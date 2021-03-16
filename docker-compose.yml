@@ -16,3 +16,23 @@ services:
       - "3000:3000"
       - "9229:9229"
     command: npm run dev
+    depends_on:
+      - postgres
+  postgres:
+    image: "postgis/postgis:11-2.5-alpine"
+    environment: 
+      - POSTGRES_USER=postgressuser
+      - POSTGRES_PASSWORD=postgrespass
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: "dpage/pgadmin4"
+    environment: 
+      - PGADMIN_LISTEN_PORT=8080
+      - PGADMIN_DEFAULT_EMAIL=dev@gov.uk
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - "8080:8080"
+      - "5432:5432"
+    links: 
+      - postgres
