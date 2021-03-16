@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "module": "commonjs",
+    "target": "es5",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "lib": ["es2015"],
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "paths": {
+      "client/*": ["client/*"],
+      "server/*": ["server/*"],
+      "config/*": ["config/*"],
+      "services/*": ["services/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "ignore": ["dist"]
+}

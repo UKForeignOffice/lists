@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "legacyWatch": true,
+  "ext": "ts,html,scss,css",
+  "exec": "npm run build:js && node --experimental-modules `if [ $NODE_ENV = \"development\" ]; then echo \"--inspect=0.0.0.0 --nolazy\"; fi` ./dist/index.js"
+}

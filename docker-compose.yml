@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  server:
+    container_name: server
+    image: bertrandmc/express-typescript-seed
+    environment:
+      - NODE_ENV=development
+      - ERROR_LEVEL=error
+      - PORT:3000
+    build:
+      context: .
+    volumes:
+      - ./:/usr/src/app:delegated
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    command: npm run dev
