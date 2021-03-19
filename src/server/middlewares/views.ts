@@ -11,6 +11,8 @@ const VIEWS_PATHS = [
 ];
 
 export const configureViews = (server: Express): void => {
+  server.engine("html", nunjucks.render);
+  server.set("view engine", "html");
   nunjucks.configure(VIEWS_PATHS, {
     autoescape: true,
     express: server,
