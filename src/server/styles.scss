@@ -1,0 +1,6 @@
+@import "../../node_modules/govuk-frontend/govuk/all";
+
+.answers-box {
+  background-color: govuk-colour("light-grey");
+  padding: govuk-spacing(4);
+}
