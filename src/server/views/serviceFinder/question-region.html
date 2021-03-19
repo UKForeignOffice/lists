@@ -1,0 +1,18 @@
+<form class="form" action="{{ nextRoute }}" method="post">
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="region">
+          Which region in {{_.upperFirst(country) }} do you need {{ serviceLabel }} from?
+        </label>
+      </h1>
+      <div id="region-hint" class="govuk-hint">
+        Write down the region of the country where you need a {{ serviceLabel }}, for example Alicante. </br>
+        If you do not know which region you need a {{ serviceLabel }} from, press continue.
+      </div>
+      <input class="govuk-input" id="region" name="region" type="hidden" value="unknown" />
+      <input class="govuk-input" id="region" name="region" type="text" />
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

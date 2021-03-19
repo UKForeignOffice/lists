@@ -1,0 +1,29 @@
+<form class="form" action="{{ nextRoute }}" method="post">
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="legal-aid-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="legalAid">
+          Do you need legal aid?
+        </label>
+      </h1>
+      <div id="legal-aid-hint" class="govuk-hint">
+        Legal aid can help meet the costs of legal advice, family mediation and representation in a court or tribunal.
+      </div>
+      <div class="govuk-radios govuk-radios--inline">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="legal-aid" name="legalAid" type="radio" value="yes" required>
+          <label class="govuk-label govuk-radios__label" for="legal-aid">
+            Yes
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="legal-aid-2" name="legalAid" type="radio" value="no" required>
+          <label class="govuk-label govuk-radios__label" for="legal-aid-2">
+            No
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

@@ -1,0 +1,33 @@
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="practiceArea">
+          In which areas do you need legal help??
+        </label>
+      </h1>
+      <div id="practice-area-hint" class="govuk-hint">
+        You can choose as many options from the list as you need.
+      </div>
+      <div class="govuk-checkboxes">
+        {% for practiceArea in practiceAreasList %}
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            name="practiceArea"
+            type="checkbox"
+            value="{{ practiceArea.toLowerCase() }}"
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="practice-area"
+          >
+            {{ practiceArea }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

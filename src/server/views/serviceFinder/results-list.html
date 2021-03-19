@@ -1,0 +1,21 @@
+<ul class="govuk-list">
+  {% if searchResults.length === 0 %}
+    <p>We couldn't find any results for this search, please <a href="{{baseRoute}}">try again</a>
+  {% endif %}
+  {% for item in searchResults %}
+    <li class="app-search-result">
+      {% for key, value in item %}
+        {% if key === "Name" %}
+          <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link">{{value}}</a>
+          </h2>
+        {% else %}
+          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+            <strong>{{ key }}</strong>: {{ value }}
+          </p>
+        {% endif %}
+      {% endfor %}
+    </li>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endfor %}
+</ul>
