@@ -1,0 +1,27 @@
+{% extends "../layout.html" %}
+
+{% block pageTitle %}
+  Service finder
+{% endblock %}
+
+{% block header %}
+  <!-- Blank header with no service name for the start page -->
+  {{ govukHeader() }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "includes/phase-banner.html" %}
+{% endblock %}
+
+{% set activeQuestion = "service-finder/partials/" + questionToRender %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% include activeQuestion %}
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {% include "service-finder/partials/answers-box.html" %}
+    </div>
+  </div>
+{% endblock %}

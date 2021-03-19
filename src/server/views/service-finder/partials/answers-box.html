@@ -1,0 +1,43 @@
+<aside class="app-related-itemsx" role="complementary">
+  <div class="answers-box">
+    <p class="govuk-body">Your answers:</p>
+    {% if not params["serviceType"] %}
+      <p class="govuk-body">Your answers will appear here</p>
+    {% endif %}
+    {% if params["serviceType"] %}
+      <p class="govuk-body">
+        What are you looking for?<br />
+        <strong>{{ _.upperFirst(_.lowerCase(params["serviceType"])) }}</strong>
+        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'serviceType') }}">Change</a>
+      </p>
+    {% endif %}
+    {% if params["country"] %}
+      <p class="govuk-body">
+        Country?<br />
+        <strong>{{ _.upperFirst(params["country"]) }}</strong>
+        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'country') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if params["region"] %}
+      <p class="govuk-body">
+        Region?<br />
+        <strong>{{ _.upperFirst(params["region"]) }}</strong>
+        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'region') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if params["practiceArea"] %}
+      <p class="govuk-body">
+        Which legal practice areas do you need?<br />
+        <strong>{{ _.join(_.split(params["practiceArea"], ","), ", ") }}</strong>
+        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'practiceArea') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if params["legalAid"] %}
+      <p class="govuk-body">
+        Do you need legal aid?<br />
+        <strong>{{ params["legalAid"] }}</strong>
+        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'legalAid') }}">Change</a>
+      </p>
+    {% endif %} 
+  </div>
+</aside>

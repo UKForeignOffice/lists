@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+  Service finder
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% include "results-list.html" %}   
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {% include "includes/answers-box.html" %}
+    </div>
+  </div>
+{% endblock %}
