@@ -1,42 +1,42 @@
 <aside class="app-related-itemsx" role="complementary">
   <div class="answers-box">
     <p class="govuk-body">Your answers:</p>
-    {% if not params["serviceType"] %}
+    {% if not serviceType %}
       <p class="govuk-body">Your answers will appear here</p>
     {% endif %}
-    {% if params["serviceType"] %}
+    {% if serviceType %}
       <p class="govuk-body">
         What are you looking for?<br />
-        <strong>{{ _.upperFirst(_.lowerCase(params["serviceType"])) }}</strong>
-        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'serviceType') }}">Change</a>
+        <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
+        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
       </p>
     {% endif %}
-    {% if params["country"] %}
+    {% if country %}
       <p class="govuk-body">
         Country?<br />
-        <strong>{{ _.upperFirst(params["country"]) }}</strong>
-        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'country') }}">Change</a>
+        <strong>{{ _.upperFirst(country) }}</strong>
+        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'country') }}">Change</a>
       </p>
     {% endif %} 
-    {% if params["region"] %}
+    {% if region %}
       <p class="govuk-body">
         Region?<br />
-        <strong>{{ _.upperFirst(params["region"]) }}</strong>
-        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'region') }}">Change</a>
+        <strong>{{ _.upperFirst(region) }}</strong>
+        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'region') }}">Change</a>
       </p>
     {% endif %} 
-    {% if params["practiceArea"] %}
+    {% if practiceArea %}
       <p class="govuk-body">
         Which legal practice areas do you need?<br />
-        <strong>{{ _.join(_.split(params["practiceArea"], ","), ", ") }}</strong>
-        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'practiceArea') }}">Change</a>
+        <strong>{{ _.join(_.split(practiceArea, ","), ", ") }}</strong>
+        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}">Change</a>
       </p>
     {% endif %} 
-    {% if params["legalAid"] %}
+    {% if legalAid %}
       <p class="govuk-body">
         Do you need legal aid?<br />
-        <strong>{{ params["legalAid"] }}</strong>
-        <a class="govuk-link" href="{{ removeQueryParameter(nextRoute, 'legalAid') }}">Change</a>
+        <strong>{{ legalAid }}</strong>
+        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
       </p>
     {% endif %} 
   </div>
