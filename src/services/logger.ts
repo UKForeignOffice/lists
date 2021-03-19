@@ -1,14 +1,21 @@
-import winston from "winston";
+import { createLogger, format, transports } from "winston";
 import { LOG_LEVEL } from "config";
 
-export const logger = winston.createLogger({
+export const logger = createLogger({
   level: LOG_LEVEL,
-  format: winston.format.json(),
+  format: format.json(),
   defaultMeta: { service: "server" },
   transports: [
     // - Write all logs with level `error` and below to `error.log`
     // - Write all logs with level LOG_LEVEL and below to console.log
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.Console({ level: LOG_LEVEL }),
+    new transports.Console({
+      level: LOG_LEVEL,
+      format: format.combine(
+        format.timestamp(),
+        format.simple(),
+        format.colorize({ all: true })
+      ),
+    }),
+    new transports.File({ filename: "error.log", level: "error" }),
   ],
 });
