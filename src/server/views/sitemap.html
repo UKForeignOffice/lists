@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+  GOV.UK Find a professional service - Sitemap
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-width-container ">
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+      <h1 class="govuk-heading-xl">Sitemap</h1>
+
+      {% for item in sections %}
+        <h2 class="govuk-heading-m">{{ item.title }}</h2>
+        <ul class="govuk-list">
+          {% for link in item.links %}
+            <li>
+              <a class="govuk-link" href="{{ link.href }}">{{ link.title }}</a>
+            </li>
+          {% endfor %}  
+        </ul>        
+      {% endfor %}
+    </main>
+  </div>
+{% endblock %}

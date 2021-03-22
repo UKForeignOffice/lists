@@ -1,10 +1,14 @@
 import querystring from "querystring";
-import _, { isArray, omit } from "lodash";
+import _, { isArray, omit, upperFirst } from "lodash";
 import { Request, Response } from "express";
 import { logger } from "services/logger";
-import { countriesList, legalPracticeAreasList } from "services/metadata";
+import {
+  countriesList,
+  legalPracticeAreasList,
+  fcdoLawyersPagesByCountry,
+} from "services/metadata";
 import { prisma } from "server/models/prisma-client";
-import { Lawyer } from "@prisma/client";
+import { countryHasLawyers } from "server/models/helpers";
 
 interface AllParams {
   serviceType?: string;
@@ -103,6 +107,10 @@ function removeQueryParameter(
   return `${querystring.stringify(params)}`;
 }
 
+function getCountryLawyerRedirectLink(countryName: string): string | undefined {
+  return fcdoLawyersPagesByCountry[upperFirst(countryName)];
+}
+
 async function queryLawyers(params: AllParams): Promise<any[]> {
   const results = await prisma.lawyer.findMany({
     where: {
@@ -159,6 +167,16 @@ export function serviceFinderStartPage(req: Request, res: Response): void {
 export function serviceFinderPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
   const queryString = queryStringFromParams(params);
+  const { country } = params;
+
+  if (country !== undefined && !countryHasLawyers(country)) {
+    // data hasn't been migrated, redirect user to legacy FCDO pages
+    const pageUrl = getCountryLawyerRedirectLink(country);
+    if (pageUrl !== undefined) {
+      return res.redirect(pageUrl);
+    }
+  }
+
   res.redirect(`${DEFAULT_VIEW_PROPS.questionsRoute}?${queryString}`);
 }
 
@@ -223,13 +241,12 @@ export async function serviceFinderResultsController(
 
   let searchResults;
 
-  switch(serviceType) {
-    case "lawyers": 
+  switch (serviceType) {
+    case "lawyers":
       searchResults = await queryLawyers(params);
       break;
     default:
-      searchResults = []
-    ;
+      searchResults = [];
   }
 
   res.render("service-finder/results-page.html", {

@@ -6,16 +6,20 @@ import {
   serviceFinderPostController,
 } from "server/controllers/service-finder";
 
+export const finderStartRoute = "/service-finder";
+export const finderFormRoute = "/service-finder/find";
+export const finderResultsRoute = "/service-finder/results";
+
 const router = express.Router();
 
 // start page
-router.get("/service-finder", serviceFinderStartPage);
+router.get(finderStartRoute, serviceFinderStartPage);
 
 // questions page
-router.get("/service-finder/find", serviceFinderController);
-router.post("/service-finder/find", serviceFinderPostController);
+router.get(finderFormRoute, serviceFinderController);
+router.post(finderFormRoute, serviceFinderPostController);
 
 // results page
-router.get("/service-finder/results", serviceFinderResultsController);
+router.get(finderResultsRoute, serviceFinderResultsController);
 
 export default router;

@@ -279,3 +279,253 @@ export const countriesList = [
   { text: "Zambia", value: "Zambia" },
   { text: "Zimbabwe", value: "Zimbabwe" },
 ];
+
+
+export const fcdoLawyersPagesByCountry = {
+  Afghanistan:
+    "https://www.gov.uk/government/publications/afghanistan-list-of-lawyers",
+  Albania:
+    "https://www.gov.uk/government/publications/albania-list-of-lawyers--2",
+  Algeria: "https://www.gov.uk/government/publications/algeria-list-of-lawyers",
+  Angola: "https://www.gov.uk/government/publications/angola-list-of-lawyers",
+  "Antigua and Barbuda":
+    "https://www.gov.uk/government/publications/antigua-list-of-lawyers--2",
+  Argentina:
+    "https://www.gov.uk/government/publications/argentina-list-of-lawyers",
+  Armenia: "https://www.gov.uk/government/publications/armenia-list-of-lawyers",
+  Australia:
+    "https://www.gov.uk/government/publications/australia-list-of-lawyers",
+  Austria: "https://www.gov.uk/government/publications/austria-list-of-lawyers",
+  Azerbaijan:
+    "https://www.gov.uk/government/publications/azerbaijan-list-of-lawyers--2",
+  Bahrain: "https://www.gov.uk/government/publications/bahrain-list-of-lawyers",
+  Bahamas: "https://www.gov.uk/government/publications/bahamas-list-of-lawyers",
+  Bangladesh:
+    "https://www.gov.uk/government/publications/bangladesh-list-of-lawyers",
+  Barbados:
+    "https://www.gov.uk/government/publications/barbados-list-of-lawyers",
+  Belarus: "https://www.gov.uk/government/publications/belarus-list-of-lawyers",
+  Belgium: "https://www.gov.uk/government/publications/belgium-list-of-lawyers",
+  Belize: "https://www.gov.uk/government/publications/belize-list-of-lawyers",
+  Bolivia: "https://www.gov.uk/government/publications/bolivia-list-of-lawyers",
+  "Bosnia and Herzegovina":
+    "https://www.gov.uk/government/publications/bosnia-and-herzegovina-list-of-lawyers",
+  Botswana:
+    "https://www.gov.uk/government/publications/botswana-list-of-lawyers",
+  Brazil: "https://www.gov.uk/government/publications/brazil-list-of-lawyers",
+  Brunei: "https://www.gov.uk/government/publications/brunei-list-of-lawyers",
+  Bulgaria:
+    "https://www.gov.uk/government/publications/bulgaria-list-of-lawyers",
+  Burma: "https://www.gov.uk/government/publications/myanmar-list-of-lawyers",
+  Burundi: "https://www.gov.uk/government/publications/burundi-list-of-lawyers",
+  Cambodia:
+    "https://www.gov.uk/government/publications/cambodia-list-of-lawyers--2",
+  Cameroon:
+    "https://www.gov.uk/government/publications/cameroon-list-of-lawyers",
+  Canada: "https://www.gov.uk/government/publications/canada-list-of-lawyers",
+  "Cape Verde":
+    "https://www.gov.uk/government/publications/cape-verde-list-of-lawyers",
+  Chile: "https://www.gov.uk/government/publications/chile-list-of-lawyers",
+  China: "https://www.gov.uk/government/publications/china-list-of-lawyers",
+  Colombia:
+    "https://www.gov.uk/government/publications/colombia-list-of-lawyers",
+  "Costa Rica":
+    "https://www.gov.uk/government/publications/costa-rica-list-of-lawyers",
+  "Cote d’Ivoire":
+    "https://www.gov.uk/government/publications/cote-divoire-list-of-lawyers",
+  Croatia: "https://www.gov.uk/government/publications/croatia-list-of-lawyers",
+  Cuba: "https://www.gov.uk/government/publications/cuba-list-of-lawyers--2",
+  Cyprus: "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
+  "Czech Republic":
+    "https://www.gov.uk/government/publications/czech-republic-list-of-lawyers",
+  "Democratic Republic of Congo":
+    "https://www.gov.uk/government/publications/democratic-republic-of-congo-list-of-lawyers",
+  Denmark: "https://www.gov.uk/government/publications/denmark-list-of-lawyers",
+  Dominica:
+    "https://www.gov.uk/government/publications/dominica-list-of-lawyers",
+  "Dominican Republic":
+    "https://www.gov.uk/government/publications/dominican-republic-list-of-lawyers",
+  Ecuador: "https://www.gov.uk/government/publications/ecuador-list-of-lawyers",
+  Egypt: "https://www.gov.uk/government/publications/egypt-list-of-lawyers",
+  "El Salvador":
+    "https://www.gov.uk/government/publications/el-salvador-list-of-lawyers",
+  Eritrea: "https://www.gov.uk/government/publications/eritrea-list-of-lawyers",
+  Estonia: "https://www.gov.uk/government/publications/estonia-list-of-lawyers",
+  Ethiopia:
+    "https://www.gov.uk/government/publications/ethiopia-list-of-lawyers",
+  Fiji: "https://www.gov.uk/government/publications/fiji-list-of-lawyers",
+  Finland: "https://www.gov.uk/government/publications/finland-list-of-lawyers",
+  France: "https://www.gov.uk/government/publications/france-list-of-lawyers",
+  Gambia: "https://www.gov.uk/government/publications/gambia-list-of-lawyers",
+  Georgia: "https://www.gov.uk/government/publications/georgia-list-of-lawyers",
+  Germany: "https://www.gov.uk/government/publications/germany-list-of-lawyers",
+  Ghana: "https://www.gov.uk/government/publications/ghana-list-of-lawyers",
+  "Cayman Islands":
+    "https://www.gov.uk/government/publications/grand-cayman-list-of-lawyers",
+  Greece: "https://www.gov.uk/government/publications/greece-list-of-lawyers",
+  Grenada: "https://www.gov.uk/government/publications/grenada-list-of-lawyers",
+  Guatemala:
+    "https://www.gov.uk/government/publications/guatemala-list-of-lawyers",
+  Guinea: "https://www.gov.uk/government/publications/guinea-list-of-lawyers",
+  Guyana:
+    "https://www.gov.uk/government/publications/guyana-list-of-lawyers-and-translators",
+  Haiti: "https://www.gov.uk/government/publications/haiti-list-of-lawyers",
+  Honduras:
+    "https://www.gov.uk/government/publications/list-of-lawyers-and-translators-for-honduras",
+  "Hong Kong":
+    "https://www.gov.uk/government/publications/hong-kong-list-of-lawyers",
+  Hungary: "https://www.gov.uk/government/publications/hungary-list-of-lawyers",
+  Iceland: "https://www.gov.uk/government/publications/iceland-list-of-lawyers",
+  India: "https://www.gov.uk/government/publications/india-list-of-lawyers",
+  Indonesia:
+    "https://www.gov.uk/government/publications/indonesia-list-of-lawyers",
+  Iran: "https://www.gov.uk/government/publications/iran-list-of-lawyers",
+  Iraq: "https://www.gov.uk/government/publications/iraq-list-of-lawyers",
+  Ireland: "https://www.gov.uk/government/publications/ireland-list-of-lawyers",
+  Israel: "https://www.gov.uk/government/publications/israel-list-of-lawyers",
+  Italy: "https://www.gov.uk/government/publications/italy-list-of-lawyers",
+  Jamaica:
+    "https://www.gov.uk/government/publications/list-of-lawyers-in-jamaica",
+  Japan: "https://www.gov.uk/government/publications/japan-lawyers",
+  Jordan: "https://www.gov.uk/government/publications/jordan-list-of-lawyers",
+  Kazakhstan:
+    "https://www.gov.uk/government/publications/kazakhstan-list-of-lawyers-translators",
+  Kenya: "https://www.gov.uk/government/publications/kenya-list-of-lawyers",
+  "North Korea":
+    "https://www.gov.uk/government/publications/democratic-peoples-republic-of-korea-list-of-lawyers",
+  Kosovo: "https://www.gov.uk/government/publications/kosovo-list-of-lawyers",
+  Kuwait: "https://www.gov.uk/government/publications/kuwait-list-of-lawyers",
+  Kyrgyzstan:
+    "https://www.gov.uk/government/publications/kyrgyzstan-list-of-lawyers-translators",
+  Laos: "https://www.gov.uk/government/publications/laos-list-of-lawyers",
+  Latvia: "https://www.gov.uk/government/publications/latvia-list-of-lawyers",
+  Lebanon: "https://www.gov.uk/government/publications/lebanon-list-of-lawyers",
+  Liberia: "https://www.gov.uk/government/publications/liberia-list-of-lawyers",
+  Lithuania:
+    "https://www.gov.uk/government/publications/lithuania-list-of-lawyers",
+  Luxembourg:
+    "https://www.gov.uk/government/publications/luxembourg-list-of-lawyers",
+  Macao: "https://www.gov.uk/government/publications/macao-list-of-lawyers",
+  Madagascar:
+    "https://www.gov.uk/government/publications/madagascar-list-of-lawyers",
+  Malawi: "https://www.gov.uk/government/publications/malawi-list-of-lawyers",
+  Malaysia:
+    "https://www.gov.uk/government/publications/malaysia-list-of-lawyers",
+  Maldives:
+    "https://www.gov.uk/government/publications/maldives-list-of-lawyers",
+  Mali: "https://www.gov.uk/government/publications/mali-list-of-lawyers",
+  Malta: "https://www.gov.uk/government/publications/malta-list-of-lawyers",
+  Mauritius:
+    "https://www.gov.uk/government/publications/mauritius-list-of-lawyers",
+  Mexico: "https://www.gov.uk/government/publications/mexico-list-of-lawyers",
+  Moldova: "https://www.gov.uk/government/publications/moldova-list-of-lawyers",
+  Monaco:
+    "https://www.gov.uk/government/publications/monaco-list-of-english-speaking-lawyers",
+  Mongolia:
+    "https://www.gov.uk/government/publications/mongolia-list-of-lawyers",
+  Montenegro:
+    "https://www.gov.uk/government/publications/montenegro-list-of-lawyers",
+  Morocco: "https://www.gov.uk/government/publications/morocco-list-of-lawyers",
+  Mozambique:
+    "https://www.gov.uk/government/publications/mozambique-list-of-lawyers",
+  Namibia: "https://www.gov.uk/government/publications/namibia-list-of-lawyers",
+  Nepal: "https://www.gov.uk/government/publications/nepal-list-of-lawyers",
+  Netherlands:
+    "https://www.gov.uk/government/publications/netherlands-list-of-lawyers",
+  "New Zealand":
+    "https://www.gov.uk/government/publications/new-zealand-list-of-lawyers",
+  Nicaragua:
+    "https://www.gov.uk/government/publications/nicaragua-list-of-lawyers",
+  Nigeria: "https://www.gov.uk/government/publications/nigeria-list-of-lawyers",
+  Macedonia:
+    "https://www.gov.uk/government/publications/north-macedonia-lawyers",
+  Norway: "https://www.gov.uk/government/publications/norway-list-of-lawyers",
+  "The Occupied Palestinian Territories":
+    "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-lawyers",
+  Pakistan:
+    "https://www.gov.uk/government/publications/pakistan-list-of-lawyers",
+  Panama: "https://www.gov.uk/government/publications/panama-list-of-lawyers",
+  "Papua New Guinea":
+    "https://www.gov.uk/government/publications/papua-new-guinea-list-of-lawyers",
+  Paraguay:
+    "https://www.gov.uk/government/publications/list-of-english-speaking-lawyers-and-translators-in-paraguay",
+  Peru: "https://www.gov.uk/government/publications/peru-list-of-lawyers",
+  Philippines:
+    "https://www.gov.uk/government/publications/philippines-list-of-lawyers",
+  Poland: "https://www.gov.uk/government/publications/poland-list-of-lawyers",
+  Portugal:
+    "https://www.gov.uk/government/publications/portugal-list-of-lawyers",
+  Qatar: "https://www.gov.uk/government/publications/qatar-list-of-lawyers",
+  Romania: "https://www.gov.uk/government/publications/romania-list-of-lawyers",
+  Russia: "https://www.gov.uk/government/publications/russia-list-of-lawyers",
+  Rwanda: "https://www.gov.uk/government/publications/rwanda-list-of-lawyers",
+  Samoa: "https://www.gov.uk/government/publications/samoa-lawyers-list",
+  "Saudi Arabia":
+    "https://www.gov.uk/government/publications/saudi-arabia-list-of-lawyers",
+  Senegal: "https://www.gov.uk/government/publications/senegal-list-of-lawyers",
+  Serbia: "https://www.gov.uk/government/publications/serbia-list-of-lawyers",
+  Seychelles:
+    "https://www.gov.uk/government/publications/seychelles-list-of-lawyers",
+  "Sierra Leone":
+    "https://www.gov.uk/government/publications/sierra-leone-list-of-lawyers",
+  Singapore:
+    "https://www.gov.uk/government/publications/singapore-list-of-lawyers",
+  Slovakia:
+    "https://www.gov.uk/government/publications/slovakia-list-of-lawyers",
+  Slovenia:
+    "https://www.gov.uk/government/publications/slovenia-list-of-lawyers",
+  "Solomon Islands":
+    "https://www.gov.uk/government/publications/solomon-islands-list-of-lawyers",
+  Somalia: "https://www.gov.uk/government/publications/somalia-list-of-lawyers",
+  "South Africa":
+    "https://www.gov.uk/government/publications/south-africa-list-of-lawyers",
+  "South Korea":
+    "https://www.gov.uk/government/publications/south-korea-list-of-lawyers",
+  Spain: "https://www.gov.uk/government/publications/spain-list-of-lawyers",
+  "Sri Lanka":
+    "https://www.gov.uk/government/publications/sri-lanka-list-of-lawyers",
+  "Saint Kitts and Nevis":
+    "https://www.gov.uk/government/publications/st-kitts-and-nevis-list-of-lawyers",
+  "Saint Lucia":
+    "https://www.gov.uk/government/publications/stlucia-list-of-lawyers",
+  "Saint Vincent and the Grenadines":
+    "https://www.gov.uk/government/publications/st-vincent-list-of-lawyers",
+  Sudan: "https://www.gov.uk/government/publications/sudan-list-of-lawyers",
+  Suriname: "https://www.gov.uk/government/publications/suriname-lawyers",
+  Sweden: "https://www.gov.uk/government/publications/sweden-list-of-lawyers",
+  Switzerland:
+    "https://www.gov.uk/government/publications/switzerland-list-of-lawyers",
+  Liechtenstein:
+    "https://www.gov.uk/government/publications/switzerland-list-of-lawyers",
+  Taiwan: "https://www.gov.uk/government/publications/taiwan-list-of-lawyers",
+  Tajikistan:
+    "https://www.gov.uk/government/publications/tajikistan-list-of-lawyers",
+  Tanzania:
+    "https://www.gov.uk/government/publications/tanzania-list-of-lawyers",
+  Thailand:
+    "https://www.gov.uk/government/publications/thailand-list-of-lawyers",
+  "Trinidad and Tobago":
+    "https://www.gov.uk/government/publications/trinidad-and-tobago-list-of-lawyers--2",
+  Tunisia: "https://www.gov.uk/government/publications/tunisia-list-of-lawyers",
+  Turkey: "https://www.gov.uk/government/publications/turkey-list-of-lawyers",
+  Turkmenistan:
+    "https://www.gov.uk/government/publications/turkmenistan-list-of-lawyers",
+  Uganda: "https://www.gov.uk/government/publications/uganda-list-of-lawyers",
+  Ukraine: "https://www.gov.uk/government/publications/ukraine-list-of-lawyers",
+  "United Arab Emirates":
+    "https://www.gov.uk/government/publications/united-arab-emirates-list-of-lawyers",
+  "United States":
+    "https://www.gov.uk/government/publications/usa-list-of-lawyers",
+  Uruguay: "https://www.gov.uk/government/publications/uruguay-list-of-lawyers",
+  Uzbekistan:
+    "https://www.gov.uk/government/publications/uzbekistan-list-of-lawyers",
+  Vanuatu: "https://www.gov.uk/government/publications/vanuatu-list-of-lawyers",
+  Venezuela:
+    "https://www.gov.uk/government/publications/venezuela-list-of-lawyers",
+  Vietnam:
+    "https://www.gov.uk/government/publications/vietnam-lists-of-interpretation-and-translation-companies",
+  Yemen: "https://www.gov.uk/government/publications/yemen-list-of-lawyers",
+  Zambia: "https://www.gov.uk/government/publications/zambia-list-of-lawyers",
+  Zimbabwe:
+    "https://www.gov.uk/government/publications/zimbabwe-list-of-lawyers",
+};
