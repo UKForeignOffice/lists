@@ -1,0 +1,148 @@
+version: 2.1
+
+orbs:
+  aws-eks: circleci/aws-eks@0.2.6
+  kubernetes: circleci/kubernetes@0.4.0
+
+defaults: &defaults
+  working_directory: ~/repo
+
+jobs:
+  build:
+    <<: *defaults
+
+    docker:
+      - image: circleci/node:12.16-browsers
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - .yarn/cache
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Lint
+          command: npm lint
+
+      - run:
+          name: Run tests
+          command: npm test
+
+  publish:
+    <<: *defaults
+
+    docker:
+      - image: circleci/python:2.7-jessie
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - setup_remote_docker:
+          version: 19.03.13
+
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+
+      - run:
+          name: Publish docker image
+          command: |
+            eval $(aws ecr get-login --no-include-email --region eu-west-2)
+            docker build --build-arg NODE_ENV=production -t 545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists:$CIRCLE_SHA1 .
+            docker push 545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists
+
+  deploy:
+    working_directory: ~/repo
+
+    machine:
+      image: ubuntu-1604:202004-01
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - aws-eks/install-eksctl
+
+      - run:
+          name: Install OpenVPN
+          command: |
+            sudo apt-get update
+            sudo apt-get install openvpn -y --force-yes
+
+      - run:
+          name: Check IP before VPN connection
+          command: |
+            ifconfig
+            route -n
+            sudo netstat -anp
+            cat /etc/resolv.conf
+            curl checkip.amazonaws.com
+
+      - run:
+          name: VPN Setup
+          background: true
+          command: |
+            phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
+            echo $phone_home
+
+            echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
+            printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
+            sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
+              --route $phone_home 255.255.255.255 net_gateway \
+              --route 169.254.0.0 255.255.0.0 net_gateway
+
+      - run:
+          name: Wait for VPN connection to be established
+          command: sleep 30
+
+      - run:
+          name: Check IP after VPN connection
+          command: |
+            ifconfig
+            route -n
+            sudo netstat -anp
+            cat /etc/resolv.conf
+            curl checkip.amazonaws.com
+
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: prod
+          aws-region: eu-west-2
+          install-kubectl: true
+
+      - kubernetes/update-container-image:
+          namespace: dev-lists
+          container-image-updates: lists=545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists:$CIRCLE_SHA1
+          resource-name: deployment/lists
+
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - publish:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - deploy-dev
+      - deploy:
+          context:
+            - VPN
+          requires:
+            - publish
+          filters:
+            branches:
+              only:
+                - deploy-dev
