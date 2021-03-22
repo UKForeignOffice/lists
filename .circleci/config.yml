@@ -130,6 +130,8 @@ workflows:
     jobs:
       - build
       - publish:
+          context:
+            - AWS
           requires:
             - build
           filters:
@@ -139,6 +141,7 @@ workflows:
                 - deploy-dev
       - deploy:
           context:
+            - AWS
             - VPN
           requires:
             - publish
