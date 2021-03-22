@@ -1,12 +1,13 @@
 version: "3.9"
 services:
-  server:
-    container_name: server
+  lists:
+    container_name: lists
     image: bertrandmc/express-typescript-seed
     environment:
       - NODE_ENV=development
       - ERROR_LEVEL=error
-      - PORT:3000
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
     build:
       context: .
     volumes:
@@ -19,20 +20,19 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: "postgis/postgis:11-2.5-alpine"
-    environment: 
+    image: "postgis/postgis:9.6-2.5-alpine"
+    environment:
       - POSTGRES_USER=postgressuser
       - POSTGRES_PASSWORD=postgrespass
     ports:
       - "5432:5432"
   pgadmin:
     image: "dpage/pgadmin4"
-    environment: 
+    environment:
       - PGADMIN_LISTEN_PORT=8080
       - PGADMIN_DEFAULT_EMAIL=dev@gov.uk
       - PGADMIN_DEFAULT_PASSWORD=password
     ports:
       - "8080:8080"
-      - "5432:5432"
-    links: 
+    links:
       - postgres

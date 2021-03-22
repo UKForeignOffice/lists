@@ -1,0 +1,97 @@
+// IMPORTANT: If you change the schmema don't forget to generate the migration with prisma migration
+// See ./scripts/prisma-migrate-dev.sh
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id     Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email  String   @unique
+  name   String   @db.VarChar(255)
+  roles  UserRoles[]
+}
+
+model UserRoles {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String @db.VarChar(255)
+  users     User[]
+}
+
+model Lawyer {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contactName String @db.VarChar(255)
+  lawFirmName String @db.VarChar(255)
+  telephone   String @db.VarChar(255)
+  email       String? @db.VarChar(255)
+  website     String? @db.VarChar(255)
+  
+  address     Address @relation(fields: [addressId], references: [id])
+  addressId   Int
+
+  legalPracticeAreas  LegalPracticeArea[]
+  regionsServed       String?
+  legalAid            Boolean @default(false)
+  proBonoService      Boolean @default(false)
+
+  isApproved    Boolean @default(false)
+  isPublished   Boolean @default(false)
+  isBlocked     Boolean @default(false)
+}
+
+model LegalPracticeArea {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String   @db.VarChar(255) @unique
+  lawyers   Lawyer[]
+}
+
+model Address {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  firsLine    String   @db.VarChar(255)
+  secondLine  String?  @db.VarChar(255)
+  city        String?  @db.VarChar(255)
+  postCode    String   @db.VarChar(255)
+  country     Country  @relation(fields: [countryId], references: [id])
+  countryId   Int
+  Lawyer      Lawyer[]
+}
+
+model Country {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  name      String    @db.VarChar(255) @unique
+  address   Address[]
+  regions   Region[]
+}
+
+model Region {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String   @db.VarChar(255)
+  country   Country  @relation(fields: [countryId], references: [id])
+  countryId Int
+}

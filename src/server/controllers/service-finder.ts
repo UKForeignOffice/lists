@@ -1,8 +1,10 @@
 import querystring from "querystring";
 import _, { isArray, omit } from "lodash";
 import { Request, Response } from "express";
-import {logger} from "services/logger"
-import { countriesList } from "services/medatada";
+import { logger } from "services/logger";
+import { countriesList, legalPracticeAreasList } from "services/metadata";
+import { prisma } from "server/models/prisma-client";
+import { Lawyer } from "@prisma/client";
 
 interface AllParams {
   serviceType?: string;
@@ -15,10 +17,13 @@ interface AllParams {
 
 const DEFAULT_VIEW_PROPS = {
   _,
-  serviceName: "Service finder",
   countriesList,
-  practiceAreasList: [],
+  serviceName: "Service finder",
+  legalPracticeAreasList,
+  questionsRoute: "/service-finder/find",
 };
+
+// Helpers
 
 function queryStringFromParams(params: AllParams): string {
   return Object.keys(params)
@@ -34,20 +39,31 @@ function queryStringFromParams(params: AllParams): string {
     .join("&");
 }
 
-function regionFromParams(params: AllParams): string[] | undefined {
+function regionFromParams(params: AllParams): string | undefined {
   if (!("region" in params)) {
     return undefined;
   }
 
-  let region = params.region;
+  let region = params.region ?? [];
 
   if (typeof region === "string") {
     region = region.split(/,/);
   }
 
-  // TODO: user can click any region
+  if (region[0] === "unsure" && region[1] !== undefined) {
+    // user is just posting region form, which includes hidden input with value unknown
+    return region[1];
+  }
 
-  return region;
+  if (region[0] === "unsure" && region[1] === undefined) {
+    // user posted empty region
+    return "unsure";
+  }
+
+  if (region[0] !== "unsure") {
+    // region has already been defined
+    return region[0];
+  }
 }
 
 function practiceAreaFromParams(params: AllParams): string[] | undefined {
@@ -79,6 +95,60 @@ function getAllRequestParams(req: Request): AllParams {
   };
 }
 
+function removeQueryParameter(
+  queryString: string,
+  parameterName: string
+): string {
+  const params = omit(querystring.parse(queryString), parameterName);
+  return `${querystring.stringify(params)}`;
+}
+
+async function queryLawyers(params: AllParams): Promise<any[]> {
+  const results = await prisma.lawyer.findMany({
+    where: {
+      address: {
+        country: {
+          name: {
+            startsWith: params.country,
+            mode: "insensitive",
+          },
+        },
+      },
+    },
+    select: {
+      contactName: true,
+      lawFirmName: true,
+      telephone: true,
+      email: true,
+      website: true,
+      regionsServed: true,
+      legalPracticeAreas: true,
+      address: {
+        select: {
+          firsLine: true,
+          postCode: true,
+          country: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return results.map((lawyer) => {
+    return {
+      ...lawyer,
+      legalPracticeAreas: lawyer.legalPracticeAreas
+        .map((a) => a.name)
+        .join(", "),
+    };
+  });
+}
+
+// Controllers
+
 export function serviceFinderStartPage(req: Request, res: Response): void {
   return res.render("service-finder/start-page", {
     nextRoute: "/service-finder/find",
@@ -86,6 +156,11 @@ export function serviceFinderStartPage(req: Request, res: Response): void {
   });
 }
 
+export function serviceFinderPostController(req: Request, res: Response): void {
+  const params = getAllRequestParams(req);
+  const queryString = queryStringFromParams(params);
+  res.redirect(`${DEFAULT_VIEW_PROPS.questionsRoute}?${queryString}`);
+}
 
 export function serviceFinderController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
@@ -106,14 +181,6 @@ export function serviceFinderController(req: Request, res: Response): void {
   const queryString = queryStringFromParams(params);
   const isSearchingForLawyers = serviceType === "lawyers";
 
-  const viewProps = {
-    ...params,
-    ...DEFAULT_VIEW_PROPS,
-    responses: { ...req.query },
-    serviceLabel: getServiceLabel(serviceType),
-    baseRoute: "/base-route",
-  };
-
   let questionToRender;
 
   if (serviceType === undefined) {
@@ -130,29 +197,47 @@ export function serviceFinderController(req: Request, res: Response): void {
     questionToRender = "question-practice-area.html";
   } else if (legalAid === undefined && isSearchingForLawyers) {
     questionToRender = "question-legal-aid.html";
-  } else if (req.method === "POST") {
-    // all processed, redirect to get route
-    logger.warn(req.baseUrl + req.path);
-    
-    return res.redirect(`/service-finder/results?${queryString}`);
+  } else {
+    // all processed, redirect to result route
+    res.redirect(`/service-finder/results?${queryString}`);
+    return;
   }
 
-  const searchResults = []; // TODO
-
-  console.log("XXXXX", { params });
-  
-
-  return res.render("service-finder/question-page.html", {
-    ...viewProps,
-    previousRoute: "/service-finder/",
-    nextRoute: `/service-finder/find?${queryString}`,
+  res.render("service-finder/question-page.html", {
+    ...DEFAULT_VIEW_PROPS,
+    ...params,
+    queryString,
     questionToRender,
-    params,
-    searchResults,
-    removeQueryParameter: (route: string, parameterName: string) => {
-      const [path, query] = route.split(/\?/);
-      const params = omit(querystring.parse(query), parameterName);
-      return `${path}?${querystring.stringify(params)}`;
-    },
+    removeQueryParameter,
+    serviceLabel: getServiceLabel(serviceType),
+  });
+}
+
+export async function serviceFinderResultsController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const params = getAllRequestParams(req);
+  const queryString = queryStringFromParams(params);
+  const { serviceType } = params;
+
+  let searchResults;
+
+  switch(serviceType) {
+    case "lawyers": 
+      searchResults = await queryLawyers(params);
+      break;
+    default:
+      searchResults = []
+    ;
+  }
+
+  res.render("service-finder/results-page.html", {
+    ...DEFAULT_VIEW_PROPS,
+    ...params,
+    queryString,
+    searchResults: searchResults,
+    removeQueryParameter,
+    serviceLabel: getServiceLabel(serviceType),
   });
 }

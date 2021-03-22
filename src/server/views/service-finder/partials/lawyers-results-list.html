@@ -1,0 +1,35 @@
+<ul class="govuk-list">
+  {% if searchResults.length === 0 %}
+    <p>We couldn't find any results for this search, please <a href="{{questionsRoute}}">try again</a>
+  {% endif %}
+  {% for item in searchResults %}
+    <li class="app-search-result">
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
+        {{ item.lawFirmName if item.lawFirmName else item.contactName }}
+      </h2>
+      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+        <strong>Telephone</strong>: {{ item.telephone }}
+      </p>
+      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+        <strong>Address</strong>: {{ item.address.firsLine }}
+      </p>
+      {% if item.email %}
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Email</strong>: {{ item.email }}
+        </p>
+      {% endif %}
+      {% if item.website %}
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Website</strong>: {{ item.website }}
+        </p>
+      {% endif %}
+      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+        <strong>Legal Practice Areas</strong>: {{ item.legalPracticeAreas }}
+      </p>
+      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+        <strong>Legal Aid</strong>: {{ "Yes" if item.legalAid else "No" }}
+      </p>
+    </li>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endfor %}
+</ul>

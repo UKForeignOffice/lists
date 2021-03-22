@@ -1,3 +1,19 @@
+export const legalPracticeAreasList = [
+  "Bankruptcy",
+  "Corporate",
+  "Criminal",
+  "Employment",
+  "Family",
+  "Health",
+  "Immigration",
+  "Intellectual property",
+  "International",
+  "Maritime",
+  "Personal injury",
+  "Real estate",
+  "Tax",
+];
+
 export const countriesList = [
   { text: "Afghanistan", value: "Afghanistan" },
   { text: "Albania", value: "Albania" },

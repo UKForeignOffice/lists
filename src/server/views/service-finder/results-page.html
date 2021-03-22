@@ -7,7 +7,9 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% include "service-finder/partials/results-list.html" %}   
+      {% if serviceType === "lawyers" %}
+        {% include "service-finder/partials/lawyers-results-list.html" %}   
+      {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
       {% include "service-finder/partials/answers-box.html" %}
