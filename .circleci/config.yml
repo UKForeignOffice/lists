@@ -43,8 +43,7 @@ jobs:
       - image: circleci/python:2.7-jessie
 
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
 
       - setup_remote_docker:
           version: 19.03.13
@@ -61,7 +60,7 @@ jobs:
             docker push 545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists
 
   deploy:
-    working_directory: ~/repo
+    <<: *defaults
 
     machine:
       image: ubuntu-1604:202004-01
