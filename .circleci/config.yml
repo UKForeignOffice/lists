@@ -30,11 +30,11 @@ jobs:
 
       - run:
           name: Lint
-          command: npm lint
+          command: npm run lint
 
       - run:
           name: Run tests
-          command: npm test
+          command: npm run test
 
   publish:
     <<: *defaults
