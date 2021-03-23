@@ -1,12 +1,12 @@
 import querystring from "querystring";
 import _, { isArray, omit, upperFirst } from "lodash";
 import { Request, Response } from "express";
-import { logger } from "services/logger";
+import {} from "services/locationService";
 import {
   countriesList,
   legalPracticeAreasList,
   fcdoLawyersPagesByCountry,
-} from "services/metadata";
+} from "services/metadataService";
 import { prisma } from "server/models/prisma-client";
 import { countryHasLawyers } from "server/models/helpers";
 

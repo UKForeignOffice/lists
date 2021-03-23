@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { uniq } from "lodash";
-import { logger } from "services/logger";
+import { logger } from "services/loggerService";
 import lawyers from "./thailand-lawyers";
 
 export const populateThailandLawyers = async (

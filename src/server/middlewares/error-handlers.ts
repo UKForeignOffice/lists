@@ -1,5 +1,5 @@
 import { Express, Request, Response, NextFunction, ErrorRequestHandler } from "express";
-import { logger } from "services/logger";
+import { logger } from "services/loggerService";
 
 interface HttpException extends Error {
   status: number;

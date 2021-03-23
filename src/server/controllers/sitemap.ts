@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { countriesList } from "services/metadata";
+import { countriesList } from "services/metadataService";
 import { finderFormRoute } from "server/routes/service-finder";
 
 export function sitemapController(req: Request, res: Response): void {

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { logger } from "services/logger";
+import { logger } from "services/loggerService";
 import { populateThailandLawyers } from "./thailand/populate-thailand";
 import { POPULATE_DB } from "config";
 
