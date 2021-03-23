@@ -4,7 +4,7 @@ import {
   LOCATION_SERVICE_SECRET_KEY,
   LOCATION_SERVICE_INDEX_NAME,
 } from "config";
-import { logger } from "./loggerService";
+import { logger } from "./logger";
 
 const INDEX_PARAMS = {
   DataSource: "Esri",

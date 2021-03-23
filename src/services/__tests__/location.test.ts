@@ -4,7 +4,7 @@ import {
   checkIfPlaceIndexExists,
   createPlaceIndex,
   locatePlaceByText,
-} from "../locationService";
+} from "../location";
 
 describe("Location service:", () => {
   test("service is initialized with the correct parameters", () => {
