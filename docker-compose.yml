@@ -20,7 +20,7 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: "postgis/postgis:9.6-2.5-alpine"
+    image: "gangstead/postgis:13-3.1-arm"
     environment:
       - POSTGRES_DB=service-finder-db
       - POSTGRES_USER=postgressuser

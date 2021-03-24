@@ -7,8 +7,8 @@ import {
   legalPracticeAreasList,
   fcdoLawyersPagesByCountry,
 } from "services/metadata";
-// import { prisma } from "server/models/prisma-client";
-// import { countryHasLawyers } from "server/models/helpers";
+import { prisma } from "server/models/prisma-client";
+import { countryHasLawyers } from "server/models/helpers";
 
 interface AllParams {
   serviceType?: string;
@@ -112,48 +112,47 @@ function getCountryLawyerRedirectLink(countryName: string): string | undefined {
 }
 
 async function queryLawyers(params: AllParams): Promise<any[]> {
-  return [];
-  // const results = await prisma.lawyer.findMany({
-  //   where: {
-  //     address: {
-  //       country: {
-  //         name: {
-  //           startsWith: params.country,
-  //           mode: "insensitive",
-  //         },
-  //       },
-  //     },
-  //   },
-  //   select: {
-  //     contactName: true,
-  //     lawFirmName: true,
-  //     telephone: true,
-  //     email: true,
-  //     website: true,
-  //     regionsServed: true,
-  //     legalPracticeAreas: true,
-  //     address: {
-  //       select: {
-  //         firsLine: true,
-  //         postCode: true,
-  //         country: {
-  //           select: {
-  //             name: true,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
+  const results = await prisma.lawyer.findMany({
+    where: {
+      address: {
+        country: {
+          name: {
+            startsWith: params.country,
+            mode: "insensitive",
+          },
+        },
+      },
+    },
+    select: {
+      contactName: true,
+      lawFirmName: true,
+      telephone: true,
+      email: true,
+      website: true,
+      regionsServed: true,
+      legalPracticeAreas: true,
+      address: {
+        select: {
+          firsLine: true,
+          postCode: true,
+          country: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-  // return results.map((lawyer) => {
-  //   return {
-  //     ...lawyer,
-  //     legalPracticeAreas: lawyer.legalPracticeAreas
-  //       .map((a) => a.name)
-  //       .join(", "),
-  //   };
-  // });
+  return results.map((lawyer) => {
+    return {
+      ...lawyer,
+      legalPracticeAreas: lawyer.legalPracticeAreas
+        .map((a) => a.name)
+        .join(", "),
+    };
+  });
 }
 
 // Controllers

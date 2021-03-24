@@ -91,15 +91,11 @@ export const populateThailandLawyers = async (
       const point = location?.Geometry?.Point;
 
       if (isArray(point)) {
-        const locationId = await rawInsertGeoLocation(point, prisma);
-
+        const locationId = await rawInsertGeoLocation(point);
+        
         if (locationId >= 0) {
           Object.assign(lawyer.address.create, {
-            geoLocation: {
-              connect: {
-                id: locationId,
-              },
-            },
+            geoLocationId: locationId,
           });
         }
       }

@@ -116,3 +116,6 @@ dist
 # Auto generated assets
 src/public/stylesheets/styles.css
 src/public/stylesheets/styles.css.map
+
+# dev folder
+playground/
