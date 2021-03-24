@@ -22,10 +22,13 @@ services:
   postgres:
     image: "postgis/postgis:9.6-2.5-alpine"
     environment:
+      - POSTGRES_DB=service-finder-db
       - POSTGRES_USER=postgressuser
       - POSTGRES_PASSWORD=postgrespass
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
   pgadmin:
     image: "dpage/pgadmin4"
     environment:
@@ -36,3 +39,5 @@ services:
       - "8080:8080"
     links:
       - postgres
+volumes:
+  postgres-data:

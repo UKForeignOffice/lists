@@ -1,24 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import { uniq } from "lodash";
+import { uniq, isArray } from "lodash";
 import { logger } from "services/logger";
+import { locatePlaceByText } from "services/location";
+import { rawInsertGeoLocation } from "../../helpers";
+
 import lawyers from "./thailand-lawyers";
 
-export const populateThailandLawyers = async (
-  prisma: PrismaClient
-): Promise<string> => {
-  const country = await prisma.country.upsert({
-    where: {
-      name: "Thailand",
-    },
-    update: {
-      name: "Thailand",
-    },
-    create: {
-      name: "Thailand",
-    },
-  });
-
-  const listOfLawyers = lawyers.map((lawyer) => {
+function createLawyersQueryObjects(country: { id: number }): any[] {
+  return lawyers.map((lawyer) => {
     const address = lawyer.Address.substring(
       0,
       lawyer.Address.length - 6
@@ -28,7 +17,8 @@ export const populateThailandLawyers = async (
       lawyer["Legal Practice Areas"].split("; ")
     );
 
-    const postCodeFromAddress: string = lawyer.Address.match(/\d{5}/gm)?.["0"] ?? '';
+    const postCodeFromAddress: string =
+      lawyer.Address.match(/\d{5}/gm)?.["0"] ?? "";
 
     return {
       contactName: lawyer.Name,
@@ -60,13 +50,31 @@ export const populateThailandLawyers = async (
       isPublished: true,
     };
   });
+}
+
+export const populateThailandLawyers = async (
+  prisma: PrismaClient
+): Promise<string> => {
+  const country = await prisma.country.upsert({
+    where: {
+      name: "Thailand",
+    },
+    update: {
+      name: "Thailand",
+    },
+    create: {
+      name: "Thailand",
+    },
+  });
+
+  const lawyersInsetObjList = createLawyersQueryObjects(country);
 
   let itemsInserted = 0;
-  let itemsError = 0;
   let alreadyExists = 0;
+  let itemsError = 0;
 
-  for (let i = 0; i < listOfLawyers.length; i++) {
-    const lawyer = listOfLawyers[i];
+  for (let i = 0; i < 2; i++) {
+    const lawyer = lawyersInsetObjList[i];
     const exists = await prisma.lawyer.findFirst({
       where: {
         lawFirmName: lawyer.lawFirmName,
@@ -79,20 +87,33 @@ export const populateThailandLawyers = async (
     }
 
     try {
+      const location = await locatePlaceByText(lawyer.address.create.firsLine);
+      const point = location?.Geometry?.Point;
+
+      if (isArray(point)) {
+        const locationId = await rawInsertGeoLocation(point, prisma);
+
+        if (locationId >= 0) {
+          Object.assign(lawyer.address.create, {
+            geoLocation: {
+              connect: {
+                id: locationId,
+              },
+            },
+          });
+        }
+      }
+
       await prisma.lawyer.create({ data: lawyer });
       itemsInserted += 1;
     } catch (error) {
       itemsError += 1;
-      logger.error(error);
+      logger.error("Error creating thailand lawyer", error);
     }
   }
 
-  const result = `
-    ${itemsInserted} Thailand Lawyers Records created successfully, 
-    ${itemsError} errors, 
-    ${alreadyExists} already existed
-  `;
-  
+  const result = `${itemsInserted} Thailand Lawyers created successfully, ${itemsError} errors, ${alreadyExists} already existed`;
+
   logger.info(result);
 
   return result;

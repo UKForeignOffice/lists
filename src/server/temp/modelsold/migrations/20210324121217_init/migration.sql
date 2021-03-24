@@ -60,6 +60,7 @@ CREATE TABLE "Address" (
     "city" VARCHAR(255),
     "postCode" VARCHAR(255) NOT NULL,
     "countryId" INTEGER NOT NULL,
+    "geoLocationId" INTEGER,
 
     PRIMARY KEY ("id")
 );

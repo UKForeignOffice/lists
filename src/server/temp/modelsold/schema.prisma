@@ -74,7 +74,16 @@ model Address {
   country     Country  @relation(fields: [countryId], references: [id])
   countryId   Int
   Lawyer      Lawyer[]
+  geoLocationId   Int?
 }
+
+// Prisma does not support PostGis geography types so this table is created using raw sql
+// please see ./helpers
+// model GeoLocation {
+//   id          Int      @id @default(autoincrement())
+//   location    Unsupported("point")?
+//   address     Address[]
+// }
 
 model Country {
   id        Int       @id @default(autoincrement())
