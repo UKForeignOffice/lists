@@ -17,12 +17,12 @@ const router = express.Router();
 // router.get(listsFinderStartRoute, listsFinderStartPageController);
 router.get(listsFinderStartRoute, listRedirectToLawyersController);
 
-
 // questions page
 router.get(listsFinderFormRoute, listsFinderGetController);
 router.post(listsFinderFormRoute, listsFinderPostController);
 
 // results page
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(listsFinderResultsRoute, listsFinderResultsController);
 
 export default router;

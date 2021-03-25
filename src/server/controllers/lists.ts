@@ -38,7 +38,7 @@ const DEFAULT_VIEW_PROPS = {
 function queryStringFromParams(params: AllParams): string {
   return Object.keys(params)
     .map((key) => {
-      let value = params[key];
+      let value: string = params[key];
 
       if (isArray(value)) {
         value = value.toString();
@@ -210,8 +210,6 @@ export async function listsFinderResultsController(
     default:
       searchResults = [];
   }
-
-  console.log(searchResults);
 
   res.render("lists/results-page.html", {
     ...DEFAULT_VIEW_PROPS,
