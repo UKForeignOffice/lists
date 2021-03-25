@@ -18,9 +18,9 @@ export const rawInsertGeoLocation = async (
     }
 
     const result = await db.query(`
-      INSERT INTO public.geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
+      INSERT INTO geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
     `);
-    
+
     return result?.rows?.[0]?.id ?? false;
   } catch (error) {
     logger.error("Insert raw GeoLocation", error);

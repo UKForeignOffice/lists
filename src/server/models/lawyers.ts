@@ -64,7 +64,7 @@ function fetchPublishedLawyersQuery(props: {
       lawyer."proBonoService",
       (SELECT array_agg(name)
         FROM legal_practice_areas lpa
-        INNER JOIN public."_lawyerTolegal_practice_areas" AS ltl ON ltl."A" = lawyer.id
+        INNER JOIN "_lawyerTolegal_practice_areas" AS ltl ON ltl."A" = lawyer.id
         WHERE lpa.id = ltl."B"
       ) AS "legalPracticeAreas",
 
@@ -76,10 +76,10 @@ function fetchPublishedLawyersQuery(props: {
 
       ${withDistance}
 
-    FROM public.lawyer AS lawyer
-    INNER JOIN public.address AS address ON lawyer."addressId" = address.id
-    INNER JOIN public.country AS country ON address."countryId" = country.id
-    INNER JOIN public.geo_location AS geo ON address."geoLocationId" = geo.id
+    FROM lawyer AS lawyer
+    INNER JOIN address AS address ON lawyer."addressId" = address.id
+    INNER JOIN country AS country ON address."countryId" = country.id
+    INNER JOIN geo_location AS geo ON address."geoLocationId" = geo.id
     ${whereCountryName}
     AND lawyer."isApproved" = true
     AND lawyer."isPublished" = true
