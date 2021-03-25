@@ -7,6 +7,11 @@
       <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
         {{ item.lawFirmName if item.lawFirmName else item.contactName }}
       </h2>
+      {% if item.distanceinmeters %}
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Distance</strong>: {{ (item.distanceinmeters / 1609).toFixed(2) }} miles
+        </p>
+      {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Telephone</strong>: {{ item.telephone }}
       </p>
