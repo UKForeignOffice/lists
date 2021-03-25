@@ -21,6 +21,7 @@ interface AllParams {
   practiceArea?: string | string[];
   legalAid?: string;
   readNotice?: string;
+  readDisclaimer?: string;
 }
 
 const DEFAULT_VIEW_PROPS = {
@@ -142,7 +143,7 @@ export function listsFinderPostController(req: Request, res: Response): void {
 export function listsFinderGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
 
-  const { serviceType, country, legalAid, readNotice } = params;
+  const { serviceType, country, legalAid, readNotice, readDisclaimer } = params;
 
   const region = regionFromParams(params);
   const practiceArea = practiceAreaFromParams(params);
@@ -174,6 +175,8 @@ export function listsFinderGetController(req: Request, res: Response): void {
     questionToRender = "question-practice-area.html";
   } else if (legalAid === undefined && isSearchingForLawyers) {
     questionToRender = "question-legal-aid.html";
+  } else if (readDisclaimer === undefined) {
+    questionToRender = "question-disclaimer.html";
   } else {
     // all processed, redirect to result route
     res.redirect(`${listsFinderResultsRoute}?${queryString}`);
