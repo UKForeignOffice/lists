@@ -112,7 +112,8 @@ export async function findPublishedLawyersPerCountry(props: {
       distanceFromPoint,
     });
 
-    return await prisma.$queryRaw(query);
+    const result = await prisma.$queryRaw(query);
+    return result;
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
     return [];
