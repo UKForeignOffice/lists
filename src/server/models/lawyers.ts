@@ -62,6 +62,11 @@ function fetchPublishedLawyersQuery(props: {
       lawyer."website",
       lawyer."legalAid",
       lawyer."proBonoService",
+      (SELECT array_agg(name)
+        FROM legal_practice_areas lpa
+        INNER JOIN public."_lawyerTolegal_practice_areas" AS ltl ON ltl."A" = lawyer.id
+        WHERE lpa.id = ltl."B"
+      ) AS "legalPracticeAreas",
 
       concat_ws(', ', address."firsLine", address."secondLine") AS address,
       address."city",

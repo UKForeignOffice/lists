@@ -7,9 +7,9 @@
       <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
         {{ item.lawFirmName if item.lawFirmName else item.contactName }}
       </h2>
-      {% if item.distanceinmeters %}
+      {% if item.distanceinmeters >= 0 %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Distance</strong>: {{ (item.distanceinmeters / 1609).toFixed(2) }} miles
+          <strong>Distance</strong>: {{ _.max([(item.distanceinmeters / 1609).toFixed(2), 2]) }} miles
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
@@ -29,7 +29,7 @@
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Legal Practice Areas</strong>: {{ item.legalPracticeAreas }}
+        <strong>Legal Practice Areas</strong>: {{ item.legalPracticeAreas.join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Legal Aid</strong>: {{ "Yes" if item.legalAid else "No" }}
