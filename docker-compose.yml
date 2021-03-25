@@ -7,7 +7,7 @@ services:
       - NODE_ENV=development
       - ERROR_LEVEL=error
       - PORT=3000
-      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db?schema=public
+      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
     build:
       context: .
     volumes:
