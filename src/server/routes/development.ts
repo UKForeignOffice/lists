@@ -21,14 +21,12 @@ router.get("/prepare-db", (req, res) => {
 });
 
 router.get("/populate-db", (req, res) => {
-  const dbSchema = DATABASE_URL?.split("?")[1];
-
   populateDb(prisma)
     .then((result) => {
-      res.send({ result, dbSchema });
+      res.send({ result, DATABASE_URL });
     })
     .catch((error) => {
-      res.send({ error, dbSchema });
+      res.send({ error, DATABASE_URL });
     });
 });
 

@@ -18,6 +18,7 @@ jobs:
       - checkout
 
       # Disabele circleci cache because prisma
+      # TODO: How to keep caching without prisma generated client?
       # - restore_cache:
       #     keys:
       #       - v1-dependencies-1-{{ checksum "package-lock.json" }}
