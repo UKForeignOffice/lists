@@ -4,15 +4,15 @@
   Service finder
 {% endblock %}
 
+{% set activeQuestion = "lists/partials/" + questionToRender %}
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if serviceType === "lawyers" %}
-        {% include "service-finder/partials/lawyers-results-list.html" %}   
-      {% endif %}
+      {% include activeQuestion %}
     </div>
     <div class="govuk-grid-column-one-third">
-      {% include "service-finder/partials/answers-box.html" %}
+      {% include "lists/partials/answers-box.html" %}
     </div>
   </div>
 {% endblock %}

@@ -8,35 +8,35 @@
       <p class="govuk-body">
         What are you looking for?<br />
         <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
-        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
       </p>
     {% endif %}
     {% if country %}
       <p class="govuk-body">
         Country?<br />
         <strong>{{ _.upperFirst(country) }}</strong>
-        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'country') }}">Change</a>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'country') }}">Change</a>
       </p>
     {% endif %} 
     {% if region %}
       <p class="govuk-body">
         Region?<br />
         <strong>{{ _.upperFirst(region) }}</strong>
-        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'region') }}">Change</a>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'region') }}">Change</a>
       </p>
     {% endif %} 
     {% if practiceArea %}
       <p class="govuk-body">
         Which legal practice areas do you need?<br />
         <strong>{{ _.join(_.split(practiceArea, ","), ", ") }}</strong>
-        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}">Change</a>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}">Change</a>
       </p>
     {% endif %} 
     {% if legalAid %}
       <p class="govuk-body">
         Do you need legal aid?<br />
         <strong>{{ legalAid }}</strong>
-        <a class="govuk-link" href="{{ questionsRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
       </p>
     {% endif %} 
   </div>

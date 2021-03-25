@@ -11,7 +11,7 @@
         <strong>Telephone</strong>: {{ item.telephone }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Address</strong>: {{ item.address.firsLine }}
+        <strong>Address</strong>: {{ item.address }} {{ "-" if item.postCode }} {{ item.postCode }}
       </p>
       {% if item.email %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">

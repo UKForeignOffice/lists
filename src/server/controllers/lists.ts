@@ -1,19 +1,23 @@
 import querystring from "querystring";
 import _, { isArray, omit, upperFirst } from "lodash";
 import { Request, Response } from "express";
-import {} from "services/location";
 import {
   countriesList,
   legalPracticeAreasList,
   fcdoLawyersPagesByCountry,
 } from "services/metadata";
-import { prisma } from "server/models/prisma-client";
+
 import { countryHasLawyers } from "server/models/helpers";
+import { db } from "server/models"
+
+export const listsFinderStartRoute = "/";
+export const listsFinderFormRoute = "/find";
+export const listsFinderResultsRoute = "/results";
 
 interface AllParams {
   serviceType?: string;
   country?: string;
-  region?: string | string[];
+  region?: string;
   practiceArea?: string | string[];
   legalAid?: string;
   readNotice?: string;
@@ -22,10 +26,11 @@ interface AllParams {
 const DEFAULT_VIEW_PROPS = {
   _,
   countriesList,
-  serviceName: "Service finder",
+  serviceName: "Lists",
   legalPracticeAreasList,
-  questionsRoute: "/service-finder/find",
+  listsFinderFormRoute,
 };
+
 
 // Helpers
 
@@ -44,29 +49,30 @@ function queryStringFromParams(params: AllParams): string {
 }
 
 function regionFromParams(params: AllParams): string | undefined {
+  // TODO: this can be simplified if regions is required but allow user to select unsure
   if (!("region" in params)) {
     return undefined;
   }
 
-  let region = params.region ?? [];
+  let regions: string[] = []
 
-  if (typeof region === "string") {
-    region = region.split(/,/);
+  if (typeof params.region === "string") {
+    regions = params.region.split(/,/);
   }
 
-  if (region[0] === "unsure" && region[1] !== undefined) {
+  if (regions[0] === "unsure" && regions[1] !== undefined) {
     // user is just posting region form, which includes hidden input with value unknown
-    return region[1];
+    return regions[1];
   }
 
-  if (region[0] === "unsure" && region[1] === undefined) {
+  if (regions[0] === "unsure" && regions[1] === undefined) {
     // user posted empty region
     return "unsure";
   }
 
-  if (region[0] !== "unsure") {
+  if (regions[0] !== "unsure") {
     // region has already been defined
-    return region[0];
+    return regions[0];
   }
 }
 
@@ -111,60 +117,16 @@ function getCountryLawyerRedirectLink(countryName: string): string | undefined {
   return fcdoLawyersPagesByCountry[upperFirst(countryName)];
 }
 
-async function queryLawyers(params: AllParams): Promise<any[]> {
-  const results = await prisma.lawyer.findMany({
-    where: {
-      address: {
-        country: {
-          name: {
-            startsWith: params.country,
-            mode: "insensitive",
-          },
-        },
-      },
-    },
-    select: {
-      contactName: true,
-      lawFirmName: true,
-      telephone: true,
-      email: true,
-      website: true,
-      regionsServed: true,
-      legalPracticeAreas: true,
-      address: {
-        select: {
-          firsLine: true,
-          postCode: true,
-          country: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  return results.map((lawyer) => {
-    return {
-      ...lawyer,
-      legalPracticeAreas: lawyer.legalPracticeAreas
-        .map((a) => a.name)
-        .join(", "),
-    };
-  });
-}
-
 // Controllers
 
-export function serviceFinderStartPage(req: Request, res: Response): void {
-  return res.render("service-finder/start-page", {
-    nextRoute: "/service-finder/find",
-    previousRoute: "/service-finder/",
+export function listsFinderStartPageController(req: Request, res: Response): void {
+  return res.render("lists/start-page", {
+    nextRoute: listsFinderFormRoute,
+    previousRoute: listsFinderStartRoute,
   });
 }
 
-export function serviceFinderPostController(req: Request, res: Response): void {
+export function listsFinderPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
   const queryString = queryStringFromParams(params);
   const { country } = params;
@@ -177,10 +139,10 @@ export function serviceFinderPostController(req: Request, res: Response): void {
     }
   }
 
-  res.redirect(`${DEFAULT_VIEW_PROPS.questionsRoute}?${queryString}`);
+  res.redirect(`${DEFAULT_VIEW_PROPS.listsFinderFormRoute}?${queryString}`);
 }
 
-export function serviceFinderController(req: Request, res: Response): void {
+export function listsFinderGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
 
   const { serviceType, country, legalAid, readNotice } = params;
@@ -217,11 +179,11 @@ export function serviceFinderController(req: Request, res: Response): void {
     questionToRender = "question-legal-aid.html";
   } else {
     // all processed, redirect to result route
-    res.redirect(`/service-finder/results?${queryString}`);
+    res.redirect(`${listsFinderResultsRoute}?${queryString}`);
     return;
   }
 
-  res.render("service-finder/question-page.html", {
+  res.render("lists/question-page.html", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
     queryString,
@@ -231,7 +193,7 @@ export function serviceFinderController(req: Request, res: Response): void {
   });
 }
 
-export async function serviceFinderResultsController(
+export async function listsFinderResultsController(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -243,13 +205,15 @@ export async function serviceFinderResultsController(
 
   switch (serviceType) {
     case "lawyers":
-      searchResults = await queryLawyers(params);
+      searchResults = await db.Lawyers.findPublishedLawyersPerCountry(params);
       break;
     default:
       searchResults = [];
   }
 
-  res.render("service-finder/results-page.html", {
+  console.log(searchResults);
+
+  res.render("lists/results-page.html", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
     queryString,

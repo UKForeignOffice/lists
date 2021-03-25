@@ -73,7 +73,7 @@ export const populateThailandLawyers = async (
   let alreadyExists = 0;
   let itemsError = 0;
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < lawyersInsetObjList.length; i++) {
     const lawyer = lawyersInsetObjList[i];
     const exists = await prisma.lawyer.findFirst({
       where: {
@@ -92,7 +92,7 @@ export const populateThailandLawyers = async (
 
       if (isArray(point)) {
         const locationId = await rawInsertGeoLocation(point);
-        
+
         if (locationId >= 0) {
           Object.assign(lawyer.address.create, {
             geoLocationId: locationId,

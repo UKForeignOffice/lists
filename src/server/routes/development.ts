@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "server/models/prisma-client";
-import { populateDb } from "server/models/data/populate-database";
+import { populateDb } from "server/models/seed-data/populate-database";
 import { createGeoLocationTable } from "server/models/helpers";
 import { logger } from "services/logger";
 
