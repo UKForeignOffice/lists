@@ -1,5 +1,5 @@
 import querystring from "querystring";
-import _, { isArray, omit, upperFirst } from "lodash";
+import _, { isArray, omit, upperFirst, isString } from "lodash";
 import { Request, Response } from "express";
 import {
   countriesList,
@@ -8,7 +8,7 @@ import {
 } from "services/metadata";
 
 import { countryHasLawyers } from "server/models/helpers";
-import { db } from "server/models"
+import { db } from "server/models";
 
 export const listsFinderStartRoute = "/";
 export const listsFinderFormRoute = "/find";
@@ -32,7 +32,6 @@ const DEFAULT_VIEW_PROPS = {
   listsFinderFormRoute,
 };
 
-
 // Helpers
 
 function queryStringFromParams(params: AllParams): string {
@@ -55,7 +54,7 @@ function regionFromParams(params: AllParams): string | undefined {
     return undefined;
   }
 
-  let regions: string[] = []
+  let regions: string[] = [];
 
   if (typeof params.region === "string") {
     regions = params.region.split(/,/);
@@ -88,7 +87,9 @@ function practiceAreaFromParams(params: AllParams): string[] | undefined {
     return practiceArea;
   }
 
-  return [practiceArea];
+  if (isString(practiceArea)) {
+    return [practiceArea];
+  }
 }
 
 function getServiceLabel(serviceType: string | undefined): string {
@@ -117,7 +118,10 @@ function getCountryLawyerRedirectLink(countryName: string): string | undefined {
 
 // Controllers
 
-export function listsFinderStartPageController(req: Request, res: Response): void {
+export function listsFinderStartPageController(
+  req: Request,
+  res: Response
+): void {
   return res.render("lists/start-page", {
     nextRoute: listsFinderFormRoute,
     previousRoute: listsFinderStartRoute,
@@ -221,10 +225,13 @@ export async function listsFinderResultsController(
   });
 }
 
-export function listRedirectToLawyersController(req: Request, res: Response): void {
+export function listRedirectToLawyersController(
+  req: Request,
+  res: Response
+): void {
   const params = getAllRequestParams(req);
   params.serviceType = "lawyers";
   const queryString = queryStringFromParams(params);
 
   res.redirect(`${listsFinderFormRoute}?${queryString}`);
-};
+}
