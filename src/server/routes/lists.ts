@@ -1,6 +1,7 @@
 import express from "express";
 import {
-  listsFinderStartPageController,
+  listRedirectToLawyersController,
+  // listsFinderStartPageController,
   listsFinderGetController,
   listsFinderResultsController,
   listsFinderPostController,
@@ -12,7 +13,10 @@ import {
 const router = express.Router();
 
 // start page
-router.get(listsFinderStartRoute, listsFinderStartPageController);
+// Temporary redirect to lawyers start page
+// router.get(listsFinderStartRoute, listsFinderStartPageController);
+router.get(listsFinderStartRoute, listRedirectToLawyersController);
+
 
 // questions page
 router.get(listsFinderFormRoute, listsFinderGetController);

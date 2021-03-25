@@ -1,4 +1,4 @@
-import { upperFirst } from "lodash";
+import { upperFirst, isNumber } from "lodash";
 import { logger } from "services/logger";
 import { db } from "./database";
 
@@ -9,12 +9,18 @@ export const countryHasLawyers = (countryName: string): boolean => {
 };
 
 export const rawInsertGeoLocation = async (
-  point: number[],
+  point: number[]
 ): Promise<number | boolean> => {
   try {
+    if (!isNumber(point[0]) || !isNumber(point[0])) {
+      // make sure these are number to avoid sql injection
+      return false;
+    }
+
     const result = await db.query(`
       INSERT INTO public.geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
     `);
+    
     return result?.rows?.[0]?.id ?? false;
   } catch (error) {
     logger.error("Insert raw GeoLocation", error);
@@ -51,5 +57,5 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
     results.push(error.message);
   }
 
-  return results.join(', ');
+  return results.join(", ");
 };

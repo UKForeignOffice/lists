@@ -167,8 +167,8 @@ export function listsFinderGetController(req: Request, res: Response): void {
     questionToRender = "question-service-type.html";
   } else if (readNotice === undefined) {
     questionToRender = isSearchingForLawyers
-      ? "notice-lawyer.html"
-      : "notice-medical-facilities.html";
+      ? "lawyer-start-page.html"
+      : "medical-facilities-start-page.html";
   } else if (country === undefined) {
     questionToRender = "question-country.html";
   } else if (region === undefined) {
@@ -222,3 +222,11 @@ export async function listsFinderResultsController(
     serviceLabel: getServiceLabel(serviceType),
   });
 }
+
+export function listRedirectToLawyersController(req: Request, res: Response): void {
+  const params = getAllRequestParams(req);
+  params.serviceType = "lawyers";
+  const queryString = queryStringFromParams(params);
+
+  res.redirect(`${listsFinderFormRoute}?${queryString}`);
+};

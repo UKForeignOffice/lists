@@ -24,8 +24,6 @@ async function getPlaceGeoPoint(props: {
   }
 }
 
-
-
 function fetchPublishedLawyersQuery(props: {
   country?: string;
   distanceFromPoint?: Point;
@@ -82,13 +80,16 @@ function fetchPublishedLawyersQuery(props: {
     AND lawyer."isPublished" = true
     AND lawyer."isBlocked" = false
     ${orderBy}
+    LIMIT 20
   `;
 }
 
+// Model API
 
-// Model API 
-
-export async function findPublishedLawyersPerCountry(props: { country?: string, region?: string}): Promise<any[]> {
+export async function findPublishedLawyersPerCountry(props: {
+  country?: string;
+  region?: string;
+}): Promise<any[]> {
   const country = upperFirst(props.country);
 
   if (props.country === undefined) {
@@ -98,17 +99,17 @@ export async function findPublishedLawyersPerCountry(props: { country?: string, 
   try {
     const distanceFromPoint = await getPlaceGeoPoint({
       country,
-      text: props.region
+      text: props.region,
     });
 
     const query = fetchPublishedLawyersQuery({
       country,
       distanceFromPoint,
     });
-    
-    return await prisma.$queryRaw(query);;
+
+    return await prisma.$queryRaw(query);
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
-    return []
+    return [];
   }
 }

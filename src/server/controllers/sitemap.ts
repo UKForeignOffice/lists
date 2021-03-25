@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { countriesList } from "services/metadata";
-import { listsFinderFormRoute } from "server/routes/lists";
+import { listsFinderStartRoute } from "./lists";
 
 export function sitemapController(req: Request, res: Response): void {
   const sections = [
@@ -9,7 +9,7 @@ export function sitemapController(req: Request, res: Response): void {
       links: countriesList.map(({value}) => {
         return {
           title: value,
-          href: `${listsFinderFormRoute}?country=${value}&serviceType=lawyers`,
+          href: `${listsFinderStartRoute}?country=${value}&serviceType=lawyers`,
         };
       }),
     },

@@ -1,15 +1,16 @@
 <aside class="app-related-itemsx" role="complementary">
   <div class="answers-box">
     <p class="govuk-body">Your answers:</p>
-    {% if not serviceType %}
+    {% if not country %}
       <p class="govuk-body">Your answers will appear here</p>
     {% endif %}
     {% if serviceType %}
-      <p class="govuk-body">
+      {# until other services are integrated we can hide this #}
+      {# <p class="govuk-body">
         What are you looking for?<br />
         <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
         <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
-      </p>
+      </p> #}
     {% endif %}
     {% if country %}
       <p class="govuk-body">

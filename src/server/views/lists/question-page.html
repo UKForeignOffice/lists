@@ -11,8 +11,12 @@
     <div class="govuk-grid-column-two-thirds">
       {% include activeQuestion %}
     </div>
-    <div class="govuk-grid-column-one-third">
-      {% include "lists/partials/answers-box.html" %}
-    </div>
+
+    {# temporary remove answer-box from lawyers start page, until other services are added #}
+    {% if questionToRender !== "lawyer-start-page.html" %}
+      <div class="govuk-grid-column-one-third">
+        {% include "lists/partials/answers-box.html" %}
+      </div>
+    {% endif %} 
   </div>
 {% endblock %}
