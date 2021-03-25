@@ -3,6 +3,7 @@ import { prisma } from "server/models/prisma-client";
 import { populateDb } from "server/models/seed-data/populate-database";
 import { createGeoLocationTable } from "server/models/helpers";
 import { logger } from "services/logger";
+import { DATABASE_URL } from "config";
 
 const router = express.Router();
 
@@ -15,18 +16,19 @@ router.get("/prepare-db", (req, res) => {
     })
     .catch((error) => {
       logger.error(error);
-      res.send({error });
+      res.send({ error });
     });
-  
 });
 
 router.get("/populate-db", (req, res) => {
+  const dbSchema = DATABASE_URL?.split("?")[1];
+
   populateDb(prisma)
     .then((result) => {
-      res.send({ result });
+      res.send({ result, dbSchema });
     })
     .catch((error) => {
-      res.send({ error });
+      res.send({ error, dbSchema });
     });
 });
 
