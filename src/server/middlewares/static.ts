@@ -13,10 +13,12 @@ const accessibleAutoCompletePath = path.join(
   "accessible-autocomplete",
   "dist"
 );
+const errorLogFile = path.join(ROOT, "error.log");
 
 export const configureStaticServer = (server: Express): void => {
   server.use("/assets", express.static(publicFolderPath));
   server.use("/assets", express.static(govUKAssetsFolderPath));
   server.use("/assets/govuk-frontend/all.js", express.static(govUKAllJSPath));
   server.use("/assets", express.static(accessibleAutoCompletePath));
+  server.use("/error-log", express.static(errorLogFile));
 };
