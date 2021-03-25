@@ -83,9 +83,6 @@ function practiceAreaFromParams(params: AllParams): string[] | undefined {
 
   const { practiceArea } = params;
 
-  // TODO
-  // user can select any
-
   if (isArray(practiceArea)) {
     return practiceArea;
   }

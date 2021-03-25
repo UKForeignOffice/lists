@@ -23,9 +23,23 @@
             for="practice-area"
           >
             {{ practiceArea }}
-          </label>
+          </label>  
         </div>
         {% endfor %}
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            name="practiceArea"
+            type="checkbox"
+            value="other"
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="practice-area"
+          >
+            Other
+          </label>  
+        </div>
       </div>
     </fieldset>
   </div>
