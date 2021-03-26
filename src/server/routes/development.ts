@@ -36,8 +36,8 @@ router.get("/populate-db", (req, res) => {
     });
 });
 
-router.get("/reset-db", (req, res) => {
-  exec("npm run prisma:reset", (error, stdout, stderr) => {
+router.get("/deploy-db", (req, res) => {
+  exec("npm run prisma:deploy", (error, stdout, stderr) => {
     res.send({ error, stdout, stderr });
   });
 });
