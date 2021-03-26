@@ -39,5 +39,3 @@ export const logger = createLogger({
   defaultMeta: { service: "server" },
   transports: transportsList,
 });
-
-logger.error("ENV", process.env);
