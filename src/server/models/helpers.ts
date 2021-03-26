@@ -73,3 +73,20 @@ export const describeDb = async (): Promise<any> => {
     return error;
   }
 };
+
+export const dumpDb = async (): Promise<any> => {
+  const lawyersQuery = "SELECT * from lawyer";
+  const addressQuery = "SELECT * from address";
+  const geoQuery = "SELECT * from geo_location";
+  const countryQuery = "SELECT * from country";
+
+  try {
+    const lawyers = await db.query(lawyersQuery);
+    const address = await db.query(addressQuery);
+    const geo = await db.query(geoQuery);
+    const country = await db.query(countryQuery);
+    return { lawyers, address, geo, country };
+  } catch (error) {
+    return error;
+  }
+};
