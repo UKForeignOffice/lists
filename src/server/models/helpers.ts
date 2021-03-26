@@ -90,3 +90,14 @@ export const dumpDb = async (): Promise<any> => {
     return error;
   }
 };
+
+export const listAppliedMigrations = async (): Promise<any> => {
+  const query = "SELECT * from _prisma_migrations";
+
+  try {
+    const { rows } = await db.query(query);
+    return { migrations: rows };
+  } catch (error) {
+    return error;
+  }
+};
