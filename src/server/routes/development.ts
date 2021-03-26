@@ -42,4 +42,10 @@ router.get("/deploy-db", (req, res) => {
   });
 });
 
+router.get("/reset-db", (req, res) => {
+  exec("npm run prisma:reset", (error, stdout) => {
+    res.send({ error, stdout });
+  });
+});
+
 export default router;
