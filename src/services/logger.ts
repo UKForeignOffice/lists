@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from "winston";
 import { Papertrail } from "winston-papertrail";
-import { LOG_LEVEL, LOCAL_DEV } from "config";
+import { LOG_LEVEL, LOCAL_DEV, isTest } from "config";
 
 const transportsList = [
   // - Write all logs with level `error` and below to `error.log`
@@ -16,7 +16,7 @@ const transportsList = [
   new transports.File({ filename: "error.log", level: "error" }),
 ];
 
-if (!LOCAL_DEV) {
+if (!LOCAL_DEV && !isTest()) {
   transportsList.push(
     new Papertrail({
       host: "logs.papertrailapp.com",
