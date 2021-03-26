@@ -113,7 +113,10 @@ function removeQueryParameter(
 }
 
 function getCountryLawyerRedirectLink(countryName: string): string | undefined {
-  return fcdoLawyersPagesByCountry[upperFirst(countryName)];
+  return (
+    fcdoLawyersPagesByCountry[upperFirst(countryName)] ??
+    "https://www.gov.uk/government/collections/list-of-lawyers"
+  );
 }
 
 // Controllers
