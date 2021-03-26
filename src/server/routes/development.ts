@@ -52,7 +52,7 @@ router.get("/populate-db", (req, res) => {
     });
 });
 
-router.get("dump-db", (req, res) => {
+router.get("/dump-db", (req, res) => {
   dumpDb()
     .then((result) => {
       res.send({ result });
