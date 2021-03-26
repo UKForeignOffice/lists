@@ -59,3 +59,17 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
 
   return results.join(", ");
 };
+
+export const describeDb = async (): Promise<any> => {
+  const query = `
+    SELECT table_schema,table_name FROM information_schema.tables
+    ORDER BY table_schema,table_name;
+  `;
+
+  try {
+    const result = await db.query(query);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};

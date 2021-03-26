@@ -2,10 +2,16 @@ import express from "express";
 import { exec } from "child_process";
 import { prisma } from "server/models/prisma-client";
 import { populateDb } from "server/models/seed-data/populate-database";
-import { createGeoLocationTable } from "server/models/helpers";
+import { createGeoLocationTable, describeDb } from "server/models/helpers";
 import { logger } from "services/logger";
 
 const router = express.Router();
+
+router.get("/inspect-db", (req, res) => {
+  describeDb()
+    .then((result) => res.send({ result }))
+    .catch((error) => res.send({ error }));
+});
 
 router.get("/prepare-db", (req, res) => {
   const promises = [createGeoLocationTable()];
@@ -31,8 +37,8 @@ router.get("/populate-db", (req, res) => {
 });
 
 router.get("/reset-db", (req, res) => {
-  exec("npm run prisma:reset", (error, stdout) => {
-    res.send({ error, stdout });
+  exec("npm run prisma:reset", (error, stdout, stderr) => {
+    res.send({ error, stdout, stderr });
   });
 });
 
