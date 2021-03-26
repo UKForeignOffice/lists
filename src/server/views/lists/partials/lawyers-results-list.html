@@ -1,6 +1,6 @@
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
-    <p>We couldn't find any results for this search, please <a href="{{questionsRoute}}">try again</a>
+    <p>We couldn't find any results for this search, please <a href="{{listsFinderFormRoute}}?serviceType=lawyers">try again</a>
   {% endif %}
   {% for item in searchResults %}
     <li class="app-search-result">
