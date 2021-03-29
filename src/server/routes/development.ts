@@ -79,7 +79,7 @@ router.get("/dev/list-applied-migrations", (req, res) => {
     });
 });
 
-router.get("/dev/log-env", (req, res) => {
+router.get("/dev/debug-env", (req, res) => {
   res.json({
     LOCATION_SERVICE_ACCESS_KEY: LOCATION_SERVICE_ACCESS_KEY?.length,
     LOCATION_SERVICE_SECRET_KEY: LOCATION_SERVICE_SECRET_KEY?.length,

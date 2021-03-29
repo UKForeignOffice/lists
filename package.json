@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "test": "npm run type-check && npm run prisma:generate && jest --collect-coverage",
+    "test": "npm run prisma:generate && npm run type-check && jest --collect-coverage",
     "test:watch": "jest --watch",
     "prisma:generate": "npx prisma generate --schema ./src/server/models/schema.prisma",
     "prisma:migrate": "npx prisma migrate dev --schema ./src/server/models/schema.prisma",
