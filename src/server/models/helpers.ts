@@ -1,7 +1,6 @@
 import { upperFirst, isNumber } from "lodash";
 import { logger } from "services/logger";
 import { db } from "./database";
-import { DATABASE_URL } from "config";
 
 const countriesWithData = ["Thailand"];
 
@@ -36,7 +35,7 @@ export const createPostgis = async (): Promise<"OK" | string> => {
     await db.query(createPostGisExtension);
     return "postgis extension OK";
   } catch (error) {
-    logger.error("Create postgis extension error:", error);
+    logger.error("createPostgis extension error:", error);
     return error;
   }
 };
@@ -54,7 +53,7 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
     await db.query(createGeoTable);
     return "geo_location created successfully";
   } catch (error) {
-    logger.error("Create postgis extension error:", { error, DATABASE_URL });
+    logger.error("createGeoLocationTable error:", error);
     return error;
   }
 };
@@ -69,6 +68,7 @@ export const describeDb = async (): Promise<any> => {
     const result = await db.query(query);
     return result;
   } catch (error) {
+    logger.error("describeDb error:", error);
     return error;
   }
 };
@@ -86,6 +86,7 @@ export const dumpDb = async (): Promise<any> => {
     const country = await db.query(countryQuery);
     return { lawyers, address, geo, country };
   } catch (error) {
+    logger.error("dumpDb error:", error);
     return error;
   }
 };
@@ -97,6 +98,7 @@ export const listAppliedMigrations = async (): Promise<any> => {
     const { rows } = await db.query(query);
     return { migrations: rows };
   } catch (error) {
+    logger.error("listAppliedMigrations error:", error);
     return error;
   }
 };

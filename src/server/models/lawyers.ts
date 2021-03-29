@@ -1,4 +1,5 @@
 import { isArray, upperFirst } from "lodash";
+import { format } from "sqlstring";
 import { prisma } from "./prisma-client";
 import { locatePlaceByText } from "services/location";
 import { logger } from "services/logger";
@@ -45,7 +46,9 @@ function fetchPublishedLawyersQuery(props: {
   `;
 
   if (country !== undefined) {
-    whereCountryName = `${conditionClause()} country.name = '${country}'`;
+    whereCountryName = format(`${conditionClause()} country.name = ?`, [
+      country,
+    ]);
   }
 
   if (filterLegalAidYes) {
@@ -53,13 +56,15 @@ function fetchPublishedLawyersQuery(props: {
   }
 
   if (isArray(distanceFromPoint)) {
-    withDistance = `
-      ,
+    withDistance = format(
+      `,
       ST_Distance(
         geo.location,
-        ST_GeographyFromText('Point(${distanceFromPoint[0]} ${distanceFromPoint[1]})')
+        ST_GeographyFromText('Point(? ?)')
       ) AS distanceInMeters
-    `;
+    `,
+      distanceFromPoint
+    );
 
     orderBy = "ORDER BY distanceInMeters ASC";
   }
