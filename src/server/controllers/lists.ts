@@ -133,10 +133,13 @@ export function listsFinderStartPageController(
 
 export function listsFinderPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
-  const queryString = queryStringFromParams({
-    ...params,
-    region: regionFromParams(params),
-  });
+  const region = regionFromParams(params);
+
+  if (region !== undefined) {
+    params.region = region;
+  }
+
+  const queryString = queryStringFromParams(params);
   const { country } = params;
 
   if (country !== undefined && !countryHasLawyers(country)) {
