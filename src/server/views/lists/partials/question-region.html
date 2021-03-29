@@ -7,11 +7,10 @@
         </label>
       </h1>
       <div id="region-hint" class="govuk-hint">
-        Write down the region of the country where you need a {{ serviceLabel }}, for example Alicante. </br>
+        Write down the region or city of the country where you need a {{ serviceLabel }}, for example Alicante. </br>
         If you do not know which region you need a {{ serviceLabel }} from, press continue.
       </div>
-      <input class="govuk-input" id="region" name="region" type="hidden" value="unsure" />
-      <input class="govuk-input" id="region" name="region" type="text" />
+      <input class="govuk-input" id="region" name="region" type="text" required/>
     </fieldset>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>

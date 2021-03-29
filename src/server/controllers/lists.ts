@@ -48,34 +48,6 @@ function queryStringFromParams(params: AllParams): string {
     .join("&");
 }
 
-function regionFromParams(params: AllParams): string | undefined {
-  // TODO: this can be simplified if regions is required but allow user to select unsure
-  if (!("region" in params)) {
-    return undefined;
-  }
-
-  let regions: string[] = [];
-
-  if (typeof params.region === "string") {
-    regions = params.region.split(/,/);
-  }
-
-  if (regions[0] === "unsure" && regions[1] !== undefined) {
-    // user is just posting region form, which includes hidden input with value unknown
-    return regions[1];
-  }
-
-  if (regions[0] === "unsure" && regions[1] === undefined) {
-    // user posted empty region
-    return "unsure";
-  }
-
-  if (regions[0] !== "unsure") {
-    // region has already been defined
-    return regions[0];
-  }
-}
-
 function practiceAreaFromParams(params: AllParams): string[] | undefined {
   if (!("practiceArea" in params)) {
     return undefined;
@@ -150,14 +122,16 @@ export function listsFinderPostController(req: Request, res: Response): void {
 export function listsFinderGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
 
-  const { serviceType, country, legalAid, readNotice, readDisclaimer } = params;
+  const {
+    serviceType,
+    country,
+    legalAid,
+    readNotice,
+    readDisclaimer,
+    region,
+  } = params;
 
-  const region = regionFromParams(params);
   const practiceArea = practiceAreaFromParams(params);
-
-  if (region !== undefined) {
-    params.region = region;
-  }
 
   if (practiceArea !== undefined) {
     params.practiceArea = practiceArea;
