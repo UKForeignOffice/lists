@@ -10,6 +10,12 @@ import {
 } from "server/models/helpers";
 import { logger } from "services/logger";
 
+import {
+  LOCATION_SERVICE_ACCESS_KEY,
+  LOCATION_SERVICE_SECRET_KEY,
+  LOCATION_SERVICE_INDEX_NAME,
+} from "config";
+
 const router = express.Router();
 
 router.get("/dev/inspect-db", (req, res) => {
@@ -71,6 +77,14 @@ router.get("/dev/list-applied-migrations", (req, res) => {
     .catch((error) => {
       res.json({ error });
     });
+});
+
+router.get("/dev/log-env", (req, res) => {
+  res.json({
+    LOCATION_SERVICE_ACCESS_KEY: LOCATION_SERVICE_ACCESS_KEY?.length,
+    LOCATION_SERVICE_SECRET_KEY: LOCATION_SERVICE_SECRET_KEY?.length,
+    LOCATION_SERVICE_INDEX_NAME: LOCATION_SERVICE_INDEX_NAME?.length,
+  });
 });
 
 export default router;
