@@ -9,12 +9,7 @@
       </h2>
       {% if item.distanceinmeters >= 0 %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Distance</strong>: 
-          {% if item.distanceinmeters <= 1 %}
-            <{{ item.distanceinmeters }} mile
-          {% else %}
-            {{ item.distanceinmeters }} miles
-          {% endif %}
+          <strong>Distance</strong>:  {{ item.distanceinmeters.toFixed(1) }} miles
         </p>
       {% endif %}
       {% if (item.contactName) and (item.contactName !== item.lawFirmName)  %}
