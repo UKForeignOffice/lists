@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-// import { Papertrail } from "winston-papertrail";
+import { Papertrail } from "winston-papertrail";
 import { LOG_LEVEL, LOCAL_DEV, isTest } from "config";
 
 const ignoreHttpGET = format((info) => {
