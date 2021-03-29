@@ -27,18 +27,29 @@ async function getPlaceGeoPoint(props: {
 function fetchPublishedLawyersQuery(props: {
   country?: string;
   distanceFromPoint?: Point;
+  filterLegalAidYes: boolean;
 }): string {
-  const { country, distanceFromPoint } = props;
+  const { country, distanceFromPoint, filterLegalAidYes } = props;
 
-  let withDistance: string = "";
+  let conditionClause = (): "WHERE" | "AND" => {
+    conditionClause = () => "AND";
+    return "WHERE";
+  };
+
+  let withDistance = "";
   let whereCountryName = "";
-  let orderBy: string = `
+  let whereLegalAid = "";
+  let orderBy = `
     ORDER BY
     CASE WHEN lawyer."lawFirmName" IS NULL THEN lawyer."contactName" ELSE lawyer."lawFirmName" END ASC
   `;
 
   if (country !== undefined) {
-    whereCountryName = `WHERE country.name = '${country}'`;
+    whereCountryName = `${conditionClause()} country.name = '${country}'`;
+  }
+
+  if (filterLegalAidYes) {
+    whereLegalAid = `${conditionClause()} lawyer."legalAid" = true`;
   }
 
   if (isArray(distanceFromPoint)) {
@@ -81,6 +92,7 @@ function fetchPublishedLawyersQuery(props: {
     INNER JOIN country AS country ON address."countryId" = country.id
     INNER JOIN geo_location AS geo ON address."geoLocationId" = geo.id
     ${whereCountryName}
+    ${whereLegalAid}
     AND lawyer."isApproved" = true
     AND lawyer."isPublished" = true
     AND lawyer."isBlocked" = false
@@ -94,8 +106,10 @@ function fetchPublishedLawyersQuery(props: {
 export async function findPublishedLawyersPerCountry(props: {
   country?: string;
   region?: string;
+  legalAid?: "yes" | "no";
 }): Promise<any[]> {
   const country = upperFirst(props.country);
+  const filterLegalAidYes = props.legalAid === "yes";
 
   if (props.country === undefined) {
     return [];
@@ -109,6 +123,7 @@ export async function findPublishedLawyersPerCountry(props: {
 
     const query = fetchPublishedLawyersQuery({
       country,
+      filterLegalAidYes,
       distanceFromPoint,
     });
 

@@ -19,7 +19,7 @@ interface AllParams {
   country?: string;
   region?: string;
   practiceArea?: string | string[];
-  legalAid?: string;
+  legalAid?: "yes" | "no";
   readNotice?: string;
   readDisclaimer?: string;
 }
