@@ -2,8 +2,7 @@ import { isArray, upperFirst } from "lodash";
 import { prisma } from "./prisma-client";
 import { locatePlaceByText } from "services/location";
 import { logger } from "services/logger";
-
-type Point = number[];
+import { Point, Lawyer } from "./types";
 
 // Helpers
 async function getPlaceGeoPoint(props: {
@@ -28,6 +27,7 @@ function fetchPublishedLawyersQuery(props: {
   country?: string;
   distanceFromPoint?: Point;
   filterLegalAidYes: boolean;
+  practiceArea?: string[];
 }): string {
   const { country, distanceFromPoint, filterLegalAidYes } = props;
 
@@ -107,7 +107,8 @@ export async function findPublishedLawyersPerCountry(props: {
   country?: string;
   region?: string;
   legalAid?: "yes" | "no";
-}): Promise<any[]> {
+  practiceArea?: string[];
+}): Promise<Lawyer[]> {
   const country = upperFirst(props.country);
   const filterLegalAidYes = props.legalAid === "yes";
 
@@ -126,8 +127,6 @@ export async function findPublishedLawyersPerCountry(props: {
       filterLegalAidYes,
       distanceFromPoint,
     });
-
-    logger.error("Querying", { query });
 
     const result = await prisma.$queryRaw(query);
     return result;

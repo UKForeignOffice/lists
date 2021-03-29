@@ -8,7 +8,7 @@ import {
 } from "services/metadata";
 
 import { countryHasLawyers } from "server/models/helpers";
-import { db } from "server/models";
+import { lawyers, types as modelTypes } from "server/models";
 
 export const listsFinderStartRoute = "/";
 export const listsFinderFormRoute = "/find";
@@ -60,7 +60,7 @@ function practiceAreaFromParams(params: AllParams): string[] | undefined {
   }
 
   if (isString(practiceArea)) {
-    return [practiceArea];
+    return practiceArea.split(",");
   }
 }
 
@@ -179,14 +179,19 @@ export async function listsFinderResultsController(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const queryString = queryStringFromParams(params);
-  const { serviceType } = params;
+  const { serviceType, country, legalAid, region } = params;
+  const practiceArea = practiceAreaFromParams(params);
 
-  let searchResults;
+  let searchResults: modelTypes.Lawyer[];
 
   switch (serviceType) {
     case "lawyers":
-      searchResults = await db.Lawyers.findPublishedLawyersPerCountry(params);
+      searchResults = await lawyers.findPublishedLawyersPerCountry({
+        country,
+        region,
+        legalAid,
+        practiceArea,
+      });
       break;
     default:
       searchResults = [];
@@ -195,9 +200,9 @@ export async function listsFinderResultsController(
   res.render("lists/results-page.html", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
-    queryString,
     searchResults: searchResults,
     removeQueryParameter,
+    queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
   });
 }

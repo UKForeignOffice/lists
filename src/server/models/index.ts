@@ -1,5 +1,2 @@
-import * as Lawyers from "./lawyers";
-
-export const db = {
-  Lawyers,
-}
+export * as lawyers from "./lawyers";
+export * as types from "./types.d";
