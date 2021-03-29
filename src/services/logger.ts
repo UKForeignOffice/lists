@@ -1,10 +1,6 @@
 import { createLogger, format, transports } from "winston";
 // import { Papertrail } from "winston-papertrail";
-import {
-  LOG_LEVEL,
-  // LOCAL_DEV,
-  // isTest
-} from "config";
+import { LOG_LEVEL, LOCAL_DEV, isTest } from "config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message.includes("HTTP GET")) {
@@ -28,14 +24,14 @@ const transportsList = [
   new transports.File({ filename: "error.log", level: "error" }),
 ];
 
-// if (!LOCAL_DEV && !isTest()) {
-//   transportsList.push(
-//     new Papertrail({
-//       host: "logs.papertrailapp.com",
-//       port: 48692,
-//     })
-//   );
-// }
+if (!LOCAL_DEV && !isTest()) {
+  transportsList.push(
+    new Papertrail({
+      host: "logs.papertrailapp.com",
+      port: 48692,
+    })
+  );
+}
 
 export const logger = createLogger({
   level: LOG_LEVEL,

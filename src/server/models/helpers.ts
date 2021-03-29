@@ -1,6 +1,7 @@
 import { upperFirst, isNumber } from "lodash";
 import { logger } from "services/logger";
 import { db } from "./database";
+import { DATABASE_URL } from "config";
 
 const countriesWithData = ["Thailand"];
 
@@ -18,7 +19,7 @@ export const rawInsertGeoLocation = async (
     }
 
     const result = await db.query(`
-      INSERT INTO geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
+      INSERT INTO public.geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
     `);
 
     return result?.rows?.[0]?.id ?? false;
@@ -53,7 +54,7 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
     await db.query(createGeoTable);
     return "geo_location created successfully";
   } catch (error) {
-    logger.error("Create postgis extension error:", error);
+    logger.error("Create postgis extension error:", { error, DATABASE_URL });
     return error;
   }
 };
