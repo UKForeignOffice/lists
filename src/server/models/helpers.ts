@@ -28,36 +28,34 @@ export const rawInsertGeoLocation = async (
   }
 };
 
-export const createGeoLocationTable = async (): Promise<"OK" | string> => {
+export const createPostgis = async (): Promise<"OK" | string> => {
   const createPostGisExtension = "CREATE EXTENSION postgis;";
 
+  try {
+    await db.query(createPostGisExtension);
+    return "postgis extension OK";
+  } catch (error) {
+    logger.error("Create postgis extension error:", error);
+    return error;
+  }
+};
+
+export const createGeoLocationTable = async (): Promise<"OK" | string> => {
   const createGeoTable = `
-     CREATE TABLE "geo_location" (
+     CREATE TABLE public."geo_location" (
         "id" SERIAL NOT NULL,
         "location" geography(POINT),
         PRIMARY KEY ("id")
      );
   `;
 
-  const results: string[] = [];
-
   try {
     await db.query(createGeoTable);
-    results.push("postgis extension OK");
+    return "geo_location created successfully";
   } catch (error) {
     logger.error("Create postgis extension error:", error);
-    results.push(error.message);
+    return error;
   }
-
-  try {
-    await db.query(createPostGisExtension);
-    results.push("geo_location table OK");
-  } catch (error) {
-    logger.error("CreateGeoLocationTable error:", error);
-    results.push(error.message);
-  }
-
-  return results.join(", ");
 };
 
 export const describeDb = async (): Promise<any> => {

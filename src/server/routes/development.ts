@@ -4,11 +4,11 @@ import { prisma } from "server/models/prisma-client";
 import { populateDb } from "server/models/seed-data/populate-database";
 import {
   createGeoLocationTable,
+  createPostgis,
   describeDb,
   dumpDb,
   listAppliedMigrations,
 } from "server/models/helpers";
-import { logger } from "services/logger";
 
 import {
   LOCATION_SERVICE_ACCESS_KEY,
@@ -31,16 +31,15 @@ router.get("/deploy-db", (req, res) => {
 });
 
 router.get("/dev/prepare-geo-db", (req, res) => {
-  const promises = [createGeoLocationTable()];
-
-  Promise.all(promises)
-    .then((result) => {
-      res.json({ status: result });
+  createPostgis()
+    .then((resultPostgis) => {
+      createGeoLocationTable()
+        .then((resultsGeoTable) => {
+          res.json({ resultPostgis, resultsGeoTable });
+        })
+        .catch((error) => res.json({ error }));
     })
-    .catch((error) => {
-      logger.error(error);
-      res.json({ error });
-    });
+    .catch((error) => res.json({ error }));
 });
 
 router.get("/dev/reset-db", (req, res) => {
