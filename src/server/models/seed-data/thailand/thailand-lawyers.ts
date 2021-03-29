@@ -72,7 +72,7 @@ export default [
     Name: "Natipatana Law Office",
     Telephone: "+66 (0)81775 7695",
     Address:
-      "4-5th Floors, CNW Office Building, 827/1 Ladprao 87, Klongchan, Bangkapi, Bangkok",
+      "4-5th Floors, CNW Office Building, 827/1 Ladprao 87, Klongchan, Bangkapi, Bangkok 10240",
     "Regions Served": "Thailand",
     "Legal Practice Areas":
       "Bankruptcy; Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual property; International; Maritime; Personal injury; Real estate; Tax",
@@ -92,7 +92,7 @@ export default [
     Name: "RSM (Thailand) Limited",
     Telephone: "+66 (0)267090026",
     Address:
-      "26/1 Fl., Sathorn City Tower, 175 South Sathorn Road, Thungmahamek, Sathorn, Bangkok",
+      "26/1 Fl., Sathorn City Tower, 175 South Sathorn Road, Thungmahamek, Sathorn, Bangkok 10120",
     "Regions Served": "Bangkok, Thailand",
     "Legal Practice Areas":
       "Bankruptcy; Corporate; Criminal; Employment; Family; Immigration; Intellectual property; International; Personal injury; Real estate; Tax",
