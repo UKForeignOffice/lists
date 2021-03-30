@@ -2,7 +2,7 @@ import { upperFirst, isNumber } from "lodash";
 import { logger } from "services/logger";
 import { db } from "./database";
 
-const countriesWithData = ["Thailand", "France"];
+const countriesWithData = ["Thailand", "France", "Italy"];
 
 export const countryHasLawyers = (countryName: string): boolean => {
   return countriesWithData.includes(upperFirst(countryName));

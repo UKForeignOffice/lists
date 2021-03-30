@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, country } from "@prisma/client";
 import { uniq, isArray, upperFirst } from "lodash";
 import { logger } from "services/logger";
 import { locatePlaceByText } from "services/location";
@@ -7,6 +7,7 @@ import { rawInsertGeoLocation } from "../helpers";
 const postCodeExtractRegex = {
   Thailand: /(\d{5})(?!.*\1)/gm,
   France: /(\d{5})(?!.*\1)/gm,
+  Italy: /(\d{5})(?!.*\1)/gm,
 };
 
 function createLawyersQueryObjects(
@@ -22,17 +23,20 @@ function createLawyersQueryObjects(
   }
 
   return lawyers.map((lawyer) => {
-    const legalPracticeAreasList = uniq(lawyer.legalPracticeAreas.split("; "));
+    const legalPracticeAreasList = uniq(
+      lawyer.legalPracticeAreas?.split("; ") ?? []
+    );
 
     const postCodeFromAddress: string =
-      lawyer.address.match(postCodeRegex)?.["0"] ?? "";
+      lawyer.address?.match(postCodeRegex)?.["0"] ?? "";
 
     return {
       contactName: lawyer.contactName ?? lawyer.lawFirmName,
       lawFirmName: lawyer.lawFirmName ?? lawyer.contactName,
       telephone: lawyer.telephone,
-      email: "",
-      website: "",
+      email: lawyer.email ?? "",
+      website: lawyer.website ?? "",
+      description: lawyer.description ?? "",
       address: {
         create: {
           firsLine: lawyer.address,
@@ -63,19 +67,34 @@ export const populateCountryLawyers = async (
   countryName: string,
   lawyers: any[],
   prisma: PrismaClient
-): Promise<string> => {
+): Promise<any> => {
   const name = upperFirst(countryName);
-  const country = await prisma.country.upsert({
-    where: { name },
-    update: { name },
-    create: { name },
-  });
+  let country: country;
 
-  const lawyersInsetObjList = createLawyersQueryObjects(country, lawyers);
+  try {
+    country = await prisma.country.upsert({
+      where: { name },
+      update: { name },
+      create: { name },
+    });
+  } catch (error) {
+    logger.error("Create country error", error);
+    return { error };
+  }
+
+  let lawyersInsetObjList;
+
+  try {
+    lawyersInsetObjList = createLawyersQueryObjects(country, lawyers);
+  } catch (error) {
+    return { error };
+  }
 
   let itemsInserted = 0;
   let alreadyExists = 0;
   let itemsError = 0;
+
+  const errors: Error[] = [];
 
   for (let i = 0; i < lawyersInsetObjList.length; i++) {
     const lawyer = lawyersInsetObjList[i];
@@ -107,14 +126,21 @@ export const populateCountryLawyers = async (
       await prisma.lawyer.create({ data: lawyer });
       itemsInserted += 1;
     } catch (error) {
+      errors.push(error);
       itemsError += 1;
       logger.error(`Populate ${countryName} lawyers Error:`, error);
     }
   }
 
-  const result = `${itemsInserted} ${countryName} Lawyers created successfully, ${itemsError} errors, ${alreadyExists} already existed`;
+  const result = {
+    country: country.name,
+    totalSuccess: itemsInserted,
+    totalErrors: itemsError,
+    alreadyExists: alreadyExists,
+    errors,
+  };
 
-  logger.info(result);
+  logger.info(`populateCountryLawyers for ${countryName}`, result);
 
   return result;
 };

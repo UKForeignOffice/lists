@@ -1,0 +1,45 @@
+export default [
+  {
+    contactName: "Carlo Maccallini",
+    lawFirmName: "Studio Legale Maccallini",
+    email: "info@studiomaccallini.it",
+    website: "http://www.studiomaccallini.it",
+    telephone: "+39 086 3413968",
+    address: "Via Veneto, 60 - 67051 Avezzano (AQ)",
+    legalPracticeAreas:
+      "Bankruptcy; Corporate; Intellectual property; Real estate",
+    legalAid: "No",
+    proBonoService: "No",
+  },
+  {
+    contactName: "Filomena Mancinelli",
+    email: "st.mancinelli@tin.it",
+    telephone: "+39 085 692964",
+    address: "Via Conte di Ruvo, 153 - 65128 Pescara",
+    legalPracticeAreas: "Criminal; Family",
+    legalAid: "Yes",
+    proBonoService: "No",
+  },
+  {
+    contactName: "Lorenzo Palmese",
+    lawFirmName: "Studio Legale Avv. Lorenzo Palmese",
+    email: "legalepalmese@gmail.com",
+    telephone: "+39 085 2194401",
+    address: "Via Milite Ignoto, 39 - 65123 Pescara",
+    legalPracticeAreas:
+      "Bankruptcy; Corporate; Employment; Family; Health; Intellectual property; International; Personal injury; Real estate; Tax",
+    legalAid: "Yes",
+    proBonoService: "Yes",
+  },
+  {
+    contactName: "Roberto Delli Passeri",
+    lawFirmName: "Studio Legale Roberto Delli Passeri",
+    email: "studio@avvocatodellipasseri.com",
+    website: "http://www.avvocatodellipasseri.com",
+    telephone: "+39 328 6124961",
+    address: "Via Cavallotti, 27 -  65019 Montesilvano (PE)",
+    legalPracticeAreas: "Criminal; International",
+    legalAid: "Yes",
+    proBonoService: "No",
+  },
+];
