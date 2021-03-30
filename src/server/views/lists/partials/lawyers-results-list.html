@@ -22,12 +22,12 @@
       </p>
       {% if item.email %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Email</strong>: {{ item.email }}
+          <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.email }}">{{ item.email }}</a>
         </p>
       {% endif %}
       {% if item.website %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Website</strong>: {{ item.website }}
+          <strong>Website</strong>: <a class="govuk-link" href="{{ item.website }}" rel="noopener noreferrer">{{ item.website }}</a>
         </p>
       {% endif %}
 
