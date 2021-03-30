@@ -39,6 +39,7 @@ model lawyer {
   telephone   String @db.VarChar(255)
   email       String? @db.VarChar(255)
   website     String? @db.VarChar(255)
+  description String?
   
   address     address @relation(fields: [addressId], references: [id])
   addressId   Int

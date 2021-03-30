@@ -29,6 +29,7 @@ CREATE TABLE "lawyer" (
     "telephone" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255),
     "website" VARCHAR(255),
+    "description" TEXT,
     "addressId" INTEGER NOT NULL,
     "regionsServed" TEXT,
     "legalAid" BOOLEAN NOT NULL DEFAULT false,
