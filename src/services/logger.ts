@@ -3,11 +3,18 @@ import { createLogger, format, transports } from "winston";
 import {
   LOG_LEVEL,
   // LOCAL_DEV,
-  // isTest
+  isTest,
 } from "config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message.includes("HTTP GET")) {
+    return false;
+  }
+  return info;
+});
+
+const ignoreHttpPOST = format((info) => {
+  if (info.message.includes("HTTP POST")) {
     return false;
   }
   return info;
@@ -20,10 +27,12 @@ const transportsList = [
     level: LOG_LEVEL,
     format: format.combine(
       ignoreHttpGET(),
+      ignoreHttpPOST(),
       format.timestamp(),
       format.simple(),
       format.colorize({ all: true })
     ),
+    silent: isTest(),
   }),
   new transports.File({ filename: "error.log", level: "error" }),
 ];
