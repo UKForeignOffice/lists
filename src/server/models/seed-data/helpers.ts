@@ -8,6 +8,7 @@ const postCodeExtractRegex = {
   Thailand: /(\d{5})(?!.*\1)/gm,
   France: /(\d{5})(?!.*\1)/gm,
   Italy: /(\d{5})(?!.*\1)/gm,
+  Spain: /(\d{5})(?!.*\1)/gm,
 };
 
 function createLawyersQueryObjects(
@@ -63,11 +64,29 @@ function createLawyersQueryObjects(
   });
 }
 
-export const populateCountryLawyers = async (
+type PopulateCountryLawyers = (
   countryName: string,
   lawyers: any[],
   prisma: PrismaClient
-): Promise<any> => {
+) => Promise<
+  | {
+      country: string;
+      totalSuccess: number;
+      totalErrors: number;
+      alreadyExists: number;
+      errors: Error[];
+    }
+  | {
+      country: string;
+      error: any;
+    }
+>;
+
+export const populateCountryLawyers: PopulateCountryLawyers = async (
+  countryName,
+  lawyers,
+  prisma
+) => {
   const name = upperFirst(countryName);
   let country: country;
 
@@ -79,7 +98,7 @@ export const populateCountryLawyers = async (
     });
   } catch (error) {
     logger.error("Create country error", error);
-    return { error };
+    return { country: countryName, error: error.message };
   }
 
   let lawyersInsetObjList;
@@ -87,7 +106,9 @@ export const populateCountryLawyers = async (
   try {
     lawyersInsetObjList = createLawyersQueryObjects(country, lawyers);
   } catch (error) {
-    return { error };
+    logger.error("createLawyersQueryObjects", error);
+
+    return { country: countryName, error: error.message };
   }
 
   let itemsInserted = 0;
@@ -126,7 +147,7 @@ export const populateCountryLawyers = async (
       await prisma.lawyer.create({ data: lawyer });
       itemsInserted += 1;
     } catch (error) {
-      errors.push(error);
+      errors.push(error.message);
       itemsError += 1;
       logger.error(`Populate ${countryName} lawyers Error:`, error);
     }

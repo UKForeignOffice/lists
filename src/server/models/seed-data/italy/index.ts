@@ -27,7 +27,7 @@ import italyLawyers26 from "./italy-lawyers-26";
 import italyLawyers27 from "./italy-lawyers-27";
 import italyLawyers28 from "./italy-lawyers-28";
 
-export default [
+export const italyLawyers = [
   ...italyLawyers1,
   ...italyLawyers2,
   ...italyLawyers3,

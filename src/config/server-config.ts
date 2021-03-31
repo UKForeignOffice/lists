@@ -25,3 +25,7 @@ export const isDev = (): boolean => {
 export const isTest = (): boolean => {
   return NODE_ENV === "test";
 };
+
+export const isLocal = (): boolean => {
+  return process.env.LOCAL_DEV === "true";
+};
