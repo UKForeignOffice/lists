@@ -2,15 +2,14 @@
   <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
       <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l" for="region">
-          Which region in {{_.upperFirst(country) }} do you need {{ serviceLabel }} from?
+        <label class="govuk-label govuk-label--l" for="area">
+          Which area in {{_.upperFirst(country) }} do you need {{ serviceLabel }} from?
         </label>
       </h1>
-      <div id="region-hint" class="govuk-hint">
-        Write down the region or city of the country where you need a {{ serviceLabel }}, for example Alicante. </br>
-        If you do not know which region you need a {{ serviceLabel }} from, press continue.
+      <div id="area-hint" class="govuk-hint">
+        Write down the specific area of the country where you need a lawyer. This could be a city or postcode, for example Madrid, or 28000 in Spain
       </div>
-      <input class="govuk-input" id="region" name="region" type="text" required/>
+      <input class="govuk-input" id="area" name="region" type="text" required/>
     </fieldset>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>

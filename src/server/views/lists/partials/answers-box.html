@@ -21,22 +21,22 @@
     {% endif %} 
     {% if region %}
       <p class="govuk-body">
-        Region?<br />
+        Area?<br />
         <strong>{{ _.upperFirst(region) }}</strong>
         <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'region') }}">Change</a>
       </p>
     {% endif %} 
     {% if practiceArea %}
       <p class="govuk-body">
-        Which legal practice areas do you need?<br />
-        <strong>{{ _.join(_.split(practiceArea, ","), ", ") }}</strong>
+        Which field of law do you need?<br />
+        <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
         <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}">Change</a>
       </p>
     {% endif %} 
     {% if legalAid %}
       <p class="govuk-body">
         Do you need legal aid?<br />
-        <strong>{{ legalAid }}</strong>
+        <strong>{{ _.startCase(legalAid) }}</strong>
         <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
       </p>
     {% endif %} 

@@ -31,6 +31,11 @@
         </p>
       {% endif %}
 
+      {% if (not item.email) or (not item.website) %}
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Telephone</strong>: {{ item.telephone }}
+        </p>  
+      {% endif %}
 
       <details class="govuk-details" data-module="govuk-details">
         <summary class="govuk-details__summary">
@@ -39,9 +44,11 @@
           </span>
         </summary>
         <div class="govuk-details__text">
+          {% if (item.email) and (item.website) %}
           <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
             <strong>Telephone</strong>: {{ item.telephone }}
-          </p>      
+          </p>  
+          {% endif %}    
           {% if item.legalPracticeAreas %}
             <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
               <strong>Legal Practice Areas</strong>: {{ item.legalPracticeAreas.join(", ") }}
