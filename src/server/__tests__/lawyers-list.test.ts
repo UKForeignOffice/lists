@@ -163,5 +163,72 @@ describe("Location service:", () => {
     );
   });
 
-  // test("Lawyer's results page GET request is correct");
+  test("Lawyer's final questionary page GET request is correct", async () => {
+    // here the controller will check all parameters are correct and if so the user will be redirected to /results with the same query parameters
+    const { status, header } = await request(server)
+      .get(
+        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+      )
+      .type("text/html");
+
+    expect(status).toBe(302);
+    expect(header.location).toBe(
+      "/results?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+    );
+  });
+
+  test("Lawyers results page GET request answers box is correct", async () => {
+    const { text } = await request(server)
+      .get(
+        "/results?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+      )
+      .type("text/html");
+
+    const $html = $.load(text);
+    const $body = $html("body");
+    const $answerBox = $($body.find(".answers-box"));
+
+    const answers = $answerBox.find("p");
+
+    // country answer
+    expect(answers.eq(1).text()).toEqual(`
+        Country?
+        Thailand
+        Change
+      `);
+
+    expect(answers.eq(1).find("a").attr("href")).toEqual(
+      "/find?serviceType=lawyers&readNotice=ok&region=Bangkok&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+    );
+
+    // region answer
+    expect(answers.eq(2).text()).toEqual(`
+        Region?
+        Bangkok
+        Change
+      `);
+    expect(answers.eq(2).find("a").attr("href")).toEqual(
+      "/find?serviceType=lawyers&readNotice=ok&country=thailand&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+    );
+
+    // legal practice areas
+    expect(answers.eq(3).text()).toEqual(`
+        Which legal practice areas do you need?
+        maritime, real estate
+        Change
+      `);
+    expect(answers.eq(3).find("a").attr("href")).toEqual(
+      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&legalAid=no&readDisclaimer=ok"
+    );
+
+    // legal aid
+    expect(answers.eq(4).text()).toEqual(`
+        Do you need legal aid?
+        no
+        Change
+      `);
+    expect(answers.eq(4).find("a").attr("href")).toEqual(
+      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+    );
+  });
 });
