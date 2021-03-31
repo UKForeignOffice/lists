@@ -35,7 +35,7 @@
     {% endif %} 
     {% if legalAid %}
       <p class="govuk-body">
-        Do you need legal aid?<br />
+        Are you interested in legal aid?<br />
         <strong>{{ _.startCase(legalAid) }}</strong>
         <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
       </p>

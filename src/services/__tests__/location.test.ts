@@ -10,13 +10,12 @@ describe("Location service:", () => {
   test("service is initialized with the correct parameters", () => {
     const expectedParams = {
       apiVersion: "2020-11-19",
-      region: "us-east-1",
+      region: "eu-west-1",
     };
 
     getAWSLocationService();
     expect(Location).toHaveBeenCalledWith(expectedParams);
-  })
-
+  });
 
   test("expect credentials to be set correctly", () => {
     const location = getAWSLocationService();
@@ -28,10 +27,9 @@ describe("Location service:", () => {
 
   test("checkIfPlaceIndexExists returns true when place index exists", async () => {
     // place index is mocked see ../__mocks__
-    const exists = await checkIfPlaceIndexExists("MOCK_INDEX_NAME")
+    const exists = await checkIfPlaceIndexExists("MOCK_INDEX_NAME");
     expect(exists).toBe(true);
   });
-
 
   test("checkIfPlaceIndexExists returns false when place index does not exist", async () => {
     const exists = await checkIfPlaceIndexExists("DOES_NOT_EXIST");
@@ -41,7 +39,7 @@ describe("Location service:", () => {
   test("createLocationPlacesIndex request is correct", async () => {
     const location = getAWSLocationService();
     const result = await createPlaceIndex();
-    expect(result).toBe(true)
+    expect(result).toBe(true);
     expect(location.createPlaceIndex).toHaveBeenCalledWith({
       DataSource: "Esri",
       DataSourceConfiguration: {
@@ -56,7 +54,7 @@ describe("Location service:", () => {
   test("locatePlaceByText request is correct", async () => {
     const location = getAWSLocationService();
     await locatePlaceByText("Bangkok, Thailand");
-    
+
     expect(location.searchPlaceIndexForText).toHaveBeenCalledWith({
       MaxResults: 1,
       Text: "Bangkok, Thailand",
@@ -75,5 +73,4 @@ describe("Location service:", () => {
       SubRegion: "Phra Nakhon",
     });
   });
-
-})
+});

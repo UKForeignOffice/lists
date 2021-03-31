@@ -61,7 +61,7 @@ describe("Location service:", () => {
     const continueButton = $html("button");
 
     expect(pageHeader.text().trim()).toBe(
-      "Which region in Thailand do you need a lawyer from?"
+      "Which area in Thailand do you need a lawyer from?"
     );
     expect(continueButton.text()).toBe("Continue");
   });
@@ -89,7 +89,7 @@ describe("Location service:", () => {
     const continueButton = $html("button");
 
     expect(pageHeader.text().trim()).toBe(
-      "In which areas do you need legal help?"
+      "In which field of law do you need legal help?"
     );
     expect(continueButton.text()).toBe("Continue");
   });
@@ -118,7 +118,7 @@ describe("Location service:", () => {
     const pageHeader = $html("h1");
     const continueButton = $html("button");
 
-    expect(pageHeader.text().trim()).toBe("Do you need legal aid?");
+    expect(pageHeader.text().trim()).toBe("Are you interested in legal aid?");
     expect(continueButton.text()).toBe("Continue");
   });
 
@@ -203,7 +203,7 @@ describe("Location service:", () => {
 
     // region answer
     expect(answers.eq(2).text()).toEqual(`
-        Region?
+        Area?
         Bangkok
         Change
       `);
@@ -213,8 +213,8 @@ describe("Location service:", () => {
 
     // legal practice areas
     expect(answers.eq(3).text()).toEqual(`
-        Which legal practice areas do you need?
-        maritime, real estate
+        Which field of law do you need?
+        Maritime, Real Estate
         Change
       `);
     expect(answers.eq(3).find("a").attr("href")).toEqual(
@@ -223,8 +223,8 @@ describe("Location service:", () => {
 
     // legal aid
     expect(answers.eq(4).text()).toEqual(`
-        Do you need legal aid?
-        no
+        Are you interested in legal aid?
+        No
         Change
       `);
     expect(answers.eq(4).find("a").attr("href")).toEqual(
