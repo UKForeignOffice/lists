@@ -280,7 +280,6 @@ export const countriesList = [
   { text: "Zimbabwe", value: "Zimbabwe" },
 ];
 
-
 export const fcdoLawyersPagesByCountry = {
   Afghanistan:
     "https://www.gov.uk/government/publications/afghanistan-list-of-lawyers",
@@ -529,3 +528,39 @@ export const fcdoLawyersPagesByCountry = {
   Zimbabwe:
     "https://www.gov.uk/government/publications/zimbabwe-list-of-lawyers",
 };
+
+export const listOfCountriesWithLegalAid = [
+  // based on https://www.gov.uk/legal-aid/legal-problems-abroad
+  "Albania",
+  "Austria",
+  "Azerbaijan",
+  "Belgium",
+  "Bosnia and Herzegovina",
+  "Bulgaria",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Estonia",
+  "Finland",
+  "France",
+  "Georgia",
+  "Greece",
+  "Ireland",
+  "Italy",
+  "Latvia",
+  "Lithuania",
+  "Luxembourg",
+  "Montenegro",
+  "Netherlands",
+  "North Macedonia",
+  "Norway",
+  "Poland",
+  "Portugal",
+  "Romania",
+  "Serbia",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "Turkey",
+  "Ukraine",
+];

@@ -1,11 +1,15 @@
-import querystring from "querystring";
-import _, { isArray, omit, upperFirst, isString } from "lodash";
+import _ from "lodash";
 import { Request, Response } from "express";
+import { countriesList, legalPracticeAreasList } from "services/metadata";
 import {
-  countriesList,
-  legalPracticeAreasList,
-  fcdoLawyersPagesByCountry,
-} from "services/metadata";
+  getAllRequestParams,
+  regionFromParams,
+  queryStringFromParams,
+  getCountryLawyerRedirectLink,
+  practiceAreaFromParams,
+  removeQueryParameter,
+  getServiceLabel,
+} from "./helpers";
 
 import { countryHasLawyers } from "server/models/helpers";
 import { lawyers, types as modelTypes } from "server/models";
@@ -14,16 +18,6 @@ export const listsFinderStartRoute = "/";
 export const listsFinderFormRoute = "/find";
 export const listsFinderResultsRoute = "/results";
 
-interface AllParams {
-  serviceType?: string;
-  country?: string;
-  region?: string;
-  practiceArea?: string | string[];
-  legalAid?: "yes" | "no";
-  readNotice?: string;
-  readDisclaimer?: string;
-}
-
 const DEFAULT_VIEW_PROPS = {
   _,
   countriesList,
@@ -31,93 +25,6 @@ const DEFAULT_VIEW_PROPS = {
   legalPracticeAreasList,
   listsFinderFormRoute,
 };
-
-// Helpers
-
-function queryStringFromParams(params: AllParams): string {
-  return Object.keys(params)
-    .map((key) => {
-      let value: string = params[key];
-
-      if (isArray(value)) {
-        value = value.toString();
-      }
-
-      return `${key}=${value}`;
-    })
-    .join("&");
-}
-
-function regionFromParams(params: AllParams): string | undefined {
-  // TODO: this can be simplified if regions is required but allow user to select unsure
-  if (!("region" in params)) {
-    return undefined;
-  }
-
-  let regions: string[] = [];
-
-  if (typeof params.region === "string") {
-    regions = params.region.split(/,/);
-  }
-
-  if (regions[0] === "unsure" && regions[1] !== undefined) {
-    // user is just posting region form, which includes hidden input with value unknown
-    return regions[1];
-  }
-
-  if (regions[0] === "unsure" && regions[1] === undefined) {
-    // user posted empty region
-    return "unsure";
-  }
-
-  if (regions[0] !== "unsure") {
-    // region has already been defined
-    return regions[0];
-  }
-}
-
-function practiceAreaFromParams(params: AllParams): string[] | undefined {
-  if (!("practiceArea" in params)) {
-    return undefined;
-  }
-
-  const { practiceArea } = params;
-
-  if (isArray(practiceArea)) {
-    return practiceArea;
-  }
-
-  if (isString(practiceArea)) {
-    return practiceArea.split(",");
-  }
-}
-
-function getServiceLabel(serviceType: string | undefined): string {
-  return serviceType === "lawyers" ? "a lawyer" : "medical assistance";
-}
-
-function getAllRequestParams(req: Request): AllParams {
-  return {
-    ...req.query,
-    ...req.body,
-    ...req.params,
-  };
-}
-
-function removeQueryParameter(
-  queryString: string,
-  parameterName: string
-): string {
-  const params = omit(querystring.parse(queryString), parameterName);
-  return `${querystring.stringify(params)}`;
-}
-
-function getCountryLawyerRedirectLink(countryName: string): string | undefined {
-  return (
-    fcdoLawyersPagesByCountry[upperFirst(countryName)] ??
-    "https://www.gov.uk/government/collections/list-of-lawyers"
-  );
-}
 
 // Controllers
 
