@@ -23,7 +23,7 @@ export function getAWSLocationService(): Location {
   if (location === undefined) {
     location = new Location({
       apiVersion: "2020-11-19",
-      region: "us-east-1",
+      region: "eu-west-1",
     });
 
     location.config.credentials = {
@@ -75,7 +75,7 @@ export async function locatePlaceByText(
   };
 
   if (!placeIndexExists) {
-    placeIndexExists = await createPlaceIndex()
+    placeIndexExists = await createPlaceIndex();
   }
 
   try {
