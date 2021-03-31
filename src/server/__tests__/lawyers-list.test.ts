@@ -1,8 +1,8 @@
-import request from "supertest";
 import $ from "cheerio";
+import request from "supertest";
 import { server } from "..";
 
-describe("Location service:", () => {
+describe("Lawyers List:", () => {
   test("lawyer's land page GET request is correct", async () => {
     const { text } = await request(server)
       .get("/find?serviceType=lawyers")
@@ -43,17 +43,17 @@ describe("Location service:", () => {
   test("lawyer's country question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post("/find?serviceType=lawyers&readNotice=ok")
-      .send({ country: "thailand" });
+      .send({ country: "spain" });
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain"
     );
   });
 
   test("lawyer's region question page GET request is correct", async () => {
     const { text } = await request(server)
-      .get("/find?serviceType=lawyers&readNotice=ok&country=thailand")
+      .get("/find?serviceType=lawyers&readNotice=ok&country=spain")
       .type("text/html");
 
     const $html = $.load(text);
@@ -61,26 +61,26 @@ describe("Location service:", () => {
     const continueButton = $html("button");
 
     expect(pageHeader.text().trim()).toBe(
-      "Which area in Thailand do you need a lawyer from?"
+      "Which area in Spain do you need a lawyer from?"
     );
     expect(continueButton.text()).toBe("Continue");
   });
 
   test("lawyer's region question page POST request is correct", async () => {
     const { status, header } = await request(server)
-      .post("/find?serviceType=lawyers&readNotice=ok&country=thailand")
-      .send({ region: "Bangkok" });
+      .post("/find?serviceType=lawyers&readNotice=ok&country=spain")
+      .send({ region: "madrid" });
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid"
     );
   });
 
   test("Lawyer's legal areas question page GET request is correct", async () => {
     const { text } = await request(server)
       .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid"
       )
       .type("text/html");
 
@@ -97,20 +97,20 @@ describe("Location service:", () => {
   test("Lawyer's legal areas question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid"
       )
       .send({ practiceArea: ["maritime", "real estate"] });
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate"
     );
   });
 
   test("Lawyer's legal aid question page GET request is correct", async () => {
     const { text } = await request(server)
       .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate"
       )
       .type("text/html");
 
@@ -122,23 +122,38 @@ describe("Location service:", () => {
     expect(continueButton.text()).toBe("Continue");
   });
 
+  test("Lawyer's legal aid question is omitted for country without legal aid support", async () => {
+    const { text } = await request(server)
+      .get(
+        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=bangkok&practiceArea=maritime,real%20estate"
+      )
+      .type("text/html");
+
+    const $html = $.load(text);
+    const pageHeader = $html("h1");
+    const continueButton = $html("button");
+
+    expect(pageHeader.text().trim()).toBe("Disclaimer");
+    expect(continueButton.text()).toBe("Continue");
+  });
+
   test("Lawyer's legal aid question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate"
       )
       .send({ legalAid: "no" });
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no"
     );
   });
 
   test("Lawyer's disclaimer question page GET request is correct", async () => {
     const { text } = await request(server)
       .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no"
       )
       .type("text/html");
 
@@ -153,13 +168,13 @@ describe("Location service:", () => {
   test("Lawyer's disclaimer question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no"
       )
       .send({ readDisclaimer: "ok" });
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
     );
   });
 
@@ -167,20 +182,20 @@ describe("Location service:", () => {
     // here the controller will check all parameters are correct and if so the user will be redirected to /results with the same query parameters
     const { status, header } = await request(server)
       .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
       )
       .type("text/html");
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
     );
   });
 
   test("Lawyers results page GET request answers box is correct", async () => {
     const { text } = await request(server)
       .get(
-        "/results?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+        "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
       )
       .type("text/html");
 
@@ -193,22 +208,22 @@ describe("Location service:", () => {
     // country answer
     expect(answers.eq(1).text()).toEqual(`
         Country?
-        Thailand
+        Spain
         Change
       `);
 
     expect(answers.eq(1).find("a").attr("href")).toEqual(
-      "/find?serviceType=lawyers&readNotice=ok&region=Bangkok&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+      "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
     );
 
     // region answer
     expect(answers.eq(2).text()).toEqual(`
         Area?
-        Bangkok
+        Madrid
         Change
       `);
     expect(answers.eq(2).find("a").attr("href")).toEqual(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
     );
 
     // legal practice areas
@@ -218,7 +233,7 @@ describe("Location service:", () => {
         Change
       `);
     expect(answers.eq(3).find("a").attr("href")).toEqual(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&legalAid=no&readDisclaimer=ok"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&legalAid=no&readDisclaimer=ok"
     );
 
     // legal aid
@@ -228,7 +243,7 @@ describe("Location service:", () => {
         Change
       `);
     expect(answers.eq(4).find("a").attr("href")).toEqual(
-      "/find?serviceType=lawyers&readNotice=ok&country=thailand&region=Bangkok&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
     );
   });
 });

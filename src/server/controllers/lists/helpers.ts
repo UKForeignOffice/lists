@@ -1,7 +1,10 @@
 import querystring from "querystring";
 import { isArray, omit, upperFirst, isString } from "lodash";
 import { Request } from "express";
-import { fcdoLawyersPagesByCountry } from "services/metadata";
+import {
+  fcdoLawyersPagesByCountry,
+  listOfCountriesWithLegalAid,
+} from "services/metadata";
 import { ListsRequestParams } from "./types";
 
 export function queryStringFromParams(params: ListsRequestParams): string {
@@ -93,4 +96,8 @@ export function getCountryLawyerRedirectLink(
     fcdoLawyersPagesByCountry[upperFirst(countryName)] ??
     "https://www.gov.uk/government/collections/list-of-lawyers"
   );
+}
+
+export function countryHasLegalAid(country: string): boolean {
+  return listOfCountriesWithLegalAid.includes(upperFirst(country));
 }

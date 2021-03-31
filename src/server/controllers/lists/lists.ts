@@ -9,6 +9,7 @@ import {
   practiceAreaFromParams,
   removeQueryParameter,
   getServiceLabel,
+  countryHasLegalAid,
 } from "./helpers";
 
 import { countryHasLawyers } from "server/models/helpers";
@@ -95,7 +96,11 @@ export function listsFinderGetController(req: Request, res: Response): void {
     questionToRender = "question-region.html";
   } else if (practiceArea === undefined && isSearchingForLawyers) {
     questionToRender = "question-practice-area.html";
-  } else if (legalAid === undefined && isSearchingForLawyers) {
+  } else if (
+    legalAid === undefined &&
+    isSearchingForLawyers &&
+    countryHasLegalAid(country)
+  ) {
     questionToRender = "question-legal-aid.html";
   } else if (readDisclaimer === undefined) {
     questionToRender = "question-disclaimer.html";
