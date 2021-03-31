@@ -7,7 +7,7 @@ import {
 } from "services/metadata";
 import { ListsRequestParams } from "./types";
 
-export function queryStringFromParams(params: ListsRequestParams): string {
+export function queryStringFromParams(params: { [name: string]: any }): string {
   return Object.keys(params)
     .map((key) => {
       let value: string = params[key];
