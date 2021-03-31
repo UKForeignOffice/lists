@@ -18,8 +18,8 @@ export default [
     proBonoService: "No",
   },
   {
-    contactName: "Menorca Legal",
-    lawFirmName: "Veronique Niessen",
+    contactName: "Veronique Niessen",
+    lawFirmName: "Menorca Legal",
     email: "v.niessen@menorcalegal.com",
     website: "https://www.menorcalegal.com",
     telephone: "+34 664 621313",
