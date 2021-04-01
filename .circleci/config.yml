@@ -17,16 +17,18 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+      # Disabele circleci cache because prisma
+      # TODO: How to keep caching without prisma generated client?
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-1-{{ checksum "package-lock.json" }}
 
       - run: npm install
 
-      - save_cache:
-          paths:
-            - .yarn/cache
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
+      # - save_cache:
+      #     paths:
+      #       - .yarn/cache
+      #     key: v1-dependencies-1-{{ checksum "package-lock.json" }}
 
       - run:
           name: Lint

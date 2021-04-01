@@ -1,0 +1,44 @@
+<aside class="app-related-itemsx" role="complementary">
+  <div class="answers-box">
+    <p class="govuk-body">Your answers:</p>
+    {% if not country %}
+      <p class="govuk-body">Your answers will appear here</p>
+    {% endif %}
+    {% if serviceType %}
+      {# until other services are integrated we can hide this #}
+      {# <p class="govuk-body">
+        What are you looking for?<br />
+        <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
+      </p> #}
+    {% endif %}
+    {% if country %}
+      <p class="govuk-body">
+        Country?<br />
+        <strong>{{ _.upperFirst(country) }}</strong>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'country') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if region %}
+      <p class="govuk-body">
+        Area?<br />
+        <strong>{{ _.upperFirst(region) }}</strong>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'region') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if practiceArea %}
+      <p class="govuk-body">
+        Which field of law do you need?<br />
+        <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}">Change</a>
+      </p>
+    {% endif %} 
+    {% if legalAid %}
+      <p class="govuk-body">
+        Are you interested in legal aid?<br />
+        <strong>{{ _.startCase(legalAid) }}</strong>
+        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}">Change</a>
+      </p>
+    {% endif %} 
+  </div>
+</aside>

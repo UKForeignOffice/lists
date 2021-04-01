@@ -9,6 +9,7 @@
     "lib": ["es2015"],
     "esModuleInterop": true,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     "paths": {
       "client/*": ["client/*"],
       "server/*": ["server/*"],
