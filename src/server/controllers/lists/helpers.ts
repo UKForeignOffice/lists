@@ -69,8 +69,17 @@ export function practiceAreaFromParams(
   }
 }
 
-export function getServiceLabel(serviceType: string | undefined): string {
-  return serviceType === "lawyers" ? "a lawyer" : "medical assistance";
+export function getServiceLabel(
+  serviceType: string | undefined
+): string | undefined {
+  switch (serviceType) {
+    case "lawyers":
+      return "a lawyer";
+    case "medical facilities":
+      return "medical assistance";
+    default:
+      return undefined;
+  }
 }
 
 export function getAllRequestParams(req: Request): ListsRequestParams {
