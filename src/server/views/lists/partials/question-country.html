@@ -1,0 +1,24 @@
+<form class="form" action="{{ nextRoute }}" method="post">
+  <div class="govuk-form-group">
+    <h1 class="govuk-label-wrapper">
+      <label class="govuk-label govuk-label--l" for="country-autocomplete">
+        Which country do you need {{ serviceLabel }} from?
+      </label>
+    </h1>
+    <select id="country-autocomplete" name="country" required>
+      <option value=""></option>
+      {% for country in countriesList %}
+      <option value="{{ country.value.toLowerCase() }}">{{ country.text }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>
+
+<script>
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#country-autocomplete'),
+    required: true
+  })
+</script>

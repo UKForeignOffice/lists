@@ -7,7 +7,7 @@ describe("Compress middleware", () => {
       .get("/")
       .set("Accept-Encoding", "gzip");
 
-    expect(headers.vary).toEqual("Accept-Encoding");
+    expect(headers.vary.indexOf("Accept-Encoding") > -1).toBe(true);
   });
 
   test("is not compressing when x-no-compression header is present", async () => {
@@ -16,6 +16,6 @@ describe("Compress middleware", () => {
       .set("x-no-compression", "true")
       .set("Accept-Encoding", "gzip");
 
-    expect(headers.vary).toBeUndefined();
+    expect(headers.vary.indexOf("Accept-Encoding") > -1).toBe(false);
   });
 });

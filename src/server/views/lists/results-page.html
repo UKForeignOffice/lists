@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+  Find a Professional Service Abroad
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if serviceType === "lawyers" %}
+        {% include "lists/partials/lawyers-results-list.html" %}   
+      {% endif %}
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {% include "lists/partials/answers-box.html" %}
+    </div>
+  </div>
+{% endblock %}

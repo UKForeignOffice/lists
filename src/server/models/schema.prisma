@@ -1,0 +1,108 @@
+// IMPORTANT: If you change the schmema don't forget to generate the migration with prisma migration
+// See ./scripts/prisma-migrate-dev.sh
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id     Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email  String   @unique
+  name   String   @db.VarChar(255)
+  roles  user_roles[]
+}
+
+model user_roles {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String @db.VarChar(255)
+  users     user[]
+}
+
+model lawyer {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contactName String @db.VarChar(255)
+  lawFirmName String @db.VarChar(255)
+  telephone   String @db.VarChar(255)
+  email       String? @db.VarChar(255)
+  website     String? @db.VarChar(255)
+  description String?
+  
+  address     address @relation(fields: [addressId], references: [id])
+  addressId   Int
+
+  legalPracticeAreas  legal_practice_areas[]
+  regionsServed       String?
+  legalAid            Boolean @default(false)
+  proBonoService      Boolean @default(false)
+
+  isApproved    Boolean @default(false)
+  isPublished   Boolean @default(false)
+  isBlocked     Boolean @default(false)
+}
+
+model legal_practice_areas {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String   @db.VarChar(255) @unique
+  lawyers   lawyer[]
+}
+
+model address {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  firsLine    String   @db.VarChar(255)
+  secondLine  String?  @db.VarChar(255)
+  city        String?  @db.VarChar(255)
+  postCode    String   @db.VarChar(255)
+  country     country  @relation(fields: [countryId], references: [id])
+  countryId   Int
+  Lawyer      lawyer[]
+  
+  geoLocationId   Int?
+}
+
+// Prisma does not support PostGis geography types so this table is created using raw sql
+// please see ./helpers
+// model GeoLocation {
+//   id          Int      @id @default(autoincrement())
+//   location    Unsupported("point")?
+//   address     Address[]
+// }
+
+model country {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  name      String    @db.VarChar(255) @unique
+  address   address[]
+  regions   region[]
+}
+
+model region {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String   @db.VarChar(255)
+  country   country  @relation(fields: [countryId], references: [id])
+  countryId Int
+}

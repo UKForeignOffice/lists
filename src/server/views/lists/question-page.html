@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+  Find a Professional Service Abroad
+{% endblock %}
+
+{% set activeQuestion = "lists/partials/" + questionToRender %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% include activeQuestion %}
+    </div>
+
+    {# temporary remove answer-box from lawyers start page, until other services are added #}
+    {% if questionToRender !== "lawyer-start-page.html" %}
+      <div class="govuk-grid-column-one-third">
+        {% include "lists/partials/answers-box.html" %}
+      </div>
+    {% endif %} 
+  </div>
+{% endblock %}

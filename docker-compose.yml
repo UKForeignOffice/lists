@@ -1,12 +1,13 @@
 version: "3.9"
 services:
-  server:
-    container_name: server
+  lists:
+    container_name: lists
     image: bertrandmc/express-typescript-seed
     environment:
       - NODE_ENV=development
       - ERROR_LEVEL=error
-      - PORT:3000
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
     build:
       context: .
     volumes:
@@ -19,20 +20,27 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: "postgis/postgis:11-2.5-alpine"
-    environment: 
+    # Using ganstead image for postgis because it supports Mac M1
+    # if you are not on M1 please use official postgis https://hub.docker.com/r/postgis/postgis
+    # see https://github.com/docker/for-mac/issues/5122
+    image: "gangstead/postgis:13-3.1-arm"
+    environment:
+      - POSTGRES_DB=service-finder-db
       - POSTGRES_USER=postgressuser
       - POSTGRES_PASSWORD=postgrespass
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
   pgadmin:
     image: "dpage/pgadmin4"
-    environment: 
+    environment:
       - PGADMIN_LISTEN_PORT=8080
       - PGADMIN_DEFAULT_EMAIL=dev@gov.uk
       - PGADMIN_DEFAULT_PASSWORD=password
     ports:
       - "8080:8080"
-      - "5432:5432"
-    links: 
+    links:
       - postgres
+volumes:
+  postgres-data:

@@ -1,0 +1,43 @@
+<h1 class="govuk-heading-l">
+  Find a lawyer {{ "in " + _.startCase(country) if country else "abroad"}}
+</h1>
+<p class="govuk-body">
+  The Foreign, Commonwealth and Development Office (FCDO) has created a list of
+  lawyers abroad to help British nationals find the legal support they need. You
+  can search lawyers by:
+</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>country</li>
+  <li>specific area, city or postcode</li>
+  <li>field of expertise</li>
+</ul>
+<p class="govuk-body">
+  All lawyers on the list have been contacted by the FCDO to make sure they
+  have:
+</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>good English language skills</li>
+  <li>legal qualifications</li>
+  <li>up to date contact details</li>
+</ul>
+<p class="govuk-body">
+  It is recommended that you do your own research before deciding which lawyer
+  to use.
+</p>
+
+<h2 class="govuk-heading-m">Lawyers feedback</h2>
+<p class="govuk-body">
+  The FCDO welcomes feedback from people who have used lawyers from the list. We
+  use this feedback to make sure all information is up to date and accurate.
+</p>
+<p class="govuk-body">
+  If you would like to send any feedback on Lawyer’s list please email <a class="govuk-link" href="mailto:digitalservicesfeedback@fco.gov.uk">digitalservicesfeedback@fco.gov.uk</a>
+</p>
+<p class="govuk-body">
+  The FCDO will quickly respond to feedback and will remove any lawyer from the
+  list where appropriate.
+</p>
+<form class="form" action="{{ nextRoute }}" method="post">
+  <input name="readNotice" type="hidden" value="ok" />
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

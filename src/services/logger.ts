@@ -1,14 +1,55 @@
-import winston from "winston";
-import { LOG_LEVEL } from "config";
+import { createLogger, format, transports } from "winston";
+// import { Papertrail } from "winston-papertrail";
+import {
+  LOG_LEVEL,
+  // LOCAL_DEV,
+  isTest,
+} from "config";
 
-export const logger = winston.createLogger({
+const ignoreHttpGET = format((info) => {
+  if (info.message.includes("HTTP GET")) {
+    return false;
+  }
+  return info;
+});
+
+const ignoreHttpPOST = format((info) => {
+  if (info.message.includes("HTTP POST")) {
+    return false;
+  }
+  return info;
+});
+
+const transportsList = [
+  // - Write all logs with level `error` and below to `error.log`
+  // - Write all logs with level LOG_LEVEL and below to console.log
+  new transports.Console({
+    level: LOG_LEVEL,
+    format: format.combine(
+      ignoreHttpGET(),
+      ignoreHttpPOST(),
+      format.timestamp(),
+      format.simple(),
+      format.colorize({ all: true })
+    ),
+    silent: isTest(),
+  }),
+  new transports.File({ filename: "error.log", level: "error" }),
+];
+
+// Debug only
+// if (!LOCAL_DEV && !isTest()) {
+//   transportsList.push(
+//     new Papertrail({
+//       host: "logs.papertrailapp.com",
+//       port: 48692,
+//     })
+//   );
+// }
+
+export const logger = createLogger({
   level: LOG_LEVEL,
-  format: winston.format.json(),
+  format: format.json(),
   defaultMeta: { service: "server" },
-  transports: [
-    // - Write all logs with level `error` and below to `error.log`
-    // - Write all logs with level LOG_LEVEL and below to console.log
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.Console({ level: LOG_LEVEL }),
-  ],
+  transports: transportsList,
 });
