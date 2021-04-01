@@ -62,6 +62,10 @@ jobs:
   deploy:
     <<: *defaults
 
+    parameters:
+      namespace:
+        type: string
+
     machine:
       image: ubuntu-1604:202004-01
 
@@ -118,10 +122,9 @@ jobs:
           install-kubectl: true
 
       - kubernetes/update-container-image:
-          namespace: dev-lists
+          namespace: << parameters.namespace >>
           container-image-updates: lists=545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
-
 
 workflows:
   version: 2
@@ -132,11 +135,16 @@ workflows:
           requires:
             - build
           filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
                 - master
                 - deploy-dev
+
       - deploy:
+          name: deploy-dev
+          namespace: dev-lists
           context:
             - VPN
           requires:
@@ -145,3 +153,16 @@ workflows:
             branches:
               only:
                 - deploy-dev
+
+      - deploy:
+          name: deploy-prod
+          namespace: prod-lists
+          context:
+            - VPN
+          requires:
+            - publish
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
