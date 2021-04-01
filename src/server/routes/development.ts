@@ -24,19 +24,21 @@ const devRateLimit = rateLimit({
   max: 10,
 });
 
-router.get("/dev/inspect-db", devRateLimit, (req, res) => {
+router.get("/dev/*", devRateLimit);
+
+router.get("/dev/inspect-db", (req, res) => {
   describeDb()
     .then((result) => res.json({ result }))
     .catch((error) => res.json({ error }));
 });
 
-router.get("/deploy-db", devRateLimit, (req, res) => {
+router.get("/deploy-db", (req, res) => {
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
     res.json({ error, stdout, stderr });
   });
 });
 
-router.get("/dev/prepare-geo-db", devRateLimit, (req, res) => {
+router.get("/dev/prepare-geo-db", (req, res) => {
   createPostgis()
     .then((resultPostgis) => {
       createGeoLocationTable()
@@ -48,13 +50,13 @@ router.get("/dev/prepare-geo-db", devRateLimit, (req, res) => {
     .catch((error) => res.json({ error }));
 });
 
-router.get("/dev/reset-db", devRateLimit, (req, res) => {
+router.get("/dev/reset-db", (req, res) => {
   exec("npm run prisma:reset", (error, stdout) => {
     res.json({ error, stdout });
   });
 });
 
-router.get("/dev/populate-db", devRateLimit, (req, res) => {
+router.get("/dev/populate-db", (req, res) => {
   populateDb(prisma)
     .then((result) => {
       res.json({ result });
@@ -74,7 +76,7 @@ router.get("/dev/populate-db", devRateLimit, (req, res) => {
 //     });
 // });
 
-router.get("/dev/list-applied-migrations", devRateLimit, (req, res) => {
+router.get("/dev/list-applied-migrations", (req, res) => {
   listAppliedMigrations()
     .then((result) => {
       res.json({ result });
@@ -84,7 +86,7 @@ router.get("/dev/list-applied-migrations", devRateLimit, (req, res) => {
     });
 });
 
-router.get("/dev/debug-env", devRateLimit, (req, res) => {
+router.get("/dev/debug-env", (req, res) => {
   res.json({
     LOCATION_SERVICE_ACCESS_KEY: LOCATION_SERVICE_ACCESS_KEY?.length,
     LOCATION_SERVICE_SECRET_KEY: LOCATION_SERVICE_SECRET_KEY?.length,
