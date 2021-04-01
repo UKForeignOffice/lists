@@ -2,11 +2,12 @@ import express from "express";
 import { exec } from "child_process";
 import { prisma } from "server/models/prisma-client";
 import { populateDb } from "server/models/seed-data/populate-database";
+import rateLimit from "express-rate-limit";
 import {
   createGeoLocationTable,
   createPostgis,
   describeDb,
-  dumpDb,
+  // dumpDb,
   listAppliedMigrations,
 } from "server/models/helpers";
 
@@ -17,6 +18,13 @@ import {
 } from "config";
 
 const router = express.Router();
+
+const devRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 10,
+});
+
+router.get("/dev/*", devRateLimit);
 
 router.get("/dev/inspect-db", (req, res) => {
   describeDb()
@@ -58,15 +66,15 @@ router.get("/dev/populate-db", (req, res) => {
     });
 });
 
-router.get("/dev/dump-db", (req, res) => {
-  dumpDb()
-    .then((result) => {
-      res.json({ result });
-    })
-    .catch((error) => {
-      res.json({ error });
-    });
-});
+// router.get("/dev/dump-db", (req, res) => {
+//   dumpDb()
+//     .then((result) => {
+//       res.json({ result });
+//     })
+//     .catch((error) => {
+//       res.json({ error });
+//     });
+// });
 
 router.get("/dev/list-applied-migrations", (req, res) => {
   listAppliedMigrations()
