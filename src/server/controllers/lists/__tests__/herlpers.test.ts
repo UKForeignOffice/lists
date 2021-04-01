@@ -110,8 +110,15 @@ describe("Lawyers List:", () => {
     test("lawyers label is returned correctly", () => {
       expect(getServiceLabel("lawyers")).toEqual("a lawyer");
     });
+
     test("medical assistance label is returned correctly", () => {
-      expect(getServiceLabel("medical")).toEqual("medical assistance");
+      expect(getServiceLabel("medical facilities")).toEqual(
+        "medical assistance"
+      );
+    });
+
+    test("undefined is returned when service name is unknown", () => {
+      expect(getServiceLabel("famous singer phone number")).toEqual(undefined);
     });
   });
 
