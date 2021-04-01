@@ -130,7 +130,11 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /*/
+
       - publish:
           requires:
             - build
@@ -139,7 +143,6 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - master
                 - deploy-dev
 
       - deploy:
