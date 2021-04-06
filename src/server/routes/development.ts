@@ -7,7 +7,7 @@ import {
   createGeoLocationTable,
   createPostgis,
   describeDb,
-  // dumpDb,
+  dumpDb,
   listAppliedMigrations,
 } from "server/models/helpers";
 
@@ -32,7 +32,7 @@ router.get("/dev/inspect-db", (req, res) => {
     .catch((error) => res.json({ error }));
 });
 
-router.get("/deploy-db", (req, res) => {
+router.get("/dev/deploy-db", (req, res) => {
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
     res.json({ error, stdout, stderr });
   });
@@ -66,15 +66,15 @@ router.get("/dev/populate-db", (req, res) => {
     });
 });
 
-// router.get("/dev/dump-db", (req, res) => {
-//   dumpDb()
-//     .then((result) => {
-//       res.json({ result });
-//     })
-//     .catch((error) => {
-//       res.json({ error });
-//     });
-// });
+router.get("/dev/dump-db", (req, res) => {
+  dumpDb()
+    .then((result) => {
+      res.json({ result });
+    })
+    .catch((error) => {
+      res.json({ error });
+    });
+});
 
 router.get("/dev/list-applied-migrations", (req, res) => {
   listAppliedMigrations()
