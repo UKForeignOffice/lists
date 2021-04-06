@@ -2,13 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import { logger } from "services/logger";
 
 import { populateCountryLawyers } from "./helpers";
+import { CountriesWithData } from "../types";
 
 import { thailandLawyers } from "./thailand";
 import { franceLawyers } from "./france";
 import { italyLawyers } from "./italy";
 import { spainLawyers } from "./spain";
 
-const CountriesWithData = [
+const CountriesData: Array<{
+  name: CountriesWithData;
+  lawyers: any;
+}> = [
   {
     name: "Thailand",
     lawyers: thailandLawyers,
@@ -30,8 +34,8 @@ const CountriesWithData = [
 export const populateDb = async (prisma: PrismaClient): Promise<string[]> => {
   const results: any[] = [];
 
-  for (let i = 0; i < CountriesWithData.length; i += 1) {
-    const country = CountriesWithData[i];
+  for (let i = 0; i < CountriesData.length; i += 1) {
+    const country = CountriesData[i];
     logger.info(`Will populate DB for country ${country.name}`);
 
     try {

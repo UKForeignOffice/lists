@@ -3,8 +3,11 @@ import { uniq, isArray, upperFirst } from "lodash";
 import { logger } from "services/logger";
 import { locatePlaceByText } from "services/location";
 import { rawInsertGeoLocation } from "../helpers";
+import { CountriesWithData } from "../types";
 
-const postCodeExtractRegex = {
+const postCodeExtractRegex: {
+  [propName: string]: RegExp;
+} = {
   Thailand: /(\d{5})(?!.*\1)/gm,
   France: /(\d{5})(?!.*\1)/gm,
   Italy: /(\d{5})(?!.*\1)/gm,
@@ -12,7 +15,7 @@ const postCodeExtractRegex = {
 };
 
 function createLawyersQueryObjects(
-  country: { id: number; name: string },
+  country: country,
   lawyers: any[]
 ): any[] {
   const postCodeRegex = postCodeExtractRegex[country.name];
@@ -24,7 +27,7 @@ function createLawyersQueryObjects(
   }
 
   return lawyers.map((lawyer) => {
-    const legalPracticeAreasList = uniq(
+    const legalPracticeAreasList = uniq<string>(
       lawyer.legalPracticeAreas?.split("; ") ?? []
     );
 
@@ -65,7 +68,7 @@ function createLawyersQueryObjects(
 }
 
 type PopulateCountryLawyers = (
-  countryName: string,
+  countryName: CountriesWithData,
   lawyers: any[],
   prisma: PrismaClient
 ) => Promise<

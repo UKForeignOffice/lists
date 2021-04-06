@@ -1,11 +1,12 @@
 import querystring from "querystring";
-import { isArray, omit, upperFirst, isString, trim } from "lodash";
+import { isArray, omit, upperFirst, isString, trim, get } from "lodash";
 import { Request } from "express";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "services/metadata";
 import { ListsRequestParams } from "./types";
+import { CountryName } from "server/models/types";
 
 export function queryStringFromParams(params: { [name: string]: any }): string {
   return Object.keys(params)
@@ -98,11 +99,10 @@ export function removeQueryParameter(
   return `${querystring.stringify(params)}`;
 }
 
-export function getCountryLawyerRedirectLink(
-  countryName: string
-): string | undefined {
-  return (
-    fcdoLawyersPagesByCountry[upperFirst(countryName)] ??
+export function getCountryLawyerRedirectLink(countryName: CountryName): string {
+  return get(
+    fcdoLawyersPagesByCountry,
+    upperFirst(countryName),
     "https://www.gov.uk/government/collections/list-of-lawyers"
   );
 }
