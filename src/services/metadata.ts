@@ -14,6 +14,7 @@ export const legalPracticeAreasList = [
   "Tax",
 ];
 
+
 export const countriesList = [
   { text: "Afghanistan", value: "Afghanistan" },
   { text: "Albania", value: "Albania" },
@@ -278,7 +279,7 @@ export const countriesList = [
   { text: "Yemen", value: "Yemen" },
   { text: "Zambia", value: "Zambia" },
   { text: "Zimbabwe", value: "Zimbabwe" },
-];
+] as const;
 
 export const fcdoLawyersPagesByCountry = {
   Afghanistan:

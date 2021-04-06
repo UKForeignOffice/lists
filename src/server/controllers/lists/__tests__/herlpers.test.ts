@@ -9,7 +9,7 @@ import {
   getCountryLawyerRedirectLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "services/metadata";
-import { upperFirst } from "lodash";
+import { upperFirst, get } from "lodash";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -134,11 +134,17 @@ describe("Lawyers List:", () => {
 
   describe("getCountryLawyerRedirectLink", () => {
     test("redirect link is for Spain correct", () => {
-      ["ghana", "burma", "spain", "italy", "thailand"].forEach((country) => {
+      ["ghana", "burma", "spain", "italy", "thailand"].forEach((country: any) => {
         expect(getCountryLawyerRedirectLink(country)).toBe(
-          fcdoLawyersPagesByCountry[upperFirst(country)]
+          get(fcdoLawyersPagesByCountry, upperFirst(country))
         );
       });
+    });
+
+    test("redirect link for unknown country is correct", () => {
+      expect(getCountryLawyerRedirectLink("Tycho" as any)).toBe(
+        "https://www.gov.uk/government/collections/list-of-lawyers"
+      );
     });
   });
 
