@@ -140,6 +140,12 @@ describe("Lawyers List:", () => {
         );
       });
     });
+
+    test("redirect link for unknown country is correct", () => {
+      expect(getCountryLawyerRedirectLink("Tycho" as any)).toBe(
+        "https://www.gov.uk/government/collections/list-of-lawyers"
+      );
+    });
   });
 
   describe("countryHasLegalAid", () => {
