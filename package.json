@@ -12,7 +12,7 @@
     "build:css": "sass src/server/styles.scss src/public/stylesheets/styles.css",
     "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "npm run prisma:generate && eslint .",
     "lint:fix": "eslint . --fix",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "test": "npm run prisma:generate && npm run type-check && jest --collect-coverage",
