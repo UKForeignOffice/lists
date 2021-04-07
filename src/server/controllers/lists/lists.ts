@@ -27,7 +27,7 @@ const DEFAULT_VIEW_PROPS = {
 
 // Controllers
 
-export function listsFinderStartPageController(
+export function listsStartPageController(
   req: Request,
   res: Response
 ): void {
@@ -37,7 +37,7 @@ export function listsFinderStartPageController(
   });
 }
 
-export function listsFinderPostController(req: Request, res: Response): void {
+export function listsPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
   const region = regionFromParams(params);
 
@@ -169,7 +169,7 @@ export function listsGetController(req: Request, res: Response): void {
   }
 }
 
-export async function listsFinderResultsController(
+export async function listsResultsController(
   req: Request,
   res: Response
 ): Promise<void> {

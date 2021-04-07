@@ -1,10 +1,10 @@
 import express from "express";
 import {
   listRedirectToLawyersController,
-  // listsFinderStartPageController,
+  // listsStartPageController,
   listsGetController,
-  listsFinderResultsController,
-  listsFinderPostController,
+  listsResultsController,
+  listsPostController,
   listsFinderStartRoute,
   listsFinderFormRoute,
   listsFinderResultsRoute,
@@ -14,15 +14,15 @@ const router = express.Router();
 
 // start page
 // Temporary redirect to lawyers start page
-// router.get(listsFinderStartRoute, listsFinderStartPageController);
+// router.get(listsFinderStartRoute, listsStartPageController);
 router.get(listsFinderStartRoute, listRedirectToLawyersController);
 
 // questions page
 router.get(listsFinderFormRoute, listsGetController);
-router.post(listsFinderFormRoute, listsFinderPostController);
+router.post(listsFinderFormRoute, listsPostController);
 
 // results page
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get(listsFinderResultsRoute, listsFinderResultsController);
+router.get(listsFinderResultsRoute, listsResultsController);
 
 export default router;
