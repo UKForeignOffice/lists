@@ -11,40 +11,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model User {
   id     Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   email  String   @unique
   name   String   @db.VarChar(255)
-  roles  user_roles[]
+  roles  UserRoles[]
 }
 
-model user_roles {
+model UserRoles {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String @db.VarChar(255)
-  users     user[]
+  users     User[]
 }
 
-model lawyer {
+model Lawyer {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   contactName String @db.VarChar(255)
-  lawFirmName String @db.VarChar(255)
+  lawFirmName String @db.VarChar(255) @unique
   telephone   String @db.VarChar(255)
   email       String? @db.VarChar(255)
   website     String? @db.VarChar(255)
   description String?
   
-  address     address @relation(fields: [addressId], references: [id])
+  address     Address @relation(fields: [addressId], references: [id])
   addressId   Int
 
-  legalPracticeAreas  legal_practice_areas[]
+  legalPracticeAreas  LegalPracticeAreas[]
   regionsServed       String?
   legalAid            Boolean @default(false)
   proBonoService      Boolean @default(false)
@@ -54,16 +54,16 @@ model lawyer {
   isBlocked     Boolean @default(false)
 }
 
-model legal_practice_areas {
+model LegalPracticeAreas {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name      String   @db.VarChar(255) @unique
-  lawyers   lawyer[]
+  lawyers   Lawyer[]
 }
 
-model address {
+model Address {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -72,9 +72,9 @@ model address {
   secondLine  String?  @db.VarChar(255)
   city        String?  @db.VarChar(255)
   postCode    String   @db.VarChar(255)
-  country     country  @relation(fields: [countryId], references: [id])
+  country     Country  @relation(fields: [countryId], references: [id])
   countryId   Int
-  Lawyer      lawyer[]
+  Lawyer      Lawyer[]
   
   geoLocationId   Int?
 }
@@ -87,22 +87,22 @@ model address {
 //   address     Address[]
 // }
 
-model country {
+model Country {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   name      String    @db.VarChar(255) @unique
-  address   address[]
-  regions   region[]
+  address   Address[]
+  regions   Region[]
 }
 
-model region {
+model Region {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name      String   @db.VarChar(255)
-  country   country  @relation(fields: [countryId], references: [id])
+  country   Country  @relation(fields: [countryId], references: [id])
   countryId Int
 }
