@@ -147,7 +147,13 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
         }
       }
 
-      await prisma.lawyer.create({ data: lawyer });
+      await prisma.user.upsert({
+        where: {
+          lawFirmName: lawyer.lawFirmName,
+        },
+        update: {},
+        create: lawyer,
+      });
       itemsInserted += 1;
     } catch (error) {
       errors.push(error.message);
