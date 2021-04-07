@@ -102,7 +102,9 @@ export function removeQueryParameter(
 export function getCountryLawyerRedirectLink(countryName: CountryName): string {
   return get(
     fcdoLawyersPagesByCountry,
-    startCase(countryName),
+    Object.keys(fcdoLawyersPagesByCountry).find(
+      (key) => key.toLowerCase() === countryName.toLowerCase()
+    ) ?? 'unknown',
     "https://www.gov.uk/government/collections/list-of-lawyers"
   );
 }
