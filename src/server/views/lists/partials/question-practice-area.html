@@ -14,13 +14,14 @@
         <div class="govuk-checkboxes__item">
           <input
             class="govuk-checkboxes__input"
+            id="practice-area-{{practiceArea.toLowerCase()}}"
             name="practiceArea"
             type="checkbox"
             value="{{ practiceArea.toLowerCase() }}"
           />
           <label
             class="govuk-label govuk-checkboxes__label"
-            for="practice-area"
+            for="practice-area-{{ practiceArea.toLowerCase() }}"
           >
             {{ practiceArea }}
           </label>  
@@ -29,13 +30,14 @@
         <div class="govuk-checkboxes__item">
           <input
             class="govuk-checkboxes__input"
+            id="practice-area-other"
             name="practiceArea"
             type="checkbox"
             value="other"
           />
           <label
             class="govuk-label govuk-checkboxes__label"
-            for="practice-area"
+            for="practice-area-other"
           >
             Other
           </label>  

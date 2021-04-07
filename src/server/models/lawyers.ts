@@ -42,24 +42,24 @@ function fetchPublishedLawyersQuery(props: {
   let whereLegalAid = "";
   let orderBy = `
     ORDER BY
-    CASE WHEN lawyer."lawFirmName" IS NULL THEN lawyer."contactName" ELSE lawyer."lawFirmName" END ASC
+    CASE WHEN "Lawyer"."lawFirmName" IS NULL THEN "Lawyer"."contactName" ELSE "Lawyer"."lawFirmName" END ASC
   `;
 
   if (country !== undefined) {
-    whereCountryName = format(`${conditionClause()} country.name = ?`, [
+    whereCountryName = format(`${conditionClause()} "Country".name = ?`, [
       country,
     ]);
   }
 
   if (filterLegalAidYes) {
-    whereLegalAid = `${conditionClause()} lawyer."legalAid" = true`;
+    whereLegalAid = `${conditionClause()} "Lawyer"."legalAid" = true`;
   }
 
   if (isArray(distanceFromPoint)) {
     withDistance = format(
       `,
       ST_Distance(
-        geo.location,
+        "GeoLocation".location,
         ST_GeographyFromText('Point(? ?)')
       ) AS distanceInMeters
     `,
@@ -71,36 +71,35 @@ function fetchPublishedLawyersQuery(props: {
 
   return `
     SELECT
-      lawyer."contactName",
-      lawyer."lawFirmName",
-      lawyer."telephone",
-      lawyer."email",
-      lawyer."website",
-      lawyer."legalAid",
-      lawyer."proBonoService",
+      "Lawyer"."contactName",
+      "Lawyer"."lawFirmName",
+      "Lawyer"."telephone",
+      "Lawyer"."email",
+      "Lawyer"."website",
+      "Lawyer"."legalAid",
+      "Lawyer"."proBonoService",
       (SELECT array_agg(name)
-        FROM legal_practice_areas lpa
-        INNER JOIN "_lawyerTolegal_practice_areas" AS ltl ON ltl."A" = lawyer.id
+        FROM "LegalPracticeAreas" lpa
+        INNER JOIN "_LawyerToLegalPracticeAreas" AS ltl ON ltl."A" = "Lawyer".id
         WHERE lpa.id = ltl."B"
       ) AS "legalPracticeAreas",
 
-      concat_ws(', ', address."firsLine", address."secondLine") AS address,
-      address."city",
-      address."postCode",
-
-      country.name as country
+      concat_ws(', ', "Address"."firsLine", "Address"."secondLine") AS address,
+      "Address"."city",
+      "Address"."postCode",
+      "Country".name as country
 
       ${withDistance}
 
-    FROM lawyer AS lawyer
-    INNER JOIN address AS address ON lawyer."addressId" = address.id
-    INNER JOIN country AS country ON address."countryId" = country.id
-    INNER JOIN geo_location AS geo ON address."geoLocationId" = geo.id
+    FROM "Lawyer"
+    INNER JOIN "Address" ON "Lawyer"."addressId" = "Address".id
+    INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+    INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
     ${whereCountryName}
     ${whereLegalAid}
-    AND lawyer."isApproved" = true
-    AND lawyer."isPublished" = true
-    AND lawyer."isBlocked" = false
+    AND "Lawyer"."isApproved" = true
+    AND "Lawyer"."isPublished" = true
+    AND "Lawyer"."isBlocked" = false
     ${orderBy}
     LIMIT 20
   `;

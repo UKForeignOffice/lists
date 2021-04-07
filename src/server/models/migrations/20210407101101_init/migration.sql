@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "user" (
+CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE "user" (
 );
 
 -- CreateTable
-CREATE TABLE "user_roles" (
+CREATE TABLE "UserRoles" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "user_roles" (
 );
 
 -- CreateTable
-CREATE TABLE "lawyer" (
+CREATE TABLE "Lawyer" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE "lawyer" (
 );
 
 -- CreateTable
-CREATE TABLE "legal_practice_areas" (
+CREATE TABLE "LegalPracticeAreas" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "legal_practice_areas" (
 );
 
 -- CreateTable
-CREATE TABLE "address" (
+CREATE TABLE "Address" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE "address" (
 );
 
 -- CreateTable
-CREATE TABLE "country" (
+CREATE TABLE "Country" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE "country" (
 );
 
 -- CreateTable
-CREATE TABLE "region" (
+CREATE TABLE "Region" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -88,55 +88,58 @@ CREATE TABLE "region" (
 );
 
 -- CreateTable
-CREATE TABLE "_userTouser_roles" (
+CREATE TABLE "_UserToUserRoles" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "_lawyerTolegal_practice_areas" (
+CREATE TABLE "_LawyerToLegalPracticeAreas" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user.email_unique" ON "user"("email");
+CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "legal_practice_areas.name_unique" ON "legal_practice_areas"("name");
+CREATE UNIQUE INDEX "Lawyer.lawFirmName_unique" ON "Lawyer"("lawFirmName");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "country.name_unique" ON "country"("name");
+CREATE UNIQUE INDEX "LegalPracticeAreas.name_unique" ON "LegalPracticeAreas"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_userTouser_roles_AB_unique" ON "_userTouser_roles"("A", "B");
+CREATE UNIQUE INDEX "Country.name_unique" ON "Country"("name");
 
 -- CreateIndex
-CREATE INDEX "_userTouser_roles_B_index" ON "_userTouser_roles"("B");
+CREATE UNIQUE INDEX "_UserToUserRoles_AB_unique" ON "_UserToUserRoles"("A", "B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_lawyerTolegal_practice_areas_AB_unique" ON "_lawyerTolegal_practice_areas"("A", "B");
+CREATE INDEX "_UserToUserRoles_B_index" ON "_UserToUserRoles"("B");
 
 -- CreateIndex
-CREATE INDEX "_lawyerTolegal_practice_areas_B_index" ON "_lawyerTolegal_practice_areas"("B");
+CREATE UNIQUE INDEX "_LawyerToLegalPracticeAreas_AB_unique" ON "_LawyerToLegalPracticeAreas"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_LawyerToLegalPracticeAreas_B_index" ON "_LawyerToLegalPracticeAreas"("B");
 
 -- AddForeignKey
-ALTER TABLE "lawyer" ADD FOREIGN KEY ("addressId") REFERENCES "address"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Lawyer" ADD FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "address" ADD FOREIGN KEY ("countryId") REFERENCES "country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Address" ADD FOREIGN KEY ("countryId") REFERENCES "Country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "region" ADD FOREIGN KEY ("countryId") REFERENCES "country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Region" ADD FOREIGN KEY ("countryId") REFERENCES "Country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_userTouser_roles" ADD FOREIGN KEY ("A") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_UserToUserRoles" ADD FOREIGN KEY ("A") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_userTouser_roles" ADD FOREIGN KEY ("B") REFERENCES "user_roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_UserToUserRoles" ADD FOREIGN KEY ("B") REFERENCES "UserRoles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_lawyerTolegal_practice_areas" ADD FOREIGN KEY ("A") REFERENCES "lawyer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_LawyerToLegalPracticeAreas" ADD FOREIGN KEY ("A") REFERENCES "Lawyer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_lawyerTolegal_practice_areas" ADD FOREIGN KEY ("B") REFERENCES "legal_practice_areas"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_LawyerToLegalPracticeAreas" ADD FOREIGN KEY ("B") REFERENCES "LegalPracticeAreas"("id") ON DELETE CASCADE ON UPDATE CASCADE;
