@@ -16,3 +16,7 @@ input {
 .govuk-list .govuk-details {
   margin-bottom: 0;
 }
+
+.govuk-form-group--error .autocomplete__input {
+  border: 2px solid govuk-colour("red");
+}

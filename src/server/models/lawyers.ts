@@ -110,7 +110,7 @@ function fetchPublishedLawyersQuery(props: {
 export async function findPublishedLawyersPerCountry(props: {
   country?: string;
   region?: string;
-  legalAid?: "yes" | "no";
+  legalAid?: "yes" | "no" | "";
   practiceArea?: string[];
 }): Promise<Lawyer[]> {
   const country = upperFirst(props.country);

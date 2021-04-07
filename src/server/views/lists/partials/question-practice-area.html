@@ -1,5 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post" required>
-  <div class="govuk-form-group">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'practice-area' }}">
     <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="practiceArea">
@@ -9,6 +9,11 @@
       <div id="practice-area-hint" class="govuk-hint">
         You can choose as many options from the list as you need.
       </div>
+      {% if error.field === 'practice-area' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
       <div class="govuk-checkboxes">
         {% for practiceArea in legalPracticeAreasList %}
         <div class="govuk-checkboxes__item">
@@ -42,6 +47,14 @@
             Other
           </label>  
         </div>
+        <input
+            class="govuk-checkboxes__input"
+            id="practice-area-other"
+            name="practiceArea"
+            type="checkbox"
+            value=""
+            checked
+          />
       </div>
     </fieldset>
   </div>

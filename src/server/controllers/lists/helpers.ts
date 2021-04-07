@@ -1,5 +1,5 @@
 import querystring from "querystring";
-import { isArray, omit, upperFirst, isString, trim, get } from "lodash";
+import { isArray, omit, isString, trim, get, without, startCase } from "lodash";
 import { Request } from "express";
 import {
   fcdoLawyersPagesByCountry,
@@ -62,11 +62,11 @@ export function practiceAreaFromParams(
   const { practiceArea } = params;
 
   if (isArray(practiceArea)) {
-    return practiceArea;
+    return without(practiceArea, "");
   }
 
   if (isString(practiceArea)) {
-    return practiceArea.split(",").map(trim);
+    return without(practiceArea.split(",").map(trim), "");
   }
 }
 
@@ -102,11 +102,11 @@ export function removeQueryParameter(
 export function getCountryLawyerRedirectLink(countryName: CountryName): string {
   return get(
     fcdoLawyersPagesByCountry,
-    upperFirst(countryName),
+    startCase(countryName),
     "https://www.gov.uk/government/collections/list-of-lawyers"
   );
 }
 
 export function countryHasLegalAid(country: string): boolean {
-  return listOfCountriesWithLegalAid.includes(upperFirst(country));
+  return listOfCountriesWithLegalAid.includes(startCase(country));
 }
