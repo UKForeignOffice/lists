@@ -2,7 +2,7 @@ import express from "express";
 import {
   listRedirectToLawyersController,
   // listsFinderStartPageController,
-  listsFinderGetController,
+  listsGetController,
   listsFinderResultsController,
   listsFinderPostController,
   listsFinderStartRoute,
@@ -18,7 +18,7 @@ const router = express.Router();
 router.get(listsFinderStartRoute, listRedirectToLawyersController);
 
 // questions page
-router.get(listsFinderFormRoute, listsFinderGetController);
+router.get(listsFinderFormRoute, listsGetController);
 router.post(listsFinderFormRoute, listsFinderPostController);
 
 // results page

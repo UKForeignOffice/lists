@@ -10,15 +10,21 @@
   providers or this information
 </p>
 <form class="form" action="{{ nextRoute }}" method="post">
-  <div class="govuk-form-group">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'read-disclaimer' }}">
+    {% if error.field === 'read-disclaimer' %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+      </span>
+    {% endif %}
     <div class="govuk-checkboxes">
       <div class="govuk-checkboxes__item">
-        <input class="govuk-checkboxes__input" id="readDisclaimer" name="readDisclaimer" type="checkbox" value="ok" required>
-        <label class="govuk-label govuk-checkboxes__label" for="readDisclaimer">
+        <input class="govuk-checkboxes__input" id="read-disclaimer" name="readDisclaimer" type="checkbox" value="ok">
+        <label class="govuk-label govuk-checkboxes__label" for="read-disclaimer">
           I have read and agree with the above statement.
         </label>
       </div>
     </div>
+    <input class="govuk-checkboxes__input govuk-visually-hidden" name="readDisclaimer" type="checkbox" value="" checked>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>
 </form>

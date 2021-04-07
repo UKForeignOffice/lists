@@ -1,5 +1,5 @@
 import querystring from "querystring";
-import { isArray, omit, upperFirst, isString, trim, get } from "lodash";
+import { isArray, omit, upperFirst, isString, trim, get, without } from "lodash";
 import { Request } from "express";
 import {
   fcdoLawyersPagesByCountry,
@@ -62,11 +62,11 @@ export function practiceAreaFromParams(
   const { practiceArea } = params;
 
   if (isArray(practiceArea)) {
-    return practiceArea;
+    return without(practiceArea, "");
   }
 
   if (isString(practiceArea)) {
-    return practiceArea.split(",").map(trim);
+    return without(practiceArea.split(",").map(trim), "");
   }
 }
 
