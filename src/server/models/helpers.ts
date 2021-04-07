@@ -18,7 +18,7 @@ export const rawInsertGeoLocation = async (
     }
 
     const result = await db.query(`
-      INSERT INTO public.geo_location (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
+      INSERT INTO public."GeoLocation" (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
     `);
 
     return result?.rows?.[0]?.id ?? false;
@@ -42,7 +42,7 @@ export const createPostgis = async (): Promise<"OK" | string> => {
 
 export const createGeoLocationTable = async (): Promise<"OK" | string> => {
   const createGeoTable = `
-     CREATE TABLE public."geo_location" (
+     CREATE TABLE public."GeoLocation" (
         "id" SERIAL NOT NULL,
         "location" geography(POINT),
         PRIMARY KEY ("id")
@@ -51,7 +51,7 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
 
   try {
     await db.query(createGeoTable);
-    return "geo_location created successfully";
+    return "GeoLocation created successfully";
   } catch (error) {
     logger.error("createGeoLocationTable error:", error);
     return error;
@@ -74,10 +74,10 @@ export const describeDb = async (): Promise<any> => {
 };
 
 export const dumpDb = async (): Promise<any> => {
-  const lawyersQuery = "SELECT * from lawyer";
-  const addressQuery = "SELECT * from address";
-  const geoQuery = "SELECT * from geo_location";
-  const countryQuery = "SELECT * from country";
+  const lawyersQuery = 'SELECT * from "Lawyer"';
+  const addressQuery = 'SELECT * from "Address"';
+  const geoQuery = 'SELECT * from "GeoLocation"';
+  const countryQuery = 'SELECT * from "Country"';
 
   try {
     const lawyers = await db.query(lawyersQuery);

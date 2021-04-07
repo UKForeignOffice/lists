@@ -1,4 +1,4 @@
-import { PrismaClient, country } from "@prisma/client";
+import { PrismaClient, Country } from "@prisma/client";
 import { uniq, isArray, upperFirst } from "lodash";
 import { logger } from "services/logger";
 import { locatePlaceByText } from "services/location";
@@ -15,7 +15,7 @@ const postCodeExtractRegex: {
 };
 
 function createLawyersQueryObjects(
-  country: country,
+  country: Country,
   lawyers: any[]
 ): any[] {
   const postCodeRegex = postCodeExtractRegex[country.name];
@@ -91,7 +91,7 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
   prisma
 ) => {
   const name = upperFirst(countryName);
-  let country: country;
+  let country: Country;
 
   try {
     country = await prisma.country.upsert({
@@ -147,7 +147,7 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
         }
       }
 
-      await prisma.user.upsert({
+      await prisma.lawyer.upsert({
         where: {
           lawFirmName: lawyer.lawFirmName,
         },
