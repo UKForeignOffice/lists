@@ -9,7 +9,7 @@ import {
   getCountryLawyerRedirectLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "services/metadata";
-import { upperFirst, get } from "lodash";
+import { startCase, get } from "lodash";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -143,14 +143,16 @@ describe("Lawyers List:", () => {
         "Antigua and Barbuda",
         "Cote d’Ivoire",
       ].forEach((country: any) => {
-        expect(getCountryLawyerRedirectLink(country)).toBe(
-          get(
-            fcdoLawyersPagesByCountry,
-            Object.keys(fcdoLawyersPagesByCountry).find(
-              (key) => key.toLowerCase() === country.toLowerCase()
-            )
-          )
+        const link = getCountryLawyerRedirectLink(country);
+        const expectedLink = get(
+          fcdoLawyersPagesByCountry,
+          Object.keys(fcdoLawyersPagesByCountry).find(
+            (key) => key.toLowerCase() === country.toLowerCase()
+          ) as string
         );
+        
+        expect(link).toBe(expectedLink);
+        expect(expectedLink).toBeDefined();
       });
     });
 

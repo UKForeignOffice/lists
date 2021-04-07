@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+
 {% block pageTitle %}
   Find a Professional Service Abroad
 {% endblock %}
@@ -9,6 +10,12 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+      {% if error.field %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [error]
+        }) }}
+      {% endif %}
       {% include activeQuestion %}
     </div>
 

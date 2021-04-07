@@ -1,14 +1,14 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.6",
   "engines": {
     "node": ">=0.14"
   },
   "scripts": {
-    "dev": "nodemon",
-    "start": "nodemon",
+    "dev": "npm run prisma:generate && nodemon",
+    "start": "npm run prisma:generate && nodemon",
     "start:prod": "nodemon dist/index.js",
-    "build": "npm run build:css && npm run build:js",
-    "build:js": "npm run prisma:generate && babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps --copy-files",
+    "build": "npm run build:css && npm run prisma:generate && npm run build:js",
+    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps --copy-files",
     "build:css": "sass src/server/styles.scss src/public/stylesheets/styles.css",
     "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
