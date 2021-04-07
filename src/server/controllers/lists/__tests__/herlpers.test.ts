@@ -134,9 +134,22 @@ describe("Lawyers List:", () => {
 
   describe("getCountryLawyerRedirectLink", () => {
     test("redirect link is for Spain correct", () => {
-      ["ghana", "burma", "spain", "italy", "thailand"].forEach((country: any) => {
+      [
+        "ghana",
+        "burma",
+        "spain",
+        "italy",
+        "thailand",
+        "Antigua and Barbuda",
+        "Cote d’Ivoire",
+      ].forEach((country: any) => {
         expect(getCountryLawyerRedirectLink(country)).toBe(
-          get(fcdoLawyersPagesByCountry, upperFirst(country))
+          get(
+            fcdoLawyersPagesByCountry,
+            Object.keys(fcdoLawyersPagesByCountry).find(
+              (key) => key.toLowerCase() === country.toLowerCase()
+            )
+          )
         );
       });
     });
