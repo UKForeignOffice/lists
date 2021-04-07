@@ -9,7 +9,7 @@ import {
   getCountryLawyerRedirectLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "services/metadata";
-import { startCase, get } from "lodash";
+import { get } from "lodash";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
