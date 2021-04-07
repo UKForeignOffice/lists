@@ -1,5 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post">
-  <div class="govuk-form-group">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'legal-aid' }}">
     <fieldset class="govuk-fieldset" aria-describedby="legal-aid-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="legalAid">
@@ -12,6 +12,11 @@
         Eligibility for legal aid depends on meeting certain criteria and is
         decided on a case by case basis.
       </div>
+      {% if error.field === 'legal-aid' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
       <div class="govuk-radios govuk-radios--inline">
         <div class="govuk-radios__item">
           <input
@@ -20,7 +25,6 @@
             name="legalAid"
             type="radio"
             value="yes"
-            required
           />
           <label class="govuk-label govuk-radios__label" for="legal-aid">
             Yes
@@ -33,13 +37,20 @@
             name="legalAid"
             type="radio"
             value="no"
-            required
           />
           <label class="govuk-label govuk-radios__label" for="legal-aid-2">
             No
           </label>
         </div>
       </div>
+      <input
+        class="govuk-radios__input"
+        id="legal-aid-2"
+        name="legalAid"
+        type="radio"
+        value=""
+        checked
+      />
     </fieldset>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>
