@@ -6,7 +6,6 @@ import {
   trim,
   get,
   without,
-  startCase,
   mapKeys,
   lowerCase,
 } from "lodash";
@@ -110,7 +109,9 @@ export function removeQueryParameter(
 }
 
 export const getCountryLawyerRedirectLink = (() => {
-  const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) => lowerCase(key));
+  const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) =>
+    lowerCase(key)
+  );
 
   return (countryName: CountryName): string => {
     return get(
@@ -118,7 +119,7 @@ export const getCountryLawyerRedirectLink = (() => {
       lowerCase(countryName),
       "https://www.gov.uk/government/collections/list-of-lawyers"
     );
-  }
+  };
 })();
 
 export const countryHasLegalAid = (() => {
