@@ -16,6 +16,8 @@ describe("Lawyers List:", () => {
     test("result is correct when country has legal aid support", () => {
       expect(countryHasLegalAid("Spain")).toBe(true);
       expect(countryHasLegalAid("spain")).toBe(true);
+      expect(countryHasLegalAid("bosnia and Herzegovina")).toBe(true);
+
     });
 
     test("result is correct when country does not have legal aid support", () => {
