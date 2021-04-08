@@ -7,13 +7,14 @@
 
 {% block head %}
 
-  {% if GA_TRACKING_ID %}
+  {% if GA_TRACKING_ID and (not isLocalHOST) %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_TRACKING_ID }}"></script>
     <script>
-      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-      ga("create", "{{ GA_TRACKING_ID }}", "auto");
-      ga("send", "pageview");
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ GA_TRACKING_ID }}');
     </script>
-    <script async src='https://www.google-analytics.com/analytics.js'></script>
   {% endif %}
 
   <link rel="preload" as="font" href="/assets/fonts/bold-affa96571d-v2.woff" type="font/woff2" crossorigin="anonymous">

@@ -2,7 +2,7 @@ import path from "path";
 import { Express } from "express";
 import nunjucks from "nunjucks";
 import { version } from "../../../package.json";
-import { GA_TRACKING_ID } from "config";
+import { GA_TRACKING_ID, isLocalHost } from "config";
 
 const ROOT = process.cwd();
 
@@ -21,5 +21,6 @@ export const configureViews = (server: Express): void => {
       express: server,
     })
     .addGlobal("appVersion", version)
-    .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID);
+    .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
+    .addGlobal("isLocalHOST", isLocalHost);
 };
