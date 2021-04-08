@@ -8,6 +8,7 @@ module.exports = {
   },
   rules: {
     "no-console": ["error"],
+    "@typescript-eslint/restrict-template-expressions": false,
   },
   ignorePatterns: ["playground/", "dist/", ".eslintrc.js", "jest.config.js"],
 };
