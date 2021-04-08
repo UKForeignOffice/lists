@@ -15,19 +15,7 @@ export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME;
 export const GA_TRACKING_ID = process.env.GA_TRACKING_ID ?? "G-QMXES8PQGH";
 
-// Helpers
-export const isProd = (): boolean => {
-  return NODE_ENV === "production";
-};
-
-export const isDev = (): boolean => {
-  return NODE_ENV === "development";
-};
-
-export const isTest = (): boolean => {
-  return NODE_ENV === "test";
-};
-
-export const isLocal = (): boolean => {
-  return process.env.LOCAL_DEV === "true";
-};
+export const isProd = NODE_ENV === "production";
+export const isDev = NODE_ENV === "development";
+export const isTest = NODE_ENV === "test";
+export const isLocalHost = process.env.LOCAL_HOST === "true";
