@@ -13,7 +13,9 @@ export const LOCATION_SERVICE_SECRET_KEY =
   process.env.LOCATION_SERVICE_SECRET_KEY;
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME;
+export const GA_TRACKING_ID = process.env.GA_TRACKING_ID ?? "G-QMXES8PQGH";
 
+// Helpers
 export const isProd = (): boolean => {
   return NODE_ENV === "production";
 };
