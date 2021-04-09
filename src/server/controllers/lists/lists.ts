@@ -1,6 +1,7 @@
 import _, { startCase } from "lodash";
 import { Request, Response } from "express";
 import { countriesList, legalPracticeAreasList } from "services/metadata";
+import { trackListSearch } from "services/google-analytics";
 import {
   getAllRequestParams,
   regionFromParams,
@@ -44,7 +45,7 @@ export function listsPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
   const region = regionFromParams(params);
 
-  const { country } = params;
+  const { country, serviceType } = params;
 
   if (region !== undefined) {
     params.region = region;
@@ -54,10 +55,12 @@ export function listsPostController(req: Request, res: Response): void {
 
   if (country !== undefined && country !== "" && !countryHasLawyers(country)) {
     // data hasn't been migrated, redirect user to legacy FCDO pages
-    const pageUrl = getCountryLawyerRedirectLink(country);
-    if (pageUrl !== undefined) {
-      return res.redirect(pageUrl);
-    }
+    trackListSearch({
+      serviceType,
+      country,
+    });
+
+    return res.redirect(getCountryLawyerRedirectLink(country));
   }
 
   res.redirect(`${DEFAULT_VIEW_PROPS.listsFinderFormRoute}?${queryString}`);
@@ -187,6 +190,14 @@ export async function listsResultsController(
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
+
+  trackListSearch({
+    serviceType,
+    country,
+    region,
+    practiceArea: practiceArea?.join(","),
+    legalAid,
+  });
 
   let searchResults: modelTypes.Lawyer[];
 
