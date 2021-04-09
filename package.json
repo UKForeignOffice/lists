@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.20.0",
+    "@types/node-fetch": "^2.5.10",
     "accessible-autocomplete": "^2.0.3",
     "aws-sdk": "^2.881.0",
     "body-parser": "^1.19.0",
@@ -35,6 +36,7 @@
     "govuk-frontend": "^3.11.0",
     "helmet": "^4.4.1",
     "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.3",
     "pg": "^8.5.1",
     "prisma": "^2.20.0",
