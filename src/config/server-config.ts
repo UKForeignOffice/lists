@@ -13,7 +13,10 @@ export const LOCATION_SERVICE_SECRET_KEY =
   process.env.LOCATION_SERVICE_SECRET_KEY;
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME;
+
+// TODO remove dev defaults
 export const GA_TRACKING_ID = process.env.GA_TRACKING_ID ?? "G-QMXES8PQGH";
+export const GA_API_SECRET = process.env.GA_API_SECRET ?? "F_jB5X0mT-6jERB9GmAYSg";
 
 export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";
