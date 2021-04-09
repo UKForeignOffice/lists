@@ -10,6 +10,7 @@ import {
   removeQueryParameter,
   getServiceLabel,
   countryHasLegalAid,
+  needToReadNotice,
   needToAnswerCountry,
   needToAnswerRegion,
   needToAnswerPracticeArea,
@@ -86,7 +87,7 @@ export function lawyersGetController(req: Request, res: Response): void {
   let partialToRender: string;
   let error: { field?: string; text?: string; href?: string } = {};
 
-  if (readNotice === undefined) {
+  if (needToReadNotice(readNotice)) {
     partialToRender = "lawyers-start-page.html";
     partialPageTitle = needToAnswerCountry(country)
       ? "Find a Lawyer Abroad"
@@ -103,7 +104,9 @@ export function lawyersGetController(req: Request, res: Response): void {
     }
   } else if (needToAnswerRegion(region)) {
     partialToRender = "question-region.html";
-    partialPageTitle = `Which area in ${startCase(country)} do you need a lawyer from?`;
+    partialPageTitle = `Which area in ${startCase(
+      country
+    )} do you need a lawyer from?`;
     if (region === "") {
       error = {
         field: "region",

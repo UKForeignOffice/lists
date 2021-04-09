@@ -128,6 +128,10 @@ export const countryHasLegalAid = (() => {
     countriesWithLegalAid.includes(lowerCase(country));
 })();
 
+export function needToReadNotice(readNotice?: string): boolean {
+  return readNotice === undefined;
+}
+
 export function needToAnswerCountry(
   country?: ListsRequestParams["country"]
 ): boolean {
