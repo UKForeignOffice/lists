@@ -1,7 +1,7 @@
 import _, { startCase } from "lodash";
 import { Request, Response } from "express";
 import { countriesList, legalPracticeAreasList } from "services/metadata";
-import { trackListSearch } from "services/google-analytics";
+import { trackListsSearch } from "services/google-analytics";
 import {
   getAllRequestParams,
   regionFromParams,
@@ -55,7 +55,7 @@ export function listsPostController(req: Request, res: Response): void {
 
   if (country !== undefined && country !== "" && !countryHasLawyers(country)) {
     // data hasn't been migrated, redirect user to legacy FCDO pages
-    trackListSearch({
+    trackListsSearch({
       serviceType,
       country,
     });
@@ -191,7 +191,7 @@ export async function listsResultsController(
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
 
-  trackListSearch({
+  trackListsSearch({
     serviceType,
     country,
     region,

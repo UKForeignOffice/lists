@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { GA_TRACKING_ID , GA_API_SECRET } from "config";
-import { trackListSearch } from "../google-analytics";
+import { trackListsSearch } from "../google-analytics";
 
 describe("Google Analytics service:", () => {
   test("trackListSearch event is posted correctly", () => {
@@ -12,7 +12,7 @@ describe("Google Analytics service:", () => {
       practiceArea: "Maritime",
     };
 
-    trackListSearch(params);
+    trackListsSearch(params);
     expect(fetch).toHaveBeenCalledWith(
       `https://www.google-analytics.com/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`,
       {
@@ -39,7 +39,7 @@ describe("Google Analytics service:", () => {
       practiceArea: null,
     };
 
-    trackListSearch(params);
+    trackListsSearch(params);
     expect(fetch).toHaveBeenCalledWith(
       `https://www.google-analytics.com/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`,
       {

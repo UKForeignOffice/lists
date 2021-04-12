@@ -16,7 +16,7 @@ export interface GA_Event {
   params: GA_Search_Params;
 }
 
-export function trackListSearch(params: GA_Search_Params): void {
+export function trackListsSearch(params: GA_Search_Params): void {
   const event: GA_Event = {
     name: "lists_search",
     params: omitBy(params, isNil)
