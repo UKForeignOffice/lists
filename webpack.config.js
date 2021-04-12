@@ -14,15 +14,14 @@ const client = {
   target: "web",
   mode: environment,
   watch: devMode,
-  entry: path.resolve(__dirname, "client", "javascript", "main.tsx"),
+  entry: path.resolve(__dirname, "src", "client", "main.ts"),
   output: {
     path: path.resolve(__dirname, "dist", "client"),
-    filename: "assets/[name].js",
-    publicPath: "",
+    filename: "main.js",
   },
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
-    modules: [path.resolve(__dirname, "node_modules")],
+    modules: ["node_modules"],
   },
   node: {
     __dirname: false,
@@ -32,19 +31,21 @@ const client = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+              configFile: "tsconfig-client.json",
+            },
+          },
+        ],
       },
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: devMode,
-              reloadAll: true,
-              publicPath: "../../",
-            },
           },
           {
             loader: "css-loader",
@@ -67,50 +68,60 @@ const client = {
         test: /\.(png|svg|jpg|gif|ico)$/,
         loader: "file-loader",
         options: {
-          name: "assets/images/[name].[ext]",
+          name: "images/[name].[ext]",
         },
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         loader: "file-loader",
         options: {
-          name: "assets/fonts/[name].[ext]",
+          name: "fonts/[name].[ext]",
         },
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src", "server", "views", "layout.html"),
-      filename: "views/layout.html",
-      minify: prodMode,
+      template: path.resolve(
+        __dirname,
+        "src",
+        "server",
+        "views",
+        "layout.html"
+      ),
+      filename: "../views/layout.html",
+      minify: false,
       scriptLoading: "defer",
-      inject: "head",
+      inject: false,
       hash: prodMode,
+      publicPath: "/assets/",
     }),
     new MiniCssExtractPlugin({
-      filename: devMode
-        ? "assets/css/[name].css"
-        : "assets/css/[name].[hash].css",
-      chunkFilename: devMode
-        ? "assets/css/[id].css"
-        : "assets/css/[id].[hash].css",
+      filename: devMode ? "styles/[name].css" : "styles/[name].[hash].css",
+      chunkFilename: devMode ? "styles/[id].css" : "styles/[id].[hash].css",
     }),
     new CopyPlugin({
       patterns: [
-        { from: "server/views", to: "views" },
+        {
+          from: "src/server/views",
+          to: "../views",
+          globOptions: {
+            ignore: ["**/layout.html"],
+          },
+        },
       ],
     }),
-    new BundleAnalyzerPlugin({
-      analyzerMode: "static",
-      defaultSizes: "gzip",
-      openAnalyzer: false,
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode: "static",
+    //   defaultSizes: "gzip",
+    //   openAnalyzer: false,
+    // }),
+  ],
+  externals: [
+    nodeExternals({
+      modulesDir: "node_modules",
     }),
   ],
-  externals: {
-    react: "React",
-    "react-dom": "ReactDOM",
-  },
 };
 
 const server = {
@@ -120,38 +131,40 @@ const server = {
   entry: path.resolve(__dirname, "src", "server", "index.ts"),
   output: {
     path: path.resolve(__dirname, "dist"),
-    // filename: "server.js",
+    filename: "server.js",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".json"],
     modules: ["node_modules"],
-    plugins: [
-      new TsconfigPathsPlugin(),
-    ],
+    plugins: [new TsconfigPathsPlugin()],
   },
   node: {
     __dirname: false,
-  },
-  watchOptions: {
-    poll: 1000, // enable polling since fsevents are not supported in docker
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx|tsx|ts)$/,
         exclude: /node_modules/,
-        use: "ts-loader",
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
       },
     ],
   },
   externals: [
     nodeExternals({
-      modulesDir: path.resolve(__dirname, "node_modules"),
+      modulesDir: "node_modules",
     }),
   ],
 };
 
 module.exports = [
-  // client, 
+  client, 
   server
 ];

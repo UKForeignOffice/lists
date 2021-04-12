@@ -5,7 +5,9 @@ const ROOT = process.cwd();
 const NODE_MODULES = path.join(ROOT, "node_modules");
 const GOVUK_FRONTEND = path.join(NODE_MODULES, "govuk-frontend", "govuk");
 
-const publicFolderPath = path.join(__dirname, "..", "..", "client");
+console.log("XXXX", GOVUK_FRONTEND);
+
+const publicFolderPath = path.join(__dirname, "client");
 const govUKAssetsFolderPath = path.join(GOVUK_FRONTEND, "assets");
 const govUKAllJSPath = path.join(GOVUK_FRONTEND, "all.js");
 const accessibleAutoCompletePath = path.join(
