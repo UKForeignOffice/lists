@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { omitBy, isNil } from "lodash";
-import { logger } from "services/logger";
-import { GA_TRACKING_ID, GA_API_SECRET } from "config";
+import { logger } from "server/services/logger";
+import { GA_TRACKING_ID, GA_API_SECRET } from "server/config";
 
 export interface GA_Search_Params {
   serviceType?: string;

@@ -15,7 +15,7 @@ import {
   LOCATION_SERVICE_ACCESS_KEY,
   LOCATION_SERVICE_SECRET_KEY,
   LOCATION_SERVICE_INDEX_NAME,
-} from "config";
+} from "server/config";
 
 const router = express.Router();
 

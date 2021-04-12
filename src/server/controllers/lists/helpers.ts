@@ -13,7 +13,7 @@ import { Request } from "express";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
-} from "services/metadata";
+} from "server/services/metadata";
 import { ListsRequestParams } from "./types";
 import { CountryName } from "server/models/types";
 

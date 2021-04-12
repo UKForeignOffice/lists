@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import { isLocalHost } from "config";
+import { isLocalHost } from "server/config";
 
 const logLevel: Prisma.LogLevel[] = ["warn", "error"];
 

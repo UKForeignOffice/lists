@@ -2,7 +2,8 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": "src",
-    "module": "commonjs",
+    "module": "amd",
+    "moduleResolution": "node",
     "target": "es5",
     "declaration": true,
     "sourceMap": true,
@@ -11,13 +12,15 @@
     "lib": ["ES2020"],
     "esModuleInterop": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "client/*": ["client/*"],
-      "server/*": ["server/*"],
-      "services/*": ["services/*"]
-    }
+    // "resolveJsonModule": true,
+    // "paths": {
+    //   "client/*": ["client/*"],
+    //   "server/*": ["server/*"],
+    //   "config/*": ["config/*"],
+    //   "services/*": ["services/*"]
+    // }
   },
   "include": ["src/client/**/*"],
-  "ignore": ["dist"]
+  // "exclude": ["node_modules"]
+  // "ignore": ["dist"]
 }

@@ -2,7 +2,7 @@ import path from "path";
 import { Express } from "express";
 import nunjucks from "nunjucks";
 import { version } from "../../../package.json";
-import { GA_TRACKING_ID, isLocalHost } from "config";
+import { GA_TRACKING_ID, isLocalHost } from "server/config";
 
 const ROOT = process.cwd();
 

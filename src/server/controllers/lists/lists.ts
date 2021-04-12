@@ -1,7 +1,7 @@
 import _, { startCase } from "lodash";
 import { Request, Response } from "express";
-import { countriesList, legalPracticeAreasList } from "services/metadata";
-import { trackListsSearch } from "services/google-analytics";
+import { countriesList, legalPracticeAreasList } from "server/services/metadata";
+import { trackListsSearch } from "server/services/google-analytics";
 import {
   getAllRequestParams,
   regionFromParams,

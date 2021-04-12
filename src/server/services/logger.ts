@@ -4,7 +4,7 @@ import {
   LOG_LEVEL,
   // LOCAL_DEV,
   isTest,
-} from "config";
+} from "server/config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message.includes("HTTP GET")) {

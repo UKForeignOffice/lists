@@ -8,7 +8,7 @@ import {
   removeQueryParameter,
   getCountryLawyerRedirectLink,
 } from "../helpers";
-import { fcdoLawyersPagesByCountry } from "services/metadata";
+import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
 
 describe("Lawyers List:", () => {

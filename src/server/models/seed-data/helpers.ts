@@ -1,7 +1,7 @@
 import { PrismaClient, Country } from "@prisma/client";
 import { uniq, isArray, upperFirst } from "lodash";
-import { logger } from "services/logger";
-import { locatePlaceByText } from "services/location";
+import { logger } from "server/services/logger";
+import { locatePlaceByText } from "server/services/location";
 import { rawInsertGeoLocation } from "../helpers";
 import { CountriesWithData } from "../types";
 

@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { GA_TRACKING_ID , GA_API_SECRET } from "config";
+import { GA_TRACKING_ID , GA_API_SECRET } from "server/config";
 import { trackListsSearch } from "../google-analytics";
 
 describe("Google Analytics service:", () => {

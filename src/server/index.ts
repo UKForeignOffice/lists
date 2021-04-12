@@ -1,31 +1,7 @@
-import express from "express";
-import {
-  helmet,
-  logger,
-  bodyParser,
-  compression,
-  configureViews,
-  configureStaticServer,
-  configureErrorHandlers,
-} from "./middlewares";
-import { configureRouter } from "./routes";
+import { server } from "./server";
+import { PORT, NODE_ENV } from "./config";
+import { logger } from "./services/logger";
 
-export const server = express();
-
-// middlewares
-server.use(helmet());
-server.use(logger());
-server.use(compression());
-server.use(bodyParser())
-
-// views
-configureViews(server);
-
-// routes
-configureRouter(server);
-
-// public assets
-configureStaticServer(server);
-
-// error handlers
-configureErrorHandlers(server)
+server.listen(PORT, () => {
+  logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
+});
