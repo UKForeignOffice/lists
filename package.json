@@ -5,8 +5,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development webpack",
-    "start:dev": "npm run prisma:generate && nodemon",
-    "start:prod": "NODE_ENV=production nodemon dist/server/index.js",
+    "start:dev": "NODE_ENV=development nodemon",
+    "start:prod": "NODE_ENV=production nodemon",
     "build": "npm run prisma:generate && NODE_ENV=production webpack",
     "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",

@@ -9,11 +9,16 @@ const devMode = process.env.NODE_ENV !== "production";
 const prodMode = process.env.NODE_ENV === "production";
 const environment = prodMode ? "production" : "development";
 
+console.log("Webpack Starting", { devMode , prodMode });
 
 const client = {
   target: "web",
   mode: environment,
   watch: devMode,
+  watchOptions: {
+    poll: 300,
+    ignored: /node_modules/
+  },
   entry: path.resolve(__dirname, "src", "client", "main.ts"),
   output: {
     path: path.resolve(__dirname, "dist", "client"),

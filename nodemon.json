@@ -1,5 +1,5 @@
 {
-  "watch": ["src"],
+  "watch": ["dist"],
   "legacyWatch": true,
   "delay": "500",
   "ext": "ts,html,scss,css",
