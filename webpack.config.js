@@ -10,6 +10,9 @@ const devMode = process.env.NODE_ENV !== "production";
 const prodMode = process.env.NODE_ENV === "production";
 const environment = prodMode ? "production" : "development";
 
+
+console.log({ node_env: process.env.NODE_ENV, devMode, prodMode });
+
 const client = {
   target: "web",
   mode: environment,
@@ -18,6 +21,7 @@ const client = {
   output: {
     path: path.resolve(__dirname, "dist", "client"),
     filename: "main.js",
+    publicPath: "/assets/",
   },
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -36,7 +40,6 @@ const client = {
             loader: "ts-loader",
             options: {
               transpileOnly: true,
-              configFile: "tsconfig-client.json",
             },
           },
         ],
@@ -49,7 +52,6 @@ const client = {
           },
           {
             loader: "css-loader",
-            options: {},
           },
           {
             loader: "postcss-loader",
@@ -111,11 +113,11 @@ const client = {
         },
       ],
     }),
-    // new BundleAnalyzerPlugin({
-    //   analyzerMode: "static",
-    //   defaultSizes: "gzip",
-    //   openAnalyzer: false,
-    // }),
+    new BundleAnalyzerPlugin({
+      analyzerMode: "static",
+      defaultSizes: "gzip",
+      openAnalyzer: false,
+    }),
   ],
   externals: [
     nodeExternals({
