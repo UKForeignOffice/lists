@@ -4,7 +4,7 @@ import {
   LOG_LEVEL,
   // LOCAL_DEV,
   isTest,
-} from "config";
+} from "server/config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message.includes("HTTP GET")) {
@@ -32,7 +32,7 @@ const transportsList = [
       format.simple(),
       format.colorize({ all: true })
     ),
-    silent: isTest(),
+    silent: isTest,
   }),
   new transports.File({ filename: "error.log", level: "error" }),
 ];

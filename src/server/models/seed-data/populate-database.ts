@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { logger } from "services/logger";
+import { logger } from "server/services/logger";
 
 import { populateCountryLawyers } from "./helpers";
 import { CountriesWithData } from "../types";

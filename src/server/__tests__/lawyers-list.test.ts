@@ -1,6 +1,6 @@
 import $ from "cheerio";
 import request from "supertest";
-import { server } from "..";
+import { server } from "../server";
 
 describe("Lawyers List:", () => {
   test("lawyer's land page GET request is correct", async () => {

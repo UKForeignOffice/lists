@@ -1,4 +1,5 @@
-@import "../../node_modules/govuk-frontend/govuk/all";
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+@import "../../../node_modules/govuk-frontend/govuk/all";
 
 .answers-box {
   background-color: govuk-colour("light-grey");

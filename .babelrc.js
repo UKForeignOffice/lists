@@ -8,8 +8,6 @@ module.exports = {
         alias: {
           "client/*": ["client/*"],
           "server/*": ["server/*"],
-          "config/*": ["config/*"],
-          "services/*": ["services/*"],
         },
         extensions: [".ts", ".tsx"],
       },

@@ -1,4 +1,4 @@
-import { server } from "../..";
+import { server } from "../../server";
 
 describe("Views middleware", () => {
   test("views folder is configured correctly", () => {

@@ -8,7 +8,7 @@ import {
   removeQueryParameter,
   getCountryLawyerRedirectLink,
 } from "../helpers";
-import { fcdoLawyersPagesByCountry } from "services/metadata";
+import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
 
 describe("Lawyers List:", () => {
@@ -16,6 +16,8 @@ describe("Lawyers List:", () => {
     test("result is correct when country has legal aid support", () => {
       expect(countryHasLegalAid("Spain")).toBe(true);
       expect(countryHasLegalAid("spain")).toBe(true);
+      expect(countryHasLegalAid("bosnia and Herzegovina")).toBe(true);
+
     });
 
     test("result is correct when country does not have legal aid support", () => {
