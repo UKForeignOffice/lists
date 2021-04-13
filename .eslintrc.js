@@ -4,7 +4,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   extends: ["standard-with-typescript", "prettier"],
   parserOptions: {
-    project: "./tsconfig.json",
+    project: "tsconfig.json",
   },
   rules: {
     "no-console": ["error"],

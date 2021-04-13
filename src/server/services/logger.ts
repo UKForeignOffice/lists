@@ -32,7 +32,7 @@ const transportsList = [
       format.simple(),
       format.colorize({ all: true })
     ),
-    // silent: isTest,
+    silent: isTest,
   }),
   new transports.File({ filename: "error.log", level: "error" }),
 ];

@@ -7,13 +7,15 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "lib": ["ES2020"],
+    "lib": ["es2015"],
     "esModuleInterop": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "paths": {
-      "client/*": ["src/client/*"],
-      "server/*": ["src/server/*"]
+      "client/*": ["client/*"],
+      "server/*": ["server/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "ignore": ["dist"]
 }
