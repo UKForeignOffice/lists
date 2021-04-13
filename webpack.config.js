@@ -92,7 +92,7 @@ const client = {
     new CopyPlugin({
       patterns: [
         {
-          from: "src/server/views",
+          from: path.resolve(__dirname, "src", "server", "views"),
           to: "../views",
         },
       ],
