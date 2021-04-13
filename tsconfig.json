@@ -13,9 +13,7 @@
     "resolveJsonModule": true,
     "paths": {
       "client/*": ["client/*"],
-      "server/*": ["server/*"],
-      "config/*": ["config/*"],
-      "services/*": ["services/*"]
+      "server/*": ["server/*"]
     }
   },
   "include": ["src/**/*"],

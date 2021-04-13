@@ -1,5 +1,5 @@
 import request from "supertest";
-import { server } from "../..";
+import { server } from "../../server";
 
 describe("Health-check route", () => {
   test("/health-check is responding correctly", async () => {

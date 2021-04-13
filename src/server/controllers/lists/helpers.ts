@@ -1,10 +1,19 @@
 import querystring from "querystring";
-import { isArray, omit, isString, trim, get, without, startCase } from "lodash";
+import {
+  isArray,
+  omit,
+  isString,
+  trim,
+  get,
+  without,
+  mapKeys,
+  lowerCase,
+} from "lodash";
 import { Request } from "express";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
-} from "services/metadata";
+} from "server/services/metadata";
 import { ListsRequestParams } from "./types";
 import { CountryName } from "server/models/types";
 
@@ -99,16 +108,56 @@ export function removeQueryParameter(
   return `${querystring.stringify(params)}`;
 }
 
-export function getCountryLawyerRedirectLink(countryName: CountryName): string {
-  return get(
-    fcdoLawyersPagesByCountry,
-    Object.keys(fcdoLawyersPagesByCountry).find(
-      (key) => key.toLowerCase() === countryName.toLowerCase()
-    ) ?? 'unknown',
-    "https://www.gov.uk/government/collections/list-of-lawyers"
+export const getCountryLawyerRedirectLink = (() => {
+  const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) =>
+    lowerCase(key)
   );
+
+  return (countryName: CountryName): string => {
+    return get(
+      pagesByCountry,
+      lowerCase(countryName),
+      "https://www.gov.uk/government/collections/list-of-lawyers"
+    );
+  };
+})();
+
+export const countryHasLegalAid = (() => {
+  const countriesWithLegalAid = listOfCountriesWithLegalAid.map(lowerCase);
+  return (country?: string): boolean =>
+    countriesWithLegalAid.includes(lowerCase(country));
+})();
+
+export function needToReadNotice(readNotice?: string): boolean {
+  return readNotice === undefined;
 }
 
-export function countryHasLegalAid(country: string): boolean {
-  return listOfCountriesWithLegalAid.includes(startCase(country));
+export function needToAnswerCountry(
+  country?: ListsRequestParams["country"]
+): boolean {
+  return country === undefined || country === "";
+}
+
+export function needToAnswerRegion(
+  region?: ListsRequestParams["region"]
+): boolean {
+  return region === undefined || region === "";
+}
+
+export function needToAnswerPracticeArea(
+  practiceArea?: ListsRequestParams["practiceArea"]
+): boolean {
+  return practiceArea === undefined || practiceArea.length === 0;
+}
+
+export function needToAnswerLegalAid(
+  legalAid?: ListsRequestParams["legalAid"]
+): boolean {
+  return legalAid === undefined || legalAid === "";
+}
+
+export function needToReadDisclaimer(
+  readDisclaimer?: ListsRequestParams["readDisclaimer"]
+): boolean {
+  return readDisclaimer === undefined || readDisclaimer === "";
 }

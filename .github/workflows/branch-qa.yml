@@ -14,6 +14,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Prisma generate
+        run: npm run prisma:generate
+
+      - name: Type check
+        run: npm run type-check
+
       - name: Lint
         run: npm run lint
 

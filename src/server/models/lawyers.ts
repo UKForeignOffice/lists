@@ -1,8 +1,8 @@
 import { isArray, upperFirst } from "lodash";
 import { format } from "sqlstring";
 import { prisma } from "./prisma-client";
-import { locatePlaceByText } from "services/location";
-import { logger } from "services/logger";
+import { locatePlaceByText } from "server/services/location";
+import { logger } from "server/services/logger";
 import { Point, Lawyer } from "./types";
 
 // Helpers
