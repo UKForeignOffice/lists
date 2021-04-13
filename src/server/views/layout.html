@@ -23,16 +23,13 @@
   <link rel="preload" as="font" href="/assets/fonts/light-94a07e06a1-v2.woff2" type="font/woff" crossorigin="anonymous">
   <link rel="preload" as="font" href="/assets/fonts/light-f591b13f7d-v2.woff" type="font/woff" crossorigin="anonymous">
   <link href="/assets/accessible-autocomplete.min.css" rel="stylesheet" />
-  <% for(var i=0; i < htmlWebpackPlugin.files.css.length; i++) {%>
-    <link type="text/css" rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[i] %>">
-  <% } %>
+  <link type="text/css" rel="stylesheet" href="/assets/styles/main.css">
+  
   <meta name="Description" content="Find {{ serviceLabel if serviceLabel else "a Professional Service"}} {{ "in " + _.startCase(country) if country else "abroad"}} - GOV.UK">
   
   <script src="/assets/govuk-frontend/all.js"></script>
   <script src="/assets/accessible-autocomplete.min.js"></script>
-  <% for(var i=0; i < htmlWebpackPlugin.files.js.length; i++) {%>
-    <script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[i] %>"></script>
-  <% } %>
+  <script type="text/javascript" src="/assets/main.js"></script>
 {% endblock %}
 
 

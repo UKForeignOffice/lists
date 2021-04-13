@@ -1,7 +1,6 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
@@ -10,8 +9,6 @@ const devMode = process.env.NODE_ENV !== "production";
 const prodMode = process.env.NODE_ENV === "production";
 const environment = prodMode ? "production" : "development";
 
-
-console.log({ node_env: process.env.NODE_ENV, devMode, prodMode });
 
 const client = {
   target: "web",
@@ -83,33 +80,15 @@ const client = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(
-        __dirname,
-        "src",
-        "server",
-        "views",
-        "layout.html"
-      ),
-      filename: "../views/layout.html",
-      minify: false,
-      scriptLoading: "defer",
-      inject: false,
-      hash: prodMode,
-      publicPath: "/assets/",
-    }),
     new MiniCssExtractPlugin({
-      filename: devMode ? "styles/[name].css" : "styles/[name].[hash].css",
-      chunkFilename: devMode ? "styles/[id].css" : "styles/[id].[hash].css",
+      filename: devMode ? "styles/[name].css" : "styles/[name].css",
+      chunkFilename: devMode ? "styles/[id].css" : "styles/[id].css",
     }),
     new CopyPlugin({
       patterns: [
         {
           from: "src/server/views",
           to: "../views",
-          globOptions: {
-            ignore: ["**/layout.html"],
-          },
         },
       ],
     }),
