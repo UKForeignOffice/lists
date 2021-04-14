@@ -18,7 +18,7 @@ FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser ./src ./src/
 USER 1001
-RUN npm run build
+RUN npm run prisma:generate && npm run build:prod
 
 
 FROM build AS runner

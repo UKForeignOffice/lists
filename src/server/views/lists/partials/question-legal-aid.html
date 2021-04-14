@@ -21,31 +21,32 @@
         <div class="govuk-radios__item">
           <input
             class="govuk-radios__input"
-            id="legal-aid"
+            id="legal-aid-yes"
             name="legalAid"
             type="radio"
             value="yes"
           />
-          <label class="govuk-label govuk-radios__label" for="legal-aid">
+          <label class="govuk-label govuk-radios__label" for="legal-aid-yes">
             Yes
           </label>
         </div>
         <div class="govuk-radios__item">
           <input
             class="govuk-radios__input"
-            id="legal-aid-2"
+            id="legal-aid-no"
             name="legalAid"
             type="radio"
             value="no"
           />
-          <label class="govuk-label govuk-radios__label" for="legal-aid-2">
+          <label class="govuk-label govuk-radios__label" for="legal-aid-no">
             No
           </label>
         </div>
       </div>
       <input
+        aria-hidden="true"
+        disabled
         class="govuk-radios__input"
-        id="legal-aid-2"
         name="legalAid"
         type="radio"
         value=""
