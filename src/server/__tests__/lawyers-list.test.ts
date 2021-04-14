@@ -1,5 +1,6 @@
 import $ from "cheerio";
 import request from "supertest";
+import { axe } from "jest-axe";
 import { server } from "../server";
 
 describe("Lawyers List:", () => {
@@ -14,6 +15,14 @@ describe("Lawyers List:", () => {
 
     expect(pageHeader.text().trim()).toBe("Find a lawyer abroad");
     expect(continueButton.text()).toBe("Continue");
+  });
+
+  test("lawyer's land page accessibility", async () => {
+    const { text } = await request(server)
+      .get("/find?serviceType=lawyers")
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
   });
 
   test("lawyer's land page POST request is correct", async () => {
@@ -40,6 +49,14 @@ describe("Lawyers List:", () => {
     expect(continueButton.text()).toBe("Continue");
   });
 
+  test("lawyer's country question page accessibility", async () => {
+    const { text } = await request(server)
+      .get("/find?serviceType=lawyers&readNotice=ok")
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
+  });
+
   test("lawyer's country question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post("/find?serviceType=lawyers&readNotice=ok")
@@ -64,6 +81,14 @@ describe("Lawyers List:", () => {
       "Which area in Spain do you need a lawyer from?"
     );
     expect(continueButton.text()).toBe("Continue");
+  });
+
+  test("lawyer's region question page accessibility", async () => {
+    const { text } = await request(server)
+      .get("/find?serviceType=lawyers&readNotice=ok&country=spain")
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
   });
 
   test("lawyer's region question page POST request is correct", async () => {
@@ -94,6 +119,16 @@ describe("Lawyers List:", () => {
     expect(continueButton.text()).toBe("Continue");
   });
 
+  test("lawyer's legal areas question page accessibility", async () => {
+    const { text } = await request(server)
+      .get(
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid"
+      )
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
+  });
+
   test("Lawyer's legal areas question page POST request is correct", async () => {
     const { status, header } = await request(server)
       .post(
@@ -120,6 +155,16 @@ describe("Lawyers List:", () => {
 
     expect(pageHeader.text().trim()).toBe("Are you interested in legal aid?");
     expect(continueButton.text()).toBe("Continue");
+  });
+
+  test("lawyer's legal aid question page accessibility", async () => {
+    const { text } = await request(server)
+      .get(
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate"
+      )
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
   });
 
   test("Lawyer's legal aid question is omitted for country without legal aid support", async () => {
@@ -163,6 +208,16 @@ describe("Lawyers List:", () => {
 
     expect(pageHeader.text().trim()).toBe("Disclaimer");
     expect(continueButton.text()).toBe("Continue");
+  });
+
+  test("lawyer's disclaimer question page accessibility", async () => {
+    const { text } = await request(server)
+      .get(
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no"
+      )
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
   });
 
   test("Lawyer's disclaimer question page POST request is correct", async () => {
@@ -245,5 +300,15 @@ describe("Lawyers List:", () => {
     expect(answers.eq(4).find("a").attr("href")).toEqual(
       "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
     );
+  });
+
+  test("lawyer's results page accessibility", async () => {
+    const { text } = await request(server)
+      .get(
+        "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+      )
+      .type("text/html");
+
+    expect(await axe(text)).toHaveNoViolations();
   });
 });
