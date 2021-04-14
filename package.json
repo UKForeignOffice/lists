@@ -83,7 +83,7 @@
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.2.4",
     "webpack": "^5.32.0",
-    "webpack-bundle-analyzer": "^4.4.0",
+    "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
     "webpack-node-externals": "^2.5.2",
     "winston-papertrail": "^1.0.5"
