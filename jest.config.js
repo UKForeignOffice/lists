@@ -11,7 +11,8 @@ module.exports = {
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: ["json"],
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   // setupFiles
   setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
+  setupFilesAfterEnv: ["<rootDir>/.jest/extensions.js"],
 };
