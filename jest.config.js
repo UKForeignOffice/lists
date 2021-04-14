@@ -9,7 +9,7 @@ module.exports = {
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "babel",
   // A list of reporter names that Jest uses when writing coverage reports
-  coverageReporters: ["json"],
+  coverageReporters: ["json", "text"],
   // The test environment that will be used for testing
   testEnvironment: "jsdom",
   // setupFiles
