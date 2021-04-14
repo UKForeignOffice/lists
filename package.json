@@ -21,7 +21,7 @@
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "^2.20.0",
+    "@prisma/client": "^2.21.0",
     "@types/node-fetch": "^2.5.10",
     "accessible-autocomplete": "^2.0.3",
     "aws-sdk": "^2.886.0",
