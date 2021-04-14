@@ -21,10 +21,10 @@
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "^2.20.0",
+    "@prisma/client": "^2.21.0",
     "@types/node-fetch": "^2.5.10",
     "accessible-autocomplete": "^2.0.3",
-    "aws-sdk": "^2.885.0",
+    "aws-sdk": "^2.886.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
@@ -36,8 +36,8 @@
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.3",
-    "pg": "^8.5.1",
-    "prisma": "^2.20.0",
+    "pg": "^8.6.0",
+    "prisma": "^2.21.0",
     "sqlstring": "^2.3.2",
     "winston": "^3.3.3"
   },
@@ -66,7 +66,7 @@
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.1",
     "eslint": "^7.24.0",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-prettier": "^8.2.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "file-loader": "^6.2.0",
     "husky": "^6.0.0",
@@ -84,8 +84,8 @@
     "ts-standard": "^10.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.2.4",
-    "webpack": "^5.31.2",
-    "webpack-bundle-analyzer": "^4.4.0",
+    "webpack": "^5.32.0",
+    "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
     "webpack-node-externals": "^2.5.2",
     "winston-papertrail": "^1.0.5"
