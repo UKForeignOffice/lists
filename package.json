@@ -36,7 +36,7 @@
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.3",
     "pg": "^8.6.0",
-    "prisma": "^2.21.0",
+    "prisma": "^2.21.1",
     "sqlstring": "^2.3.2",
     "winston": "^3.3.3"
   },
