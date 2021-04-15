@@ -147,6 +147,7 @@ const server = {
   plugins: [
     new NodemonPlugin({
       verbose: true,
+      watch: path.resolve("./dist"),
     }),
   ],
   externals: [
