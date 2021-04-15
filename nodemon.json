@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "watch": ["disxt"],
+  "watch": ["dist"],
   "legacyWatch": true,
   "delay": "500",
   "ext": "ts,html,scss,css",
