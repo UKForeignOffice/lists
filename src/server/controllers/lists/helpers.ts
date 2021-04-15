@@ -97,7 +97,7 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
     ...req.query,
     ...req.body,
     ...req.params,
-  };
+  }
 }
 
 export function removeQueryParameter(
