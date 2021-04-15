@@ -17,8 +17,16 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
-      <div class="govuk-radios govuk-radios--inline">
+      <div class="govuk-radios govuk-radios--inline" role="radiogroup">
         <div class="govuk-radios__item">
+          <input
+            aria-hidden="true"
+            class="govuk-radios__input"
+            name="legalAid"
+            type="hidden"
+            value=""
+            checked
+          />
           <input
             class="govuk-radios__input"
             id="legal-aid-yes"
@@ -43,15 +51,6 @@
           </label>
         </div>
       </div>
-      <input
-        aria-hidden="true"
-        disabled
-        class="govuk-radios__input"
-        name="legalAid"
-        type="radio"
-        value=""
-        checked
-      />
     </fieldset>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>
