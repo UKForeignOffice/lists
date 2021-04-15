@@ -1,6 +1,7 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
+const NodemonPlugin = require("nodemon-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
@@ -143,6 +144,11 @@ const server = {
       },
     ],
   },
+  plugins: [
+    new NodemonPlugin({
+      verbose: true,
+    }),
+  ],
   externals: [
     nodeExternals({
       modulesDir: "node_modules",
