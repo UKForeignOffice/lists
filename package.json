@@ -95,6 +95,6 @@
     "**/*{ts,tsx}": "prettier --write --ignore-unknown",
     "*.{ts,tsx}": "eslint --fix",
     "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "*.{js,css,scss,md}": "prettier --write"
   }
 }
