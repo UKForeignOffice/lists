@@ -91,6 +91,11 @@
     "webpack-node-externals": "^2.5.2",
     "winston-papertrail": "^1.0.5"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run type-check"
+    }
+  },
   "lint-staged": {
     "**/*{ts,tsx}": "prettier --write --ignore-unknown",
     "*.{ts,tsx}": "eslint --fix",
