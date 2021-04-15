@@ -116,6 +116,7 @@ const server = {
   mode: environment,
   watch: devMode,
   entry: path.resolve(__dirname, "src", "server", "index.ts"),
+  devtool: "eval-cheap-module-source-map",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "server.js",
@@ -148,6 +149,7 @@ const server = {
     new NodemonPlugin({
       verbose: true,
       watch: path.resolve("./dist"),
+      nodeArgs: ["--inspect"],
     }),
   ],
   externals: [
