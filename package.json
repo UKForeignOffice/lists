@@ -17,7 +17,7 @@
     "prisma:migrate": "npx prisma migrate dev --schema ./src/server/models/schema.prisma",
     "prisma:reset": "npx prisma migrate reset --schema ./src/server/models/schema.prisma --force",
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/schema.prisma",
-    "prepare:git:hooks": "npx mrm lint-staged"
+    "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\""
   },
   "dependencies": {
     "@prisma/client": "^2.21.0",
@@ -90,11 +90,6 @@
     "webpack-cli": "^4.6.0",
     "webpack-node-externals": "^2.5.2",
     "winston-papertrail": "^1.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run type-check"
-    }
   },
   "lint-staged": {
     "**/*{ts,tsx}": "prettier --write --ignore-unknown",
