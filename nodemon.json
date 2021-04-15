@@ -1,8 +1,8 @@
 {
-  "watch": ["dist"],
+  "verbose": true,
+  "watch": ["disxt"],
   "legacyWatch": true,
   "delay": "500",
   "ext": "ts,html,scss,css",
-  "ignore": ["src/public/stylesheets/*", ".test.ts"],
   "exec": "node --experimental-modules `if [ $NODE_ENV = \"development\" ]; then echo \"--inspect=0.0.0.0 --nolazy\"; fi` ./dist/server.js"
 }
