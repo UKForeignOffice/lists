@@ -52,11 +52,9 @@ Important: When the application is build inside docker a dist folder will be cre
 ### Coding Style and Lint
 We are using [https://standardjs.com/](https://standardjs.com), [eslint-config-standard-with-typescript](https://www.npmjs.com/package/eslint-config-standard-with-typescript) and [https://prettier.io/](https://prettier.io/) for code styling and formatting.
 
-### Pre-commit Hooks
-Lint and prettier formatting will be run on a pre-commit hook, to by pass it jut use the `--no-verify` flag, e.g: "git commit -m 'msg' --no-verify".
-
-### Pre-push Hooks
-Typescript type check will be run on a pre-push hook, to by pass it jut use the `--no-verify` flag, e.g: "git commit -m 'msg' --no-verify".
+### Pre-Commit and Pre-Push Hooks
+Lint and prettier formatting will be run on a pre-commit hook and Typescript type check will be run on a pre-push hook.
+To by pass them you can use the `--no-verify` flag, e.g: "git commit -m 'msg' --no-verify".
 
 ## Continuous Integration
 TODO:Semantic release
