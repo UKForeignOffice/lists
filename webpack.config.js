@@ -1,4 +1,5 @@
 const path = require("path");
+const dotenv = require("dotenv");
 const CopyPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const NodemonPlugin = require("nodemon-webpack-plugin");
@@ -6,11 +7,14 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
+dotenv.config();
+
 const devMode = process.env.NODE_ENV !== "production";
 const prodMode = process.env.NODE_ENV === "production";
 const environment = prodMode ? "production" : "development";
+const isDockerCompose = process.env.DOCKER_COMPOSE === "true";
 
-console.log("Webpack Starting", { devMode , prodMode });
+console.log("Webpack Starting", { devMode, prodMode, isDockerCompose });
 
 const client = {
   target: "web",
@@ -18,7 +22,7 @@ const client = {
   watch: devMode,
   watchOptions: {
     poll: 300,
-    ignored: /node_modules/
+    ignored: /node_modules/,
   },
   entry: path.resolve(__dirname, "src", "client", "main.ts"),
   output: {
@@ -149,7 +153,7 @@ const server = {
     new NodemonPlugin({
       verbose: true,
       watch: path.resolve("./dist"),
-      nodeArgs: ["--inspect"],
+      nodeArgs: [`--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`],
     }),
   ],
   externals: [
@@ -159,7 +163,4 @@ const server = {
   ],
 };
 
-module.exports = [
-  client, 
-  server
-];
+module.exports = [client, server];
