@@ -2,8 +2,8 @@ version: "3.9"
 services:
   lists:
     container_name: lists
-    image: bertrandmc/express-typescript-seed
     environment:
+      - DOCKER_COMPOSE=true
       - NODE_ENV=development
       - ERROR_LEVEL=error
       - PORT=3000
