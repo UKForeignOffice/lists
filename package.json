@@ -23,7 +23,7 @@
     "@prisma/client": "^2.21.1",
     "@types/node-fetch": "^2.5.10",
     "accessible-autocomplete": "^2.0.3",
-    "aws-sdk": "^2.887.0",
+    "aws-sdk": "^2.888.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
