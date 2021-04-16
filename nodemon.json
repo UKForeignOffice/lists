@@ -1,6 +1,0 @@
-{
-  "verbose": true,
-  "watch": ["dist"],
-  "ext": "ts,html,scss,css",
-  "exec": "node --experimental-modules ./dist/server.js"
-}
