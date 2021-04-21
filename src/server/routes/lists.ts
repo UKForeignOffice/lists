@@ -8,7 +8,7 @@ import {
   listsFinderStartRoute,
   listsFinderFormRoute,
   listsFinderResultsRoute,
-} from "server/controllers/lists/lists";
+} from "server/controllers/lists";
 
 const router = express.Router();
 
