@@ -1,42 +1,56 @@
+import request from "supertest";
 import { Express } from "express";
-import { spawn } from "child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import proxy from "express-http-proxy";
 import { logger } from "server/services/logger";
 
 const FORM_RUNNER_BASE_ROUTE = "application";
 const FORM_RUNNER_URL = "localhost:3001";
 
-let formRunnerStarted = false;
+let isStarting = false;
 
-export function startFormRunner(): void {
-  const formRunner = spawn(`npm run form-runner:start`, { shell: true });
+export async function startFormRunner(): Promise<boolean> {
+  let formRunner: ChildProcessWithoutNullStreams;
+  const isAlreadyRunning = await isFormRunnerReady();
 
-  formRunner.stdout.on("data", (data) => {
-    const hasStarted = data.toString().indexOf("/{id}/{path*}") > -1;
+  if (!isStarting && !isAlreadyRunning) {
+    isStarting = true;
+    formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
-    if (hasStarted) {
-      formRunnerStarted = true;
-      logger.info("Form Runner Started");
+    formRunner.stderr.on("data", (data) => {
+      logger.error("From Runner Error: ", data.toString());
+    });
+
+    formRunner.on("exit", () => {
+      isStarting = false;
+      logger.info("Form Runner Stopped");
+    });
+
+    process.once("SIGUSR2", function () {
+      formRunner.kill();
+    });
+
+    process.on("SIGINT", () => {
+      formRunner.kill();
+    });
+  }
+
+  while (true) {
+    const isReady = await isFormRunnerReady();
+
+    if (isReady) {
+      return true;
     }
-  });
-
-  formRunner.stderr.on("data", (data) => {
-    logger.error("From Runner Error: ", data.toString());
-  });
-
-  formRunner.on("exit", () => {
-    formRunnerStarted = false;
-    logger.info("Form Runner Stopped");
-    startFormRunner();
-  });
-
-  process.once("SIGUSR2", function () {
-    formRunner.kill("SIGINT");
-  });
+  }
 }
 
-export function isFormRunnerReady(): boolean {
-  return formRunnerStarted;
+export async function isFormRunnerReady(): Promise<boolean> {
+  try {
+    const { status } = await request(FORM_RUNNER_URL).get("/status");
+    return status === 200;
+  } catch (error) {
+    return false;
+  }
 }
 
 export function configureFormRunner(server: Express): void {
