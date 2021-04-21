@@ -12,3 +12,7 @@ startFormRunner()
   .catch((error) => {
     logger.error("Server initialization error", error);
   });
+
+process.on("exit", function () {
+  logger.info(`Server Stopped`);
+});
