@@ -17,7 +17,9 @@
     "prisma:migrate": "npx prisma migrate dev --schema ./src/server/models/schema.prisma",
     "prisma:reset": "npx prisma migrate reset --schema ./src/server/models/schema.prisma --force",
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/schema.prisma",
-    "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\""
+    "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
+    "prepare:form-builder": "./scripts/prepare-form-builder.sh",
+    "form-builder:start": "cd ./src/forms/form-builder && yarn runner start"
   },
   "dependencies": {
     "@prisma/client": "^2.21.2",
@@ -28,6 +30,7 @@
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
     "express": "^4.16.3",
+    "express-http-proxy": "^1.6.2",
     "express-rate-limit": "^5.2.6",
     "express-winston": "^4.1.0",
     "govuk-frontend": "^3.11.0",
@@ -50,6 +53,7 @@
     "@types/cheerio": "^0.22.28",
     "@types/compression": "^1.7.0",
     "@types/express": "^4.17.11",
+    "@types/express-http-proxy": "^1.6.1",
     "@types/express-rate-limit": "^5.1.1",
     "@types/express-winston": "^4.0.0",
     "@types/jest": "^26.0.22",

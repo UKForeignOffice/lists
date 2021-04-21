@@ -7,6 +7,7 @@ import {
   configureViews,
   configureStaticServer,
   configureErrorHandlers,
+  configureFormRunnerProxy,
 } from "./middlewares";
 import { configureRouter } from "./routes";
 
@@ -16,7 +17,12 @@ export const server = express();
 server.use(helmet());
 server.use(logger());
 server.use(compression());
-server.use(bodyParser())
+
+// form runner proxy must be initialized before body parser
+configureFormRunnerProxy(server);
+
+//
+server.use(bodyParser());
 
 // views
 configureViews(server);
@@ -28,4 +34,4 @@ configureRouter(server);
 configureStaticServer(server);
 
 // error handlers
-configureErrorHandlers(server)
+configureErrorHandlers(server);

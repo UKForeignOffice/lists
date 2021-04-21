@@ -121,4 +121,4 @@ src/public/stylesheets/styles.css.map
 playground/
 
 # form-builder submodule
-src/form-builder/
+src/forms/form-builder/

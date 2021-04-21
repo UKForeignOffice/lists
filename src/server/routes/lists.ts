@@ -25,4 +25,9 @@ router.post(listsFinderFormRoute, listsPostController);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(listsFinderResultsRoute, listsResultsController);
 
+router.post("/lists/submit", (req, res) => {
+  // TODO
+  res.json({ reference: 123 });
+});
+
 export default router;
