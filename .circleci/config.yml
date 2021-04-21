@@ -41,6 +41,10 @@ jobs:
           command: npm run lint
 
       - run:
+          name: Install Form Runner
+          command: npm run form-runner:install
+
+      - run:
           name: Run tests
           command: npm run test
 
