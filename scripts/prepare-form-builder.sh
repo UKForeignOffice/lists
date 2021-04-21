@@ -18,7 +18,7 @@ else
   echo "PORT=3001" >> ./runner/.env
   echo "PRIVACY_POLICY_URL=https://www.gov.uk/help/privacy-notice" >> ./runner/.env
   echo "SERVICE_NAME=Find a Professional Service Abroad" >> ./runner/.env
-  echo "FEEDBACK_LINK=mailto:digitalservicesfeedback@fco.gov.uk"
+  echo "FEEDBACK_LINK=mailto:digitalservicesfeedback@fco.gov.uk" >> ./runner/.env
 
   # cleanup
   rm -rf ./designer
