@@ -23,6 +23,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Install Form Runner
+        run: npm run form-runner:install
+
       - name: Test
         run: npm run test
-
