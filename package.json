@@ -4,7 +4,7 @@
     "node": ">=0.14"
   },
   "scripts": {
-    "dev": "NODE_ENV=development npm run form-runner:install && webpack",
+    "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
     "build:prod": "NODE_ENV=production npm run form-runner:install && webpack",
     "start:prod": "NODE_ENV=production nodemon ./dist/server.js",
     "type-check": "tsc --noEmit",
