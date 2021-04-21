@@ -1,7 +1,10 @@
 import { server } from "./server";
 import { PORT, NODE_ENV } from "./config";
 import { logger } from "./services/logger";
-import { isFormRunnerReady } from "server/middlewares";
+import {
+  startFormRunner,
+  isFormRunnerReady,
+} from "server/middlewares/form-runner";
 
 function startServer(): void {
   if (isFormRunnerReady()) {
@@ -13,4 +16,5 @@ function startServer(): void {
   }
 }
 
+startFormRunner();
 startServer();

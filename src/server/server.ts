@@ -7,7 +7,7 @@ import {
   configureViews,
   configureStaticServer,
   configureErrorHandlers,
-  configureFormRunnerProxy,
+  configureFormRunner,
 } from "./middlewares";
 import { configureRouter } from "./routes";
 
@@ -18,10 +18,9 @@ server.use(helmet());
 server.use(logger());
 server.use(compression());
 
-// form runner proxy must be initialized before body parser
-configureFormRunnerProxy(server);
+// form runner must be initialized before body parser
+configureFormRunner(server);
 
-//
 server.use(bodyParser());
 
 // views
