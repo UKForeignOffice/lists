@@ -31,7 +31,7 @@
     "express-rate-limit": "^5.2.6",
     "express-winston": "^4.1.0",
     "govuk-frontend": "^3.11.0",
-    "helmet": "^4.4.1",
+    "helmet": "^4.5.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.3",
