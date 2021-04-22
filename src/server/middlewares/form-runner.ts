@@ -66,6 +66,9 @@ export function configureFormRunner(server: Express): void {
       userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
         const data = proxyResData.toString("utf8");
 
+        // eslint-disable-next-line no-console
+        console.log("XXXX", data, typeof data);
+
         const updatedData = data
           .replaceAll(
             /(href|src)="\/([^'"]+)/g,
