@@ -6,8 +6,7 @@ RUN mkdir -p /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
     apk upgrade && \
-    apk add --no-cache bash git openssh && \
-    mkdir ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+    apk add --no-cache bash git
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
