@@ -1,4 +1,4 @@
-import { Request, Response, RequestHandler } from "express";
+import { Express, Request, Response } from "express";
 import compression from "compression";
 
 function shouldCompress(req: Request, res: Response): boolean {
@@ -10,4 +10,6 @@ function shouldCompress(req: Request, res: Response): boolean {
   return compression.filter(req, res);
 }
 
-export default (): RequestHandler => compression({ filter: shouldCompress });
+export function configureCompression(server: Express): void {
+  server.use(compression({ filter: shouldCompress }));
+}

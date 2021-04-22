@@ -1,25 +1,24 @@
 import request from "supertest";
 import { Express } from "express";
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { spawn } from "child_process";
 import proxy from "express-http-proxy";
 import { logger } from "server/services/logger";
 
-const FORM_RUNNER_BASE_ROUTE = "application";
+const FORM_RUNNER_BASE_ROUTE = "/application";
 const FORM_RUNNER_URL = "localhost:3001";
 
 let isStarting = false;
 
 export async function startFormRunner(): Promise<boolean> {
-  let formRunner: ChildProcessWithoutNullStreams;
   const isAlreadyRunning = await isFormRunnerReady();
 
   if (!isStarting && !isAlreadyRunning) {
     isStarting = true;
-    formRunner = spawn(`npm run form-runner:start`, { shell: true });
+    const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
     formRunner.stdout.on("data", () => {
       // TODO: investigate
-      // Strangely enough form-runner process will stop responding
+      // form-runner process stops responding
       // if this stdout listener is not registered
     });
 
@@ -61,21 +60,18 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export function configureFormRunner(server: Express): void {
   server.use(
-    `/${FORM_RUNNER_BASE_ROUTE}/*?`,
+    `${FORM_RUNNER_BASE_ROUTE}/*`,
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
-        const parts = req.originalUrl.split("?");
-        const queryString = parts[1] ?? "";
-        const updatedPath = parts[0].replace(`/${FORM_RUNNER_BASE_ROUTE}`, "");
-        return updatedPath + (queryString.length > 0 ? "?" + queryString : "");
+        return req.originalUrl.replace(`${FORM_RUNNER_BASE_ROUTE}`, "");
       },
-      userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
+      userResDecorator: function (_, proxyResData, userReq) {
         const data = proxyResData.toString("utf8");
 
         const updatedData = data
           .replaceAll(
             /(href|src)="\/([^'"]+)/g,
-            `$1="/${FORM_RUNNER_BASE_ROUTE}/$2"`
+            `$1="${FORM_RUNNER_BASE_ROUTE}/$2"`
           )
           .replaceAll(
             /<form(.*)>/g,
@@ -84,11 +80,11 @@ export function configureFormRunner(server: Express): void {
 
         return updatedData;
       },
-      userResHeaderDecorator(headers, userReq, userRes, proxyReq, proxyRes) {
+      userResHeaderDecorator(headers, _, userRes) {
         if (userRes.statusCode === 302) {
           return {
             ...headers,
-            location: `/${FORM_RUNNER_BASE_ROUTE}${headers.location}`,
+            location: `${FORM_RUNNER_BASE_ROUTE}${headers.location}`,
           };
         }
 
