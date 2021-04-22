@@ -10,10 +10,12 @@ describe.only("Form Runner:", () => {
   test("form-runner /health-check is responding correctly", async () => {
     try {
       const response = await request(server).get("/application/health-check");
+      // eslint-disable-next-line
       console.log(response);
       expect(response.status).toBe(200);
-    }catch(error) {
-      console.log("XXXXX", error)
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log("XXXXX", error);
     }
   });
 });
