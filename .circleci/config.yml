@@ -17,16 +17,7 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-1-{{ checksum "package-lock.json" }}
-
       - run: npm install
-
-      - save_cache:
-          paths:
-            - .yarn/cache
-          key: v1-dependencies-1-{{ checksum "package-lock.json" }}
 
       - run:
           name: Prisma generate
@@ -40,9 +31,18 @@ jobs:
           name: Lint
           command: npm run lint
 
+      - restore_form_runner_cache:
+          keys:
+            - v1-dependencies-1-{{ checksum "./src/form-runner/form-runner-app/package-lock.json" }}
+
       - run:
           name: Install Form Runner
           command: npm run form-runner:install
+
+      - save_form_runner_cache:
+          paths:
+            - ./src/form-runner/form-runner-app/.yarn/cache
+          key: v1-dependencies-1-{{ checksum "./src/form-runner/form-runner-app/package-lock.json" }}
 
       - run:
           name: Run tests
