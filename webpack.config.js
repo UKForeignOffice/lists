@@ -150,11 +150,17 @@ const server = {
     ],
   },
   plugins: [
-    new NodemonPlugin({
-      verbose: true,
-      watch: path.resolve("./dist"),
-      nodeArgs: [`--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`],
-    }),
+    ...(devMode
+      ? [
+          new NodemonPlugin({
+            verbose: true,
+            watch: path.resolve("./dist"),
+            nodeArgs: [
+              `--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`,
+            ],
+          }),
+        ]
+      : []),
   ],
   externals: [
     nodeExternals({
