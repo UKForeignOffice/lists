@@ -1,7 +1,7 @@
 {
   "version": "1.0.7",
   "engines": {
-    "node": ">=0.14"
+    "node": ">=15"
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
