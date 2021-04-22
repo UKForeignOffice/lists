@@ -1,6 +1,9 @@
 import _, { startCase } from "lodash";
 import { Request, Response } from "express";
-import { countriesList, legalPracticeAreasList } from "server/services/metadata";
+import {
+  countriesList,
+  legalPracticeAreasList,
+} from "server/services/metadata";
 import { trackListsSearch } from "server/services/google-analytics";
 import {
   getAllRequestParams,
@@ -25,6 +28,7 @@ import { lawyers, types as modelTypes } from "server/models";
 export const listsFinderStartRoute = "/";
 export const listsFinderFormRoute = "/find";
 export const listsFinderResultsRoute = "/results";
+export const listsFormRunnerApplicationRoute = "/apply/:serviceType";
 
 const DEFAULT_VIEW_PROPS = {
   _,
@@ -32,7 +36,7 @@ const DEFAULT_VIEW_PROPS = {
   listsFinderFormRoute,
 };
 
-// Controllers
+// Lists Controllers
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -65,6 +69,77 @@ export function listsPostController(req: Request, res: Response): void {
 
   res.redirect(`${DEFAULT_VIEW_PROPS.listsFinderFormRoute}?${queryString}`);
 }
+
+export function listsGetController(req: Request, res: Response): void {
+  const params = getAllRequestParams(req);
+
+  const { serviceType } = params;
+
+  if (serviceType === undefined) {
+    res.render("lists/question-page.html", {
+      ...DEFAULT_VIEW_PROPS,
+      ...params,
+      partialToRender: "question-service-type.html",
+      serviceLabel: getServiceLabel(serviceType),
+    });
+  } else if (serviceType === "lawyers") {
+    lawyersGetController(req, res);
+  }
+}
+
+export async function listsResultsController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const params = getAllRequestParams(req);
+  const { serviceType, country, legalAid, region } = params;
+  const practiceArea = practiceAreaFromParams(params);
+
+  trackListsSearch({
+    serviceType,
+    country,
+    region,
+    practiceArea: practiceArea?.join(","),
+    legalAid,
+  });
+
+  let searchResults: modelTypes.Lawyer[];
+
+  switch (serviceType) {
+    case "lawyers":
+      searchResults = await lawyers.findPublishedLawyersPerCountry({
+        country,
+        region,
+        legalAid,
+        practiceArea,
+      });
+      break;
+    default:
+      searchResults = [];
+  }
+
+  res.render("lists/results-page.html", {
+    ...DEFAULT_VIEW_PROPS,
+    ...params,
+    searchResults: searchResults,
+    removeQueryParameter,
+    queryString: queryStringFromParams(params),
+    serviceLabel: getServiceLabel(serviceType),
+  });
+}
+
+export function listRedirectToLawyersController(
+  req: Request,
+  res: Response
+): void {
+  const params = getAllRequestParams(req);
+  params.serviceType = "lawyers";
+  const queryString = queryStringFromParams(params);
+
+  res.redirect(`${listsFinderFormRoute}?${queryString}`);
+}
+
+// Lawyers Controllers
 
 export function lawyersGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
@@ -166,71 +241,22 @@ export function lawyersGetController(req: Request, res: Response): void {
   });
 }
 
-export function listsGetController(req: Request, res: Response): void {
-  const params = getAllRequestParams(req);
+// Professionals Application Form Controllers
 
-  const { serviceType } = params;
-
-  if (serviceType === undefined) {
-    res.render("lists/question-page.html", {
-      ...DEFAULT_VIEW_PROPS,
-      ...params,
-      partialToRender: "question-service-type.html",
-      serviceLabel: getServiceLabel(serviceType),
-    });
-  } else if (serviceType === "lawyers") {
-    lawyersGetController(req, res);
-  }
-}
-
-export async function listsResultsController(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const params = getAllRequestParams(req);
-  const { serviceType, country, legalAid, region } = params;
-  const practiceArea = practiceAreaFromParams(params);
-
-  trackListsSearch({
-    serviceType,
-    country,
-    region,
-    practiceArea: practiceArea?.join(","),
-    legalAid,
-  });
-
-  let searchResults: modelTypes.Lawyer[];
-
-  switch (serviceType) {
-    case "lawyers":
-      searchResults = await lawyers.findPublishedLawyersPerCountry({
-        country,
-        region,
-        legalAid,
-        practiceArea,
-      });
-      break;
-    default:
-      searchResults = [];
-  }
-
-  res.render("lists/results-page.html", {
-    ...DEFAULT_VIEW_PROPS,
-    ...params,
-    searchResults: searchResults,
-    removeQueryParameter,
-    queryString: queryStringFromParams(params),
-    serviceLabel: getServiceLabel(serviceType),
-  });
-}
-
-export function listRedirectToLawyersController(
+export function listFormRunnerApplicationController(
   req: Request,
   res: Response
 ): void {
-  const params = getAllRequestParams(req);
-  params.serviceType = "lawyers";
-  const queryString = queryStringFromParams(params);
+  const { serviceType } = req.params;
 
-  res.redirect(`${listsFinderFormRoute}?${queryString}`);
+  switch (serviceType) {
+    case "lawyers":
+      res.json({ reference: 123 });
+      break;
+    default:
+      res.status(500).send({
+        error:
+          "Service Type is incorrect, please verify form output configuration url is correct '/apply/:serviceType' ",
+      });
+  }
 }

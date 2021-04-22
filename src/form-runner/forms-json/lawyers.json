@@ -320,7 +320,7 @@
       "name": "i02AMQ893Sk0DFh0GX5d4",
       "title": "Post to Lists",
       "type": "webhook",
-      "outputConfiguration": { "url": "http://localhost:3000/lists/submit" }
+      "outputConfiguration": { "url": "http://localhost:3000/apply/lawyers" }
     }
   ],
   "version": 1,

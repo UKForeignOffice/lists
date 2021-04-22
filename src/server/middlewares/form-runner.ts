@@ -17,6 +17,12 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
     formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
+    formRunner.stdout.on("data", () => {
+      // TODO: investigate
+      // Strangely enough form-runner process will stop responding
+      // if this stdout listener is not registered
+    });
+
     formRunner.stderr.on("data", (data) => {
       logger.error("From Runner Error: ", data.toString());
     });

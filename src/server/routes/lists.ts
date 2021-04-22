@@ -8,6 +8,8 @@ import {
   listsFinderStartRoute,
   listsFinderFormRoute,
   listsFinderResultsRoute,
+  listsFormRunnerApplicationRoute,
+  listFormRunnerApplicationController,
 } from "server/controllers/lists";
 
 const router = express.Router();
@@ -25,9 +27,10 @@ router.post(listsFinderFormRoute, listsPostController);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(listsFinderResultsRoute, listsResultsController);
 
-router.post("/lists/submit", (req, res) => {
-  // TODO
-  res.json({ reference: 123 });
-});
+// lists application forms processing
+router.post(
+  listsFormRunnerApplicationRoute,
+  listFormRunnerApplicationController
+);
 
 export default router;
