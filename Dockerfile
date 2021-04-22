@@ -6,7 +6,8 @@ RUN mkdir -p /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
     apk upgrade && \
-    apk add --no-cache bash git openssh
+    apk add --no-cache bash git openssh && \
+    ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
@@ -17,6 +18,7 @@ RUN npm install
 FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser ./src ./src/
+RUN ls ./src
 USER 1001
 RUN npm run prisma:generate && npm run build:prod
 
