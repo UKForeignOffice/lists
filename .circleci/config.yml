@@ -19,7 +19,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-1-{{ checksum "./src/form-runner/form-runner-app/package-lock.json" }}
+            - v1-dependencies-1-{{ checksum "package-lock.json" }}
 
       - run: npm install
 
@@ -45,8 +45,9 @@ jobs:
 
       - save_cache:
           paths:
+            - .yarn/cache
             - ./src/form-runner/form-runner-app/.yarn/cache
-          key: v1-dependencies-1-{{ checksum "./src/form-runner/form-runner-app/package-lock.json" }}
+          key: v1-dependencies-1-{{ checksum "package-lock.json" }}
 
   publish:
     <<: *defaults
