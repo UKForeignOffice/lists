@@ -15,9 +15,15 @@ describe.only("Form Runner:", () => {
   });
 
   test("form-runner /health-check is responding correctly", async () => {
-    const response = await request(server)
-      .get("/application/health-check")
-      .type("text/html");
-    expect(response.status).toBe(200);
+    try {
+      const response = await request(server)
+        .get("/application/health-check")
+        .type("text/html");
+      expect(response.status).toBe(200);
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log("EEOROR", error);
+      expect(false).toBe(true);
+    }
   });
 });
