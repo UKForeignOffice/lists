@@ -5,7 +5,7 @@ import {
   isFormRunnerReady,
 } from "server/middlewares/form-runner";
 
-describe("Form Runner:", () => {
+describe.only("Form Runner:", () => {
   beforeAll(async () => {
     await startFormRunner();
   }, 30000);
