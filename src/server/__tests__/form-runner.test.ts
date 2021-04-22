@@ -1,11 +1,18 @@
 import request from "supertest";
 import { server } from "../server";
-import { startFormRunner } from "server/middlewares/form-runner";
+import {
+  startFormRunner,
+  isFormRunnerReady,
+} from "server/middlewares/form-runner";
 
 describe.only("Form Runner:", () => {
   beforeAll(async () => {
     await startFormRunner();
   }, 30000);
+
+  test("form-runner is running", async () => {
+    expect(await isFormRunnerReady()).toBe(true);
+  });
 
   test("form-runner /health-check is responding correctly", async () => {
     const response = await request(server)
