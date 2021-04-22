@@ -1,7 +1,11 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import { isLocalHost } from "server/config";
+import { isLocalHost, isTest } from "server/config";
 
-const logLevel: Prisma.LogLevel[] = ["warn", "error"];
+const logLevel: Prisma.LogLevel[] = [];
+
+if (!isTest) {
+  logLevel.push("warn", "error");
+}
 
 if (isLocalHost) {
   logLevel.push("query", "info");
