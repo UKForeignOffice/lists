@@ -1,3 +1,4 @@
+import os from "os";
 import request from "supertest";
 import { Express } from "express";
 import { spawn } from "child_process";
@@ -14,12 +15,15 @@ export async function startFormRunner(): Promise<boolean> {
 
   if (!isStarting && !isAlreadyRunning) {
     logger.info("Form Runner Starting");
+    logger.info(
+      `Pod Size: CPU: ${os.cpus()}, MEM: ${os.totalmem()}, FREEMEM: ${os.freemem()}`
+    );
 
     isStarting = true;
     const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
     formRunner.stdout.on("data", (data) => {
-      logger.error("Form Runner Data: ", data.toString());
+      logger.info("Form Runner Data: ", data.toString());
     });
 
     formRunner.stderr.on("data", (data) => {
