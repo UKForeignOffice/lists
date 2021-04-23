@@ -4,14 +4,14 @@ import { PapertrailTransport } from "winston-papertrail-transport";
 import { LOG_LEVEL, LOCAL_DEV, isTest } from "server/config";
 
 const ignoreHttpGET = format((info) => {
-  if (info.message.includes("HTTP GET")) {
+  if (info.message.startsWith("HTTP GET")) {
     return false;
   }
   return info;
 });
 
 const ignoreHttpPOST = format((info) => {
-  if (info.message.includes("HTTP POST")) {
+  if (info.message.startsWith("HTTP POST")) {
     return false;
   }
   return info;
