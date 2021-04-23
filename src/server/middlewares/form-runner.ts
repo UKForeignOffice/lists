@@ -13,17 +13,17 @@ export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
 
   if (!isStarting && !isAlreadyRunning) {
+    logger.info("Form Runner Starting");
+
     isStarting = true;
     const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
-    formRunner.stdout.on("data", () => {
-      // TODO: investigate
-      // form-runner process stops responding
-      // if this stdout listener is not registered
+    formRunner.stdout.on("data", (data) => {
+      logger.info("Form Runner Data: ", data.toString());
     });
 
     formRunner.stderr.on("data", (data) => {
-      logger.error("From Runner Error: ", data.toString());
+      logger.error("Form Runner Error: ", data.toString());
     });
 
     formRunner.on("exit", () => {
