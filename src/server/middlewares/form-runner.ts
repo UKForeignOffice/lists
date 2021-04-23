@@ -18,8 +18,8 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
     const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
-    formRunner.stdout.on("data", () => {
-      // TODO: Investigate why child process stops working if this event is not registered
+    formRunner.stdout.on("data", (data) => {
+      logger.error("Form Runner Data: ", data.toString());
     });
 
     formRunner.stderr.on("data", (data) => {

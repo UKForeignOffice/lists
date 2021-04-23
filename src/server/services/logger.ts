@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from "winston";
 import { PapertrailTransport } from "winston-papertrail-transport";
 
-import { LOG_LEVEL, LOCAL_DEV, isTest } from "server/config";
+import { LOG_LEVEL, isLocalHost, isTest } from "server/config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message.startsWith("HTTP GET")) {
@@ -37,7 +37,7 @@ const transportsList = [
 ];
 
 // Debug dev only
-if (!LOCAL_DEV && !isTest) {
+if (!isLocalHost && !isTest) {
   transportsList.push(
     new PapertrailTransport({
       level: LOG_LEVEL,
