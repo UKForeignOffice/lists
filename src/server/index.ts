@@ -1,18 +1,23 @@
 import { server } from "./server";
 import { PORT, NODE_ENV } from "./config";
 import { logger } from "./services/logger";
-import { startFormRunner } from "server/middlewares/form-runner";
+import {
+  startFormRunner,
+  isFormRunnerReady,
+} from "server/middlewares/form-runner";
 
-startFormRunner()
-  .then(() => {
+async function startServer(): Promise<void> {
+  await startFormRunner();
+
+  if (await isFormRunnerReady()) {
     server.listen(PORT, () => {
       logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
     });
-  })
-  .catch((error) => {
-    logger.error("Server initialization error", error);
-  });
+  } else {
+    return startServer();
+  }
+}
 
-process.on("exit", function () {
-  logger.info(`Server Stopped`);
+startServer().catch((error) => {
+  logger.error("Server Start Error: ", error);
 });

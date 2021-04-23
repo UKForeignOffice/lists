@@ -23,6 +23,7 @@ export async function startFormRunner(): Promise<boolean> {
     );
 
     isStarting = true;
+
     const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
     formRunner.stdout.on("data", (data) => {
@@ -36,9 +37,6 @@ export async function startFormRunner(): Promise<boolean> {
     formRunner.on("exit", (code, signal) => {
       isStarting = false;
       logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
-
-      // eslint-disable-next-line no-void
-      void startFormRunner();
     });
 
     process.once("SIGUSR2", function () {
@@ -50,13 +48,7 @@ export async function startFormRunner(): Promise<boolean> {
     });
   }
 
-  while (true) {
-    const isReady = await isFormRunnerReady();
-
-    if (isReady) {
-      return true;
-    }
-  }
+  return true;
 }
 
 export async function isFormRunnerReady(): Promise<boolean> {
