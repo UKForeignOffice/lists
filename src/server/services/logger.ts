@@ -17,18 +17,20 @@ const ignoreHttpPOST = format((info) => {
   return info;
 });
 
+const formatters = format.combine(
+  ignoreHttpGET(),
+  ignoreHttpPOST(),
+  format.timestamp(),
+  format.simple(),
+  format.colorize({ all: true })
+);
+
 const transportsList = [
   // - Write all logs with level `error` and below to `error.log`
   // - Write all logs with level LOG_LEVEL and below to console.log
   new transports.Console({
     level: LOG_LEVEL,
-    format: format.combine(
-      ignoreHttpGET(),
-      ignoreHttpPOST(),
-      format.timestamp(),
-      format.simple(),
-      format.colorize({ all: true })
-    ),
+    format: formatters,
     silent: isTest,
   }),
   new transports.File({ filename: "error.log", level: "error" }),
@@ -38,8 +40,10 @@ const transportsList = [
 if (!LOCAL_DEV && !isTest) {
   transportsList.push(
     new PapertrailTransport({
+      level: LOG_LEVEL,
       host: "logs.papertrailapp.com",
       port: 48692,
+      format: formatters,
     }) as any
   );
 }
