@@ -16,7 +16,10 @@ export async function startFormRunner(): Promise<boolean> {
   if (!isStarting && !isAlreadyRunning) {
     logger.info("Form Runner Starting");
     logger.info(
-      `Pod Size: CPU: ${os.cpus()}, MEM: ${os.totalmem()}, FREEMEM: ${os.freemem()}`
+      `Pod Size: CPU: ${JSON.stringify(os.cpus())}, 
+        MEM: ${JSON.stringify(os.totalmem())}, 
+        FREEMEM: ${JSON.stringify(os.freemem())}
+      `
     );
 
     isStarting = true;
