@@ -17,7 +17,6 @@ RUN npm install
 FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser ./src ./src/
-RUN ls ./src
 USER 1001
 RUN npm run prisma:generate && npm run build:prod
 
