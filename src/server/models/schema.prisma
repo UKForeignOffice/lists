@@ -12,9 +12,9 @@ datasource db {
 }
 
 model User {
-  id     Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id     Int          @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   email  String   @unique
   name   String   @db.VarChar(255)
@@ -22,10 +22,10 @@ model User {
 }
 
 model UserRoles {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String @db.VarChar(255)
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String    @db.VarChar(255)
   users     User[]
 }
 
@@ -34,9 +34,9 @@ model Lawyer {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  contactName String @db.VarChar(255)
-  lawFirmName String @db.VarChar(255) @unique
-  telephone   String @db.VarChar(255)
+  contactName String  @db.VarChar(255)
+  lawFirmName String  @db.VarChar(255) @unique
+  telephone   String  @db.VarChar(255)
   email       String? @db.VarChar(255)
   website     String? @db.VarChar(255)
   description String?
@@ -79,11 +79,12 @@ model Address {
   geoLocationId   Int?
 }
 
-// Prisma does not support PostGis geography types so this table is created using raw sql
+// Prisma does not support PostGis geography types so Address.geo location 
+// is temporarily moved to a separate table GeoLocation which is created using raw sql
 // please see ./helpers
 // model GeoLocation {
-//   id          Int      @id @default(autoincrement())
-//   location    Unsupported("point")?
+//   id          Int @id @default(autoincrement())
+//   location    geography(POINT)
 //   address     Address[]
 // }
 
