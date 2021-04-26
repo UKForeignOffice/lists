@@ -18,10 +18,6 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
     const formRunner = spawn(`npm run form-runner:start`, { shell: true });
 
-    formRunner.stdout.on("data", (data) => {
-      logger.info("Form Runner Data: ", data.toString());
-    });
-
     formRunner.stderr.on("data", (data) => {
       logger.error("Form Runner Error: ", data.toString());
     });
