@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   lists:
+    platform: linux/x86_64
     container_name: lists
     environment:
       - DOCKER_COMPOSE=true
@@ -20,10 +21,8 @@ services:
     depends_on:
       - postgres
   postgres:
-    # Using ganstead image for postgis because it supports Mac M1
-    # if you are not on M1 please use official postgis https://hub.docker.com/r/postgis/postgis
-    # see https://github.com/docker/for-mac/issues/5122
-    image: "gangstead/postgis:13-3.1-arm"
+    platform: linux/x86_64
+    image: "postgis/postgis"
     environment:
       - POSTGRES_DB=service-finder-db
       - POSTGRES_USER=postgressuser
