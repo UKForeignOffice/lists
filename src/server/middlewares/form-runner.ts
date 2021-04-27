@@ -16,7 +16,9 @@ export async function startFormRunner(): Promise<boolean> {
     logger.info("Form Runner Starting");
 
     isStarting = true;
-    const formRunner = spawn(`npm run form-runner:start`, { shell: true });
+    const formRunner = spawn(`npm run form-runner:start`, {
+      shell: true,
+    });
 
     formRunner.stderr.on("data", (data) => {
       logger.error("Form Runner Error: ", data.toString());
