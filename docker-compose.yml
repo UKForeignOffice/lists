@@ -14,6 +14,7 @@ services:
     volumes:
       - ./:/usr/src/app:delegated
       - /usr/src/app/node_modules
+      - /usr/src/app/src/form-runner/form-runner-app
     ports:
       - "3000:3000"
       - "9229:9229"
