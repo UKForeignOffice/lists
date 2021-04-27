@@ -1,9 +1,149 @@
 {
-  "startPage": "/first-page",
+  "startPage": "/start-page",
   "pages": [
     {
-      "title": "First page",
-      "path": "/first-page",
+      "title": "Start Page",
+      "path": "/start-page",
+      "components": [
+        {
+          "name": "xxwAAy",
+          "options": {},
+          "type": "InsetText",
+          "content": "More content here..."
+        }
+      ],
+      "next": [{ "path": "/do-you-speak-english" }]
+    },
+    {
+      "title": "Summary",
+      "path": "/summary",
+      "controller": "./pages/summary.js",
+      "components": []
+    },
+    {
+      "path": "/do-you-speak-english",
+      "title": "Do you speak English?",
+      "components": [
+        {
+          "name": "speakEnglish",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Do you speak English?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/are-you-the-english-speaking-lead-for-your-company",
+          "condition": "oV9fvQl39FkGahoM46257"
+        },
+        { "path": "/no-english", "condition": "50_TW9NLlvr2820-1-Qt6" }
+      ]
+    },
+    {
+      "path": "/are-you-the-english-speaking-lead-for-your-company",
+      "title": "Are you the English speaking lead for your company?",
+      "components": [
+        {
+          "name": "englishSpeakLead",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Are you the English speaking lead for your company?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/are-you-qualified-to-practice-law" }]
+    },
+    {
+      "path": "/no-english",
+      "title": "No English",
+      "components": [],
+      "next": []
+    },
+    {
+      "path": "/are-you-qualified-to-practice-law",
+      "title": "Are you qualified to practice law?",
+      "components": [
+        {
+          "name": "qualifiedToPracticeLaw",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Are you qualified to practice law?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/full-name", "condition": "sC_WI7140dW0LN5R7pbFk" },
+        { "path": "/not-qualified", "condition": "wQAJrkhE3WF5cKg-a0ocJ" }
+      ]
+    },
+    {
+      "path": "/full-name",
+      "title": "Full name",
+      "components": [
+        {
+          "name": "firstName",
+          "options": {},
+          "type": "TextField",
+          "title": "First name",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "middleName",
+          "options": { "required": false },
+          "type": "TextField",
+          "title": "Middle name",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "surname",
+          "options": {},
+          "type": "TextField",
+          "title": "Surname",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/organisation-name" }]
+    },
+    {
+      "path": "/organisation-name",
+      "title": "Organisation name",
+      "components": [
+        {
+          "name": "organisationName",
+          "options": {},
+          "type": "TextField",
+          "title": "Organisation name",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/website-address" }]
+    },
+    {
+      "path": "/website-address",
+      "title": "Website address",
+      "components": [
+        {
+          "name": "websiteAddress",
+          "options": {},
+          "type": "TextField",
+          "title": "Website address",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/email-address" }]
+    },
+    {
+      "path": "/email-address",
+      "title": "Email address",
       "components": [
         {
           "name": "emailAddress",
@@ -14,32 +154,245 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/country" }]
+      "next": [{ "path": "/phone-number" }]
     },
     {
-      "title": "Summary",
-      "path": "/summary",
-      "controller": "./pages/summary.js",
-      "components": []
-    },
-    {
-      "path": "/country",
-      "title": "Country",
+      "path": "/areas-of-law-practised",
+      "title": "Areas of law practised",
       "components": [
         {
-          "values": { "type": "listRef", "list": "country" },
+          "name": "areasOfLaw",
+          "options": {},
+          "type": "CheckboxesField",
+          "title": "Areas of law practicsed",
+          "nameHasError": false,
+          "list": "iqn9pP"
+        }
+      ],
+      "next": [{ "path": "/can-you-provide-legal-aid-to-british-nationals" }]
+    },
+    {
+      "path": "/can-you-provide-legal-aid-to-british-nationals",
+      "title": "Can you provide legal aid to British Nationals?",
+      "components": [
+        {
+          "name": "canProvideLegalAid",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Can you provide legal aid to British Nationals?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/can-you-offer-pro-bono-service-to-british-nationals" }
+      ]
+    },
+    {
+      "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+      "title": "Can you offer pro bono service to British Nationals?",
+      "components": [
+        {
+          "name": "canOfferProBono",
+          "options": { "required": true },
+          "type": "YesNoField",
+          "title": "Can you offer pro bono service to British Nationals?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/have-you-represented-british-nationals-before" }]
+    },
+    {
+      "path": "/have-you-represented-british-nationals-before",
+      "title": "Have you represented British Nationals before?",
+      "components": [
+        {
+          "name": "5wlnAK",
+          "options": {},
+          "type": "YesNoField",
+          "title": "representedBritishNationalsBefore",
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/what-qualifications-do-you-possess-to-practice-law" }
+      ]
+    },
+    {
+      "path": "/what-qualifications-do-you-possess-to-practice-law",
+      "title": "What qualifications do you possess to practice Law?",
+      "components": [
+        {
+          "name": "legalPracticeAreasQualifications",
+          "options": {},
+          "type": "CheckboxesField",
+          "title": "What qualifications do you possess to practice Law?",
+          "nameHasError": false,
+          "list": "iqn9pP"
+        }
+      ],
+      "next": [
+        {
+          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authoritybody-specify-the-most-relevant-one"
+        }
+      ]
+    },
+    {
+      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authoritybody-specify-the-most-relevant-one",
+      "title": "Are you a member of a local bar association or other regulatory authority/body? Specify the most relevant one",
+      "components": [
+        {
+          "name": "regulatoryAuthority",
+          "options": {},
+          "type": "TextField",
+          "title": "Are you a member of a local bar association or other regulatory authority/body? Specify the most relevant one",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
+    },
+    {
+      "path": "/do-you-offer-out-of-hours-service",
+      "title": "Do you offer out of hours service?",
+      "components": [
+        {
+          "name": "outOfHoursService",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Do you offer out of hours service?",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
+          "condition": "6ZEjcsVvflFMwoHRspRPd"
+        },
+        { "path": "/summary", "condition": "WiHImXvXbzDvbsY90biLb" }
+      ]
+    },
+    {
+      "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
+      "title": "Are the contact details different for the out of hours service?",
+      "components": [
+        {
+          "name": "outOfHoursContactDetailsDifferent",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Are the contact details different for the out of hours service?",
+          "nameHasError": false
+        }
+      ],
+      "next": [
+        {
+          "path": "/out-of-hours-contact-details",
+          "condition": "HbAUjaiVjoVTUhFXDxH8D"
+        },
+        { "path": "/summary", "condition": "YzSeD8_Zz49h7BNzTOfw8" }
+      ]
+    },
+    {
+      "path": "/out-of-hours-contact-details",
+      "title": "Out of hours contact details?",
+      "components": [
+        {
+          "name": "outOfHoursContactDetails",
+          "options": {},
+          "type": "TextField",
+          "title": "Out of hours contact details?",
+          "nameHasError": false
+        }
+      ],
+      "next": [{ "path": "/summary" }]
+    },
+    {
+      "path": "/not-qualified",
+      "title": "Not qualified",
+      "components": [],
+      "next": []
+    },
+    {
+      "path": "/phone-number",
+      "title": "Phone number",
+      "components": [
+        {
+          "name": "phoneNumber",
+          "options": {},
+          "type": "TextField",
+          "title": "Phone number?",
+          "nameHasError": false
+        }
+      ],
+      "next": [{ "path": "/address" }]
+    },
+    {
+      "path": "/address",
+      "title": "Address",
+      "components": [
+        {
+          "name": "addressLine1",
+          "options": {},
+          "type": "TextField",
+          "title": "Address line 1",
+          "nameHasError": false
+        },
+        {
+          "name": "addressLine2",
+          "options": { "required": false },
+          "type": "TextField",
+          "title": "Address line 2",
+          "nameHasError": false
+        },
+        {
+          "name": "city",
+          "options": {},
+          "type": "TextField",
+          "title": "Town or city",
+          "nameHasError": false
+        },
+        {
+          "name": "postcode",
+          "options": {},
+          "type": "TextField",
+          "title": "Postcode",
+          "nameHasError": false
+        },
+        {
           "name": "country",
           "options": {},
           "type": "AutocompleteField",
           "title": "Country",
           "nameHasError": false,
-          "schema": {}
+          "list": "country"
         }
       ],
-      "next": [{ "path": "/summary" }]
+      "next": [{ "path": "/areas-of-law-practised" }]
     }
   ],
   "lists": [
+    {
+      "title": "Legal Practice Areas",
+      "name": "iqn9pP",
+      "type": "string",
+      "items": [
+        { "text": "Bankruptcy", "value": "Bankruptcy" },
+        { "text": "Corporate", "value": "Corporate" },
+        { "text": "Criminal", "value": "Criminal" },
+        { "text": "Employment", "value": "Employment" },
+        { "text": "Family", "value": "Family" },
+        { "text": "Health", "value": "Health" },
+        { "text": "Immigration", "value": "Immigration" },
+        { "text": "Intellectual property", "value": "Intellectual property" },
+        { "text": "International", "value": "International" },
+        { "text": "Maritime", "value": "Maritime" },
+        { "text": "Personal injury", "value": "Personal injury" },
+        { "text": "Real estate", "value": "Real estate" },
+        { "text": "Tax", "value": "Tax" }
+      ]
+    },
     {
       "name": "country",
       "title": "Countries",
@@ -311,18 +664,156 @@
       ]
     }
   ],
-  "sections": [],
+  "sections": [{ "name": "yourDetails", "title": "Your details" }],
   "phaseBanner": {},
   "metadata": {},
   "fees": [],
-  "outputs": [
+  "outputs": [],
+  "version": 2,
+  "conditions": [
     {
-      "name": "i02AMQ893Sk0DFh0GX5d4",
-      "title": "Post to Lists",
-      "type": "webhook",
-      "outputConfiguration": { "url": "http://localhost:3000/apply/lawyers" }
+      "name": "oV9fvQl39FkGahoM46257",
+      "displayName": "speakEnglishYes",
+      "value": {
+        "name": "speakEnglishYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "speakEnglish",
+              "type": "YesNoField",
+              "display": "Do you speak English?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "Yes" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "50_TW9NLlvr2820-1-Qt6",
+      "displayName": "speakEnglishNo",
+      "value": {
+        "name": "speakEnglishNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "speakEnglish",
+              "type": "YesNoField",
+              "display": "Do you speak English?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "No" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "sC_WI7140dW0LN5R7pbFk",
+      "displayName": "qualifiedToPracticeLawYes",
+      "value": {
+        "name": "qualifiedToPracticeLawYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "qualifiedToPracticeLaw",
+              "type": "YesNoField",
+              "display": "Are you qualified to practice law?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "Yes" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "wQAJrkhE3WF5cKg-a0ocJ",
+      "displayName": "qualifiedToPracticeLawNo",
+      "value": {
+        "name": "qualifiedToPracticeLawNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "qualifiedToPracticeLaw",
+              "type": "YesNoField",
+              "display": "Are you qualified to practice law?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "No" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "6ZEjcsVvflFMwoHRspRPd",
+      "displayName": "offerOutOfHoursServiceYes",
+      "value": {
+        "name": "offerOutOfHoursServiceYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursService",
+              "type": "YesNoField",
+              "display": "Do you offer out of hours service?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "Yes" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WiHImXvXbzDvbsY90biLb",
+      "displayName": "offerOutOfHoursServiceNo",
+      "value": {
+        "name": "offerOutOfHoursServiceNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursService",
+              "type": "YesNoField",
+              "display": "Do you offer out of hours service?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "No" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HbAUjaiVjoVTUhFXDxH8D",
+      "displayName": "outOfHoursContactDetailsDifferentYes",
+      "value": {
+        "name": "outOfHoursContactDetailsDifferentYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferent",
+              "type": "YesNoField",
+              "display": "Are the contact details different for the out of hours service?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "Yes" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "YzSeD8_Zz49h7BNzTOfw8",
+      "displayName": "outOfHoursContactDetailsDifferentNo",
+      "value": {
+        "name": "outOfHoursContactDetailsDifferentNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferent",
+              "type": "YesNoField",
+              "display": "Are the contact details different for the out of hours service?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "No" }
+          }
+        ]
+      }
     }
-  ],
-  "version": 1,
-  "conditions": []
+  ]
 }
