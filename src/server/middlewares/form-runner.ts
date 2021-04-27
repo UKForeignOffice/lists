@@ -28,10 +28,12 @@ export async function startFormRunner(): Promise<boolean> {
     });
 
     process.once("SIGUSR2", function () {
+      isStarting = false;
       formRunner.kill();
     });
 
     process.on("SIGINT", () => {
+      isStarting = false;
       formRunner.kill();
     });
   }
