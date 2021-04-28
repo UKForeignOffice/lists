@@ -1,15 +1,16 @@
 {
-  "startPage": "/start-page",
+  "startPage": "/register-to-the-find-a-lawyer-abroad-service",
   "pages": [
     {
-      "title": "Start Page",
-      "path": "/start-page",
+      "title": "Register to the Find a Lawyer Abroad Service",
+      "path": "/register-to-the-find-a-lawyer-abroad-service",
       "components": [
         {
           "name": "xxwAAy",
           "options": {},
           "type": "InsetText",
-          "content": "More content here..."
+          "content": "More content here...",
+          "schema": {}
         }
       ],
       "next": [{ "path": "/do-you-speak-english" }]
@@ -166,7 +167,8 @@
           "type": "CheckboxesField",
           "title": "Areas of law practicsed",
           "nameHasError": false,
-          "list": "iqn9pP"
+          "list": "iqn9pP",
+          "schema": {}
         }
       ],
       "next": [{ "path": "/can-you-provide-legal-aid-to-british-nationals" }]
@@ -229,29 +231,36 @@
           "type": "CheckboxesField",
           "title": "What qualifications do you possess to practice Law?",
           "nameHasError": false,
-          "list": "iqn9pP"
+          "list": "iqn9pP",
+          "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authoritybody-specify-the-most-relevant-one"
+          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body"
         }
       ]
     },
     {
-      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authoritybody-specify-the-most-relevant-one",
-      "title": "Are you a member of a local bar association or other regulatory authority/body? Specify the most relevant one",
+      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body",
+      "title": "Are you a member of a local bar association or other regulatory authority/body?",
       "components": [
         {
-          "name": "regulatoryAuthority",
+          "name": "memberOfRegulatoryAuthority",
           "options": {},
-          "type": "TextField",
-          "title": "Are you a member of a local bar association or other regulatory authority/body? Specify the most relevant one",
+          "type": "YesNoField",
+          "title": "Are you a member of a local bar association or other regulatory authority/body?",
           "nameHasError": false,
           "schema": {}
         }
       ],
-      "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
+      "next": [
+        {
+          "path": "/which-local-bar-association-or-other-regulatory-authority",
+          "condition": "DzOdSI"
+        },
+        { "path": "/not-a-member", "condition": "VMgnBE" }
+      ]
     },
     {
       "path": "/do-you-offer-out-of-hours-service",
@@ -283,30 +292,38 @@
           "options": {},
           "type": "YesNoField",
           "title": "Are the contact details different for the out of hours service?",
-          "nameHasError": false
+          "nameHasError": false,
+          "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/out-of-hours-contact-details",
+          "path": "/which-out-of-hours-contact-details-are-different",
           "condition": "HbAUjaiVjoVTUhFXDxH8D"
         },
         { "path": "/summary", "condition": "YzSeD8_Zz49h7BNzTOfw8" }
       ]
     },
     {
-      "path": "/out-of-hours-contact-details",
-      "title": "Out of hours contact details?",
+      "path": "/which-out-of-hours-contact-details-are-different",
+      "title": "Which out of hours contact details are different?",
       "components": [
         {
-          "name": "outOfHoursContactDetails",
+          "name": "outOfHoursContactDetailsDifferences",
           "options": {},
-          "type": "TextField",
-          "title": "Out of hours contact details?",
-          "nameHasError": false
+          "type": "CheckboxesField",
+          "title": "Which out of hours contact details are different?",
+          "nameHasError": false,
+          "list": "QrcJZH",
+          "schema": {}
         }
       ],
-      "next": [{ "path": "/summary" }]
+      "next": [
+        { "path": "/out-of-hours-phone-number", "condition": "uwhxHa" },
+        { "path": "/out-of-hours-address", "condition": "NzzQrT" },
+        { "path": "/out-of-hours-email", "condition": "XAARcX" },
+        { "path": "/terms-and-conditions", "condition": "DWLEtI" }
+      ]
     },
     {
       "path": "/not-qualified",
@@ -321,9 +338,10 @@
         {
           "name": "phoneNumber",
           "options": {},
-          "type": "TextField",
-          "title": "Phone number?",
-          "nameHasError": false
+          "type": "TelephoneNumberField",
+          "title": "Phone number",
+          "nameHasError": false,
+          "schema": {}
         }
       ],
       "next": [{ "path": "/address" }]
@@ -337,28 +355,32 @@
           "options": {},
           "type": "TextField",
           "title": "Address line 1",
-          "nameHasError": false
+          "nameHasError": false,
+          "schema": {}
         },
         {
           "name": "addressLine2",
           "options": { "required": false },
           "type": "TextField",
           "title": "Address line 2",
-          "nameHasError": false
+          "nameHasError": false,
+          "schema": {}
         },
         {
           "name": "city",
           "options": {},
           "type": "TextField",
           "title": "Town or city",
-          "nameHasError": false
+          "nameHasError": false,
+          "schema": {}
         },
         {
           "name": "postcode",
           "options": {},
           "type": "TextField",
           "title": "Postcode",
-          "nameHasError": false
+          "nameHasError": false,
+          "schema": {}
         },
         {
           "name": "country",
@@ -366,10 +388,126 @@
           "type": "AutocompleteField",
           "title": "Country",
           "nameHasError": false,
-          "list": "country"
+          "list": "country",
+          "schema": {}
         }
       ],
       "next": [{ "path": "/areas-of-law-practised" }]
+    },
+    {
+      "path": "/which-local-bar-association-or-other-regulatory-authority",
+      "title": "Which local bar association or other regulatory authority?",
+      "components": [
+        {
+          "name": "yRVKHj",
+          "options": {},
+          "type": "TextField",
+          "hint": "Please specify the most relevant one",
+          "title": "Which local bar association or other regulatory authority?",
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
+    },
+    {
+      "path": "/not-a-member",
+      "title": "Not a member",
+      "components": [],
+      "next": []
+    },
+    {
+      "path": "/out-of-hours-phone-number",
+      "title": "Out of hours phone number",
+      "components": [
+        {
+          "name": "phoneNumber",
+          "options": {},
+          "type": "TelephoneNumberField",
+          "title": "Phone number",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/out-of-hours-address", "condition": "tZJmuK" },
+        { "path": "/out-of-hours-email", "condition": "Ddafcu" },
+        { "path": "/terms-and-conditions", "condition": "bybXmC" }
+      ],
+      "section": "outOfHours"
+    },
+    {
+      "path": "/out-of-hours-address",
+      "title": "Out of hours address",
+      "components": [
+        {
+          "name": "addressLine1",
+          "options": {},
+          "type": "TextField",
+          "title": "Address line 1",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "addressLine2",
+          "options": { "required": false },
+          "type": "TextField",
+          "title": "Address line 2",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "city",
+          "options": {},
+          "type": "TextField",
+          "title": "Town or city",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "postcode",
+          "options": {},
+          "type": "TextField",
+          "title": "Postcode",
+          "nameHasError": false,
+          "schema": {}
+        },
+        {
+          "name": "country",
+          "options": {},
+          "type": "AutocompleteField",
+          "title": "Country",
+          "nameHasError": false,
+          "list": "country",
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/out-of-hours-email", "condition": "SONTUr" },
+        { "path": "/terms-and-conditions", "condition": "GqOvZW" }
+      ],
+      "section": "outOfHours"
+    },
+    {
+      "path": "/out-of-hours-email",
+      "title": "Out of hours email",
+      "components": [
+        {
+          "name": "emailAddress",
+          "options": {},
+          "type": "EmailAddressField",
+          "title": "Email address",
+          "nameHasError": false,
+          "schema": {}
+        }
+      ],
+      "next": [{ "path": "/terms-and-conditions" }],
+      "section": "outOfHours"
+    },
+    {
+      "path": "/terms-and-conditions",
+      "title": "Terms and Conditions",
+      "components": [],
+      "next": [{ "path": "/summary" }]
     }
   ],
   "lists": [
@@ -662,9 +800,23 @@
         { "text": "Zambia", "value": "Zambia" },
         { "text": "Zimbabwe", "value": "Zimbabwe" }
       ]
+    },
+    {
+      "title": "Contact Details Options",
+      "name": "QrcJZH",
+      "type": "string",
+      "items": [
+        { "text": "Phone number", "value": "phoneNumber" },
+        { "text": "Address", "value": "address" },
+        { "text": "Email", "value": "email" },
+        { "text": "None", "value": "none" }
+      ]
     }
   ],
-  "sections": [{ "name": "yourDetails", "title": "Your details" }],
+  "sections": [
+    { "name": "yourDetails", "title": "Your details" },
+    { "name": "outOfHours", "title": "Out of hours" }
+  ],
   "phaseBanner": {},
   "metadata": {},
   "fees": [],
@@ -811,6 +963,356 @@
             },
             "operator": "is",
             "value": { "type": "Value", "value": "false", "display": "No" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "DzOdSI",
+      "displayName": "memberRegulatoryAuthorityYes",
+      "value": {
+        "name": "memberRegulatoryAuthorityYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "memberOfRegulatoryAuthority",
+              "type": "YesNoField",
+              "display": "Are you a member of a local bar association or other regulatory authority/body?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "true" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VMgnBE",
+      "displayName": "memberRegulatoryAuthorityNo",
+      "value": {
+        "name": "memberRegulatoryAuthorityNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "memberOfRegulatoryAuthority",
+              "type": "YesNoField",
+              "display": "Are you a member of a local bar association or other regulatory authority/body?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "false" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "uwhxHa",
+      "displayName": "outOfHoursPhoneNumberIsDifferent",
+      "value": {
+        "name": "outOfHoursPhoneNumberIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "contains",
+            "value": {
+              "type": "Value",
+              "value": "phoneNumber",
+              "display": "phoneNumber"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "tZJmuK",
+      "displayName": "outOfHoursAddressIsDifferent",
+      "value": {
+        "name": "outOfHoursAddressIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "contains",
+            "value": {
+              "type": "Value",
+              "value": "address",
+              "display": "address"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SONTUr",
+      "displayName": "outOfHoursEmailIsDifferent",
+      "value": {
+        "name": "outOfHoursEmailIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "contains",
+            "value": { "type": "Value", "value": "email", "display": "email" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "JUJTOB",
+      "displayName": "outOfHoursPhoneNumberAndAddressAreDifferent",
+      "value": {
+        "name": "outOfHoursPhoneNumberAndAddressAreDifferent",
+        "conditions": [
+          {
+            "conditionName": "uwhxHa",
+            "conditionDisplayName": "outOfHoursPhoneNumberIsDifferent"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "tZJmuK",
+            "conditionDisplayName": "outOfHoursAddressIsDifferent"
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": { "type": "Value", "value": "email", "display": "email" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FlcbhJ",
+      "displayName": "outOfHoursPhoneNumberAndAddressAndEmailAreDifferent",
+      "value": {
+        "name": "outOfHoursPhoneNumberAndAddressAndEmailAreDifferent",
+        "conditions": [
+          {
+            "conditionName": "uwhxHa",
+            "conditionDisplayName": "outOfHoursPhoneNumberIsDifferent"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "tZJmuK",
+            "conditionDisplayName": "outOfHoursAddressIsDifferent"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "SONTUr",
+            "conditionDisplayName": "outOfHoursEmailIsDifferent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ddafcu",
+      "displayName": "outOfHoursAddressIsSameAndEmailIsDifferent",
+      "value": {
+        "name": "outOfHoursAddressIsSameAndEmailIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "address",
+              "display": "address"
+            }
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "SONTUr",
+            "conditionDisplayName": "outOfHoursEmailIsDifferent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GqOvZW",
+      "displayName": "outOfHoursEmailIsSame",
+      "value": {
+        "name": "outOfHoursEmailIsSame",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": { "type": "Value", "value": "email", "display": "email" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "bybXmC",
+      "displayName": "outOfHoursAddressAndEmailAreSame",
+      "value": {
+        "name": "outOfHoursAddressAndEmailAreSame",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "address",
+              "display": "address"
+            }
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": { "type": "Value", "value": "email", "display": "email" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "NzzQrT",
+      "displayName": "outOfHoursPhoneNumberIsSameAndAddressIsDifferent",
+      "value": {
+        "name": "outOfHoursPhoneNumberIsSameAndAddressIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "phoneNumber",
+              "display": "phoneNumber"
+            }
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "tZJmuK",
+            "conditionDisplayName": "outOfHoursAddressIsDifferent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XAARcX",
+      "displayName": "outOfHoursPhoneAndAddressAreSameAndEmailIsDifferent",
+      "value": {
+        "name": "outOfHoursPhoneAndAddressAreSameAndEmailIsDifferent",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "phoneNumber",
+              "display": "phoneNumber"
+            }
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "address",
+              "display": "address"
+            }
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "SONTUr",
+            "conditionDisplayName": "outOfHoursEmailIsDifferent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DWLEtI",
+      "displayName": "outOfHoursContactDetailsAreAllSame",
+      "value": {
+        "name": "outOfHoursContactDetailsAreAllSame",
+        "conditions": [
+          {
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "phoneNumber",
+              "display": "phoneNumber"
+            }
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "address",
+              "display": "address"
+            }
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "does not contain",
+            "value": { "type": "Value", "value": "email", "display": "email" }
+          },
+          {
+            "coordinator": "and",
+            "field": {
+              "name": "outOfHoursContactDetailsDifferences",
+              "type": "CheckboxesField",
+              "display": "Which out of hours contact details are different?"
+            },
+            "operator": "contains",
+            "value": { "type": "Value", "value": "none", "display": "none" }
           }
         ]
       }
