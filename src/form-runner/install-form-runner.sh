@@ -12,7 +12,7 @@ then
   echo "Form Runner Already Installed"
 else
   echo "Installing Form Runner"
-  git clone --depth 1 --branch 2.0.6-rc https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
+  git clone --depth 1 --branch 2.0.60-rc https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
   cd $form_runner_folder
   yarn install
   yarn run build:dependencies
@@ -22,6 +22,7 @@ else
   rm -rf ./designer
   rm -rf ./docs
   rm -rf ./smoke-tests
+  rm ./runner/src/server/forms/*
 
   echo "Form Runner Installed Successfully"
 fi
@@ -38,7 +39,7 @@ echo "Form Runner .env Created Successfully"
 cd $root_folder
 
 # copy forms jsons
-rm -rfv "$form_runner_forms_folder/*" 
+rm "$form_runner_forms_folder/*" 
 cp -a "$forms_json_folder/." $form_runner_forms_folder
 echo "Forms JSON Files Copied Successfully"
  
