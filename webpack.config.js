@@ -155,6 +155,7 @@ const server = {
           new NodemonPlugin({
             verbose: true,
             watch: path.resolve("./dist"),
+            legacyWatch: isDockerCompose,
             nodeArgs: [
               `--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`,
             ],
