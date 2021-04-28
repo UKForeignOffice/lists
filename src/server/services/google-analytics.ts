@@ -19,7 +19,7 @@ export interface GA_Event {
 export function trackListsSearch(params: GA_Search_Params): void {
   const event: GA_Event = {
     name: "lists_search",
-    params: omitBy(params, isNil)
+    params: omitBy(params, isNil),
   };
 
   postEvent(event).catch((error) =>
@@ -28,8 +28,15 @@ export function trackListsSearch(params: GA_Search_Params): void {
 }
 
 async function postEvent(event: GA_Event): Promise<boolean> {
+  if (GA_TRACKING_ID === undefined || GA_API_SECRET === undefined) {
+    logger.error(
+      "Google Analytics, missing environment variables GA_TRACKING_ID and GA_API_SECRET"
+    );
+    return false;
+  }
+
   const url = `https://www.google-analytics.com/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`;
-  
+
   try {
     await fetch(url, {
       method: "POST",
