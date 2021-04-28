@@ -172,7 +172,7 @@ export function lawyersGetController(req: Request, res: Response): void {
       : `Find a Lawyer in ${startCase(country)}`;
   } else if (needToAnswerCountry(country)) {
     partialToRender = "question-country.html";
-    partialPageTitle = "Which country do you need a lawyer from?";
+    partialPageTitle = "Which country do you need a lawyer in?";
     if (country === "") {
       error = {
         field: "country",
