@@ -21,7 +21,7 @@ export async function startFormRunner(): Promise<boolean> {
     });
 
     formRunner.stderr.on("data", (data) => {
-      logger.error("Form Runner Error: ", data.toString());
+      logger.error(`Form Runner Error: ${data.toString()}`);
     });
 
     formRunner.on("exit", (code, signal) => {
