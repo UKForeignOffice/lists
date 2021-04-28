@@ -322,7 +322,7 @@
         { "path": "/out-of-hours-phone-number", "condition": "uwhxHa" },
         { "path": "/out-of-hours-address", "condition": "NzzQrT" },
         { "path": "/out-of-hours-email", "condition": "XAARcX" },
-        { "path": "/terms-and-conditions", "condition": "DWLEtI" }
+        { "path": "/declaration", "condition": "DWLEtI" }
       ]
     },
     {
@@ -431,7 +431,7 @@
       "next": [
         { "path": "/out-of-hours-address", "condition": "tZJmuK" },
         { "path": "/out-of-hours-email", "condition": "Ddafcu" },
-        { "path": "/terms-and-conditions", "condition": "bybXmC" }
+        { "path": "/declaration", "condition": "bybXmC" }
       ],
       "section": "outOfHours"
     },
@@ -483,7 +483,7 @@
       ],
       "next": [
         { "path": "/out-of-hours-email", "condition": "SONTUr" },
-        { "path": "/terms-and-conditions", "condition": "GqOvZW" }
+        { "path": "/declaration", "condition": "GqOvZW" }
       ],
       "section": "outOfHours"
     },
@@ -500,13 +500,30 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/terms-and-conditions" }],
+      "next": [{ "path": "/declaration" }],
       "section": "outOfHours"
     },
     {
-      "path": "/terms-and-conditions",
-      "title": "Terms and Conditions",
-      "components": [],
+      "path": "/declaration",
+      "title": "Declaration",
+      "components": [
+        {
+          "name": "VUylUR",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-body\">You must declare:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    you are currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation;\n  </li>\n  <li>\n    that you have not been disbarred from practising law\n  </li>\n  <li>\n    that you are reliable and willing to help on a regular basis\n  </li>\n  <li>\n    that you are able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    that you are willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n</ul>\n",
+          "schema": {}
+        },
+        {
+          "name": "declarationConfirm",
+          "options": { "hideTitle": true },
+          "type": "CheckboxesField",
+          "title": "Confirm",
+          "nameHasError": false,
+          "list": "mpjiNq",
+          "schema": {}
+        }
+      ],
       "next": [{ "path": "/summary" }]
     }
   ],
@@ -811,6 +828,12 @@
         { "text": "Email", "value": "email" },
         { "text": "None", "value": "none" }
       ]
+    },
+    {
+      "title": "Confirm",
+      "name": "mpjiNq",
+      "type": "string",
+      "items": [{ "text": "Confirm", "value": "confirm" }]
     }
   ],
   "sections": [
