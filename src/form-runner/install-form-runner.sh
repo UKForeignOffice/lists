@@ -17,13 +17,15 @@ else
   cd $form_runner_folder
   yarn install
   yarn run build:dependencies
-  yarn runner build
-
+  
   # cleanup
   rm -rf ./designer
   rm -rf ./docs
   rm -rf ./smoke-tests
+  rm ./runner/src/server/forms/*
 
+  # build
+  yarn runner build
   echo "Form Runner Installed Successfully"
 fi
 
