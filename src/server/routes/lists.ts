@@ -8,7 +8,9 @@ import {
   listsFinderStartRoute,
   listsFinderFormRoute,
   listsFinderResultsRoute,
-} from "server/controllers/lists/lists";
+  listsFormRunnerApplicationRoute,
+  listFormRunnerApplicationController,
+} from "server/controllers/lists";
 
 const router = express.Router();
 
@@ -24,5 +26,11 @@ router.post(listsFinderFormRoute, listsPostController);
 // results page
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(listsFinderResultsRoute, listsResultsController);
+
+// lists application forms processing
+router.post(
+  listsFormRunnerApplicationRoute,
+  listFormRunnerApplicationController
+);
 
 export default router;

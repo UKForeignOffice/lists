@@ -44,7 +44,7 @@ describe("Lawyers List:", () => {
     const continueButton = $html("button");
 
     expect(pageHeader.text().trim()).toBe(
-      "Which country do you need a lawyer from?"
+      "Which country do you need a lawyer in?"
     );
     expect(continueButton.text()).toBe("Continue");
   });

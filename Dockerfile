@@ -6,11 +6,11 @@ RUN mkdir -p /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
     apk upgrade && \
-    apk add --no-cache bash git
+    apk add --no-cache bash git curl
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY --chown=appuser:appuser package.json tsconfig.json .babelrc.js nodemon.json webpack.config.js  ./
+COPY --chown=appuser:appuser package.json tsconfig.json .babelrc.js webpack.config.js  ./
 USER 1001
 RUN npm install
 

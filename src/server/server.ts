@@ -1,31 +1,26 @@
 import express from "express";
 import {
-  helmet,
-  logger,
-  bodyParser,
-  compression,
+  configureHelmet,
+  configureLogger,
+  configureCompression,
   configureViews,
+  configureBodyParser,
   configureStaticServer,
   configureErrorHandlers,
+  configureFormRunner,
 } from "./middlewares";
 import { configureRouter } from "./routes";
 
 export const server = express();
 
 // middlewares
-server.use(helmet());
-server.use(logger());
-server.use(compression());
-server.use(bodyParser())
-
-// views
+configureHelmet(server);
+configureLogger(server);
+configureCompression(server);
+// form runner must be initialized before body parser
+configureFormRunner(server);
+configureBodyParser(server);
 configureViews(server);
-
-// routes
 configureRouter(server);
-
-// public assets
 configureStaticServer(server);
-
-// error handlers
-configureErrorHandlers(server)
+configureErrorHandlers(server);

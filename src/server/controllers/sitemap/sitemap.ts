@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { countriesList } from "server/services/metadata";
-import { listsFinderStartRoute } from "./lists/lists";
+import { listsFinderStartRoute } from "../lists";
 
 export function sitemapController(req: Request, res: Response): void {
   const sections = [

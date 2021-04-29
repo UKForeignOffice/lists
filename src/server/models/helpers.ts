@@ -1,11 +1,19 @@
 import { upperFirst, isNumber } from "lodash";
 import { logger } from "server/services/logger";
-import { db } from "./database";
+import { db } from "./db/database";
+import { CountriesWithData, CountryName } from "./types";
 
-const countriesWithData = ["Thailand", "France", "Italy", "Spain"];
+const countriesWithData: CountriesWithData[] = [
+  "Thailand",
+  "France",
+  "Italy",
+  "Spain",
+];
 
-export const countryHasLawyers = (countryName: string): boolean => {
-  return countriesWithData.includes(upperFirst(countryName));
+export const countryHasLawyers = (countryName: CountryName): boolean => {
+  return countriesWithData.includes(
+    upperFirst(countryName) as CountriesWithData
+  );
 };
 
 export const rawInsertGeoLocation = async (
