@@ -1,20 +1,21 @@
-import { NextFunction, Request, Response } from "express";
 import { startCase } from "lodash";
+import { NextFunction, Request, Response } from "express";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
+import { lawyers } from "server/models";
 import { legalPracticeAreasList } from "server/services/metadata";
 import {
+  getServiceLabel,
+  needToReadNotice,
+  needToAnswerRegion,
   countryHasLegalAid,
   getAllRequestParams,
-  getServiceLabel,
   needToAnswerCountry,
   needToAnswerLegalAid,
-  needToAnswerPracticeArea,
-  needToAnswerRegion,
   needToReadDisclaimer,
-  needToReadNotice,
-  practiceAreaFromParams,
-  queryStringFromParams,
   removeQueryParameter,
+  queryStringFromParams,
+  practiceAreaFromParams,
+  needToAnswerPracticeArea,
 } from "./helpers";
 
 export function lawyersGetController(
@@ -121,7 +122,33 @@ export function lawyersGetController(
   });
 }
 
-export function lawyersApplicationIngestionController(
+export async function searchLawyers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const params = getAllRequestParams(req);
+  const { serviceType, country, legalAid, region } = params;
+  const practiceArea = practiceAreaFromParams(params);
+
+  const searchResults = await lawyers.findPublishedLawyersPerCountry({
+    country,
+    region,
+    legalAid,
+    practiceArea,
+  });
+
+  res.render("lists/results-page.html", {
+    ...DEFAULT_VIEW_PROPS,
+    ...params,
+    searchResults: searchResults,
+    removeQueryParameter,
+    queryString: queryStringFromParams(params),
+    serviceLabel: getServiceLabel(serviceType),
+  });
+}
+
+export function lawyersDataIngestionController(
   req: Request,
   res: Response,
   next: NextFunction

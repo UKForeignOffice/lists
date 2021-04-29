@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { countryHasLawyers } from "server/models/helpers";
-import { lawyers, types as modelTypes } from "server/models";
 import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import {
+  searchLawyers,
   lawyersGetController,
-  lawyersApplicationIngestionController,
+  lawyersDataIngestionController,
 } from "./lawyers";
 import {
-  getAllRequestParams,
-  regionFromParams,
-  queryStringFromParams,
-  getCountryLawyerRedirectLink,
-  practiceAreaFromParams,
-  removeQueryParameter,
   getServiceLabel,
+  regionFromParams,
+  getAllRequestParams,
+  queryStringFromParams,
+  practiceAreaFromParams,
+  getCountryLawyerRedirectLink,
 } from "./helpers";
+import { logger } from "server/services/logger";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -70,10 +70,11 @@ export function listsGetController(
   }
 }
 
-export async function listsResultsController(
+export function listsResultsController(
   req: Request,
-  res: Response
-): Promise<void> {
+  res: Response,
+  next: NextFunction
+): void {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
@@ -86,29 +87,15 @@ export async function listsResultsController(
     legalAid,
   });
 
-  let searchResults: modelTypes.Lawyer[];
-
   switch (serviceType) {
     case "lawyers":
-      searchResults = await lawyers.findPublishedLawyersPerCountry({
-        country,
-        region,
-        legalAid,
-        practiceArea,
-      });
+      searchLawyers(req, res, next).catch((error) =>
+        logger.error("Lists Result Controller", { error })
+      );
       break;
     default:
-      searchResults = [];
+      next();
   }
-
-  res.render("lists/results-page.html", {
-    ...DEFAULT_VIEW_PROPS,
-    ...params,
-    searchResults: searchResults,
-    removeQueryParameter,
-    queryString: queryStringFromParams(params),
-    serviceLabel: getServiceLabel(serviceType),
-  });
 }
 
 export function listRedirectToLawyersController(
@@ -122,7 +109,7 @@ export function listRedirectToLawyersController(
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 
-export function professionalApplicationIngestionController(
+export function listsDataIngestionController(
   req: Request,
   res: Response,
   next: NextFunction
@@ -131,12 +118,12 @@ export function professionalApplicationIngestionController(
 
   switch (serviceType) {
     case "lawyers":
-      lawyersApplicationIngestionController(req, res, next);
+      lawyersDataIngestionController(req, res, next);
       break;
     default:
       res.status(500).send({
         error:
-          "Service Type is incorrect, please make sure form's output configuration is correct",
+          "Service Type is incorrect, please make sure form's webhook output configuration is correct",
       });
   }
 }

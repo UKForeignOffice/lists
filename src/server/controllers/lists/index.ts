@@ -3,8 +3,8 @@ export {
   listsPostController,
   listsResultsController,
   listsStartPageController,
+  listsDataIngestionController,
   listRedirectToLawyersController,
-  professionalApplicationIngestionController,
 } from "./lists";
 
 export { listsRoutes } from "./constants";

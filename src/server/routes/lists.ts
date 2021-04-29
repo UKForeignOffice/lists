@@ -1,12 +1,12 @@
 import express from "express";
 import {
   listsRoutes,
-  listRedirectToLawyersController,
-  // listsStartPageController,
   listsGetController,
-  listsResultsController,
   listsPostController,
-  professionalApplicationIngestionController,
+  listsResultsController,
+  // listsStartPageController,
+  listsDataIngestionController,
+  listRedirectToLawyersController,
 } from "server/controllers/lists";
 
 const router = express.Router();
@@ -16,11 +16,7 @@ const router = express.Router();
 router.get(listsRoutes.start, listRedirectToLawyersController);
 router.get(listsRoutes.finder, listsGetController);
 router.post(listsRoutes.finder, listsPostController);
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(listsRoutes.results, listsResultsController);
-router.post(
-  listsRoutes.formRunnerWebhook,
-  professionalApplicationIngestionController
-);
+router.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
 
 export default router;
