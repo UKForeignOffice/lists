@@ -843,7 +843,16 @@
   "phaseBanner": {},
   "metadata": {},
   "fees": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "postToLists",
+      "title": "Post to lists",
+      "type": "webhook",
+      "outputConfiguration": {
+        "url": "http://localhost:3000/ingest/lawyers"
+      }
+    }
+  ],
   "version": 2,
   "conditions": [
     {

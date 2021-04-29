@@ -1,12 +1,10 @@
 export {
-  listRedirectToLawyersController,
-  listsStartPageController,
   listsGetController,
-  listsResultsController,
   listsPostController,
-  listsFinderStartRoute,
-  listsFinderFormRoute,
-  listsFinderResultsRoute,
-  listsFormRunnerApplicationRoute,
-  listFormRunnerApplicationController,
+  listsResultsController,
+  listsStartPageController,
+  listRedirectToLawyersController,
+  professionalApplicationIngestionController,
 } from "./lists";
+
+export { listsRoutes } from "./constants";
