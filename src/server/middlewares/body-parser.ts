@@ -1,7 +1,6 @@
-import { RequestHandler } from "express";
-import bodyParser from "body-parser";
+import { Express } from "express";
+import { json, urlencoded } from "body-parser";
 
-export default (): RequestHandler[] => [
-  bodyParser.json(),
-  bodyParser.urlencoded({ extended: true }),
-];
+export function configureBodyParser(server: Express): void {
+  server.use([json(), urlencoded({ extended: true })]);
+}

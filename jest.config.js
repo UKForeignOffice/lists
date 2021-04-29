@@ -15,4 +15,5 @@ module.exports = {
   // setupFiles
   setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
   setupFilesAfterEnv: ["<rootDir>/.jest/extensions.js"],
+  modulePathIgnorePatterns: ["<rootDir>/src/form-runner/form-runner-app"],
 };

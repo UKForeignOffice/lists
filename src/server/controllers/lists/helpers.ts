@@ -26,6 +26,10 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
         value = value.toString();
       }
 
+      if (value[0] === ",") {
+        value = value.substring(1);
+      }
+
       return `${key}=${value}`;
     })
     .join("&");
