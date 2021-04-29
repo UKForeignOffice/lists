@@ -19,7 +19,7 @@
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
     "form-runner:install": "./src/form-runner/install-form-runner.sh",
-    "form-runner:start": "cd ./src/form-runner/form-runner-app && yarn runner start"
+    "form-runner:start": "cd ./lib/form-runner && yarn runner start"
   },
   "dependencies": {
     "@prisma/client": "^2.21.2",

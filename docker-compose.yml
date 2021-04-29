@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   lists:
-    platform: linux/x86_64
+    platform: linux/amd64
     container_name: lists
     environment:
       - DOCKER_COMPOSE=true
@@ -14,7 +14,7 @@ services:
     volumes:
       - ./:/usr/src/app:delegated
       - /usr/src/app/node_modules
-      - /usr/src/app/src/form-runner/form-runner-app
+      - /user/src/app/lib
     ports:
       - "3000:3000"
       - "9229:9229"
@@ -22,7 +22,7 @@ services:
     depends_on:
       - postgres
   postgres:
-    platform: linux/x86_64
+    platform: linux/amd64
     image: "postgis/postgis"
     environment:
       - POSTGRES_DB=service-finder-db
