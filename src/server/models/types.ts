@@ -22,6 +22,7 @@ export interface LawyerCreateObject {
       firsLine: string;
       secondLine?: string;
       postCode: string;
+      city: string;
       country: {
         connect: {
           id: number;
@@ -44,41 +45,4 @@ export interface LawyerCreateObject {
   proBonoService: boolean;
   isApproved: boolean;
   isPublished: boolean;
-}
-
-export interface LawyerWebhookData {
-  speakEnglish: boolean;
-  englishSpeakLead: boolean;
-  qualifiedToPracticeLaw: boolean;
-  firstName: string;
-  middleName: string | undefined;
-  surname: string;
-  organisationName: string;
-  websiteAddress: string;
-  emailAddress: string;
-  phoneNumber: string;
-  addressLine1: string;
-  addressLine2: string | undefined;
-  city: string;
-  postcode: string;
-  country: string;
-  areasOfLaw: string; // "Bankruptcy, Corporate, Criminal, ..."
-  canProvideLegalAid: boolean;
-  canOfferProBono: boolean;
-  representedBritishNationalsBefore: boolean;
-  memberOfRegulatoryAuthority: boolean;
-  regulatoryAuthority: string;
-  outOfHoursService: boolean;
-  outOfHoursContactDetailsDifferent: boolean;
-  outOfHoursContactDetailsDifferences: string; // "phoneNumber, address, email"
-  outOfHours?: {
-    phoneNumber?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    city?: string;
-    postcode: string;
-    country: string;
-    emailAddress: string;
-  };
-  declarationConfirm: string; // "confirm"
 }

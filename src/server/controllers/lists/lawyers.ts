@@ -1,8 +1,14 @@
 import { startCase } from "lodash";
 import { NextFunction, Request, Response } from "express";
-import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
+
 import { lawyers } from "server/models";
+import { lawyersPostRequestSchema } from "./schemas";
+import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { legalPracticeAreasList } from "server/services/metadata";
+import {
+  parseFormRunnerWebhookObject,
+  LawyersFormWebhookData,
+} from "server/services/form-runner";
 import {
   getServiceLabel,
   needToReadNotice,
@@ -17,6 +23,7 @@ import {
   practiceAreaFromParams,
   needToAnswerPracticeArea,
 } from "./helpers";
+import { logger } from "server/services/logger";
 
 export function lawyersGetController(
   req: Request,
@@ -153,5 +160,23 @@ export function lawyersDataIngestionController(
   res: Response,
   next: NextFunction
 ): void {
-  res.json({ reference: 123 });
+  const { value, error } = lawyersPostRequestSchema.validate(req.body);
+
+  if (error !== undefined) {
+    res.status(422).send({
+      error: error.message,
+    });
+  } else {
+    const data = parseFormRunnerWebhookObject<LawyersFormWebhookData>(value);
+
+    lawyers
+      .createLawyer(data)
+      .then((lawyer) => {
+        res.json({ reference: lawyer.id });
+      })
+      .catch((error) => {
+        next(new Error("Error while creating new lawyer"));
+        logger.error(`lawyersDataIngestionController Error: ${error.message}`);
+      });
+  }
 }

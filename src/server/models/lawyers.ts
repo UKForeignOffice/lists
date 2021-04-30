@@ -3,7 +3,8 @@ import { format } from "sqlstring";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
-import { Point, Lawyer, LawyerCreateObject, LawyerWebhookData } from "./types";
+import { LawyersFormWebhookData } from "server/services/form-runner";
+import { Point, Lawyer, LawyerCreateObject } from "./types";
 import { rawInsertGeoLocation } from "./helpers";
 
 // Helpers
@@ -108,7 +109,7 @@ function fetchPublishedLawyersQuery(props: {
 
 // TODO: test
 async function createLawyerInsertObject(
-  lawyer: LawyerWebhookData
+  lawyer: LawyersFormWebhookData
 ): Promise<LawyerCreateObject> {
   try {
     const countryName = upperFirst(lawyer.country);
@@ -124,8 +125,10 @@ async function createLawyerInsertObject(
     );
 
     return {
-      contactName: `${lawyer.firstName} ${lawyer.middleName} ${lawyer.surname}`,
-      lawFirmName: lawyer.organisationName,
+      contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
+        lawyer.surname
+      }`,
+      lawFirmName: lawyer.organisationName.toLowerCase(),
       telephone: lawyer.phoneNumber,
       email: lawyer.emailAddress,
       website: lawyer.websiteAddress,
@@ -134,6 +137,7 @@ async function createLawyerInsertObject(
           firsLine: lawyer.addressLine1,
           secondLine: lawyer.addressLine2,
           postCode: lawyer.postcode,
+          city: lawyer.city,
           country: {
             connect: { id: country.id },
           },
@@ -196,7 +200,7 @@ export async function findPublishedLawyersPerCountry(props: {
 
 // TODO: test
 export async function createLawyer(
-  webhookData: LawyerWebhookData
+  webhookData: LawyersFormWebhookData
 ): Promise<Lawyer> {
   const exists = await prisma.lawyer.findFirst({
     where: {
