@@ -6,14 +6,14 @@
       "path": "/register-to-the-find-a-lawyer-abroad-service",
       "components": [
         {
-          "name": "xxwAAy",
+          "name": "rhnpiT",
           "options": {},
-          "type": "InsetText",
-          "content": "More content here...",
+          "type": "Html",
+          "content": "<p class=\"govuk-body\">Lawyers based outside of the UK can register online to be added to the Foreign, Commonwealth & Development Office’s Find a Lawyer Abroad service.</p>\n<p class=\"govuk-body\">British nationals use this service to help them find the legal support abroad that best suits their needs.</p>\n<p class=\"govuk-body\">You need to register as an individual lawyer and not on behalf of your company. </p>\n<p class=\"govuk-body\">To be eligible to be added to the lawyer’s list you need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>fluent English language skills</li>\n  <li>legal qualifications</li>\n  <li>up to date contact details</li>\n</ul>",
           "schema": {}
         }
       ],
-      "next": [{ "path": "/do-you-speak-english" }]
+      "next": [{ "path": "/do-you-speak-fluent-english" }]
     },
     {
       "title": "Summary",
@@ -22,8 +22,8 @@
       "components": []
     },
     {
-      "path": "/do-you-speak-english",
-      "title": "Do you speak English?",
+      "path": "/do-you-speak-fluent-english",
+      "title": "Do you speak fluent English?",
       "components": [
         {
           "name": "speakEnglish",
@@ -31,7 +31,9 @@
           "type": "YesNoField",
           "title": "Do you speak English?",
           "nameHasError": false,
-          "schema": {}
+          "schema": {},
+          "hint": "You can only be added to the Find a Lawyer Abroad service if you have excellent English language skills. ",
+          "values": { "type": "listRef" }
         }
       ],
       "next": [
@@ -39,7 +41,10 @@
           "path": "/are-you-the-english-speaking-lead-for-your-company",
           "condition": "oV9fvQl39FkGahoM46257"
         },
-        { "path": "/no-english", "condition": "50_TW9NLlvr2820-1-Qt6" }
+        {
+          "path": "/you-need-to-speak-fluent-english-to-use-this-service",
+          "condition": "50_TW9NLlvr2820-1-Qt6"
+        }
       ]
     },
     {
@@ -58,9 +63,17 @@
       "next": [{ "path": "/are-you-qualified-to-practice-law" }]
     },
     {
-      "path": "/no-english",
-      "title": "No English",
-      "components": [],
+      "path": "/you-need-to-speak-fluent-english-to-use-this-service",
+      "title": "You need to speak fluent English to use this service",
+      "components": [
+        {
+          "name": "WlXNxl",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\n   You can only be added to the Find a Lawyer Abroad service if you have excellent English language skills. \n\n</div>",
+          "schema": {}
+        }
+      ],
       "next": []
     },
     {
@@ -77,8 +90,14 @@
         }
       ],
       "next": [
-        { "path": "/full-name", "condition": "sC_WI7140dW0LN5R7pbFk" },
-        { "path": "/not-qualified", "condition": "wQAJrkhE3WF5cKg-a0ocJ" }
+        {
+          "path": "/you-need-to-be-qualified-to-practise-law-in-your-country-to-use-this-service",
+          "condition": "wQAJrkhE3WF5cKg-a0ocJ"
+        },
+        {
+          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body",
+          "condition": "sC_WI7140dW0LN5R7pbFk"
+        }
       ]
     },
     {
@@ -158,8 +177,8 @@
       "next": [{ "path": "/phone-number" }]
     },
     {
-      "path": "/areas-of-law-practised",
-      "title": "Areas of law practised",
+      "path": "/in-what-areas-of-law-are-you-qualified-to-practise",
+      "title": "In what areas of law are you qualified to practise? ",
       "components": [
         {
           "name": "areasOfLaw",
@@ -168,7 +187,8 @@
           "title": "Areas of law practicsed",
           "nameHasError": false,
           "list": "iqn9pP",
-          "schema": {}
+          "schema": {},
+          "hint": "You can choose as many areas of law as relevant\n"
         }
       ],
       "next": [{ "path": "/can-you-provide-legal-aid-to-british-nationals" }]
@@ -210,36 +230,16 @@
       "title": "Have you represented British Nationals before?",
       "components": [
         {
-          "name": "5wlnAK",
+          "name": "representedBritishNationalsBefore",
           "options": {},
           "type": "YesNoField",
-          "title": "representedBritishNationalsBefore",
-          "schema": {}
-        }
-      ],
-      "next": [
-        { "path": "/what-qualifications-do-you-possess-to-practice-law" }
-      ]
-    },
-    {
-      "path": "/what-qualifications-do-you-possess-to-practice-law",
-      "title": "What qualifications do you possess to practice Law?",
-      "components": [
-        {
-          "name": "legalPracticeAreasQualifications",
-          "options": {},
-          "type": "CheckboxesField",
-          "title": "What qualifications do you possess to practice Law?",
+          "title": "Have you represented British Nationals before?",
+          "schema": {},
           "nameHasError": false,
-          "list": "iqn9pP",
-          "schema": {}
+          "values": { "type": "listRef" }
         }
       ],
-      "next": [
-        {
-          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body"
-        }
-      ]
+      "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
     },
     {
       "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body",
@@ -256,7 +256,7 @@
       ],
       "next": [
         {
-          "path": "/which-local-bar-association-or-other-regulatory-authority",
+          "path": "/what-is-the-name-of-the-local-bar-association-or-other-regulatory-authority",
           "condition": "DzOdSI"
         },
         { "path": "/not-a-member", "condition": "VMgnBE" }
@@ -279,8 +279,7 @@
         {
           "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
           "condition": "6ZEjcsVvflFMwoHRspRPd"
-        },
-        { "path": "/summary", "condition": "WiHImXvXbzDvbsY90biLb" }
+        }
       ]
     },
     {
@@ -301,7 +300,7 @@
           "path": "/which-out-of-hours-contact-details-are-different",
           "condition": "HbAUjaiVjoVTUhFXDxH8D"
         },
-        { "path": "/summary", "condition": "YzSeD8_Zz49h7BNzTOfw8" }
+        { "path": "/declaration", "condition": "YzSeD8_Zz49h7BNzTOfw8" }
       ]
     },
     {
@@ -315,7 +314,8 @@
           "title": "Which out of hours contact details are different?",
           "nameHasError": false,
           "list": "QrcJZH",
-          "schema": {}
+          "schema": {},
+          "hint": "You can choose as many options as relevant\n"
         }
       ],
       "next": [
@@ -326,9 +326,17 @@
       ]
     },
     {
-      "path": "/not-qualified",
-      "title": "Not qualified",
-      "components": [],
+      "path": "/you-need-to-be-qualified-to-practise-law-in-your-country-to-use-this-service",
+      "title": "You need to be qualified to practise law in your country to use this service",
+      "components": [
+        {
+          "name": "gjJiCS",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\n    You can only be added to the Find a Lawyer Abroad service if you are qualified to practice law in the country you are based. \n</div>",
+          "schema": {}
+        }
+      ],
       "next": []
     },
     {
@@ -344,11 +352,11 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/address" }]
+      "next": [{ "path": "/company-address" }]
     },
     {
-      "path": "/address",
-      "title": "Address",
+      "path": "/company-address",
+      "title": "Company Address",
       "components": [
         {
           "name": "addressLine1",
@@ -392,22 +400,30 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/areas-of-law-practised" }]
+      "next": [
+        { "path": "/in-what-areas-of-law-are-you-qualified-to-practise" }
+      ]
     },
     {
-      "path": "/which-local-bar-association-or-other-regulatory-authority",
-      "title": "Which local bar association or other regulatory authority?",
+      "path": "/what-is-the-name-of-the-local-bar-association-or-other-regulatory-authority",
+      "title": "What is the name of the local bar association or other regulatory authority?",
       "components": [
         {
-          "name": "yRVKHj",
+          "name": "TQVySa",
           "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\n    Please specify the most relevant one\n</div>",
+          "schema": {}
+        },
+        {
+          "name": "KLBDAg",
+          "options": { "hideTitle": true },
           "type": "TextField",
-          "hint": "Please specify the most relevant one",
-          "title": "Which local bar association or other regulatory authority?",
+          "title": "Regulatorybodyname",
           "schema": {}
         }
       ],
-      "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
+      "next": [{ "path": "/full-name" }]
     },
     {
       "path": "/not-a-member",
@@ -848,9 +864,7 @@
       "name": "postToLists",
       "title": "Post to lists",
       "type": "webhook",
-      "outputConfiguration": {
-        "url": "http://localhost:3000/ingest/lawyers"
-      }
+      "outputConfiguration": { "url": "http://localhost:3000/ingest/lawyers" }
     }
   ],
   "version": 2,
