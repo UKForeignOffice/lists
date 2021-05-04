@@ -1,6 +1,3 @@
-// IMPORTANT: If you change the schmema don't forget to generate the migration with prisma migration
-// See ./scripts/prisma-migrate-dev.sh
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
@@ -30,28 +27,28 @@ model UserRoles {
 }
 
 model Lawyer {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  contactName String  @db.VarChar(255)
-  lawFirmName String  @db.VarChar(255) @unique
-  telephone   String  @db.VarChar(255)
-  email       String? @db.VarChar(255)
-  website     String? @db.VarChar(255)
-  description String?
+  lawFirmName         String  @db.VarChar(255) @unique
+  contactName         String  @db.VarChar(255)
+  telephone           String  @db.VarChar(255)
+  email               String? @db.VarChar(255)
+  website             String? @db.VarChar(255)
   
-  address     Address @relation(fields: [addressId], references: [id])
-  addressId   Int
+  address             Address @relation(fields: [addressId], references: [id])
+  addressId           Int
 
   legalPracticeAreas  LegalPracticeAreas[]
-  regionsServed       String?
   legalAid            Boolean @default(false)
   proBonoService      Boolean @default(false)
 
-  isApproved    Boolean @default(false)
-  isPublished   Boolean @default(false)
-  isBlocked     Boolean @default(false)
+  extendedProfile     Json?
+
+  isApproved          Boolean @default(false)
+  isPublished         Boolean @default(false)
+  isBlocked           Boolean @default(false)
 }
 
 model LegalPracticeAreas {
@@ -79,9 +76,9 @@ model Address {
   geoLocationId   Int?
 }
 
-// Prisma does not support PostGis geography types so Address.geo location 
+// Prisma does not support PostGis geography types so Address.geoLocation 
 // is temporarily moved to a separate table GeoLocation which is created using raw sql
-// please see ./helpers
+// please see ../helpers
 // model GeoLocation {
 //   id          Int @id @default(autoincrement())
 //   location    geography(POINT)
