@@ -1,8 +1,8 @@
 import { PrismaClient, Country } from "@prisma/client";
 import { uniq, upperFirst } from "lodash";
 import { logger } from "server/services/logger";
-import { CountriesWithData } from "../types";
-import { createLawyer } from "../lawyers";
+import { CountriesWithData } from "../../types";
+import { createLawyer } from "../../lawyers";
 
 const postCodeExtractRegex: {
   [propName: string]: RegExp;

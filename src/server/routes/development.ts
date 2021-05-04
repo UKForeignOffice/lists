@@ -1,7 +1,7 @@
 import express from "express";
 import { exec } from "child_process";
 import { prisma } from "server/models/db/prisma-client";
-import { populateDb } from "server/models/seed-data/populate-database";
+import { seedDb } from "server/models/db/seed-data/seed-db";
 import rateLimit from "express-rate-limit";
 import {
   createGeoLocationTable,
@@ -56,8 +56,8 @@ router.get("/dev/reset-db", (req, res) => {
   });
 });
 
-router.get("/dev/populate-db", (req, res) => {
-  populateDb(prisma)
+router.get("/dev/seed-db", (req, res) => {
+  seedDb(prisma)
     .then((result) => {
       res.json({ result });
     })
