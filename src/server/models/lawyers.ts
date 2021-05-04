@@ -1,13 +1,23 @@
-import { isArray, upperFirst, uniq } from "lodash";
+import { isArray, upperFirst, uniq, pick } from "lodash";
 import { format } from "sqlstring";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { LawyersFormWebhookData } from "server/services/form-runner";
-import { Point, Lawyer, LawyerCreateObject } from "./types";
+import { Country, Point, Lawyer, LawyerCreateObject } from "./types";
 import { rawInsertGeoLocation } from "./helpers";
 
 // Helpers
+async function createCountry(country: string): Promise<Country> {
+  const countryName = upperFirst(country);
+
+  return await prisma.country.upsert({
+    where: { name: countryName },
+    create: { name: countryName },
+    update: {},
+  });
+}
+
 async function getPlaceGeoPoint(props: {
   country?: string;
   text?: string;
@@ -24,6 +34,48 @@ async function getPlaceGeoPoint(props: {
   } catch (error) {
     return undefined;
   }
+}
+
+async function createAddressGeoLocation(
+  lawyer: LawyersFormWebhookData
+): Promise<number | boolean> {
+  const location = await geoLocatePlaceByText(`
+      ${lawyer.addressLine1}, 
+      ${lawyer.addressLine2 ?? ""}, 
+      ${lawyer.city} - 
+      ${lawyer.country} - 
+      ${lawyer.postcode}
+  `);
+
+  const point = location?.Geometry?.Point;
+
+  if (isArray(point)) {
+    return await rawInsertGeoLocation(point);
+  }
+
+  return false;
+}
+
+function parseOutOfHoursObject(
+  lawyer: LawyersFormWebhookData
+): LawyerCreateObject["extendedProfile"]["outOfHours"] {
+  const telephone = lawyer.outOfHours?.phoneNumber;
+  const email = lawyer.outOfHours?.emailAddress;
+  const address =
+    lawyer.outOfHours?.country !== undefined
+      ? {
+          firsLine: `${lawyer.outOfHours?.addressLine1}`,
+          secondLine: lawyer.outOfHours?.addressLine2,
+          postCode: `${lawyer.outOfHours?.postcode}`,
+          city: `${lawyer.outOfHours?.city}`,
+        }
+      : {};
+
+  return {
+    email,
+    telephone,
+    ...address,
+  };
 }
 
 function fetchPublishedLawyersQuery(props: {
@@ -112,17 +164,10 @@ async function createLawyerInsertObject(
   lawyer: LawyersFormWebhookData
 ): Promise<LawyerCreateObject> {
   try {
-    const countryName = upperFirst(lawyer.country);
-
-    const country = await prisma.country.upsert({
-      where: { name: countryName },
-      create: { name: countryName },
-      update: {},
-    });
-
-    const legalPracticeAreasList = uniq<string>(
-      lawyer.areasOfLaw?.split(", ") ?? []
-    );
+    const country = await createCountry(lawyer.country);
+    const geoLocationId = await createAddressGeoLocation(lawyer);
+    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(", ") ?? []);
+    const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {
       contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
@@ -141,6 +186,7 @@ async function createLawyerInsertObject(
           country: {
             connect: { id: country.id },
           },
+          ...(typeof geoLocationId === "number" ? { geoLocationId } : {}),
         },
       },
       legalPracticeAreas: {
@@ -155,6 +201,14 @@ async function createLawyerInsertObject(
       proBonoService: lawyer.canOfferProBono,
       isApproved: false,
       isPublished: false,
+      extendedProfile: {
+        ...pick(lawyer, [
+          "regulatoryAuthority",
+          "englishSpeakLead",
+          "representedBritishNationalsBefore",
+        ]),
+        outOfHours,
+      },
     };
   } catch (error) {
     const message = `createLawyerInsertObject Error: ${error.message}`;
@@ -204,7 +258,12 @@ export async function createLawyer(
 ): Promise<Lawyer> {
   const exists = await prisma.lawyer.findFirst({
     where: {
-      lawFirmName: webhookData.organisationName,
+      lawFirmName: webhookData.organisationName.toLowerCase(),
+      address: {
+        country: {
+          name: webhookData.country,
+        },
+      },
     },
   });
 
@@ -215,27 +274,6 @@ export async function createLawyer(
   const lawyerData = await createLawyerInsertObject(webhookData);
 
   try {
-    const address = `
-      ${webhookData.addressLine1}, 
-      ${webhookData.addressLine2 ?? ""}, 
-      ${webhookData.city} - 
-      ${webhookData.country} - 
-      ${webhookData.postcode}
-    `;
-
-    const location = await geoLocatePlaceByText(address);
-    const point = location?.Geometry?.Point;
-
-    if (isArray(point)) {
-      const locationId = await rawInsertGeoLocation(point);
-
-      if (locationId >= 0) {
-        Object.assign(lawyerData.address.create, {
-          geoLocationId: locationId,
-        });
-      }
-    }
-
     return await prisma.lawyer.create({ data: lawyerData });
   } catch (error) {
     logger.error(`createLawyer Error: ${error.message}`);

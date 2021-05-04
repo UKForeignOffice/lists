@@ -15,6 +15,7 @@ import {
   LOCATION_SERVICE_ACCESS_KEY,
   LOCATION_SERVICE_SECRET_KEY,
   LOCATION_SERVICE_INDEX_NAME,
+  isLocalHost,
 } from "server/config";
 
 const router = express.Router();
@@ -24,7 +25,9 @@ const devRateLimit = rateLimit({
   max: 10,
 });
 
-router.get("/dev/*", devRateLimit);
+if (!isLocalHost) {
+  router.get("/dev/*", devRateLimit);
+}
 
 router.get("/dev/inspect-db", (req, res) => {
   describeDb()
