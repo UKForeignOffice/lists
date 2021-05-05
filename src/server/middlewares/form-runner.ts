@@ -13,6 +13,10 @@ export function configureFormRunnerProxy(server: Express): void {
         return req.originalUrl.replace(`${FORM_RUNNER_BASE_ROUTE}`, "");
       },
       userResDecorator: function (_, proxyResData, userReq) {
+        if (userReq.baseUrl.includes("assets/")) {
+          return proxyResData;
+        }
+
         const data = proxyResData.toString("utf8");
 
         const updatedData = data
