@@ -1,4 +1,4 @@
-import { isArray, upperFirst, uniq, pick } from "lodash";
+import { isArray, upperFirst, uniq, pick, startCase, toLower } from "lodash";
 import { format } from "sqlstring";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -9,7 +9,7 @@ import { rawInsertGeoLocation } from "./helpers";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
-  const countryName = upperFirst(country);
+  const countryName = startCase(toLower(country));
 
   return await prisma.country.upsert({
     where: { name: countryName },
@@ -80,11 +80,11 @@ function parseOutOfHoursObject(
 
 function fetchPublishedLawyersQuery(props: {
   country?: string;
-  distanceFromPoint?: Point;
+  fromGeoPoint?: Point;
   filterLegalAidYes: boolean;
   practiceArea?: string[];
 }): string {
-  const { country, distanceFromPoint, filterLegalAidYes } = props;
+  const { country, fromGeoPoint, filterLegalAidYes } = props;
 
   let conditionClause = (): "WHERE" | "AND" => {
     conditionClause = () => "AND";
@@ -109,7 +109,7 @@ function fetchPublishedLawyersQuery(props: {
     whereLegalAid = `${conditionClause()} "Lawyer"."legalAid" = true`;
   }
 
-  if (isArray(distanceFromPoint)) {
+  if (isArray(fromGeoPoint)) {
     withDistance = format(
       `,
       ST_Distance(
@@ -117,7 +117,7 @@ function fetchPublishedLawyersQuery(props: {
         ST_GeographyFromText('Point(? ?)')
       ) AS distanceInMeters
     `,
-      distanceFromPoint
+      fromGeoPoint
     );
 
     orderBy = "ORDER BY distanceInMeters ASC";
@@ -233,7 +233,7 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   try {
-    const distanceFromPoint = await getPlaceGeoPoint({
+    const fromGeoPoint = await getPlaceGeoPoint({
       country,
       text: props.region,
     });
@@ -241,7 +241,7 @@ export async function findPublishedLawyersPerCountry(props: {
     const query = fetchPublishedLawyersQuery({
       country,
       filterLegalAidYes,
-      distanceFromPoint,
+      fromGeoPoint,
     });
 
     const result = await prisma.$queryRaw(query);
@@ -278,5 +278,55 @@ export async function createLawyer(
   } catch (error) {
     logger.error(`createLawyer Error: ${error.message}`);
     throw new Error(`createLawyer Error: ${error.message}`);
+  }
+}
+
+export async function approveLawyer(lawFirmName: string): Promise<Lawyer> {
+  try {
+    return await prisma.lawyer.update({
+      where: {
+        lawFirmName: lawFirmName.toLowerCase(),
+      },
+      data: {
+        isApproved: true,
+      },
+    });
+  } catch (error) {
+    logger.error(`approveLawyer Error ${error.message}`);
+    throw new Error("Failed to approve lawyer");
+  }
+}
+
+export async function publishLawyer(lawFirmName: string): Promise<Lawyer> {
+  try {
+    return await prisma.lawyer.update({
+      where: {
+        lawFirmName: lawFirmName.toLowerCase(),
+      },
+      data: {
+        isPublished: true,
+      },
+    });
+  } catch (error) {
+    logger.error(`publishLawyer Error ${error.message}`);
+    throw new Error("Failed to publish lawyer");
+  }
+}
+
+export async function blockLawyer(lawFirmName: string): Promise<Lawyer> {
+  try {
+    return await prisma.lawyer.update({
+      where: {
+        lawFirmName: lawFirmName.toLowerCase(),
+      },
+      data: {
+        isBlocked: true,
+        isApproved: false,
+        isPublished: false,
+      },
+    });
+  } catch (error) {
+    logger.error(`blockLawyer Error ${error.message}`);
+    throw new Error("Failed to publish lawyer");
   }
 }
