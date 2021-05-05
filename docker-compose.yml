@@ -31,7 +31,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data/
       - ./config:/usr/src/config
     command: postgres -c config_file=/usr/src/config/postgresql-local.conf
   pgadmin:
@@ -50,5 +49,3 @@ services:
       - "8081:8080"
     environment:
       - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
-volumes:
-  postgres-data:

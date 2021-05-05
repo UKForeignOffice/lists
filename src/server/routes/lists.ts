@@ -1,36 +1,22 @@
 import express from "express";
 import {
-  listRedirectToLawyersController,
-  // listsStartPageController,
+  listsRoutes,
   listsGetController,
-  listsResultsController,
   listsPostController,
-  listsFinderStartRoute,
-  listsFinderFormRoute,
-  listsFinderResultsRoute,
-  listsFormRunnerApplicationRoute,
-  listFormRunnerApplicationController,
+  listsResultsController,
+  // listsStartPageController,
+  listsDataIngestionController,
+  listRedirectToLawyersController,
 } from "server/controllers/lists";
 
 const router = express.Router();
 
-// start page
 // Temporary redirect to lawyers start page
-// router.get(listsFinderStartRoute, listsStartPageController);
-router.get(listsFinderStartRoute, listRedirectToLawyersController);
-
-// questions page
-router.get(listsFinderFormRoute, listsGetController);
-router.post(listsFinderFormRoute, listsPostController);
-
-// results page
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get(listsFinderResultsRoute, listsResultsController);
-
-// lists application forms processing
-router.post(
-  listsFormRunnerApplicationRoute,
-  listFormRunnerApplicationController
-);
+// router.get(listsRoutes.start, listsStartPageController);
+router.get(listsRoutes.start, listRedirectToLawyersController);
+router.get(listsRoutes.finder, listsGetController);
+router.post(listsRoutes.finder, listsPostController);
+router.get(listsRoutes.results, listsResultsController);
+router.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
 
 export default router;

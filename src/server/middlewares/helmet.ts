@@ -5,8 +5,7 @@ export function configureHelmet(server: Express): void {
   server.use(
     helmet({
       referrerPolicy: { policy: "no-referrer" },
-      // TODO: this is breaking dev process.env.NODE_ENV === "production" ? undefined : false,
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: false, // TODO: When true this breaks some scripts e.b autocomplete input
     })
   );
 }

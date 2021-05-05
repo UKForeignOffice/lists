@@ -1,7 +1,7 @@
 import express from "express";
 import { exec } from "child_process";
 import { prisma } from "server/models/db/prisma-client";
-import { populateDb } from "server/models/seed-data/populate-database";
+import { seedDb } from "server/models/db/seed-data/seed-db";
 import rateLimit from "express-rate-limit";
 import {
   createGeoLocationTable,
@@ -15,6 +15,7 @@ import {
   LOCATION_SERVICE_ACCESS_KEY,
   LOCATION_SERVICE_SECRET_KEY,
   LOCATION_SERVICE_INDEX_NAME,
+  isLocalHost,
 } from "server/config";
 
 const router = express.Router();
@@ -24,7 +25,9 @@ const devRateLimit = rateLimit({
   max: 10,
 });
 
-router.get("/dev/*", devRateLimit);
+if (!isLocalHost) {
+  router.get("/dev/*", devRateLimit);
+}
 
 router.get("/dev/inspect-db", (req, res) => {
   describeDb()
@@ -56,8 +59,8 @@ router.get("/dev/reset-db", (req, res) => {
   });
 });
 
-router.get("/dev/populate-db", (req, res) => {
-  populateDb(prisma)
+router.get("/dev/seed-db", (req, res) => {
+  seedDb(prisma)
     .then((result) => {
       res.json({ result });
     })

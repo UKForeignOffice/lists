@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { logger } from "server/services/logger";
 
 import { populateCountryLawyers } from "./helpers";
-import { CountriesWithData } from "../types";
+import { CountriesWithData } from "../../types";
 
 import { thailandLawyers } from "./thailand";
 import { franceLawyers } from "./france";
@@ -31,7 +31,7 @@ const CountriesData: Array<{
   },
 ];
 
-export const populateDb = async (prisma: PrismaClient): Promise<string[]> => {
+export const seedDb = async (prisma: PrismaClient): Promise<string[]> => {
   const results: any[] = [];
 
   for (let i = 0; i < CountriesData.length; i += 1) {
