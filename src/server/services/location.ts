@@ -65,7 +65,7 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 }
 
-export async function locatePlaceByText(
+export async function geoLocatePlaceByText(
   address: string
 ): Promise<Location.Types.Place | undefined> {
   const query = {

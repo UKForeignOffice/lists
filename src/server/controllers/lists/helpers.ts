@@ -1,21 +1,22 @@
 import querystring from "querystring";
+import { Request } from "express";
 import {
-  isArray,
-  omit,
-  isString,
-  trim,
   get,
-  without,
+  omit,
+  trim,
   mapKeys,
+  isArray,
+  without,
+  isString,
   lowerCase,
 } from "lodash";
-import { Request } from "express";
+
+import { ListsRequestParams } from "./types";
+import { CountryName } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
-import { ListsRequestParams } from "./types";
-import { CountryName } from "server/models/types";
 
 export function queryStringFromParams(params: { [name: string]: any }): string {
   return Object.keys(params)

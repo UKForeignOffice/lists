@@ -8,7 +8,7 @@
       {# <p class="govuk-body">
         What are you looking for?<br />
         <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
-        <a class="govuk-link" href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
+        <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
       </p> #}
     {% endif %}
     {% if country %}
@@ -17,7 +17,7 @@
         <strong>{{ _.upperFirst(country) }}</strong>
         <a 
           class="govuk-link" 
-          href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'country') }}"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}"
           aria-label="Change country answer"
         >Change</a>
       </p>
@@ -28,7 +28,7 @@
         <strong>{{ _.upperFirst(region) }}</strong>
         <a 
           class="govuk-link" 
-          href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'region') }}"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}"
           aria-label="Change country's area answer"
         >Change</a>
       </p>
@@ -39,7 +39,7 @@
         <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
         <a 
           class="govuk-link" 
-          href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'practiceArea') }}"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}"
           aria-label="Change field of law answer"
         >Change</a>
       </p>
@@ -50,7 +50,7 @@
         <strong>{{ _.startCase(legalAid) }}</strong>
         <a 
           class="govuk-link" 
-          href="{{ listsFinderFormRoute }}?{{ removeQueryParameter(queryString, 'legalAid') }}"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'legalAid') }}"
           aria-label="Change legal aid answer"
         >Change</a>
       </p>

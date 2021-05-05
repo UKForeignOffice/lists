@@ -1,7 +1,7 @@
 import { server } from "./server";
 import { PORT, NODE_ENV } from "./config";
 import { logger } from "./services/logger";
-import { startFormRunner } from "server/middlewares/form-runner";
+import { startFormRunner } from "server/services/form-runner";
 
 startFormRunner()
   .then(() => {

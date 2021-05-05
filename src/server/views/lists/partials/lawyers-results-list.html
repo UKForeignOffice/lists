@@ -1,13 +1,13 @@
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
     <li>
-      <p>We couldn't find any results for this search, please <a href="{{listsFinderFormRoute}}?serviceType=lawyers">try again</a>
+      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType=lawyers">try again</a>
     </li>
   {% endif %}
   {% for item in searchResults %}
     <li>
       <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
-        {{ item.lawFirmName if item.lawFirmName else item.contactName }}
+        {{ _.startCase(_.toLower(item.lawFirmName if item.lawFirmName else item.contactName)) }}
       </h2>
       {% if item.distanceinmeters >= 0 %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">

@@ -7,7 +7,7 @@ import {
   configureBodyParser,
   configureStaticServer,
   configureErrorHandlers,
-  configureFormRunner,
+  configureFormRunnerProxy,
 } from "./middlewares";
 import { configureRouter } from "./routes";
 
@@ -17,8 +17,8 @@ export const server = express();
 configureHelmet(server);
 configureLogger(server);
 configureCompression(server);
-// form runner must be initialized before body parser
-configureFormRunner(server);
+// form runner proxy must be initialized before body parser
+configureFormRunnerProxy(server);
 configureBodyParser(server);
 configureViews(server);
 configureRouter(server);

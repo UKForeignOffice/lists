@@ -3,7 +3,7 @@ import {
   getAWSLocationService,
   checkIfPlaceIndexExists,
   createPlaceIndex,
-  locatePlaceByText,
+  geoLocatePlaceByText,
 } from "../location";
 
 describe("Location service:", () => {
@@ -53,7 +53,7 @@ describe("Location service:", () => {
 
   test("locatePlaceByText request is correct", async () => {
     const location = getAWSLocationService();
-    await locatePlaceByText("Bangkok, Thailand");
+    await geoLocatePlaceByText("Bangkok, Thailand");
 
     expect(location.searchPlaceIndexForText).toHaveBeenCalledWith({
       MaxResults: 1,
@@ -63,7 +63,7 @@ describe("Location service:", () => {
   });
 
   test("locatePlaceByText response is correct", async () => {
-    const result = await locatePlaceByText("Bangkok, Thailand");
+    const result = await geoLocatePlaceByText("Bangkok, Thailand");
 
     expect(result).toEqual({
       Country: "THA",
