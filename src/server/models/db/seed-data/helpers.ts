@@ -1,8 +1,9 @@
 import { PrismaClient, Country } from "@prisma/client";
-import { uniq, upperFirst } from "lodash";
+import { upperFirst } from "lodash";
 import { logger } from "server/services/logger";
 import { CountriesWithData } from "../../types";
-import { createLawyer } from "../../lawyers";
+import { createLawyer, approveLawyer, publishLawyer } from "../../lawyers";
+import { LawyersFormWebhookData } from "server/services/form-runner";
 
 const postCodeExtractRegex: {
   [propName: string]: RegExp;
@@ -13,7 +14,10 @@ const postCodeExtractRegex: {
   Spain: /(\d{5})(?!.*\1)/gm,
 };
 
-function createLawyersQueryObjects(country: Country, lawyers: any[]): any[] {
+function createLawyersQueryObjects(
+  country: Country,
+  lawyers: any[]
+): LawyersFormWebhookData[] {
   const postCodeRegex = postCodeExtractRegex[country.name];
 
   if (postCodeRegex === undefined) {
@@ -23,42 +27,38 @@ function createLawyersQueryObjects(country: Country, lawyers: any[]): any[] {
   }
 
   return lawyers.map((lawyer) => {
-    const legalPracticeAreasList = uniq<string>(
-      lawyer.legalPracticeAreas?.split("; ") ?? []
-    );
-
     const postCodeFromAddress: string =
       lawyer.address?.match(postCodeRegex)?.["0"] ?? "";
 
     return {
-      contactName: lawyer.contactName ?? lawyer.lawFirmName,
-      lawFirmName: lawyer.lawFirmName ?? lawyer.contactName,
-      telephone: lawyer.telephone,
-      email: lawyer.email ?? "",
-      website: lawyer.website ?? "",
-      description: lawyer.description ?? "",
-      address: {
-        create: {
-          firsLine: lawyer.address,
-          postCode: postCodeFromAddress,
-          country: {
-            connect: { id: country.id },
-          },
-        },
-      },
-      legalPracticeAreas: {
-        connectOrCreate: legalPracticeAreasList
-          .map((name: string) => name.trim())
-          .map((name) => ({
-            where: { name },
-            create: { name },
-          })),
-      },
-      regionsServed: lawyer.regionsServed,
-      legalAid: lawyer.legalAid === "Yes",
-      proBonoService: false,
-      isApproved: true,
-      isPublished: true,
+      speakEnglish: true,
+      englishSpeakLead: true,
+      qualifiedToPracticeLaw: true,
+      firstName: (lawyer.contactName ?? "").split(/[\s,]+/)[0],
+      middleName: undefined,
+      surname: (lawyer.contactName ?? "")
+        .split(/[\s,]+/)
+        .slice(1)
+        .join(" "),
+      organisationName: lawyer.lawFirmName ?? lawyer.contactName,
+      websiteAddress: lawyer.website ?? "",
+      emailAddress: lawyer.email ?? "",
+      phoneNumber: lawyer.telephone,
+      addressLine1: lawyer.address,
+      addressLine2: undefined,
+      city: "",
+      postcode: postCodeFromAddress,
+      country: `${country.name}`,
+      areasOfLaw: lawyer.legalPracticeAreas?.replace(";", ","),
+      canProvideLegalAid: lawyer.legalAid === "Yes",
+      canOfferProBono: lawyer.proBonoService === "Yes",
+      representedBritishNationalsBefore: true,
+      memberOfRegulatoryAuthority: true,
+      regulatoryAuthority: "",
+      outOfHoursService: false,
+      outOfHoursContactDetailsDifferent: false,
+      outOfHoursContactDetailsDifferences: "",
+      declarationConfirm: "confirm",
     };
   });
 }
@@ -104,7 +104,6 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
     lawyersInsetObjList = createLawyersQueryObjects(country, lawyers);
   } catch (error) {
     logger.error("createLawyersQueryObjects", error);
-
     return { country: countryName, error: error.message };
   }
 
@@ -116,7 +115,9 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
     const lawyer = lawyersInsetObjList[i];
 
     try {
-      await createLawyer(lawyer);
+      const newLawyer = await createLawyer(lawyer);
+      await approveLawyer(newLawyer.lawFirmName);
+      await publishLawyer(newLawyer.lawFirmName);
       itemsInserted += 1;
     } catch (error) {
       errors.push(error.message);
