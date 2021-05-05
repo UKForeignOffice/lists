@@ -1,12 +1,11 @@
 import { Express } from "express";
 import helmet from "helmet";
-import { isLocalHost } from "server/config";
 
 export function configureHelmet(server: Express): void {
   server.use(
     helmet({
       referrerPolicy: { policy: "no-referrer" },
-      contentSecurityPolicy: !isLocalHost,
+      contentSecurityPolicy: false, // TODO: When true this breaks some scripts e.b autocomplete input
     })
   );
 }
