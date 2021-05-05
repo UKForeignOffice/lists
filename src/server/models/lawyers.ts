@@ -159,7 +159,6 @@ function fetchPublishedLawyersQuery(props: {
   `;
 }
 
-// TODO: test
 async function createLawyerInsertObject(
   lawyer: LawyersFormWebhookData
 ): Promise<LawyerCreateObject> {
@@ -252,7 +251,6 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 }
 
-// TODO: test
 export async function createLawyer(
   webhookData: LawyersFormWebhookData
 ): Promise<Lawyer> {
