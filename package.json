@@ -38,6 +38,7 @@
     "joi": "^17.4.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
+    "notifications-node-client": "^5.1.0",
     "nunjucks": "^3.2.3",
     "pg": "^8.6.0",
     "sqlstring": "^2.3.2",
