@@ -7,6 +7,7 @@ import {
   getAllRequestParams,
   removeQueryParameter,
   getCountryLawyerRedirectLink,
+  createConfirmationLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
@@ -17,7 +18,6 @@ describe("Lawyers List:", () => {
       expect(countryHasLegalAid("Spain")).toBe(true);
       expect(countryHasLegalAid("spain")).toBe(true);
       expect(countryHasLegalAid("bosnia and Herzegovina")).toBe(true);
-
     });
 
     test("result is correct when country does not have legal aid support", () => {
@@ -152,7 +152,7 @@ describe("Lawyers List:", () => {
             (key) => key.toLowerCase() === country.toLowerCase()
           ) as string
         );
-        
+
         expect(link).toBe(expectedLink);
         expect(expectedLink).toBeDefined();
       });
@@ -171,6 +171,18 @@ describe("Lawyers List:", () => {
     });
     test("it returns false when country has legal aid support", () => {
       expect(countryHasLegalAid("thailand")).toBe(false);
+    });
+  });
+
+  describe("createConfirmationLink", () => {
+    test("confirmation link is correct", () => {
+      const req: any = {
+        get: jest.fn().mockReturnValue("localhost"),
+        protocol: "https",
+      };
+      expect(createConfirmationLink(req, "123")).toBe(
+        "https://localhost/confirm/123"
+      );
     });
   });
 });

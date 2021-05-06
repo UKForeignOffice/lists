@@ -6,6 +6,7 @@ export const listsRoutes = {
   finder: "/find",
   results: "/results",
   formRunnerWebhook: "/ingest/:serviceType",
+  confirmApplication: "/confirm/:applicationReference",
 };
 
 export const DEFAULT_VIEW_PROPS = {

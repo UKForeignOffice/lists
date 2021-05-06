@@ -1,10 +1,11 @@
-import { startCase } from "lodash";
+import { noop, startCase } from "lodash";
 import { NextFunction, Request, Response } from "express";
 
 import { lawyers } from "server/models";
 import { lawyersPostRequestSchema } from "./schemas";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { legalPracticeAreasList } from "server/services/metadata";
+import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import {
   parseFormRunnerWebhookObject,
   LawyersFormWebhookData,
@@ -22,6 +23,7 @@ import {
   queryStringFromParams,
   practiceAreaFromParams,
   needToAnswerPracticeArea,
+  createConfirmationLink,
 } from "./helpers";
 import { logger } from "server/services/logger";
 
@@ -171,8 +173,15 @@ export function lawyersDataIngestionController(
 
     lawyers
       .createLawyer(data)
-      .then((lawyer) => {
-        res.json({ reference: lawyer.id });
+      .then(async (lawyer) => {
+        if (lawyer.email !== null) {
+          sendApplicationConfirmationEmail(
+            lawyer.email,
+            createConfirmationLink(req, lawyer.reference)
+          ).catch(noop);
+        }
+
+        res.json({});
       })
       .catch((error) => {
         next(new Error("Error while creating new lawyer"));

@@ -7,6 +7,7 @@ import {
   // listsStartPageController,
   listsDataIngestionController,
   listRedirectToLawyersController,
+  listsConfirmApplicationController,
 } from "server/controllers/lists";
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get(listsRoutes.finder, listsGetController);
 router.post(listsRoutes.finder, listsPostController);
 router.get(listsRoutes.results, listsResultsController);
 router.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
+router.get(listsRoutes.confirmApplication, listsConfirmApplicationController);
 
 export default router;

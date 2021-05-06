@@ -127,3 +127,12 @@ export function listsDataIngestionController(
       });
   }
 }
+
+export function listsConfirmApplicationController(
+  req: Request,
+  res: Response,
+  _next: NextFunction
+): void {
+  const { applicationReference } = req.params;
+  res.send(`OK ${applicationReference}`);
+}
