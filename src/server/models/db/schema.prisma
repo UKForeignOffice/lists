@@ -10,6 +10,7 @@ datasource db {
 
 model Lawyer {
   id                  Int      @id @default(autoincrement())
+  reference           String   @default(uuid()) @unique
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -74,15 +75,4 @@ model Country {
 
   name      String    @db.VarChar(255) @unique
   address   Address[]
-  regions   Region[]
-}
-
-model Region {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name      String   @db.VarChar(255)
-  country   Country  @relation(fields: [countryId], references: [id])
-  countryId Int
 }
