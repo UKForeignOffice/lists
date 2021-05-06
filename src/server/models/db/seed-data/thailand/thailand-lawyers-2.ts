@@ -4,7 +4,9 @@ export default [
     lawFirmName: "Price Sanond",
     website: "https://www.pricesanond.com/",
     telephone: "+66(0)26791844",
-    address: "16F, Q House Sathorn, 11 South Sathorn Road, Bangkok 10120",
+    address: "16F, Q House Sathorn, 11 South Sathorn Road",
+    postcode: "10120",
+    city: "Bangkok",
     regionsServed: "All regions",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Immigration; Intellectual property; Personal injury; Real estate; Tax",
@@ -16,7 +18,9 @@ export default [
     lawFirmName: "The Socia Lawyers",
     website: "http://www.thesociallawyers.com",
     telephone: "0901296101 - 0926921844 - 033 640005 (landline)",
-    address: "29/25 moo 9, Nongprue, Banglamung, Chonburi",
+    address: "29/25 moo 9, Nongprue, Banglamung",
+    postcode: "",
+    city: "Chonburi",
     regionsServed:
       "All regions for criminal and succession law, Bankgok -  Easern Seaboard - Bankgok - Krabi",
     legalPracticeAreas:
@@ -29,7 +33,9 @@ export default [
     lawFirmName: "Legal Services Hua Hin",
     website: "https://www.legalserviceshuahin.com",
     telephone: "+66(0)818469193",
-    address: "Unit 1, Makro Food Services Hua Hin, Prachaup Khiri Khan, 77110",
+    address: "Unit 1, Makro Food Services Hua Hin",
+    postcode: "77110",
+    city: "Prachaup Khiri Khan",
     regionsServed: "Hua Hin,Phetchaburi, Prachaup Khiri Khan",
     legalPracticeAreas:
       "Corporate; Criminal; Employment; Family; Immigration; Real estate; Tax",
@@ -41,8 +47,9 @@ export default [
     lawFirmName: "Ployprathip International Law Office (PILO)",
     website: "http://www.ployprathip.com",
     telephone: "+66(0)26782995",
-    address:
-      "11/15-16 Ratchadaphisek Road, Chong Nonsi, Yannawa, Bangkok 10120",
+    address: "11/15-16 Ratchadaphisek Road, Chong Nonsi, Yannawa",
+    postcode: "10120",
+    city: "Bangkok",
     regionsServed: "Thailand",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual property; International; Maritime; Personal injury; Real estate; Tax",
@@ -54,7 +61,9 @@ export default [
     lawFirmName: "Sutin and Friends International Law Office",
     website: "http://www.sutinlawkrabi.com",
     telephone: "+66(0)817786969",
-    address: "171/80-82 Krabi Rd., Paknam, Muang, Krabi 81000",
+    address: "171/80-82 Krabi Rd., Paknam, Muang",
+    postcode: "81000",
+    city: "Krabi",
     regionsServed:
       "Bangkok, Krabi, Phang Nga, Phuket, Surat Thani and other regions of the Kingdom of Thailand",
     legalPracticeAreas:
@@ -68,7 +77,9 @@ export default [
     website: "http://www.siam-attorney.com",
     telephone: "+66 (0) 95 750 0888",
     address:
-      "No.1 Vasu 1 Building, Room 1501/3, 15th Floor, Sukhumvit 25 Alley, Sukhumvit Road, North Klongtoey, Wattana District, Bangkok 10310, Thailand",
+      "No.1 Vasu 1 Building, Room 1501/3, 15th Floor, Sukhumvit 25 Alley, Sukhumvit Road, North Klongtoey, Wattana District",
+    postcode: "10310",
+    city: "Bangkok",
     regionsServed: "Bangkok and Neighboring Provinces, and Phuket",
     legalPracticeAreas:
       "Corporate; Criminal; Employment; Family; Immigration; Intellectual property; International; Personal injury; Real estate; Tax",
@@ -80,8 +91,9 @@ export default [
     lawFirmName: "Anglo-Thai Legal",
     website: "http://www.anglothailegal.com",
     telephone: "+66(0)27142968",
-    address:
-      "133 Sukhumvit 57 Road, Klongton Nua, Wattana, Bangkok, Thailand 10110",
+    address: "133 Sukhumvit 57 Road, Klongton Nua, Wattana",
+    postcode: "10110",
+    city: "Bangkok",
     regionsServed:
       "All regions with offices in Bangkok, Pattaya, Phuket, Chiang Mai, Koh Samui, Hua Hin, Buriram, Hat Yai",
     legalPracticeAreas:
@@ -95,7 +107,9 @@ export default [
     website: "http://www.Thailand-English-speaking-lawyer.com",
     telephone: "+66(0)818991604",
     address:
-      "965/9 Rangsit Nakornayok Rd. Pachatibut Thanyaburee District Pathumthnai Province 12130",
+      "965/9 Rangsit Nakornayok Rd. Pachatibut Thanyaburee District Pathumthnai Province",
+    postcode: "12130",
+    city: "",
     regionsServed:
       "Cover all Thailand except Yala, Pattanee, and Naratiwat Provinces",
     legalPracticeAreas:
@@ -109,7 +123,9 @@ export default [
     website: "https://www.natipatana.com",
     telephone: "+66(81)7757695",
     address:
-      "827/1, CNW Office and Residence, Ladprao 87, Klong-chan, Bangkapi, Bangkok 10240",
+      "827/1, CNW Office and Residence, Ladprao 87, Klong-chan, Bangkapi",
+    postcode: "10240",
+    city: "Bangkok",
     regionsServed: "All regions",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual property; International; Maritime; Personal injury; Real estate; Tax",
@@ -121,7 +137,9 @@ export default [
     lawFirmName: "Silk Legal",
     website: "https://www.silklegal.com",
     telephone: "+66(0)21072007",
-    address: "#805 RSU Tower, 571 Sukhumvit Road, Bangkok 10110",
+    address: "#805 RSU Tower, 571 Sukhumvit Road",
+    postcode: "10110",
+    city: "Bangkok",
     regionsServed: "All Regions",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Health; Immigration; Intellectual property; International; Personal injury; Real estate",
@@ -134,7 +152,9 @@ export default [
     website: "http://www.prachayainternationallaw.com",
     telephone: "+66 814538800",
     address:
-      "10 Soi 20 Mithuna Yaek 5, Sutthisan Road, Samsen Nok, Huai Khwang, Bangkok 10310",
+      "10 Soi 20 Mithuna Yaek 5, Sutthisan Road, Samsen Nok, Huai Khwang",
+    postcode: "10310",
+    city: "Bangkok",
     regionsServed:
       "Bangkok, Chiang Mai,  Hua Hin, Pattaya, Phuket, Samui and other regions of the Kingdom of Thailand",
     legalPracticeAreas:
@@ -147,8 +167,9 @@ export default [
     lawFirmName: "Thailand Family Law Partners",
     website: "http://www.thailandfamilylaw.com/",
     telephone: "+66(0)855393675",
-    address:
-      "97/5 Bang Phlab 2 Road, Bang Phlab, Pak Kret, Nonthaburi (Bangkok) 11120",
+    address: "97/5 Bang Phlab 2 Road, Bang Phlab, Pak Kret, Nonthaburi",
+    postcode: "11120",
+    city: "Bangkok",
     regionsServed: "All regions of Thailand.",
     legalPracticeAreas: "Family; International; Real estate",
     legalAid: "Yes",

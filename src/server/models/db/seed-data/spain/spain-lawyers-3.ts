@@ -4,8 +4,9 @@ export default [
     lawFirmName: "All Law Lanzarote",
     website: "http://www.all-law.es/",
     telephone: "+34 928826691",
-    address:
-      "Avda. Islas Canarias, C.C. Maretas local 32A, 35508 Costa Teguise, Lanzarote",
+    address: "Avda. Islas Canarias, C.C. Maretas local 32A,  Costa Teguise",
+    postcode: "35508",
+    city: "Lanzarote",
     regionsServed: "Spain",
     legalPracticeAreas: "Bankruptcy; Corporate; International; Real Estate",
     legalAid: "No",
@@ -16,8 +17,9 @@ export default [
     lawFirmName: "Beatriz Alvarez Martinez",
     email: "beatriz@amvabogados.es",
     telephone: "+34928530992",
-    address:
-      "Calle Duero, 9, oficina 8, 35600 Puerto del Rosario, Fuerteventura",
+    address: "Calle Duero, 9, oficina 8, Puerto del Rosario",
+    postcode: "35600",
+    city: "Fuerteventura",
     regionsServed: "Fuerteventura",
     legalPracticeAreas: "Family; Real Estate",
     legalAid: "Yes",
@@ -28,8 +30,9 @@ export default [
     lawFirmName: "BG Abogados & Consultores",
     website: "http://www.bethencourt-gonzalez.com/",
     telephone: "+34928383412",
-    address:
-      "Avda. de España 7,  C.C. Prisma, Local 20, 35100 Playa del Inglés, Gran Canaria",
+    address: "Avda. de España 7,  C.C. Prisma, Local 20,  Playa del Inglés",
+    postcode: "35100",
+    city: "Gran Canaria",
     regionsServed: "Canary Islands; Madrid",
     legalPracticeAreas:
       "Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual Property; International; Personal Injury; Real Estate",
@@ -41,7 +44,9 @@ export default [
     lawFirmName: "Bravo de Laguna & Rodriguez",
     website: "http://www.bravodelaguna-rodriguez.com/index.html",
     telephone: "+34928383836",
-    address: "Calle Buenos Aires nº 8, 2ºC, 35002 Las Palmas de Gran Canaria",
+    address: "Calle Buenos Aires nº 8, 2ºC",
+    postcode: "35002",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Canary Islands",
     legalPracticeAreas:
       "Corporate; Criminal; Family; Intellectual Property; Real Estate",
@@ -54,7 +59,9 @@ export default [
     email: "deltoroabogados@gmail.com",
     telephone: "+34 928493801",
     address:
-      "C/Luis Morote 6, piso 3, oficina 1, Las Palmas de Gran Canaria; Avda de Canarias 85, 1ªA, Vecindario, 35110 Santa Lucia",
+      "C/Luis Morote 6, piso 3, oficina 1, Las Palmas de Gran Canaria; Avda de Canarias 85, 1ªA, Vecindario",
+    postcode: "35110",
+    city: "Santa Lucia",
     regionsServed: "Spain",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual Property; International; Maritime; Personal Injury; Real Estate; Tax",
@@ -68,6 +75,8 @@ export default [
     telephone: "+34928816513",
     address:
       "Calle Senador Rafael stinga González nº 2 oficina 2 Arrecife de Lanzarote",
+    postcode: "",
+    city: "Lanzarote",
     regionsServed: "Lanzarote",
     legalPracticeAreas:
       "Criminal; Family; Intellectual Property; Real Estate; Tax",
@@ -79,7 +88,9 @@ export default [
     lawFirmName: "Gamma Abogados, Lanzarote y Fuerteventura",
     website: "https://www.gammaabogados.com/",
     telephone: "+34 638257298",
-    address: "C/ Las Maretas 4, 35580, Playa Blanca, Yaiza",
+    address: "C/ Las Maretas 4, , Playa Blanca",
+    postcode: "35580",
+    city: "Yaiza",
     regionsServed: "Lanzarote and Fuerteventura",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Employment; Family; Health; Immigration; Intellectual Property; International; Maritime; Personal Injury; Real Estate; Tax;",
@@ -91,8 +102,9 @@ export default [
     lawFirmName: "Glex Lawyers SL",
     website: "https://lajareslawoffices.com/",
     telephone: "+34 928532088",
-    address:
-      "C/Secundino Alonso, 39.1º 4ª, 35600 Puerto del Rosario, Fuerteventura",
+    address: "C/Secundino Alonso, 39.1º 4ª,  Puerto del Rosario",
+    postcode: "35600",
+    city: "Fuerteventura",
     regionsServed: "Spain",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Intellectual Property; International; Real Estate; Tax",
@@ -104,7 +116,9 @@ export default [
     lawFirmName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
-    address: "C/Gines de Castro y Alvarez 12 3º-B, 35500 Arrecife de Lanzarote",
+    address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
+    postcode: "35500",
+    city: "Lanzarote",
     regionsServed: "Canary Islands",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Family; Intellectual Property; International; Personal Injury; Real Estate; Tax",
@@ -116,7 +130,9 @@ export default [
     lawFirmName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
-    address: "C/Gines de Castro y Alvarez 12 3º-B, 35500 Arrecife de Lanzarote",
+    address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
+    postcode: "35500",
+    city: "Lanzarote",
     regionsServed: "Canary Islands",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Family; Intellectual Property; International; Personal Injury; Real Estate; Tax",
@@ -128,7 +144,9 @@ export default [
     lawFirmName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
-    address: "C/Gines de Castro y Alvarez 12 3º-B, 35500 Arrecife de Lanzarote",
+    address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
+    postcode: "35500",
+    city: "Lanzarote",
     regionsServed: "Canary Islands",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Family; Intellectual Property; International; Personal Injury; Real Estate; Tax",
@@ -140,7 +158,9 @@ export default [
     lawFirmName: "Lagares Abogados",
     website: "https://lagares-abogados.com/",
     telephone: "+34 928382148",
-    address: "C/ Canalejas  29, 35003 Las Palmas de Gran Canaria",
+    address: "C/ Canalejas  29",
+    postcode: "35003",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Canary Islands, Spain",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Criminal; Family; Health; Immigration; Intellectual Property; International; Maritime; Personal Injury; Real Estate; Tax",
@@ -152,7 +172,9 @@ export default [
     lawFirmName: "Lexalia Abogados S.L.",
     website: "http://lexelia.es/index.php/en/",
     telephone: "+34 928391616",
-    address: "C/Triana 22, 2º, 35002 Las Palmas de Gran Canaria",
+    address: "C/Triana 22, 2º",
+    postcode: "35002",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Las Palmas de Gran Canaria",
     legalPracticeAreas:
       "Bankruptcy; Corporate; Employment; International; Maritime; Real Estate; Tax",
@@ -164,7 +186,9 @@ export default [
     lawFirmName: "Montelongo Asesores",
     website: "https://www.montelongoasesores.com/",
     telephone: "+34928385252;",
-    address: "Calle Canalejas 90-92, 35003, Las Palmas de Gran Canaria",
+    address: "Calle Canalejas 90-92",
+    postcode: "35003",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Gran Canaria, Tenerife, Fuerteventura, Lanzarote",
     legalPracticeAreas:
       "Corporate; Criminal; Employment; Family; Health; Immigration; International Property; International; Personal Injury; Real Estate; Tax",
@@ -176,8 +200,9 @@ export default [
     lawFirmName: "Quintana & Espiau SCP",
     email: "abogados@quintanayespiauabogados.com",
     telephone: "+34 928276995",
-    address:
-      "Calle Los Martínez de Escobar, 3 Oficina 7  35007 Las Palmas de Gran Canaria",
+    address: "Calle Los Martínez de Escobar, 3 Oficina 7",
+    postcode: "35007",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Las Palmas de Gran Canaria",
     legalPracticeAreas: "Real Estate",
     legalAid: "No",
@@ -188,7 +213,9 @@ export default [
     lawFirmName: "RM Legal Abogados",
     website: "http://www.rm-legal.es/",
     telephone: "+34 928349761",
-    address: "Calle La Lapa 27, 35580 Playa Blanca-Yaiza, Lanzarote",
+    address: "Calle La Lapa 27,  Playa Blanca-Yaiza",
+    postcode: "35580",
+    city: "Lanzarote",
     regionsServed: "Lanzarote",
     legalPracticeAreas: "Family; Real Estate",
     legalAid: "No",
@@ -198,7 +225,9 @@ export default [
     contactName: "Eusebio Francisco Bolaños Ferreira",
     lawFirmName: "EBF Attorney",
     telephone: "+34650295436",
-    address: "Calle Venegas nº49, 2ºA Las Palmas de Gran Canaria",
+    address: "Calle Venegas nº49, 2ºA",
+    postcode: "",
+    city: "Las Palmas de Gran Canaria",
     regionsServed: "Spain",
     legalPracticeAreas:
       "Criminal; Employment; Family; Health; Immigration; Personal Injury; Real Estate",
@@ -208,8 +237,9 @@ export default [
   {
     contactName: "Raquel Fuertes Muñoz",
     telephone: "+34 619048651",
-    address:
-      "Calle Thomas Edison 15, Azaleas Plus 1, 35100 Sonnenland- Maspalomas, Gran Canaria",
+    address: "Calle Thomas Edison 15, Azaleas Plus 1,  Sonnenland- Maspalomas",
+    postcode: "35100",
+    city: "Gran Canaria",
     regionsServed: "Las Palmas de Gran Canaria",
     legalPracticeAreas: "Maritime",
     legalAid: "Yes",
