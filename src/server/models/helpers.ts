@@ -1,7 +1,7 @@
 import { upperFirst, isNumber } from "lodash";
 import { logger } from "server/services/logger";
 import { db } from "./db/database";
-import { CountriesWithData, CountryName } from "./types";
+import { CountriesWithData, CountryName, LegalAreas } from "./types";
 
 const countriesWithData: CountriesWithData[] = [
   "Thailand",
@@ -110,3 +110,25 @@ export const listAppliedMigrations = async (): Promise<any> => {
     return error;
   }
 };
+
+export function filterAllowedLegalAreas(legalAreas: string[]): LegalAreas[] {
+  const allowed = [
+    "bankruptcy",
+    "corporate",
+    "criminal",
+    "employment",
+    "family",
+    "health",
+    "immigration",
+    "intellectual property",
+    "international",
+    "maritime",
+    "personal injury",
+    "real estate",
+    "tax",
+  ];
+
+  return legalAreas.filter((legalArea) =>
+    allowed.includes(legalArea.toLowerCase())
+  ) as LegalAreas[];
+}

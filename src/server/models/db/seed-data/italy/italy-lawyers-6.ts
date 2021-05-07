@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Vincenzo Senatore",
-    lawFirmName: "Studio Legale GSA",
+    organisationName: "Studio Legale GSA",
     email: "vsenatore@studiolegalegsa.it",
     website: "http://www.studiolegalegsa.it/",
     telephone: "+39 081 056 0376",
@@ -13,7 +13,7 @@ export default [
   },
   {
     contactName: "Victor Sotunde",
-    lawFirmName: "Studio Legale Castaldo, Magliulo & Associati",
+    organisationName: "Studio Legale Castaldo, Magliulo & Associati",
     email: "v.sotunde@castaldomagliuloassociati.it",
     website: "http://www.castaldomagliuloassociati.it/41/TEAM.html",
     telephone: "+39 081 552 3200",

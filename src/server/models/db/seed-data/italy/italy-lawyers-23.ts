@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alessandra Ghilardi",
-    lawFirmName: "Studio Legale Avv. Alessandra Ghilardi",
+    organisationName: "Studio Legale Avv. Alessandra Ghilardi",
     email: "alessandra.ghilardi@pec.avvocatilucca.it",
     telephone: "+39 339 3865392",
     address: "Via Sciesa, 16/D",
@@ -25,7 +25,7 @@ export default [
   },
   {
     contactName: "Carlo H. Mastellone",
-    lawFirmName: "SLM - Studio Legale Mastellone",
+    organisationName: "SLM - Studio Legale Mastellone",
     email: "c.mastellone@studiomastellone.it",
     website: "http://www.studiomastellone.it",
     telephone: "+39 055 214620040",
@@ -39,7 +39,7 @@ export default [
   },
   {
     contactName: "Chiara Celesti",
-    lawFirmName: "DS TAX & LEGAL",
+    organisationName: "DS TAX & LEGAL",
     email: "celesti@dstaxlegal.it",
     website: "https://www.dstaxlegal.it/",
     telephone: "+39 055 5015902",
@@ -52,7 +52,7 @@ export default [
   },
   {
     contactName: "Daniela Forti",
-    lawFirmName: "Studio Legale Avv. Daniela Forti",
+    organisationName: "Studio Legale Avv. Daniela Forti",
     email: "info@fortilawyerintuscany.com",
     website: "http://www.fortilawyerintuscany.com",
     telephone: "+39 348 8098799",
@@ -65,7 +65,7 @@ export default [
   },
   {
     contactName: "Elena Borsacchi",
-    lawFirmName: "Studio Legale Barbieri Borsacchi & Partn.",
+    organisationName: "Studio Legale Barbieri Borsacchi & Partn.",
     email: "studio@barbieriborsacchi.com; avv.elenaborsacchi@gmail.com",
     website: "http://www.barbieriborsacchi.com/en/the-law-firm/",
     telephone: "+39 050 29039/48073/29459",
@@ -79,7 +79,7 @@ export default [
   },
   {
     contactName: "Enrico Lattanzi",
-    lawFirmName: "Studio Legale Lattanzi",
+    organisationName: "Studio Legale Lattanzi",
     email: "e.lattanzi@lattanzistudio.it",
     website: "http://www.lawfirminitaly.com",
     telephone: "+39 0583 584981",
@@ -92,7 +92,7 @@ export default [
   },
   {
     contactName: "Federica Barone Bombagli",
-    lawFirmName: "Studio Legale Barone Bombagli",
+    organisationName: "Studio Legale Barone Bombagli",
     email: "fbarone@studiolegalebarone.com",
     website: "http://www.studiolegalebarone.com",
     telephone: "+39 0577 46163",
@@ -105,7 +105,7 @@ export default [
   },
   {
     contactName: "Francesca Saracchi",
-    lawFirmName: "Studio Legale Francesca Saracchi",
+    organisationName: "Studio Legale Francesca Saracchi",
     email: "info@studiolegalefrancescasaracchi.com",
     website: "http://www.studiolegalefrancescasaracchi.com",
     telephone: "+39 327 0611563",
@@ -119,7 +119,7 @@ export default [
   },
   {
     contactName: "Francesca Sani; Francesca Baroncelli Poggi",
-    lawFirmName: "Studio Legale Sani - Baroncelli Poggi",
+    organisationName: "Studio Legale Sani - Baroncelli Poggi",
     email:
       "f.baroncelli@firenzelegale.com;  f.sani@firenzelegale.com We Lawyers",
     website: "https://www.we-lawyers.com",
@@ -134,7 +134,7 @@ export default [
   },
   {
     contactName: "Francesco Chianini",
-    lawFirmName: "Studio Legale Chianini",
+    organisationName: "Studio Legale Chianini",
     email: "avv.chianini@libero.it",
     telephone: "+39 057 5355201",
     address: "Via Fulvio Croce, 13",
@@ -147,7 +147,7 @@ export default [
   },
   {
     contactName: "Francesco Maresca",
-    lawFirmName: "Studio Legale Maresca",
+    organisationName: "Studio Legale Maresca",
     email: "avv.fmaresca@gmail.com",
     website: "http://www.avvocatofrancescomaresca.it",
     telephone: "+39 335 7059597; +39 055 217571",
@@ -160,7 +160,7 @@ export default [
   },
   {
     contactName: "Francesco Petitti",
-    lawFirmName: "Avvocato Francesco Petitti",
+    organisationName: "Avvocato Francesco Petitti",
     email: "francescopetitti@virgilio.it",
     website: "http://www.linkedin.com/in/francesco-petitti-30929432",
     telephone: "+39 320 3005860",
@@ -173,7 +173,7 @@ export default [
   },
   {
     contactName: "Giampaolo Benedetti Pearson",
-    lawFirmName: "BBPLegal",
+    organisationName: "BBPLegal",
     email: "g.benedettipearson@bbplegal.it",
     website: "http://www.bbplegal.it",
     telephone: "+39 050 6203219",
@@ -187,7 +187,7 @@ export default [
   },
   {
     contactName: "Gian Franco Borio",
-    lawFirmName: "Studio Avv. Gian Franco Borio",
+    organisationName: "Studio Avv. Gian Franco Borio",
     email: "gfborio@dinonet.it",
     telephone: "+39 055 6532144",
     address: "Via Finlandia, 20",
@@ -200,7 +200,7 @@ export default [
   },
   {
     contactName: "Lorenzo Contri OBE",
-    lawFirmName: "Studio Legale Contri Associazione Professionale",
+    organisationName: "Studio Legale Contri Associazione Professionale",
     email: "l.contri@studiolegalecontri.it",
     website: "http://www.studiolegalecontri.it",
     telephone: "+39 055 578005",
@@ -214,7 +214,7 @@ export default [
   },
   {
     contactName: "Margaret MacLeod",
-    lawFirmName: "Belmonte-MacLeod Lawyers",
+    organisationName: "Belmonte-MacLeod Lawyers",
     email: "margaret.macleod@tuscanylawyers.com",
     website: "http://www.tuscanylawyers.com",
     telephone: "+39 327 5558129",
@@ -228,7 +228,7 @@ export default [
   },
   {
     contactName: "Maria Grazia Antoci",
-    lawFirmName: "Studio Legale Antoci",
+    organisationName: "Studio Legale Antoci",
     email: "studiolegale@antoci.eu",
     website: "http://www.antoci.eu",
     telephone: "+39 3474198281",
@@ -242,7 +242,7 @@ export default [
   },
   {
     contactName: "Mariangela Marrangoni",
-    lawFirmName: "Studio Legale Marrangoni",
+    organisationName: "Studio Legale Marrangoni",
     email: "avvocatomarrangoni@gmail.com",
     website: "http://www.studiolegalemarrangoni.it",
     telephone: "+39  338 6805009",
@@ -256,7 +256,7 @@ export default [
   },
   {
     contactName: "Massimo Miniati Paoli",
-    lawFirmName: "Studio Legale Miniati Paoli",
+    organisationName: "Studio Legale Miniati Paoli",
     email: "studio@miniatipaoli.it",
     website: "http://www.miniatipaoli.it",
     telephone: "+39 055 2477363",
@@ -270,7 +270,7 @@ export default [
   },
   {
     contactName: "Piermarco Sibillia",
-    lawFirmName: "SLVB",
+    organisationName: "SLVB",
     email: "sibillia@slvb.it",
     website: "http://www.slvb.it",
     telephone: "+39 055 489504",
@@ -284,7 +284,7 @@ export default [
   },
   {
     contactName: "Simone Calzolai",
-    lawFirmName: "Studio Legale Calzolai - Law Firm",
+    organisationName: "Studio Legale Calzolai - Law Firm",
     email:
       "avv.calzolai@studiolegalecalzolai.it; segreteria@studiolegalecalzolai.it",
     website: "http://www.studiolegalecalzolai.it",
@@ -299,7 +299,7 @@ export default [
   },
   {
     contactName: "Stefano Dorigo",
-    lawFirmName: "DS TAX & LEGAL",
+    organisationName: "DS TAX & LEGAL",
     email: "dorigo@dstaxlegal.it",
     website: "https://www.dstaxlegal.it/",
     telephone: "+39 055 5015902",
@@ -312,7 +312,7 @@ export default [
   },
   {
     contactName: "Vieri Adriani",
-    lawFirmName: "Studio Legale Avvocato Vieri Adriani",
+    organisationName: "Studio Legale Avvocato Vieri Adriani",
     email: "vieriavvadriani@gmail.com",
     website: "http://www.vieriavvocatoadriani.it",
     telephone: "+39 340 2650014",

@@ -12,7 +12,7 @@ export default [
   },
   {
     contactName: "Lucilla Longone",
-    lawFirmName: "Longone",
+    organisationName: "Longone",
     email: "lucilla.longone@tin.it",
     telephone: "+39 081 4238444",
     address: "Via dei Mille, 59",
@@ -24,7 +24,7 @@ export default [
   },
   {
     contactName: "Elvira Marzano",
-    lawFirmName: "Marzano Avvocati Associati",
+    organisationName: "Marzano Avvocati Associati",
     email: "ira@marzanolaw.it",
     website: "http://www.marzanolaw.it",
     telephone: "+39 089 224842",
@@ -38,7 +38,7 @@ export default [
   },
   {
     contactName: "Luigi Massa",
-    lawFirmName: "Studio Legale Avv. Luigi Massa - NLP",
+    organisationName: "Studio Legale Avv. Luigi Massa - NLP",
     email: "l.massa@nlpstudiolegale.it",
     website: "http://nlpstudiolegale.it",
     telephone: "+39 0823 808791",
@@ -52,7 +52,7 @@ export default [
   },
   {
     contactName: "Francesco Mazzei",
-    lawFirmName: "Studio Legale Mazzei",
+    organisationName: "Studio Legale Mazzei",
     email: "mazzeif@tin.it",
     telephone: "+39 3470157425",
     address: "Via Gian vincenzo Quaranta, 1",
@@ -64,7 +64,7 @@ export default [
   },
   {
     contactName: "Giancarlo Pierpaolo Pezzuti",
-    lawFirmName: "Studio Legale Pezzuti",
+    organisationName: "Studio Legale Pezzuti",
     email: "studiopezzuti@gmail.com",
     telephone: "+39 328 333 3080",
     address: "Piazza Eritrea, 3",
@@ -76,7 +76,7 @@ export default [
   },
   {
     contactName: "Alfonso Scafuro",
-    lawFirmName: "Studio Legale Scafuro",
+    organisationName: "Studio Legale Scafuro",
     email: "alfonsoscafuro@studiolegalscafuro.com",
     website: "http://www.studiolegalescafuro.com",
     telephone: "+39 0892963195",
@@ -90,7 +90,7 @@ export default [
   },
   {
     contactName: "Luigi Scalzo",
-    lawFirmName: "Studio Legale Scalzo e Associati",
+    organisationName: "Studio Legale Scalzo e Associati",
     email: "studiolegalescalzo@gmail.com",
     website: "https://www.linkedin.com/in/luigi-scalzo/",
     telephone: "+39 347 9256390",
@@ -104,7 +104,7 @@ export default [
   },
   {
     contactName: "Victor Sotunde",
-    lawFirmName: "Studio Legale Castaldo, Magliulo & Associati",
+    organisationName: "Studio Legale Castaldo, Magliulo & Associati",
     email: "v.sotunde@castaldomagliuloassociati.it",
     website: "http://www.castaldomagliuloassociati.it",
     telephone: "+39 081 5523200",

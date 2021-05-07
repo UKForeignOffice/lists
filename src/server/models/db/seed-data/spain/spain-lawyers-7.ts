@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Cristina Carrillo Cabrera",
-    lawFirmName: "Carillo y Asociados",
+    organisationName: "Carillo y Asociados",
     email: "carrilloyasociados@yahoo.es",
     telephone: "+34607909484",
     address: "Calle Ramos Puente Nº 9, Bajo-A, Torremolinos",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Francisco Jose Ortega Moreno",
-    lawFirmName: "AF Consulting Lawyers",
+    organisationName: "AF Consulting Lawyers",
     website: "https://afconsulting.es/en/contact-us/",
     telephone: "+34722277677",
     address: "Calle Vilchez 6, 1B, Motril",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Jose Maria Alonso Martin",
-    lawFirmName: "Alonso & Weber abogados",
+    organisationName: "Alonso & Weber abogados",
     website: "http://www.alonsoweber.com",
     telephone: "+34951132760",
     address: "Calle Granados 3, 4ºB",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Guerrero Rafael",
-    lawFirmName: "Andalucia-Lawyers",
+    organisationName: "Andalucia-Lawyers",
     website: "https://www.andalucia-lawyers.com/",
     telephone: "+34958290580",
     address: "Camino de Ronda, 74, 3º, P4",
@@ -56,7 +56,7 @@ export default [
   },
   {
     contactName: "Jose Miguel López",
-    lawFirmName: "Axarquía Solicitors",
+    organisationName: "Axarquía Solicitors",
     website: "https://marbellasolicitors.com/",
     telephone: "+34952901225",
     address: "Calle Camino de Remanente, nº 2, 1º A, Vélez-Málaga",
@@ -69,7 +69,7 @@ export default [
   },
   {
     contactName: "Katherine Biel Gleeson",
-    lawFirmName: "Biel Gleeson Abogado & Solicitor",
+    organisationName: "Biel Gleeson Abogado & Solicitor",
     website: "https://bielgleeson.com/",
     telephone: "+34639099395",
     address: "Calle Boleros 11",
@@ -83,7 +83,7 @@ export default [
   },
   {
     contactName: "Oscar Ernesto Bornico",
-    lawFirmName: "Bornico Farquharson Solicitors",
+    organisationName: "Bornico Farquharson Solicitors",
     website: "http://www.bfsolicitors.com",
     telephone: "+34660622374",
     address:
@@ -98,7 +98,7 @@ export default [
   },
   {
     contactName: "Miguel Angel Bravo",
-    lawFirmName: "Bravo Legal, S.L.",
+    organisationName: "Bravo Legal, S.L.",
     website: "http://www.bravolegal.es",
     telephone: "+34952463499",
     address: "Calle Córdoba 9, Office 5",
@@ -111,7 +111,7 @@ export default [
   },
   {
     contactName: "Victoria Westhead",
-    lawFirmName: "British Lawyer In Spain",
+    organisationName: "British Lawyer In Spain",
     website: "https://www.britishlawyerspain.com/",
     telephone: "+34678826771",
     address: "Edificio Santa Maria 1 °N, Avenida Tivoli 15, Benalmadena",
@@ -124,7 +124,7 @@ export default [
   },
   {
     contactName: "Sixto Garcia",
-    lawFirmName: "Costadelaluz-Lawyers",
+    organisationName: "Costadelaluz-Lawyers",
     website: "https://costaluzlawyers.es/",
     telephone: "+34956531214",
     address: "Calle Hormaza 28, 2ºB, Chiclana",
@@ -137,7 +137,7 @@ export default [
   },
   {
     contactName: "María L De Castro",
-    lawFirmName: "Costaluz Lawyers",
+    organisationName: "Costaluz Lawyers",
     website: "https://costaluzlawyers.es/",
     telephone: "+34956092687",
     address:
@@ -151,7 +151,7 @@ export default [
   },
   {
     contactName: "Michael Davies",
-    lawFirmName: "Davies Abogados/Solicitors & Barristers",
+    organisationName: "Davies Abogados/Solicitors & Barristers",
     website: "http://www.daviessolicitors.com",
     telephone: "+34950472775",
     address: "Parque Comercial 50",
@@ -164,7 +164,7 @@ export default [
   },
   {
     contactName: "Manuel Davó",
-    lawFirmName: "Davo & Asociados Abogados SLP",
+    organisationName: "Davo & Asociados Abogados SLP",
     website: "http://www.davolawoffices.com",
     telephone: "+34952064781",
     address: "Calle Pirandello Street 16, 6th Floor, Apartament nº 1",
@@ -178,7 +178,7 @@ export default [
   },
   {
     contactName: "Sandra Wrightson",
-    lawFirmName: "De Cotta Law",
+    organisationName: "De Cotta Law",
     website: "http://www.decottalaw.com",
     telephone: "+34952527014",
     address: "Centro Comercial Valdepinos 1 y 3 Urb.Calypso, Mijas Costa",
@@ -192,7 +192,7 @@ export default [
   },
   {
     contactName: "Eugene Delgado de la Cuesta",
-    lawFirmName: "DJ Ortiz Y Asociados, SL",
+    organisationName: "DJ Ortiz Y Asociados, SL",
     website: "http://www.ortizyasociados.es",
     telephone: "+34954561056",
     address: "Calle Almirante Lobo 2, 2 Iza",
@@ -206,7 +206,7 @@ export default [
   },
   {
     contactName: "Edward Grant",
-    lawFirmName: "Edward Grant Associates",
+    organisationName: "Edward Grant Associates",
     website: "http://www.spanishbarrister.com",
     telephone: "+34952822876",
     address: "Plaza de la Solidaridad, 12, 5ª planta",
@@ -219,7 +219,7 @@ export default [
   },
   {
     contactName: "Francisco de Asis Gamboa",
-    lawFirmName: "Fitzwilliam Solicitors",
+    organisationName: "Fitzwilliam Solicitors",
     website: "https://www.fitzwilliamsolicitors.com/",
     telephone: "+34951519851",
     address: "Calle Llanos de San Ramón 3, Edf. Mayoral, 2º 6",
@@ -232,7 +232,7 @@ export default [
   },
   {
     contactName: "Fernando Franco",
-    lawFirmName: "Franco Abogados",
+    organisationName: "Franco Abogados",
     website: "https://www.francoabogados.com/",
     telephone: "+34952863819",
     address: "Calle Ramon Gomez de la Serna 14",
@@ -246,7 +246,7 @@ export default [
   },
   {
     contactName: "Francisco Gómez Moreno",
-    lawFirmName: "Gómez Abogados",
+    organisationName: "Gómez Abogados",
     website: "http://www.gomez-abogados.com/",
     telephone: "+34689740442",
     address: "Avenida Gerald Brenan 103, Edificio Perla 1, Local 2, Oficina 3",
@@ -259,7 +259,7 @@ export default [
   },
   {
     contactName: "Marianela Nuñez",
-    lawFirmName: "Hispalaw Abogados",
+    organisationName: "Hispalaw Abogados",
     website: "https://www.hispalawabogados.com/",
     telephone: "+34605815338",
     address: "Calle Bolivia, 12, ground floor",
@@ -273,7 +273,7 @@ export default [
   },
   {
     contactName: "Jaime Casado Ruiz",
-    lawFirmName: "Jaime Casado Ruiz - Despacho Jurídico",
+    organisationName: "Jaime Casado Ruiz - Despacho Jurídico",
     website: "https://jaimecasado.com/",
     telephone: "+34954281614",
     address: "Edificio Metropol I, 1 Calle Industria",
@@ -287,7 +287,7 @@ export default [
   },
   {
     contactName: "Jesus M Hernandez Carmona",
-    lawFirmName: "Jesus Hernandez C JMHC",
+    organisationName: "Jesus Hernandez C JMHC",
     email: "jmhc@icadiz.net",
     telephone: "+34679474647",
     address: "San Pablo 18, 2nd floor La Linea de la Concepción",
@@ -301,7 +301,7 @@ export default [
   },
   {
     contactName: "Juan Domingo Corpas",
-    lawFirmName: "Juan Domingo & abogados",
+    organisationName: "Juan Domingo & abogados",
     website: "http://www.juandomingo-abogados.com",
     telephone: "+34952857292",
     address: "Calle Jacinto Benavente nº 30 1º F",
@@ -315,7 +315,7 @@ export default [
   },
   {
     contactName: "Marisa Moreno Castillo",
-    lawFirmName: "Just Law Spanish Solicitors",
+    organisationName: "Just Law Spanish Solicitors",
     website: "https://justlawsolicitors.com/",
     telephone: "+34663373535",
     address: "2, Calle Chile",
@@ -329,7 +329,7 @@ export default [
   },
   {
     contactName: "José Manuel Díaz Montes",
-    lawFirmName: "Konsell Abogados y Asesores, S.L.",
+    organisationName: "Konsell Abogados y Asesores, S.L.",
     website: "http://www.konsell.es",
     telephone: "+34956330083",
     address: "Calle Porvera nº 6, 1º A",
@@ -343,7 +343,7 @@ export default [
   },
   {
     contactName: "Raymond L. Nesbitt",
-    lawFirmName: "Larrain Nesbitt Abogados",
+    organisationName: "Larrain Nesbitt Abogados",
     website: "https://www.larrainnesbittabogados.com/",
     telephone: "+34952192288",
     address: "Calle San Juan Bosco 2, 6B",
@@ -356,7 +356,7 @@ export default [
   },
   {
     contactName: "Encarnacion Mercedes Teva Villen",
-    lawFirmName: "Lexpertis",
+    organisationName: "Lexpertis",
     website: "http://www.lexpertis.es",
     telephone: "+34953583198",
     address: "Calle Archidona 36",
@@ -370,7 +370,7 @@ export default [
   },
   {
     contactName: "David Llucia",
-    lawFirmName: "llucia & AS-Lawyers",
+    organisationName: "llucia & AS-Lawyers",
     website:
       "https://llucialawyers.co.uk/legal-advice-in-sevilla-and-cadiz-spain/",
     telephone: "+34954228149",
@@ -385,7 +385,7 @@ export default [
   },
   {
     contactName: "Sergio Molina Fernandez",
-    lawFirmName: "M & S Molina Abogados",
+    organisationName: "M & S Molina Abogados",
     website: "http://www.msmolinaabogados.com",
     telephone: "+34659451263",
     address: "Calle Princesa Nº 5, 1º B, Torre del Mar",
@@ -399,7 +399,7 @@ export default [
   },
   {
     contactName: "Miguel Angel Manzanares Macias",
-    lawFirmName: "Manzanares Abogados",
+    organisationName: "Manzanares Abogados",
     website: "https://manzanareslawyers.com/",
     telephone: "+34952824112",
     address: "Avda. Ricardo Soriano No 34,  Edif. Portillo Pl. 2 - Ofic. 4",
@@ -413,7 +413,7 @@ export default [
   },
   {
     contactName: "Francesco Luca Caronna",
-    lawFirmName: "Martin-Caronna abogados y consultores",
+    organisationName: "Martin-Caronna abogados y consultores",
     website: "http://www.martin-caronna.com",
     telephone: "+34658618276",
     address: "Calle Josè Galán Merino 6",
@@ -427,7 +427,7 @@ export default [
   },
   {
     contactName: "Marie Claire Richardson",
-    lawFirmName: "MCR Lawyers",
+    organisationName: "MCR Lawyers",
     email: "marieclaire.richardson@gmail.com",
     telephone: "+34661548733",
     address: "Avenida 28 de Febrero, 3D",
@@ -440,7 +440,7 @@ export default [
   },
   {
     contactName: "Luis Mesa Vila",
-    lawFirmName: "Mesa & Green Abogados/Lawyers",
+    organisationName: "Mesa & Green Abogados/Lawyers",
     website: "https://mesagreen.com/",
     telephone: "+34952901133",
     address: "Centro de Negocios Tembo, bloque A, Oficina 1",
@@ -454,7 +454,7 @@ export default [
   },
   {
     contactName: "Alex Radford",
-    lawFirmName: "My Lawyer in Spain",
+    organisationName: "My Lawyer in Spain",
     website: "http://www.mylawyerinspain.com",
     telephone: "+34951203094",
     address: "Calle JuanRamon Jimenez 10, Edificioa Marbeland 4B",
@@ -468,7 +468,7 @@ export default [
   },
   {
     contactName: "Miguel Angel Peral Cortes",
-    lawFirmName: "My Legal PA Associates & Gestoria Peral Cabello",
+    organisationName: "My Legal PA Associates & Gestoria Peral Cabello",
     website: "https://mylegalpaassociates.com/",
     telephone: "+34952810391",
     address:
@@ -483,7 +483,7 @@ export default [
   },
   {
     contactName: "Noemi Alarcon",
-    lawFirmName: "Nav Consultores",
+    organisationName: "Nav Consultores",
     email: "nalarcon@navconsultores.es",
     telephone: "+34675417771",
     address: "Plaza Arriola 1, 1",
@@ -496,7 +496,7 @@ export default [
   },
   {
     contactName: "Javier Perez de Vargas Ruesdas",
-    lawFirmName: "Perez De Vargas Abogados",
+    organisationName: "Perez De Vargas Abogados",
     website: "https://perezdevargas.co.uk/",
     telephone: "+34 952778848",
     address: "Calle Mª Auxiliadora Nº 2, edificio Pata-Pata 5ª Planta",
@@ -510,7 +510,7 @@ export default [
   },
   {
     contactName: "Amaya Luzuriaga Fernández",
-    lawFirmName: "Prime Legal Spain",
+    organisationName: "Prime Legal Spain",
     website: "https://www.primelegal.es/",
     telephone: "+34656438361",
     address: "Alonso de Bazan 6, 1st floor, Office 5",
@@ -524,7 +524,7 @@ export default [
   },
   {
     contactName: "Fernando De Andres Gaston",
-    lawFirmName: "Professional Advice Spain SLU (Pro-Advice)",
+    organisationName: "Professional Advice Spain SLU (Pro-Advice)",
     website: "https://www.pro-advice.es/",
     telephone: "+34609454650",
     address: "Calle General Segura, 12, 2nd floor 1st door",
@@ -538,7 +538,7 @@ export default [
   },
   {
     contactName: "Rebecca Philip Crowther",
-    lawFirmName: "Puerta Vides SL",
+    organisationName: "Puerta Vides SL",
     website: "http://www.puertavides.com",
     telephone: "+34952764181",
     address: "Edificio Sabadell, Avda Ricardo Soriano 22, 3-6",
@@ -552,7 +552,7 @@ export default [
   },
   {
     contactName: "Rafael Berdaguer",
-    lawFirmName: "Rafael Berdaguer Abogados",
+    organisationName: "Rafael Berdaguer Abogados",
     website: "http://www.berdaguerabogados.com",
     telephone: "+34952823085",
     address:
@@ -566,7 +566,7 @@ export default [
   },
   {
     contactName: "Jose Luis Rodriguez",
-    lawFirmName: "Ros Abogados",
+    organisationName: "Ros Abogados",
     website: "http://WWW.ROSLEGAL.ES",
     telephone: "+34951592529",
     address:
@@ -581,7 +581,7 @@ export default [
   },
   {
     contactName: "Jesús Ruíz Ballesteros",
-    lawFirmName: "Ruiz Ballesteros Economistas y Abogados, SL",
+    organisationName: "Ruiz Ballesteros Economistas y Abogados, SL",
     website: "http://www.ruizballesteros.es",
     telephone: "+34952779874",
     address: "Calle Juan Ramón Jiménez S/N, Bajo 6",
@@ -595,7 +595,7 @@ export default [
   },
   {
     contactName: "Sacha David Ruiz Dickson",
-    lawFirmName: "Ruiz-Dickson, Abogados",
+    organisationName: "Ruiz-Dickson, Abogados",
     website: "http://www.ruiz-dickson.com",
     telephone: "+34952770426",
     address: "Calle Nuestra Señora de Gracia 5, 1º-3",
@@ -608,7 +608,7 @@ export default [
   },
   {
     contactName: "Javier Serrano",
-    lawFirmName: "S&J Solicitors",
+    organisationName: "S&J Solicitors",
     website: "http://www.s-jsolicitors.com",
     telephone: "+34638106260",
     address: "Avda. Constitucion, 26",
@@ -622,7 +622,7 @@ export default [
   },
   {
     contactName: "Lorenzo & Sebastian Sánchez-Stewart de Torres",
-    lawFirmName: "Sánchez-Stewart Abogados",
+    organisationName: "Sánchez-Stewart Abogados",
     website: "https://www.sanchez-stewart.com/",
     telephone: "+34952770704",
     address: "Calle Nuestra Señora de Gracia, 1 - 1º",
@@ -636,7 +636,7 @@ export default [
   },
   {
     contactName: "Ken Sasaki Bulpe",
-    lawFirmName: "Sasaki Abogados",
+    organisationName: "Sasaki Abogados",
     website: "https://sasakiabogados.com/en/",
     telephone: "+34956781345",
     address:
@@ -651,7 +651,7 @@ export default [
   },
   {
     contactName: "Ines Barba",
-    lawFirmName: "Sbj Abogados",
+    organisationName: "Sbj Abogados",
     website: "http://www.sbjabogados.com",
     telephone: "+34606990997",
     address: "Calle Nuestra Señora de Gracia 28 1D",
@@ -664,7 +664,7 @@ export default [
   },
   {
     contactName: "Marina Rodriguez",
-    lawFirmName: "Sotogrande-Solicitors",
+    organisationName: "Sotogrande-Solicitors",
     website: "http://www.sotogrande-solicitors.com/",
     telephone: "+34671093857",
     address: "Calle Reina Sofia, Apto Campo Polo, 6",
@@ -678,7 +678,7 @@ export default [
   },
   {
     contactName: "Rosa Vega Delgado",
-    lawFirmName: "Tejada Solicitors",
+    organisationName: "Tejada Solicitors",
     website: "https://tejadasolicitors.com/",
     telephone: "+34676815262",
     address: "Calle Camino de Malaga 22A, Edificio Espejo",
@@ -692,7 +692,7 @@ export default [
   },
   {
     contactName: "Juan Antonio Rodríguez García",
-    lawFirmName: "Temple Cambria Lawyers",
+    organisationName: "Temple Cambria Lawyers",
     website: "https://www.templecambria.com/",
     telephone: "+34617073669",
     address: "Calle Virgen de la Luz, corner with Calle Poniente, S/N",
@@ -706,7 +706,7 @@ export default [
   },
   {
     contactName: "Maria Teresa Toscano Martin",
-    lawFirmName: "Toscanolex",
+    organisationName: "Toscanolex",
     website: "http://www.toscanolex.es",
     telephone: "+34699154530",
     address: "Avda Salvador Allende Nº 18",
@@ -720,7 +720,7 @@ export default [
   },
   {
     contactName: "Victorio Heras Garcia",
-    lawFirmName: "Victorio Heras Abogados",
+    organisationName: "Victorio Heras Abogados",
     website: "http://www.propertylawspain.com/",
     telephone: "+34647460099",
     address: "Calle Alhondiga 9, Baza",
@@ -734,7 +734,7 @@ export default [
   },
   {
     contactName: "Victoria Eugenia Villalba Gonzalez",
-    lawFirmName: "Villalba solicitors and accountants S.L.",
+    organisationName: "Villalba solicitors and accountants S.L.",
     website: "http://www.villalba-asesores.com/",
     telephone: "+34950431720",
     address: "Avenida 28 de Febrero, 7, Albox",
@@ -748,7 +748,7 @@ export default [
   },
   {
     contactName: "Virginia Ramos Martos",
-    lawFirmName: "Virginia Ramos Lawyer",
+    organisationName: "Virginia Ramos Lawyer",
     website: "http://www.virginiaramos.com",
     telephone: "+34616243990",
     address:

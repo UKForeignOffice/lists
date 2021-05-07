@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Andrea Bucci",
-    lawFirmName: "Studio Legale Bucci",
+    organisationName: "Studio Legale Bucci",
     email: "info@buccilex.com",
     website: "http://www.buccilex.com",
     telephone: "+39 051 267606",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Alessio Totaro",
-    lawFirmName: "R&P Legal",
+    organisationName: "R&P Legal",
     email: "alessio.totaro@replegal.it",
     website: "http://www.replegal.it",
     telephone: "+39 051 232495",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Angelo Stirone",
-    lawFirmName: "Studio Legale Gamberini Associazione Professionale",
+    organisationName: "Studio Legale Gamberini Associazione Professionale",
     email: "avvocatostirone@gmail.com",
     website: "https://avvocatostironesl.com",
     telephone: "+39 333 8835684",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Carlo Longanesi",
-    lawFirmName: "Studio Legale Associato Ridolfi Ghighi Longanesi",
+    organisationName: "Studio Legale Associato Ridolfi Ghighi Longanesi",
     email: "segreteria@rilomar.it",
     telephone: "+39 0544 35076 / +39 0544 38301",
     address: "Via Diaz, 47",
@@ -55,7 +55,7 @@ export default [
   },
   {
     contactName: "Cristina Maria Melito",
-    lawFirmName: "M-Lawyers",
+    organisationName: "M-Lawyers",
     email: "c.melito@m-lawyers.com",
     website: "http://www.m-lawyers.com",
     telephone: "+39 051 2264179",
@@ -69,7 +69,7 @@ export default [
   },
   {
     contactName: "Domenico Antonio Multari",
-    lawFirmName: "M-Lawyers",
+    organisationName: "M-Lawyers",
     email: "d.multari@m-lawyers.com",
     website: "http://www.m-lawyers.com",
     telephone: "+39 051 264179",
@@ -83,7 +83,7 @@ export default [
   },
   {
     contactName: "Gian Piero Rinaldi",
-    lawFirmName: "Studio Legale Rinaldi",
+    organisationName: "Studio Legale Rinaldi",
     email: "info@rinaldilawfirm.com",
     website: "http://www.rinaldilawfirm.com",
     telephone: "+39 051 237870",
@@ -96,7 +96,7 @@ export default [
   },
   {
     contactName: "Jane Schorah",
-    lawFirmName: "Fieldfisher Italy",
+    organisationName: "Fieldfisher Italy",
     email: "jane.schorah@fieldfisher.com",
     website: "https://www.fieldfisher.com/en/locations/italy",
     telephone: "+39 051 99711",
@@ -110,7 +110,7 @@ export default [
   },
   {
     contactName: "Manuela Tirini",
-    lawFirmName: "Studio Legale Tirini Grassi",
+    organisationName: "Studio Legale Tirini Grassi",
     email: "manuela@tirinigrassi.it",
     website: "http://www.tirinigrassi.it",
     telephone: "+39 051 6446810",
@@ -123,7 +123,7 @@ export default [
   },
   {
     contactName: "Marco Tomasi",
-    lawFirmName: "Studio Legale Tomasi",
+    organisationName: "Studio Legale Tomasi",
     email: "marco.tomasi@studiolegaletomasi.it",
     website: "http://www.studiolegaletomasi.it",
     telephone: "+39 393 6469299",
@@ -137,7 +137,7 @@ export default [
   },
   {
     contactName: "Michele Sacchi",
-    lawFirmName: "Studio Legale Avv. Sacchi",
+    organisationName: "Studio Legale Avv. Sacchi",
     email: "m.sacchi@sacchiconsulenze.com",
     website: "http://www.sacchiconsulenze.com",
     telephone: "+39 052 1575787",
@@ -151,7 +151,7 @@ export default [
   },
   {
     contactName: "Simon Cartwright",
-    lawFirmName: "Studio Legale Cartwright Pescatore",
+    organisationName: "Studio Legale Cartwright Pescatore",
     email: "simon.cartwright@becp.eu",
     website: "http://www.becp.eu",
     telephone: "+39 054 2784519",

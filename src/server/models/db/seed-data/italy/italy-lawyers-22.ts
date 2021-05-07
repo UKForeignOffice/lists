@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Anna Maria Fiasconaro",
-    lawFirmName: "Studio Legale Fiasconaro",
+    organisationName: "Studio Legale Fiasconaro",
     email: "a.fiasconaro@studiolegalefiasconaro.it",
     website: "http://www.studiolegalefiasconaro.it",
     telephone: "+39 333 8974445",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Antonino Chiaramonte",
-    lawFirmName: "Studio Legale Chiaramonte",
+    organisationName: "Studio Legale Chiaramonte",
     email: "achiaramonte@studiolegalechiaramonte.it",
     website: "http://www.studiolegalechiaramonte.it",
     telephone: "+39 389 5104275",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Donatella Sicomo",
-    lawFirmName: "Studio Legale Internazionale Arnone&Sicomo",
+    organisationName: "Studio Legale Internazionale Arnone&Sicomo",
     email: "donatella.sicomo@arnonesicomo.com",
     website: "http://www.arnonesicomo.it",
     telephone: "+39 333 2454773",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Giuseppe Coppola",
-    lawFirmName: "Coppolalaw",
+    organisationName: "Coppolalaw",
     email: "info@coppolastudiolegale.com",
     website: "http://www.coppolaw.com",
     telephone: "+39 334 3756736",
@@ -56,7 +56,7 @@ export default [
   },
   {
     contactName: "Manlio Gervasi",
-    lawFirmName: "c_legal",
+    organisationName: "c_legal",
     email: "m.gervasi@c-legal.it",
     website: "http://www.c-legal.it",
     telephone: "+39 338 4558766",
@@ -69,7 +69,7 @@ export default [
   },
   {
     contactName: "Marco Mendola",
-    lawFirmName: "Vegna&Mendola - Studio Legale Internazionale",
+    organisationName: "Vegna&Mendola - Studio Legale Internazionale",
     email: "marco.mendola@vemlegal.com",
     website: "http://www.vemlegal.com",
     telephone: "+39 339 6895999",
@@ -83,7 +83,7 @@ export default [
   },
   {
     contactName: "Serena Torrente",
-    lawFirmName: "Luxury Law",
+    organisationName: "Luxury Law",
     email: "info@luxury-law.com",
     website: "https://www.luxury-law.com",
     telephone: "+39 3271260285",

@@ -1,7 +1,7 @@
 import { noop, startCase } from "lodash";
 import { NextFunction, Request, Response } from "express";
 
-import { lawyers } from "server/models";
+import { listItem } from "server/models";
 import { lawyersPostRequestSchema } from "./schemas";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { legalPracticeAreasList } from "server/services/metadata";
@@ -140,7 +140,7 @@ export async function searchLawyers(
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
 
-  const searchResults = await lawyers.findPublishedLawyersPerCountry({
+  const searchResults = await listItem.findPublishedLawyersPerCountry({
     country,
     region,
     legalAid,
@@ -171,12 +171,13 @@ export function lawyersDataIngestionController(
   } else {
     const data = parseFormRunnerWebhookObject<LawyersFormWebhookData>(value);
 
-    lawyers
-      .createLawyer(data)
+    listItem
+      .createLawyerListItem(data)
       .then(async (lawyer) => {
-        if (lawyer.email !== null) {
+        // TODO: fix type
+        if (lawyer.jsonData.email !== null) {
           sendApplicationConfirmationEmail(
-            lawyer.email,
+            lawyer.jsonData.email,
             createConfirmationLink(req, lawyer.reference)
           ).catch(noop);
         }

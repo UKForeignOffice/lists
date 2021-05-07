@@ -1,11 +1,17 @@
-import { isArray, upperFirst, uniq, pick, startCase, toLower } from "lodash";
+import { isArray, uniq, startCase, toLower } from "lodash";
 import { format } from "sqlstring";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { LawyersFormWebhookData } from "server/services/form-runner";
-import { Country, Point, Lawyer, LawyerCreateObject } from "./types";
-import { rawInsertGeoLocation } from "./helpers";
+import {
+  Country,
+  Point,
+  ListItem,
+  LawyerCreateObject,
+  LawyerListItemCreateObject,
+} from "./types";
+import { filterAllowedLegalAreas, rawInsertGeoLocation } from "./helpers";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -64,7 +70,7 @@ function parseOutOfHoursObject(
   const address =
     lawyer.outOfHours?.country !== undefined
       ? {
-          firsLine: `${lawyer.outOfHours?.addressLine1}`,
+          firstLine: `${lawyer.outOfHours?.addressLine1}`,
           secondLine: lawyer.outOfHours?.addressLine2,
           postCode: `${lawyer.outOfHours?.postcode}`,
           city: `${lawyer.outOfHours?.city}`,
@@ -78,7 +84,7 @@ function parseOutOfHoursObject(
   };
 }
 
-function fetchPublishedLawyersQuery(props: {
+function fetchPublishedListItemQuery(props: {
   country?: string;
   fromGeoPoint?: Point;
   filterLegalAidYes: boolean;
@@ -95,8 +101,7 @@ function fetchPublishedLawyersQuery(props: {
   let whereCountryName = "";
   let whereLegalAid = "";
   let orderBy = `
-    ORDER BY
-    CASE WHEN "Lawyer"."lawFirmName" IS NULL THEN "Lawyer"."contactName" ELSE "Lawyer"."lawFirmName" END ASC
+    ORDER BY "ListItem"."jsonData"->>"organisationName" ASC
   `;
 
   if (country !== undefined) {
@@ -106,13 +111,12 @@ function fetchPublishedLawyersQuery(props: {
   }
 
   if (filterLegalAidYes) {
-    whereLegalAid = `${conditionClause()} "Lawyer"."legalAid" = true`;
+    whereLegalAid = `${conditionClause()} "ListItem"."jsonData" @> '{"legalAid":true}'`;
   }
 
   if (isArray(fromGeoPoint)) {
     withDistance = format(
-      `,
-      ST_Distance(
+      `ST_Distance(
         "GeoLocation".location,
         ST_GeographyFromText('Point(? ?)')
       ) AS distanceInMeters
@@ -125,60 +129,83 @@ function fetchPublishedLawyersQuery(props: {
 
   return `
     SELECT
-      "Lawyer"."contactName",
-      "Lawyer"."lawFirmName",
-      "Lawyer"."telephone",
-      "Lawyer"."email",
-      "Lawyer"."website",
-      "Lawyer"."legalAid",
-      "Lawyer"."proBonoService",
-      (SELECT array_agg(name)
-        FROM "LegalPracticeAreas" lpa
-        INNER JOIN "_LawyerToLegalPracticeAreas" AS ltl ON ltl."A" = "Lawyer".id
-        WHERE lpa.id = ltl."B"
-      ) AS "legalPracticeAreas",
+      "ListItem"."id",
+ 	    "ListItem"."reference",
+ 	    "ListItem"."type",
+ 	    "ListItem"."jsonData",
+	    (
+ 	   	  SELECT ROW_TO_JSON(a)
+ 		    FROM (
+			    SELECT
+				    "Address"."firstLine", 
+				    "Address"."secondLine", 
+				    "Address"."city", 
+				    "Address"."postCode",
+				    (
+					    SELECT ROW_TO_JSON(c)
+					    FROM (
+						    SELECT name
+						    FROM "Country"
+						    WHERE "Address"."countryId" = "Country"."id"
+					    ) as c
+		  	    ) as country
+ 	          FROM "Address"
+			      WHERE "Address".id = "ListItem"."addressId"
+ 		    ) as a
+ 	    ) as address,
+      ${withDistance}	   
 
-      concat_ws(', ', "Address"."firsLine", "Address"."secondLine") AS address,
-      "Address"."city",
-      "Address"."postCode",
-      "Country".name as country
-
-      ${withDistance}
-
-    FROM "Lawyer"
-    INNER JOIN "Address" ON "Lawyer"."addressId" = "Address".id
-    INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+    FROM "ListItem"
+ 	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+	  INNER JOIN "Country" ON "Address"."countryId" = "Country".id
     INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
     ${whereCountryName}
     ${whereLegalAid}
-    AND "Lawyer"."isApproved" = true
-    AND "Lawyer"."isPublished" = true
-    AND "Lawyer"."isBlocked" = false
+    AND "ListItem"."isApproved" = true
+    AND "ListItem"."isPublished" = true
+    AND "ListItem"."isBlocked" = false
     ${orderBy}
     LIMIT 20
   `;
 }
 
-async function createLawyerInsertObject(
+async function createLawyerListItemObject(
   lawyer: LawyersFormWebhookData
-): Promise<LawyerCreateObject> {
+): Promise<LawyerListItemCreateObject> {
   try {
     const country = await createCountry(lawyer.country);
     const geoLocationId = await createAddressGeoLocation(lawyer);
-    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(", ") ?? []);
+    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(/;|,/) ?? []);
     const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {
-      contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
-        lawyer.surname
-      }`,
-      lawFirmName: lawyer.organisationName.toLowerCase(),
-      telephone: lawyer.phoneNumber,
-      email: lawyer.emailAddress,
-      website: lawyer.websiteAddress,
+      type: "lawyer",
+      isApproved: false,
+      isPublished: false,
+      jsonData: {
+        organisationName: lawyer.organisationName.toLowerCase().trim(),
+        contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
+          lawyer.surname
+        }`.trim(),
+        telephone: lawyer.phoneNumber,
+        email: lawyer.emailAddress.toLowerCase().trim(),
+        website: lawyer.websiteAddress.toLowerCase().trim(),
+        legalPracticeAreas: filterAllowedLegalAreas(
+          legalPracticeAreasList.map((name: string) =>
+            name.trim().toLowerCase()
+          )
+        ),
+        regulatoryAuthority: lawyer.regulatoryAuthority,
+        englishSpeakLead: lawyer.englishSpeakLead,
+        representedBritishNationalsBefore:
+          lawyer.representedBritishNationalsBefore,
+        legalAid: lawyer.canProvideLegalAid,
+        proBonoService: lawyer.canOfferProBono,
+        outOfHours,
+      },
       address: {
         create: {
-          firsLine: lawyer.addressLine1,
+          firstLine: lawyer.addressLine1,
           secondLine: lawyer.addressLine2,
           postCode: lawyer.postcode,
           city: lawyer.city,
@@ -187,26 +214,6 @@ async function createLawyerInsertObject(
           },
           ...(typeof geoLocationId === "number" ? { geoLocationId } : {}),
         },
-      },
-      legalPracticeAreas: {
-        connectOrCreate: legalPracticeAreasList
-          .map((name: string) => name.trim())
-          .map((name) => ({
-            where: { name },
-            create: { name },
-          })),
-      },
-      legalAid: lawyer.canProvideLegalAid,
-      proBonoService: lawyer.canOfferProBono,
-      isApproved: false,
-      isPublished: false,
-      extendedProfile: {
-        ...pick(lawyer, [
-          "regulatoryAuthority",
-          "englishSpeakLead",
-          "representedBritishNationalsBefore",
-        ]),
-        outOfHours,
       },
     };
   } catch (error) {
@@ -223,13 +230,13 @@ export async function findPublishedLawyersPerCountry(props: {
   region?: string;
   legalAid?: "yes" | "no" | "";
   practiceArea?: string[];
-}): Promise<Lawyer[]> {
-  const country = upperFirst(props.country);
-  const filterLegalAidYes = props.legalAid === "yes";
-
+}): Promise<any> {
   if (props.country === undefined) {
     return [];
   }
+
+  const country = startCase(toLower(props.country));
+  const filterLegalAidYes = props.legalAid === "yes";
 
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
@@ -237,7 +244,7 @@ export async function findPublishedLawyersPerCountry(props: {
       text: props.region,
     });
 
-    const query = fetchPublishedLawyersQuery({
+    const query = fetchPublishedListItemQuery({
       country,
       filterLegalAidYes,
       fromGeoPoint,
@@ -251,12 +258,69 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 }
 
-export async function createLawyer(
+// TODO: return type
+export async function approveLawyer(reference: string): Promise<any> {
+  try {
+    return await prisma.listItem.update({
+      where: {
+        reference,
+      },
+      data: {
+        isApproved: true,
+      },
+    });
+  } catch (error) {
+    logger.error(`approveLawyer Error ${error.message}`);
+    throw new Error("Failed to approve lawyer");
+  }
+}
+
+// TODO: return type
+export async function publishLawyer(reference: string): Promise<any> {
+  try {
+    return await prisma.listItem.update({
+      where: {
+        reference,
+      },
+      data: {
+        isPublished: true,
+      },
+    });
+  } catch (error) {
+    logger.error(`publishLawyer Error ${error.message}`);
+    throw new Error("Failed to publish lawyer");
+  }
+}
+
+// TODO: return type
+export async function blockLawyer(reference: string): Promise<any> {
+  try {
+    return await prisma.listItem.update({
+      where: {
+        reference,
+      },
+      data: {
+        isBlocked: true,
+      },
+    });
+  } catch (error) {
+    logger.error(`blockLawyer Error ${error.message}`);
+    throw new Error("Failed to publish lawyer");
+  }
+}
+
+// API based on ListItem
+
+export async function createLawyerListItem(
   webhookData: LawyersFormWebhookData
-): Promise<Lawyer> {
-  const exists = await prisma.lawyer.findFirst({
+): Promise<ListItem> {
+  const exists = await prisma.listItem.findFirst({
     where: {
-      lawFirmName: webhookData.organisationName.toLowerCase(),
+      jsonData: {
+        equals: {
+          organisationName: webhookData.organisationName.toLowerCase(),
+        },
+      },
       address: {
         country: {
           name: webhookData.country,
@@ -269,62 +333,11 @@ export async function createLawyer(
     throw new Error("Record already exists");
   }
 
-  const lawyerData = await createLawyerInsertObject(webhookData);
-
   try {
-    return await prisma.lawyer.create({ data: lawyerData });
+    const lawyerData = await createLawyerListItemObject(webhookData);
+    return await prisma.listItem.create({ data: lawyerData });
   } catch (error) {
-    logger.error(`createLawyer Error: ${error.message}`);
-    throw new Error(`createLawyer Error: ${error.message}`);
-  }
-}
-
-export async function approveLawyer(lawFirmName: string): Promise<Lawyer> {
-  try {
-    return await prisma.lawyer.update({
-      where: {
-        lawFirmName: lawFirmName.toLowerCase(),
-      },
-      data: {
-        isApproved: true,
-      },
-    });
-  } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
-    throw new Error("Failed to approve lawyer");
-  }
-}
-
-export async function publishLawyer(lawFirmName: string): Promise<Lawyer> {
-  try {
-    return await prisma.lawyer.update({
-      where: {
-        lawFirmName: lawFirmName.toLowerCase(),
-      },
-      data: {
-        isPublished: true,
-      },
-    });
-  } catch (error) {
-    logger.error(`publishLawyer Error ${error.message}`);
-    throw new Error("Failed to publish lawyer");
-  }
-}
-
-export async function blockLawyer(lawFirmName: string): Promise<Lawyer> {
-  try {
-    return await prisma.lawyer.update({
-      where: {
-        lawFirmName: lawFirmName.toLowerCase(),
-      },
-      data: {
-        isBlocked: true,
-        isApproved: false,
-        isPublished: false,
-      },
-    });
-  } catch (error) {
-    logger.error(`blockLawyer Error ${error.message}`);
-    throw new Error("Failed to publish lawyer");
+    logger.error(`createLawyerListItem Error: ${error.message}`);
+    throw new Error(`createLawyerListItem Error: ${error.message}`);
   }
 }

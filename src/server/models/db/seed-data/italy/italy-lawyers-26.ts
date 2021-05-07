@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Elena Boschini",
-    lawFirmName: "Avvocato Elena Boschini",
+    organisationName: "Avvocato Elena Boschini",
     email: "avv.boschini@gmail.com",
     website: "http://www.studiolegaleboschini.com",
     telephone: "+39 328 7658338",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Manuela Chenal",
-    lawFirmName: "Avvocato Mauela Chenal",
+    organisationName: "Avvocato Mauela Chenal",
     email: "avvchenal.manuela@libero.it",
     telephone: "+39 339 3082642",
     address: "Via Vevey, 17",

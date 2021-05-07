@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alessandro Spinnato",
-    lawFirmName: "Spinnato Law Firm",
+    organisationName: "Spinnato Law Firm",
     email: "info@spinnatolawfirm.com",
     website: "http://spinnatolawfirm.com",
     telephone: "+39 347 4908130",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Alessandro Bartoli",
-    lawFirmName: "Castagneto-Bartolotta-D’Harcourt-Bartoli",
+    organisationName: "Castagneto-Bartolotta-D’Harcourt-Bartoli",
     email: "alessandro.bartoli@saurolex.it; segreteria@saurolex.it",
     telephone: "+39 019 815190; +39 347 4713050",
     address: "Via Nazario Sauro 3/1 S",
@@ -28,7 +28,8 @@ export default [
   },
   {
     contactName: "Alessandro Bartoli",
-    lawFirmName: "Castagneto-Bartolotta-D’Harcourt-Bartoli (Branch Office)",
+    organisationName:
+      "Castagneto-Bartolotta-D’Harcourt-Bartoli (Branch Office)",
     email: "alessandro.bartoli@saurolex.it; segreteria@saurolex.it",
     telephone: "+39 019 815190; +39 347 4713050",
     address: "Piazza della Vittoria",
@@ -41,7 +42,7 @@ export default [
   },
   {
     contactName: "Andrea Pericu",
-    lawFirmName: "Bettini Formigaro Pericu",
+    organisationName: "Bettini Formigaro Pericu",
     email: "andreapericu@bfplex.com",
     website: "http://www.bfplex.com",
     telephone: "+39 010 581746",
@@ -55,7 +56,7 @@ export default [
   },
   {
     contactName: "Andrea Sciello",
-    lawFirmName: "Avvocato Andrea Sciello",
+    organisationName: "Avvocato Andrea Sciello",
     email: "andreasciello@hotmail.it",
     telephone: "+39 335 337786",
     address: "Via Fieschi, 2/26B",
@@ -67,7 +68,7 @@ export default [
   },
   {
     contactName: "Carla Borachia",
-    lawFirmName: "Studio Legale Borachia",
+    organisationName: "Studio Legale Borachia",
     email: "avvocatiborachia@gmail.com",
     telephone: "+39 0187 737149",
     address: "Via U. Rattazzi, 29",
@@ -90,7 +91,7 @@ export default [
   },
   {
     contactName: "Maurizio Dardani",
-    lawFirmName: "Dardani Studio Legale",
+    organisationName: "Dardani Studio Legale",
     email: "maurizio.dardani@dardani.it",
     website: "http://www.dardani.it",
     telephone: "+39 010 5761816",
@@ -104,7 +105,7 @@ export default [
   },
   {
     contactName: "Umberto Illuzzi",
-    lawFirmName: "Umberto Illuzzi",
+    organisationName: "Umberto Illuzzi",
     email: "studio@assoprof.net",
     website: "http://www.assoprof.net",
     telephone: "+39 010 530091",

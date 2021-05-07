@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Simon Cartwright",
-    lawFirmName: "Studio Legale Cartwright - Pescatore",
+    organisationName: "Studio Legale Cartwright - Pescatore",
     email: "simon.cartwright@becp.eu",
     website: "https://www.becp.eu/it/professionisti/soci/simon-cartwright/",
     telephone: "+39 0542 784519",

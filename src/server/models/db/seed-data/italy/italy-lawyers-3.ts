@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Elizabeth Hannah",
-    lawFirmName: "SLCG",
+    organisationName: "SLCG",
     email: "ehannah@slcg.it",
     website: "http://www.slcg.it/",
     telephone: "+39 338 7707797",
@@ -13,7 +13,7 @@ export default [
   },
   {
     contactName: "Filippo Zuti Giachetti",
-    lawFirmName: "BASP Bei-Ariani-Salvatori & Partners",
+    organisationName: "BASP Bei-Ariani-Salvatori & Partners",
     email: "Filippo.zutigiachetti@basp.it",
     website: "http://www.basp.it",
     telephone: "+39 055 0948210",

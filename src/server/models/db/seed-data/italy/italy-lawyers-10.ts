@@ -12,7 +12,7 @@ export default [
   },
   {
     contactName: "Francesco Mortelliti",
-    lawFirmName: "Studio Legale Mortelliti",
+    organisationName: "Studio Legale Mortelliti",
     email: "info@studiolegalemortelliti.it",
     website: "http://www.studiolegalemortelliti.it",
     telephone: "+39 0965 1870750",
@@ -25,7 +25,7 @@ export default [
   },
   {
     contactName: "Paolo Zagami",
-    lawFirmName: "Studio Legale Internazionale Zagamilaw",
+    organisationName: "Studio Legale Internazionale Zagamilaw",
     email: "reggiocalabria@zagamilaw.com",
     website: "http://www.zagamilaw.com",
     telephone: "+39 339 7554723",

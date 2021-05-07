@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alberto Batini",
-    lawFirmName: "Batini Traverso Grasso & Associati",
+    organisationName: "Batini Traverso Grasso & Associati",
     email: "a.batini@btglegal.it",
     website: "http://www.btglegal.it",
     telephone: "+39 348 7902191",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Aldo Lorenzo Feliciani",
-    lawFirmName: "Studio Legale Bonora e Associati",
+    organisationName: "Studio Legale Bonora e Associati",
     email: "a.feliciani@studiobonora.it",
     website: "http://www.studiobonora.it",
     telephone: "+39 02 76013210",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Alessandro Bossi",
-    lawFirmName: "Studio Legale Bossi",
+    organisationName: "Studio Legale Bossi",
     email: "<info@slblaw.eu >",
     website: "http://www.slblaw.eu",
     telephone: "+39 02 58315151",
@@ -43,7 +43,7 @@ export default [
   },
   {
     contactName: "Alessandro Maria Tirelli",
-    lawFirmName: "International Lawyers Associates",
+    organisationName: "International Lawyers Associates",
     email: "alessandrotirelli@yahoo.it",
     website: "http://www.lawyeritalian.com",
     telephone: "+39 338 6222365",
@@ -56,7 +56,7 @@ export default [
   },
   {
     contactName: "Andrea Arcidiacono",
-    lawFirmName: "Studio Legale Arcidiacono",
+    organisationName: "Studio Legale Arcidiacono",
     email: "studio.arcidiacono@gmail.com",
     website: "https://studiolegalearcidiacono.com/",
     telephone: "+39 333 6892201",
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Anna Scalzi",
-    lawFirmName: "Scalzi Legal",
+    organisationName: "Scalzi Legal",
     email: "info@scalzi.it",
     website: "http://www.scalzi.it",
     telephone: "+39 347 2560738",
@@ -84,7 +84,7 @@ export default [
   },
   {
     contactName: "Antonio Golino",
-    lawFirmName: "Clifford Chance",
+    organisationName: "Clifford Chance",
     email: "antonio.golino@cliffordchance.com",
     website: "http://www.cliffordchance.com",
     telephone: "+39 02 8063411",
@@ -97,7 +97,7 @@ export default [
   },
   {
     contactName: "Benedetta Guzzoni",
-    lawFirmName: "Studio Legale Guzzoni",
+    organisationName: "Studio Legale Guzzoni",
     email: "bg@guzzoni.net",
     website: "http://www.guzzoni.net",
     telephone: "+39 02 76008869",
@@ -110,7 +110,7 @@ export default [
   },
   {
     contactName: "Carlo Bottino",
-    lawFirmName: "Studio Legale Bottino",
+    organisationName: "Studio Legale Bottino",
     email: "info@studiolegalebottino.it",
     website: "http://www.italianlawfirm.co.uk",
     telephone: "+39 02 8356327",
@@ -124,7 +124,7 @@ export default [
   },
   {
     contactName: "Claudio Piombo",
-    lawFirmName: "NCL Legal",
+    organisationName: "NCL Legal",
     email: "avvclaudiopiombo@gmail.com",
     website: "http://www.nclegal.it",
     telephone: "+39 340 4836822",
@@ -138,7 +138,7 @@ export default [
   },
   {
     contactName: "Colin Jamieson",
-    lawFirmName: "Studio Legale Avv. Jamieson",
+    organisationName: "Studio Legale Avv. Jamieson",
     email: "colin@taxing.it",
     website: "http://www.jamieson.it",
     telephone: "+39 02 488 3945",
@@ -152,7 +152,7 @@ export default [
   },
   {
     contactName: "Cristiano Cominotto",
-    lawFirmName: "AL Assistenza Legale",
+    organisationName: "AL Assistenza Legale",
     email: "c.cominotto@alassistenzalegale.it",
     website: "http://www.alassistenzalegale.it",
     telephone: "+39 335 59 28 732",
@@ -166,7 +166,7 @@ export default [
   },
   {
     contactName: "Daria Pesce",
-    lawFirmName: "Studio Avv. Daria Pesce",
+    organisationName: "Studio Avv. Daria Pesce",
     email: "info@avvocatodariapesce.it",
     website: "http://www.avvocatodariapesce.it",
     telephone: "+39 02 5455553",
@@ -180,7 +180,7 @@ export default [
   },
   {
     contactName: "Davide Palazzo",
-    lawFirmName: "Palazzo Law Boutique",
+    organisationName: "Palazzo Law Boutique",
     email: "avv.palazzo@palazzolawboutique.com",
     website: "http://palazzolawboutique.com",
     telephone: "+39 0287199463",
@@ -194,7 +194,7 @@ export default [
   },
   {
     contactName: "Davide Cinelli",
-    lawFirmName: "Studio Legale De Falco e Grompe",
+    organisationName: "Studio Legale De Falco e Grompe",
     email: "davide.cinelli@defalcogrompe.com",
     website: "http://www.defalcogrompe.com",
     telephone: "+39 02 801031-2",
@@ -208,7 +208,7 @@ export default [
   },
   {
     contactName: "Emanuele Cammareri",
-    lawFirmName: "Studio Legale Bresner Cammareri",
+    organisationName: "Studio Legale Bresner Cammareri",
     email: "emanuele.cammareri@bcip.it",
     website: "http://www.bcip.it",
     telephone: "+39 349 7218642",
@@ -222,7 +222,7 @@ export default [
   },
   {
     contactName: "Fabrizio Bianchi Schierholz",
-    lawFirmName: "Bianchi Schierholz & Partners",
+    organisationName: "Bianchi Schierholz & Partners",
     email: "studio@bianchischierholz.it",
     website: "http://www.bianchischierholz.it",
     telephone: "+39 02 866644",
@@ -236,7 +236,7 @@ export default [
   },
   {
     contactName: "Francesco Senaldi",
-    lawFirmName: "BSVA Studio Legale",
+    organisationName: "BSVA Studio Legale",
     email: "f.senaldi@bsva.it",
     website: "http://www.bsva.it",
     telephone: "+39 02 783811",
@@ -250,7 +250,7 @@ export default [
   },
   {
     contactName: "Francesco Mangiameli",
-    lawFirmName: "CTES Advisors",
+    organisationName: "CTES Advisors",
     email: "francesco.mangiameli@ctes.it",
     website: "http://www.ctes.it",
     telephone: "+39 02 36574450",
@@ -263,7 +263,7 @@ export default [
   },
   {
     contactName: "Giovanni Babino",
-    lawFirmName: "Giovanni Babino",
+    organisationName: "Giovanni Babino",
     email: "foreignclients@bf-lawyers.com",
     website: "http://www.bf-lawyers.com",
     telephone: "+39 02 66981438",
@@ -277,7 +277,7 @@ export default [
   },
   {
     contactName: "Lorenzo Da Pra Galanti",
-    lawFirmName: "Iuraplus",
+    organisationName: "Iuraplus",
     email: "dapra@iuraplus.com",
     website: "http://www.iuraplus.com",
     telephone: "+39 02 80501156",
@@ -290,7 +290,7 @@ export default [
   },
   {
     contactName: "Luca Corabi De Marchi",
-    lawFirmName: "Ughi e Nunziante",
+    organisationName: "Ughi e Nunziante",
     email: "l.corabi@unlaw.it",
     website: "http://www.unlaw.it",
     telephone: "+39 02 762171",
@@ -304,7 +304,7 @@ export default [
   },
   {
     contactName: "Luca Salerno",
-    lawFirmName: "Hanover Bond Law",
+    organisationName: "Hanover Bond Law",
     email: "ls@hanoverbondlaw.com",
     website: "http://www.hanoverbondlaw.com",
     telephone: "+39 02 40707817",
@@ -318,7 +318,7 @@ export default [
   },
   {
     contactName: "Luciano Pizzi",
-    lawFirmName: "A&P Legal",
+    organisationName: "A&P Legal",
     email: "lpizzi@aeplegal.com",
     website: "http://www.aeplegal.com",
     telephone: "+39 02 83466400",
@@ -331,7 +331,7 @@ export default [
   },
   {
     contactName: "Mark Anthony Simon Paolini",
-    lawFirmName: "CDT Legal",
+    organisationName: "CDT Legal",
     email: "mpaolini@cdt.legal",
     website: "https://cdt.legal/",
     telephone: "+39 349 1401967",
@@ -345,7 +345,7 @@ export default [
   },
   {
     contactName: "Massimo Dimarco",
-    lawFirmName: "Dimarco & Partners International Law Firm",
+    organisationName: "Dimarco & Partners International Law Firm",
     email: "m.dimarco@dimarcoandpartners.eu",
     website: "http://www.lawyer-italy.org",
     telephone: "+39 0289053510",
@@ -359,7 +359,7 @@ export default [
   },
   {
     contactName: "Massimo Mascali",
-    lawFirmName: "Studio Legale Mascali",
+    organisationName: "Studio Legale Mascali",
     email: "info@studio-mascali.it",
     website: "http://www.studio-mascali.it",
     telephone: "+39 035 238314",
@@ -372,7 +372,7 @@ export default [
   },
   {
     contactName: "Michele Stratta",
-    lawFirmName: "studio Legale Avv. Michele Stratta",
+    organisationName: "studio Legale Avv. Michele Stratta",
     email: "michele.stratta@hotmail.it",
     website: "http://www.studiolegalestratta.it",
     telephone: "+39 0444 326698",
@@ -385,7 +385,7 @@ export default [
   },
   {
     contactName: "Monica C. James",
-    lawFirmName: "James & Co. - Legal Services in Italy",
+    organisationName: "James & Co. - Legal Services in Italy",
     email: "info@james-legal.com",
     website: "http://www.james-legal.com",
     telephone: "+39 030 9911001",
@@ -400,7 +400,7 @@ export default [
   },
   {
     contactName: "Paolo De’ Capitani di Vimercate",
-    lawFirmName: "Studio Uckmar Associazione Professionale",
+    organisationName: "Studio Uckmar Associazione Professionale",
     email: "p.decapitani@uckmar.com",
     website: "http://www.studiouckmar.com/home.html",
     telephone: "+39 02 801085",
@@ -413,7 +413,7 @@ export default [
   },
   {
     contactName: "Perla Sciretti",
-    lawFirmName: "Sciretti Avvocati",
+    organisationName: "Sciretti Avvocati",
     email: "perlex@perlex.it",
     website: "http://www.perlex.it",
     telephone: "+39 02 55185533",
@@ -426,7 +426,7 @@ export default [
   },
   {
     contactName: "Stefania Skonieczny",
-    lawFirmName: "Giambrone&Partners",
+    organisationName: "Giambrone&Partners",
     email: "stefania.skonieczny@giambronelaw.com",
     website: "http://www.giambronelaw.com",
     telephone: "+39 02 49481276",
@@ -440,7 +440,7 @@ export default [
   },
   {
     contactName: "Stefano Linares",
-    lawFirmName: "Linares Associates PLLC",
+    organisationName: "Linares Associates PLLC",
     email: "info@linareslaw.com",
     website: "http://www.linareslaw.com",
     telephone: "+39 349 1723704",
@@ -454,7 +454,7 @@ export default [
   },
   {
     contactName: "Marzia Ghigliazza",
-    lawFirmName: "Studio Legale Internazionale Ghigliazza-Rugani",
+    organisationName: "Studio Legale Internazionale Ghigliazza-Rugani",
     email: "marzia.ghigliazza@gr-studio.eu",
     website: "https://www.iafl.com/fellows/marzia-ghigliazza/22695",
     telephone: "+39 02 72093417",
