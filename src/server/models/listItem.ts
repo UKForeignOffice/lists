@@ -1,5 +1,5 @@
 import { isArray, uniq, startCase, toLower } from "lodash";
-import { format } from "sqlstring";
+import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
@@ -8,10 +8,14 @@ import {
   Country,
   Point,
   ListItem,
-  LawyerCreateObject,
-  LawyerListItemCreateObject,
+  LawyerListItemCreateInput,
+  LawyerListItemGetObject,
 } from "./types";
-import { filterAllowedLegalAreas, rawInsertGeoLocation } from "./helpers";
+import {
+  filterAllowedLegalAreas,
+  geoPointIsValid,
+  rawInsertGeoLocation,
+} from "./helpers";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -25,17 +29,17 @@ async function createCountry(country: string): Promise<Country> {
 }
 
 async function getPlaceGeoPoint(props: {
-  country?: string;
+  countryName?: string;
   text?: string;
 }): Promise<Point | undefined> {
-  const { country, text } = props;
+  const { countryName, text } = props;
 
-  if (text === undefined || country === undefined) {
+  if (text === undefined || countryName === undefined) {
     return undefined;
   }
 
   try {
-    const place = await geoLocatePlaceByText(`${text}, ${country}`);
+    const place = await geoLocatePlaceByText(`${text}, ${countryName}`);
     return place?.Geometry?.Point ?? undefined;
   } catch (error) {
     return undefined;
@@ -62,9 +66,8 @@ async function createAddressGeoLocation(
   return false;
 }
 
-function parseOutOfHoursObject(
-  lawyer: LawyersFormWebhookData
-): LawyerCreateObject["extendedProfile"]["outOfHours"] {
+// TODO: type
+function parseOutOfHoursObject(lawyer: LawyersFormWebhookData): any {
   const telephone = lawyer.outOfHours?.phoneNumber;
   const email = lawyer.outOfHours?.emailAddress;
   const address =
@@ -85,44 +88,24 @@ function parseOutOfHoursObject(
 }
 
 function fetchPublishedListItemQuery(props: {
-  country?: string;
+  type: string;
+  countryName: string;
   fromGeoPoint?: Point;
-  filterLegalAidYes: boolean;
-  practiceArea?: string[];
+  andWhere?: string;
 }): string {
-  const { country, fromGeoPoint, filterLegalAidYes } = props;
-
-  let conditionClause = (): "WHERE" | "AND" => {
-    conditionClause = () => "AND";
-    return "WHERE";
-  };
+  const { type, countryName, fromGeoPoint, andWhere } = props;
+  const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
+  const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
 
   let withDistance = "";
-  let whereCountryName = "";
-  let whereLegalAid = "";
-  let orderBy = `
-    ORDER BY "ListItem"."jsonData"->>"organisationName" ASC
-  `;
+  let orderBy = 'ORDER BY "ListItem"."jsonData"->>"organisationName" ASC';
 
-  if (country !== undefined) {
-    whereCountryName = format(`${conditionClause()} "Country".name = ?`, [
-      country,
-    ]);
-  }
-
-  if (filterLegalAidYes) {
-    whereLegalAid = `${conditionClause()} "ListItem"."jsonData" @> '{"legalAid":true}'`;
-  }
-
-  if (isArray(fromGeoPoint)) {
-    withDistance = format(
-      `ST_Distance(
+  if (geoPointIsValid(fromGeoPoint)) {
+    withDistance = `ST_Distance(
         "GeoLocation".location,
-        ST_GeographyFromText('Point(? ?)')
+        ST_GeographyFromText('Point(${fromGeoPoint?.join(" ")})')
       ) AS distanceInMeters
-    `,
-      fromGeoPoint
-    );
+    `;
 
     orderBy = "ORDER BY distanceInMeters ASC";
   }
@@ -159,8 +142,9 @@ function fetchPublishedListItemQuery(props: {
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
 	  INNER JOIN "Country" ON "Address"."countryId" = "Country".id
     INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+    ${whereType}
     ${whereCountryName}
-    ${whereLegalAid}
+    ${andWhere}
     AND "ListItem"."isApproved" = true
     AND "ListItem"."isPublished" = true
     AND "ListItem"."isBlocked" = false
@@ -169,9 +153,35 @@ function fetchPublishedListItemQuery(props: {
   `;
 }
 
+async function checkListItemExists({
+  organisationName,
+}: {
+  organisationName?: string;
+}): Promise<boolean> {
+  const jsonQuery: {
+    organisationName?: string;
+  } = {};
+
+  if (organisationName !== undefined) {
+    jsonQuery.organisationName = pgescape.string(
+      organisationName?.toLowerCase()
+    );
+  }
+
+  const query = `
+    SELECT COUNT(*) 
+    FROM "ListItem" 
+    WHERE "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}' 
+    LIMIT 1
+  `;
+
+  const result = await prisma.$queryRaw(query);
+  return result?.["0"].count > 0;
+}
+
 async function createLawyerListItemObject(
   lawyer: LawyersFormWebhookData
-): Promise<LawyerListItemCreateObject> {
+): Promise<LawyerListItemCreateInput> {
   try {
     const country = await createCountry(lawyer.country);
     const geoLocationId = await createAddressGeoLocation(lawyer);
@@ -226,40 +236,66 @@ async function createLawyerListItemObject(
 // Model API
 
 export async function findPublishedLawyersPerCountry(props: {
-  country?: string;
+  countryName?: string;
   region?: string;
   legalAid?: "yes" | "no" | "";
   practiceArea?: string[];
-}): Promise<any> {
-  if (props.country === undefined) {
-    return [];
+}): Promise<LawyerListItemGetObject[]> {
+  if (props.countryName === undefined) {
+    throw new Error("Country name is missing");
   }
 
-  const country = startCase(toLower(props.country));
-  const filterLegalAidYes = props.legalAid === "yes";
+  const countryName = startCase(toLower(props.countryName));
+  const andWhere: string[] = [];
 
+  if (props.legalAid === "yes") {
+    andWhere.push(`AND "ListItem"."jsonData" @> '{"legalAid":true}'`);
+  }
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
-      country,
+      countryName,
       text: props.region,
     });
 
     const query = fetchPublishedListItemQuery({
-      country,
-      filterLegalAidYes,
+      type: "lawyer",
+      countryName,
       fromGeoPoint,
+      andWhere: andWhere.join(" "),
     });
 
-    const result = await prisma.$queryRaw(query);
-    return result;
+    return await prisma.$queryRaw(query);
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
     return [];
   }
 }
 
-// TODO: return type
-export async function approveLawyer(reference: string): Promise<any> {
+export async function createLawyerListItem(
+  webhookData: LawyersFormWebhookData
+): Promise<ListItem> {
+  const exists = await checkListItemExists({
+    organisationName: webhookData.organisationName,
+  });
+
+  if (exists) {
+    throw new Error("Record already exists");
+  }
+
+  try {
+    const lawyerData = await createLawyerListItemObject(webhookData);
+    return await prisma.listItem.create({ data: lawyerData });
+  } catch (error) {
+    logger.error(`createLawyerListItem Error: ${error.message}`);
+    throw new Error(`createLawyerListItem Error: ${error.message}`);
+  }
+}
+
+export async function approveListItem({
+  reference,
+}: {
+  reference: string;
+}): Promise<ListItem> {
   try {
     return await prisma.listItem.update({
       where: {
@@ -275,8 +311,11 @@ export async function approveLawyer(reference: string): Promise<any> {
   }
 }
 
-// TODO: return type
-export async function publishLawyer(reference: string): Promise<any> {
+export async function publishListItem({
+  reference,
+}: {
+  reference: string;
+}): Promise<ListItem> {
   try {
     return await prisma.listItem.update({
       where: {
@@ -292,8 +331,11 @@ export async function publishLawyer(reference: string): Promise<any> {
   }
 }
 
-// TODO: return type
-export async function blockLawyer(reference: string): Promise<any> {
+export async function blockListItem({
+  reference,
+}: {
+  reference: string;
+}): Promise<ListItem> {
   try {
     return await prisma.listItem.update({
       where: {
@@ -306,38 +348,5 @@ export async function blockLawyer(reference: string): Promise<any> {
   } catch (error) {
     logger.error(`blockLawyer Error ${error.message}`);
     throw new Error("Failed to publish lawyer");
-  }
-}
-
-// API based on ListItem
-
-export async function createLawyerListItem(
-  webhookData: LawyersFormWebhookData
-): Promise<ListItem> {
-  const exists = await prisma.listItem.findFirst({
-    where: {
-      jsonData: {
-        equals: {
-          organisationName: webhookData.organisationName.toLowerCase(),
-        },
-      },
-      address: {
-        country: {
-          name: webhookData.country,
-        },
-      },
-    },
-  });
-
-  if (exists !== null) {
-    throw new Error("Record already exists");
-  }
-
-  try {
-    const lawyerData = await createLawyerListItemObject(webhookData);
-    return await prisma.listItem.create({ data: lawyerData });
-  } catch (error) {
-    logger.error(`createLawyerListItem Error: ${error.message}`);
-    throw new Error(`createLawyerListItem Error: ${error.message}`);
   }
 }

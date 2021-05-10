@@ -4,9 +4,9 @@ import { LawyersFormWebhookData } from "server/services/form-runner";
 import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
 import {
-  approveLawyer,
-  publishLawyer,
-  blockLawyer,
+  approveListItem,
+  publishListItem,
+  blockListItem,
   createLawyerListItem,
   findPublishedLawyersPerCountry,
 } from "../listItem";
@@ -49,7 +49,7 @@ const LawyerWebhookData: LawyersFormWebhookData = {
   declarationConfirm: "confirm",
 };
 
-describe("Lawyers Model:", () => {
+describe("ListItem Model:", () => {
   const sampleLawyer = { organisationName: "The Amazing Lawyers" };
 
   const spyLawyerCreate = (returnValue?: any): jest.SpyInstance => {
@@ -64,10 +64,8 @@ describe("Lawyers Model:", () => {
       .mockResolvedValue(returnValue ?? sampleLawyer);
   };
 
-  const spyLawyerFindFirst = (returnValue: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "findFirst")
-      .mockResolvedValue(returnValue);
+  const spyPrismaQueryRaw = (returnValue: any): jest.SpyInstance => {
+    return jest.spyOn(prisma, "$queryRaw").mockResolvedValue(returnValue);
   };
 
   const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
@@ -90,8 +88,9 @@ describe("Lawyers Model:", () => {
   };
 
   describe("Create Lawyer", () => {
-    test("createLawyer command correctly calls findFirst", async () => {
-      const spyFindFirst = spyLawyerFindFirst({});
+    test("createLawyer command correctly calls $queryRaw to check if list item already exists", async () => {
+      const spyQueryRaw = spyPrismaQueryRaw([{ count: 1 }]);
+      const spyCountry = spyCountryUpsert();
 
       try {
         await createLawyerListItem(LawyerWebhookData);
@@ -99,24 +98,20 @@ describe("Lawyers Model:", () => {
         expect(error.message).toBe("Record already exists");
       }
 
-      expect(spyFindFirst).toHaveBeenCalledWith({
-        where: {
-          jsonData: {
-            equals: {
-              organisationName: LawyerWebhookData.organisationName.toLowerCase(),
-            },
-          },
-          address: {
-            country: {
-              name: LawyerWebhookData.country,
-            },
-          },
-        },
-      });
+      const expectedQuery = `
+        SELECT COUNT(*) 
+        FROM "ListItem" 
+        WHERE "ListItem"."jsonData" @> '{"organisationName":"cartesian systems"}' 
+        LIMIT 1
+      `;
+      expect(spyQueryRaw.mock.calls[0][0].replace(/\s/g, "")).toEqual(
+        expectedQuery.replace(/\s/g, "")
+      );
+      expect(spyCountry).not.toHaveBeenCalled();
     });
 
     test("createLawyer command correctly calls country.upsert", async () => {
-      spyLawyerFindFirst(null);
+      spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
       spyLawyerCreate();
       const spyCountry = spyCountryUpsert();
@@ -137,7 +132,7 @@ describe("Lawyers Model:", () => {
     });
 
     test("createLawyer command correctly calls lawyer.create", async () => {
-      spyLawyerFindFirst(null);
+      spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
       spyCountryUpsert();
       const spy = spyLawyerCreate();
@@ -174,19 +169,19 @@ describe("Lawyers Model:", () => {
             legalAid: true,
             proBonoService: true,
             legalPracticeAreas: [
-              "Bankruptcy",
-              "Corporate",
-              "Criminal",
-              "Employment",
-              "Family",
-              "Health",
-              "Immigration",
-              "Intellectual property",
-              "International",
-              "Maritime",
-              "Personal injury",
-              "Real estate",
-              "Tax",
+              "bankruptcy",
+              "corporate",
+              "criminal",
+              "employment",
+              "family",
+              "health",
+              "immigration",
+              "intellectual property",
+              "international",
+              "maritime",
+              "personal injury",
+              "real estate",
+              "tax",
             ],
             outOfHours: {
               email: "outofhours@email.com",
@@ -207,7 +202,7 @@ describe("Lawyers Model:", () => {
     const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
 
     await findPublishedLawyersPerCountry({
-      country: "france",
+      countryName: "france",
       region: "paris",
       legalAid: "yes",
       practiceArea: [],
@@ -217,40 +212,56 @@ describe("Lawyers Model:", () => {
 
     expect(spyLocation).toHaveBeenCalledWith("paris, France");
 
-    expect(query.includes(`ST_GeographyFromText('Point(1 1)')`)).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id`
-      )
-    ).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "Country" ON "Address"."countryId" = "Country".id`
-      )
-    ).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id`
-      )
-    ).toBe(true);
-
-    expect(query.includes(`WHERE "Country".name = 'France'`)).toBe(true);
-    expect(
-      query.includes(`AND "ListItem"."jsonData" @> '{"legalAid":true}'`)
-    ).toBe(true);
-    expect(query.includes(`AND "ListItem"."isApproved" = true`)).toBe(true);
-    expect(query.includes(`AND "ListItem"."isPublished" = true`)).toBe(true);
-    expect(query.includes(`AND "ListItem"."isBlocked" = false`)).toBe(true);
-    expect(query.includes(`ORDER BY distanceInMeters ASC`)).toBe(true);
-    expect(query.includes(`LIMIT 20`)).toBe(true);
+    expect(query.replace(/\s\s+/g, " ")).toEqual(
+      `
+      SELECT
+        "ListItem"."id",
+        "ListItem"."reference",
+        "ListItem"."type",
+        "ListItem"."jsonData",
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine", 
+              "Address"."secondLine", 
+              "Address"."city", 
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                        SELECT name
+                        FROM "Country"
+                        WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+            FROM "Address"
+            WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+        ST_Distance(
+          "GeoLocation".location,
+          ST_GeographyFromText('Point(1 1)')
+        ) AS distanceInMeters
+        FROM "ListItem"
+        INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+        WHERE "ListItem"."type" = 'lawyer'
+        AND "Country".name = 'France'
+        AND "ListItem"."jsonData" @> '{"legalAid":true}'
+        AND "ListItem"."isApproved" = true
+        AND "ListItem"."isPublished" = true
+        AND "ListItem"."isBlocked" = false
+        ORDER BY distanceInMeters ASC
+        LIMIT 20
+    `.replace(/\s\s+/g, " ")
+    );
   });
 
   test("approveLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await approveLawyer("reference");
+    const result = await approveListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {
@@ -266,7 +277,7 @@ describe("Lawyers Model:", () => {
 
   test("publishLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await publishLawyer("reference");
+    const result = await publishListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {
@@ -282,7 +293,7 @@ describe("Lawyers Model:", () => {
 
   test("blockLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await blockLawyer("reference");
+    const result = await blockListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {

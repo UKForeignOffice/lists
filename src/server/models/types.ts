@@ -10,9 +10,35 @@ export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
 export type ListItem = PrismaClient.ListItem;
+export type ListItemCreateInput = PrismaClient.Prisma.ListItemCreateInput;
 
-interface LawyerExtendedProfile extends PrismaClient.Prisma.JsonObject {
-  regulatoryAuthority?: string;
+interface ListItemGetObject extends PrismaClient.ListItem {
+  address: {
+    firstLine: string;
+    secondLine?: string;
+    postCode: string;
+    city: string;
+    country: {
+      id: number;
+      name: string;
+    };
+    geoLocationId?: number;
+  };
+}
+
+// Lawyer
+interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
+  contactName: string;
+  organisationName: string;
+  telephone: string;
+  email: string;
+  website: string;
+  legalPracticeAreas: string[];
+  legalAid: boolean;
+  proBonoService: boolean;
+  regulatoryAuthority: string;
+  englishSpeakLead: boolean;
+  representedBritishNationalsBefore: boolean;
   outOfHours?: {
     telephone?: string;
     email?: string;
@@ -25,90 +51,14 @@ interface LawyerExtendedProfile extends PrismaClient.Prisma.JsonObject {
   };
 }
 
-export interface LawyerCreateObject {
-  contactName: string;
-  organisationName: string;
-  telephone: string;
-  email: string;
-  website: string;
-  address: {
-    create: {
-      firstLine: string;
-      secondLine?: string;
-      postCode: string;
-      city: string;
-      country: {
-        connect: {
-          id: number;
-        };
-      };
-      geoLocationId?: number;
-    };
-  };
-  legalPracticeAreas: {
-    connectOrCreate: Array<{
-      where: {
-        name: string;
-      };
-      create: {
-        name: string;
-      };
-    }>;
-  };
-  regionsServed?: string;
-  legalAid: boolean;
-  proBonoService: boolean;
-  extendedProfile: LawyerExtendedProfile;
-  isApproved: boolean;
-  isPublished: boolean;
-}
-
-interface ListItemCreateObject {
-  type: string;
-  address: {
-    create: {
-      firstLine: string;
-      secondLine?: string;
-      postCode: string;
-      city: string;
-      country: {
-        connect: {
-          id: number;
-        };
-      };
-      geoLocationId?: number;
-    };
-  };
-  isApproved?: boolean;
-  isPublished?: boolean;
-  isBlocked?: boolean;
-}
-
-export interface LawyerListItemCreateObject extends ListItemCreateObject {
+export interface LawyerListItemCreateInput extends ListItemCreateInput {
   type: "lawyer";
-  jsonData: {
-    contactName: string;
-    organisationName: string;
-    telephone: string;
-    email: string;
-    website: string;
-    legalPracticeAreas: string[];
-    legalAid: boolean;
-    proBonoService: boolean;
-    regulatoryAuthority: string;
-    englishSpeakLead: boolean;
-    representedBritishNationalsBefore: boolean;
-    outOfHours?: {
-      telephone?: string;
-      email?: string;
-      address?: {
-        firstLine: string;
-        secondLine?: string;
-        postCode: string;
-        city: string;
-      };
-    };
-  };
+  jsonData: LawyerListItemJsonData;
+}
+
+export interface LawyerListItemGetObject extends ListItemGetObject {
+  type: "lawyer";
+  jsonData: LawyerListItemJsonData;
 }
 
 export type LegalAreas =

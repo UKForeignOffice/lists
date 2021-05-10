@@ -1,4 +1,4 @@
-import { noop, startCase } from "lodash";
+import { get, noop, startCase } from "lodash";
 import { NextFunction, Request, Response } from "express";
 
 import { listItem } from "server/models";
@@ -134,14 +134,14 @@ export function lawyersGetController(
 export async function searchLawyers(
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
-    country,
+    countryName: country,
     region,
     legalAid,
     practiceArea,
@@ -174,12 +174,12 @@ export function lawyersDataIngestionController(
     listItem
       .createLawyerListItem(data)
       .then(async (lawyer) => {
-        // TODO: fix type
-        if (lawyer.jsonData.email !== null) {
-          sendApplicationConfirmationEmail(
-            lawyer.jsonData.email,
-            createConfirmationLink(req, lawyer.reference)
-          ).catch(noop);
+        const { reference } = lawyer;
+        const email = get(lawyer?.jsonData, "email");
+
+        if (email !== null) {
+          const confirmationLink = createConfirmationLink(req, reference);
+          sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
         }
 
         res.json({});

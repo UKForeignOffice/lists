@@ -1,4 +1,4 @@
-import { upperFirst, isNumber } from "lodash";
+import { upperFirst, isNumber, isArray } from "lodash";
 import { logger } from "server/services/logger";
 import { db } from "./db/database";
 import { CountriesWithData, CountryName, LegalAreas } from "./types";
@@ -131,4 +131,8 @@ export function filterAllowedLegalAreas(legalAreas: string[]): LegalAreas[] {
   return legalAreas.filter((legalArea) =>
     allowed.includes(legalArea.toLowerCase())
   ) as LegalAreas[];
+}
+
+export function geoPointIsValid(geoPoint: any): boolean {
+  return isArray(geoPoint) && isNumber(geoPoint[0]) && isNumber(geoPoint[1]);
 }
