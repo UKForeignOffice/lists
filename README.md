@@ -6,7 +6,7 @@
 
 `docker-compose up` to start the following services:
 
-1. `server`: The lists application which is accessible on `PORT:3000`
+1. `lists`: The lists application which is accessible on `PORT:3000`
 2. `PostgreSQL`: The PostgreSQL database with PostGis which is accessible on `PORT:5432` (please see `docker-compose.yml` file for database user and password)
 3. `pgadmin`: The PgAdmin GUI app so you can manage the database, it is accessible on `PORT:8080` (please see `docker-compose.yml` file for user and password)
 4. `pghero`: A performance dashboard for Postgres, it is accessible on `PORT:8081`
@@ -19,6 +19,18 @@ If you like you can start each service independently:
 4. `docker-compose up pghero`
 
 To force a rebuild (for example if a new npm module has been installed) use the **--build** flag `docker-compose up --build lists`
+
+### Preparing the database
+
+After starting the services with docker-compose the next step is to prepare the database, do do that, with the application running, open the browser and navigate to `http://localhost:3000/dev/reset-db`.
+
+This Is what is going to happen:
+
+- Database will reset and **all data will be removed**
+- Prisma migrations are applied
+- Postgis extension is installed
+- GeoLocation table is created
+- Data is seeded
 
 ### Debugging
 
