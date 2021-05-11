@@ -1,5 +1,5 @@
 {
-  "version": "1.1.2",
+  "version": "1.2.0",
   "engines": {
     "node": ">=15"
   },
@@ -22,10 +22,11 @@
     "form-runner:start": "cd ./lib/form-runner && yarn runner start"
   },
   "dependencies": {
-    "@prisma/client": "^2.22.0",
+    "@prisma/client": "^2.22.1",
     "@types/node-fetch": "^2.5.10",
+    "@types/pg-escape": "^0.2.1",
     "accessible-autocomplete": "^2.0.3",
-    "aws-sdk": "^2.892.0",
+    "aws-sdk": "^2.904.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "dotenv": "^9.0.1",
@@ -38,9 +39,10 @@
     "joi": "^17.4.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
+    "notifications-node-client": "^5.1.0",
     "nunjucks": "^3.2.3",
     "pg": "^8.6.0",
-    "sqlstring": "^2.3.2",
+    "pg-escape": "^0.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -62,7 +64,6 @@
     "@types/node": "^15.0.2",
     "@types/nunjucks": "^3.1.4",
     "@types/pg": "^7.14.11",
-    "@types/sqlstring": "^2.3.0",
     "@types/supertest": "^2.0.11",
     "babel-plugin-module-resolver": "^4.1.0",
     "cheerio": "^1.0.0-rc.9",
@@ -82,7 +83,7 @@
     "nodemon-webpack-plugin": "^4.5.2",
     "postcss-loader": "^5.2.0",
     "prettier": "2.2.1",
-    "prisma": "^2.21.2",
+    "prisma": "^2.22.1",
     "sass": "^1.32.12",
     "sass-loader": "^11.1.0",
     "supertest": "^6.1.3",
