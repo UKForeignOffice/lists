@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Fiona Stelfox",
-    lawFirmName: "Stelfox Antuofermo & Associates",
+    organisationName: "Stelfox Antuofermo & Associates",
     email: "f.stelfox@asaalegal.eu",
     website: "http://www.lawyersintuscany.eu/",
     telephone: "+39 0583 572900",

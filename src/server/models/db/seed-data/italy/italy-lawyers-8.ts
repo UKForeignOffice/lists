@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Roberto Barbalich",
-    lawFirmName: "Barbalich Law Practice",
+    organisationName: "Barbalich Law Practice",
     email: "barbalichr@barbalich-law.eu",
     website: "http://www.barbalich-law.eu/en/16/Contact-Us.aspx",
     telephone: "+39 041 2440121",
@@ -13,7 +13,7 @@ export default [
   },
   {
     contactName: "Matteo Zambelli",
-    lawFirmName: "Zambelli Tassetto Studio Legale",
+    organisationName: "Zambelli Tassetto Studio Legale",
     email: "Matteo.Zambelli@ztlex.com",
     website: "http://ztlex.com/en/matteo-zambelli/",
     telephone: "+39 041 940752",

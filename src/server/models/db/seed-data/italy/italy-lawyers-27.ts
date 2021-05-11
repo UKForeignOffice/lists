@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Daniela Ajese",
-    lawFirmName: "Studio Legale e Commerciale Ajese",
+    organisationName: "Studio Legale e Commerciale Ajese",
     email: "ajese@studioajese.it",
     website: "https://www.studioajese.it",
     telephone: "+39 041 961965",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Domenico Carponi Schittar",
-    lawFirmName: "Studio Carponi Schittar e Sportelli",
+    organisationName: "Studio Carponi Schittar e Sportelli",
     email: "avvocaticarponisportelli@gmail.com",
     website: "https://studiocarponischittarsportelli.business.site",
     telephone: "+39 041 962475",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Enrico Tenerani",
-    lawFirmName: "Studio Legale Tenerani",
+    organisationName: "Studio Legale Tenerani",
     email: "avv.tenerani@email.it",
     website: "http://www.tenlegal.it",
     telephone: "+39 045 8347702",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Giovanni Tretti",
-    lawFirmName: "Studio Legale GTA",
+    organisationName: "Studio Legale GTA",
     email: "giovanni.tretti@gtastudio.eu",
     website: "http://www.gtastudio.eu",
     telephone: "+39 042 4566112",
@@ -56,7 +56,7 @@ export default [
   },
   {
     contactName: "Michele Stratta",
-    lawFirmName: "Studio Legale Avv. Michele Stratta",
+    organisationName: "Studio Legale Avv. Michele Stratta",
     email: "michele.stratta@hotmail.it",
     website: "http://www.studiolegalestratta.it",
     telephone: "+39 0444 326698",
@@ -69,7 +69,7 @@ export default [
   },
   {
     contactName: "Roberto Barbalich",
-    lawFirmName: "Barbalich Law Practice – Studio Legale Barbalich",
+    organisationName: "Barbalich Law Practice – Studio Legale Barbalich",
     email: "barbalichr@barbalich-law.eu",
     website: "http://www.barbalich-law.eu",
     telephone: "+39 041 244 0121",

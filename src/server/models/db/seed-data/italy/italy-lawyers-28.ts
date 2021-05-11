@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alessia Turci",
-    lawFirmName: "studio Lexa",
+    organisationName: "studio Lexa",
     email: "a.turci@studiolexa.it",
     website: "http://www.studiolexa.it",
     telephone: "+39 349 8785925",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Alice Di Lallo",
-    lawFirmName: "Studio Legale Di Nella",
+    organisationName: "Studio Legale Di Nella",
     email: "alice.dilallo@dinellalex.it",
     website: "http://www.dinellalex.com",
     telephone: "+39 02 43982209",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Angela Ianni",
-    lawFirmName: "Angela Ianni",
+    organisationName: "Angela Ianni",
     email: "angelaianni@tiscali.it",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 340 7163673",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Cecilia Cortesi Venturini",
-    lawFirmName: "Studio Legale Venturini",
+    organisationName: "Studio Legale Venturini",
     email: "venturini_cortesi@iol.it",
     telephone: "+39 0521230167",
     address: "Via Farini, 15",
@@ -54,7 +54,7 @@ export default [
   },
   {
     contactName: "Cristina Fasciotti",
-    lawFirmName: "Cristina Fasciotti",
+    organisationName: "Cristina Fasciotti",
     email: "cristinafasciotti@studiofasciotti.com",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 338 6645019",
@@ -67,7 +67,7 @@ export default [
   },
   {
     contactName: "Elena Biaggioni",
-    lawFirmName: "Stulio Legale Avv. Elena Biaggioni",
+    organisationName: "Stulio Legale Avv. Elena Biaggioni",
     email: "studio@biaggioni.it",
     telephone: "+39 0461 234100",
     address: "Via A. Diaz, 8",
@@ -78,7 +78,7 @@ export default [
   },
   {
     contactName: "Emanuela Origlia",
-    lawFirmName: "Avv. Emanuela Origlia",
+    organisationName: "Avv. Emanuela Origlia",
     email: "avv.emanuelaoriglia@gmail.com",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 347 6541358",
@@ -91,7 +91,7 @@ export default [
   },
   {
     contactName: "Federica Podio",
-    lawFirmName: "Avv. Federica Podio - Studio Legale",
+    organisationName: "Avv. Federica Podio - Studio Legale",
     email: "federica.podio@studiolegalepodio.it",
     website: "http://www.studiolegalepodio.it",
     telephone: "+39 3398112309",
@@ -105,7 +105,7 @@ export default [
   },
   {
     contactName: "Francesca Manodori Sagredo",
-    lawFirmName: "Studio legale FMS",
+    organisationName: "Studio legale FMS",
     email: "francescamanodori@libero.it",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 333 4789054",
@@ -118,7 +118,7 @@ export default [
   },
   {
     contactName: "Loredana Severoni",
-    lawFirmName: "Loredana Sevorini",
+    organisationName: "Loredana Sevorini",
     email: "loredanaseveroni@gmail.com",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 06 3729389; +39 393 0774415",
@@ -131,7 +131,7 @@ export default [
   },
   {
     contactName: "Lucilla Longone",
-    lawFirmName: "Longone",
+    organisationName: "Longone",
     email: "lucilla.longone@tin.it",
     telephone: "+39 081 4238444",
     address: "Via dei Mille, 59",
@@ -143,7 +143,7 @@ export default [
   },
   {
     contactName: "Maria Carmen Napolitano",
-    lawFirmName: "Studio Legale",
+    organisationName: "Studio Legale",
     email: "mcarmen68napolitano@gmail.com",
     telephone: "+39 339 1300555",
     address: "Via Di Novoli , 33/15",
@@ -155,7 +155,7 @@ export default [
   },
   {
     contactName: "Viviana Straccia",
-    lawFirmName: "Viviana Straccia",
+    organisationName: "Viviana Straccia",
     email: "avv.vivianastraccia@gmail.com",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 392 8294263",
@@ -169,7 +169,7 @@ export default [
   },
   {
     contactName: "Viviana Minghelli",
-    lawFirmName: "Studio Legale Minghelli",
+    organisationName: "Studio Legale Minghelli",
     email: "vivianaminghelli@libero.it",
     website: "http://www.giuristeingenere.it",
     telephone: "+39 335 6380232",

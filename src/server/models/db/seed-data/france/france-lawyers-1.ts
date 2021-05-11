@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Jean-Claude Alle",
-    lawFirmName: "Alle Avocats",
+    organisationName: "Alle Avocats",
     website: "https://91degres.fr/",
     telephone: "+33(0)467065393",
     address: "18 rue Joe Dassin",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Etienne Arnaud",
-    lawFirmName: "Cabinet Étienne ARNAUD",
+    organisationName: "Cabinet Étienne ARNAUD",
     website: "https://www.etiennearnaud.com",
     telephone: "+33(0)184790956",
     address: "32 rue Jouffroy d’Abbans",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Stéphane Babonneau",
-    lawFirmName: "Stéphane Babonneau",
+    organisationName: "Stéphane Babonneau",
     website: "https://www.sba-avocats.com/",
     telephone: "+33(0)186954310",
     address: "262 boulevard Saint-Germain",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "France Bedois-Bekissa",
-    lawFirmName: "BEXXIS Legal",
+    organisationName: "BEXXIS Legal",
     website: "http://bexxislegal.com/",
     telephone: "+33(0)977199500",
     address: "10, rue Mohamed V",
@@ -56,7 +56,7 @@ export default [
   },
   {
     contactName: "Patrick Berjaud",
-    lawFirmName: "KGA Avocats",
+    organisationName: "KGA Avocats",
     website: "https://kga-avocats.fr/web/",
     telephone: "+33(0)144952000",
     address: "44 Avenue des Champs-Elysées",
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Avi Bitton",
-    lawFirmName: "Avi Bitton Law Firm",
+    organisationName: "Avi Bitton Law Firm",
     website: "https://www.avibitton.com",
     telephone: "+33(0)146476842",
     address: "72 Boulevard de Picpus",
@@ -83,7 +83,7 @@ export default [
   },
   {
     contactName: "Sarah Bright Thomas",
-    lawFirmName: "BRIGHT AVOCATS",
+    organisationName: "BRIGHT AVOCATS",
     website: "http://www.brightavocats.com",
     telephone: "+33(0)561579086",
     address: "16, place Saint Georges",
@@ -97,7 +97,7 @@ export default [
   },
   {
     contactName: "Gildas Brochen",
-    lawFirmName: "CABINET BROCHEN GOEMINNE",
+    organisationName: "CABINET BROCHEN GOEMINNE",
     website: "http://avocats-roubaix.fr",
     telephone: "+33(0)320280340",
     address: "113 Avenue Jean Leabs",
@@ -110,7 +110,7 @@ export default [
   },
   {
     contactName: "Prune Calonne-Davies",
-    lawFirmName: "Calonne & Adoue-Dugast",
+    organisationName: "Calonne & Adoue-Dugast",
     website: "https://www.cad-avocats.com",
     telephone: "+33(0)674161112",
     address: "61 rue Pierre Cazeneuve",
@@ -124,7 +124,7 @@ export default [
   },
   {
     contactName: "Faten Chafi-Shalak",
-    lawFirmName: "Faten CHAFI-SHALAK",
+    organisationName: "Faten CHAFI-SHALAK",
     website: "https://www.avocat-chafi-roubaix.fr",
     telephone: "+33(0)320258489",
     address: "35, rue du maréchal Foch",
@@ -137,7 +137,7 @@ export default [
   },
   {
     contactName: "Véronique Chauveau",
-    lawFirmName: "Véronique Chauveau & Associés",
+    organisationName: "Véronique Chauveau & Associés",
     website: "https://www.chauveau-associes.com/",
     telephone: "+33(0)155425525",
     address: "62 rue de Maubeuge",
@@ -150,7 +150,7 @@ export default [
   },
   {
     contactName: "Karim Chebbani",
-    lawFirmName: "CABINET CHEBBANI",
+    organisationName: "CABINET CHEBBANI",
     website: "https://www.cabinet-chebbani.com",
     telephone: "+33(0)140060924",
     address: "30 rue Cambacérès",
@@ -164,7 +164,7 @@ export default [
   },
   {
     contactName: "Julian Cockain-Barère",
-    lawFirmName: "Morvilliers Sentenac & Associés",
+    organisationName: "Morvilliers Sentenac & Associés",
     website: "http://www.ms-associes.com",
     telephone: "+33(0)562275053",
     address: "Morvilliers Sentenac & Associés, 18 rue Lafayette",
@@ -178,7 +178,7 @@ export default [
   },
   {
     contactName: "Fabien Cordiez",
-    lawFirmName: "Cordiez Avocats & Solicitors",
+    organisationName: "Cordiez Avocats & Solicitors",
     website: "https://www.solicitor.fr",
     telephone: "+33(0)486688968",
     address: "4 Cours Mirabeau",
@@ -191,7 +191,7 @@ export default [
   },
   {
     contactName: "Aurore Cressent",
-    lawFirmName: "Cressent Avocats",
+    organisationName: "Cressent Avocats",
     website: "http://cressent-avocats.com",
     telephone: "+33(0)185765092",
     address: "79, bd Malesherbes",
@@ -204,7 +204,7 @@ export default [
   },
   {
     contactName: "Julie Daniel",
-    lawFirmName: "Castance Avocats",
+    organisationName: "Castance Avocats",
     website: "http://www.castance-avocats.fr/en/",
     telephone: "+33(0)648305606",
     address: "14 rue Rabelais",
@@ -218,7 +218,7 @@ export default [
   },
   {
     contactName: "Samira Denfer",
-    lawFirmName: "Denfer",
+    organisationName: "Denfer",
     email: "samira.denfer@wanadoo.fr",
     telephone: "+33(0)320652842",
     address: "Residence du Palais, 57b Rue du Grand Chemin",
@@ -232,7 +232,7 @@ export default [
   },
   {
     contactName: "Elisa Gatto Warbington",
-    lawFirmName: "Gatto Warbington",
+    organisationName: "Gatto Warbington",
     email: "contact@egwlegal.com",
     telephone: "+33(0)144293370",
     address: "5 rue Saint Philippe du Roule",
@@ -246,7 +246,7 @@ export default [
   },
   {
     contactName: "Caterina Giudiceandrea",
-    lawFirmName: "Cabinet Giudiceandrea",
+    organisationName: "Cabinet Giudiceandrea",
     website: "http://www.legal-gc.com",
     telephone: "+33(0)144882929",
     address: "65 rue Montmartre",
@@ -259,7 +259,7 @@ export default [
   },
   {
     contactName: "Antoine Giraudet",
-    lawFirmName: "Cabinet Giraudet",
+    organisationName: "Cabinet Giraudet",
     website:
       "https://consultation.avocat.fr/avocat-paris/antoine-giraudet-41970.html",
     telephone: "+33(0)185080069",
@@ -273,7 +273,7 @@ export default [
   },
   {
     contactName: "Gregory Hanson",
-    lawFirmName: "AARPI FGLH AVOCATS",
+    organisationName: "AARPI FGLH AVOCATS",
     website: "http://gregoryhansonavocat.com",
     telephone: "+33(0)466282245",
     address: "1, rue Général Perrier",
@@ -287,7 +287,7 @@ export default [
   },
   {
     contactName: "Sophia Harris",
-    lawFirmName: "SHS Avocats",
+    organisationName: "SHS Avocats",
     email: "sophia@shs-avocats.eu",
     telephone: "+33(0)629156482",
     address: "16 rue Beauvau",
@@ -301,7 +301,7 @@ export default [
   },
   {
     contactName: "Christophe Jolk",
-    lawFirmName: "BMH",
+    organisationName: "BMH",
     website: "https://bmhavocats.com/",
     telephone: "+33(0)142666319",
     address: "29 rue du Faubourg Saint-Honoré",
@@ -315,7 +315,7 @@ export default [
   },
   {
     contactName: "Edouard Knoll",
-    lawFirmName: "Knoll",
+    organisationName: "Knoll",
     email: "avocat.edouardknoll@outlook.fr",
     telephone: "+33(0)145481688",
     address: "179 bd Saint Germain",
@@ -329,7 +329,7 @@ export default [
   },
   {
     contactName: "Benoit Lafourcade",
-    lawFirmName: "DELCADE AVOCATS & SOLICITORS",
+    organisationName: "DELCADE AVOCATS & SOLICITORS",
     website: "https://www.delcade.com",
     telephone: "+33(0)175431856",
     address: "19 rue du Colisée",
@@ -343,7 +343,7 @@ export default [
   },
   {
     contactName: "Sébastien Leguay",
-    lawFirmName: "Leguay",
+    organisationName: "Leguay",
     email: "leguay.s.avocat@orange.fr",
     telephone: "+33(0)468251445",
     address: "72 rue d’Alsace",
@@ -357,7 +357,7 @@ export default [
   },
   {
     contactName: "Philippe L’Hoiry",
-    lawFirmName: "SELARL L’HOIRY-VELASCO",
+    organisationName: "SELARL L’HOIRY-VELASCO",
     website: "http://lhoiry-velasco-avocats.com/",
     telephone: "+33(0)559422052",
     address: "15 rue Raoul Perpère “Le Forum”",
@@ -371,7 +371,7 @@ export default [
   },
   {
     contactName: "Olivier Mingasson",
-    lawFirmName: "Les Avocats du Thélème",
+    organisationName: "Les Avocats du Thélème",
     website: "https://www.avocatsdutheleme.com",
     telephone: "+33(0)467642724",
     address: "500 rue Léon Blum",
@@ -385,7 +385,7 @@ export default [
   },
   {
     contactName: "Julien Neveux",
-    lawFirmName: "NSC AVOCATS",
+    organisationName: "NSC AVOCATS",
     email: "j.neveux@nsavocats.fr",
     telephone: "+33(0)320158460",
     address: "228, avenue de la République",
@@ -399,7 +399,7 @@ export default [
   },
   {
     contactName: "Armelle Omnes",
-    lawFirmName: "Cabinet Armelle OMNES",
+    organisationName: "Cabinet Armelle OMNES",
     website: "https://www.cabinetomnesavocat.fr",
     telephone: "+33(0)299783308",
     address: "78 C, rue Saint Hélier",
@@ -413,7 +413,7 @@ export default [
   },
   {
     contactName: "Emmanuel Picq",
-    lawFirmName: "PwC Société d’Avocats",
+    organisationName: "PwC Société d’Avocats",
     website: "http://www.pwcavocats.com",
     telephone: "+33(0)156574969",
     address: "61 rue de Villiers",
@@ -427,7 +427,7 @@ export default [
   },
   {
     contactName: "Jehanne Pornon-Weidknnet",
-    lawFirmName: "JPW Avocats",
+    organisationName: "JPW Avocats",
     website: "https://www.pornonweidknnet-avocat.com",
     telephone: "+33(0)782736088",
     address: "2ème étage, 4 Rue des Trois Conils",
@@ -440,7 +440,7 @@ export default [
   },
   {
     contactName: "OLIVIER RANGEON",
-    lawFirmName: "CABINET RANGEON",
+    organisationName: "CABINET RANGEON",
     website: "http://www.avocat-rangeon.com",
     telephone: "+33(0)321300506",
     address: "8 Place de La Résistance",
@@ -454,7 +454,7 @@ export default [
   },
   {
     contactName: "Julie Ritaine",
-    lawFirmName: "BBDR AVOCATS",
+    organisationName: "BBDR AVOCATS",
     website: "http://www.avocatsbbdr.fr",
     telephone: "+33(0)321990550",
     address: "28 rue Saint Jean",
@@ -468,7 +468,7 @@ export default [
   },
   {
     contactName: "Philippe Roger",
-    lawFirmName: "KPDB",
+    organisationName: "KPDB",
     website: "https://www.kpdb.fr",
     telephone: "+33(0)556006270",
     address: "353, Boulevard du Président Wilson",
@@ -481,7 +481,7 @@ export default [
   },
   {
     contactName: "Olivier Rosato",
-    lawFirmName: "Cabinet d’avocats ROSATO",
+    organisationName: "Cabinet d’avocats ROSATO",
     website: "http://rosato-avocats.com/",
     telephone: "+33(0)491912203",
     address: "3 quai de la Joliette",
@@ -495,7 +495,7 @@ export default [
   },
   {
     contactName: "Etienne Rosenthal",
-    lawFirmName: "Archipelago Law Office",
+    organisationName: "Archipelago Law Office",
     website: "http://www.archipelago.law",
     telephone: "+33(0)251840084",
     address: "1, boulevard George Pompidou",
@@ -509,7 +509,7 @@ export default [
   },
   {
     contactName: "Jill Schofield Thommeret",
-    lawFirmName: "Douma Schofield Sibenaler",
+    organisationName: "Douma Schofield Sibenaler",
     website: "http://avocats-douma-schofield-sibenaler.com/",
     telephone: "+33(0)144693550",
     address: "80 Boulevard Haussmann",
@@ -522,7 +522,7 @@ export default [
   },
   {
     contactName: "Inna Shveda",
-    lawFirmName: "SHVEDA Inna Lawyer’ Cabinet",
+    organisationName: "SHVEDA Inna Lawyer’ Cabinet",
     website: "http://www.innaavocat.com",
     telephone: "+33(0)473908052",
     address: "56 avenue Julien",
@@ -536,7 +536,7 @@ export default [
   },
   {
     contactName: "Julie Soudaz",
-    lawFirmName: "Julie Soudaz",
+    organisationName: "Julie Soudaz",
     website: "https://avocat-soudaz.com/",
     telephone: "+33(0)631688291",
     address: "20 Avenue de l’Opéra",
@@ -549,7 +549,7 @@ export default [
   },
   {
     contactName: "Jean-Michel Sourdin",
-    lawFirmName: "Sourdin",
+    organisationName: "Sourdin",
     email: "sourdin.avoc@wanadoo.fr",
     telephone: "+33(0)299405867",
     address: "2 Place Chateaubriand",
@@ -563,7 +563,7 @@ export default [
   },
   {
     contactName: "Aurore Tonnellier",
-    lawFirmName: "Utopia law firm",
+    organisationName: "Utopia law firm",
     website: "https://www.utopia-avocats.com",
     telephone: "+33(0)185088000",
     address: "120 avenue des Champs Elysées",
@@ -577,7 +577,7 @@ export default [
   },
   {
     contactName: "Dominique Tricaud",
-    lawFirmName: "TRICAUD AVOCATS",
+    organisationName: "TRICAUD AVOCATS",
     website: "https://tricaudavocats.fr/en/home-3/",
     telephone: "+33(0)140640025",
     address: "4 place Denfert Rochereau",
@@ -591,7 +591,7 @@ export default [
   },
   {
     contactName: "Sharon Wilson-Dutin",
-    lawFirmName: "Wilson-Dutin",
+    organisationName: "Wilson-Dutin",
     email: "%20sharon.wilson.dutin@orange.fr",
     telephone: "+33(0)616078001",
     address: "139 boulevard du President Wilson",
@@ -604,7 +604,7 @@ export default [
   },
   {
     contactName: "Sebastian Van Teslaar",
-    lawFirmName: "Van Teslaar Avocats",
+    organisationName: "Van Teslaar Avocats",
     website: "http://www.vanteslaar.com",
     telephone: "+33(0)144900222",
     address: "32, rue Le Peletier",
@@ -617,7 +617,7 @@ export default [
   },
   {
     contactName: "Mickaelle Verdier",
-    lawFirmName: "SCP Plaisant Fourmond Verdier",
+    organisationName: "SCP Plaisant Fourmond Verdier",
     email: "contact@avocatspfv.fr",
     telephone: "+33(0)243284765",
     address: "32 avenue François Mitterrand",

@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Aleksandra Broom",
-    lawFirmName: "Oliver & Partners",
+    organisationName: "Oliver & Partners",
     email: "a.broom@oliverpartners.it",
     website: "http://www.oliverpartners.it/our-team/aleksandra-broom/",
     telephone: "+39 06 45 777 174",
@@ -13,7 +13,7 @@ export default [
   },
   {
     contactName: "Roberto Gaglione",
-    lawFirmName: "Slig Law",
+    organisationName: "Slig Law",
     email: "info@sliglaw.com",
     website: "http://www.sliglaw.com/attorneys/",
     telephone: "+39 06 8419662",
@@ -34,7 +34,7 @@ export default [
   },
   {
     contactName: "Charlotte Oliver",
-    lawFirmName: "Oliver & Partners",
+    organisationName: "Oliver & Partners",
     email: "c.oliver@oliverpartners.it",
     website: "http://www.oliverpartners.it/our-team/charlotte-oliver/",
     telephone: "+ 39 06 45 777 174; + 39 06 45 777 350",
@@ -46,7 +46,7 @@ export default [
   },
   {
     contactName: "Fernanda Stefani Araujo",
-    lawFirmName: "Giambrone Law Firm",
+    organisationName: "Giambrone Law Firm",
     email: "Fernanda.stefani@giambronelaw.com",
     website: "https://www.giambronelaw.com",
     telephone: "+39 02 9475 4184; +39 338 247 6424; +44 (0)7383 828368",
@@ -58,7 +58,7 @@ export default [
   },
   {
     contactName: "Piers William Jennings",
-    lawFirmName: "Jennings Law",
+    organisationName: "Jennings Law",
     email: "piers@zennings.com",
     telephone: "+39 334 74265760",
     address: "Rome",

@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Davide Cupertino",
-    lawFirmName: "Consulenti Italiani",
+    organisationName: "Consulenti Italiani",
     email: "info@consulentiitaliani.com",
     website: "https://www.consulentiitaliani.com/contact-us",
     telephone: "+39 080 9697816",
@@ -12,7 +12,7 @@ export default [
   },
   {
     contactName: "Antonio Golino",
-    lawFirmName: "Clifford Chance",
+    organisationName: "Clifford Chance",
     email: "Antonio.Golino@CliffordChance.com",
     website:
       "https://www.cliffordchance.com/content/cliffordchance/people_and_places/people/partners/it/antonio_golino.html",
@@ -25,7 +25,7 @@ export default [
   },
   {
     contactName: "Richard Hamilton",
-    lawFirmName: "Gianni Origoni Grippo Capelli Partners",
+    organisationName: "Gianni Origoni Grippo Capelli Partners",
     email: "RHamilton@gop.it",
     website: "http://www.gop.it/people_view.php?id=324",
     telephone: "+39 02 7637 4507",
@@ -37,7 +37,7 @@ export default [
   },
   {
     contactName: "Colin Jamieson",
-    lawFirmName: "Studio Legale Tributario Avv. Colin Jamieson",
+    organisationName: "Studio Legale Tributario Avv. Colin Jamieson",
     email: "colin@taxing.it",
     website: "http://www.taxing.it",
     telephone: "+39 02 488 3945",
@@ -49,7 +49,7 @@ export default [
   },
   {
     contactName: "Anamaria Marin",
-    lawFirmName: "SLCG Studio Legale Associato",
+    organisationName: "SLCG Studio Legale Associato",
     email: "amarin@slcg.it",
     website: "http://www.slcg.it/",
     telephone: "+39 02 720 80153",
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Luca Salerno",
-    lawFirmName: "Hanover Bond Law",
+    organisationName: "Hanover Bond Law",
     email: "ls@hanoverbondlaw.com",
     website: "https://www.hanoverbondlaw.com/team-details/?id=16",
     telephone: "+44 (0)20 3031 6647",
@@ -82,7 +82,7 @@ export default [
   },
   {
     contactName: "Stefano Sciolla",
-    lawFirmName: "Latham & Watkins llp",
+    organisationName: "Latham & Watkins llp",
     email: "stefano.sciolla@lw.com",
     website: "https://www.lw.com/people/stefano-sciolla",
     telephone: "+39 02 30462102",
@@ -94,7 +94,7 @@ export default [
   },
   {
     contactName: "Ian Tully",
-    lawFirmName: "Curtis, Mallet-Prevost, Colt & Mosle llp",
+    organisationName: "Curtis, Mallet-Prevost, Colt & Mosle llp",
     email: "itully@curtis.com",
     website: "http://www.curtis.com/sitecontent.cfm?pageid=8&itemid=279",
     telephone: "+39 02 762 320 28",
@@ -106,7 +106,7 @@ export default [
   },
   {
     contactName: "Filippo Zuti Giachetti",
-    lawFirmName: "BASP Bei-Ariani-Salvatori & Partners",
+    organisationName: "BASP Bei-Ariani-Salvatori & Partners",
     email: "Filippo.zutigiachetti@basp.it",
     website: "http://www.basp.it",
     telephone: "+39 055 0948210",
@@ -118,7 +118,7 @@ export default [
   },
   {
     contactName: "Fernanda Stefani Araujo",
-    lawFirmName: "Giambrone Law Firm",
+    organisationName: "Giambrone Law Firm",
     email: "Fernanda.stefani@giambronelaw.com",
     website: "https://www.giambronelaw.com",
     telephone: "+39 02 9475 4184; +39 338 247 6424; +44 (0)7383 828368",

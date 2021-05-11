@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Fabio Pucciarelli",
-    lawFirmName: "Avv. Fabio Pucciarelli - Legal Consulting",
+    organisationName: "Avv. Fabio Pucciarelli - Legal Consulting",
     email: "pflawfirm@gmail.com",
     website: "http://www.domuslex.com",
     telephone: "+39 333 2045500",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Giovanna Salvucci",
-    lawFirmName: "Studio Legale Giovanna Salvucci",
+    organisationName: "Studio Legale Giovanna Salvucci",
     email: "gsalvucci@marchelegale.com",
     website: "http://www.marchelegale.com",
     telephone: "+39 349 811636",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Loredana Gatt",
-    lawFirmName: "LegLegal",
+    organisationName: "LegLegal",
     email: "loredana@leglegal.it",
     website: "http://www.leglegal.it",
     telephone: "+39 3204233930",
@@ -42,7 +42,7 @@ export default [
   },
   {
     contactName: "Michele Zuccaro",
-    lawFirmName: "Studio Legale Avv. Michele Zuccaro",
+    organisationName: "Studio Legale Avv. Michele Zuccaro",
     email: "mi.zuccaro@gmail.com",
     telephone: "+39 339 4406296; +39 071 56730",
     address: "Via San Martino, 23",

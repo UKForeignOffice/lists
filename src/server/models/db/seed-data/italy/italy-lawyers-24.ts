@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Andrea Colorio",
-    lawFirmName: "Platter Ausserer Bauer + Partner",
+    organisationName: "Platter Ausserer Bauer + Partner",
     email: "colorio@pmab.it",
     website: "http://www.pmab.it",
     telephone: "+39 3471131314",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Carlo Alberto Boscarolli",
-    lawFirmName: "Studio Legale Associato Boscarolli",
+    organisationName: "Studio Legale Associato Boscarolli",
     email: "avvocati@boscarolli.it",
     website: "http://www.boscarolli.it",
     telephone: "+39 0471 266300",
@@ -27,7 +27,7 @@ export default [
   },
   {
     contactName: "Elena Biaggioni",
-    lawFirmName: "Studio Legale Avv. Elena Biaggioni",
+    organisationName: "Studio Legale Avv. Elena Biaggioni",
     email: "studio@biaggioni.it",
     telephone: "+39 0461 234100",
     address: "Via A. Diaz, 8",
@@ -39,7 +39,7 @@ export default [
   },
   {
     contactName: "Nicola Canestrini",
-    lawFirmName: "canestriniLex",
+    organisationName: "canestriniLex",
     email: "nicola.canestrini@canestrinilex.it",
     website: "http://www.canestriniLex.com",
     telephone: "+39 0464 436688",

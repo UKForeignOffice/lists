@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Carlo Maccallini",
-    lawFirmName: "Studio Legale Maccallini",
+    organisationName: "Studio Legale Maccallini",
     email: "info@studiomaccallini.it",
     website: "http://www.studiomaccallini.it",
     telephone: "+39 086 3413968",
@@ -26,7 +26,7 @@ export default [
   },
   {
     contactName: "Lorenzo Palmese",
-    lawFirmName: "Studio Legale Avv. Lorenzo Palmese",
+    organisationName: "Studio Legale Avv. Lorenzo Palmese",
     email: "legalepalmese@gmail.com",
     telephone: "+39 085 2194401",
     address: "Via Milite Ignoto, 39",
@@ -39,7 +39,7 @@ export default [
   },
   {
     contactName: "Roberto Delli Passeri",
-    lawFirmName: "Studio Legale Roberto Delli Passeri",
+    organisationName: "Studio Legale Roberto Delli Passeri",
     email: "studio@avvocatodellipasseri.com",
     website: "http://www.avvocatodellipasseri.com",
     telephone: "+39 328 6124961",

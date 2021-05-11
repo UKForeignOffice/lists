@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alessandro Mazza",
-    lawFirmName: "Studio Legale Giardini Mazza Sanvido e Associati",
+    organisationName: "Studio Legale Giardini Mazza Sanvido e Associati",
     email: "alessandro.mazza@studiolegale.to.it",
     website: "http://www.studiolegale.to.it",
     telephone: "+39 0114335686",
@@ -26,7 +26,7 @@ export default [
   },
   {
     contactName: "Andrea Sardo",
-    lawFirmName: "Lexinto Avvocati",
+    organisationName: "Lexinto Avvocati",
     email: "a.sardo@lexinto.it",
     website: "http://www.lexinto.it",
     telephone: "+39 011 7654734",
@@ -40,7 +40,7 @@ export default [
   },
   {
     contactName: "Eugenio Remus",
-    lawFirmName: "Studio Legale Remus",
+    organisationName: "Studio Legale Remus",
     email: "eugenio.remus@gmail.com",
     telephone: "+39 161 212950",
     address: "Corso Fiume 5/B",
@@ -53,7 +53,7 @@ export default [
   },
   {
     contactName: "Gabriele Pezzano",
-    lawFirmName: "Avvocato Gabriele Pezzano",
+    organisationName: "Avvocato Gabriele Pezzano",
     email: "gp@gabrielepezzano.it",
     website: "http://www.gabrielepezzano.it",
     telephone: "+39 011 7654734",
@@ -66,7 +66,7 @@ export default [
   },
   {
     contactName: "Marco; Umberto; Giulia Bona; Oliva; Oberto",
-    lawFirmName: "Bona Oliva e Associati",
+    organisationName: "Bona Oliva e Associati",
     email: "bona@mbolaw.it",
     website: "http://www.mbolaw.it",
     telephone: "+39 0115111005",
@@ -79,7 +79,7 @@ export default [
   },
   {
     contactName: "Matteo Guidotti",
-    lawFirmName: "Studio Legale Associato D&M Legal",
+    organisationName: "Studio Legale Associato D&M Legal",
     email: "m.guidotti@dmlegal.eu",
     website: "http://www.dmlegal.eu",
     telephone: "+39 011 5184486",
@@ -93,7 +93,7 @@ export default [
   },
   {
     contactName: "Paola Ciccarelli",
-    lawFirmName: "Bonatti Sattanino Studio Legale Associato",
+    organisationName: "Bonatti Sattanino Studio Legale Associato",
     email: "legale@bsavvocati.it",
     website: "http://www.studiobonatti.it",
     telephone: "+39 114334444",
@@ -107,7 +107,7 @@ export default [
   },
   {
     contactName: "Paolo Garrone",
-    lawFirmName: "Avvocato Paolo Garrone",
+    organisationName: "Avvocato Paolo Garrone",
     email: "avv.paologarrone@gmail.com",
     telephone: "+39 338 8353034",
     address: "Via Alberto Sordi, 36",
@@ -131,7 +131,7 @@ export default [
   },
   {
     contactName: "Stefano Faraoni",
-    lawFirmName: "Athena S.r.l. S.t.a.",
+    organisationName: "Athena S.r.l. S.t.a.",
     email: "stefano.faraoni@athenalaw.it",
     website: "http://www.athenalaw.it",
     telephone: "+39 349 1659915",

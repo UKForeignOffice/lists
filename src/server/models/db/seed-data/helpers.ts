@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { CountriesWithData } from "../../types";
-import { createLawyer, approveLawyer, publishLawyer } from "../../lawyers";
+import {
+  createLawyerListItem,
+  approveListItem,
+  publishListItem,
+} from "../../listItem";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 
 function createLawyerJson(
@@ -19,7 +23,7 @@ function createLawyerJson(
         .split(/[\s,]+/)
         .slice(1)
         .join(" "),
-      organisationName: lawyer.lawFirmName ?? lawyer.contactName,
+      organisationName: lawyer.organisationName ?? lawyer.contactName,
       websiteAddress: lawyer.website ?? "",
       emailAddress: lawyer.email ?? "",
       phoneNumber: lawyer.telephone,
@@ -72,9 +76,9 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
     const lawyer = lawyerJsonList[i];
 
     try {
-      const newLawyer = await createLawyer(lawyer);
-      await approveLawyer(newLawyer.lawFirmName);
-      await publishLawyer(newLawyer.lawFirmName);
+      const newLawyer = await createLawyerListItem(lawyer);
+      await approveListItem({ reference: newLawyer.reference });
+      await publishListItem({ reference: newLawyer.reference });
       itemsInserted += 1;
     } catch (error) {
       errors.push(error.message);

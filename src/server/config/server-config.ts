@@ -26,3 +26,12 @@ export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";
 export const isTest = NODE_ENV === "test";
 export const isLocalHost = process.env.LOCAL_HOST === "true";
+
+// GOVUK Notify
+export const GOVUK_NOTIFY_API_KEY = process.env.GOVUK_NOTIFY_API_KEY;
+export const GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID =
+  process.env
+    .GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
+export const GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID =
+  process.env
+    .GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID;

@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Guillermo Besga Saenz de Magarola",
-    lawFirmName: "Mallorca Law",
+    organisationName: "Mallorca Law",
     website: "http://mallorcalaw.com/",
     telephone: "+34 689457006",
     address: "Paseo del Borne 17, 1A",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Gabriel Buades",
-    lawFirmName: "Bufete Buades",
+    organisationName: "Bufete Buades",
     website: "https://www.bufetebuades.com/en/",
     telephone: "+34 971228500",
     address: "Av. Jaime III, 4",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Borja Casanovas",
-    lawFirmName: "Casasnovas Abogados",
+    organisationName: "Casasnovas Abogados",
     website: "http://www.casasnovasabogados.com/es/",
     telephone: "+34 971723902",
     address: "Av.Jaime III 3, 2º-1a",
@@ -43,7 +43,7 @@ export default [
   },
   {
     contactName: "Margaret Anne Cunningham",
-    lawFirmName: "Cunningham Associates",
+    organisationName: "Cunningham Associates",
     website: "http://www.maricunningham.com/",
     telephone: "+34 971591118",
     address: "Calle Miguel de los Santos Oliver, 10, local 3",
@@ -57,7 +57,7 @@ export default [
   },
   {
     contactName: "Elena Font Carvahal",
-    lawFirmName: "Font Mora Sainz de Baranda",
+    organisationName: "Font Mora Sainz de Baranda",
     website: "http://www.fmsb.eu/",
     telephone: "+34 971456222",
     address: "Avenida Alejandro Rosselló, 40, 8º",
@@ -71,7 +71,7 @@ export default [
   },
   {
     contactName: "Jose Frau Greenfield",
-    lawFirmName: "Bufete Frau",
+    organisationName: "Bufete Frau",
     website: "https://www.bufetefrau.com/",
     telephone: "+34 971228036",
     address: "Calle San Miguel 36, 1",
@@ -85,7 +85,7 @@ export default [
   },
   {
     contactName: "Eugenia Garcias de España",
-    lawFirmName: "Eugenia Garcias de España",
+    organisationName: "Eugenia Garcias de España",
     telephone: "+34 971908100",
     address: "Avda Jaime III 17, Despacho 42",
     postcode: "07012",
@@ -97,7 +97,7 @@ export default [
   },
   {
     contactName: "Gabriel Garcias Planas",
-    lawFirmName: "Gabriel Garcias Planas",
+    organisationName: "Gabriel Garcias Planas",
     telephone: "+34 971710624",
     address: "Paseo Mallorca 10",
     postcode: "07012",
@@ -109,7 +109,7 @@ export default [
   },
   {
     contactName: "Marga Matas",
-    lawFirmName: "Your Lawyer in Palma",
+    organisationName: "Your Lawyer in Palma",
     website: "http://yourlawyerinpalma.com/",
     telephone: "34971711105",
     address: "Calle Ca´n Maçanet 3 bajos izquierda",
@@ -123,7 +123,7 @@ export default [
   },
   {
     contactName: "Lucas Maura",
-    lawFirmName: "Bufete Maura",
+    organisationName: "Bufete Maura",
     website: "http://www.bufetemaura.com/",
     telephone: "+34 971710941",
     address: "Edificio Fénix, Paseo Marítimo Calle Aigua Dolça n1, 1 -6a",
@@ -137,7 +137,7 @@ export default [
   },
   {
     contactName: "Antonio Morell",
-    lawFirmName: "Grimalt & Associates",
+    organisationName: "Grimalt & Associates",
     website: "http://www.grassociates.es/",
     telephone: "+34 971719220",
     address: "Calle San Miguel, 30-5º",
@@ -151,7 +151,7 @@ export default [
   },
   {
     contactName: "Gloria Olmos",
-    lawFirmName: "Sistema Legal",
+    organisationName: "Sistema Legal",
     website: "http://www.sistemalegal.net//",
     telephone: "+34 971764481",
     address: "Calle San Miguel 63-2º",
@@ -165,7 +165,7 @@ export default [
   },
   {
     contactName: "Rosa Torrandell",
-    lawFirmName: "Rosa Torrandell",
+    organisationName: "Rosa Torrandell",
     website:
       "https://advocateabroad.com/lawyers/spain/mallorca/palma-de-mallorca//",
     telephone: "+34 971098980",

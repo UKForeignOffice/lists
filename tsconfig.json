@@ -16,6 +16,6 @@
       "server/*": ["server/*"]
     }
   },
-  "include": ["src/server/**/*", "src/client/**/*"],
+  "include": ["src", "src/server/**/*", "src/client/**/*"],
   "ignore": ["dist"]
 }

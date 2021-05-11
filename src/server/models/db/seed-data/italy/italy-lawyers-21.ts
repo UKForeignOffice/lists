@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Emmanuele Govoni",
-    lawFirmName: "Govoni Law Firm",
+    organisationName: "Govoni Law Firm",
     email: "govonilaw@gmail.com",
     website: "http://www.govonilaw.com",
     telephone: "+39 392 1376728",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Maurizio Loche",
-    lawFirmName: "Loche Internatonal Law Firm",
+    organisationName: "Loche Internatonal Law Firm",
     email: "ml@lochelawfirm.com",
     website: "http://www.lochelawfirm.com",
     telephone: "+39 070 663 222",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Nicola Nieddu",
-    lawFirmName: "Studio legale - Law Firm Nieddu",
+    organisationName: "Studio legale - Law Firm Nieddu",
     email: "avv.nieddu@lawfirmsardinia.com",
     website: "http://www.lawfirmsardinia.com",
     telephone: "+39 347 9434693",
@@ -43,7 +43,7 @@ export default [
   },
   {
     contactName: "Roberto Sanna",
-    lawFirmName: "Studio Legale Sanna",
+    organisationName: "Studio Legale Sanna",
     email: "avvocatorobertosanna@gmail.com",
     website: "http://www.studiorobertosanna.com",
     telephone: "+39 333 8765065",

@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Aldo Sam",
-    lawFirmName: "Studio Legale Avv. Aldo Sam",
+    organisationName: "Studio Legale Avv. Aldo Sam",
     email: "aldo.sam@fastwebnet.it",
     website: "https://studiolegalesamaldo.myadj.it/v/studiolegalesamaldo",
     telephone: "+39 0434 208523",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Francesco Furlan",
-    lawFirmName: "Studio Legale Furlan",
+    organisationName: "Studio Legale Furlan",
     email: "francesco.furlan@avvocatofurlan.eu",
     telephone: "+39 349 3564891",
     address: "Studio Legale Furlan, Vicolo del Forno 11",
@@ -39,7 +39,7 @@ export default [
   },
   {
     contactName: "Michela Brusadin",
-    lawFirmName: "Michela Brusadin Law Firm",
+    organisationName: "Michela Brusadin Law Firm",
     email: "brusadin.michela@gmail.com",
     telephone: "+39 338 4902693",
     address: "Via San Quirino, 11",
