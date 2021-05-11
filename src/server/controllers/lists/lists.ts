@@ -133,6 +133,5 @@ export function listsConfirmApplicationController(
   res: Response,
   _next: NextFunction
 ): void {
-  const { applicationReference } = req.params;
-  res.send(`OK ${applicationReference}`);
+  res.send("OK");
 }
