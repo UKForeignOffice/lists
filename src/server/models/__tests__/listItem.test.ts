@@ -4,12 +4,12 @@ import { LawyersFormWebhookData } from "server/services/form-runner";
 import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
 import {
-  approveLawyer,
-  publishLawyer,
-  blockLawyer,
-  createLawyer,
+  approveListItem,
+  publishListItem,
+  blockListItem,
+  createLawyerListItem,
   findPublishedLawyersPerCountry,
-} from "../lawyers";
+} from "../listItem";
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   speakEnglish: true,
@@ -49,26 +49,23 @@ const LawyerWebhookData: LawyersFormWebhookData = {
   declarationConfirm: "confirm",
 };
 
-describe("Lawyers Model:", () => {
-  const firmName = "Firm Name";
-  const sampleLawyer = { lawFirmName: "The Amazing Lawyers" };
+describe("ListItem Model:", () => {
+  const sampleLawyer = { organisationName: "The Amazing Lawyers" };
 
   const spyLawyerCreate = (returnValue?: any): jest.SpyInstance => {
     return jest
-      .spyOn(prisma.lawyer, "create")
+      .spyOn(prisma.listItem, "create")
       .mockResolvedValue(returnValue ?? sampleLawyer);
   };
 
   const spyLawyerUpdate = (returnValue?: any): jest.SpyInstance => {
     return jest
-      .spyOn(prisma.lawyer, "update")
+      .spyOn(prisma.listItem, "update")
       .mockResolvedValue(returnValue ?? sampleLawyer);
   };
 
-  const spyLawyerFindFirst = (returnValue: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.lawyer, "findFirst")
-      .mockResolvedValue(returnValue);
+  const spyPrismaQueryRaw = (returnValue: any): jest.SpyInstance => {
+    return jest.spyOn(prisma, "$queryRaw").mockResolvedValue(returnValue);
   };
 
   const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
@@ -91,35 +88,36 @@ describe("Lawyers Model:", () => {
   };
 
   describe("Create Lawyer", () => {
-    test("createLawyer command correctly calls findFirst", async () => {
-      const spyFindFirst = spyLawyerFindFirst({});
+    test("createLawyer command correctly calls $queryRaw to check if list item already exists", async () => {
+      const spyQueryRaw = spyPrismaQueryRaw([{ count: 1 }]);
+      const spyCountry = spyCountryUpsert();
 
       try {
-        await createLawyer(LawyerWebhookData);
+        await createLawyerListItem(LawyerWebhookData);
       } catch (error) {
         expect(error.message).toBe("Record already exists");
       }
 
-      expect(spyFindFirst).toHaveBeenCalledWith({
-        where: {
-          lawFirmName: LawyerWebhookData.organisationName.toLowerCase(),
-          address: {
-            country: {
-              name: LawyerWebhookData.country,
-            },
-          },
-        },
-      });
+      const expectedQuery = `
+        SELECT COUNT(*) 
+        FROM "ListItem" 
+        WHERE "ListItem"."jsonData" @> '{"organisationName":"cartesian systems"}' 
+        LIMIT 1
+      `;
+      expect(spyQueryRaw.mock.calls[0][0].replace(/\s/g, "")).toEqual(
+        expectedQuery.replace(/\s/g, "")
+      );
+      expect(spyCountry).not.toHaveBeenCalled();
     });
 
     test("createLawyer command correctly calls country.upsert", async () => {
-      spyLawyerFindFirst(null);
+      spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
       spyLawyerCreate();
       const spyCountry = spyCountryUpsert();
 
       try {
-        await createLawyer(LawyerWebhookData);
+        await createLawyerListItem(LawyerWebhookData);
       } catch (error) {
         expect(error.message).toBe("Record already exists");
       }
@@ -134,77 +132,61 @@ describe("Lawyers Model:", () => {
     });
 
     test("createLawyer command correctly calls lawyer.create", async () => {
-      spyLawyerFindFirst(null);
+      spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
       spyCountryUpsert();
       const spy = spyLawyerCreate();
 
       try {
-        await createLawyer(LawyerWebhookData);
+        await createLawyerListItem(LawyerWebhookData);
       } catch (error) {
         expect(error.message).toBe("Record already exists");
       }
 
       expect(spy).toHaveBeenCalledWith({
         data: {
-          contactName: "Rene  Descartes",
-          lawFirmName: "cartesian systems",
-          telephone: "777766665555",
-          email: "aa@aa.com",
-          website: "www.cartesiansystems.com",
+          type: "lawyer",
+          isApproved: false,
+          isPublished: false,
           address: {
             create: {
-              firsLine: "Cogito, Ergo Sum",
+              firstLine: "Cogito, Ergo Sum",
               secondLine: "Street",
               postCode: "123456",
               city: "Touraine",
               country: { connect: { id: "123TEST" } },
             },
           },
-          legalPracticeAreas: {
-            connectOrCreate: [
-              { where: { name: "Bankruptcy" }, create: { name: "Bankruptcy" } },
-              { where: { name: "Corporate" }, create: { name: "Corporate" } },
-              { where: { name: "Criminal" }, create: { name: "Criminal" } },
-              { where: { name: "Employment" }, create: { name: "Employment" } },
-              { where: { name: "Family" }, create: { name: "Family" } },
-              { where: { name: "Health" }, create: { name: "Health" } },
-              {
-                where: { name: "Immigration" },
-                create: { name: "Immigration" },
-              },
-              {
-                where: { name: "Intellectual property" },
-                create: { name: "Intellectual property" },
-              },
-              {
-                where: { name: "International" },
-                create: { name: "International" },
-              },
-              { where: { name: "Maritime" }, create: { name: "Maritime" } },
-              {
-                where: { name: "Personal injury" },
-                create: { name: "Personal injury" },
-              },
-              {
-                where: { name: "Real estate" },
-                create: { name: "Real estate" },
-              },
-              { where: { name: "Tax" }, create: { name: "Tax" } },
-            ],
-          },
-          legalAid: true,
-          proBonoService: true,
-          isApproved: false,
-          isPublished: false,
-          extendedProfile: {
+          jsonData: {
+            organisationName: "cartesian systems",
+            contactName: "Rene  Descartes",
+            email: "aa@aa.com",
+            telephone: "777766665555",
+            website: "www.cartesiansystems.com",
             regulatoryAuthority: "IBA",
             englishSpeakLead: true,
             representedBritishNationalsBefore: true,
+            legalAid: true,
+            proBonoService: true,
+            legalPracticeAreas: [
+              "bankruptcy",
+              "corporate",
+              "criminal",
+              "employment",
+              "family",
+              "health",
+              "immigration",
+              "intellectual property",
+              "international",
+              "maritime",
+              "personal injury",
+              "real estate",
+              "tax",
+            ],
             outOfHours: {
               email: "outofhours@email.com",
               telephone: "88777766665555",
-              firsLine: "Cogito, Ergo Sum",
+              firstLine: "Cogito, Ergo Sum",
               secondLine: "Street",
               postCode: "123456",
               city: "Touraine",
@@ -220,7 +202,7 @@ describe("Lawyers Model:", () => {
     const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
 
     await findPublishedLawyersPerCountry({
-      country: "france",
+      countryName: "france",
       region: "paris",
       legalAid: "yes",
       practiceArea: [],
@@ -230,41 +212,60 @@ describe("Lawyers Model:", () => {
 
     expect(spyLocation).toHaveBeenCalledWith("paris, France");
 
-    expect(query.includes(`ST_GeographyFromText('Point(1 1)')`)).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "Address" ON "Lawyer"."addressId" = "Address".id`
-      )
-    ).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "Country" ON "Address"."countryId" = "Country".id`
-      )
-    ).toBe(true);
-
-    expect(
-      query.includes(
-        `INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id`
-      )
-    ).toBe(true);
-
-    expect(query.includes(`WHERE "Country".name = 'France'`)).toBe(true);
-    expect(query.includes(`AND "Lawyer"."legalAid" = true`)).toBe(true);
-    expect(query.includes(`AND "Lawyer"."isApproved" = true`)).toBe(true);
-    expect(query.includes(`AND "Lawyer"."isBlocked" = false`)).toBe(true);
-    expect(query.includes(`ORDER BY distanceInMeters ASC`)).toBe(true);
-    expect(query.includes(`LIMIT 20`)).toBe(true);
+    expect(query.replace(/\s\s+/g, " ")).toEqual(
+      `
+      SELECT
+        "ListItem"."id",
+        "ListItem"."reference",
+        "ListItem"."type",
+        "ListItem"."jsonData",
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine", 
+              "Address"."secondLine", 
+              "Address"."city", 
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                        SELECT name
+                        FROM "Country"
+                        WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+            FROM "Address"
+            WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+        ST_Distance(
+          "GeoLocation".location,
+          ST_GeographyFromText('Point(1 1)')
+        ) AS distanceInMeters
+        FROM "ListItem"
+        INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+        WHERE "ListItem"."type" = 'lawyer'
+        AND "Country".name = 'France'
+        AND "ListItem"."jsonData" @> '{"legalAid":true}'
+        AND "ListItem"."isApproved" = true
+        AND "ListItem"."isPublished" = true
+        AND "ListItem"."isBlocked" = false
+        ORDER BY distanceInMeters ASC
+        LIMIT 20
+    `.replace(/\s\s+/g, " ")
+    );
   });
 
   test("approveLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await approveLawyer("Firm Name");
+    const result = await approveListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {
-        lawFirmName: firmName.toLowerCase(),
+        reference: "reference",
       },
       data: {
         isApproved: true,
@@ -276,11 +277,11 @@ describe("Lawyers Model:", () => {
 
   test("publishLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await publishLawyer("Firm Name");
+    const result = await publishListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {
-        lawFirmName: firmName.toLowerCase(),
+        reference: "reference",
       },
       data: {
         isPublished: true,
@@ -292,16 +293,14 @@ describe("Lawyers Model:", () => {
 
   test("blockLawyer command is correct", async () => {
     const spy = spyLawyerUpdate();
-    const result = await blockLawyer("Firm Name");
+    const result = await blockListItem({ reference: "reference" });
 
     expect(spy).toHaveBeenCalledWith({
       where: {
-        lawFirmName: firmName.toLowerCase(),
+        reference: "reference",
       },
       data: {
         isBlocked: true,
-        isApproved: false,
-        isPublished: false,
       },
     });
 

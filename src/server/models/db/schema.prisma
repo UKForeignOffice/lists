@@ -8,38 +8,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Lawyer {
+model ListItem {
   id                  Int      @id @default(autoincrement())
+  reference           String   @default(uuid()) @unique
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  lawFirmName         String  @db.VarChar(255) @unique
-  contactName         String  @db.VarChar(255)
-  telephone           String  @db.VarChar(255)
-  email               String? @db.VarChar(255)
-  website             String? @db.VarChar(255)
-  
+  type                String
+  jsonData            Json
+
   address             Address @relation(fields: [addressId], references: [id])
   addressId           Int
-
-  legalPracticeAreas  LegalPracticeAreas[]
-  legalAid            Boolean @default(false)
-  proBonoService      Boolean @default(false)
-
-  extendedProfile     Json?
 
   isApproved          Boolean @default(false)
   isPublished         Boolean @default(false)
   isBlocked           Boolean @default(false)
-}
 
-model LegalPracticeAreas {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name      String   @db.VarChar(255) @unique
-  lawyers   Lawyer[]
+  @@index([type, reference, isApproved, isPublished, isBlocked])
 }
 
 model Address {
@@ -47,13 +32,14 @@ model Address {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  firsLine    String   @db.VarChar(255)
+  firstLine    String   @db.VarChar(255)
   secondLine  String?  @db.VarChar(255)
   city        String?  @db.VarChar(255)
   postCode    String   @db.VarChar(255)
   country     Country  @relation(fields: [countryId], references: [id])
   countryId   Int
-  Lawyer      Lawyer[]
+  
+  ListItem    ListItem[]
   
   geoLocationId   Int?
 }
@@ -74,15 +60,4 @@ model Country {
 
   name      String    @db.VarChar(255) @unique
   address   Address[]
-  regions   Region[]
-}
-
-model Region {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name      String   @db.VarChar(255)
-  country   Country  @relation(fields: [countryId], references: [id])
-  countryId Int
 }

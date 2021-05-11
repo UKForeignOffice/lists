@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alejandro Bonet Templeton",
-    lawFirmName: "ALMAR LAWYERS",
+    organisationName: "ALMAR LAWYERS",
     website: "https://www.almarlawyers.com/",
     telephone: "+34 686382537 / +34 971 313 421",
     address: "Paseo Vara de Rey 20, 1°, 2ª",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Nadine Schroeder",
-    lawFirmName: "ALMAR LAWYERS",
+    organisationName: "ALMAR LAWYERS",
     website: "https://www.almarlawyers.com/",
     telephone: "+34 649 400 424 / +34 971 313 421",
     address: "Paseo Vara de Rey 20, 1°, 2ª",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Vicente Cardona Serapio",
-    lawFirmName: "SERAPIO ABOGADOS",
+    organisationName: "SERAPIO ABOGADOS",
     telephone: "+34 634 141 550",
     address: "Plaza Enrique Fajarnés Nº 6",
     postcode: "07800",
@@ -40,7 +40,7 @@ export default [
   },
   {
     contactName: "Jesús Herrero Antón",
-    lawFirmName: "JESÚS ANTÓN ABOGADO",
+    organisationName: "JESÚS ANTÓN ABOGADO",
     telephone: "+34 971 390 562 / +34 699 491 601",
     address: "Paseo Vara de Rey 18,1A",
     postcode: "07800",
@@ -52,7 +52,7 @@ export default [
   },
   {
     contactName: "Francisco Lorente Ramírez",
-    lawFirmName: "ABOGADOS IBIZA",
+    organisationName: "ABOGADOS IBIZA",
     website: "http://www.abogadosibiza.com/",
     telephone: "(+34) 971 394 725 / (+34)667 555 585",
     address: "C/ Carlos V, 27, 1ºC",
@@ -65,7 +65,7 @@ export default [
   },
   {
     contactName: "Lucas Prats Ribas",
-    lawFirmName: "LUCAS PRATS RIBAS ABOGADO",
+    organisationName: "LUCAS PRATS RIBAS ABOGADO",
     telephone: "+34 97119 86 73 / +34 609 300 938",
     address: "Agroturismo Can Lluc, Ctra. Santa Inés km2",
     postcode: "07816",
@@ -77,7 +77,7 @@ export default [
   },
   {
     contactName: "Jaime Roig Riera",
-    lawFirmName: "JAIME ROIG RIERA AND ASSOCIATES",
+    organisationName: "JAIME ROIG RIERA AND ASSOCIATES",
     website: "https://www.ibizalawyers.com/en/jaime-roig.php",
     telephone: "+34 971 19 15 85 / +34 971 19 15 86 / +34 629 214 213",
     address: "Avda. Bartolomé Vicente Ramón 1, 1º 1ª",
@@ -90,7 +90,7 @@ export default [
   },
   {
     contactName: "Elisa Rosselló Mayans",
-    lawFirmName: "ELISA ROSELLÓ ABOGADOS",
+    organisationName: "ELISA ROSELLÓ ABOGADOS",
     website: "http://elisarosselloabogados.com/",
     telephone: "+34 971 39 97 20 / +34 665 364 505",
     address: "Avda. Espanya, nº 59, 1º piso 7ª 8ª",
@@ -104,7 +104,7 @@ export default [
   },
   {
     contactName: "Roger Sales Jimenez",
-    lawFirmName: "ROGER SALAS JIMENEZ",
+    organisationName: "ROGER SALAS JIMENEZ",
     telephone: "+34 971 39 99 53 / +34 616 789 126",
     address: "Avenida España nº 27, bajo 1ª",
     postcode: "07800",
@@ -117,7 +117,7 @@ export default [
   },
   {
     contactName: "Cristina Samaan Joaniquet",
-    lawFirmName: "CRISTINA SAMAAN JOANIQUET",
+    organisationName: "CRISTINA SAMAAN JOANIQUET",
     telephone: "+34 971 31 51 63 / +34 665 83 37 55",
     address: "Carrer Carlos III, 10 – 12, 6th Floor, Door no 4",
     postcode: "07800",

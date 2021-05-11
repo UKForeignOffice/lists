@@ -127,3 +127,11 @@ export function listsDataIngestionController(
       });
   }
 }
+
+export function listsConfirmApplicationController(
+  req: Request,
+  res: Response,
+  _next: NextFunction
+): void {
+  res.send("OK");
+}

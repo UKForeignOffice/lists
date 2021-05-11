@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Filippo Bianchini",
-    lawFirmName: "Studio Legale Bianchini",
+    organisationName: "Studio Legale Bianchini",
     email: "avv.filippobianchini@gmail.com",
     website: "http://www.bianchini.legal",
     telephone: "+39 349 2864103",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Cristina Vescovi",
-    lawFirmName: "FARAGLIA & VESCOVI Studio Legale Associato",
+    organisationName: "FARAGLIA & VESCOVI Studio Legale Associato",
     email: "info@italianlawcanada.com",
     website: "http://www.italianlawcanada.com",
     telephone: "+39 329 7308785",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "Giorgio Faraglia",
-    lawFirmName: "FARAGLIA & VESCOVI Studio Legale Associato",
+    organisationName: "FARAGLIA & VESCOVI Studio Legale Associato",
     email: "info@italianlawcanada.com",
     website: "http://www.italianlawcanada.com",
     telephone: "+39 3297308785",

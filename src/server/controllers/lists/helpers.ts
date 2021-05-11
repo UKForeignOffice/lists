@@ -11,6 +11,7 @@ import {
   lowerCase,
 } from "lodash";
 
+import { listsRoutes } from "./constants";
 import { ListsRequestParams } from "./types";
 import { CountryName } from "server/models/types";
 import {
@@ -165,4 +166,17 @@ export function needToReadDisclaimer(
   readDisclaimer?: ListsRequestParams["readDisclaimer"]
 ): boolean {
   return readDisclaimer === undefined || readDisclaimer === "";
+}
+
+export function createConfirmationLink(
+  req: Request,
+  reference: string
+): string {
+  const host = `${req.protocol}://${req.get("host")}`;
+  const path = listsRoutes.confirmApplication.replace(
+    ":applicationReference",
+    reference
+  );
+
+  return `${host}${path}`;
 }

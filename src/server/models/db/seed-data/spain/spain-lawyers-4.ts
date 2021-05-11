@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Ralph Smith",
-    lawFirmName: "Gómez-Acebo & Pombo Abogados S.L.P.",
+    organisationName: "Gómez-Acebo & Pombo Abogados S.L.P.",
     website: "https://www.ga-p.com/",
     telephone: "+34 91 582 91 00",
     address: "Castellana 216",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Rosana Hallett",
-    lawFirmName: "Gómez-Acebo & Pombo",
+    organisationName: "Gómez-Acebo & Pombo",
     website: "https://www.ga-p.com/oficina/bilbao/",
     telephone: "+34 94 415 70 15",
     address: "Plaza Euskadi 5, planta 19",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "María García de la Concha",
-    lawFirmName: "Gómez-Acebo & Pombo",
+    organisationName: "Gómez-Acebo & Pombo",
     website: "https://www.ga-p.com/en/office/vigo-en/",
     telephone: "+34 91 582 91 00",
     address: "Colón 36, 4º,  Pontevedra",
@@ -43,7 +43,7 @@ export default [
   },
   {
     contactName: "César Gerardo Ayala Canales",
-    lawFirmName: "All Law",
+    organisationName: "All Law",
     website: "http://www.all-law.es/",
     telephone: "+34 91 578 05 60",
     address: "Paseo de la Castellana 140, 10ºD",
@@ -57,7 +57,7 @@ export default [
   },
   {
     contactName: "Oscar Baeza Chibel",
-    lawFirmName: "Baeza Abogados",
+    organisationName: "Baeza Abogados",
     telephone: "+34 649 05 47 99",
     address: "Calle Pensamiento, 27 - Izq. 3º 3",
     postcode: "28020",
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Margaret J. Hauschild Rey",
-    lawFirmName: "Bennet&Rey",
+    organisationName: "Bennet&Rey",
     website: "http://www.bennetrey.com/en/",
     telephone: "+34 91 186 32 68",
     address: "Paseo de la Castellana, 119, 2º D",
@@ -84,7 +84,7 @@ export default [
   },
   {
     contactName: "Juan-Antonio Berdejo",
-    lawFirmName: "Berdejo-Abogados",
+    organisationName: "Berdejo-Abogados",
     website: "https://berdejoabogados.eu/",
     telephone: "+34 94 222 05 87",
     address: "Calle Lealtad, 19, 1-C",
@@ -98,7 +98,7 @@ export default [
   },
   {
     contactName: "Gustavo Carlos Duguech Torriente",
-    lawFirmName: "Duguech & Dip",
+    organisationName: "Duguech & Dip",
     website: "https://duguechdip.com/",
     telephone: "+34 91 825 92 53",
     address: "Calle Fernandez de la Hoz, nº 27, Ground Floor - Left",
@@ -112,7 +112,7 @@ export default [
   },
   {
     contactName: "Viviana Echeverria Pascual",
-    lawFirmName: "Echeverria Abogados",
+    organisationName: "Echeverria Abogados",
     website: "https://www.echeverriaabogados.com/en/",
     telephone: "+34 94 342 57 26",
     address: "Antonio Maria Labaien 14 - 4º B",
@@ -125,7 +125,7 @@ export default [
   },
   {
     contactName: "Elena Garrido Martín",
-    lawFirmName: "Sánchez-Cervera Abogados",
+    organisationName: "Sánchez-Cervera Abogados",
     website: "https://www.sanchez-cervera.com",
     telephone: "+34 91 411 48 78",
     address: "Calle General Oráa, 26",
@@ -139,7 +139,7 @@ export default [
   },
   {
     contactName: "Florina García González",
-    lawFirmName: "Florina García y Asociados",
+    organisationName: "Florina García y Asociados",
     website: "http://www.florinag.com/en/home/",
     telephone: "+34 98 523 45 55",
     address: "Calle Uría 19, entresuelo izquierda",
@@ -153,7 +153,7 @@ export default [
   },
   {
     contactName: "Elena Lino Garcia",
-    lawFirmName: "Galicia Property Lawyers",
+    organisationName: "Galicia Property Lawyers",
     website: "https://galiciapropertylawyers.net/",
     telephone: "+34 647 42 25 01",
     address: "García Camba nº 6  4º A",
@@ -166,7 +166,7 @@ export default [
   },
   {
     contactName: "Lucía Goy Mastromiechele",
-    lawFirmName: "Goy Gentile Abogados",
+    organisationName: "Goy Gentile Abogados",
     website: "https://www.goygentile.com/en/",
     telephone: "+34 91 435 45 19",
     address: "Calle Ayala 17, 1C",
@@ -180,7 +180,7 @@ export default [
   },
   {
     contactName: "Ramón Bustillo",
-    lawFirmName: "InheritanceSpain",
+    organisationName: "InheritanceSpain",
     website: "http://www.inheritancespain.com/",
     telephone: "+34 636 54 24 65",
     address: "Calle Asturias 21 1 D",
@@ -194,7 +194,7 @@ export default [
   },
   {
     contactName: "Javier Bicarregui",
-    lawFirmName: "Iusfinder Abogados",
+    organisationName: "Iusfinder Abogados",
     website: "http://www.iusfinder.com/",
     telephone: "+34 94 465 70 00",
     address: "Gran Via 17, Dpto 402",
@@ -208,7 +208,7 @@ export default [
   },
   {
     contactName: "Javier Frías",
-    lawFirmName: "Javier Frías",
+    organisationName: "Javier Frías",
     telephone: "+34 635 53 68 98",
     address: "Calle Capitán Haya 33, 10D",
     postcode: "28020",
@@ -220,7 +220,7 @@ export default [
   },
   {
     contactName: "Juan Manuel Batuecas Florindo",
-    lawFirmName: "Juan Manuel Batuecas & Associates",
+    organisationName: "Juan Manuel Batuecas & Associates",
     website: "http://www.asesoriayabogados.com/",
     telephone: "+34 646 37 38 87",
     address: "Santiago Alió, 9",
@@ -234,7 +234,7 @@ export default [
   },
   {
     contactName: "Fernando Martínez",
-    lawFirmName: "Martínez Sanz Abogados",
+    organisationName: "Martínez Sanz Abogados",
     website: "http://martinezsanzabogados.com/?lang=en",
     telephone: "+34 91 192 20 12",
     address: "Paseo General Martínez Campos, 42, bajo",
@@ -248,7 +248,7 @@ export default [
   },
   {
     contactName: "Joseba Renobales",
-    lawFirmName: "Renobales, Mariscal, Castresana, Abogados & Asociados",
+    organisationName: "Renobales, Mariscal, Castresana, Abogados & Asociados",
     website: "https://www.abogadoempresayfamilia.com/",
     telephone: "+34 94 423 40 00",
     address: "Alameda Recalde 27, 1",
@@ -262,7 +262,7 @@ export default [
   },
   {
     contactName: "Rocco Caira",
-    lawFirmName: "Rocco Caira",
+    organisationName: "Rocco Caira",
     website: "http://www.caira.es/",
     telephone: "+34 94 475 06 96",
     address: "Avda. Madariaga 1",
@@ -275,7 +275,7 @@ export default [
   },
   {
     contactName: "Jeremy Scudamore",
-    lawFirmName: "Scudamore Law",
+    organisationName: "Scudamore Law",
     website: "http://www.scudamore.es/en/",
     telephone: "+34 91 593 91 26",
     address: "Plaza de Castilla 3, 15ª E2",
@@ -289,7 +289,7 @@ export default [
   },
   {
     contactName: "Bianca Sharma Sharma",
-    lawFirmName: "Sharma Abogados",
+    organisationName: "Sharma Abogados",
     website: "http://www.emergenciaspenales.com",
     telephone: "+34 91 326 95 23",
     address: "Via de las Dos Castillas, 33, Atica 4 B-A, Pozuelo de Alarcón",
@@ -303,7 +303,7 @@ export default [
   },
   {
     contactName: "Carolina Trujillo Garzon",
-    lawFirmName: "Trujillo Garzon Legal Consulting S.L.",
+    organisationName: "Trujillo Garzon Legal Consulting S.L.",
     website: "http://www.tglegalconsulting.com",
     telephone: "+34 619 56 92 62",
     address: "Plaza de Castilla 3",
@@ -317,7 +317,7 @@ export default [
   },
   {
     contactName: "Andrea San Román",
-    lawFirmName: "Valero San Román SLP",
+    organisationName: "Valero San Román SLP",
     website: "https://valerosanroman.com/",
     telephone: "+34 647 78 52 30",
     address: "Calle Suero de Quiñones 38, 2º izq",

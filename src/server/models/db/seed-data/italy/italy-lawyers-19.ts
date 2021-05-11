@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Antonello Leogrande",
-    lawFirmName: "AL&partners",
+    organisationName: "AL&partners",
     email: "aletpartners@gmail.com",
     telephone: "+39 335 7469676",
     address: "Via Lido Bruno 80",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Davide Cupertino",
-    lawFirmName: "Consulenti Italiani Law Firm",
+    organisationName: "Consulenti Italiani Law Firm",
     email: "info@consulentiitaliani.com",
     website: "http://www.consulentiitaliani.com",
     telephone: "+39 069291 5093",
@@ -28,7 +28,7 @@ export default [
   },
   {
     contactName: "Giandomenico De Tullio",
-    lawFirmName: "De Tullio Law Firm",
+    organisationName: "De Tullio Law Firm",
     email: "info@detulliolawfirm.com",
     website: "https://www.detulliolawfirm.com",
     telephone: "+39 080 4831785",
@@ -41,7 +41,7 @@ export default [
   },
   {
     contactName: "Giuseppe Stanisci",
-    lawFirmName: "Stanisci Law Firm & Business",
+    organisationName: "Stanisci Law Firm & Business",
     email: "avv.stanisci@hotmail.it",
     website: "https://www.studiolegalestanisci.eu/",
     telephone: "+39 339 2991782",
@@ -55,7 +55,7 @@ export default [
   },
   {
     contactName: "Luca Bruno",
-    lawFirmName: "Luca Bruno",
+    organisationName: "Luca Bruno",
     email: "avv.bruno@gmail.com",
     website: "https://www.francescopaolosisto.it/",
     telephone: "+39 334 962 9237",

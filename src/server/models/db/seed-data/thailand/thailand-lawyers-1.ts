@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Jiraporn Thongphong",
-    lawFirmName: "Chaninat & Leeds",
+    organisationName: "Chaninat & Leeds",
     website: "http://www.chaninatandleeds.com",
     telephone: "+66 (0)2168 7001-3",
     address:
@@ -16,7 +16,7 @@ export default [
   },
   {
     contactName: "Garn Tuntasatityanond",
-    lawFirmName: "Garn Tuntasatityanond & Associates",
+    organisationName: "Garn Tuntasatityanond & Associates",
     website: "http://www.thailand-lawyer-bangkok.com",
     telephone: "+66 (0)2648 5041",
     address:
@@ -30,7 +30,7 @@ export default [
   },
   {
     contactName: "Jetsada Jamallsawat",
-    lawFirmName: "Sutin and Friends International Law Office",
+    organisationName: "Sutin and Friends International Law Office",
     website: "http://www.sutinlawkrabi.com",
     telephone: "+66 (0)81778 6969",
     address: "171/80-82 Krabi Road, Paknam, Muang",
@@ -45,7 +45,7 @@ export default [
   },
   {
     contactName: "Kitsanachai Kraibavornwish",
-    lawFirmName: "Bangkok Lawyer Co.,Ltd.",
+    organisationName: "Bangkok Lawyer Co.,Ltd.",
     website: "http://www.thailand-english-speaking-lawyer.com",
     telephone: "+66 (0)81899 1604",
     address:
@@ -60,7 +60,7 @@ export default [
   },
   {
     contactName: "Nattaphol Chinawong",
-    lawFirmName: "Natipatana Law Office",
+    organisationName: "Natipatana Law Office",
     website: "http://www.natipatana.com",
     telephone: "+66 (0)81775 7695",
     address: "CNW Office & Residence 827/1, Ladprao 87, Klongchan, Bangkapi",
@@ -74,7 +74,7 @@ export default [
   },
   {
     contactName: "Prachaya Vijitpokin",
-    lawFirmName: "Prachaya International Law Firm",
+    organisationName: "Prachaya International Law Firm",
     website: "http://www.prachayainternationallaw.com",
     telephone: "+66 (0)81453 8800",
     address: "10 Soi 20 Mithuna Yaek 5, Suthisan Road, Samsen Nok, Huai Khwang",
@@ -89,7 +89,7 @@ export default [
   },
   {
     contactName: "Thammarong Bootlert",
-    lawFirmName: "Thailand Family Law Partners",
+    organisationName: "Thailand Family Law Partners",
     website: "https://www.thailandfamilylaw.com/",
     telephone: "+66 (0)85539 3675",
     address: "97/5 Bang Phlab 2 Road, Bang Phlab, Pak Kret",
@@ -102,7 +102,7 @@ export default [
   },
   {
     contactName: "Trib Danaitangtrakul",
-    lawFirmName: "Legal Unit Company Limited",
+    organisationName: "Legal Unit Company Limited",
     website: "https://www.legalunit.co.th",
     telephone: "+66 (0)81684 2228",
     address: "Italthai Tower Building, New Petchburi Road",
@@ -116,7 +116,7 @@ export default [
   },
   {
     contactName: "Vorathum Jirananda",
-    lawFirmName: "Bangkok Legal Associates Law Office",
+    organisationName: "Bangkok Legal Associates Law Office",
     email: "blalaw@hotmail.com",
     telephone: "+66 (0)2391 6099",
     address:

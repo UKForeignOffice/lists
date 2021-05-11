@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Andrew Wynne",
-    lawFirmName: "Price Sanond",
+    organisationName: "Price Sanond",
     website: "https://www.pricesanond.com/",
     telephone: "+66(0)26791844",
     address: "16F, Q House Sathorn, 11 South Sathorn Road",
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Carlo Filippo (Charles) CIAMBRELLI",
-    lawFirmName: "The Socia Lawyers",
+    organisationName: "The Socia Lawyers",
     website: "http://www.thesociallawyers.com",
     telephone: "0901296101 - 0926921844 - 033 640005 (landline)",
     address: "29/25 moo 9, Nongprue, Banglamung",
@@ -30,7 +30,7 @@ export default [
   },
   {
     contactName: "David Ross Martin",
-    lawFirmName: "Legal Services Hua Hin",
+    organisationName: "Legal Services Hua Hin",
     website: "https://www.legalserviceshuahin.com",
     telephone: "+66(0)818469193",
     address: "Unit 1, Makro Food Services Hua Hin",
@@ -44,7 +44,7 @@ export default [
   },
   {
     contactName: "Edward Thiravej Ploysongsang",
-    lawFirmName: "Ployprathip International Law Office (PILO)",
+    organisationName: "Ployprathip International Law Office (PILO)",
     website: "http://www.ployprathip.com",
     telephone: "+66(0)26782995",
     address: "11/15-16 Ratchadaphisek Road, Chong Nonsi, Yannawa",
@@ -58,7 +58,7 @@ export default [
   },
   {
     contactName: "Jetsada Jamallsawat",
-    lawFirmName: "Sutin and Friends International Law Office",
+    organisationName: "Sutin and Friends International Law Office",
     website: "http://www.sutinlawkrabi.com",
     telephone: "+66(0)817786969",
     address: "171/80-82 Krabi Rd., Paknam, Muang",
@@ -73,7 +73,7 @@ export default [
   },
   {
     contactName: "Jirasak Taosiri",
-    lawFirmName: "Siam Attorney International",
+    organisationName: "Siam Attorney International",
     website: "http://www.siam-attorney.com",
     telephone: "+66 (0) 95 750 0888",
     address:
@@ -88,7 +88,7 @@ export default [
   },
   {
     contactName: "John Lewis",
-    lawFirmName: "Anglo-Thai Legal",
+    organisationName: "Anglo-Thai Legal",
     website: "http://www.anglothailegal.com",
     telephone: "+66(0)27142968",
     address: "133 Sukhumvit 57 Road, Klongton Nua, Wattana",
@@ -103,7 +103,7 @@ export default [
   },
   {
     contactName: "Kitsanachai Kraibavornwish",
-    lawFirmName: "Bangkok Lawyer Co.,Ltd",
+    organisationName: "Bangkok Lawyer Co.,Ltd",
     website: "http://www.Thailand-English-speaking-lawyer.com",
     telephone: "+66(0)818991604",
     address:
@@ -119,7 +119,7 @@ export default [
   },
   {
     contactName: "Nattaphol Chinawong",
-    lawFirmName: "Natipatana Law Office",
+    organisationName: "Natipatana Law Office",
     website: "https://www.natipatana.com",
     telephone: "+66(81)7757695",
     address:
@@ -134,7 +134,7 @@ export default [
   },
   {
     contactName: "Navin Chaiyakul",
-    lawFirmName: "Silk Legal",
+    organisationName: "Silk Legal",
     website: "https://www.silklegal.com",
     telephone: "+66(0)21072007",
     address: "#805 RSU Tower, 571 Sukhumvit Road",
@@ -148,7 +148,7 @@ export default [
   },
   {
     contactName: "Prachaya Vijitpokin",
-    lawFirmName: "Prachaya International law firm",
+    organisationName: "Prachaya International law firm",
     website: "http://www.prachayainternationallaw.com",
     telephone: "+66 814538800",
     address:
@@ -164,7 +164,7 @@ export default [
   },
   {
     contactName: "Thammarong Bootlert",
-    lawFirmName: "Thailand Family Law Partners",
+    organisationName: "Thailand Family Law Partners",
     website: "http://www.thailandfamilylaw.com/",
     telephone: "+66(0)855393675",
     address: "97/5 Bang Phlab 2 Road, Bang Phlab, Pak Kret, Nonthaburi",

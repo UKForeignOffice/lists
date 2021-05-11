@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Achille Campagna",
-    lawFirmName: "Studio Legale Campagna",
+    organisationName: "Studio Legale Campagna",
     email: "achille.campagna@avvocatocampagna.com",
     website: "http://www.avvocatocampagna.com",
     telephone: "+39 338 2026150",

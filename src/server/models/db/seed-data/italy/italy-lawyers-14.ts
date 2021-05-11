@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Alessandro Bonta",
-    lawFirmName: "Avvocati.Us PLLC",
+    organisationName: "Avvocati.Us PLLC",
     email: "info@avvocati.us",
     telephone: "+39 375 5725237",
     address: "Piazza del Popolo, 18",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Carlo Dalla Vedova",
-    lawFirmName: "Dalla Vedova Studio Legale",
+    organisationName: "Dalla Vedova Studio Legale",
     email: "dvsl@dallavedova.com",
     telephone: "+39 06 4440821",
     address: "Via Vittorio, 12 Bachelet",
@@ -27,7 +27,7 @@ export default [
   },
   {
     contactName: "Charlotte Oliver",
-    lawFirmName: "Oliver & Partners",
+    organisationName: "Oliver & Partners",
     email: "legal@oliverpartners.it",
     telephone: "+39 333 2937921",
     address: "Piazza Capranica, 78",
@@ -39,7 +39,7 @@ export default [
   },
   {
     contactName: "Claudia Bortolani",
-    lawFirmName: "Legal Grounds Avvocati",
+    organisationName: "Legal Grounds Avvocati",
     email: "c.bortolani@legalgrounds.eu",
     telephone: "+39 349 6221364",
     address: "Via A. Bertoloni, 55",
@@ -52,7 +52,7 @@ export default [
   },
   {
     contactName: "Daniela Piccioni",
-    lawFirmName: "Lex Consilium",
+    organisationName: "Lex Consilium",
     email: "avvdanielapiccioni@gmail.com",
     telephone: "+39 06 39736280",
     address: "Via Andrea Doria, 64",
@@ -65,7 +65,7 @@ export default [
   },
   {
     contactName: "Domenico Plateroti",
-    lawFirmName: "International Law Firm Iorio & Parteners",
+    organisationName: "International Law Firm Iorio & Parteners",
     email: "avv.dplateroti@gmail.com",
     telephone: "+39 347 8792285",
     address: "Via Tacito, 50",
@@ -78,7 +78,7 @@ export default [
   },
   {
     contactName: "Elena Capriati",
-    lawFirmName: "Capriati Carbone & Partners Law Firm",
+    organisationName: "Capriati Carbone & Partners Law Firm",
     email: "ecapriati@cc-partners.it",
     telephone: "+39 0635072132",
     address: "Via Giuseppe Taverna, 76",
@@ -90,7 +90,7 @@ export default [
   },
   {
     contactName: "Elvira Marzano",
-    lawFirmName: "Marzano Avvocati Associati",
+    organisationName: "Marzano Avvocati Associati",
     email: "ira@marzanolaw.it",
     telephone: "+39 089 224842",
     address: "Via Nazionale, 69",
@@ -103,7 +103,7 @@ export default [
   },
   {
     contactName: "Francesca Catherine Dimunno",
-    lawFirmName: "Consulia Studio Legale e Commerciale",
+    organisationName: "Consulia Studio Legale e Commerciale",
     email: "dimunno@consulia.it",
     telephone: "+39 06 688 02363",
     address: "Piazza S. Andrea della Valle, 3",
@@ -116,7 +116,7 @@ export default [
   },
   {
     contactName: "Francesco Maresca",
-    lawFirmName: "Studio Legale Maresca",
+    organisationName: "Studio Legale Maresca",
     email: "avv.fmaresca@gmail.com",
     telephone: "+39 335 7059597; +39 06 3221351",
     address: "Via Ennio Quirino Visconti, 20",
@@ -128,7 +128,7 @@ export default [
   },
   {
     contactName: "Giandomenico De Tullio",
-    lawFirmName: "De Tullio Law Firm",
+    organisationName: "De Tullio Law Firm",
     email: "info@detulliolawfirm.com",
     telephone: "+39  06 4227 2230",
     address: "Via Antonio Salandra, 18",
@@ -140,7 +140,7 @@ export default [
   },
   {
     contactName: "Marco Calabrese",
-    lawFirmName: "Family Law Italy",
+    organisationName: "Family Law Italy",
     email: "m.calabrese@familylawitaly.com",
     telephone: "+39 06 8075014",
     address: "Via Domenico Chelini, 20",
@@ -164,7 +164,7 @@ export default [
   },
   {
     contactName: "Nicholas Scott",
-    lawFirmName: "Scott & Partners International Law Firm",
+    organisationName: "Scott & Partners International Law Firm",
     email: "info@scottandpartners.com",
     telephone: "+39 06 89016876",
     address: "Viale angelico 78",
@@ -177,7 +177,7 @@ export default [
   },
   {
     contactName: "Nicoletta Caruso",
-    lawFirmName: "Studio Caruso",
+    organisationName: "Studio Caruso",
     email: "legalenquiry@studio-caruso.com",
     telephone: "+39 06 7720 4581",
     address: "Piazza Re di Roma, 3",
@@ -190,7 +190,7 @@ export default [
   },
   {
     contactName: "Ombretta Paoletti",
-    lawFirmName: "Studio legale Ombretta Paoletti",
+    organisationName: "Studio legale Ombretta Paoletti",
     email: "ombrettapaoletti1@gmail.com",
     telephone: "+39 3471581428",
     address: "Largo XII Settembre, 4",
@@ -203,7 +203,7 @@ export default [
   },
   {
     contactName: "Riccardo, Ernesto Di Vizio",
-    lawFirmName: "Dviuris Law Firm",
+    organisationName: "Dviuris Law Firm",
     email: "info@dviuris.com",
     telephone: "+39 0776 310673",
     address: "Piazza Marconi 20",
@@ -216,7 +216,7 @@ export default [
   },
   {
     contactName: "Roberta Ceschini",
-    lawFirmName: "Ceschini & Restignoli",
+    organisationName: "Ceschini & Restignoli",
     email: "rceschini@crlegal.it",
     telephone: "+39 06 3216 571",
     address: "Viale Giuseppe Mazzini, 4",
@@ -228,7 +228,7 @@ export default [
   },
   {
     contactName: "Rodrigo Carè",
-    lawFirmName: "CARE - International Counsel",
+    organisationName: "CARE - International Counsel",
     email: "rodrigo.care@careinternationalcounsel.com",
     telephone: "+39 068 415 687",
     address: "c/o Studio Legale Abenavoli - Viale Liegi, 14",
@@ -241,7 +241,7 @@ export default [
   },
   {
     contactName: "Susanna Beltramo",
-    lawFirmName: "Studio Legale Beltramo",
+    organisationName: "Studio Legale Beltramo",
     email: "slb@beltramo.biz",
     telephone: "+39 06 4817747",
     address: "Via Vittorio Veneto 84",
@@ -254,7 +254,7 @@ export default [
   },
   {
     contactName: "Walter De Agostino",
-    lawFirmName: "Studio Legale De Agostino",
+    organisationName: "Studio Legale De Agostino",
     email: "walterdeagostino@studiolegaledeagostino.eu",
     telephone: "+39 335 8159832",
     address: "Piazza Adriana, 15",

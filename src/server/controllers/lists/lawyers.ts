@@ -1,10 +1,11 @@
-import { startCase } from "lodash";
+import { get, noop, startCase } from "lodash";
 import { NextFunction, Request, Response } from "express";
 
-import { lawyers } from "server/models";
+import { listItem } from "server/models";
 import { lawyersPostRequestSchema } from "./schemas";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { legalPracticeAreasList } from "server/services/metadata";
+import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import {
   parseFormRunnerWebhookObject,
   LawyersFormWebhookData,
@@ -22,6 +23,7 @@ import {
   queryStringFromParams,
   practiceAreaFromParams,
   needToAnswerPracticeArea,
+  createConfirmationLink,
 } from "./helpers";
 import { logger } from "server/services/logger";
 
@@ -132,14 +134,14 @@ export function lawyersGetController(
 export async function searchLawyers(
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = practiceAreaFromParams(params);
 
-  const searchResults = await lawyers.findPublishedLawyersPerCountry({
-    country,
+  const searchResults = await listItem.findPublishedLawyersPerCountry({
+    countryName: country,
     region,
     legalAid,
     practiceArea,
@@ -169,10 +171,18 @@ export function lawyersDataIngestionController(
   } else {
     const data = parseFormRunnerWebhookObject<LawyersFormWebhookData>(value);
 
-    lawyers
-      .createLawyer(data)
-      .then((lawyer) => {
-        res.json({ reference: lawyer.id });
+    listItem
+      .createLawyerListItem(data)
+      .then(async (lawyer) => {
+        const { reference } = lawyer;
+        const email = get(lawyer?.jsonData, "email");
+
+        if (email !== null) {
+          const confirmationLink = createConfirmationLink(req, reference);
+          sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
+        }
+
+        res.json({});
       })
       .catch((error) => {
         next(new Error("Error while creating new lawyer"));

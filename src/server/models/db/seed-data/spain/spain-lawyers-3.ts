@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Santiago Lleó",
-    lawFirmName: "All Law Lanzarote",
+    organisationName: "All Law Lanzarote",
     website: "http://www.all-law.es/",
     telephone: "+34 928826691",
     address: "Avda. Islas Canarias, C.C. Maretas local 32A,  Costa Teguise",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Beatriz Alvarez Martinez",
-    lawFirmName: "Beatriz Alvarez Martinez",
+    organisationName: "Beatriz Alvarez Martinez",
     email: "beatriz@amvabogados.es",
     telephone: "+34928530992",
     address: "Calle Duero, 9, oficina 8, Puerto del Rosario",
@@ -27,7 +27,7 @@ export default [
   },
   {
     contactName: "Carlos Bethancourt",
-    lawFirmName: "BG Abogados & Consultores",
+    organisationName: "BG Abogados & Consultores",
     website: "http://www.bethencourt-gonzalez.com/",
     telephone: "+34928383412",
     address: "Avda. de España 7,  C.C. Prisma, Local 20,  Playa del Inglés",
@@ -41,7 +41,7 @@ export default [
   },
   {
     contactName: "Elena Bravo de Laguna",
-    lawFirmName: "Bravo de Laguna & Rodriguez",
+    organisationName: "Bravo de Laguna & Rodriguez",
     website: "http://www.bravodelaguna-rodriguez.com/index.html",
     telephone: "+34928383836",
     address: "Calle Buenos Aires nº 8, 2ºC",
@@ -55,7 +55,7 @@ export default [
   },
   {
     contactName: "Jorge Luis del Toro Vega",
-    lawFirmName: "Del Toro Abogados S.L.",
+    organisationName: "Del Toro Abogados S.L.",
     email: "deltoroabogados@gmail.com",
     telephone: "+34 928493801",
     address:
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Erardo Ferrar Quintana",
-    lawFirmName: "Erardo Ferrer Quintana Abogado",
+    organisationName: "Erardo Ferrer Quintana Abogado",
     website: "https://www.lanzaroteabogados.es/",
     telephone: "+34928816513",
     address:
@@ -85,7 +85,7 @@ export default [
   },
   {
     contactName: "Cristina Gallego Betancor",
-    lawFirmName: "Gamma Abogados, Lanzarote y Fuerteventura",
+    organisationName: "Gamma Abogados, Lanzarote y Fuerteventura",
     website: "https://www.gammaabogados.com/",
     telephone: "+34 638257298",
     address: "C/ Las Maretas 4, , Playa Blanca",
@@ -99,7 +99,7 @@ export default [
   },
   {
     contactName: "César Ignacio Gonzalez Zarza",
-    lawFirmName: "Glex Lawyers SL",
+    organisationName: "Glex Lawyers SL",
     website: "https://lajareslawoffices.com/",
     telephone: "+34 928532088",
     address: "C/Secundino Alonso, 39.1º 4ª,  Puerto del Rosario",
@@ -113,7 +113,7 @@ export default [
   },
   {
     contactName: "Eileen Izquierdo Lawlor",
-    lawFirmName: "Izquierdo y De la Cueva SCP",
+    organisationName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
     address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
@@ -127,7 +127,7 @@ export default [
   },
   {
     contactName: "Mario Izquierdo Lawlor",
-    lawFirmName: "Izquierdo y De la Cueva SCP",
+    organisationName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
     address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
@@ -141,7 +141,7 @@ export default [
   },
   {
     contactName: "Jorge Manuel de la Cueva Terrer",
-    lawFirmName: "Izquierdo y De la Cueva SCP",
+    organisationName: "Izquierdo y De la Cueva SCP",
     website: "http://www.lanzarotelawyers.com/",
     telephone: "+34 928815262",
     address: "C/Gines de Castro y Alvarez 12 3º-B,  Arrecife de Lanzarote",
@@ -155,7 +155,7 @@ export default [
   },
   {
     contactName: "Ricardo Lagares",
-    lawFirmName: "Lagares Abogados",
+    organisationName: "Lagares Abogados",
     website: "https://lagares-abogados.com/",
     telephone: "+34 928382148",
     address: "C/ Canalejas  29",
@@ -169,7 +169,7 @@ export default [
   },
   {
     contactName: "Nayra Roda",
-    lawFirmName: "Lexalia Abogados S.L.",
+    organisationName: "Lexalia Abogados S.L.",
     website: "http://lexelia.es/index.php/en/",
     telephone: "+34 928391616",
     address: "C/Triana 22, 2º",
@@ -183,7 +183,7 @@ export default [
   },
   {
     contactName: "Ana Maria Montelongo Melian",
-    lawFirmName: "Montelongo Asesores",
+    organisationName: "Montelongo Asesores",
     website: "https://www.montelongoasesores.com/",
     telephone: "+34928385252;",
     address: "Calle Canalejas 90-92",
@@ -197,7 +197,7 @@ export default [
   },
   {
     contactName: "Ana Maria Quintana",
-    lawFirmName: "Quintana & Espiau SCP",
+    organisationName: "Quintana & Espiau SCP",
     email: "abogados@quintanayespiauabogados.com",
     telephone: "+34 928276995",
     address: "Calle Los Martínez de Escobar, 3 Oficina 7",
@@ -210,7 +210,7 @@ export default [
   },
   {
     contactName: "James Martin Sonny Lee Gwynne",
-    lawFirmName: "RM Legal Abogados",
+    organisationName: "RM Legal Abogados",
     website: "http://www.rm-legal.es/",
     telephone: "+34 928349761",
     address: "Calle La Lapa 27,  Playa Blanca-Yaiza",
@@ -223,7 +223,7 @@ export default [
   },
   {
     contactName: "Eusebio Francisco Bolaños Ferreira",
-    lawFirmName: "EBF Attorney",
+    organisationName: "EBF Attorney",
     telephone: "+34650295436",
     address: "Calle Venegas nº49, 2ºA",
     postcode: "",

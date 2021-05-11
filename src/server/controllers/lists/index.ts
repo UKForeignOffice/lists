@@ -5,6 +5,7 @@ export {
   listsStartPageController,
   listsDataIngestionController,
   listRedirectToLawyersController,
+  listsConfirmApplicationController,
 } from "./lists";
 
 export { listsRoutes } from "./constants";

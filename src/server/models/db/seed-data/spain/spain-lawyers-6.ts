@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Valle García de novales",
-    lawFirmName: "A\\V Asesores, A.I.E.",
+    organisationName: "A\\V Asesores, A.I.E.",
     website: "http://www.av-asesores.com",
     telephone: "(+34) 976234029",
     address: "Paseo Constitución 21, 4ºdcha",
@@ -14,7 +14,7 @@ export default [
   },
   {
     contactName: "Anna Abad",
-    lawFirmName: "Abad Associats",
+    organisationName: "Abad Associats",
     website: "https://www.abadassociats.com",
     telephone: "(+34) 972818901",
     address: "Ginesta, 40 Platja d’Aro",
@@ -27,7 +27,7 @@ export default [
   },
   {
     contactName: "Albert Forment",
-    lawFirmName: "Aft Iure Legal",
+    organisationName: "Aft Iure Legal",
     website: "http://www.aftiure.com",
     telephone: "(+34) 616614764",
     address: "Calle Comte d’Urgell-272 Entresuelo 3ª",
@@ -41,7 +41,7 @@ export default [
   },
   {
     contactName: "Jonathan Hinkson",
-    lawFirmName: "Augé Legal & Fiscal",
+    organisationName: "Augé Legal & Fiscal",
     website: "http://www.augelegalfiscal.com",
     telephone: "(+376) 803 636",
     address: "Carrer Pere d’Urg, 10 (5e planta)",
@@ -55,7 +55,7 @@ export default [
   },
   {
     contactName: "Lourdes Santisteban",
-    lawFirmName: "Avalaw Legal Services SLP",
+    organisationName: "Avalaw Legal Services SLP",
     website: "http://www.avasla.com",
     telephone: "(+34) 934814349",
     address: "Rambla Catalunya 25, 1-1",
@@ -69,7 +69,7 @@ export default [
   },
   {
     contactName: "Montserrat Balart Torrequebrada",
-    lawFirmName: "Balart Advocats",
+    organisationName: "Balart Advocats",
     email: "m.balart@balartadvocats.com",
     telephone: "(+376) 829 829",
     address: "Despatx 4, planta 2, Escala C, 59 - 65 Carrer Prat de la Creu",
@@ -83,7 +83,7 @@ export default [
   },
   {
     contactName: "Melanie Cachafeiro Martínez",
-    lawFirmName: "Boni Iuris Advocats",
+    organisationName: "Boni Iuris Advocats",
     email: "administracio@boniiurisandorra.com",
     telephone: "(+376) 821 518",
     address: "Ed. 92, Carrer Prat de la Creu",
@@ -97,7 +97,7 @@ export default [
   },
   {
     contactName: "Luis Berenguer",
-    lawFirmName: "Bufete Berenguer Comas Abogados",
+    organisationName: "Bufete Berenguer Comas Abogados",
     website: "http://www.bbcalegal.com/",
     telephone: "(+34) 933021143",
     address: "Paseo Colon 24, Pral 2",
@@ -111,7 +111,7 @@ export default [
   },
   {
     contactName: "Laura Nieto",
-    lawFirmName: "Cases&Lacambra",
+    organisationName: "Cases&Lacambra",
     website: "http://www.caseslacambra.com",
     telephone: "(+376) 728 001",
     address: "Manuel Cerqueda i Escaler, 3-5, Escaldes",
@@ -124,7 +124,7 @@ export default [
   },
   {
     contactName: "Cristian Carci",
-    lawFirmName: "CC Defensa Legal",
+    organisationName: "CC Defensa Legal",
     telephone: "(+34) 610525064",
     address: "Gran de Garcia, 1 Principal",
     postcode: "08012",
@@ -136,7 +136,7 @@ export default [
   },
   {
     contactName: "Sebastián Martín-Osorio",
-    lawFirmName: "Despatx Osorio",
+    organisationName: "Despatx Osorio",
     email: "sebastianmartin@cada.ad",
     telephone: "(+376) 650 650",
     address: "Carrer Prat de la Creu nº. 96, Edifici Sucarà, 3º-1ª",
@@ -150,7 +150,7 @@ export default [
   },
   {
     contactName: "Christopher Lee",
-    lawFirmName: "Doménech Abogados",
+    organisationName: "Doménech Abogados",
     website: "http://www.domenechabogados.com/en/",
     telephone: "(+34) 934150677",
     address: "Madrazo 33",
@@ -164,7 +164,7 @@ export default [
   },
   {
     contactName: "Yolanda Lobao Andres",
-    lawFirmName: "Ecija",
+    organisationName: "Ecija",
     website: "https://www.ecija.com",
     telephone: "(+34) 669475612",
     address: "Avda. Diagonal 458, 8",
@@ -178,7 +178,7 @@ export default [
   },
   {
     contactName: "Benjamin Rascagneres",
-    lawFirmName: "Eurolex Andorra",
+    organisationName: "Eurolex Andorra",
     website: "http://www.eurolexinternational.com",
     telephone: "(+376) 801 420",
     address: "7, Les Canals Street",
@@ -192,7 +192,7 @@ export default [
   },
   {
     contactName: "Víctor Fabregat Rubiol",
-    lawFirmName: "Fabregat Perulles Sales Abogados",
+    organisationName: "Fabregat Perulles Sales Abogados",
     website: "http://www.fabregat-perulles-sales.com/lawyers-en/index",
     telephone: "(+34) 932054231",
     address: "Plaza Bonanova 4, 1º, 1ª",
@@ -206,7 +206,7 @@ export default [
   },
   {
     contactName: "Graciano Cecchetti",
-    lawFirmName: "Giambrone & Partners SLP",
+    organisationName: "Giambrone & Partners SLP",
     website: "https://www.giambronelaw.com/",
     telephone: "(+34) 932201627",
     address: "Calle Balmes 28, pral. 2, Barcelona",
@@ -220,7 +220,7 @@ export default [
   },
   {
     contactName: "Antonio Guillen Hederich",
-    lawFirmName: "Gunnercooke LLP",
+    organisationName: "Gunnercooke LLP",
     website: "http://www.gunnercooke.com",
     telephone: "(+34) 649945633",
     address: "Av. Del Mar 10, 1º 1ª Gava mar",
@@ -233,7 +233,7 @@ export default [
   },
   {
     contactName: "Christian Herrera Petrus",
-    lawFirmName: "Herrera Advocats",
+    organisationName: "Herrera Advocats",
     website: "http://www.herrera-advocats.com",
     telephone: "(+34) 932176362",
     address: "Vía Augusta n. 4, 6th floor",
@@ -247,7 +247,7 @@ export default [
   },
   {
     contactName: "Hugh McCairley",
-    lawFirmName: "Hugh McCairley Abogado",
+    organisationName: "Hugh McCairley Abogado",
     website: "http://mccairley-abogado.com",
     telephone: "(+34) 934539029",
     address: "Calle Benet Mercadé 9-11 bajos 2ª",
@@ -261,7 +261,7 @@ export default [
   },
   {
     contactName: "Hugo Navarrete Gragera",
-    lawFirmName: "Hugo Lawyer",
+    organisationName: "Hugo Lawyer",
     website: "http://www.hugolawyer.com/",
     telephone: "(+34) 661886587",
     address: "Calle Princesa 34, 2º1",
@@ -274,7 +274,7 @@ export default [
   },
   {
     contactName: "Luis Izquierdo",
-    lawFirmName: "ILV Silver",
+    organisationName: "ILV Silver",
     website: "https://www.ilvsilver.com/",
     telephone: "(+34) 932411670",
     address: "Calle Santaló 10, 1º",
@@ -288,7 +288,7 @@ export default [
   },
   {
     contactName: "Alexandru George Lazar",
-    lawFirmName: "INTLAW Abogados y Consultores",
+    organisationName: "INTLAW Abogados y Consultores",
     website: "http://www.intlaw.eu",
     telephone: "(+34) 655837261",
     address: "Calle Aribau 175, Principal 1 B",
@@ -303,7 +303,7 @@ export default [
   },
   {
     contactName: "Anna Klevtsova",
-    lawFirmName: "Klev&Vera International Law Firm",
+    organisationName: "Klev&Vera International Law Firm",
     website: "http://www.klevvera.com/",
     telephone: "(+34) 931760190",
     address: "281 Valencia Street, 2-2",
@@ -317,7 +317,7 @@ export default [
   },
   {
     contactName: "Manuel Laguillo",
-    lawFirmName: "LBL Partners",
+    organisationName: "LBL Partners",
     website: "https://www.lblpartners.es/",
     telephone: "(+34) 932182300",
     address: "123, 5B Josep Tarradellas Avenue",
@@ -330,7 +330,7 @@ export default [
   },
   {
     contactName: "Lidia Navas Esteller",
-    lawFirmName: "LN Solicitors",
+    organisationName: "LN Solicitors",
     website: "http://www.lnsolicitors.es",
     telephone: "(+34) 636046663",
     address: "Calle Sanchis Albella, 2, 2º",
@@ -343,7 +343,7 @@ export default [
   },
   {
     contactName: "Màrius Roch Izard",
-    lawFirmName: "Màrius Roch Izard, Advocat",
+    organisationName: "Màrius Roch Izard, Advocat",
     website: "http://rochadvocat.com",
     telephone: "(+34) 934397332",
     address: "Carrer Muntaner 161 2n 4ª",
@@ -356,7 +356,7 @@ export default [
   },
   {
     contactName: "Miquel Martí Torrents",
-    lawFirmName: "Martí & Associats Lawyers and Consultants",
+    organisationName: "Martí & Associats Lawyers and Consultants",
     website: "http://www.martilawyers.com",
     telephone: "(+34) 932016266",
     address: "Av. Diagonal 584 - Principal",
@@ -369,7 +369,7 @@ export default [
   },
   {
     contactName: "Noelia Hernando Mercadé",
-    lawFirmName: "Noelia Hernando Mercadé",
+    organisationName: "Noelia Hernando Mercadé",
     website: "https://www.noeliahernandoabogada.com/",
     telephone: "(+34) 606582525",
     address: "Travessia del carrer nou, 1",
@@ -383,7 +383,7 @@ export default [
   },
   {
     contactName: "Yolanda Porcel Martínez",
-    lawFirmName: "Porcel Advocats",
+    organisationName: "Porcel Advocats",
     website: "http://www.porcel.legal/",
     telephone: "(+34) 972963413",
     address: "Calle Hortal de’n Pou 56 Baixos",
@@ -397,7 +397,7 @@ export default [
   },
   {
     contactName: "Thais Delgado",
-    lawFirmName: "Pragma Advocats",
+    organisationName: "Pragma Advocats",
     website: "http://www.pragma-advocats.com/",
     telephone: "(+34) 937588522",
     address: "Calle Altafulla 8 3-3",
@@ -411,7 +411,7 @@ export default [
   },
   {
     contactName: "Raffaele Tancredi",
-    lawFirmName: "Raffaele Tancredi Abogados",
+    organisationName: "Raffaele Tancredi Abogados",
     telephone: "(+34) 622856625",
     address: "Carrer de la Granada del Penedés 10, entresuelo",
     postcode: "08006",
@@ -424,7 +424,7 @@ export default [
   },
   {
     contactName: "Victoriano Travieso",
-    lawFirmName: "Stepinlaw SLP",
+    organisationName: "Stepinlaw SLP",
     website: "https://www.stepinlaw.com",
     telephone: "(+44)(0)934584353",
     address: "Roger de Flor 275, 2º 1ª",
@@ -438,7 +438,7 @@ export default [
   },
   {
     contactName: "Carlos Prieto Cid",
-    lawFirmName: "Tarracoiuris S.L.",
+    organisationName: "Tarracoiuris S.L.",
     website: "https://www.tarracoiuris.com",
     telephone: "(+34) 977243021",
     address: "Carrer Macià Mallol i Bosch 5 B",
@@ -451,7 +451,7 @@ export default [
   },
   {
     contactName: "Eduardo Vilá",
-    lawFirmName: "Vilá Abogados",
+    organisationName: "Vilá Abogados",
     website: "https://www.vila.es",
     telephone: "(+34) 932156865",
     address: "Paseo de Gracia, 76, 1 - 2",
@@ -465,7 +465,7 @@ export default [
   },
   {
     contactName: "Xavier Jordana",
-    lawFirmName: "Xavier Jordana Advocats",
+    organisationName: "Xavier Jordana Advocats",
     email: "xjordana@andorra.ad",
     telephone: "(+376) 807 030",
     address: "Plaça Rebés 8, 2n, Andorra la Vella",

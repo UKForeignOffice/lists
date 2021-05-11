@@ -1,7 +1,7 @@
 export default [
   {
     contactName: "Ardines y Asociados",
-    lawFirmName: "Ardines y Asociados",
+    organisationName: "Ardines y Asociados",
     website: "http://ardinessampedro.com/",
     telephone: "(+34) 922 751 196 & (+34) 658 828 687",
     address:
@@ -15,7 +15,7 @@ export default [
   },
   {
     contactName: "Cabrera y Ravina Abogados",
-    lawFirmName: "Cabrera y Ravina Abogados",
+    organisationName: "Cabrera y Ravina Abogados",
     website: "http://www.cabrerayravina.com",
     telephone: "(+34) 922 243 890",
     address: "Calle General Gutiérrez, nº 4 - 1º. Santa Cruz de Tenerife",
@@ -29,7 +29,7 @@ export default [
   },
   {
     contactName: "De Cotta Law",
-    lawFirmName: "De Cotta Law",
+    organisationName: "De Cotta Law",
     website: "http://www.decottalaw.com",
     telephone: "(+34) 922 719 520",
     address:
@@ -44,7 +44,7 @@ export default [
   },
   {
     contactName: "Hodgson Abogados",
-    lawFirmName: "Hodgson Abogados",
+    organisationName: "Hodgson Abogados",
     website: "http://www.hodgson.es",
     telephone: "(+34) 922 247 365",
     address: "Calle Pilar, nº 5 - 2º. Santa Cruz de Tenerife",
@@ -70,7 +70,7 @@ export default [
   },
   {
     contactName: "Lawten Lawyers",
-    lawFirmName: "Lawten Lawyers",
+    organisationName: "Lawten Lawyers",
     website: "http://www.lawtenlawyers.com",
     telephone: "(+34) 735 937 & (+34) 652 293 325",
     address:
@@ -85,7 +85,7 @@ export default [
   },
   {
     contactName: "Lawyers Network International",
-    lawFirmName: "Lawyers Network International",
+    organisationName: "Lawyers Network International",
     website: "http://www.avvo.es",
     telephone: "(+34) 922 751 524",
     address:
@@ -99,7 +99,7 @@ export default [
   },
   {
     contactName: "Luis Sánchez García-Yanes (L.S. Abogados)",
-    lawFirmName: "Website under construction",
+    organisationName: "Website under construction",
     telephone: "(+34) 822 143 647 & (+34) 605 879 124",
     address:
       "Avenida de Moscú, nº 38. Centro Comercial Aquamall, local 10. -Costa Adeje",
@@ -113,7 +113,7 @@ export default [
   },
   {
     contactName: "Tenerife Solicitors",
-    lawFirmName: "Tenerife Solicitors",
+    organisationName: "Tenerife Solicitors",
     website: "http://www.tenerifesolicitors.com",
     telephone: "(+34) 922 717 845 & 0871 218 0063",
     address:
@@ -128,7 +128,7 @@ export default [
   },
   {
     contactName: "Vercellone & Asociados",
-    lawFirmName: "Vercellone & Asociados",
+    organisationName: "Vercellone & Asociados",
     website: "http://www.vercelloneyasociados.es",
     telephone: "(+34) 922 717 202",
     address:
@@ -143,7 +143,7 @@ export default [
   },
   {
     contactName: "Wildpret Abogados",
-    lawFirmName: "Wildpret Abogados",
+    organisationName: "Wildpret Abogados",
     website: "http://www.wildpret.es",
     telephone: "(+34) 922 718 020",
     address: "Centro Comercial San Eugenio, local 97. -Costa Adeje",
