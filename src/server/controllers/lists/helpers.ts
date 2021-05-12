@@ -162,6 +162,12 @@ export function needToAnswerLegalAid(
   return legalAid === undefined || legalAid === "";
 }
 
+export function needToAnswerProBono(
+  proBono?: ListsRequestParams["proBono"]
+): boolean {
+  return proBono === undefined || proBono === "";
+}
+
 export function needToReadDisclaimer(
   readDisclaimer?: ListsRequestParams["readDisclaimer"]
 ): boolean {

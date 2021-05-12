@@ -239,6 +239,7 @@ export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
   region?: string;
   legalAid?: "yes" | "no" | "";
+  proBono?: "yes" | "no" | "";
   practiceArea?: string[];
 }): Promise<LawyerListItemGetObject[]> {
   if (props.countryName === undefined) {
@@ -247,10 +248,25 @@ export async function findPublishedLawyersPerCountry(props: {
 
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
+  const jsonQuery: {
+    legalAid?: boolean;
+    proBonoService?: boolean;
+  } = {};
 
   if (props.legalAid === "yes") {
-    andWhere.push(`AND "ListItem"."jsonData" @> '{"legalAid":true}'`);
+    jsonQuery.legalAid = true;
   }
+
+  if (props.proBono === "yes") {
+    jsonQuery.proBonoService = true;
+  }
+
+  if (Object.keys(jsonQuery).length > 0) {
+    andWhere.push(
+      `AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`
+    );
+  }
+
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,
