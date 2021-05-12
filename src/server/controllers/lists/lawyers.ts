@@ -24,6 +24,7 @@ import {
   practiceAreaFromParams,
   needToAnswerPracticeArea,
   createConfirmationLink,
+  needToAnswerProBono,
 } from "./helpers";
 import { logger } from "server/services/logger";
 
@@ -37,6 +38,7 @@ export function lawyersGetController(
   const {
     region,
     country,
+    proBono,
     legalAid,
     readNotice,
     serviceType,
@@ -99,7 +101,17 @@ export function lawyersGetController(
       error = {
         field: "legal-aid",
         text: "Legal aid is not allowed to be empty",
-        href: "#legal-aid",
+        href: "#legal-aid-yes",
+      };
+    }
+  } else if (needToAnswerProBono(proBono)) {
+    partialToRender = "question-pro-bono.html";
+    partialPageTitle = "Are you interested in pro bono services?";
+    if (proBono === "") {
+      error = {
+        field: "pro-bono",
+        text: "Pro bono is not allowed to be empty",
+        href: "#pro-bono-yes",
       };
     }
   } else if (needToReadDisclaimer(readDisclaimer)) {
@@ -137,13 +149,14 @@ export async function searchLawyers(
   _next: NextFunction
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, legalAid, region } = params;
+  const { serviceType, country, legalAid, region, proBono } = params;
   const practiceArea = practiceAreaFromParams(params);
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
     legalAid,
+    proBono,
     practiceArea,
   });
 

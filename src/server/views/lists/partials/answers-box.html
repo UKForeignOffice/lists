@@ -54,6 +54,17 @@
           aria-label="Change legal aid answer"
         >Change</a>
       </p>
+    {% endif %}
+    {% if proBono %}
+      <p class="govuk-body">
+        Are you interested in pro bono services?<br />
+        <strong>{{ _.startCase(proBono) }}</strong>
+        <a 
+          class="govuk-link" 
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'proBono') }}"
+          aria-label="Change pro bono answer"
+        >Change</a>
+      </p>
     {% endif %} 
   </div>
   

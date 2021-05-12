@@ -197,23 +197,8 @@ describe("ListItem Model:", () => {
     });
   });
 
-  test("findPublishedLawyersPerCountry command is correct", async () => {
-    const spyLocation = spyLocationService();
-    const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
-
-    await findPublishedLawyersPerCountry({
-      countryName: "france",
-      region: "paris",
-      legalAid: "yes",
-      practiceArea: [],
-    });
-
-    const query = spyQueryRaw.mock.calls[0][0] as string;
-
-    expect(spyLocation).toHaveBeenCalledWith("paris, France");
-
-    expect(query.replace(/\s\s+/g, " ")).toEqual(
-      `
+  describe("findPublishedLawyersPerCountry command is correct", () => {
+    const expectedQuery = `
       SELECT
         "ListItem"."id",
         "ListItem"."reference",
@@ -249,14 +234,89 @@ describe("ListItem Model:", () => {
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyer'
         AND "Country".name = 'France'
-        AND "ListItem"."jsonData" @> '{"legalAid":true}'
+        AND "ListItem"."jsonData" @> '{"legalAid":true,"proBonoService":true}'
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
         LIMIT 20
-    `.replace(/\s\s+/g, " ")
-    );
+    `.replace(/\s\s+/g, " ");
+
+    test("query is correct", async () => {
+      const spyLocation = spyLocationService();
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+
+      await findPublishedLawyersPerCountry({
+        countryName: "france",
+        region: "paris",
+        legalAid: "yes",
+        proBono: "yes",
+        practiceArea: [],
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+
+      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
+    });
+
+    test("query without legalAid is correct", async () => {
+      const spyLocation = spyLocationService();
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+
+      await findPublishedLawyersPerCountry({
+        countryName: "france",
+        region: "paris",
+        legalAid: "no",
+        proBono: "yes",
+        practiceArea: [],
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+
+      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(query.replace(/\s\s+/g, " ")).toEqual(
+        expectedQuery.replace('"legalAid":true,', "")
+      );
+    });
+
+    test("query without proBono is correct", async () => {
+      const spyLocation = spyLocationService();
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+
+      await findPublishedLawyersPerCountry({
+        countryName: "france",
+        region: "paris",
+        legalAid: "yes",
+        proBono: "no",
+        practiceArea: [],
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+
+      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(query.replace(/\s\s+/g, " ")).toEqual(
+        expectedQuery.replace(',"proBonoService":true', "")
+      );
+    });
+
+    test("query without legalAid and proBono is correct", async () => {
+      const spyLocation = spyLocationService();
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+
+      await findPublishedLawyersPerCountry({
+        countryName: "france",
+        region: "paris",
+        legalAid: "no",
+        proBono: "no",
+        practiceArea: [],
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+
+      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(query.includes(`AND "ListItem"."jsonData" @>`)).toEqual(false);
+    });
   });
 
   test("approveLawyer command is correct", async () => {

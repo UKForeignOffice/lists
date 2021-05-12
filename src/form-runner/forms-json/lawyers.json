@@ -2,7 +2,7 @@
   "startPage": "/register-to-the-find-a-lawyer-abroad-service",
   "pages": [
     {
-      "title": "Register to the Find a Lawyer Abroad Service",
+      "title": "Register to the Find a Lawyer Abroad service",
       "path": "/register-to-the-find-a-lawyer-abroad-service",
       "components": [
         {
@@ -60,7 +60,7 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/are-you-qualified-to-practice-law" }]
+      "next": [{ "path": "/are-you-qualified-to-practice-law-in-your-country" }]
     },
     {
       "path": "/you-need-to-speak-fluent-english-to-use-this-service",
@@ -77,8 +77,8 @@
       "next": []
     },
     {
-      "path": "/are-you-qualified-to-practice-law",
-      "title": "Are you qualified to practice law?",
+      "path": "/are-you-qualified-to-practice-law-in-your-country",
+      "title": "Are you qualified to practice law in your country?",
       "components": [
         {
           "name": "qualifiedToPracticeLaw",
@@ -95,7 +95,7 @@
           "condition": "wQAJrkhE3WF5cKg-a0ocJ"
         },
         {
-          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body",
+          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-or-body",
           "condition": "sC_WI7140dW0LN5R7pbFk"
         }
       ]
@@ -129,11 +129,11 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/organisation-name" }]
+      "next": [{ "path": "/company-name" }]
     },
     {
-      "path": "/organisation-name",
-      "title": "Organisation name",
+      "path": "/company-name",
+      "title": "Company name",
       "components": [
         {
           "name": "organisationName",
@@ -171,7 +171,8 @@
           "type": "EmailAddressField",
           "title": "Email address",
           "nameHasError": false,
-          "schema": {}
+          "schema": {},
+          "hint": "This is the email address you wish to be contacted on by British nationals"
         }
       ],
       "next": [{ "path": "/phone-number" }]
@@ -195,7 +196,7 @@
     },
     {
       "path": "/can-you-provide-legal-aid-to-british-nationals",
-      "title": "Can you provide legal aid to British Nationals?",
+      "title": "Can you provide legal aid to British nationals?",
       "components": [
         {
           "name": "canProvideLegalAid",
@@ -207,12 +208,14 @@
         }
       ],
       "next": [
-        { "path": "/can-you-offer-pro-bono-service-to-british-nationals" }
+        {
+          "path": "/can-you-offer-pro-bono-service-to-british-nationals"
+        }
       ]
     },
     {
       "path": "/can-you-offer-pro-bono-service-to-british-nationals",
-      "title": "Can you offer pro bono service to British Nationals?",
+      "title": "Can you offer pro bono service to British nationals?",
       "components": [
         {
           "name": "canOfferProBono",
@@ -227,7 +230,7 @@
     },
     {
       "path": "/have-you-represented-british-nationals-before",
-      "title": "Have you represented British Nationals before?",
+      "title": "Have you represented British nationals before?",
       "components": [
         {
           "name": "representedBritishNationalsBefore",
@@ -242,8 +245,8 @@
       "next": [{ "path": "/do-you-offer-out-of-hours-service" }]
     },
     {
-      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-body",
-      "title": "Are you a member of a local bar association or other regulatory authority/body?",
+      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-or-body",
+      "title": "Are you a member of a local bar association or other regulatory authority or body?",
       "components": [
         {
           "name": "memberOfRegulatoryAuthority",
@@ -292,7 +295,8 @@
           "type": "YesNoField",
           "title": "Are the contact details different for the out of hours service?",
           "nameHasError": false,
-          "schema": {}
+          "schema": {},
+          "values": { "type": "listRef" }
         }
       ],
       "next": [
@@ -349,7 +353,8 @@
           "type": "TelephoneNumberField",
           "title": "Phone number",
           "nameHasError": false,
-          "schema": {}
+          "schema": {},
+          "hint": "This is the phone number you wish to be contacted on by British nationals"
         }
       ],
       "next": [{ "path": "/company-address" }]
@@ -841,8 +846,7 @@
       "items": [
         { "text": "Phone number", "value": "phoneNumber" },
         { "text": "Address", "value": "address" },
-        { "text": "Email", "value": "email" },
-        { "text": "None", "value": "none" }
+        { "text": "Email", "value": "email" }
       ]
     },
     {

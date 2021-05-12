@@ -8,7 +8,7 @@ services:
       - NODE_ENV=development
       - ERROR_LEVEL=error
       - PORT=3000
-      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
+      - DATABASE_URL=postgresql://postgresuser:postgrespass@postgres:5432/service-finder-db
       - GOVUK_NOTIFY_API_KEY=lists_test_key-51af028d-d3a7-491a-9d9a-b657dc9bc133-86592bf4-0952-4327-a008-3cabbcd4c49a
       - GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID=5fc30bd9-6f58-4beb-9b52-4e8885e15671
       - GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID=fbeb637c-288b-4f6b-83f7-7ea7696ab245
@@ -32,7 +32,7 @@ services:
     # image: "gangstead/postgis:13-3.1-arm"
     environment:
       - POSTGRES_DB=service-finder-db
-      - POSTGRES_USER=postgressuser
+      - POSTGRES_USER=postgresuser
       - POSTGRES_PASSWORD=postgrespass
     ports:
       - "5432:5432"
@@ -54,4 +54,4 @@ services:
     ports:
       - "8081:8080"
     environment:
-      - DATABASE_URL=postgresql://postgressuser:postgrespass@postgres:5432/service-finder-db
+      - DATABASE_URL=postgresql://postgresuser:postgrespass@postgres:5432/service-finder-db
