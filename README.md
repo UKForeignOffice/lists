@@ -28,7 +28,13 @@ To force a rebuild (for example if a new npm module has been installed) use the 
 
 ### Preparing the database
 
-After starting the services the next step is to prepare the database, first with the application running, open the browser and navigate to `http://localhost:3000/dev/reset-db`.
+After starting the services the next step is to prepare the database, first run the following command:
+
+```bash
+npm run prisma:migrate
+```
+
+Then with the application running, open the browser and navigate to `http://localhost:3000/dev/reset-db`.
 
 This is what is going to happen:
 
@@ -36,12 +42,6 @@ This is what is going to happen:
 - Postgis extension is installed
 - GeoLocation table is created
 - Data is seeded
-
-If you want to re-create postgres by deleting the postgres image then you have to run the following command before executing `/dev/reset-db`
-
-```bash
-npm run prisma:migrate
-```
 
 ### Debugging
 
