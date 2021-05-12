@@ -6,6 +6,7 @@ export interface ListsRequestParams {
   region?: string;
   practiceArea?: string | string[];
   legalAid?: "yes" | "no" | "";
+  proBono?: "yes" | "no" | "";
   readNotice?: string;
   readDisclaimer?: string;
 }
