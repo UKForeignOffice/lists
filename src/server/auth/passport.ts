@@ -1,5 +1,4 @@
 import passport from "passport";
-
 import {
   ExtractJwt,
   StrategyOptions,
