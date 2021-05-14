@@ -1,5 +1,5 @@
 import express from "express";
-import { ensureAuthenticated } from "server/services/auth";
+import { ensureAuthenticated } from "server/auth";
 
 const router = express.Router();
 

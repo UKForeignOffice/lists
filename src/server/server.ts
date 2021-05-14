@@ -10,7 +10,7 @@ import {
   configureExpressSession,
   configureFormRunnerProxy,
 } from "./middlewares";
-import { configureAuth } from "./services/auth";
+import { configureAuth } from "./auth";
 import { configureRouter } from "./routes";
 
 export const server = express();

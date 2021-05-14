@@ -1,22 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { createAuthenticationPath } from "server/services/auth";
-// import { sendAuthenticationEmail } from "server/services/govuk-notify";
-import { logger } from "server/services/logger";
+import { sendAuthenticationEmail } from "server/services/govuk-notify";
+import { createAuthenticationPath } from "./json-web-token";
+import { authRoutes } from "./constants";
+import passport from "./passport";
+
+export const authController = passport.authenticate("jwt", {
+  successReturnToOrRedirect: "/",
+  failureRedirect: `${authRoutes.login}?invalidToken=true`,
+});
 
 export function getLoginController(
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
-  const { incorrectToken, token } = req.query;
+  const { invalidToken, token } = req.query;
 
   if (token !== undefined) {
     return next();
   }
 
   res.render("login", {
-    incorrectToken: incorrectToken === "true",
+    invalidToken: invalidToken === "true",
   });
 }
 
@@ -31,18 +37,13 @@ export function postLoginController(
     const authPath = createAuthenticationPath({ emailAddress });
     const authLink = `${req.protocol}://${req.get("host")}${authPath}`;
 
-    logger.warn(authLink);
-    res.render("login", {
-      success: true,
-    });
-
-    // sendAuthenticationEmail(emailAddress, authLink)
-    //   .then(() => {
-    //     res.render("login", {
-    //       success: true,
-    //     });
-    //   })
-    //   .catch(next);
+    sendAuthenticationEmail(emailAddress, authLink)
+      .then(() => {
+        res.render("login", {
+          success: true,
+        });
+      })
+      .catch(next);
   } else {
     res.render("login", {
       error: true,
@@ -51,7 +52,7 @@ export function postLoginController(
 }
 
 export function getLogoutController(req: Request, res: Response): void {
-  req.logOut();
+  req.logout();
   req.session.destroy(() => {
     res.redirect("/");
   });

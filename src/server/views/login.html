@@ -13,6 +13,15 @@
               }]
             }) }}
           {% endif %}
+          {% if invalidToken %}
+            {{ govukErrorSummary({
+              titleText: "Authentication link has expired",
+              errorList: [{
+                text: "Please request a new autnetication link",
+                href: "#email-address"
+              }]
+            }) }}
+          {% endif %}
           {% if success %}
             <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
               <div class="govuk-notification-banner__header">

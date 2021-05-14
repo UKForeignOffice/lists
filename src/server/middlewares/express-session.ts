@@ -15,6 +15,7 @@ export function configureExpressSession(server: Express): void {
       saveUninitialized: true,
       resave: false,
       cookie: { secure: !isLocalHost },
+      name: "sid",
     })
   );
 }

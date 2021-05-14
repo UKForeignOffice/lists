@@ -1,4 +1,4 @@
-import { ensureAuthenticated } from "../auth";
+import { ensureAuthenticated } from "../helpers";
 
 describe("Auth Service", () => {
   describe("ensureAuthenticated", () => {

@@ -1,10 +1,11 @@
 import express from "express";
 import {
+  authController,
   getLoginController,
   postLoginController,
   getLogoutController,
-} from "server/controllers/auth";
-import { authController, authRoutes } from "server/services/auth";
+} from "./controllers";
+import { authRoutes } from "./constants";
 
 const router = express.Router();
 

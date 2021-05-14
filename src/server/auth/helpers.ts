@@ -1,6 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import passport from "./passport";
 import { authRoutes } from "./constants";
+import authRouter from "./routes";
 
 export function ensureAuthenticated(
   req: Request,
@@ -18,9 +19,5 @@ export function ensureAuthenticated(
 export function configureAuth(server: Express): void {
   server.use(passport.initialize());
   server.use(passport.session());
+  server.use(authRouter);
 }
-
-export const authController = passport.authenticate("jwt", {
-  successReturnToOrRedirect: "/dashboard", // TODO: ???
-  failureRedirect: `${authRoutes.login}?incorrectToken=true`,
-});
