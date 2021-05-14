@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { createAuthenticationPath } from "../json-web-token";
-import { ISSUER } from "../constants";
+import { JWT_ISSUER } from "../constants";
 
 describe("Auth JSON Web Token", () => {
   describe("createAuthenticationPath", () => {
@@ -22,7 +22,7 @@ describe("Auth JSON Web Token", () => {
 
       expect(json).toMatchObject({
         user: { emailAddress: "test@gov.uk" },
-        iss: ISSUER,
+        iss: JWT_ISSUER,
       });
     });
   });
