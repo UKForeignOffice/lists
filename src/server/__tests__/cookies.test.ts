@@ -81,6 +81,7 @@ describe("Cookies", () => {
 
       const $html = $.load(text);
       const radios = $html(":radio");
+      const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = JSON.parse(
         headers["set-cookie"]
@@ -90,6 +91,7 @@ describe("Cookies", () => {
           .trim()
       );
 
+      expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual({ isSet: true, analytics: "on" });
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
@@ -109,6 +111,7 @@ describe("Cookies", () => {
 
       const $html = $.load(text);
       const radios = $html(":radio");
+      const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = JSON.parse(
         headers["set-cookie"]
@@ -118,6 +121,7 @@ describe("Cookies", () => {
           .trim()
       );
 
+      expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual({ isSet: true, analytics: "off" });
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
