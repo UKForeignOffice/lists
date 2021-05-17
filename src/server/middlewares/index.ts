@@ -6,3 +6,4 @@ export { configureViews } from "./views";
 export { configureStaticServer } from "./static";
 export { configureErrorHandlers } from "./error-handlers";
 export { configureFormRunnerProxy } from "./form-runner";
+export { configureCookieParser } from "./cookie-parser";

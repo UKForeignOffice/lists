@@ -8,6 +8,7 @@ import {
   configureStaticServer,
   configureErrorHandlers,
   configureFormRunnerProxy,
+  configureCookieParser,
 } from "./middlewares";
 import { configureRouter } from "./routes";
 
@@ -19,6 +20,7 @@ configureLogger(server);
 configureCompression(server);
 // form runner proxy must be initialized before body parser
 configureFormRunnerProxy(server);
+configureCookieParser(server);
 configureBodyParser(server);
 configureViews(server);
 configureRouter(server);
