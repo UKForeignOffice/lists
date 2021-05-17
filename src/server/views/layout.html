@@ -36,11 +36,13 @@
   Find a Professional Service Abroad
 {% endblock %}
 
+{% block skipLink %}
+  {# skiplink is inside header to avoid Axe accessibility error #}
+{% endblock %}
 
 {% block header %}
   {% include "includes/header.html" %}
 {% endblock %}
-
 
 {% block bodyStart %}
   {% if not cookiesPolicy.isSet %}
