@@ -11,8 +11,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe("Find a lawyer abroad");
       expect(continueButton.text()).toBe("Continue");
@@ -41,8 +42,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
         "Which country do you need a lawyer in?"
@@ -73,8 +75,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
         "Which area in Spain do you need a lawyer from?"
@@ -106,8 +109,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
         "In which field of law do you need legal help?"
@@ -141,8 +145,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe("Are you interested in legal aid?");
       expect(continueButton.text()).toBe("Continue");
@@ -156,8 +161,9 @@ describe("Lawyers List:", () => {
         .type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
         "Are you interested in pro bono services?"
@@ -189,8 +195,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
         "Are you interested in pro bono services?"
@@ -222,8 +229,9 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       const $html = $.load(text);
-      const pageHeader = $html("h1");
-      const continueButton = $html("button");
+      const main = $html("main");
+      const pageHeader = main.find("h1");
+      const continueButton = main.find("button");
 
       expect(pageHeader.text().trim()).toBe("Disclaimer");
       expect(continueButton.text()).toBe("Continue");
@@ -272,8 +280,8 @@ describe("Lawyers List:", () => {
         .type("text/html");
 
       const $html = $.load(text);
-      const $body = $html("body");
-      const $answerBox = $($body.find(".answers-box"));
+      const $main = $html("main");
+      const $answerBox = $($main.find(".answers-box"));
 
       const answers = $answerBox.find("p");
 
