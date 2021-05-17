@@ -7,7 +7,7 @@
 
 {% block head %}
 
-  {% if GA_TRACKING_ID %}
+  {% if GA_TRACKING_ID and cookiesPolicy.analytics === "on" %}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_TRACKING_ID }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -43,7 +43,9 @@
 
 
 {% block bodyStart %}
-  {% include "includes/cookie-banner.html" %}
+  {% if not cookiesPolicy.isSet %}
+    {% include "cookies/cookie-banner.html" %}
+  {% endif %} 
 {% endblock %}
 
 

@@ -8,8 +8,7 @@
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <main class="govuk-main-wrapper" id="main-content" role="main">
-          <h1 class="govuk-heading-xl">Cookies on {{ SERVICE_NAME }}</h1>
+        <h1 class="govuk-heading-xl">Cookies on {{ SERVICE_NAME }}</h1>
           <p class="govuk-body">
             Cookies are files saved on your phone, tablet or computer when you
             visit a website.
@@ -21,19 +20,18 @@
 
           <h2 class="govuk-heading-m">Cookie settings</h2>
           <p class="govuk-body">
-            We use 2 types of cookie. You can choose which cookies you're happy
-            for us to use.
+            We use 2 types of cookie. You can choose which cookies you're happy for us to use.
           </p>
 
           <form data-module="cookie-settings" method="post">
-            <fieldset class="govuk-fieldset" aria-describedby="hint-ga">
+            <fieldset class="govuk-fieldset" aria-describedby="hint-analytics">
               <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                 <h2 class="govuk-fieldset__heading">
                   Cookies that measure website use
                 </h2>
               </legend>
 
-              <div id="hint-ga" class="govuk-hint govuk-!-margin-bottom-6">
+              <div id="hint-analytics" class="govuk-hint govuk-!-margin-bottom-6">
                 <p class="govuk-body govuk-hint">
                   We use Google Analytics to measure how you use the website so
                   we can improve it based on user needs. We do not allow Google
@@ -58,12 +56,13 @@
                   <div class="govuk-radios__item">
                     <input
                       type="radio"
-                      name="cookies-ga"
-                      id="radio-ga-0"
-                      value="on"
                       class="govuk-radios__input"
+                      name="analytics"
+                      id="radio-analytics-0"
+                      value="on"
+                      {% if cookiesPolicy.analytics === "on" %} checked {% endif %}
                     />
-                    <label for="radio-ga-0" class="govuk-label govuk-radios__label">
+                    <label for="radio-analytics-0" class="govuk-label govuk-radios__label">
                       Use cookies that measure my website use
                     </label>
                   </div>
@@ -71,12 +70,13 @@
                   <div class="govuk-radios__item">
                     <input
                       type="radio"
-                      name="cookies-ga"
-                      id="radio-ga-1"
-                      value="off"
                       class="govuk-radios__input"
+                      name="analytics"
+                      id="radio-analytics-1"
+                      value="off"
+                      {% if cookiesPolicy.analytics !== "on" %} checked {% endif %}
                     />
-                    <label for="radio-ga-1" class="gem-c-label govuk-label govuk-radios__label">
+                    <label for="radio-analytics-1" class="gem-c-label govuk-label govuk-radios__label">
                       Do not use cookies that measure my website use
                     </label>
                   </div>
@@ -93,6 +93,7 @@
               <p class="govuk-body">They always need to be on.</p>
               <p class="govuk-body">
                 <a
+                  class="govuk-link"
                   href="https://www.gov.uk/help/cookie-details"
                   target="_blank"
                 >
@@ -105,7 +106,6 @@
               Save changes
             </button>
           </form>
-        </main>
       </div>
     </div>
   </div>
