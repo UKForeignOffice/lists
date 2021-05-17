@@ -62,7 +62,7 @@
     "@types/express-winston": "^4.0.0",
     "@types/jest": "^26.0.22",
     "@types/jest-axe": "^3.5.1",
-    "@types/lodash": "^4.14.168",
+    "@types/lodash": "^4.14.169",
     "@types/node": "^15.0.2",
     "@types/nunjucks": "^3.1.4",
     "@types/pg": "^7.14.11",
