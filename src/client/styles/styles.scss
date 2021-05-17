@@ -21,3 +21,15 @@ input {
 .govuk-form-group--error .autocomplete__input {
   border: 2px solid govuk-colour("red");
 }
+
+body .govuk-cookie-banner {
+  display: none;
+}
+
+body.js-enabled .govuk-cookie-banner:not(.no-js) {
+  display: block;
+}
+
+body:not(.js-enabled) .govuk-cookie-banner.no-js {
+  display: block;
+}
