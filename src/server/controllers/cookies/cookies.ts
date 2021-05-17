@@ -21,7 +21,7 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
   });
 
   res.render(COOKIES_PAGE_VIEW, {
-    saved: true,
+    cookiesSettingsSaved: true,
     cookiesPolicy,
   });
 }
