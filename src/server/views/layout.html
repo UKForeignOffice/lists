@@ -42,6 +42,11 @@
 {% endblock %}
 
 
+{% block bodyStart %}
+  {% include "includes/cookie-banner.html" %}
+{% endblock %}
+
+
 {% block beforeContent %}
   <div role="complementary" title="Phase Banner">
     {% include "includes/phase-banner.html" %}
