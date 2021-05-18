@@ -21,7 +21,7 @@ services:
     volumes:
       - ./:/usr/src/app:delegated
       - /usr/src/app/node_modules
-      - /user/src/app/lib
+      - /usr/src/app/lib
     ports:
       - "3000:3000"
       - "9229:9229"
