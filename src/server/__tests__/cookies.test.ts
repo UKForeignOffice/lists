@@ -13,13 +13,19 @@ describe("Cookies", () => {
       const cookieBanner = $html(".govuk-cookie-banner").eq(1);
       const cookiePageLink = cookieBanner.find("a");
 
-      expect(cookieBanner.text()).toContain(
-        "Cookies on Find a Professional Service Abroad"
-      );
+      expect(
+        cookieBanner
+          .text()
+          .includes("Cookies on Find a Professional Abroad Service")
+      ).toBe(true);
 
-      expect(cookieBanner.text()).toContain(
-        "We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our cookies page."
-      );
+      expect(
+        cookieBanner
+          .text()
+          .includes(
+            "We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our cookies page."
+          )
+      ).toBe(true);
 
       expect(cookiePageLink.attr("href")).toBe("/help/cookies");
     });
@@ -38,7 +44,7 @@ describe("Cookies", () => {
       expect(
         cookieBanner
           .text()
-          .includes("Cookies on Find a Professional Service Abroad")
+          .includes("Cookies on Find a Professional Abroad Service")
       ).toBe(true);
       expect(acceptButton.text().trim()).toEqual("Accept analytics cookies");
       expect(rejectButton.text().trim()).toEqual("Reject analytics cookies");
@@ -57,7 +63,7 @@ describe("Cookies", () => {
       const pageText = main.text();
 
       expect(
-        pageText.includes("Cookies on Find a Professional Service Abroad")
+        pageText.includes("Cookies on Find a Professional Abroad Service")
       ).toBe(true);
       expect(
         pageText.includes(
