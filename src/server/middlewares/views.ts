@@ -16,7 +16,8 @@ const VIEWS_PATHS = [
 export const configureViews = (server: Express): void => {
   server.engine("html", nunjucks.render);
   server.set("view engine", "html");
-  nunjucks
+
+  const engine = nunjucks
     .configure(VIEWS_PATHS, {
       autoescape: true,
       express: server,
@@ -25,4 +26,11 @@ export const configureViews = (server: Express): void => {
     .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
     .addGlobal("isLocalHOST", isLocalHost)
     .addGlobal("SERVICE_NAME", SERVICE_NAME);
+
+  // dynamic globals
+  server.use((req, res, next) => {
+    const cookiesPolicy = JSON.parse(req.cookies.cookies_policy ?? "{}");
+    engine.addGlobal("cookiesPolicy", cookiesPolicy);
+    next();
+  });
 };

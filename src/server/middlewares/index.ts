@@ -7,3 +7,4 @@ export { configureStaticServer } from "./static";
 export { configureErrorHandlers } from "./error-handlers";
 export { configureFormRunnerProxy } from "./form-runner";
 export { configureExpressSession } from "./express-session";
+export { configureCookieParser } from "./cookie-parser";

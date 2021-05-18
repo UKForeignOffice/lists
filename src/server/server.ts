@@ -9,6 +9,7 @@ import {
   configureErrorHandlers,
   configureExpressSession,
   configureFormRunnerProxy,
+  configureCookieParser,
 } from "./middlewares";
 import { configureAuth } from "./auth";
 import { configureRouter } from "./routes";
@@ -23,6 +24,7 @@ configureFormRunnerProxy(
   // form runner proxy must be initialized before body parser
   server
 );
+configureCookieParser(server);
 configureBodyParser(server);
 configureExpressSession(server);
 configureViews(server);
