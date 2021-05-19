@@ -10,6 +10,7 @@ import {
   ListItem,
   LawyerListItemCreateInput,
   LawyerListItemGetObject,
+  LawyerListItemJsonData,
 } from "./types";
 import {
   filterAllowedLegalAreas,
@@ -66,8 +67,9 @@ async function createAddressGeoLocation(
   return false;
 }
 
-// TODO: type
-function parseOutOfHoursObject(lawyer: LawyersFormWebhookData): any {
+function parseOutOfHoursObject(
+  lawyer: LawyersFormWebhookData
+): LawyerListItemJsonData["outOfHours"] {
   const telephone = lawyer.outOfHours?.phoneNumber;
   const email = lawyer.outOfHours?.emailAddress;
   const address =
