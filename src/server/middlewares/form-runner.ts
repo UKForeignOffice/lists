@@ -20,18 +20,16 @@ export function configureFormRunnerProxy(server: Express): void {
         const data = proxyResData.toString("utf8");
 
         const updatedData = data
-          .replaceAll(
+          .replace(
             /(href|src)="\/([^'"]+)/g,
-            `$1="${FORM_RUNNER_BASE_ROUTE}/$2"`
+            `$1="${FORM_RUNNER_BASE_ROUTE}/$2`
           )
-          .replaceAll(
-            /<form(.*)>/g,
-            `<form $1 action="${userReq.originalUrl}">`
-          );
+          .replace(/<form(.*)>/g, `<form $1 action="${userReq.originalUrl}">`);
 
         return updatedData;
       },
       userResHeaderDecorator(headers, _, userRes) {
+        // adjust redirect location
         if (userRes.statusCode === 302) {
           return {
             ...headers,
