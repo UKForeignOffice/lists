@@ -2,7 +2,7 @@ import express from "express";
 import { exec } from "child_process";
 import rateLimit from "express-rate-limit";
 import { listAppliedMigrations } from "server/models/helpers";
-import { prepareAndSeedDb } from "server/models/db/seed";
+import { prepareAndSeedDb } from "server/models/db/helpers";
 import { isLocalHost } from "server/config";
 
 const router = express.Router();
