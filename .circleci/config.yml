@@ -148,11 +148,10 @@ workflows:
               only: /.*/
 
       - publish:
+          name: publish-dev
           requires:
             - build
           filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
                 - deploy-dev
@@ -168,6 +167,17 @@ workflows:
             branches:
               only:
                 - deploy-dev
+
+      - publish:
+          name: publish-prod
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - master
 
       - deploy:
           name: deploy-prod
