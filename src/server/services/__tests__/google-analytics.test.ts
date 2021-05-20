@@ -9,7 +9,7 @@ describe("Google Analytics service:", () => {
   const HOST = "https://www.google-analytics.com";
   const URL = `/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`;
 
-  test("trackListSearch event is posted correctly", (done) => {
+  test("trackListSearch event is posted correctly", async () => {
     const params = {
       serviceType: "lawyers",
       country: "United Kingdom",
@@ -29,14 +29,11 @@ describe("Google Analytics service:", () => {
     });
 
     const scope = nock(HOST).post(URL, expectedBody).reply(200);
-    trackListsSearch(params);
-    setTimeout(() => {
-      expect(scope.isDone()).toBe(true);
-      done();
-    });
+    await trackListsSearch(params);
+    expect(scope.isDone()).toBe(true);
   });
 
-  test("nil params are removed from posted event params object", (done) => {
+  test("nil params are removed from posted event params object", async () => {
     const params: any = {
       serviceType: "lawyers",
       country: "United Kingdom",
@@ -60,25 +57,19 @@ describe("Google Analytics service:", () => {
     });
 
     const scope = nock(HOST).post(URL, expectedBody).reply(200);
-    trackListsSearch(params);
-    setTimeout(() => {
-      expect(scope.isDone()).toBe(true);
-      done();
-    });
+    await trackListsSearch(params);
+    expect(scope.isDone()).toBe(true);
   });
 
-  test("Post event errors are logged", (done) => {
+  test("Post event errors are logged", async () => {
     const spyLogger = jest.spyOn(logger, "error");
     const scope = nock(HOST).post(URL).replyWithError("ERROR");
 
-    trackListsSearch({});
+    await trackListsSearch({});
 
-    setTimeout(() => {
-      expect(scope.isDone()).toBe(true);
-      expect(spyLogger.mock.calls[0][0]).toBe(
-        "Google Analytics Post Event Error:"
-      );
-      done();
-    }, 10);
+    expect(scope.isDone()).toBe(true);
+    expect(spyLogger.mock.calls[0][0]).toBe(
+      "Google Analytics Post Event Error:"
+    );
   });
 });

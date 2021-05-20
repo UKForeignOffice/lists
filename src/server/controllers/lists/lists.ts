@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { noop } from "lodash";
 import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
@@ -42,7 +43,7 @@ export function listsPostController(req: Request, res: Response): void {
     trackListsSearch({
       serviceType,
       country,
-    });
+    }).catch(noop);
 
     return res.redirect(getCountryLawyerRedirectLink(country));
   }
@@ -86,7 +87,7 @@ export function listsResultsController(
     region,
     practiceArea: practiceArea?.join(","),
     legalAid,
-  });
+  }).catch(noop);
 
   switch (serviceType) {
     case "lawyers":
