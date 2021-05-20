@@ -1,7 +1,9 @@
+import { prisma } from "./prisma-client";
 import { db } from "./database";
 import { logger } from "server/services/logger";
+import { seedDb } from "./seed-data/seed-db";
 
-export const createPostgis = async (): Promise<"OK" | string> => {
+export const createPostgis = async (): Promise<string> => {
   const createPostGisExtension = "CREATE EXTENSION postgis;";
 
   try {
@@ -20,6 +22,9 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
         "location" geography(POINT),
         PRIMARY KEY ("id")
      );
+     CREATE INDEX location_geo_idx
+     ON "GeoLocation"
+     USING GIST (location);
   `;
 
   try {
@@ -63,3 +68,17 @@ export const dumpDb = async (): Promise<any> => {
     return error;
   }
 };
+
+export async function prepareAndSeedDb(): Promise<string[]> {
+  try {
+    logger.info("Prepare Database: Installing Postgis");
+    await createPostgis();
+    logger.info("Prepare Database: Create GeoLocation Table");
+    await createGeoLocationTable();
+    logger.info("Prepare Database: Seeding data");
+    return await seedDb(prisma);
+  } catch (error) {
+    logger.error(`prepareAndSeedDb Error: ${error.message}`);
+    throw error;
+  }
+}

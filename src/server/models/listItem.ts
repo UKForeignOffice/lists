@@ -1,4 +1,4 @@
-import { isArray, uniq, startCase, toLower } from "lodash";
+import { isArray, uniq, startCase, toLower, merge, get } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -10,6 +10,7 @@ import {
   ListItem,
   LawyerListItemCreateInput,
   LawyerListItemGetObject,
+  LawyerListItemJsonData,
 } from "./types";
 import {
   filterAllowedLegalAreas,
@@ -66,8 +67,9 @@ async function createAddressGeoLocation(
   return false;
 }
 
-// TODO: type
-function parseOutOfHoursObject(lawyer: LawyersFormWebhookData): any {
+function parseOutOfHoursObject(
+  lawyer: LawyersFormWebhookData
+): LawyerListItemJsonData["outOfHours"] {
   const telephone = lawyer.outOfHours?.phoneNumber;
   const email = lawyer.outOfHours?.emailAddress;
   const address =
@@ -364,5 +366,36 @@ export async function blockListItem({
   } catch (error) {
     logger.error(`blockLawyer Error ${error.message}`);
     throw new Error("Failed to publish lawyer");
+  }
+}
+
+export async function setEmailIsVerified({
+  reference,
+}: {
+  reference: string;
+}): Promise<boolean> {
+  try {
+    const item = await prisma.listItem.findUnique({
+      where: { reference },
+    });
+
+    if (get(item, "jsonData.metadata.emailVerified") === true) {
+      return true;
+    }
+
+    const jsonData = merge(item?.jsonData, {
+      metadata: { emailVerified: true },
+    });
+
+    await prisma.listItem.update({
+      where: { reference },
+      data: { jsonData },
+    });
+
+    return true;
+  } catch (error) {
+    const message = `setEmailIsVerified Error ${error.message}`;
+    logger.error(message);
+    throw new Error(message);
   }
 }

@@ -12,6 +12,17 @@ export function configureFormRunnerProxy(server: Express): void {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace(`${FORM_RUNNER_BASE_ROUTE}`, "");
       },
+      proxyReqOptDecorator: function (proxyReqOpts) {
+        if (typeof proxyReqOpts?.headers?.cookie === "string") {
+          // remove cookies_policy cookie because form-runner breaks with JSON cookies
+          proxyReqOpts.headers.cookie = proxyReqOpts.headers.cookie.replace(
+            /\scookies_policy={\S+}(;)?/g,
+            ""
+          );
+        }
+
+        return proxyReqOpts;
+      },
       userResDecorator: function (_, proxyResData, userReq) {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
@@ -20,18 +31,16 @@ export function configureFormRunnerProxy(server: Express): void {
         const data = proxyResData.toString("utf8");
 
         const updatedData = data
-          .replaceAll(
+          .replace(
             /(href|src)="\/([^'"]+)/g,
-            `$1="${FORM_RUNNER_BASE_ROUTE}/$2"`
+            `$1="${FORM_RUNNER_BASE_ROUTE}/$2`
           )
-          .replaceAll(
-            /<form(.*)>/g,
-            `<form $1 action="${userReq.originalUrl}">`
-          );
+          .replace(/<form(.*)>/g, `<form $1 action="${userReq.originalUrl}">`);
 
         return updatedData;
       },
       userResHeaderDecorator(headers, _, userRes) {
+        // adjust redirect location
         if (userRes.statusCode === 302) {
           return {
             ...headers,
