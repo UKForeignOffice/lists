@@ -12,6 +12,17 @@ export function configureFormRunnerProxy(server: Express): void {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace(`${FORM_RUNNER_BASE_ROUTE}`, "");
       },
+      proxyReqOptDecorator: function (proxyReqOpts) {
+        if (typeof proxyReqOpts?.headers?.cookie === "string") {
+          // remove cookies_policy cookie because form-runner breaks with JSON cookies
+          proxyReqOpts.headers.cookie = proxyReqOpts.headers.cookie.replace(
+            /\scookies_policy={\S+}(;)?/g,
+            ""
+          );
+        }
+
+        return proxyReqOpts;
+      },
       userResDecorator: function (_, proxyResData, userReq) {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
