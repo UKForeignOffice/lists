@@ -49,6 +49,9 @@ export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
       city: string;
     };
   };
+  metadata?: {
+    emailVerified?: boolean;
+  };
 }
 
 export interface LawyerListItemCreateInput extends ListItemCreateInput {

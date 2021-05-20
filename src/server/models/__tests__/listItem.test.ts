@@ -9,6 +9,7 @@ import {
   blockListItem,
   createLawyerListItem,
   findPublishedLawyersPerCountry,
+  setEmailIsVerified,
 } from "../listItem";
 
 const LawyerWebhookData: LawyersFormWebhookData = {
@@ -50,18 +51,27 @@ const LawyerWebhookData: LawyersFormWebhookData = {
 };
 
 describe("ListItem Model:", () => {
-  const sampleLawyer = { organisationName: "The Amazing Lawyers" };
-
-  const spyLawyerCreate = (returnValue?: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "create")
-      .mockResolvedValue(returnValue ?? sampleLawyer);
+  const sampleListItem = {
+    id: "123ABC",
+    jsonData: { organisationName: "The Amazing Lawyers" },
   };
 
-  const spyLawyerUpdate = (returnValue?: any): jest.SpyInstance => {
+  const spyListItemFindUnique = (returnValue?: any): jest.SpyInstance => {
+    return jest
+      .spyOn(prisma.listItem, "findUnique")
+      .mockResolvedValue(returnValue ?? sampleListItem);
+  };
+
+  const spyListItemCreate = (returnValue?: any): jest.SpyInstance => {
+    return jest
+      .spyOn(prisma.listItem, "create")
+      .mockResolvedValue(returnValue ?? sampleListItem);
+  };
+
+  const spyListItemUpdate = (returnValue?: any): jest.SpyInstance => {
     return jest
       .spyOn(prisma.listItem, "update")
-      .mockResolvedValue(returnValue ?? sampleLawyer);
+      .mockResolvedValue(returnValue ?? sampleListItem);
   };
 
   const spyPrismaQueryRaw = (returnValue: any): jest.SpyInstance => {
@@ -113,7 +123,7 @@ describe("ListItem Model:", () => {
     test("createLawyer command correctly calls country.upsert", async () => {
       spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
-      spyLawyerCreate();
+      spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
       try {
@@ -135,7 +145,7 @@ describe("ListItem Model:", () => {
       spyPrismaQueryRaw([{ count: 0 }]);
       spyLocationService();
       spyCountryUpsert();
-      const spy = spyLawyerCreate();
+      const spy = spyListItemCreate();
 
       try {
         await createLawyerListItem(LawyerWebhookData);
@@ -319,51 +329,118 @@ describe("ListItem Model:", () => {
     });
   });
 
-  test("approveLawyer command is correct", async () => {
-    const spy = spyLawyerUpdate();
-    const result = await approveListItem({ reference: "reference" });
+  describe("approveLawyer", () => {
+    test("update command is correct", async () => {
+      const spy = spyListItemUpdate();
+      const result = await approveListItem({ reference: "reference" });
 
-    expect(spy).toHaveBeenCalledWith({
-      where: {
-        reference: "reference",
-      },
-      data: {
-        isApproved: true,
-      },
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          reference: "reference",
+        },
+        data: {
+          isApproved: true,
+        },
+      });
+
+      expect(result).toBe(sampleListItem);
     });
-
-    expect(result).toBe(sampleLawyer);
   });
 
-  test("publishLawyer command is correct", async () => {
-    const spy = spyLawyerUpdate();
-    const result = await publishListItem({ reference: "reference" });
+  describe("publishLawyer", () => {
+    test("update command is correct", async () => {
+      const spy = spyListItemUpdate();
+      const result = await publishListItem({ reference: "reference" });
 
-    expect(spy).toHaveBeenCalledWith({
-      where: {
-        reference: "reference",
-      },
-      data: {
-        isPublished: true,
-      },
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          reference: "reference",
+        },
+        data: {
+          isPublished: true,
+        },
+      });
+
+      expect(result).toBe(sampleListItem);
     });
-
-    expect(result).toBe(sampleLawyer);
   });
 
-  test("blockLawyer command is correct", async () => {
-    const spy = spyLawyerUpdate();
-    const result = await blockListItem({ reference: "reference" });
+  describe("blockLawyer", () => {
+    test("update command is correct", async () => {
+      const spy = spyListItemUpdate();
+      const result = await blockListItem({ reference: "reference" });
 
-    expect(spy).toHaveBeenCalledWith({
-      where: {
-        reference: "reference",
-      },
-      data: {
-        isBlocked: true,
-      },
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          reference: "reference",
+        },
+        data: {
+          isBlocked: true,
+        },
+      });
+      expect(result).toBe(sampleListItem);
+    });
+  });
+
+  describe("setEmailIsVerified", () => {
+    test("findUnique command is correct", async () => {
+      const reference = "123ABC";
+      const spy = spyListItemFindUnique({
+        ...sampleListItem,
+        jsonData: {
+          ...sampleListItem.jsonData,
+          metadata: {
+            emailVerified: true,
+          },
+        },
+      });
+
+      const result = await setEmailIsVerified({ reference });
+
+      expect(result).toBe(true);
+      expect(spy).toHaveBeenCalledWith({
+        where: { reference },
+      });
     });
 
-    expect(result).toBe(sampleLawyer);
+    test("it won't call update if email has already been verified", async () => {
+      const reference = "123ABC";
+      const spyFindUnique = spyListItemFindUnique({
+        ...sampleListItem,
+        jsonData: {
+          ...sampleListItem.jsonData,
+          metadata: {
+            emailVerified: true,
+          },
+        },
+      });
+      const spyUpdate = spyListItemUpdate();
+
+      const result = await setEmailIsVerified({ reference });
+
+      expect(result).toBe(true);
+      expect(spyFindUnique).toHaveBeenCalled();
+      expect(spyUpdate).not.toHaveBeenCalled();
+    });
+
+    test("update command is correct", async () => {
+      const reference = "123ABC";
+      spyListItemFindUnique();
+      const spyUpdate = spyListItemUpdate();
+
+      const result = await setEmailIsVerified({ reference });
+
+      expect(spyUpdate).toHaveBeenCalledWith({
+        where: { reference },
+        data: {
+          jsonData: {
+            ...sampleListItem.jsonData,
+            metadata: { emailVerified: true },
+          },
+        },
+      });
+
+      expect(result).toBe(true);
+    });
   });
 });

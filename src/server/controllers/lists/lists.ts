@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
+import { listItem } from "server/models";
 import {
   searchLawyers,
   lawyersGetController,
@@ -131,7 +132,11 @@ export function listsDataIngestionController(
 export function listsConfirmApplicationController(
   req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ): void {
-  res.send("OK");
+  const { reference } = req.params;
+  listItem
+    .setEmailIsVerified({ reference })
+    .then(() => res.render("lists/application-confirmation-page.html"))
+    .catch(next);
 }
