@@ -27,7 +27,7 @@ interface ListItemGetObject extends PrismaClient.ListItem {
 }
 
 // Lawyer
-interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
+export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
   contactName: string;
   organisationName: string;
   telephone: string;
@@ -48,6 +48,9 @@ interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
       postCode: string;
       city: string;
     };
+  };
+  metadata?: {
+    emailVerified?: boolean;
   };
 }
 
