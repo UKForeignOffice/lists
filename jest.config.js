@@ -13,7 +13,10 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: "jsdom",
   // setupFiles
-  setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
-  setupFilesAfterEnv: ["<rootDir>/.jest/extensions.js"],
+  setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
+  setupFilesAfterEnv: [
+    "<rootDir>/.jest/setup.ts",
+    "<rootDir>/.jest/extensions.ts",
+  ],
   modulePathIgnorePatterns: ["<rootDir>/src/form-runner/form-runner-app"],
 };

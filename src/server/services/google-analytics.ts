@@ -16,15 +16,20 @@ export interface GA_Event {
   params: GA_Search_Params;
 }
 
-export function trackListsSearch(params: GA_Search_Params): void {
+export async function trackListsSearch(
+  params: GA_Search_Params
+): Promise<boolean> {
   const event: GA_Event = {
     name: "lists_search",
     params: omitBy(params, isNil),
   };
 
-  postEvent(event).catch((error) =>
-    logger.error("Google Analytics trackListSearch Error:", error)
-  );
+  try {
+    return await postEvent(event);
+  } catch (error) {
+    logger.error("Google Analytics trackListSearch Error:", error);
+    return false;
+  }
 }
 
 async function postEvent(event: GA_Event): Promise<boolean> {
