@@ -1,9 +1,16 @@
 import $ from "cheerio";
+import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
-import { server } from "../server";
+import { getServer } from "../server";
 
 describe("Lawyers List:", () => {
+  let server: Express;
+
+  beforeAll(async () => {
+    server = await getServer();
+  }, 30000);
+
   describe("Lawyer's land page", () => {
     const pageLink = "/find?serviceType=lawyers";
 

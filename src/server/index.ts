@@ -1,10 +1,11 @@
-import { server } from "./server";
+import { getServer } from "./server";
 import { PORT, NODE_ENV } from "./config";
 import { logger } from "./services/logger";
 import { startFormRunner } from "server/services/form-runner";
 
 startFormRunner()
-  .then(() => {
+  .then(getServer)
+  .then((server) => {
     server.listen(PORT, () => {
       logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
     });
