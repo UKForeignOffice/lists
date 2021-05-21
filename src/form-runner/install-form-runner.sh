@@ -1,14 +1,14 @@
 #!/bin/bash
 
 root_folder=$(pwd)
-form_runner_folder=./lib/form-runner
+form_runner_folder="$root_folder/lib/form-runner"
 form_runner_forms_folder="$form_runner_folder/runner/dist/server/forms"
 form_runner_env_file="$form_runner_folder/runner/.env"
 forms_json_folder=./src/form-runner/forms-json
 
 # rm -rf $form_runner_folder
 
-if [ -d "$form_runner_folder/node_modules" ]
+if [ -n "$(ls -A "$form_runner_folder/node_modules/.bin" 2>/dev/null)" ]
 then
   echo "Form Runner Already Installed"
 else
