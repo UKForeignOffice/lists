@@ -8,7 +8,7 @@ import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
 import { getServer } from "server/server";
 
-describe("Auth Module", () => {
+describe.skip("Auth Module", () => {
   let req: any, res: any, next: any;
   
   beforeAll(async () => {

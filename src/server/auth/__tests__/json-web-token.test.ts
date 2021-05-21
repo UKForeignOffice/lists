@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { createAuthenticationPath } from "../json-web-token";
 
-describe("Auth JSON Web Token", () => {
+describe.skip("Auth JSON Web Token", () => {
   describe("createAuthenticationPath", () => {
     test("authentication path is correct", async () => {
       const path: any = await createAuthenticationPath({
