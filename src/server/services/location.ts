@@ -1,10 +1,16 @@
 import { Location } from "aws-sdk";
 import {
+  AWS_REGION,
   LOCATION_SERVICE_ACCESS_KEY,
   LOCATION_SERVICE_SECRET_KEY,
   LOCATION_SERVICE_INDEX_NAME,
 } from "server/config";
 import { logger } from "./logger";
+
+// TODO
+// if (GOVUK_NOTIFY_API_KEY === undefined) {
+//   throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
+// }
 
 const INDEX_PARAMS = {
   DataSource: "Esri",
@@ -23,7 +29,7 @@ export function getAWSLocationService(): Location {
   if (location === undefined) {
     location = new Location({
       apiVersion: "2020-11-19",
-      region: "eu-west-1",
+      region: AWS_REGION,
     });
 
     location.config.credentials = {
