@@ -1,9 +1,8 @@
 import { createLogger, format, transports } from "winston";
-// import { PapertrailTransport } from "winston-papertrail-transport";
-
+import { PapertrailTransport } from "winston-papertrail-transport";
 import {
   LOG_LEVEL,
-  // isLocalHost,
+  isLocalHost,
   isTest,
 } from "server/config";
 
@@ -41,16 +40,16 @@ const transportsList = [
 ];
 
 // Debug dev only
-// if (!isLocalHost && !isTest) {
-//   transportsList.push(
-//     new PapertrailTransport({
-//       level: LOG_LEVEL,
-//       host: "logs.papertrailapp.com",
-//       port: 48692,
-//       format: formatters,
-//     }) as any
-//   );
-// }
+if (!isLocalHost && !isTest) {
+  transportsList.push(
+    new PapertrailTransport({
+      level: LOG_LEVEL,
+      host: "logs.papertrailapp.com",
+      port: 48692,
+      format: formatters,
+    }) as any
+  );
+}
 
 export const logger = createLogger({
   level: LOG_LEVEL,
