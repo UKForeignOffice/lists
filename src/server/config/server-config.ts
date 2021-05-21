@@ -4,11 +4,10 @@ dotenv.config();
 
 // Server config
 export const PORT = process.env.PORT ?? 3000;
-export const APP_NAME = process.env.APP_NAME ?? "lists";
-export const LOG_LEVEL = process.env.LOG_LEVEL ?? "error";
-export const NODE_ENV = process.env.NODE_ENV ?? "development";
 export const DEBUG = process.env.DEBUG === "true";
 export const SERVICE_NAME = process.env.SERVICE_NAME;
+export const LOG_LEVEL = process.env.LOG_LEVEL ?? "error";
+export const NODE_ENV = process.env.NODE_ENV ?? "development";
 
 // Helper flags
 export const isProd = NODE_ENV === "production";
