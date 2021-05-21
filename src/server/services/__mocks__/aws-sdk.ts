@@ -1,4 +1,3 @@
-
 const location = {
   config: {
     credentials: {},
@@ -38,9 +37,7 @@ const location = {
         DataSource: "Esri",
         MaxResults: 1,
         ResultBBox: [
-          100.50483000000008,
-          13.753360000000043,
-          100.50483000000008,
+          100.50483000000008, 13.753360000000043, 100.50483000000008,
           13.753360000000043,
         ],
         Text: "Bangkok, thailand",
@@ -49,4 +46,19 @@ const location = {
   }),
 };
 
+const secretsManager = {
+  config: {
+    credentials: {},
+  },
+  createSecret: jest.fn().mockReturnValue({
+    promise: jest.fn().mockResolvedValue({}),
+  }),
+  getSecretValue: jest.fn().mockReturnValue({
+    promise: jest.fn().mockResolvedValue({
+      SecretString: "123ABC",
+    }),
+  }),
+};
+
 export const Location = jest.fn().mockReturnValue(location);
+export const SecretsManager = jest.fn().mockReturnValue(secretsManager);
