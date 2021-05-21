@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="govuk-width-container ">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {% if error %}
+          {{ govukErrorSummary({
+            titleText: "Invalid GOV.UK email address",
+            errorList: [{
+              text: "Please use a valid GOV.UK email address",
+              href: "#email-address"
+            }]
+          }) }}
+        {% endif %}
+        {% if invalidToken %}
+          {{ govukErrorSummary({
+            titleText: "Authentication link has expired",
+            errorList: [{
+              text: "Please request a new autnetication link",
+              href: "#email-address"
+            }]
+          }) }}
+        {% endif %}
+        {% if success %}
+          <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+              <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                Success
+              </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+              <h3 class="govuk-notification-banner__heading">
+                Email sent
+              </h3>
+              <p class="govuk-body">We have sent you an email with the login instructions</p>
+            </div>
+          </div>
+        {% endif %}
+        {% if not success %}
+          <form class="form" method="post">
+            <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
+              <h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--l" for="email-address">
+                  Please enter your GOV.UK email address
+                </label>
+              </h1>
+              <div id="email-address-hint" class="govuk-hint">
+                You will receive an email with the login instructions
+              </div>
+              {% if error %}
+                <span class="govuk-error-message">
+                  <span class="govuk-visually-hidden">Error:</span> Invalid GOV.UK email address
+                </span>
+              {% endif %}
+              <input class="govuk-input" id="email-address" name="emailAddress" type="text" aria-describedby="email-address-hint">
+            </div>
+            <button class="govuk-button" data-module="govuk-button">Continue</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
