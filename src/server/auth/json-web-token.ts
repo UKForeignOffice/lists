@@ -1,8 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { logger } from "server/services/logger";
+import { getSecretValue } from "server/services/secrets-manager";
 import {
-  JWT_ISSUER,
-  JWT_SECRET,
   JWT_ALGORITHM,
   JWT_EXPIRE_TIME,
   authRoutes,
@@ -10,20 +9,36 @@ import {
 import { User } from "./types";
 
 const JWT_OPTIONS: SignOptions = {
-  issuer: JWT_ISSUER,
   algorithm: JWT_ALGORITHM,
   expiresIn: JWT_EXPIRE_TIME,
 };
 
-export function createAuthenticationJWT(user: User): string | boolean {
+let JWT_SECRET: string;
+
+export async function getJwtSecret(): Promise<string> {
+  if (JWT_SECRET === undefined) {
+    JWT_SECRET = await getSecretValue("JWT_SECRET");
+  }
+
+  return JWT_SECRET
+}
+
+export async function createAuthenticationJWT(user: User): Promise<string | boolean> {
   try {
-    return jwt.sign({ user }, `${JWT_SECRET}`, JWT_OPTIONS);
+    const secret = await getJwtSecret();
+    return jwt.sign({ user }, secret, JWT_OPTIONS);
   } catch (error) {
     logger.error(`createLoginJWT Error: ${error.message}`);
     return false;
   }
 }
 
-export function createAuthenticationPath(user: User): string | boolean {
-  return `${authRoutes.login}?token=${createAuthenticationJWT(user)}`;
+export async function createAuthenticationPath(user: User): Promise<string | boolean> {
+  try {
+    const token = await createAuthenticationJWT(user);
+    return `${authRoutes.login}?token=${token}`;
+  } catch (error) {
+    logger.error(`createLoginJWT Error: ${error.message}`);
+    return false;
+  }
 }

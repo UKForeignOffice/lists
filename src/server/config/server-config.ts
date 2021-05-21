@@ -10,9 +10,6 @@ export const NODE_ENV = process.env.NODE_ENV ?? "development";
 export const DEBUG = process.env.DEBUG === "true";
 export const SERVICE_NAME = process.env.SERVICE_NAME;
 
-// Auth
-export const { SESSION_SECRET, JWT_SECRET, JWT_ISSUER } = process.env;
-
 // Helper flags
 export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";

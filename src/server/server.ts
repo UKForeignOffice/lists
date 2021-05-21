@@ -27,8 +27,8 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   await configureExpressSession(server);
+  await configureAuth(server);
   configureViews(server);
-  configureAuth(server);
   configureRouter(server);
   configureStaticServer(server);
   configureErrorHandlers(server);

@@ -6,9 +6,14 @@ import {
 } from "../controllers";
 import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
+import { getServer } from "server/server";
 
 describe("Auth Module", () => {
   let req: any, res: any, next: any;
+  
+  beforeAll(async () => {
+    await getServer();
+  })
 
   beforeEach(() => {
     req = {
@@ -68,7 +73,7 @@ describe("Auth Module", () => {
     function spyCreateAuthenticationPath(): any {
       return jest
         .spyOn(tokenService, "createAuthenticationPath")
-        .mockReturnValue("/login?token=123Token");
+        .mockResolvedValue("/login?token=123Token");
     }
 
     test("authentication request is successful when email address is gov.uk", (done) => {
@@ -86,7 +91,7 @@ describe("Auth Module", () => {
       });
     });
 
-    test("sendAuthenticationEmail is called with correct parameters", () => {
+    test("sendAuthenticationEmail is called with correct parameters", (done) => {
       const emailAddress = "person@depto.gov.uk";
       req.body.emailAddress = emailAddress;
 
@@ -94,11 +99,14 @@ describe("Auth Module", () => {
       const createAuthTokenSpy = spyCreateAuthenticationPath();
       postLoginController(req, res, next);
 
-      expect(createAuthTokenSpy).toHaveBeenCalledWith({ emailAddress });
-      expect(sendEmailSpy).toHaveBeenCalledWith(
-        emailAddress,
-        "https://localhost/login?token=123Token"
-      );
+      setTimeout(() => {
+        expect(createAuthTokenSpy).toHaveBeenCalledWith({ emailAddress });
+        expect(sendEmailSpy).toHaveBeenCalledWith(
+          emailAddress,
+          "https://localhost/login?token=123Token"
+        );
+        done()
+      })
     });
 
     test("next function is called when sendAuthenticationEmail rejects", (done) => {
@@ -136,8 +144,8 @@ describe("Auth Module", () => {
   });
 
   describe("authController", () => {
-    test("authentication is correct", () => {
-      const authPath: any = tokenService.createAuthenticationPath({
+    test("authentication is correct", async () => {
+      const authPath: any = await tokenService.createAuthenticationPath({
         emailAddress: "person@depto.gov.uk",
       });
       req.url = `http://localhost${authPath}`;
@@ -153,8 +161,8 @@ describe("Auth Module", () => {
       });
     });
 
-    test("authentication redirects to session.returnTo", () => {
-      const authPath: any = tokenService.createAuthenticationPath({
+    test("authentication redirects to session.returnTo", async () => {
+      const authPath: any = await tokenService.createAuthenticationPath({
         emailAddress: "person@depto.gov.uk",
       });
       req.url = `http://localhost${authPath}`;
@@ -166,8 +174,8 @@ describe("Auth Module", () => {
       expect(res.redirect).toHaveBeenCalledWith("/dashboard?something=1");
     });
 
-    test("authentication fails when token is invalid", () => {
-      const authPath: any = tokenService.createAuthenticationPath({
+    test("authentication fails when token is invalid", async () => {
+      const authPath: any = await tokenService.createAuthenticationPath({
         emailAddress: "person@depto.gov.uk",
       });
 

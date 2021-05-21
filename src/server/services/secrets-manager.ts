@@ -11,6 +11,7 @@ import { logger } from "./logger";
 // if (GOVUK_NOTIFY_API_KEY === undefined) {
 //   throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
 // }
+
 let secretsManager: SecretsManager;
 
 export function getAWSSecretsManager(): SecretsManager {

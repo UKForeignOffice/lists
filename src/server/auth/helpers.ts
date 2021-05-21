@@ -1,5 +1,5 @@
 import { Express, Request, Response, NextFunction } from "express";
-import passport from "./passport";
+import { configurePassport } from "./passport";
 import { authRoutes } from "./constants";
 import authRouter from "./routes";
 
@@ -16,8 +16,7 @@ export function ensureAuthenticated(
   }
 }
 
-export function configureAuth(server: Express): void {
-  server.use(passport.initialize());
-  server.use(passport.session());
+export async function configureAuth(server: Express): Promise<void> {
+  await configurePassport(server);
   server.use(authRouter);
 }

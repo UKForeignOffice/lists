@@ -34,10 +34,13 @@ export function postLoginController(
   const { emailAddress } = req.body;
 
   if (isGovUKEmailAddress(emailAddress)) {
-    const authPath = createAuthenticationPath({ emailAddress });
-    const authLink = `${req.protocol}://${req.get("host")}${authPath}`;
-
-    sendAuthenticationEmail(emailAddress, authLink)
+    createAuthenticationPath({ emailAddress })
+      .then((authPath) => {
+        return `${req.protocol}://${req.get("host")}${authPath}`;
+      })
+      .then(async (authLink) => {
+        return await sendAuthenticationEmail(emailAddress, authLink);
+      })
       .then(() => {
         res.render("login", {
           success: true,
