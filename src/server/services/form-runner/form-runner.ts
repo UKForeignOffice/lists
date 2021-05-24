@@ -13,6 +13,8 @@ export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
 
   if (!isStarting && !isAlreadyRunning) {
+    const keys = Object.keys(process.env).join(", ");
+    logger.info(`Env Keys ${keys}`);
     logger.info("Form Runner Starting");
 
     isStarting = true;
