@@ -1,6 +1,10 @@
 import { Request } from "express";
 import { CountryName } from "server/models/types";
 
+export enum ServiceType {
+  "lawyers" = "lawyers",
+}
+
 export enum QuestionName {
   "readNotice" = "readNotice",
   "country" = "country",

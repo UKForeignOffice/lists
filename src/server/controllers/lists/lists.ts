@@ -21,7 +21,7 @@ import {
 import { logger } from "server/services/logger";
 import { legalPracticeAreasList } from "server/services/metadata";
 import { questions } from "./questionnaire";
-import { QuestionError, QuestionName } from "./types";
+import { QuestionError, QuestionName, ServiceType } from "./types";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -80,7 +80,7 @@ export function listsGetController(
   }
 
   switch (serviceType) {
-    case "lawyers":
+    case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
       break;
     default:
@@ -138,8 +138,8 @@ export function listsResultsController(
   }).catch(noop);
 
   switch (serviceType) {
-    case "lawyers":
-      searchLawyers(req, res, next).catch((error) =>
+    case ServiceType.lawyers:
+      searchLawyers(req, res).catch((error) =>
         logger.error("Lists Result Controller", { error })
       );
       break;
@@ -153,7 +153,7 @@ export function listRedirectToLawyersController(
   res: Response
 ): void {
   const params = getAllRequestParams(req);
-  params.serviceType = "lawyers";
+  params.serviceType = ServiceType.lawyers;
   const queryString = queryStringFromParams(params);
 
   res.redirect(`${listsRoutes.finder}?${queryString}`);
@@ -167,7 +167,7 @@ export function listsDataIngestionController(
   const { serviceType } = req.params;
 
   switch (serviceType) {
-    case "lawyers":
+    case ServiceType.lawyers:
       lawyersDataIngestionController(req, res, next);
       break;
     default:

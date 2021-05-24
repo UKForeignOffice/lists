@@ -12,7 +12,7 @@ import {
 } from "lodash";
 
 import { listsRoutes } from "./constants";
-import { ListsRequestParams } from "./types";
+import { ListsRequestParams, ServiceType } from "./types";
 import { CountryName } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
@@ -89,7 +89,7 @@ export function getServiceLabel(
   serviceType: string | undefined
 ): string | undefined {
   switch (serviceType) {
-    case "lawyers":
+    case ServiceType.lawyers:
       return "a lawyer";
     case "medical facilities":
       return "medical assistance";
