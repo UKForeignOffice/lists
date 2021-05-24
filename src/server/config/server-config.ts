@@ -17,8 +17,8 @@ export const isLocalHost = process.env.LOCAL_HOST === "true";
 
 // AWS
 export const AWS_REGION = "eu-west-1";
-export const LOCATION_SERVICE_ACCESS_KEY = process.env.LOCATION_SERVICE_ACCESS_KEY ?? "123ABC"
-export const LOCATION_SERVICE_SECRET_KEY = process.env.LOCATION_SERVICE_SECRET_KEY ?? "123ABC"
+export const LOCATION_SERVICE_ACCESS_KEY = process.env.LOCATION_SERVICE_ACCESS_KEY
+export const LOCATION_SERVICE_SECRET_KEY = process.env.LOCATION_SERVICE_SECRET_KEY
 export const LOCATION_SERVICE_INDEX_NAME = process.env.LOCATION_SERVICE_INDEX_NAME
 
 // Google Analytics
