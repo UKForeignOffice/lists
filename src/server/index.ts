@@ -7,6 +7,8 @@ startFormRunner()
   .then(getServer)
   .then((server) => {
     server.listen(PORT, () => {
+      const keys = Object.keys(process.env).join(", ");
+      logger.info(`Env Keys ${keys}`);
       logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
     });
   })
