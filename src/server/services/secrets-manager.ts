@@ -15,7 +15,7 @@ import { logger } from "./logger";
 let secretsManager: SecretsManager;
 
 export function getAWSSecretsManager(): SecretsManager {
-  logger.info("id", LOCATION_SERVICE_ACCESS_KEY?.slice(8))
+  logger.info(`id ${LOCATION_SERVICE_ACCESS_KEY?.slice(5)} hasSecret ${typeof LOCATION_SERVICE_SECRET_KEY}`)
   if (secretsManager === undefined) {
     secretsManager = new SecretsManager({
       apiVersion: "2017-10-17",
