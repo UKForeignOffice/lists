@@ -15,16 +15,14 @@ import { logger } from "./logger";
 let secretsManager: SecretsManager;
 
 export function getAWSSecretsManager(): SecretsManager {
+  logger.info("id", LOCATION_SERVICE_ACCESS_KEY?.slice(8))
   if (secretsManager === undefined) {
     secretsManager = new SecretsManager({
       apiVersion: "2017-10-17",
       region: AWS_REGION,
+      accessKeyId: `${LOCATION_SERVICE_ACCESS_KEY}`,
+      secretAccessKey: `${LOCATION_SERVICE_SECRET_KEY}`
     });
-
-    secretsManager.config.credentials = {
-      accessKeyId: LOCATION_SERVICE_ACCESS_KEY ?? "",
-      secretAccessKey: LOCATION_SERVICE_SECRET_KEY ?? "",
-    };
   }
 
   return secretsManager;
