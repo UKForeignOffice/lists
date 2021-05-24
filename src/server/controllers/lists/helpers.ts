@@ -134,46 +134,6 @@ export const countryHasLegalAid = (() => {
     countriesWithLegalAid.includes(lowerCase(country));
 })();
 
-export function needToReadNotice(readNotice?: string): boolean {
-  return readNotice === undefined;
-}
-
-export function needToAnswerCountry(
-  country?: ListsRequestParams["country"]
-): boolean {
-  return country === undefined || country === "";
-}
-
-export function needToAnswerRegion(
-  region?: ListsRequestParams["region"]
-): boolean {
-  return region === undefined || region === "";
-}
-
-export function needToAnswerPracticeArea(
-  practiceArea?: ListsRequestParams["practiceArea"]
-): boolean {
-  return practiceArea === undefined || practiceArea.length === 0;
-}
-
-export function needToAnswerLegalAid(
-  legalAid?: ListsRequestParams["legalAid"]
-): boolean {
-  return legalAid === undefined || legalAid === "";
-}
-
-export function needToAnswerProBono(
-  proBono?: ListsRequestParams["proBono"]
-): boolean {
-  return proBono === undefined || proBono === "";
-}
-
-export function needToReadDisclaimer(
-  readDisclaimer?: ListsRequestParams["readDisclaimer"]
-): boolean {
-  return readDisclaimer === undefined || readDisclaimer === "";
-}
-
 export function createConfirmationLink(
   req: Request,
   reference: string

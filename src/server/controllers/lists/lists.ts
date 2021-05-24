@@ -6,8 +6,8 @@ import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { listItem } from "server/models";
 import {
   searchLawyers,
-  lawyersGetController,
   lawyersDataIngestionController,
+  lawyersQuestionsSequence,
 } from "./lawyers";
 import {
   getServiceLabel,
@@ -16,8 +16,12 @@ import {
   queryStringFromParams,
   practiceAreaFromParams,
   getCountryLawyerRedirectLink,
+  removeQueryParameter,
 } from "./helpers";
 import { logger } from "server/services/logger";
+import { legalPracticeAreasList } from "server/services/metadata";
+import { questions } from "./questionnaire";
+import { QuestionError, QuestionName } from "./types";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -57,8 +61,13 @@ export function listsGetController(
   next: NextFunction
 ): void {
   const params = getAllRequestParams(req);
-
+  const queryString = queryStringFromParams(params);
   const { serviceType } = params;
+
+  let questionsSequence: QuestionName[];
+  let partialPageTitle: string = "";
+  let partialToRender: string = "";
+  let error: boolean | QuestionError = false;
 
   if (serviceType === undefined) {
     res.render("lists/question-page.html", {
@@ -67,9 +76,48 @@ export function listsGetController(
       partialToRender: "question-service-type.html",
       serviceLabel: getServiceLabel(serviceType),
     });
-  } else if (serviceType === "lawyers") {
-    lawyersGetController(req, res, next);
+    return;
   }
+
+  switch (serviceType) {
+    case "lawyers":
+      questionsSequence = lawyersQuestionsSequence;
+      break;
+    default:
+      questionsSequence = [];
+  }
+
+  const askQuestion = questionsSequence.some((questionName) => {
+    const question = questions[questionName];
+
+    if (question.needsToAnswer(req)) {
+      partialToRender = question.getViewPartialName(req);
+      partialPageTitle = question.pageTitle(req);
+      error = question.validate(req);
+      return true;
+    }
+
+    return false;
+  });
+
+  if (askQuestion) {
+    res.render("lists/question-page.html", {
+      ...DEFAULT_VIEW_PROPS,
+      ...params,
+      error,
+      queryString,
+      partialToRender,
+      partialPageTitle,
+      removeQueryParameter,
+      legalPracticeAreasList,
+      serviceLabel: getServiceLabel(params.serviceType),
+    });
+
+    return;
+  }
+
+  // redirect to results page
+  res.redirect(`${listsRoutes.results}?${queryString}`);
 }
 
 export function listsResultsController(

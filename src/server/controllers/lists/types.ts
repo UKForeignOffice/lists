@@ -1,4 +1,28 @@
+import { Request } from "express";
 import { CountryName } from "server/models/types";
+
+export enum QuestionName {
+  "readNotice" = "readNotice",
+  "country" = "country",
+  "region" = "region",
+  "practiceArea" = "practiceArea",
+  "proBono" = "proBono",
+  "legalAid" = "legalAid",
+  "readDisclaimer" = "readDisclaimer",
+}
+
+export interface QuestionError {
+  field: string;
+  text: string;
+  href: string;
+}
+
+export interface Question {
+  pageTitle: (req: Request) => string;
+  needsToAnswer: (req: Request) => boolean;
+  getViewPartialName: (req: Request) => string;
+  validate: (req: Request) => boolean | QuestionError;
+}
 
 export interface ListsRequestParams {
   serviceType?: string;
