@@ -1,9 +1,5 @@
 import { Location } from "aws-sdk";
-import {
-  LOCATION_SERVICE_ACCESS_KEY,
-  LOCATION_SERVICE_SECRET_KEY,
-  LOCATION_SERVICE_INDEX_NAME,
-} from "server/config";
+import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
 
 const INDEX_PARAMS = {
@@ -23,13 +19,8 @@ export function getAWSLocationService(): Location {
   if (location === undefined) {
     location = new Location({
       apiVersion: "2020-11-19",
-      region: "eu-west-1",
+      region: AWS_REGION,
     });
-
-    location.config.credentials = {
-      accessKeyId: LOCATION_SERVICE_ACCESS_KEY ?? "",
-      secretAccessKey: LOCATION_SERVICE_SECRET_KEY ?? "",
-    };
   }
 
   return location;

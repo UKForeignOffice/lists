@@ -1,7 +1,14 @@
+import { Express } from "express";
 import request from "supertest";
-import { server } from "../../server";
+import { getServer } from "../../server";
 
 describe("Health-check route", () => {
+  let server: Express;
+
+  beforeAll(async () => {
+    server = await getServer();
+  }, 30000);
+
   test("/health-check is responding correctly", async () => {
     const { body, status } = await request(server).get("/health-check");
     expect(status).toEqual(200);
