@@ -146,7 +146,7 @@ function fetchPublishedListItemQuery(props: {
     INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
     ${whereType}
     ${whereCountryName}
-    ${andWhere ?? ''}
+    ${andWhere ?? ""}
     AND "ListItem"."isApproved" = true
     AND "ListItem"."isPublished" = true
     AND "ListItem"."isBlocked" = false
@@ -290,7 +290,7 @@ export async function findPublishedLawyersPerCountry(props: {
 }
 
 // TODO test
-export async function findPublishedCovidTestingCentersPerCountry(props: {
+export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;
   region: string;
 }): Promise<LawyerListItemGetObject[]> {
@@ -299,7 +299,7 @@ export async function findPublishedCovidTestingCentersPerCountry(props: {
   }
 
   const countryName = startCase(toLower(props.countryName));
-  
+
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,
@@ -314,7 +314,7 @@ export async function findPublishedCovidTestingCentersPerCountry(props: {
 
     return await prisma.$queryRaw(query);
   } catch (error) {
-    logger.error("findPublishedCovidTestingCentersPerCountry ERROR: ", error);
+    logger.error("findPublishedCovidTestSupplierPerCountry ERROR: ", error);
     return [];
   }
 }

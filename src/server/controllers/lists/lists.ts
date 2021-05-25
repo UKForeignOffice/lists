@@ -5,16 +5,11 @@ import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { listItem } from "server/models";
 import {
-  searchLawyers,
-  lawyersDataIngestionController,
-  lawyersQuestionsSequence,
-} from "./lawyers";
-import {
   getServiceLabel,
   regionFromParams,
   getAllRequestParams,
   queryStringFromParams,
-  practiceAreaFromParams,
+  parseListValues,
   getCountryLawyerRedirectLink,
   removeQueryParameter,
 } from "./helpers";
@@ -22,6 +17,16 @@ import { logger } from "server/services/logger";
 import { legalPracticeAreasList } from "server/services/metadata";
 import { questions } from "./questionnaire";
 import { QuestionError, QuestionName, ServiceType } from "./types";
+
+import {
+  searchLawyers,
+  lawyersDataIngestionController,
+  lawyersQuestionsSequence,
+} from "./lawyers";
+import {
+  searchCovidTestSupplier,
+  covidTestQuestionsSequence,
+} from "./covidTestSuppliers";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -74,7 +79,7 @@ export function listsGetController(
       ...DEFAULT_VIEW_PROPS,
       ...params,
       partialToRender: "question-service-type.html",
-      serviceLabel: getServiceLabel(serviceType),
+      getServiceLabel,
     });
     return;
   }
@@ -82,6 +87,9 @@ export function listsGetController(
   switch (serviceType) {
     case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
+      break;
+    case ServiceType.covidTestSupplier:
+      questionsSequence = covidTestQuestionsSequence;
       break;
     default:
       questionsSequence = [];
@@ -127,7 +135,7 @@ export function listsResultsController(
 ): void {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
-  const practiceArea = practiceAreaFromParams(params);
+  const practiceArea = parseListValues("practiceArea", params);
 
   trackListsSearch({
     serviceType,
@@ -142,6 +150,11 @@ export function listsResultsController(
       searchLawyers(req, res).catch((error) =>
         logger.error("Lists Result Controller", { error })
       );
+      break;
+    case ServiceType.covidTestSupplier:
+      searchCovidTestSupplier(req, res).catch((error) => {
+        logger.error("Lists Result Controller", { error });
+      });
       break;
     default:
       next();

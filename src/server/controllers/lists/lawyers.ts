@@ -14,7 +14,7 @@ import {
   getAllRequestParams,
   removeQueryParameter,
   queryStringFromParams,
-  practiceAreaFromParams,
+  parseListValues,
   createConfirmationLink,
 } from "./helpers";
 import { logger } from "server/services/logger";
@@ -36,7 +36,7 @@ export async function searchLawyers(
 ): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region, proBono } = params;
-  const practiceArea = practiceAreaFromParams(params);
+  const practiceArea = parseListValues("practiceArea", params);
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
     countryName: country,

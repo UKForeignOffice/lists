@@ -3,6 +3,7 @@ import { CountryName } from "server/models/types";
 
 export enum ServiceType {
   "lawyers" = "lawyers",
+  "covidTestSupplier" = "covidTestSupplier",
 }
 
 export enum QuestionName {
@@ -13,6 +14,7 @@ export enum QuestionName {
   "proBono" = "proBono",
   "legalAid" = "legalAid",
   "readDisclaimer" = "readDisclaimer",
+  "resultsTurnaround" = "resultsTurnaround",
 }
 
 export interface QuestionError {
@@ -37,4 +39,5 @@ export interface ListsRequestParams {
   proBono?: "yes" | "no" | "";
   readNotice?: string;
   readDisclaimer?: string;
+  resultsTurnAround?: string | string[];
 }

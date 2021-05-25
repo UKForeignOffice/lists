@@ -2,7 +2,7 @@ import {
   countryHasLegalAid,
   queryStringFromParams,
   regionFromParams,
-  practiceAreaFromParams,
+  parseListValues,
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
@@ -70,7 +70,9 @@ describe("Lawyers List:", () => {
         practiceArea: ["Corporate", "Real Estate"],
       };
 
-      expect(practiceAreaFromParams(params)).toEqual(params.practiceArea);
+      expect(parseListValues("practiceArea", params)).toEqual(
+        params.practiceArea
+      );
     });
 
     test("returns practiceArea array when string", () => {
@@ -78,7 +80,7 @@ describe("Lawyers List:", () => {
         practiceArea: "Corporate, Real Estate",
       };
 
-      expect(practiceAreaFromParams(params)).toEqual([
+      expect(parseListValues("practiceArea", params)).toEqual([
         "Corporate",
         "Real Estate",
       ]);
@@ -113,9 +115,9 @@ describe("Lawyers List:", () => {
       expect(getServiceLabel("lawyers")).toEqual("a lawyer");
     });
 
-    test("medical assistance label is returned correctly", () => {
-      expect(getServiceLabel("medical facilities")).toEqual(
-        "medical assistance"
+    test("Covid test supplier label is returned correctly", () => {
+      expect(getServiceLabel("covidTestSupplier")).toEqual(
+        "Covid test supplier"
       );
     });
 

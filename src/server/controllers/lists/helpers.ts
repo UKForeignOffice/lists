@@ -67,21 +67,22 @@ export function regionFromParams(
   }
 }
 
-export function practiceAreaFromParams(
+export function parseListValues(
+  paramName: string,
   params: ListsRequestParams
 ): string[] | undefined {
-  if (!("practiceArea" in params)) {
+  if (!(`${paramName}` in params)) {
     return undefined;
   }
 
-  const { practiceArea } = params;
+  const value = get(params, paramName);
 
-  if (isArray(practiceArea)) {
-    return without(practiceArea, "");
+  if (isArray(value)) {
+    return without(value, "");
   }
 
-  if (isString(practiceArea)) {
-    return without(practiceArea.split(",").map(trim), "");
+  if (isString(value)) {
+    return without(value.split(",").map(trim), "");
   }
 }
 
@@ -91,8 +92,8 @@ export function getServiceLabel(
   switch (serviceType) {
     case ServiceType.lawyers:
       return "a lawyer";
-    case "medical facilities":
-      return "medical assistance";
+    case ServiceType.covidTestSupplier:
+      return "Covid test supplier";
     default:
       return undefined;
   }

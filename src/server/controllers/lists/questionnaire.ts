@@ -1,10 +1,10 @@
 import { Request } from "express";
-import { startCase } from "lodash";
+import { startCase, kebabCase } from "lodash";
 import {
   countryHasLegalAid,
   getAllRequestParams,
   getServiceLabel,
-  practiceAreaFromParams,
+  parseListValues,
 } from "./helpers";
 import { QuestionName, Question } from "./types";
 
@@ -20,7 +20,7 @@ export const questions: {
     },
     getViewPartialName(req) {
       const { serviceType } = getAllRequestParams(req);
-      return `${serviceType}-notice.html`;
+      return `${kebabCase(serviceType)}-notice.html`;
     },
     needsToAnswer(req) {
       const { readNotice } = getAllRequestParams(req);
@@ -92,12 +92,12 @@ export const questions: {
     },
     needsToAnswer(req: Request) {
       const params = getAllRequestParams(req);
-      const practiceArea = practiceAreaFromParams(params);
+      const practiceArea = parseListValues("practiceArea", params);
       return practiceArea === undefined || practiceArea.length === 0;
     },
     validate(req: Request) {
       const params = getAllRequestParams(req);
-      const practiceArea = practiceAreaFromParams(params);
+      const practiceArea = parseListValues("practiceArea", params);
 
       if (practiceArea?.join("") === "") {
         return {
@@ -182,6 +182,33 @@ export const questions: {
           field: "read-disclaimer",
           text: "Disclaimer is not allowed to be empty",
           href: "#read-disclaimer",
+        };
+      }
+
+      return false;
+    },
+  },
+  resultsTurnaround: {
+    getViewPartialName() {
+      return "question-results-turnaround.html";
+    },
+    pageTitle() {
+      return "How long after taking the Covid test do you need the provider to turnaround the results?";
+    },
+    needsToAnswer(req: Request) {
+      const params = getAllRequestParams(req);
+      const resultsTurnaround = parseListValues("resultsTurnaround", params);
+      return resultsTurnaround === undefined || resultsTurnaround.length === 0;
+    },
+    validate(req: Request) {
+      const params = getAllRequestParams(req);
+      const resultsTurnaround = parseListValues("resultsTurnaround", params);
+
+      if (resultsTurnaround?.join("") === "") {
+        return {
+          field: "practice-area",
+          text: "Practice area is not allowed to be empty",
+          href: "#practice-area-bankruptcy",
         };
       }
 
