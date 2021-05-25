@@ -1,6 +1,6 @@
 import { ensureAuthenticated } from "../helpers";
 
-describe.skip("Auth Service", () => {
+describe("Auth Service", () => {
   describe("ensureAuthenticated", () => {
     test("next function is called when user is authenticated", () => {
       const next = jest.fn();

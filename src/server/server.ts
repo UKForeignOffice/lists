@@ -11,7 +11,7 @@ import {
   configureFormRunnerProxy,
   configureCookieParser,
 } from "./middlewares";
-// import { configureAuth } from "./auth";
+import { configureAuth } from "./auth";
 import { configureRouter } from "./routes";
 
 const server = express();
@@ -27,7 +27,7 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   await configureExpressSession(server);
-  // await configureAuth(server);
+  await configureAuth(server);
   configureViews(server);
   configureRouter(server);
   configureStaticServer(server);

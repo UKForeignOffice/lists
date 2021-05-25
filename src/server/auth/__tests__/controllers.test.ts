@@ -8,12 +8,12 @@ import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
 import { getServer } from "server/server";
 
-describe.skip("Auth Module", () => {
+describe("Auth Module", () => {
   let req: any, res: any, next: any;
-  
+
   beforeAll(async () => {
     await getServer();
-  })
+  });
 
   beforeEach(() => {
     req = {
@@ -105,8 +105,8 @@ describe.skip("Auth Module", () => {
           emailAddress,
           "https://localhost/login?token=123Token"
         );
-        done()
-      })
+        done();
+      });
     });
 
     test("next function is called when sendAuthenticationEmail rejects", (done) => {
