@@ -2,11 +2,6 @@ import { Location } from "aws-sdk";
 import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
 
-// TODO
-// if (GOVUK_NOTIFY_API_KEY === undefined) {
-//   throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
-// }
-
 const INDEX_PARAMS = {
   DataSource: "Esri",
   IndexName: LOCATION_SERVICE_INDEX_NAME ?? "",
