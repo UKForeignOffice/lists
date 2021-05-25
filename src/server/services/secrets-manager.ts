@@ -1,10 +1,6 @@
 import crypto from "crypto";
 import { SecretsManager } from "aws-sdk";
-import {
-  AWS_REGION,
-  LOCATION_SERVICE_ACCESS_KEY,
-  LOCATION_SERVICE_SECRET_KEY,
-} from "server/config";
+import { AWS_REGION } from "server/config";
 import { logger } from "./logger";
 
 // TODO
@@ -19,8 +15,6 @@ export function getAWSSecretsManager(): SecretsManager {
     secretsManager = new SecretsManager({
       apiVersion: "2017-10-17",
       region: AWS_REGION,
-      accessKeyId: `${LOCATION_SERVICE_ACCESS_KEY}`,
-      secretAccessKey: `${LOCATION_SERVICE_SECRET_KEY}`
     });
   }
 
