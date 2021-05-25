@@ -42,14 +42,18 @@ describe("Auth Module", () => {
   describe("getLoginController", () => {
     test("next function is called when token parameter is present", () => {
       req.query.token = "123abc";
+
       getLoginController(req, res, next);
+
       expect(next).toHaveBeenCalled();
       expect(res.render).not.toHaveBeenCalled();
     });
 
     test("login view is rendered when token parameter is not present", () => {
       req.query.invalidToken = "true";
+
       getLoginController(req, res, next);
+
       expect(next).not.toHaveBeenCalled();
       expect(res.render).toHaveBeenCalledWith("login", {
         invalidToken: true,
@@ -93,10 +97,10 @@ describe("Auth Module", () => {
 
     test("sendAuthenticationEmail is called with correct parameters", (done) => {
       const emailAddress = "person@depto.gov.uk";
-      req.body.emailAddress = emailAddress;
-
       const sendEmailSpy = spySendAuthenticationEmail();
       const createAuthTokenSpy = spyCreateAuthenticationPath();
+      req.body.emailAddress = emailAddress;
+
       postLoginController(req, res, next);
 
       setTimeout(() => {
@@ -115,6 +119,7 @@ describe("Auth Module", () => {
 
       spySendAuthenticationEmail(true);
       spyCreateAuthenticationPath();
+
       postLoginController(req, res, next);
 
       setTimeout(() => {
