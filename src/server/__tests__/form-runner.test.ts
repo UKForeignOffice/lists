@@ -1,13 +1,17 @@
+import { Express } from "express";
 import request from "supertest";
-import { server } from "../server";
+import { getServer } from "../server";
 import {
   startFormRunner,
   isFormRunnerReady,
 } from "server/services/form-runner";
 
 describe("Form Runner:", () => {
+  let server: Express;
+
   beforeAll(async () => {
     await startFormRunner();
+    server = await getServer();
   }, 30000);
 
   test("form-runner is running", async () => {

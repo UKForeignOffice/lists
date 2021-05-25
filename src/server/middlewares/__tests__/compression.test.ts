@@ -1,7 +1,14 @@
+import { Express } from "express";
 import request from "supertest";
-import { server } from "../../server";
+import { getServer } from "../../server";
 
 describe("Compress middleware", () => {
+  let server: Express;
+
+  beforeAll(async () => {
+    server = await getServer();
+  }, 30000);
+
   test("is compressing when Accept-Encoding header is present", async () => {
     const { headers } = await request(server)
       .get("/")

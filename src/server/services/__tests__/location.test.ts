@@ -17,14 +17,6 @@ describe("Location service:", () => {
     expect(Location).toHaveBeenCalledWith(expectedParams);
   });
 
-  test("expect credentials to be set correctly", () => {
-    const location = getAWSLocationService();
-    expect(location.config.credentials).toEqual({
-      accessKeyId: "LOCATION_SERVICE_ACCESS_KEY",
-      secretAccessKey: "LOCATION_SERVICE_SECRET_KEY",
-    });
-  });
-
   test("checkIfPlaceIndexExists returns true when place index exists", async () => {
     // place index is mocked see ../__mocks__
     const exists = await checkIfPlaceIndexExists("MOCK_INDEX_NAME");

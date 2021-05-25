@@ -40,4 +40,9 @@ router.get("/dev/list-applied-migrations", (req, res) => {
     });
 });
 
+router.get("/dev/list-env-names", (req, res) => {
+  const keys = Object.keys(process.env).join(", ");
+  res.json({ keys });
+});
+
 export default router;
