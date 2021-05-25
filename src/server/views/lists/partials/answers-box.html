@@ -66,5 +66,16 @@
         >Change</a>
       </p>
     {% endif %} 
+    {% if resultsTurnaround %}
+      <p class="govuk-body">
+        Results turnaround?<br />
+        <strong>{{ _.split(resultsTurnaround, ",").map(_.startCase).join(", ") }} hours</strong>
+        <a 
+          class="govuk-link" 
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
+          aria-label="Change results turnaround answer"
+        >Change</a>
+      </p>
+    {% endif %} 
   </div>
   

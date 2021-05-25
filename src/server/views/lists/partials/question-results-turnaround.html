@@ -1,0 +1,39 @@
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'results-turnaround' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="results-turnaround-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="resultsTurnaround">
+          How long after taking the Covid test do you need the provider to turnaround the results?
+        </label>
+      </h1>
+      <div id="practice-area-hint" class="govuk-hint">
+        You can choose as many options from the list as you need.
+      </div>
+      {% if error.field === 'results-turnaround' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <div class="govuk-checkboxes">
+        {% for turnAround in [24, 48, 72] %}
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="results-turnaround-{{turnAround}}"
+            name="resultsTurnaround"
+            type="checkbox"
+            value="{{ turnAround }}"
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="results-turnaround-{{ turnAround }}"
+          >
+            {{ turnAround }} hours
+          </label>  
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

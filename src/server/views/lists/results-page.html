@@ -8,8 +8,11 @@
   <h1 class="govuk-visually-hidden">Search Results</h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if serviceType === "lawyers" %}
+      {% if serviceType === ServiceType.lawyers %}
         {% include "lists/partials/lawyers-results-list.html" %}   
+      {% endif %}
+      {% if serviceType === ServiceType.covidTestSupplier %}
+        {% include "lists/partials/covid-test-supplier-results-list.html" %}   
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
