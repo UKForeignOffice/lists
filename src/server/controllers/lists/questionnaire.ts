@@ -13,10 +13,10 @@ export const questions: {
 } = {
   readNotice: {
     pageTitle(req) {
-      const { country } = getAllRequestParams(req);
+      const { country, serviceType } = getAllRequestParams(req);
       return country === undefined || country === ""
-        ? "Find a Lawyer Abroad"
-        : `Find a Lawyer in ${startCase(country)}`;
+        ? `Find ${getServiceLabel(serviceType)} Abroad`
+        : `Find ${getServiceLabel(serviceType)} in ${startCase(country)}`;
     },
     getViewPartialName(req) {
       const { serviceType } = getAllRequestParams(req);

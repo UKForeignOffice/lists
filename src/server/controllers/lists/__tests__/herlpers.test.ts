@@ -117,7 +117,7 @@ describe("Lawyers List:", () => {
 
     test("Covid test supplier label is returned correctly", () => {
       expect(getServiceLabel("covidTestSupplier")).toEqual(
-        "Covid test supplier"
+        "a Covid test supplier"
       );
     });
 
