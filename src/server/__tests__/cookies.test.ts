@@ -1,9 +1,16 @@
 import $ from "cheerio";
+import { Express } from "express";
 import request from "supertest";
-import { server } from "../server";
+import { getServer } from "../server";
+import { SERVICE_NAME } from "server/config";
 
 describe("Cookies", () => {
   const pageLink = "/find?serviceType=lawyers";
+  let server: Express;
+
+  beforeAll(async () => {
+    server = await getServer();
+  }, 30000);
 
   describe("Banner without JS", () => {
     test("it renders no-javascript banner correctly", async () => {
@@ -13,13 +20,17 @@ describe("Cookies", () => {
       const cookieBanner = $html(".govuk-cookie-banner").eq(1);
       const cookiePageLink = cookieBanner.find("a");
 
-      expect(cookieBanner.text()).toContain(
-        "Cookies on Find a Professional Service Abroad"
+      expect(cookieBanner.text().includes(`Cookies on ${SERVICE_NAME}`)).toBe(
+        true
       );
 
-      expect(cookieBanner.text()).toContain(
-        "We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our cookies page."
-      );
+      expect(
+        cookieBanner
+          .text()
+          .includes(
+            "We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our cookies page."
+          )
+      ).toBe(true);
 
       expect(cookiePageLink.attr("href")).toBe("/help/cookies");
     });
@@ -35,11 +46,9 @@ describe("Cookies", () => {
       const acceptButton = cookieBanner.find("button").eq(0);
       const rejectButton = cookieBanner.find("button").eq(1);
 
-      expect(
-        cookieBanner
-          .text()
-          .includes("Cookies on Find a Professional Service Abroad")
-      ).toBe(true);
+      expect(cookieBanner.text().includes(`Cookies on ${SERVICE_NAME}`)).toBe(
+        true
+      );
       expect(acceptButton.text().trim()).toEqual("Accept analytics cookies");
       expect(rejectButton.text().trim()).toEqual("Reject analytics cookies");
     });
@@ -56,9 +65,7 @@ describe("Cookies", () => {
       const radios = $html(":radio");
       const pageText = main.text();
 
-      expect(
-        pageText.includes("Cookies on Find a Professional Service Abroad")
-      ).toBe(true);
+      expect(pageText.includes(`Cookies on ${SERVICE_NAME}`)).toBe(true);
       expect(
         pageText.includes(
           "We use 2 types of cookie. You can choose which cookies you're happy for us to use."

@@ -125,4 +125,4 @@ lib/
 
 # env
 .env
-*.env.ev
+*.env
