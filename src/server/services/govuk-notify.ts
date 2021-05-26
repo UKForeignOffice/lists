@@ -11,6 +11,19 @@ if (GOVUK_NOTIFY_API_KEY === undefined) {
   throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
 }
 
+if (
+  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID ===
+  undefined
+) {
+  throw new Error(
+    "Environment variable PROFESSIONAL_APPLICATION_TEMPLATE_ID is missing"
+  );
+}
+
+if (GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID === undefined) {
+  throw new Error("Environment variable AUTHENTICATION_TEMPLATE_ID is missing");
+}
+
 const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY.trim());
 
 export async function sendApplicationConfirmationEmail(
