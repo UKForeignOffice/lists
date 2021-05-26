@@ -58,7 +58,10 @@ export async function sendAuthenticationEmail(
 
     return result.statusText === "Created";
   } catch (error) {
-    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
+    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`, {
+      error,
+    });
+    logger.error(`Notify Key ${GOVUK_NOTIFY_API_KEY?.slice(8)}`);
     return false;
   }
 }
