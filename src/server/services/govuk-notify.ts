@@ -46,6 +46,9 @@ export async function sendAuthenticationEmail(
   }
 
   try {
+    logger.error(
+      `sendApplicationConfirmationEmail DEBUG: .${emailAddress}.${GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID}.${authenticationLink}`
+    );
     const result = await notifyClient.sendEmail(
       GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
       emailAddress,
