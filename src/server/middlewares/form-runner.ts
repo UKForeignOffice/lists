@@ -16,7 +16,7 @@ export function configureFormRunnerProxy(server: Express): void {
         if (typeof proxyReqOpts?.headers?.cookie === "string") {
           // remove cookies_policy cookie because form-runner breaks with JSON cookies
           proxyReqOpts.headers.cookie = proxyReqOpts.headers.cookie.replace(
-            /\slists\.cookies_policy=j:{\S+}(;)?/g,
+            /\slists_cookies_policy=j:{\S+}(;)?/g,
             ""
           );
         }

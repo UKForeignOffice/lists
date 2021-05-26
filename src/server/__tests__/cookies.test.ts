@@ -91,7 +91,7 @@ describe("Cookies", () => {
       const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = headers["set-cookie"]
-        .find((elm: string) => elm?.includes("lists.cookies_policy"))
+        .find((elm: string) => elm?.includes("lists_cookies_policy"))
         .split("=")[1]
         .split(";")[0]
         .trim();
@@ -119,7 +119,7 @@ describe("Cookies", () => {
       const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = headers["set-cookie"]
-        .find((elm: string) => elm?.includes("lists.cookies_policy"))
+        .find((elm: string) => elm?.includes("lists_cookies_policy"))
         .split("=")[1]
         .split(";")[0]
         .trim();

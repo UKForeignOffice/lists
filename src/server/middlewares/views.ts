@@ -29,7 +29,7 @@ export const configureViews = (server: Express): void => {
 
   // dynamic globals
   server.use((req, res, next) => {
-    const cookiesPolicy = req.cookies["lists.cookies_policy"] ?? "{}";
+    const cookiesPolicy = req.cookies.lists_cookies_policy ?? "{}";
     engine.addGlobal("cookiesPolicy", cookiesPolicy);
     next();
   });

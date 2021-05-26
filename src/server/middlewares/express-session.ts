@@ -18,7 +18,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
       saveUninitialized: true,
       resave: false,
       cookie: { secure: !isLocalHost },
-      name: "lists.sid",
+      name: "lists_sid",
     })
   );
 }
