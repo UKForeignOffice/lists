@@ -92,7 +92,7 @@ describe("Cookies", () => {
 
       const cookiesPolicy = JSON.parse(
         headers["set-cookie"]
-          .find((elm: string) => elm?.includes("cookies_policy"))
+          .find((elm: string) => elm?.includes("lists.cookies_policy"))
           .split("=")[1]
           .split(";")[0]
           .trim()
@@ -122,7 +122,7 @@ describe("Cookies", () => {
 
       const cookiesPolicy = JSON.parse(
         headers["set-cookie"]
-          .find((elm: string) => elm?.includes("cookies_policy"))
+          .find((elm: string) => elm?.includes("lists.cookies_policy"))
           .split("=")[1]
           .split(";")[0]
           .trim()

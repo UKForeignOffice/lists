@@ -29,7 +29,9 @@ export const configureViews = (server: Express): void => {
 
   // dynamic globals
   server.use((req, res, next) => {
-    const cookiesPolicy = JSON.parse(req.cookies.cookies_policy ?? "{}");
+    const cookiesPolicy = JSON.parse(
+      req.cookies["lists.cookies_policy"] ?? "{}"
+    );
     engine.addGlobal("cookiesPolicy", cookiesPolicy);
     next();
   });
