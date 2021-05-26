@@ -11,7 +11,7 @@ if (GOVUK_NOTIFY_API_KEY === undefined) {
   throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
 }
 
-const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY);
+const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY.trim());
 
 export async function sendApplicationConfirmationEmail(
   emailAddress: string,
@@ -19,7 +19,7 @@ export async function sendApplicationConfirmationEmail(
 ): Promise<boolean> {
   try {
     const { statusText } = await notifyClient.sendEmail(
-      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
       emailAddress,
       {
         personalisation: {
@@ -47,7 +47,7 @@ export async function sendAuthenticationEmail(
 
   try {
     const result = await notifyClient.sendEmail(
-      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
+      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
       emailAddress,
       {
         personalisation: {
@@ -58,10 +58,7 @@ export async function sendAuthenticationEmail(
 
     return result.statusText === "Created";
   } catch (error) {
-    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`, {
-      error,
-    });
-    logger.error(`Notify Key ${GOVUK_NOTIFY_API_KEY?.slice(8)}`);
+    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
     return false;
   }
 }
