@@ -30,6 +30,10 @@ export const prisma = new PrismaClient({
   log: logLevel,
 });
 
+prisma.$connect().catch((error) => {
+  logger.error(`Prisma Connect Error ${error.message}`);
+});
+
 // @ts-expect-error
 prisma.$on("query", (e: Prisma.QueryEvent) => {
   logger.info(`
@@ -51,4 +55,8 @@ prisma.$on("info", (e) => {
 // @ts-expect-error
 prisma.$on("error", (e) => {
   logger.error(e);
+});
+
+prisma.$on("beforeExit", () => {
+  logger.info("Prisma is exiting");
 });
