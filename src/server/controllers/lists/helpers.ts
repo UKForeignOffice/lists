@@ -138,7 +138,7 @@ export function createConfirmationLink(
   req: Request,
   reference: string
 ): string {
-  const host = `${req.protocol}://${req.get("host")}`;
+  const host = `${req.protocol}://${req.headers.host}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;

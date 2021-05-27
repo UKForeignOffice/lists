@@ -91,8 +91,8 @@ describe("Lists Controllers", () => {
       query: {},
       body: {},
       protocol: "https",
-      get(param: string) {
-        if (param === "host") return "localhost";
+      headers: {
+        host: "localhost",
       },
     };
     res = {
@@ -209,9 +209,7 @@ describe("Lists Controllers", () => {
       setTimeout(() => {
         expect(spy).toHaveBeenCalledWith(
           createdListItem.jsonData.email,
-          `${req.protocol}://${req.get("host")}/confirm/${
-            createdListItem.reference
-          }`
+          `${req.protocol}://${req.headers.host}/confirm/${createdListItem.reference}`
         );
         expect(res.json).toHaveBeenCalledWith({});
         done();

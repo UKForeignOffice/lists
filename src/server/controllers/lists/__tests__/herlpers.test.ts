@@ -179,7 +179,9 @@ describe("Lawyers List:", () => {
   describe("createConfirmationLink", () => {
     test("confirmation link is correct", () => {
       const req: any = {
-        get: jest.fn().mockReturnValue("localhost"),
+        headers: {
+          host: "localhost",
+        },
         protocol: "https",
       };
       expect(createConfirmationLink(req, "123")).toBe(
