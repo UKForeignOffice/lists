@@ -20,9 +20,9 @@ if (
   );
 }
 
-if (GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID === undefined) {
-  throw new Error("Environment variable AUTHENTICATION_TEMPLATE_ID is missing");
-}
+// if (GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID === undefined) {
+//   throw new Error("Environment variable AUTHENTICATION_TEMPLATE_ID is missing");
+// }
 
 const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY.trim());
 
