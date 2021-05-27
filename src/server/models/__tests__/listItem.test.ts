@@ -1,5 +1,4 @@
 import { toLower, startCase } from "lodash";
-
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
