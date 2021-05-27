@@ -22,7 +22,7 @@
     "form-runner:start": "cd ./lib/form-runner && yarn runner start"
   },
   "dependencies": {
-    "@prisma/client": "^2.22.1",
+    "@prisma/client": "^2.23.0",
     "@types/node-fetch": "^2.5.10",
     "@types/pg-escape": "^0.2.1",
     "accessible-autocomplete": "^2.0.3",
