@@ -1,5 +1,5 @@
 import { prisma } from "./prisma-client";
-import { db } from "./database";
+import { getDbPool } from "./database";
 import { logger } from "server/services/logger";
 import { seedDb } from "./seed-data/seed-db";
 
@@ -7,6 +7,7 @@ export const createPostgis = async (): Promise<string> => {
   const createPostGisExtension = "CREATE EXTENSION postgis;";
 
   try {
+    const db = getDbPool();
     await db.query(createPostGisExtension);
     return "postgis extension OK";
   } catch (error) {
@@ -28,6 +29,7 @@ export const createGeoLocationTable = async (): Promise<"OK" | string> => {
   `;
 
   try {
+    const db = getDbPool();
     await db.query(createGeoTable);
     return "GeoLocation created successfully";
   } catch (error) {
@@ -43,6 +45,7 @@ export const describeDb = async (): Promise<any> => {
   `;
 
   try {
+    const db = getDbPool();
     const result = await db.query(query);
     return result;
   } catch (error) {
@@ -58,6 +61,7 @@ export const dumpDb = async (): Promise<any> => {
   const countryQuery = 'SELECT * from "Country"';
 
   try {
+    const db = getDbPool();
     const lawyers = await db.query(lawyersQuery);
     const address = await db.query(addressQuery);
     const geo = await db.query(geoQuery);

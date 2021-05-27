@@ -1,12 +1,12 @@
 import { geoPointIsValid, rawInsertGeoLocation } from "../helpers";
-import { db } from "../db/database";
+import { getDbPool } from "../db/database";
 
 describe("Models Helpers", () => {
   const spyDBQuery = (returnValue: {
     rows: Array<{ id: string }>;
   }): jest.SpyInstance => {
     // @ts-expect-error-next-line
-    return jest.spyOn(db, "query").mockResolvedValue(returnValue);
+    return jest.spyOn(getDbPool(), "query").mockResolvedValue(returnValue);
   };
 
   describe("rawInsertGeoLocation", () => {
