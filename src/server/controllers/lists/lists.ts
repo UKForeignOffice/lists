@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { noop } from "lodash";
+import { get, noop } from "lodash";
 import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
 import { listItem } from "server/models";
+import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
   regionFromParams,
@@ -12,21 +13,24 @@ import {
   parseListValues,
   getCountryLawyerRedirectLink,
   removeQueryParameter,
+  createConfirmationLink,
 } from "./helpers";
 import { logger } from "server/services/logger";
 import { legalPracticeAreasList } from "server/services/metadata";
 import { questions } from "./questionnaire";
-import { QuestionError, QuestionName, ServiceType } from "./types";
-
-import {
-  searchLawyers,
-  lawyersDataIngestionController,
-  lawyersQuestionsSequence,
-} from "./lawyers";
+import { QuestionError, QuestionName } from "./types";
+import { searchLawyers, lawyersQuestionsSequence } from "./lawyers";
 import {
   searchCovidTestSupplier,
   covidTestQuestionsSequence,
-} from "./covidTestSuppliers";
+} from "./covid-test-suppliers";
+import { formRunnerPostRequestSchema } from "./schemas";
+import { parseFormRunnerWebhookObject } from "server/services/form-runner";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/services/form-runner/types";
+import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -172,23 +176,44 @@ export function listRedirectToLawyersController(
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 
-export function listsDataIngestionController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  const { serviceType } = req.params;
+export function listsDataIngestionController(req: Request, res: Response): any {
+  const serviceType = req.params.serviceType as ServiceType;
+  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  switch (serviceType) {
-    case ServiceType.lawyers:
-      lawyersDataIngestionController(req, res, next);
-      break;
-    default:
-      res.status(500).send({
-        error:
-          "Service Type is incorrect, please make sure form's webhook output configuration is correct",
-      });
+  if (!(serviceType in ServiceType)) {
+    res.status(500).send({
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+    });
+    return;
   }
+
+  if (error !== undefined) {
+    res.status(422).send({ error: error.message });
+    return;
+  }
+
+  const data =
+    parseFormRunnerWebhookObject<
+      LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+    >(value);
+
+  listItem
+    .createListItem(serviceType, data)
+    .then(async (listItem) => {
+      const { reference } = listItem;
+      const email = get(listItem?.jsonData, "email");
+
+      if (email !== null) {
+        const confirmationLink = createConfirmationLink(req, reference);
+        sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
+      }
+
+      res.json({});
+    })
+    .catch((error) => {
+      logger.error(`listsDataIngestionController Error: ${error.message}`);
+    });
 }
 
 export function listsConfirmApplicationController(

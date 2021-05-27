@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { countriesList } from "server/services/metadata";
-import { ServiceType } from "./types";
+import { ServiceType } from "server/models/types";
 
 export const listsRoutes = {
   start: "/",

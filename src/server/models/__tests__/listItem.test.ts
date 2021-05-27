@@ -105,7 +105,7 @@ describe("ListItem Model:", () => {
       try {
         await createLawyerListItem(LawyerWebhookData);
       } catch (error) {
-        expect(error.message).toBe("Record already exists");
+        expect(error.message).toBe("Lawyer record already exists");
       }
 
       const expectedQuery = `
@@ -155,7 +155,7 @@ describe("ListItem Model:", () => {
 
       expect(spy).toHaveBeenCalledWith({
         data: {
-          type: "lawyer",
+          type: "lawyers",
           isApproved: false,
           isPublished: false,
           address: {

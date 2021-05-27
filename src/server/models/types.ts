@@ -1,10 +1,16 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 
+export enum ServiceType {
+  "lawyers" = "lawyers",
+  "covidTestSupplier" = "covidTestSupplier",
+}
+
 export type CountriesWithData = Extract<
   CountryName,
   "Thailand" | "France" | "Italy" | "Spain"
 >;
+
 export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
@@ -55,12 +61,37 @@ export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
 }
 
 export interface LawyerListItemCreateInput extends ListItemCreateInput {
-  type: "lawyer";
+  type: ServiceType.lawyers;
   jsonData: LawyerListItemJsonData;
 }
 
 export interface LawyerListItemGetObject extends ListItemGetObject {
-  type: "lawyer";
+  type: ServiceType.lawyers;
+  jsonData: LawyerListItemJsonData;
+}
+
+// Covid 19 Test Supplier
+export interface CovidTestSupplierListItemJsonData
+  extends PrismaClient.Prisma.JsonObject {
+  contactName: string;
+  organisationName: string;
+  telephone: string;
+  email: string;
+  website: string;
+  regulatoryAuthority: string;
+  metadata?: {
+    emailVerified?: boolean;
+  };
+}
+
+export interface CovidTestSupplierListItemCreateInput
+  extends ListItemCreateInput {
+  type: ServiceType.covidTestSupplier;
+  jsonData: CovidTestSupplierListItemJsonData;
+}
+
+export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
+  type: ServiceType.covidTestSupplier;
   jsonData: LawyerListItemJsonData;
 }
 

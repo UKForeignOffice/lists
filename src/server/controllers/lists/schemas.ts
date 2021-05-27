@@ -14,6 +14,6 @@ const formRunnerQuestionSchema = Joi.object({
   index: Joi.number(),
 });
 
-export const lawyersPostRequestSchema = Joi.object({
-  questions: Joi.array().items(formRunnerQuestionSchema),
+export const formRunnerPostRequestSchema = Joi.object({
+  questions: Joi.array().items(formRunnerQuestionSchema).required(),
 }).options({ stripUnknown: true });

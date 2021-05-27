@@ -12,8 +12,8 @@ import {
 } from "lodash";
 
 import { listsRoutes } from "./constants";
-import { ListsRequestParams, ServiceType } from "./types";
-import { CountryName } from "server/models/types";
+import { ListsRequestParams } from "./types";
+import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
@@ -40,7 +40,6 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
 export function regionFromParams(
   params: ListsRequestParams
 ): string | undefined {
-  // TODO: this can be simplified if regions is required but allow user to select unsure
   if (!("region" in params)) {
     return undefined;
   }

@@ -1,11 +1,82 @@
-import { noop } from "lodash";
 import {
   listsDataIngestionController,
   listRedirectToLawyersController,
   listsConfirmApplicationController,
 } from "../lists";
 import { listItem } from "server/models";
-import * as lawyersControllers from "../lawyers";
+import * as notify from "server/services/govuk-notify";
+
+const webhookPayload = {
+  questions: [
+    {
+      question: "Do you speak fluent English?",
+      fields: [
+        {
+          key: "speakEnglish",
+          title: "Do you speak English?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Full name",
+      fields: [
+        {
+          key: "firstName",
+          title: "First name",
+          type: "text",
+          answer: "Rene",
+        },
+        { key: "middleName", title: "Middle name", type: "text" },
+        {
+          key: "surname",
+          title: "Surname",
+          type: "text",
+          answer: "Descartes",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Company name",
+      fields: [
+        {
+          key: "organisationName",
+          title: "Organisation name",
+          type: "text",
+          answer: "Cartesian Systems",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Website address",
+      fields: [
+        {
+          key: "website",
+          title: "Website address",
+          type: "text",
+          answer: "www.com",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Email address",
+      fields: [
+        {
+          key: "emailAddress",
+          title: "Email address",
+          type: "text",
+          answer: "test@gov.uk",
+        },
+      ],
+      index: 0,
+    },
+  ],
+};
 
 describe("Lists Controllers", () => {
   let req: any;
@@ -19,15 +90,32 @@ describe("Lists Controllers", () => {
       },
       query: {},
       body: {},
+      protocol: "https",
+      get(param: string) {
+        if (param === "host") return "localhost";
+      },
     };
     res = {
       render: jest.fn(),
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
       redirect: jest.fn(),
+      json: jest.fn(),
     };
     next = jest.fn();
   });
+
+  function spyCreateListItem(createdListItem = {}): any {
+    return jest
+      .spyOn(listItem, "createListItem")
+      .mockResolvedValue(createdListItem as any);
+  }
+
+  function spySendApplicationConfirmationEmail(): any {
+    return jest
+      .spyOn(notify, "sendApplicationConfirmationEmail")
+      .mockResolvedValue(true);
+  }
 
   describe("listRedirectToLawyersController", () => {
     test("redirect is correct", () => {
@@ -43,25 +131,91 @@ describe("Lists Controllers", () => {
   });
 
   describe("listsDataIngestionController", () => {
-    test("it invokes lawyers lawyersDataIngestionController when serviceType is lawyer", () => {
-      req.params.serviceType = "lawyers";
-
-      const spy = jest
-        .spyOn(lawyersControllers, "lawyersDataIngestionController")
-        .mockImplementation(noop);
-
-      listsDataIngestionController(req, res, next);
-
-      expect(spy).toHaveBeenCalledWith(req, res, next);
-    });
-
     test("it responds with 500 when serviceType is unknown", () => {
       req.params.serviceType = "other";
+      req.body.questions = [{}];
 
-      listsDataIngestionController(req, res, next);
+      listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalled();
+    });
+
+    test("it responds with 402 when posted data schema is incorrect", () => {
+      req.params.serviceType = "lawyers";
+
+      listsDataIngestionController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(422);
+      expect(res.send).toHaveBeenCalled();
+    });
+
+    test("createListItem is invoked correctly for lawyers", () => {
+      const spy = spyCreateListItem();
+      spySendApplicationConfirmationEmail();
+
+      req.params.serviceType = "lawyers";
+      req.body.questions = webhookPayload.questions;
+
+      listsDataIngestionController(req, res);
+
+      expect(spy).toHaveBeenCalledWith("lawyers", {
+        emailAddress: "test@gov.uk",
+        firstName: "Rene",
+        middleName: undefined,
+        organisationName: "Cartesian Systems",
+        speakEnglish: true,
+        surname: "Descartes",
+        website: "www.com",
+      });
+    });
+
+    test("createListItem is invoked correctly for lawyers", () => {
+      const spy = spyCreateListItem();
+      spySendApplicationConfirmationEmail();
+
+      req.params.serviceType = "covidTestSupplier";
+      req.body.questions = webhookPayload.questions;
+
+      listsDataIngestionController(req, res);
+
+      expect(spy).toHaveBeenCalledWith("covidTestSupplier", {
+        emailAddress: "test@gov.uk",
+        firstName: "Rene",
+        middleName: undefined,
+        organisationName: "Cartesian Systems",
+        speakEnglish: true,
+        surname: "Descartes",
+        website: "www.com",
+      });
+    });
+
+    test("sendApplicationConfirmationEmail is invoked correctly", (done) => {
+      req.params.serviceType = "covidTestSupplier";
+      req.body.questions = webhookPayload.questions;
+
+      const createdListItem: any = {
+        reference: "123ABC",
+        jsonData: {
+          email: "test@email.com",
+        },
+      };
+
+      spyCreateListItem(createdListItem);
+      const spy = spySendApplicationConfirmationEmail();
+
+      listsDataIngestionController(req, res);
+
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith(
+          createdListItem.jsonData.email,
+          `${req.protocol}://${req.get("host")}/confirm/${
+            createdListItem.reference
+          }`
+        );
+        expect(res.json).toHaveBeenCalledWith({});
+        done();
+      });
     });
   });
 
