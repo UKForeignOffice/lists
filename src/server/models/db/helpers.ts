@@ -75,10 +75,10 @@ export const dumpDb = async (): Promise<any> => {
 
 export async function prepareAndSeedDb(): Promise<string[]> {
   try {
-    logger.info("Prepare Database: Installing Postgis");
-    await createPostgis();
-    logger.info("Prepare Database: Create GeoLocation Table");
-    await createGeoLocationTable();
+    // logger.info("Prepare Database: Installing Postgis");
+    // await createPostgis();
+    // logger.info("Prepare Database: Create GeoLocation Table");
+    // await createGeoLocationTable();
     logger.info("Prepare Database: Seeding data");
     return await seedDb(prisma);
   } catch (error) {

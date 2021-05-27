@@ -428,7 +428,7 @@ export async function findPublishedLawyersPerCountry(props: {
     });
 
     const query = fetchPublishedListItemQuery({
-      type: "lawyer",
+      type: ServiceType.lawyers,
       countryName,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
@@ -480,7 +480,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     });
 
     const query = fetchPublishedListItemQuery({
-      type: "lawyer",
+      type: ServiceType.lawyers,
       countryName,
       fromGeoPoint,
     });

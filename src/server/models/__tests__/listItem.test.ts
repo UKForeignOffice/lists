@@ -242,7 +242,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
         INNER JOIN "Country" ON "Address"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
-        WHERE "ListItem"."type" = 'lawyer'
+        WHERE "ListItem"."type" = 'lawyers'
         AND "Country".name = 'France'
         AND "ListItem"."jsonData" @> '{"legalAid":true,"proBonoService":true}'
         AND "ListItem"."isApproved" = true
