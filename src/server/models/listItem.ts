@@ -480,7 +480,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     });
 
     const query = fetchPublishedListItemQuery({
-      type: ServiceType.lawyers,
+      type: ServiceType.covidTestProvider,
       countryName,
       fromGeoPoint,
     });
