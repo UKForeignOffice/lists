@@ -102,10 +102,16 @@ describe("Lists Controllers", () => {
     next = jest.fn();
   });
 
-  function spyCreateListItem(createdListItem = {}): any {
-    return jest
-      .spyOn(listItem, "createListItem")
-      .mockResolvedValue(createdListItem as any);
+  function spyCreateListItem(createdListItem = {}, shouldReject = false): any {
+    const spy = jest.spyOn(listItem, "createListItem");
+
+    if (shouldReject) {
+      spy.mockRejectedValue(new Error("Ops.. something went wrong"));
+    } else {
+      spy.mockResolvedValue(createdListItem as any);
+    }
+
+    return spy;
   }
 
   function spySendApplicationConfirmationEmail(): any {
@@ -209,6 +215,30 @@ describe("Lists Controllers", () => {
           `https://${SERVICE_DOMAIN}/confirm/${createdListItem.reference}`
         );
         expect(res.json).toHaveBeenCalledWith({});
+        done();
+      });
+    });
+
+    test("it responds with 500 when createListItem fails", (done) => {
+      req.params.serviceType = "covidTestProvider";
+      req.body.questions = webhookPayload.questions;
+
+      const createdListItem: any = {
+        reference: "123ABC",
+        jsonData: {
+          email: "test@email.com",
+        },
+      };
+
+      spyCreateListItem(createdListItem, true);
+
+      listsDataIngestionController(req, res);
+
+      setTimeout(() => {
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledWith({
+          error: "Ops.. something went wrong",
+        });
         done();
       });
     });

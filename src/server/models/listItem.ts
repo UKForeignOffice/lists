@@ -457,7 +457,7 @@ export async function createLawyerListItem(
     return await prisma.listItem.create({ data: lawyerData });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
-    throw new Error(`createLawyerListItem Error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -509,6 +509,6 @@ export async function createCovidTestSupplierListItem(
     return await prisma.listItem.create({ data: lawyerData });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
-    throw new Error(`createLawyerListItem Error: ${error.message}`);
+    throw error;
   }
 }
