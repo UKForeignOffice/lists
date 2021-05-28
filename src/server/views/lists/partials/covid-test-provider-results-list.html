@@ -16,7 +16,7 @@
       {% endif %}
       {% if (item.jsonData.contactName) and (item.jsonData.contactName !== item.jsonData.organisationName)  %}
               <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Contact Person:</strong>: {{ item.jsonData.contactName }}
+          <strong>Organisation Name:</strong>: {{ item.jsonData.organisationName }}
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
@@ -51,10 +51,19 @@
         </summary>
         <div class="govuk-details__text">
           {% if (item.jsonData.email) and (item.jsonData.website) %}
+            <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+              <strong>Telephone</strong>: {{ item.jsonData.telephone }}
+            </p>  
+          {% endif %}
           <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-          </p>  
-          {% endif %}    
+            <strong>Provides Certificate Translation</strong>: {{ "Yes" if item.jsonData.providesCertificateTranslation else "No" }}
+          </p>
+          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+            <strong>Turnaround Times</strong>: {{ item.jsonData.turnaroundTimes }}
+          </p>
+          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+            <strong>Booking Options</strong>: {{ item.jsonData.bookingOptions }}
+          </p>
         </div>
       </details>      
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
