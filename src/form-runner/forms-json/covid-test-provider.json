@@ -116,7 +116,7 @@
       "title": "Website address",
       "components": [
         {
-          "name": "website",
+          "name": "websiteAddress",
           "options": {},
           "type": "TextField",
           "title": "Website address",
@@ -331,8 +331,7 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/what-types-of-covid-19-tests-do-you-offer" }],
-      "section": "address"
+      "next": [{ "path": "/what-types-of-covid-19-tests-do-you-offer" }]
     },
     {
       "path": "/what-is-the-name-of-the-local-regulatory-authority",
@@ -346,10 +345,10 @@
           "schema": {}
         },
         {
-          "name": "regulatoryBodyName",
+          "name": "regulatoryAuthority",
           "options": { "hideTitle": true },
           "type": "TextField",
-          "title": "regulatoryBodyName",
+          "title": "regulatoryAuthority",
           "schema": {},
           "nameHasError": false
         }
@@ -715,11 +714,7 @@
       ]
     }
   ],
-  "sections": [
-    { "name": "yourDetails", "title": "Your details" },
-    { "name": "outOfHours", "title": "Out of hours" },
-    { "name": "address", "title": "address" }
-  ],
+  "sections": [],
   "phaseBanner": {},
   "metadata": {},
   "fees": [],
