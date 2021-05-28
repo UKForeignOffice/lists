@@ -55,17 +55,6 @@
             <strong>Telephone</strong>: {{ item.jsonData.telephone }}
           </p>  
           {% endif %}    
-          {% if item.jsonData.legalPracticeAreas %}
-            <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-              <strong>Legal Practice Areas</strong>: {{ item.jsonData.legalPracticeAreas.map(_.startCase).join(", ") }}
-            </p>
-          {% endif %}
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Legal Aid</strong>: {{ "Yes" if item.jsonData.legalAid else "No" }}
-          </p>
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Pro Bono Service</strong>: {{ "Yes" if item.jsonData.proBonoService else "No" }}
-          </p>
         </div>
       </details>      
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
