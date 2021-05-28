@@ -208,9 +208,7 @@
         }
       ],
       "next": [
-        {
-          "path": "/can-you-offer-pro-bono-service-to-british-nationals"
-        }
+        { "path": "/can-you-offer-pro-bono-service-to-british-nationals" }
       ]
     },
     {
@@ -282,7 +280,8 @@
         {
           "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
           "condition": "6ZEjcsVvflFMwoHRspRPd"
-        }
+        },
+        { "path": "/declaration", "condition": "WiHImXvXbzDvbsY90biLb" }
       ]
     },
     {
