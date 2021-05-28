@@ -239,34 +239,34 @@ async function createLawyerListItemObject(
 }
 
 async function createCovidTestSupplierListItemObject(
-  covidTestSupplier: CovidTestSupplierFormWebhookData
+  covidTestProvider: CovidTestSupplierFormWebhookData
 ): Promise<CovidTestSupplierListItemCreateInput> {
   try {
-    const country = await createCountry(covidTestSupplier.country);
-    const geoLocationId = await createAddressGeoLocation(covidTestSupplier);
+    const country = await createCountry(covidTestProvider.country);
+    const geoLocationId = await createAddressGeoLocation(covidTestProvider);
 
     return {
       type: ServiceType.covidTestProvider,
       isApproved: false,
       isPublished: false,
       jsonData: {
-        organisationName: covidTestSupplier.organisationName
+        organisationName: covidTestProvider.organisationName
           .toLowerCase()
           .trim(),
-        contactName: `${covidTestSupplier.firstName} ${
-          covidTestSupplier.middleName ?? ""
-        } ${covidTestSupplier.surname}`.trim(),
-        telephone: covidTestSupplier.phoneNumber,
-        email: covidTestSupplier.emailAddress.toLowerCase().trim(),
-        website: covidTestSupplier.websiteAddress.toLowerCase().trim(),
-        regulatoryAuthority: covidTestSupplier.regulatoryAuthority,
+        contactName: `${covidTestProvider.firstName} ${
+          covidTestProvider.middleName ?? ""
+        } ${covidTestProvider.surname}`.trim(),
+        telephone: covidTestProvider.phoneNumber,
+        email: covidTestProvider.emailAddress.toLowerCase().trim(),
+        website: covidTestProvider.websiteAddress.toLowerCase().trim(),
+        regulatoryAuthority: covidTestProvider.regulatoryAuthority,
       },
       address: {
         create: {
-          firstLine: covidTestSupplier.addressLine1,
-          secondLine: covidTestSupplier.addressLine2,
-          postCode: covidTestSupplier.postcode,
-          city: covidTestSupplier.city,
+          firstLine: covidTestProvider.addressLine1,
+          secondLine: covidTestProvider.addressLine2,
+          postCode: covidTestProvider.postcode,
+          city: covidTestProvider.city,
           country: {
             connect: { id: country.id },
           },
