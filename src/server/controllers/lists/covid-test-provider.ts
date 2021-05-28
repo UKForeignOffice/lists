@@ -9,7 +9,7 @@ import {
 } from "./helpers";
 import { QuestionName } from "./types";
 
-export const covidTestQuestionsSequence = [
+export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
   QuestionName.country,
   QuestionName.region,
@@ -17,7 +17,7 @@ export const covidTestQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchCovidTestSupplier(
+export async function searchCovidTestProvider(
   req: Request,
   res: Response
 ): Promise<void> {

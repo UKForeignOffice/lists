@@ -3,7 +3,7 @@ import { countriesList } from "server/services/metadata";
 
 export enum ServiceType {
   "lawyers" = "lawyers",
-  "covidTestSupplier" = "covidTestSupplier",
+  "covidTestProvider" = "covidTestProvider",
 }
 
 export type CountriesWithData = Extract<
@@ -86,12 +86,12 @@ export interface CovidTestSupplierListItemJsonData
 
 export interface CovidTestSupplierListItemCreateInput
   extends ListItemCreateInput {
-  type: ServiceType.covidTestSupplier;
+  type: ServiceType.covidTestProvider;
   jsonData: CovidTestSupplierListItemJsonData;
 }
 
 export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
-  type: ServiceType.covidTestSupplier;
+  type: ServiceType.covidTestProvider;
   jsonData: LawyerListItemJsonData;
 }
 

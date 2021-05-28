@@ -21,9 +21,9 @@ import { questions } from "./questionnaire";
 import { QuestionError, QuestionName } from "./types";
 import { searchLawyers, lawyersQuestionsSequence } from "./lawyers";
 import {
-  searchCovidTestSupplier,
-  covidTestQuestionsSequence,
-} from "./covid-test-suppliers";
+  searchCovidTestProvider,
+  covidTestProviderQuestionsSequence,
+} from "./covid-test-provider";
 import { formRunnerPostRequestSchema } from "./schemas";
 import { parseFormRunnerWebhookObject } from "server/services/form-runner";
 import {
@@ -92,8 +92,8 @@ export function listsGetController(
     case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
       break;
-    case ServiceType.covidTestSupplier:
-      questionsSequence = covidTestQuestionsSequence;
+    case ServiceType.covidTestProvider:
+      questionsSequence = covidTestProviderQuestionsSequence;
       break;
     default:
       questionsSequence = [];
@@ -158,8 +158,8 @@ export function listsResultsController(
         logger.error("Lists Result Controller", { error })
       );
       break;
-    case ServiceType.covidTestSupplier:
-      searchCovidTestSupplier(req, res).catch((error) => {
+    case ServiceType.covidTestProvider:
+      searchCovidTestProvider(req, res).catch((error) => {
         logger.error("Lists Result Controller", { error });
       });
       break;
