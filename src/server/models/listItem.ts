@@ -20,9 +20,7 @@ import {
   filterAllowedLegalAreas,
 } from "./helpers";
 import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
-import {} from "server/config";
-
-const CYB_DEV = process.env.CYB_DEV === "true";
+import { isCybDev } from "server/config";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -250,8 +248,8 @@ async function createCovidTestSupplierListItemObject(
 
     return {
       type: ServiceType.covidTestProvider,
-      isApproved: CYB_DEV,
-      isPublished: CYB_DEV,
+      isApproved: isCybDev,
+      isPublished: isCybDev,
       jsonData: {
         organisationName: covidTestProvider.organisationName
           .toLowerCase()

@@ -31,6 +31,7 @@ import {
   LawyersFormWebhookData,
 } from "server/services/form-runner/types";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
+import { isCybDev } from "server/config";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -207,7 +208,7 @@ export function listsDataIngestionController(req: Request, res: Response): any {
       const { reference } = listItem;
       const email = get(listItem?.jsonData, "email");
 
-      if (email !== null) {
+      if (email !== null && !isCybDev) {
         const confirmationLink = createConfirmationLink(req, reference);
         sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
       }
