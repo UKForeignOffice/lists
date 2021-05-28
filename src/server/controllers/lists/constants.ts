@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { countriesList } from "server/services/metadata";
 import { ServiceType } from "server/models/types";
+import { enforceHttps } from "./helpers";
 
 export const listsRoutes = {
   start: "/",
@@ -15,4 +16,5 @@ export const DEFAULT_VIEW_PROPS = {
   countriesList,
   listsRoutes,
   ServiceType,
+  enforceHttps,
 };

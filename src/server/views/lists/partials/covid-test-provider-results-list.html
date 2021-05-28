@@ -33,14 +33,14 @@
       {% endif %}
       {% if item.jsonData.website %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Website</strong>: <a class="govuk-link" href="{{ item.jsonData.website }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+          <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
         </p>
       {% endif %}
 
       {% if (not item.jsonData.email) or (not item.jsonData.website) %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
           <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-        </p>  
+        </p>
       {% endif %}
 
       <details class="govuk-details" data-module="govuk-details">
