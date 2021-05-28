@@ -142,9 +142,6 @@ export function listsResultsController(
   const { serviceType, country, legalAid, region } = params;
   const practiceArea = parseListValues("practiceArea", params);
 
-  logger.info("headers", { headers: req.headers });
-  logger.info("originalUrl", { originalUrl: req.originalUrl });
-
   trackListsSearch({
     serviceType,
     country,
