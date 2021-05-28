@@ -16,8 +16,8 @@ const acceptsJSON = (req: Request): boolean => {
 
 export const configureErrorHandlers = (server: Express): void => {
   server.use(function (req: Request, res: Response, next: NextFunction) {
-    logger.error("404 Not found", { path: req.path });
-    
+    logger.warn("404 Not found", { path: req.path });
+
     res.status(404);
 
     if (acceptsHTML(req)) {
