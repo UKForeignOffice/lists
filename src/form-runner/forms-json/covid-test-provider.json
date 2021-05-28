@@ -1,9 +1,9 @@
 {
-  "startPage": "/register-to-the-find-a-covid-test-supplier-abroad-service",
+  "startPage": "/register-to-the-find-a-covid-test-provider-abroad-service",
   "pages": [
     {
       "title": "Register to the Find a Covid Test Supplier Abroad service",
-      "path": "/register-to-the-find-a-covid-test-supplier-abroad-service",
+      "path": "/register-to-the-find-a-covid-test-provider-abroad-service",
       "components": [
         {
           "name": "rhnpiT",
