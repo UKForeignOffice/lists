@@ -66,4 +66,7 @@ export interface CovidTestSupplierFormWebhookData {
   memberOfRegulatoryAuthority: boolean;
   regulatoryAuthority: string;
   declarationConfirm: string; // "confirm"
+  providesCertificateTranslation: boolean;
+  bookingOptions: string;
+  turnaroundTimes: string;
 }

@@ -261,6 +261,10 @@ async function createCovidTestSupplierListItemObject(
         email: covidTestProvider.emailAddress.toLowerCase().trim(),
         website: covidTestProvider.websiteAddress.toLowerCase().trim(),
         regulatoryAuthority: covidTestProvider.regulatoryAuthority,
+        providesCertificateTranslation:
+          covidTestProvider.providesCertificateTranslation,
+        bookingOptions: covidTestProvider.bookingOptions,
+        turnaroundTimes: covidTestProvider.turnaroundTimes,
       },
       address: {
         create: {
@@ -454,8 +458,8 @@ export async function createLawyerListItem(
   }
 
   try {
-    const lawyerData = await createLawyerListItemObject(webhookData);
-    return await prisma.listItem.create({ data: lawyerData });
+    const data = await createLawyerListItemObject(webhookData);
+    return await prisma.listItem.create({ data });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;
@@ -506,8 +510,8 @@ export async function createCovidTestSupplierListItem(
   }
 
   try {
-    const lawyerData = await createCovidTestSupplierListItemObject(webhookData);
-    return await prisma.listItem.create({ data: lawyerData });
+    const data = await createCovidTestSupplierListItemObject(webhookData);
+    return await prisma.listItem.create({ data });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;
