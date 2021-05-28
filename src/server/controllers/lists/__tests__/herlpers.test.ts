@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
+import { SERVICE_DOMAIN } from "server/config";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -116,7 +117,7 @@ describe("Lawyers List:", () => {
     });
 
     test("Covid test provider label is returned correctly", () => {
-      expect(getServiceLabel("covidTestSupplier")).toEqual(
+      expect(getServiceLabel("covidTestProvider")).toEqual(
         "a Covid test provider"
       );
     });
@@ -185,7 +186,7 @@ describe("Lawyers List:", () => {
         protocol: "https",
       };
       expect(createConfirmationLink(req, "123")).toBe(
-        "https://localhost/confirm/123"
+        `https://${SERVICE_DOMAIN}/confirm/123`
       );
     });
   });

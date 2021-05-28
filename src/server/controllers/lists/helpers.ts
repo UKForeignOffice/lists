@@ -11,6 +11,7 @@ import {
   lowerCase,
 } from "lodash";
 
+import { SERVICE_DOMAIN } from "server/config";
 import { listsRoutes } from "./constants";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
@@ -138,7 +139,7 @@ export function createConfirmationLink(
   req: Request,
   reference: string
 ): string {
-  const host = `${req.protocol}://${req.headers.host}`;
+  const host = `https://${SERVICE_DOMAIN}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;

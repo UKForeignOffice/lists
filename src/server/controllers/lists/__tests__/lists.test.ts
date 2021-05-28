@@ -5,6 +5,7 @@ import {
 } from "../lists";
 import { listItem } from "server/models";
 import * as notify from "server/services/govuk-notify";
+import { SERVICE_DOMAIN } from "server/config";
 
 const webhookPayload = {
   questions: [
@@ -90,10 +91,6 @@ describe("Lists Controllers", () => {
       },
       query: {},
       body: {},
-      protocol: "https",
-      headers: {
-        host: "localhost",
-      },
     };
     res = {
       render: jest.fn(),
@@ -174,12 +171,12 @@ describe("Lists Controllers", () => {
       const spy = spyCreateListItem();
       spySendApplicationConfirmationEmail();
 
-      req.params.serviceType = "covidTestSupplier";
+      req.params.serviceType = "covidTestProvider";
       req.body.questions = webhookPayload.questions;
 
       listsDataIngestionController(req, res);
 
-      expect(spy).toHaveBeenCalledWith("covidTestSupplier", {
+      expect(spy).toHaveBeenCalledWith("covidTestProvider", {
         emailAddress: "test@gov.uk",
         firstName: "Rene",
         middleName: undefined,
@@ -191,7 +188,7 @@ describe("Lists Controllers", () => {
     });
 
     test("sendApplicationConfirmationEmail is invoked correctly", (done) => {
-      req.params.serviceType = "covidTestSupplier";
+      req.params.serviceType = "covidTestProvider";
       req.body.questions = webhookPayload.questions;
 
       const createdListItem: any = {
@@ -209,7 +206,7 @@ describe("Lists Controllers", () => {
       setTimeout(() => {
         expect(spy).toHaveBeenCalledWith(
           createdListItem.jsonData.email,
-          `${req.protocol}://${req.headers.host}/confirm/${createdListItem.reference}`
+          `https://${SERVICE_DOMAIN}/confirm/${createdListItem.reference}`
         );
         expect(res.json).toHaveBeenCalledWith({});
         done();
