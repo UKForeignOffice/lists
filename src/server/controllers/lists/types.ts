@@ -10,6 +10,7 @@ export enum QuestionName {
   "legalAid" = "legalAid",
   "readDisclaimer" = "readDisclaimer",
   "resultsTurnaround" = "resultsTurnaround",
+  "readCovidDisclaimer" = "readCovidDisclaimer",
 }
 
 export interface QuestionError {

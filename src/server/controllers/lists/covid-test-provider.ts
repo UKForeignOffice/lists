@@ -14,7 +14,7 @@ export const covidTestProviderQuestionsSequence = [
   QuestionName.country,
   QuestionName.region,
   QuestionName.resultsTurnaround,
-  QuestionName.readDisclaimer,
+  QuestionName.readCovidDisclaimer,
 ];
 
 export async function searchCovidTestProvider(

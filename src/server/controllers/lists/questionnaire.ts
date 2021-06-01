@@ -188,6 +188,31 @@ export const questions: {
       return false;
     },
   },
+  readCovidDisclaimer: {
+    getViewPartialName() {
+      return "question-covid-disclaimer.html";
+    },
+    pageTitle() {
+      return "Disclaimer";
+    },
+    needsToAnswer(req: Request) {
+      const { readDisclaimer } = getAllRequestParams(req);
+      return readDisclaimer === undefined || readDisclaimer === "";
+    },
+    validate(req: Request) {
+      const { readDisclaimer } = getAllRequestParams(req);
+
+      if (readDisclaimer === "") {
+        return {
+          field: "read-disclaimer",
+          text: "Disclaimer is not allowed to be empty",
+          href: "#read-disclaimer",
+        };
+      }
+
+      return false;
+    },
+  },
   resultsTurnaround: {
     getViewPartialName() {
       return "question-results-turnaround.html";
