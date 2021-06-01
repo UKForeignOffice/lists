@@ -41,8 +41,16 @@ router.get("/dev/list-applied-migrations", (req, res) => {
 });
 
 router.get("/dev/list-env-names", (req, res) => {
-  const keys = Object.keys(process.env).join(", ");
-  res.json({ keys });
+  function isUpperCase(str: string): boolean {
+    return str === str.toUpperCase();
+  }
+  const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
+
+  res.json({
+    keys,
+    HOSTNAME: process.env.HOSTNAME,
+    LISTS_SERVICE_HOST: process.env.LISTS_SERVICE_HOST,
+  });
 });
 
 export default router;
