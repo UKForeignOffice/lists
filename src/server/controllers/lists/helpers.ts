@@ -93,7 +93,7 @@ export function getServiceLabel(
     case ServiceType.lawyers:
       return "a lawyer";
     case ServiceType.covidTestProvider:
-      return "a Covid test provider";
+      return "a COVID-19 test";
     default:
       return undefined;
   }
