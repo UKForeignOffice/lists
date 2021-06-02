@@ -69,4 +69,7 @@ export interface CovidTestSupplierFormWebhookData {
   providesCertificateTranslation: boolean;
   bookingOptions: string;
   turnaroundTimes: string;
+  testTypes: string;
+  turnaroundTime: string;
+  price: string;
 }

@@ -1,4 +1,4 @@
-import { isArray, uniq, startCase, toLower, merge, get } from "lodash";
+import { isArray, uniq, startCase, toLower, merge, get, trim } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -239,6 +239,7 @@ async function createLawyerListItemObject(
   }
 }
 
+// TODO: Test
 async function createCovidTestSupplierListItemObject(
   covidTestProvider: CovidTestSupplierFormWebhookData
 ): Promise<CovidTestSupplierListItemCreateInput> {
@@ -263,8 +264,11 @@ async function createCovidTestSupplierListItemObject(
         regulatoryAuthority: covidTestProvider.regulatoryAuthority,
         providesCertificateTranslation:
           covidTestProvider.providesCertificateTranslation,
-        bookingOptions: covidTestProvider.bookingOptions,
+        bookingOptions: covidTestProvider.bookingOptions?.split(",").map(trim),
         turnaroundTimes: covidTestProvider.turnaroundTimes,
+        testTypes: covidTestProvider.testTypes?.split(",").map(trim),
+        turnaroundTime: Number(covidTestProvider.turnaroundTime),
+        price: Number(covidTestProvider.price),
       },
       address: {
         create: {
