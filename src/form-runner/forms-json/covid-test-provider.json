@@ -219,8 +219,11 @@
         }
       ],
       "next": [
-        { "path": "/what-booking-options-do-you-offer", "condition": "tPlnhv" },
-        { "path": "/certificate-is-required", "condition": "UKpekg" }
+        { "path": "/certificate-is-required", "condition": "UKpekg" },
+        {
+          "path": "/what-are-the-different-formats-in-which-certificates-are-provided",
+          "condition": "tPlnhv"
+        }
       ]
     },
     {
@@ -387,6 +390,20 @@
       "title": "Certificate is required",
       "components": [],
       "next": []
+    },
+    {
+      "path": "/what-are-the-different-formats-in-which-certificates-are-provided",
+      "title": "What are the different formats in which certificates are provided?",
+      "components": [
+        {
+          "name": "orTOfZ",
+          "options": {},
+          "type": "CheckboxesField",
+          "title": "Certificate format",
+          "list": "iLIaYP"
+        }
+      ],
+      "next": [{ "path": "/what-booking-options-do-you-offer" }]
     }
   ],
   "lists": [
@@ -734,6 +751,19 @@
         { "text": "English", "value": "English" },
         { "text": "French", "value": "French" },
         { "text": "Spanish", "value": "Spanish" }
+      ]
+    },
+    {
+      "title": "Certificates Format",
+      "name": "iLIaYP",
+      "type": "string",
+      "items": [
+        { "text": "Email", "value": "email" },
+        { "text": "SMS message", "value": "sms" },
+        {
+          "text": "Printed document collected in person",
+          "value": "printed document collected in person"
+        }
       ]
     }
   ],
