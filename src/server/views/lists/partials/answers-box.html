@@ -68,12 +68,12 @@
     {% endif %} 
     {% if resultsTurnaround %}
       <p class="govuk-body">
-        Results turnaround?<br />
-        <strong>{{ _.split(resultsTurnaround, ",").map(_.startCase).join(", ") }} hours</strong>
+        Results turnaround time?<br />
+        <strong>{{ _.split(resultsTurnaround, ",").map(_.startCase).join(", ") }} hour{{ "s" if resultsTurnaround > 1 else ""}}</strong>
         <a 
           class="govuk-link" 
           href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
-          aria-label="Change results turnaround answer"
+          aria-label="Change results turnaround time answer"
         >Change</a>
       </p>
     {% endif %} 
