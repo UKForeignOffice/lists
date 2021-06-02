@@ -243,13 +243,14 @@
       "title": "Turnaround time?",
       "components": [
         {
-          "name": "turnaroundTimes",
+          "name": "turnaroundTime",
           "options": {},
           "type": "RadiosField",
           "title": "Turnaround time?",
           "hint": "'Turnaround time' is the average time in hours you suggest it will take from a British National taking a test to receiving their test result.",
           "nameHasError": false,
-          "list": "QsQEVS"
+          "list": "QsQEVS",
+          "values": { "type": "listRef" }
         }
       ],
       "next": [
