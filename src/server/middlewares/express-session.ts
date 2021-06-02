@@ -24,7 +24,10 @@ export async function configureExpressSession(server: Express): Promise<void> {
 
   if (REDIS_HOST !== undefined && REDIS_PORT !== undefined) {
     const RedisStore = connectRedis(session);
-    const redisClient = redis.createClient();
+    const redisClient = redis.createClient({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+    });
     options.store = new RedisStore({
       client: redisClient,
       prefix: "lists_session_",
