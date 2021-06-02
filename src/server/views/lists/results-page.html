@@ -9,10 +9,10 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if serviceType === ServiceType.lawyers %}
-        {% include "lists/partials/lawyers-results-list.html" %}   
+        {% include "lists/partials/lawyers/lawyers-results-list.html" %}   
       {% endif %}
       {% if serviceType === ServiceType.covidTestProvider %}
-        {% include "lists/partials/covid-test-provider-results-list.html" %}   
+        {% include "lists/partials/covid-test-provider/covid-test-provider-results-list.html" %}   
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">

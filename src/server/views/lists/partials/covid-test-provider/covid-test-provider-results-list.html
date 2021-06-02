@@ -59,7 +59,8 @@
             <strong>Provides Certificate Translation</strong>: {{ "Yes" if item.jsonData.providesCertificateTranslation else "No" }}
           </p>
           <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Turnaround Times</strong>: {{ item.jsonData.turnaroundTimes }}
+            {% set formats = ["PDF sent by email", "Printed copy to be collected"] %}
+            <strong>Certificate formats</strong>: {{ (_.shuffle(formats).slice(0, _.random(1, 2))).join(", ") }}
           </p>
           <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
             <strong>Booking Options</strong>: {{ item.jsonData.bookingOptions }}
