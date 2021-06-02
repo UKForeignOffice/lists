@@ -30,7 +30,7 @@
             class="govuk-label govuk-checkboxes__label"
             for="results-turnaround-{{ turnAround }}"
           >
-            {{ turnAround }} hours
+            {{ turnAround }} hour{{ "s" if turnAround > 1 else ""}}
           </label>  
         </div>
         {% endfor %}
