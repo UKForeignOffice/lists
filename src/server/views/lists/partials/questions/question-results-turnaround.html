@@ -3,11 +3,13 @@
     <fieldset class="govuk-fieldset" aria-describedby="results-turnaround-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="resultsTurnaround">
-          How long after taking the COVID-19 test do you need the result? 
+          How quickly after taking the COVID-19 test do you need the provider to turnaround the result? 
         </label>
       </h1>
       <div id="practice-area-hint" class="govuk-hint">
-        You can choose as many options from the list as you need.
+        You must take the test in the 3 days before the day on which you will arrive in England. 
+        For example, if you travel directly to England on Friday, you can take the test on or after Tuesday 
+        and will need to have the negative result available before boarding on Friday
       </div>
       {% if error.field === 'results-turnaround' %}
         <span class="govuk-error-message">
@@ -32,6 +34,21 @@
           </label>  
         </div>
         {% endfor %}
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="results-turnaround-other"
+            name="resultsTurnaround"
+            type="checkbox"
+            value="other"
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="results-turnaround-other"
+          >
+            No preference
+          </label>  
+        </div>
       </div>
     </fieldset>
   </div>
