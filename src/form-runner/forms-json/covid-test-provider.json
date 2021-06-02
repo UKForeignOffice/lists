@@ -1,15 +1,15 @@
 {
-  "startPage": "/register-to-the-find-a-covid-test-provider-abroad-service",
+  "startPage": "/register-to-the-find-a-covid-19-test-supplier-abroad-service",
   "pages": [
     {
-      "title": "Register to the Find a Covid Test Supplier Abroad service",
-      "path": "/register-to-the-find-a-covid-test-provider-abroad-service",
+      "title": "Register to the Find a Covid-19 Test Supplier Abroad service",
+      "path": "/register-to-the-find-a-covid-19-test-supplier-abroad-service",
       "components": [
         {
           "name": "rhnpiT",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">Lawyers based outside of the UK can register online to be added to the Foreign, Commonwealth & Development Office’s Find a Lawyer Abroad service.</p>\n<p class=\"govuk-body\">British nationals use this service to help them find the legal support abroad that best suits their needs.</p>\n<p class=\"govuk-body\">You need to register as an individual lawyer and not on behalf of your company. </p>\n<p class=\"govuk-body\">To be eligible to be added to the lawyer’s list you need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>fluent English language skills</li>\n  <li>legal qualifications</li>\n  <li>up to date contact details</li>\n</ul>",
+          "content": "<p class=\"govuk-body\">COVID-19 test suppliers based outside of the UK can register online to be added to the Foreign, Commonwealth & Development Office’s Find a COVID-19 Test Supplier Abroad service.</p>\n<p class=\"govuk-body\">British nationals use this service to help them book a COVID-19 test abroad before they return home to the UK.</p>\n<p class=\"govuk-body\">You need to register as an individual and not on behalf of your company. </p>\n<p class=\"govuk-body\">To be eligible to be added to the COVID-19 test suppliers list you need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>fluent English language skills</li>\n  <li>to be legally qualified to provide COVID-19 tests up to UK standard</li>\n  <li>up to date contact details</li>\n</ul>\n<p class=\"govuk-body\">Please read the <a href=\"https://www.gov.uk/guidance/coronavirus-covid-19-testing-for-people-travelling-to-england?step-by-step-nav=8c0c7b83-5e0b-4bed-9121-1c394e2f96f3\" target=\"_blank\" class=\"govuk-link\">coronavirus test guidance</a> for more information on UK standards for Covid-19 test suppliers.</p>",
           "schema": {}
         }
       ],
@@ -39,26 +39,32 @@
       ],
       "next": [
         {
-          "path": "/are-you-qualified-to-provide-covid-19-tests-in-your-country"
+          "path": "/are-you-qualified-to-provide-covid-19-tests-in-your-country-PCXJGd"
+        },
+        {
+          "path": "/you-need-to-speak-fluent-english-to-use-this-service",
+          "condition": "50_TW9NLlvr2820-1-Qt6"
         }
       ]
     },
     {
-      "path": "/are-you-qualified-to-provide-covid-19-tests-in-your-country",
-      "title": "Are you qualified to provide  Covid-19 tests in your country?",
+      "path": "/are-you-qualified-to-provide-covid-19-tests-in-your-country-PCXJGd",
+      "title": "Are you qualified to provide Covid-19 tests in your country?",
       "components": [
         {
           "name": "isQualified",
           "options": {},
           "type": "YesNoField",
-          "title": "Are you qualified to provide  Covid-19 tests in your country?",
+          "title": "Are you qualified to provide Covid-19 tests in your country?",
+          "hint": "The test must meet performance standards of ≥97% specificity, ≥80% sensitivity at viral loads above 100,000 copies/ml. This could include tests such as: a nucleic acid test, including a polymerase chain reaction (PCR) test or derivative technologies, including loop-mediated isothermal amplification (LAMP) tests or an antigen test, such as a test from a lateral flow device",
           "nameHasError": false,
-          "schema": {},
           "values": { "type": "listRef" }
         }
       ],
       "next": [
-        { "path": "/you-need-to-be-qualified-to-provide-covid-pct-tests" },
+        {
+          "path": "/you-need-to-be-qualified-to-provide-covid-tests-that-meet-uk-standards-to-be-registered-on-this-service"
+        },
         {
           "path": "/are-you-a-member-of-a-local-regulatory-authority-or-body",
           "condition": "CprOsX"
@@ -156,22 +162,6 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/what-payment-options-do-you-offer" }]
-    },
-    {
-      "path": "/what-payment-options-do-you-offer",
-      "title": "What payment options do you offer?",
-      "components": [
-        {
-          "name": "paymentOptions",
-          "options": {},
-          "type": "CheckboxesField",
-          "title": "paymentOptions",
-          "nameHasError": false,
-          "list": "TZZkzF",
-          "schema": {}
-        }
-      ],
       "next": [{ "path": "/tests-prices" }]
     },
     {
@@ -179,11 +169,12 @@
       "title": "Tests prices?",
       "components": [
         {
-          "name": "prices",
+          "name": "price",
           "options": {},
-          "type": "TextField",
-          "title": "Prices?",
+          "type": "NumberField",
+          "title": "price",
           "nameHasError": false,
+          "hint": "Please enter the average value of a COVID-19 test in your local currency, e.g: if you in Germany and the test  costs €50, please enter 50.",
           "schema": {}
         }
       ],
@@ -220,24 +211,32 @@
         }
       ],
       "next": [
-        { "path": "/what-is-the-name-of-the-local-regulatory-authority" }
+        {
+          "path": "/what-is-the-name-of-the-local-regulatory-authority",
+          "condition": "DzOdSI"
+        },
+        { "path": "/full-name", "condition": "VMgnBE" }
       ]
     },
     {
-      "path": "/do-you-provide-english-certificate-translation",
-      "title": "Do you provide english certificate translation?",
+      "path": "/do-you-provide-english-french-or-spanish-certificate-translation",
+      "title": "Do you provide English, French or Spanish certificate translation?",
       "components": [
         {
           "name": "providesCertificateTranslation",
           "options": {},
           "type": "YesNoField",
-          "title": "Do you provide english certificate translation?",
+          "title": "Can you provide certificate translation in English, French or Spanish?",
           "nameHasError": false,
           "schema": {},
-          "values": { "type": "listRef" }
+          "values": { "type": "listRef" },
+          "hint": "Test results must be in either English, French or Spanish."
         }
       ],
-      "next": [{ "path": "/what-booking-options-do-you-offer" }]
+      "next": [
+        { "path": "/what-booking-options-do-you-offer", "condition": "tPlnhv" },
+        { "path": "/certificate-is-required", "condition": "UKpekg" }
+      ]
     },
     {
       "path": "/turnaround-time",
@@ -246,24 +245,28 @@
         {
           "name": "turnaroundTimes",
           "options": {},
-          "type": "CheckboxesField",
-          "title": "Turnaround times",
+          "type": "RadiosField",
+          "title": "Turnaround time?",
+          "hint": "'Turnaround time' is the average time in hours you suggest it will take from a British National taking a test to receiving their test result.",
           "nameHasError": false,
-          "list": "QsQEVS",
-          "schema": {}
+          "list": "QsQEVS"
         }
       ],
-      "next": [{ "path": "/do-you-provide-english-certificate-translation" }]
+      "next": [
+        {
+          "path": "/do-you-provide-english-french-or-spanish-certificate-translation"
+        }
+      ]
     },
     {
-      "path": "/you-need-to-be-qualified-to-provide-covid-pct-tests",
-      "title": "You need to be qualified to provide Covid PCT tests ...",
+      "path": "/you-need-to-be-qualified-to-provide-covid-tests-that-meet-uk-standards-to-be-registered-on-this-service",
+      "title": "You need to be qualified to provide Covid tests that meet UK standards to be registered on this service.",
       "components": [
         {
           "name": "gjJiCS",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n    You can only be added to the Find a Lawyer Abroad service if you are qualified to practice law in the country you are based. \n</div>",
+          "content": "<div class=\"govuk-hint\">\n    You can only be added to the Find a Covid test provider abroad service if you are able to provide Covid test that meet UK standards. \n</div>",
           "schema": {}
         }
       ],
@@ -363,7 +366,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation;\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find A Lawyer Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n</ul>\n",
+          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide COVID-19 tests\n  </li>\n  <li>\n    supply COVID-19 tests to UK standard \n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find a COVID-19 Test Supplier Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n</ul>\n",
           "schema": {}
         },
         {
@@ -377,6 +380,25 @@
         }
       ],
       "next": [{ "path": "/summary" }]
+    },
+    {
+      "path": "/you-need-to-speak-fluent-english-to-use-this-service",
+      "title": "You need to speak fluent English to use this service",
+      "components": [
+        {
+          "name": "vCQCMd",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\n   You can only be added to the Find a Covid test provider abroad service if you have excellent English language skills. \n\n</div>"
+        }
+      ],
+      "next": []
+    },
+    {
+      "path": "/certificate-is-required",
+      "title": "Certificate is required",
+      "components": [],
+      "next": []
     }
   ],
   "lists": [
@@ -680,8 +702,9 @@
       "name": "IuQXnr",
       "type": "string",
       "items": [
-        { "text": "Online", "value": "Online" },
+        { "text": "Website", "value": "Website" },
         { "text": "Phone", "value": "Phone" },
+        { "text": "Email", "value": "Email" },
         { "text": "SMS", "value": "SMS" },
         { "text": "In Person", "value": "In Person" }
       ]
@@ -695,12 +718,15 @@
           "text": "Polymerase chain reaction (PCR)",
           "value": "Polymerase chain reaction (PCR)"
         },
+        {
+          "text": "An antigen test, such as a test from a lateral flow device",
+          "value": "An antigen test, such as a test from a lateral flow device"
+        },
         { "text": "Serology (antibody)", "value": "Serology (antibody)" },
         {
           "text": "Loop mediated isothermal amplification (LAMP)",
           "value": "Loop mediated isothermal amplification (LAMP)"
-        },
-        { "text": "Other", "value": "Other" }
+        }
       ]
     },
     {
@@ -708,9 +734,21 @@
       "name": "QsQEVS",
       "type": "string",
       "items": [
-        { "text": "24 hours", "value": "24 hours" },
-        { "text": "48 hours", "value": "48 hours" },
-        { "text": "72 hours", "value": "72 hours" }
+        { "text": "1 hour", "value": 1 },
+        { "text": "12 hours", "value": 12 },
+        { "text": "24 hours", "value": 24 },
+        { "text": "48 hours", "value": 48 },
+        { "text": "72 hours", "value": 72 }
+      ]
+    },
+    {
+      "title": "certificate translation",
+      "name": "vSPdrH",
+      "type": "string",
+      "items": [
+        { "text": "English", "value": "English" },
+        { "text": "French", "value": "French" },
+        { "text": "Spanish", "value": "Spanish" }
       ]
     }
   ],
@@ -816,6 +854,42 @@
             },
             "operator": "is",
             "value": { "type": "Value", "value": "true", "display": "true" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "tPlnhv",
+      "displayName": "provideCertificateYes",
+      "value": {
+        "name": "provideCertificateYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "providesCertificateTranslation",
+              "type": "YesNoField",
+              "display": "Can you provide certificate translation in English, French or Spanish?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "true", "display": "true" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UKpekg",
+      "displayName": "provideCertificateNo",
+      "value": {
+        "name": "provideCertificateNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "providesCertificateTranslation",
+              "type": "YesNoField",
+              "display": "Can you provide certificate translation in English, French or Spanish?"
+            },
+            "operator": "is",
+            "value": { "type": "Value", "value": "false", "display": "false" }
           }
         ]
       }
