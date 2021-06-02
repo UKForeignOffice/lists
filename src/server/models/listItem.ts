@@ -264,9 +264,14 @@ async function createCovidTestSupplierListItemObject(
         regulatoryAuthority: covidTestProvider.regulatoryAuthority,
         providesCertificateTranslation:
           covidTestProvider.providesCertificateTranslation,
-        bookingOptions: covidTestProvider.bookingOptions?.split(",").map(trim),
-        turnaroundTimes: covidTestProvider.turnaroundTimes,
-        testTypes: covidTestProvider.testTypes?.split(",").map(trim),
+        bookingOptions: covidTestProvider.bookingOptions
+          ?.split(",")
+          .map(trim)
+          .map(toLower),
+        testTypes: covidTestProvider.testTypes
+          ?.split(",")
+          .map(trim)
+          .map(toLower),
         turnaroundTime: Number(covidTestProvider.turnaroundTime),
         price: Number(covidTestProvider.price),
       },
