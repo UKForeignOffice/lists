@@ -58,7 +58,8 @@
           "title": "Are you qualified to provide Covid-19 tests in your country?",
           "hint": "The test must meet performance standards of ≥97% specificity, ≥80% sensitivity at viral loads above 100,000 copies/ml. This could include tests such as: a nucleic acid test, including a polymerase chain reaction (PCR) test or derivative technologies, including loop-mediated isothermal amplification (LAMP) tests or an antigen test, such as a test from a lateral flow device",
           "nameHasError": false,
-          "values": { "type": "listRef" }
+          "values": { "type": "listRef" },
+          "schema": {}
         }
       ],
       "next": [
@@ -162,22 +163,6 @@
           "schema": {}
         }
       ],
-      "next": [{ "path": "/tests-prices" }]
-    },
-    {
-      "path": "/tests-prices",
-      "title": "Tests prices?",
-      "components": [
-        {
-          "name": "price",
-          "options": {},
-          "type": "NumberField",
-          "title": "price",
-          "nameHasError": false,
-          "hint": "Please enter the average value of a COVID-19 test in your local currency, e.g: if you in Germany and the test  costs €50, please enter 50.",
-          "schema": {}
-        }
-      ],
       "next": [{ "path": "/declaration" }]
     },
     {
@@ -250,7 +235,8 @@
           "hint": "'Turnaround time' is the average time in hours you suggest it will take from a British National taking a test to receiving their test result.",
           "nameHasError": false,
           "list": "QsQEVS",
-          "values": { "type": "listRef" }
+          "values": { "type": "listRef" },
+          "schema": {}
         }
       ],
       "next": [
@@ -390,7 +376,8 @@
           "name": "vCQCMd",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n   You can only be added to the Find a Covid test provider abroad service if you have excellent English language skills. \n\n</div>"
+          "content": "<div class=\"govuk-hint\">\n   You can only be added to the Find a Covid test provider abroad service if you have excellent English language skills. \n\n</div>",
+          "schema": {}
         }
       ],
       "next": []
