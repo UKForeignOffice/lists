@@ -16,7 +16,7 @@ export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
 export type ListItem = PrismaClient.ListItem;
-export type ListItemCreateInput = PrismaClient.Prisma.ListItemCreateInput;
+export type User = PrismaClient.User;
 
 interface ListItemGetObject extends PrismaClient.ListItem {
   address: {
@@ -31,6 +31,11 @@ interface ListItemGetObject extends PrismaClient.ListItem {
     geoLocationId?: number;
   };
 }
+
+// User
+export interface UserJsonData extends PrismaClient.Prisma.JsonObject {}
+
+export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {}
 
 // Lawyer
 export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
@@ -60,7 +65,8 @@ export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
   };
 }
 
-export interface LawyerListItemCreateInput extends ListItemCreateInput {
+export interface LawyerListItemCreateInput
+  extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.lawyers;
   jsonData: LawyerListItemJsonData;
 }
@@ -85,7 +91,7 @@ export interface CovidTestSupplierListItemJsonData
 }
 
 export interface CovidTestSupplierListItemCreateInput
-  extends ListItemCreateInput {
+  extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.covidTestProvider;
   jsonData: CovidTestSupplierListItemJsonData;
 }
