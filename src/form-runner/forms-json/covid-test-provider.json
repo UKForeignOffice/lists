@@ -715,18 +715,15 @@
       "name": "lDBTVC",
       "type": "string",
       "items": [
-        {
-          "text": "Polymerase chain reaction (PCR)",
-          "value": "Polymerase chain reaction (PCR)"
-        },
+        { "text": "Polymerase chain reaction (PCR)", "value": "pcr" },
         {
           "text": "An antigen test, such as a test from a lateral flow device",
-          "value": "An antigen test, such as a test from a lateral flow device"
+          "value": "antigen"
         },
-        { "text": "Serology (antibody)", "value": "Serology (antibody)" },
+        { "text": "Serology (antibody)", "value": "serology" },
         {
           "text": "Loop mediated isothermal amplification (LAMP)",
-          "value": "Loop mediated isothermal amplification (LAMP)"
+          "value": "lamp"
         }
       ]
     },
