@@ -36,7 +36,7 @@ export function postLoginController(
   const { emailAddress } = req.body;
 
   if (isGovUKEmailAddress(emailAddress)) {
-    createAuthenticationPath({ emailAddress })
+    createAuthenticationPath({ email: emailAddress })
       .then((authPath) => {
         return `${req.protocol}://${req.get("host")}${authPath}`;
       })

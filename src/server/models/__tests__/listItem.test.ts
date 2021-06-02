@@ -164,6 +164,11 @@ describe("ListItem Model:", () => {
               postCode: "123456",
               city: "Touraine",
               country: { connect: { id: "123TEST" } },
+              geoLocation: {
+                connect: {
+                  id: undefined,
+                },
+              },
             },
           },
           jsonData: {

@@ -1,3 +1,10 @@
 export interface User {
-  emailAddress: string;
+  email: string;
+  roles?: Roles[];
+}
+
+export enum Roles {
+  SuperAdmin = "SuperAdmin",
+  Admin = "Admin",
+  Editor = "Editor",
 }

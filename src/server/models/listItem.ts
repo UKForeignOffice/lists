@@ -228,7 +228,11 @@ async function createLawyerListItemObject(
           country: {
             connect: { id: country.id },
           },
-          ...(typeof geoLocationId === "number" ? { geoLocationId } : {}),
+          geoLocation: {
+            connect: {
+              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
+            },
+          },
         },
       },
     };
@@ -284,7 +288,11 @@ async function createCovidTestSupplierListItemObject(
           country: {
             connect: { id: country.id },
           },
-          ...(typeof geoLocationId === "number" ? { geoLocationId } : {}),
+          geoLocation: {
+            connect: {
+              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
+            },
+          },
         },
       },
     };

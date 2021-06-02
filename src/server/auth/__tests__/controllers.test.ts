@@ -96,17 +96,17 @@ describe("Auth Module", () => {
     });
 
     test("sendAuthenticationEmail is called with correct parameters", (done) => {
-      const emailAddress = "person@depto.gov.uk";
+      const email = "person@depto.gov.uk";
       const sendEmailSpy = spySendAuthenticationEmail();
       const createAuthTokenSpy = spyCreateAuthenticationPath();
-      req.body.emailAddress = emailAddress;
+      req.body.emailAddress = email;
 
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(createAuthTokenSpy).toHaveBeenCalledWith({ emailAddress });
+        expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
         expect(sendEmailSpy).toHaveBeenCalledWith(
-          emailAddress,
+          email,
           "https://localhost/login?token=123Token"
         );
         done();
@@ -151,14 +151,14 @@ describe("Auth Module", () => {
   describe("authController", () => {
     test("authentication is correct", async () => {
       const authPath: any = await tokenService.createAuthenticationPath({
-        emailAddress: "person@depto.gov.uk",
+        email: "person@depto.gov.uk",
       });
       req.url = `http://localhost${authPath}`;
 
       authController(req, res, next);
 
       expect(req.logIn.mock.calls[0][0]).toEqual({
-        emailAddress: "person@depto.gov.uk",
+        email: "person@depto.gov.uk",
       });
       expect(req.logIn.mock.calls[0][1]).toEqual({
         failureRedirect: "/login?invalidToken=true",
@@ -168,7 +168,7 @@ describe("Auth Module", () => {
 
     test("authentication redirects to session.returnTo", async () => {
       const authPath: any = await tokenService.createAuthenticationPath({
-        emailAddress: "person@depto.gov.uk",
+        email: "person@depto.gov.uk",
       });
       req.url = `http://localhost${authPath}`;
       req.session.returnTo = "/dashboard?something=1";
@@ -181,7 +181,7 @@ describe("Auth Module", () => {
 
     test("authentication fails when token is invalid", async () => {
       const authPath: any = await tokenService.createAuthenticationPath({
-        emailAddress: "person@depto.gov.uk",
+        email: "person@depto.gov.uk",
       });
 
       req.url = `http://localhost${authPath}MAKEINVALID`;
