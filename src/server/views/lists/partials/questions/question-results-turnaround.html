@@ -16,34 +16,34 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
-      <div class="govuk-checkboxes">
+      <div class="govuk-radios">
         {% for turnAround in [1, 12, 24, 48, 72] %}
-        <div class="govuk-checkboxes__item">
+        <div class="govuk-radios__item">
           <input
-            class="govuk-checkboxes__input"
+            class="govuk-radios__input"
             id="results-turnaround-{{turnAround}}"
             name="resultsTurnaround"
-            type="checkbox"
+            type="radio"
             value="{{ turnAround }}"
           />
           <label
-            class="govuk-label govuk-checkboxes__label"
+            class="govuk-label govuk-radios__label"
             for="results-turnaround-{{ turnAround }}"
           >
             {{ turnAround }} hour{{ "s" if turnAround > 1 else ""}}
           </label>  
         </div>
         {% endfor %}
-        <div class="govuk-checkboxes__item">
+        <div class="govuk-radios__item">
           <input
-            class="govuk-checkboxes__input"
+            class="govuk-radios__input"
             id="results-turnaround-other"
             name="resultsTurnaround"
-            type="checkbox"
+            type="radio"
             value="other"
           />
           <label
-            class="govuk-label govuk-checkboxes__label"
+            class="govuk-label govuk-radios__label"
             for="results-turnaround-other"
           >
             No preference
