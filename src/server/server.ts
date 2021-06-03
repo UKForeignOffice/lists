@@ -20,6 +20,7 @@ export async function getServer(): Promise<Express> {
   configureHelmet(server);
   configureLogger(server);
   configureCompression(server);
+  configureStaticServer(server);
   configureFormRunnerProxy(
     // form runner proxy must be initialized before body parser
     server
@@ -30,7 +31,6 @@ export async function getServer(): Promise<Express> {
   await configureAuth(server);
   configureViews(server);
   configureRouter(server);
-  configureStaticServer(server);
   configureErrorHandlers(server);
 
   return server;
