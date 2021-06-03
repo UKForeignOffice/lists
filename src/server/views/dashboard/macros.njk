@@ -1,0 +1,7 @@
+{% macro navMenu(title, path, req) %}
+  <li>
+    <a class="govuk-link {{ "govuk-link--no-underline" if req.path !== path }}" href="{{ path }}">
+      {{ title }}
+    </a>
+  </li>
+{% endmacro %}

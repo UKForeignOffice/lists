@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% import "./macros.njk" as macros %}
+
+{% block content %}
+  <div class="govuk-width-container ">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-third">
+            <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
+              <ul class="govuk-list">
+                {{ macros.navMenu("Dashboard", dashboardRoutes.start, req) }}
+                {{ macros.navMenu("Users", dashboardRoutes.users, req) }}
+                {{ macros.navMenu("Lists", dashboardRoutes.lists, req) }}
+              </ul>
+            </nav>
+          </div>
+          <div class="govuk-grid-column-two-thirds">
+            <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content" role="main">
+              {% block dashboard %}
+                <h1 class="govuk-heading-l">Dashboard</h1>
+              {% endblock %}
+            </main>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+{% endblock %}
