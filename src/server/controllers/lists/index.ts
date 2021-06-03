@@ -8,4 +8,4 @@ export {
   listsConfirmApplicationController,
 } from "./lists";
 
-export { listsRoutes } from "./constants";
+export { listsRoutes } from "./routes";
