@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { get, noop } from "lodash";
 import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
-import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
+import { DEFAULT_VIEW_PROPS } from "./constants";
+import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
 import { ServiceType } from "server/models/types";
 import {
