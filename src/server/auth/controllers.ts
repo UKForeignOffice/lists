@@ -8,7 +8,7 @@ import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
-  successReturnToOrRedirect: "/",
+  successReturnToOrRedirect: "/dashboard",
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 

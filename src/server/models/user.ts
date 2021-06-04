@@ -7,9 +7,9 @@ export async function findUserByEmail(
   email: string
 ): Promise<User | undefined> {
   try {
-    const user = await prisma.user.findUnique({
+    const user = (await prisma.user.findUnique({
       where: { email },
-    });
+    })) as User;
 
     return user ?? undefined;
   } catch (error) {
@@ -27,8 +27,7 @@ export async function createUser(
   }
 
   try {
-    const user = await prisma.user.create({ data });
-    return user;
+    return (await prisma.user.create({ data })) as User;
   } catch (error) {
     logger.error(`findUserByEmail Error ${error.message}`);
     return undefined;
@@ -45,11 +44,10 @@ export async function updateUser(
   }
 
   try {
-    const user = await prisma.user.update({
+    return (await prisma.user.update({
       where: { email },
       data,
-    });
-    return user;
+    })) as User;
   } catch (error) {
     logger.error(`findUserByEmail Error ${error.message}`);
     return undefined;

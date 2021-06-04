@@ -16,7 +16,6 @@ export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
 export type ListItem = PrismaClient.ListItem;
-export type User = PrismaClient.User;
 
 interface ListItemGetObject extends PrismaClient.ListItem {
   address: {
@@ -33,9 +32,24 @@ interface ListItemGetObject extends PrismaClient.ListItem {
 }
 
 // User
-export interface UserJsonData extends PrismaClient.Prisma.JsonObject {}
+export enum UserRoles {
+  SuperAdmin = "SuperAdmin",
+  TeamAdmin = "TeamAdmin",
+  TeamEditor = "TeamEditor",
+}
 
-export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {}
+export interface UserJsonData extends PrismaClient.Prisma.JsonObject {
+  roles?: UserRoles[];
+  country?: CountryName;
+}
+
+export interface User extends PrismaClient.User {
+  jsonData: UserJsonData;
+}
+
+export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {
+  jsonData: UserJsonData;
+}
 
 // Lawyer
 export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {

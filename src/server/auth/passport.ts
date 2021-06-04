@@ -6,6 +6,9 @@ import {
   Strategy as JwtStrategy,
 } from "passport-jwt";
 import { getJwtSecret } from "./json-web-token";
+import { User } from "server/models/types";
+import { findUserByEmail, createUser } from "server/models/user";
+import { AuthenticatedUser } from "./authenticated-user";
 
 import { JWT_ALGORITHM } from "./constants";
 
@@ -16,26 +19,40 @@ export async function configurePassport(server: Express): Promise<void> {
     algorithms: [JWT_ALGORITHM],
     jwtFromRequest: ExtractJwt.fromUrlQueryParameter("token"),
   };
-  
+
   passport.use(
     "jwt",
-    new JwtStrategy(OPTIONS, (token, done) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    new JwtStrategy(OPTIONS, async (token, done) => {
       const { user } = token;
-  
-      if (user !== undefined) {
-        done(null, user);
+
+      if (user.email !== undefined) {
+        let userData = await findUserByEmail(user.email);
+
+        if (userData === undefined) {
+          userData = await createUser({
+            email: user.email,
+            jsonData: {
+              roles: [],
+            },
+          });
+        }
+
+        done(null, userData);
       } else {
         done(null, false);
       }
     })
   );
-  
-  passport.serializeUser((user: Express.User, cb) => {
+
+  passport.serializeUser((user, cb) => {
+    // from jwt to session
     cb(null, user);
   });
-  
-  passport.deserializeUser((user: Express.User, cb) => {
-    cb(null, user);
+
+  passport.deserializeUser((userData: User, cb) => {
+    // from session to req.user
+    cb(null, new AuthenticatedUser(userData));
   });
 
   server.use(passport.initialize());

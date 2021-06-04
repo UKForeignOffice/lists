@@ -1,10 +1,11 @@
-export interface User {
-  email: string;
-  roles?: Roles[];
-}
+import { AuthenticatedUser } from "./authenticated-user";
 
-export enum Roles {
-  SuperAdmin = "SuperAdmin",
-  Admin = "Admin",
-  Editor = "Editor",
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface User extends AuthenticatedUser {}
+    interface Request {
+      user?: User;
+    }
+  }
 }

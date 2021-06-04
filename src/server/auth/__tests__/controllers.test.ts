@@ -6,7 +6,9 @@ import {
 } from "../controllers";
 import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
+import * as userModel from "server/models/user";
 import { getServer } from "server/server";
+import { noop } from "lodash";
 
 describe("Auth Module", () => {
   let req: any, res: any, next: any;
@@ -149,34 +151,75 @@ describe("Auth Module", () => {
   });
 
   describe("authController", () => {
-    test("authentication is correct", async () => {
-      const authPath: any = await tokenService.createAuthenticationPath({
-        email: "person@depto.gov.uk",
-      });
-      req.url = `http://localhost${authPath}`;
+    const email = "person@depto.gov.uk";
+    let spyFindUserByEmail: any;
+    let spyCreateUser: any;
 
-      authController(req, res, next);
-
-      expect(req.logIn.mock.calls[0][0]).toEqual({
-        email: "person@depto.gov.uk",
-      });
-      expect(req.logIn.mock.calls[0][1]).toEqual({
-        failureRedirect: "/login?invalidToken=true",
-        successReturnToOrRedirect: "/",
-      });
+    beforeEach(() => {
+      spyFindUserByEmail = jest
+        .spyOn(userModel, "findUserByEmail")
+        .mockResolvedValue(undefined);
+      spyCreateUser = jest.spyOn(userModel, "createUser").mockResolvedValue({
+        email,
+        jsonData: {
+          roles: [],
+        },
+      } as any);
     });
 
-    test("authentication redirects to session.returnTo", async () => {
-      const authPath: any = await tokenService.createAuthenticationPath({
-        email: "person@depto.gov.uk",
-      });
-      req.url = `http://localhost${authPath}`;
-      req.session.returnTo = "/dashboard?something=1";
+    test("authentication is correct", (done) => {
+      tokenService
+        .createAuthenticationPath({ email })
+        .then((authPath) => {
+          req.url = `http://localhost${authPath}`;
 
-      authController(req, res, next);
+          authController(req, res, next);
 
-      req.logIn.mock.calls[0][2]();
-      expect(res.redirect).toHaveBeenCalledWith("/dashboard?something=1");
+          setTimeout(() => {
+            expect(req.logIn.mock.calls[0][0]).toEqual({
+              email: "person@depto.gov.uk",
+              jsonData: {
+                roles: [],
+              },
+            });
+
+            expect(req.logIn.mock.calls[0][1]).toEqual({
+              failureRedirect: "/login?invalidToken=true",
+              successReturnToOrRedirect: "/dashboard",
+            });
+
+            expect(spyFindUserByEmail).toHaveBeenCalledWith(email);
+            expect(spyCreateUser).toHaveBeenCalledWith({
+              email,
+              jsonData: {
+                roles: [],
+              },
+            });
+
+            done();
+          });
+        })
+        .catch(noop);
+    });
+
+    test("authentication redirects to session.returnTo", (done) => {
+      tokenService
+        .createAuthenticationPath({
+          email: "person@depto.gov.uk",
+        })
+        .then((authPath) => {
+          req.url = `http://localhost${authPath}`;
+          req.session.returnTo = "/dashboard?something=1";
+
+          authController(req, res, next);
+
+          setTimeout(() => {
+            req.logIn.mock.calls[0][2]();
+            expect(res.redirect).toHaveBeenCalledWith("/dashboard?something=1");
+            done();
+          });
+        })
+        .catch(noop);
     });
 
     test("authentication fails when token is invalid", async () => {
