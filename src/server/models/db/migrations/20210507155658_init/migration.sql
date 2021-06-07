@@ -69,6 +69,9 @@ CREATE UNIQUE INDEX "ListItem.reference_unique" ON "ListItem"("reference");
 CREATE INDEX "ListItem.type_reference_isApproved_isPublished_isBlocked_index" ON "ListItem"("type", "reference", "isApproved", "isPublished", "isBlocked");
 
 -- CreateIndex
+CREATE INDEX "ListItem.jsonData_gin" ON "ListItem" USING gin ("jsonData");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Country.name_unique" ON "Country"("name");
 
 -- CreateIndex

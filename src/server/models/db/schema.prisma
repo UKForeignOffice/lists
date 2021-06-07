@@ -8,6 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model List {
+  id                  Int      @id @default(autoincrement())
+  reference           String   @default(uuid()) @unique
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  type                String
+  jsonData            Json
+}
+
 model ListItem {
   id                  Int      @id @default(autoincrement())
   reference           String   @default(uuid()) @unique
