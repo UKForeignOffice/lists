@@ -1,7 +1,7 @@
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { User, UserCreateInput } from "./types";
+import { User, UserCreateInput, UserUpdateInput } from "./types";
 
 export async function findUserByEmail(
   email: string
@@ -36,9 +36,9 @@ export async function createUser(
 
 export async function updateUser(
   email: string,
-  data: UserCreateInput
+  data: UserUpdateInput
 ): Promise<User | undefined> {
-  if (!isGovUKEmailAddress(data.email)) {
+  if (typeof data.email === "string" && !isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to update non GOV.UK user ${data.email}`);
     return undefined;
   }
@@ -51,5 +51,14 @@ export async function updateUser(
   } catch (error) {
     logger.error(`findUserByEmail Error ${error.message}`);
     return undefined;
+  }
+}
+
+export async function findUsers(): Promise<User[]> {
+  try {
+    return (await prisma.user.findMany()) as User[];
+  } catch (error) {
+    logger.error(`listUsers Error ${error.message}`);
+    return [];
   }
 }

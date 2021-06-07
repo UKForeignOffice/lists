@@ -1,4 +1,5 @@
 import path from "path";
+import _ from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
@@ -25,7 +26,8 @@ export const configureViews = (server: Express): void => {
     .addGlobal("appVersion", version)
     .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
     .addGlobal("isLocalHOST", isLocalHost)
-    .addGlobal("SERVICE_NAME", SERVICE_NAME);
+    .addGlobal("SERVICE_NAME", SERVICE_NAME)
+    .addGlobal("_", _);
 
   // dynamic globals
   server.use((req, res, next) => {

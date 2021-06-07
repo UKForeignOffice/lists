@@ -34,13 +34,13 @@ interface ListItemGetObject extends PrismaClient.ListItem {
 // User
 export enum UserRoles {
   SuperAdmin = "SuperAdmin",
-  TeamAdmin = "TeamAdmin",
-  TeamEditor = "TeamEditor",
+  ListsAdmin = "ListsAdmin",
+  ListPublisher = "ListPublisher",
+  ListEditor = "ListEditor",
 }
 
 export interface UserJsonData extends PrismaClient.Prisma.JsonObject {
   roles?: UserRoles[];
-  country?: CountryName;
 }
 
 export interface User extends PrismaClient.User {
@@ -48,6 +48,10 @@ export interface User extends PrismaClient.User {
 }
 
 export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {
+  jsonData: UserJsonData;
+}
+
+export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
   jsonData: UserJsonData;
 }
 

@@ -16,13 +16,7 @@ export class AuthenticatedUser {
 
   isTeamAdmin(): boolean {
     return (
-      this.userData.jsonData?.roles?.includes(UserRoles.TeamAdmin) === true
-    );
-  }
-
-  isTeamEditor(): boolean {
-    return (
-      this.userData.jsonData?.roles?.includes(UserRoles.TeamEditor) === true
+      this.userData.jsonData?.roles?.includes(UserRoles.ListsAdmin) === true
     );
   }
 

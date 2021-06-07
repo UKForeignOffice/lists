@@ -12,7 +12,7 @@ import {
 } from "lodash";
 
 import { SERVICE_DOMAIN } from "server/config";
-import { listsRoutes } from "./constants";
+import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
 import {
