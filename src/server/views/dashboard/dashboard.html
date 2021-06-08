@@ -2,32 +2,31 @@
 {% import "./macros.njk" as macros %}
 
 {% block content %}
-  <div class="govuk-width-container ">
+  <div class="dashboard__logout">
+    <a href="/logout" class="govuk-link">Logout</a>
+  </div>
+  <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
         <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
           <ul class="govuk-list">
             {{ macros.navMenu("Dashboard", dashboardRoutes.start, req) }}
             {% if req.user.isSuperAdmin() %}
-              {{ macros.navMenu("Users", dashboardRoutes.users, req) }}
+              {{ macros.navMenu("Users", dashboardRoutes.usersList, req) }}
             {% endif %}
-            {% if req.user.isTeamAdmin() or req.user.isTeamEditor() %}
-              {{ macros.navMenu("Lists", dashboardRoutes.lists, req) }}
-            {% endif %}
+            {{ macros.navMenu("Lists", dashboardRoutes.lists, req) }}
           </ul>
         </nav>
       </div>
       <div class="govuk-grid-column-three-quarters">
-        <main class="govuk-main-wrapper govuk-!-padding-top-0" id="main-content" role="main">
-          {% block dashboard %}
-            <h1 class="govuk-heading-l">Dashboard</h1>
+        {% block dashboard %}
+          <h1 class="govuk-heading-l">Dashboard</h1>
 
-            {% if req.user.isNewUser() %}
-              {% include "./partials/new-user-banner.html" %}
-            {% endif %}
+          {% if req.user.isNewUser() %}
+            {% include "./partials/new-user-banner.html" %}
+          {% endif %}
 
-          {% endblock %}
-        </main>
+        {% endblock %}
       </div>
     </div>
   </div>

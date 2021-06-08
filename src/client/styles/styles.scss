@@ -33,3 +33,15 @@ body.js-enabled .govuk-cookie-banner:not(.no-js) {
 body:not(.js-enabled) .govuk-cookie-banner.no-js {
   display: block;
 }
+
+main.govuk-main-wrapper {
+  position: relative;
+}
+
+.dashboard {
+  &__logout {
+    position: absolute;
+    right: 0;
+    top: -2rem;
+  }
+}
