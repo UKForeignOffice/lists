@@ -1,6 +1,7 @@
 export {
   startRouteController,
-  usersRouteController,
   listsRouteController,
+  usersListController,
+  usersEditController,
 } from "./dashboard";
 export { dashboardRoutes } from "./routes";

@@ -1,7 +1,7 @@
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { User, UserCreateInput, UserUpdateInput } from "./types";
+import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
 
 export async function findUserByEmail(
   email: string
@@ -60,5 +60,15 @@ export async function findUsers(): Promise<User[]> {
   } catch (error) {
     logger.error(`listUsers Error ${error.message}`);
     return [];
+  }
+}
+
+export async function isSuperAdminUser(email: string): Promise<boolean> {
+  try {
+    const user = await findUserByEmail(email);
+    return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
+  } catch (error) {
+    logger.error(`isSuperAdmin Error: ${error.message}`);
+    throw error;
   }
 }

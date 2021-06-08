@@ -1,5 +1,6 @@
 export const dashboardRoutes = {
   start: "/dashboard",
-  users: "/dashboard/users",
   lists: "/dashboard/lists",
+  usersList: "/dashboard/users",
+  usersEdit: "/dashboard/users/:userEmail",
 };

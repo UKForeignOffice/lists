@@ -3,15 +3,19 @@
 {% block dashboard %}
   <h1 class="govuk-heading-l">Editing User</h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
+
+  {% if userSaved %}
+    {{ macros.successBanner("User updated successfully") }}
+  {% endif %}
   
   <form class="form" action="{{ req.originalUrl }}" method="post" required>
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'roles' }}">
       <fieldset class="govuk-fieldset" aria-describedby="roles">
-        <h1 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--l" for="roles">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="roles">
             Roles
           </label>
-        </h1>
+        </h3>
         {% if error.field === 'roles' %}
           <span class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> {{ error.text }}

@@ -16,7 +16,7 @@
           <th scope="row" class="govuk-table__header">{{ user.email }}</th>
           <td class="govuk-table__cell">{{ user.jsonData.roles.join(", ") }}</td>
           <td class="govuk-table__cell govuk-table__cell--numeric">
-            <a href="{{ req.path}}?editUser={{user.email}}" class="govuk-link">Edit</a>
+            <a href="{{ dashboardRoutes.usersEdit.replace(':userEmail', user.email) }}" class="govuk-link">Edit</a>
           </td>
         </tr>
       {% endfor %}

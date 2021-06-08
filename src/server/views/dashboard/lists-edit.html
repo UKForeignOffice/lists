@@ -1,0 +1,112 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">
+    {% if listId === 'new' %}
+      Create new list
+    {% else %}
+      Edit list {{ listId }}
+    {% endif %}
+  </h1>
+  <h4 class="govuk-heading-s">{{ user.email }}</h4>
+  
+  <form class="form" action="{{ req.originalUrl }}" method="post" required>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+          <h1 class="govuk-fieldset__heading">
+            Service Type?
+          </h1>
+        </legend>
+        <div class="govuk-radios">
+          {% for prop, serviceType in ServiceType %}
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="where-do-you-live" name="where-do-you-live" type="radio" value="{{ serviceType }}">
+              <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                {{ _.startCase(serviceType) }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </fieldset>
+    </div>
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
+      <h3 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="country-autocomplete">
+          Which country is this list for?
+        </label>
+      </h3>
+      {% if error.field === 'country' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <div class="govuk-hint">
+        Please leave it empty if this list is not for any specific country
+      </div>
+      <select id="country-autocomplete" name="country" className="govuk-input--error">
+        <option value=""></option>
+        {% for country in countriesList %}
+        <option value="{{ country.value.toLowerCase() }}">{{ country.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'editors' }}">
+      <fieldset class="govuk-fieldset" aria-describedby="roles">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l" for="roles">
+            Editors
+          </label>
+        </h3>
+        {% if error.field === 'editors' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="editors-hint" class="govuk-hint">
+          Editors can approve and block list items. 
+        </div>
+        <div id="editors-hint" class="govuk-hint">
+          For multiple editors, please comma separate their emails addresses
+        </div>
+        <input class="govuk-input" id="editors" name="editor" type="text" aria-describedby="editors-hint">
+      </fieldset>
+    </div>
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publishers' }}">
+      <fieldset class="govuk-fieldset" aria-describedby="roles">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l" for="roles">
+            Publishers
+          </label>
+        </h3>
+        {% if error.field === 'publishers' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="editors-hint" class="govuk-hint">
+          Publishers can publish and block list items. 
+        </div>
+        <div id="editors-hint" class="govuk-hint">
+          For multiple publishers, please comma separate their emails addresses
+        </div>
+        <input class="govuk-input" id="publishers" name="publishers" type="text" aria-describedby="publishers-hint">
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">
+      {% if listId === 'new' %}
+        Create
+      {% else %}
+        Save
+      {% endif %}
+      
+    </button>
+  </form>
+  <script>
+    accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '',
+      selectElement: document.querySelector('#country-autocomplete'),
+      autoselect: true
+    })
+  </script>
+{% endblock %}
