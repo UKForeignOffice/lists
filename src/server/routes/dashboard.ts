@@ -3,7 +3,8 @@ import express from "express";
 import { ensureAuthenticated, ensureUserIsSuperAdmin } from "server/auth";
 import {
   dashboardRoutes,
-  listsRouteController,
+  listsController,
+  listsEditController,
   startRouteController,
   usersListController,
   usersEditController,
@@ -13,9 +14,12 @@ const router = express.Router();
 
 router.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 router.get(dashboardRoutes.start, startRouteController);
-router.all(dashboardRoutes.lists, listsRouteController);
 
-// Super Admin routes
+// lists
+router.get(dashboardRoutes.lists, listsController);
+router.all(dashboardRoutes.listsEdit, listsEditController);
+
+// Users
 // TODO: test ensureUserIsSuperAdmin
 router.get(
   dashboardRoutes.usersList,

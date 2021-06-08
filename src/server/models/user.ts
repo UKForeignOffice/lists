@@ -3,6 +3,7 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
 
+// TODO: test
 export async function findUserByEmail(
   email: string
 ): Promise<User | undefined> {
@@ -18,6 +19,7 @@ export async function findUserByEmail(
   }
 }
 
+// TODO: test
 export async function createUser(
   data: UserCreateInput
 ): Promise<User | undefined> {
@@ -34,6 +36,7 @@ export async function createUser(
   }
 }
 
+// TODO: test
 export async function updateUser(
   email: string,
   data: UserUpdateInput
@@ -54,6 +57,7 @@ export async function updateUser(
   }
 }
 
+// TODO: test
 export async function findUsers(): Promise<User[]> {
   try {
     return (await prisma.user.findMany()) as User[];
@@ -63,6 +67,7 @@ export async function findUsers(): Promise<User[]> {
   }
 }
 
+// TODO: test
 export async function isSuperAdminUser(email: string): Promise<boolean> {
   try {
     const user = await findUserByEmail(email);

@@ -6,6 +6,7 @@ import { getSecretValue } from "server/services/secrets-manager";
 import { isLocalHost, REDIS_HOST, REDIS_PORT } from "server/config";
 
 const ONE_HOUR = 3600000;
+const ONE_DAY = 24 * ONE_HOUR;
 
 declare module "express-session" {
   export interface SessionData {
@@ -22,7 +23,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
     resave: false,
     cookie: {
       secure: !isLocalHost,
-      maxAge: ONE_HOUR,
+      maxAge: isLocalHost ? ONE_DAY : ONE_HOUR,
     },
     name: "lists_sid",
   };

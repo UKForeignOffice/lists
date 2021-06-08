@@ -15,7 +15,12 @@ model List {
   updatedAt           DateTime @updatedAt
 
   type                String
+  country             Country  @relation(fields: [countryId], references: [id])
+  countryId   Int
+  
   jsonData            Json
+
+  @@index([type, countryId])
 }
 
 model ListItem {
@@ -70,6 +75,7 @@ model Country {
 
   name      String    @db.VarChar(255) @unique
   address   Address[]
+  list      List[]
 }
 
 model User {

@@ -15,9 +15,30 @@ export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
+
+// List
+export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
+  editors: string[];
+  publishers: string[];
+}
+
+export interface List extends PrismaClient.List {
+  jsonData: ListJsonData;
+  country?: Partial<Country>;
+}
+
+export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
+  jsonData: ListJsonData;
+}
+
+export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
+  jsonData: ListJsonData;
+}
+
+// ListItem
 export type ListItem = PrismaClient.ListItem;
 
-interface ListItemGetObject extends PrismaClient.ListItem {
+export interface ListItemGetObject extends PrismaClient.ListItem {
   address: {
     firstLine: string;
     secondLine?: string;

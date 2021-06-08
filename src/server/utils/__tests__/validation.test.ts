@@ -1,4 +1,5 @@
-import { isGovUKEmailAddress } from "../validation";
+import { isGovUKEmailAddress, isCountryNameValid } from "../validation";
+import { countriesList } from "server/services/metadata";
 
 describe("Utils Validation", () => {
   describe("isGovUKEmailAddress", () => {
@@ -14,6 +15,20 @@ describe("Utils Validation", () => {
 
     test("multiple emails fail", () => {
       const result = isGovUKEmailAddress("person@gmail.com,person@fco.gov.uk");
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("countryNameIsValid", () => {
+    test("all valid countries pass", () => {
+      const result = countriesList.every((country) =>
+        isCountryNameValid(country.value)
+      );
+      expect(result).toBe(true);
+    });
+
+    test("invalid country name fails", () => {
+      const result = isCountryNameValid("Xortugal");
       expect(result).toBe(false);
     });
   });
