@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim } from "lodash";
+import { startCase, toLower, trim, pick, compact } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -9,22 +9,33 @@ import {
 } from "server/models/user";
 import {
   createList,
+  findUserLists,
   findListByCountryAndType,
   findListById,
+  updateList,
 } from "server/models/list";
 import { UserRoles, ServiceType, List } from "server/models/types";
-import { filterSuperAdminRole } from "./helpers";
+import {
+  filterSuperAdminRole,
+  userIsListPublisher,
+  userIsListEditor,
+  userIsListAdministrator,
+} from "./helpers";
 import { countriesList } from "server/services/metadata";
 import {
   isGovUKEmailAddress,
   isCountryNameValid,
 } from "server/utils/validation";
 import { QuestionError } from "../lists/types";
+import { authRoutes } from "server/auth";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,
+  userIsListPublisher,
+  userIsListEditor,
+  userIsListAdministrator,
 };
 
 // TODO: test
@@ -107,48 +118,44 @@ export async function listsController(
   req: Request,
   res: Response
 ): Promise<void> {
-  // TODO
+  if (req.user?.userData.email === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
 
-  //
-  // get lists assigned to logged user
+  const lists = await findUserLists(req.user?.userData.email);
 
   res.render("dashboard/lists.html", {
     ...DEFAULT_VIEW_PROPS,
     req,
+    lists,
   });
 }
 
+// TODO: test
 export async function listsEditController(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   const { listId } = req.params;
+  const { listCreated, listUpdated } = req.query;
+  const isPost = req.method === "POST";
+
   let list: Partial<List> | undefined;
+  let error: QuestionError | {} = {};
 
-  let error: QuestionError = {
-    field: "",
-    href: "",
-    text: "",
-  };
+  if (isPost) {
+    const editors: string[] = compact(
+      req.body.editors.split(",").map(trim).map(toLower)
+    );
+    const publishers: string[] = compact(
+      req.body.publishers.split(",").map(trim).map(toLower)
+    );
+    const administrators: string[] = compact(
+      req.body.administrators.split(",").map(trim).map(toLower)
+    );
 
-  if (req.method === "POST") {
-    const editors: string[] = req.body.editors
-      .split(",")
-      .map(trim)
-      .map(toLower);
-    const publishers: string[] = req.body.publishers
-      .split(",")
-      .map(trim)
-      .map(toLower);
-
-    if (!isCountryNameValid(req.body.country)) {
-      error = {
-        field: "country",
-        text: "Invalid country name",
-        href: "#country",
-      };
-    } else if (editors.some((email) => !isGovUKEmailAddress(email))) {
+    if (editors.some((email) => !isGovUKEmailAddress(email))) {
       error = {
         field: "editors",
         text: "Editors contain an invalid email address",
@@ -160,38 +167,75 @@ export async function listsEditController(
         text: "Publishers contain an invalid email address",
         href: "#editors",
       };
-    } else {
-      const existingLists = await findListByCountryAndType(
-        req.body.country,
-        req.body.serviceType
-      );
+    } else if (administrators.some((email) => !isGovUKEmailAddress(email))) {
+      error = {
+        field: "administrators",
+        text: "Administrators contain an invalid email address",
+        href: "#administrators",
+      };
+    }
 
-      if (existingLists !== undefined && existingLists?.length > 0) {
+    if (listId === "new") {
+      if (!isCountryNameValid(req.body.country)) {
         error = {
-          field: "serviceType",
-          text: `A ${startCase(req.body.serviceType)} list for ${
-            req.body.country
-          } already exists`,
-          href: "#serviceType",
+          field: "country",
+          text: "Invalid country name",
+          href: "#country",
         };
+      } else {
+        const existingLists = await findListByCountryAndType(
+          req.body.country,
+          req.body.serviceType
+        );
+
+        if (existingLists !== undefined && existingLists?.length > 0) {
+          error = {
+            field: "serviceType",
+            text: `A ${startCase(req.body.serviceType)} list for ${
+              req.body.country
+            } already exists`,
+            href: "#serviceType",
+          };
+        }
       }
     }
 
-    if (error.field === undefined) {
+    if (!("field" in error)) {
       try {
         const data = {
           country: req.body.country,
           serviceType: req.body.serviceType,
           editors: req.body.editors.split(","),
           publishers: req.body.publishers.split(","),
+          administrators: req.body.administrators.split(","),
+          createdBy: `${req.user?.userData.email}`,
         };
 
-        const list = await createList(data);
+        if (listId === "new") {
+          const list = await createList(data);
+          if (list?.id !== undefined) {
+            return res.redirect(
+              `${dashboardRoutes.listsEdit.replace(
+                ":listId",
+                `${list.id}`
+              )}?listCreated=true`
+            );
+          }
+        } else {
+          const list = await findListById(listId);
 
-        if (list?.id !== undefined) {
-          return res.redirect(
-            `${dashboardRoutes.listsEdit.replace(":listId", `${list.id}`)}`
-          );
+          if (list !== undefined && userIsListAdministrator(req, list)) {
+            await updateList(
+              Number(listId),
+              pick(data, ["editors", "publishers", "administrators"])
+            );
+            return res.redirect(
+              `${dashboardRoutes.listsEdit.replace(
+                ":listId",
+                `${listId}`
+              )}?listUpdated=true`
+            );
+          }
         }
       } catch (error) {
         next(error);
@@ -202,6 +246,7 @@ export async function listsEditController(
         jsonData: {
           editors: req.body.editors,
           publishers: req.body.publishers,
+          administrators: req.body.administrators,
         },
         country: {
           name: req.body.country,
@@ -220,8 +265,31 @@ export async function listsEditController(
   res.render("dashboard/lists-edit.html", {
     ...DEFAULT_VIEW_PROPS,
     listId,
+    listCreated,
+    listUpdated,
+    isPost,
     error,
     list,
     req,
+  });
+}
+
+// TODO: test
+export async function listsContentManagementController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const { listId } = req.params;
+  const list = await findListById(listId);
+  const listItems = [];
+
+  // get list
+  // get listItems based list parameters
+  res.render("dashboard/lists-content-management.html", {
+    ...DEFAULT_VIEW_PROPS,
+    req,
+    list,
+    listItems,
   });
 }

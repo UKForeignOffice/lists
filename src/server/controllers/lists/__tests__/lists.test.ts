@@ -177,12 +177,12 @@ describe("Lists Controllers", () => {
       const spy = spyCreateListItem();
       spySendApplicationConfirmationEmail();
 
-      req.params.serviceType = "covidTestProvider";
+      req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
       listsDataIngestionController(req, res);
 
-      expect(spy).toHaveBeenCalledWith("covidTestProvider", {
+      expect(spy).toHaveBeenCalledWith("covidTestProviders", {
         emailAddress: "test@gov.uk",
         firstName: "Rene",
         middleName: undefined,
@@ -194,7 +194,7 @@ describe("Lists Controllers", () => {
     });
 
     test("sendApplicationConfirmationEmail is invoked correctly", (done) => {
-      req.params.serviceType = "covidTestProvider";
+      req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
       const createdListItem: any = {
@@ -220,7 +220,7 @@ describe("Lists Controllers", () => {
     });
 
     test("it responds with 500 when createListItem fails", (done) => {
-      req.params.serviceType = "covidTestProvider";
+      req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
       const createdListItem: any = {

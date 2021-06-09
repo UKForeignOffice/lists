@@ -4,4 +4,5 @@ export const dashboardRoutes = {
   usersEdit: "/dashboard/users/:userEmail",
   lists: "/dashboard/lists",
   listsEdit: "/dashboard/lists/:listId",
+  listsContentManagement: "/dashboard/lists/:listId/content",
 };

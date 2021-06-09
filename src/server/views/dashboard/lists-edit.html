@@ -1,14 +1,21 @@
 {% extends "./dashboard.html" %}
 
 {% block dashboard %}
-  <h1 class="govuk-heading-m">
+  <h1 class="govuk-heading-l">
     {% if listId === 'new' %}
       Create new list
     {% else %}
-      Edit list {{ listId }}
+      Editing list {{ listId }}
     {% endif %}
   </h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
+
+  {% if listCreated %}
+    {{ macros.successBanner("List created successfully") }}
+  {% endif %}
+  {% if listUpdated %}
+    {{ macros.successBanner("List updated successfully") }}
+  {% endif %}
   
   <form class="form" action="{{ req.originalUrl }}" method="post" required>
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
@@ -33,6 +40,7 @@
                 type="radio" 
                 value="{{ serviceType }}"
                 {{-" checked" if list.type === serviceType }}
+                {{-" disabled" if listId !== 'new' }}
               >
               <label class="govuk-label govuk-radios__label" for="serviceType">
                 {{ _.startCase(serviceType) }}
@@ -42,6 +50,8 @@
         </div>
       </fieldset>
     </div>
+    
+    
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
       <h3 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--m" for="country-autocomplete">
@@ -56,17 +66,53 @@
       <div class="govuk-hint">
         Please leave it empty if this list is not for any specific country
       </div>
-      <select id="country-autocomplete" name="country" className="govuk-input--error">
-        <option value=""></option>
-        {% for country in countriesList %}
-        <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name ===  country.value}}>{{ country.text }}</option>
-      {% endfor %}
-    </select>
+      
+      {% if listId !== 'new' %}
+        <input class="govuk-input" name="country" type="text" value="{{list.country.name}}" disabled>
+      {% else %}
+        <select id="country-autocomplete" name="country" className="govuk-input--error">
+          <option value=""></option>
+          {% for country in countriesList %}
+            <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name ===  country.value}}>{{ country.text }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
     </div>
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'editors' }}">
-      <fieldset class="govuk-fieldset" aria-describedby="roles">
+
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'administrators' }}">
+      <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="roles">
+          <label class="govuk-label govuk-label--m" for="administrators">
+            Administrators
+          </label>
+        </h3>
+        {% if error.field === 'administrators' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="administrators-hint" class="govuk-hint">
+          Administrators can manage list settings
+        </div>
+        <div id="administrators-hint-2" class="govuk-hint">
+          For multiple administrators, please comma separate their emails addresses
+        </div>
+        <input 
+          class="govuk-input" 
+          id="administrators" 
+          name="administrators" 
+          type="text" 
+          aria-describedby="administrators-hint administrators-hint-2" 
+          value="{{list.jsonData.administrators or req.user.userData.email}}"
+        >
+      </fieldset>
+    </div>
+    
+    
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'editors' }}">
+      <fieldset class="govuk-fieldset">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="editors">
             Editors
           </label>
         </h3>
@@ -84,10 +130,12 @@
         <input class="govuk-input" id="editors" name="editors" type="text" aria-describedby="editors-hint" value="{{list.jsonData.editors}}">
       </fieldset>
     </div>
+
+
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publishers' }}">
-      <fieldset class="govuk-fieldset" aria-describedby="roles">
+      <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="roles">
+          <label class="govuk-label govuk-label--m" for="publishers">
             Publishers
           </label>
         </h3>

@@ -94,7 +94,7 @@ export function listsGetController(
     case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
       break;
-    case ServiceType.covidTestProvider:
+    case ServiceType.covidTestProviders:
       questionsSequence = covidTestProviderQuestionsSequence;
       break;
     default:
@@ -157,7 +157,7 @@ export function listsResultsController(
         logger.error("Lists Result Controller", { error })
       );
       break;
-    case ServiceType.covidTestProvider:
+    case ServiceType.covidTestProviders:
       searchCovidTestProvider(req, res).catch((error) => {
         logger.error("Lists Result Controller", { error });
       });

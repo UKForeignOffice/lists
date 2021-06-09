@@ -8,6 +8,7 @@ import {
   startRouteController,
   usersListController,
   usersEditController,
+  listsContentManagementController,
 } from "server/controllers/dashboard";
 
 const router = express.Router();
@@ -18,6 +19,10 @@ router.get(dashboardRoutes.start, startRouteController);
 // lists
 router.get(dashboardRoutes.lists, listsController);
 router.all(dashboardRoutes.listsEdit, listsEditController);
+router.get(
+  dashboardRoutes.listsContentManagement,
+  listsContentManagementController
+);
 
 // Users
 // TODO: test ensureUserIsSuperAdmin

@@ -4,5 +4,6 @@ export {
   usersEditController,
   listsController,
   listsEditController,
+  listsContentManagementController,
 } from "./dashboard";
 export { dashboardRoutes } from "./routes";

@@ -252,7 +252,7 @@ async function createCovidTestSupplierListItemObject(
     const geoLocationId = await createAddressGeoLocation(covidTestProvider);
 
     return {
-      type: ServiceType.covidTestProvider,
+      type: ServiceType.covidTestProviders,
       isApproved: isCybDev,
       isPublished: isCybDev,
       jsonData: {
@@ -403,7 +403,7 @@ export async function createListItem(
   switch (serviceType) {
     case ServiceType.lawyers:
       return await createLawyerListItem(webhookData as LawyersFormWebhookData);
-    case ServiceType.covidTestProvider:
+    case ServiceType.covidTestProviders:
       return await createCovidTestSupplierListItem(
         webhookData as CovidTestSupplierFormWebhookData
       );
@@ -502,7 +502,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     });
 
     const query = fetchPublishedListItemQuery({
-      type: ServiceType.covidTestProvider,
+      type: ServiceType.covidTestProviders,
       countryName,
       fromGeoPoint,
     });

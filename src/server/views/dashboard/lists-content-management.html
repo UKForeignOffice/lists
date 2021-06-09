@@ -1,0 +1,14 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">
+    {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ _.startCase(list.country.name) }}
+  </h1>
+  
+  {% if listItems.length === 0 %}
+    <p class="govuk-body">This list is empty</p>
+  {% else %}
+    <p>print list items</p>
+  {% endif %}
+
+{% endblock %}

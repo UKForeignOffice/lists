@@ -3,7 +3,7 @@ import { countriesList } from "server/services/metadata";
 
 export enum ServiceType {
   "lawyers" = "lawyers",
-  "covidTestProvider" = "covidTestProvider",
+  "covidTestProviders" = "covidTestProviders",
 }
 
 export type CountriesWithData = Extract<
@@ -20,6 +20,7 @@ export type Country = PrismaClient.Country;
 export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
   editors: string[];
   publishers: string[];
+  administrators: string[];
 }
 
 export interface List extends PrismaClient.List {
@@ -131,12 +132,12 @@ export interface CovidTestSupplierListItemJsonData
 
 export interface CovidTestSupplierListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.covidTestProvider;
+  type: ServiceType.covidTestProviders;
   jsonData: CovidTestSupplierListItemJsonData;
 }
 
 export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
-  type: ServiceType.covidTestProvider;
+  type: ServiceType.covidTestProviders;
   jsonData: LawyerListItemJsonData;
 }
 

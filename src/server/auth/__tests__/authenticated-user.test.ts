@@ -22,14 +22,14 @@ describe("AuthenticatedUser", () => {
     expect(notSuperAdmin.isSuperAdmin()).toBeFalsy();
   });
 
-  test("isTeamAdmin evaluation is correct", () => {
+  test("ListsAdmin evaluation is correct", () => {
     const teamAdmin = createUser({
       roles: [UserRoles.ListsAdmin, UserRoles.ListEditor],
     });
     const notTeamAdmin = createUser({ roles: [UserRoles.ListEditor] });
 
-    expect(teamAdmin.isTeamAdmin()).toBeTruthy();
-    expect(notTeamAdmin.isTeamAdmin()).toBeFalsy();
+    expect(teamAdmin.ListsAdmin()).toBeTruthy();
+    expect(notTeamAdmin.ListsAdmin()).toBeFalsy();
   });
 
   test("isNewUser evaluation is correct", () => {
