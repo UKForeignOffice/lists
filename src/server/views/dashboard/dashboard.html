@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% import "./macros.njk" as macros %}
+{% import "./macros.njk" as dashboardMacros %}
 
 {% block content %}
   <div class="dashboard__logout">
@@ -10,11 +10,11 @@
       <div class="govuk-grid-column-one-quarter">
         <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
           <ul class="govuk-list">
-            {{ macros.navMenu("Dashboard", dashboardRoutes.start, req) }}
+            {{ dashboardMacros.navMenu("Dashboard", dashboardRoutes.start, req) }}
             {% if req.user.isSuperAdmin() %}
-              {{ macros.navMenu("Users", dashboardRoutes.usersList, req) }}
+              {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
             {% endif %}
-            {{ macros.navMenu("Lists", dashboardRoutes.lists, req) }}
+            {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
           </ul>
         </nav>
       </div>

@@ -1,4 +1,7 @@
 {% extends "./dashboard.html" %}
+{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
+{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+
 
 {% block dashboard %}
   <h1 class="govuk-heading-l">
@@ -8,7 +11,16 @@
   {% if listItems.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
-    <p>print list items</p>
+    <ul class="govuk-list dashboard__content-list">
+      {% for listItem in listItems %}
+        {{ dashboardMacros.listItemActionsBart(listItem) }}
+        {% if list.type === 'covidTestProviders' %}
+          {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem) }}
+        {% endif %}
+        {% if list.type === 'lawyers' %}
+          {{  lawyersMacros.lawyersListItem(listItem) }}
+        {% endif %}
+      {% endfor %}
+    </ul>  
   {% endif %}
-
 {% endblock %}

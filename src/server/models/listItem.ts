@@ -13,6 +13,7 @@ import {
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
+  List,
 } from "./types";
 import {
   geoPointIsValid,
@@ -200,9 +201,9 @@ async function createLawyerListItemObject(
       isPublished: false,
       jsonData: {
         organisationName: lawyer.organisationName.toLowerCase().trim(),
-        contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
-          lawyer.surname
-        }`.trim(),
+        contactName: `${lawyer.firstName.trim()} ${
+          lawyer.middleName?.trim() ?? ""
+        } ${lawyer.surname.trim()}`,
         telephone: lawyer.phoneNumber,
         email: lawyer.emailAddress.toLowerCase().trim(),
         website: lawyer.websiteAddress.toLowerCase().trim(),
@@ -251,6 +252,8 @@ async function createCovidTestSupplierListItemObject(
     const country = await createCountry(covidTestProvider.country);
     const geoLocationId = await createAddressGeoLocation(covidTestProvider);
 
+    // TODO if geoLocation fails?
+
     return {
       type: ServiceType.covidTestProviders,
       isApproved: isCybDev,
@@ -259,9 +262,9 @@ async function createCovidTestSupplierListItemObject(
         organisationName: covidTestProvider.organisationName
           .toLowerCase()
           .trim(),
-        contactName: `${covidTestProvider.firstName} ${
-          covidTestProvider.middleName ?? ""
-        } ${covidTestProvider.surname}`.trim(),
+        contactName: `${covidTestProvider.firstName.trim()} ${
+          covidTestProvider.middleName?.trim() ?? ""
+        } ${covidTestProvider.surname.trim()}`,
         telephone: covidTestProvider.phoneNumber,
         email: covidTestProvider.emailAddress.toLowerCase().trim(),
         website: covidTestProvider.websiteAddress.toLowerCase().trim(),
@@ -304,6 +307,40 @@ async function createCovidTestSupplierListItemObject(
 }
 
 // Model API
+
+// TODO: test
+export async function getListItemsForList(list: List): Promise<ListItem[]> {
+  try {
+    const where = {
+      type: list.type,
+      address: {
+        countryId: list.countryId,
+      },
+    };
+
+    return await prisma.listItem.findMany({
+      where,
+      include: {
+        address: {
+          select: {
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    logger.error(`approveLawyer Error ${error.message}`);
+    throw new Error("Failed to approve lawyer");
+  }
+}
 
 export async function approveListItem({
   reference,

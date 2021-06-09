@@ -28,6 +28,7 @@ import {
 } from "server/utils/validation";
 import { QuestionError } from "../lists/types";
 import { authRoutes } from "server/auth";
+import { getListItemsForList } from "server/models/listItem";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -282,9 +283,13 @@ export async function listsContentManagementController(
 ): Promise<void> {
   const { listId } = req.params;
   const list = await findListById(listId);
-  const listItems = [];
 
-  // get list
+  if (list === undefined) {
+    return next();
+  }
+
+  const listItems = await getListItemsForList(list);
+
   // get listItems based list parameters
   res.render("dashboard/lists-content-management.html", {
     ...DEFAULT_VIEW_PROPS,

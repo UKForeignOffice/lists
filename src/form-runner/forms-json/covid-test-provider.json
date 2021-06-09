@@ -777,7 +777,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://localhost:3000/ingest/covidTestProvider"
+        "url": "http://localhost:3000/ingest/covidTestProviders"
       }
     }
   ],

@@ -1,3 +1,5 @@
+{% import "./macros.njk" as macros %}
+
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
     <li>
@@ -5,70 +7,6 @@
     </li>
   {% endif %}
   {% for item in searchResults %}
-    <li>
-      <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
-        {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName else item.jsonData.contactName)) }}
-      </h2>
-      {% if item.distanceinmeters >= 0 %}
-        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Distance</strong>:  {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
-        </p>
-      {% endif %}
-      {% if (item.jsonData.contactName) and (item.jsonData.contactName !== item.jsonData.organisationName)  %}
-              <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Contact Person:</strong>: {{ item.jsonData.contactName }}
-        </p>
-      {% endif %}
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Address</strong>: 
-          {{ item.address.firstLine }} 
-          {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
-          {{ "-" if item.address.postCode }} {{ item.address.postCode }} 
-          {{ "-" if item.address.city }} {{ item.address.city }}
-      </p>
-      {% if item.jsonData.email %}
-        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
-        </p>
-      {% endif %}
-      {% if item.jsonData.website %}
-        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
-        </p>
-      {% endif %}
-
-      {% if (not item.jsonData.email) or (not item.jsonData.website) %}
-        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-        </p>  
-      {% endif %}
-
-      <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">
-            Details
-          </span>
-        </summary>
-        <div class="govuk-details__text">
-          {% if (item.jsonData.email) and (item.jsonData.website) %}
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-          </p>  
-          {% endif %}    
-          {% if item.jsonData.legalPracticeAreas %}
-            <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-              <strong>Legal Practice Areas</strong>: {{ item.jsonData.legalPracticeAreas.map(_.startCase).join(", ") }}
-            </p>
-          {% endif %}
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Legal Aid</strong>: {{ "Yes" if item.jsonData.legalAid else "No" }}
-          </p>
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-            <strong>Pro Bono Service</strong>: {{ "Yes" if item.jsonData.proBonoService else "No" }}
-          </p>
-        </div>
-      </details>      
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-    </li>
+    {{ macros.lawyersListItem(item) }}
   {% endfor %}
 </ul>

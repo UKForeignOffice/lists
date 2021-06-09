@@ -22,3 +22,16 @@
 {% endmacro %}
 
 
+{% macro listItemActionsBart(listItem) %}
+  <div class="dashboard__list-item-actions-bar">
+    <button class="govuk-button" data-module="govuk-button">
+      Approve
+    </button>
+    <button class="govuk-button" data-module="govuk-button">
+      Publish
+    </button>
+    <button class="govuk-button govuk-button--warning" data-module="govuk-button">
+      Block
+    </button>
+  </div>
+{% endmacro %}
