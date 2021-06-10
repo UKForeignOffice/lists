@@ -3,7 +3,12 @@ import _ from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
-import { GA_TRACKING_ID, isLocalHost, SERVICE_NAME } from "server/config";
+import {
+  GA_TRACKING_ID,
+  isLocalHost,
+  SERVICE_NAME,
+  SERVICE_DOMAIN,
+} from "server/config";
 import { enforceHttps } from "server/utils/security";
 
 const ROOT = process.cwd();
@@ -28,6 +33,7 @@ export const configureViews = (server: Express): void => {
     .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
     .addGlobal("isLocalHOST", isLocalHost)
     .addGlobal("SERVICE_NAME", SERVICE_NAME)
+    .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
     .addGlobal("enforceHttps", enforceHttps)
     .addGlobal("_", _);
 
