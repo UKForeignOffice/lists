@@ -8,21 +8,16 @@ import {
   startRouteController,
   usersListController,
   usersEditController,
-  listsContentManagementController,
+  listsItemsController,
+  listItemsEditController,
+  listItemsApproveController,
+  listItemsPublishController,
 } from "server/controllers/dashboard";
 
 const router = express.Router();
 
 router.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 router.get(dashboardRoutes.start, startRouteController);
-
-// lists
-router.get(dashboardRoutes.lists, listsController);
-router.all(dashboardRoutes.listsEdit, listsEditController);
-router.get(
-  dashboardRoutes.listsContentManagement,
-  listsContentManagementController
-);
 
 // Users
 // TODO: test ensureUserIsSuperAdmin
@@ -36,5 +31,15 @@ router.all(
   ensureUserIsSuperAdmin,
   usersEditController
 );
+
+// lists
+router.get(dashboardRoutes.lists, listsController);
+router.all(dashboardRoutes.listsEdit, listsEditController);
+router.get(dashboardRoutes.listsItems, listsItemsController);
+
+// list items
+router.put(dashboardRoutes.listsItemsEdit, listItemsEditController);
+router.put(dashboardRoutes.listsItemsApprove, listItemsApproveController);
+router.put(dashboardRoutes.listsItemsPublish, listItemsPublishController);
 
 export default router;

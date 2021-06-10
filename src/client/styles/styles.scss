@@ -48,6 +48,10 @@ main.govuk-main-wrapper {
   &__list-item-actions-bar {
     position: absolute;
     right: 0;
+
+    :checked + label {
+      color: govuk-colour("green");
+    }
   }
 
   &__content-list {

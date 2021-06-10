@@ -14,6 +14,7 @@ import {
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
   List,
+  ListItemGetObject,
 } from "./types";
 import {
   geoPointIsValid,
@@ -323,12 +324,14 @@ export async function getListItemsForList(list: List): Promise<ListItem[]> {
       include: {
         address: {
           select: {
+            id: true,
             firstLine: true,
             secondLine: true,
             city: true,
             postCode: true,
             country: {
               select: {
+                id: true,
                 name: true,
               },
             },
@@ -342,62 +345,77 @@ export async function getListItemsForList(list: List): Promise<ListItem[]> {
   }
 }
 
-export async function approveListItem({
-  reference,
-}: {
-  reference: string;
-}): Promise<ListItem> {
+export async function findListItemById(
+  id: string | number
+): Promise<ListItemGetObject> {
   try {
-    return await prisma.listItem.update({
-      where: {
-        reference,
+    return (await prisma.listItem.findUnique({
+      where: { id: Number(id) },
+      include: {
+        address: {
+          select: {
+            id: true,
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
-      data: {
-        isApproved: true,
-      },
-    });
+    })) as ListItemGetObject;
   } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
+    logger.error(`findListItemById Error ${error.message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
 
-export async function publishListItem({
-  reference,
+export async function togglerListItemIsApproved({
+  id,
+  isApproved,
 }: {
-  reference: string;
+  id: number;
+  isApproved: boolean;
 }): Promise<ListItem> {
+  const data: {
+    isApproved: boolean;
+    isPublished?: boolean;
+  } = { isApproved };
+
+  if (!isApproved) {
+    data.isPublished = false;
+  }
+
   try {
     return await prisma.listItem.update({
-      where: {
-        reference,
-      },
-      data: {
-        isPublished: true,
-      },
+      where: { id },
+      data,
     });
   } catch (error) {
-    logger.error(`publishLawyer Error ${error.message}`);
-    throw new Error("Failed to publish lawyer");
+    logger.error(`togglerListItemIsApproved Error ${error.message}`);
+    throw error;
   }
 }
 
-export async function blockListItem({
-  reference,
+export async function togglerListItemIsPublished({
+  id,
+  isPublished,
 }: {
-  reference: string;
+  id: number;
+  isPublished: boolean;
 }): Promise<ListItem> {
   try {
     return await prisma.listItem.update({
-      where: {
-        reference,
-      },
-      data: {
-        isBlocked: true,
-      },
+      where: { id },
+      data: { isPublished },
     });
   } catch (error) {
-    logger.error(`blockLawyer Error ${error.message}`);
+    logger.error(`publishLawyer Error ${error.message}`);
     throw new Error("Failed to publish lawyer");
   }
 }

@@ -14,6 +14,12 @@ import {
   findListById,
   updateList,
 } from "server/models/list";
+import {
+  getListItemsForList,
+  findListItemById,
+  togglerListItemIsApproved,
+  togglerListItemIsPublished,
+} from "server/models/listItem";
 import { UserRoles, ServiceType, List } from "server/models/types";
 import {
   filterSuperAdminRole,
@@ -28,7 +34,6 @@ import {
 } from "server/utils/validation";
 import { QuestionError } from "../lists/types";
 import { authRoutes } from "server/auth";
-import { getListItemsForList } from "server/models/listItem";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -276,7 +281,7 @@ export async function listsEditController(
 }
 
 // TODO: test
-export async function listsContentManagementController(
+export async function listsItemsController(
   req: Request,
   res: Response,
   next: NextFunction
@@ -291,10 +296,121 @@ export async function listsContentManagementController(
   const listItems = await getListItemsForList(list);
 
   // get listItems based list parameters
-  res.render("dashboard/lists-content-management.html", {
+  res.render("dashboard/lists-items.html", {
     ...DEFAULT_VIEW_PROPS,
     req,
     list,
     listItems,
+    canApprove: userIsListEditor(req, list),
+    canPublish: userIsListPublisher(req, list),
   });
+}
+
+// TODO: test
+export async function listItemsEditController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  next();
+}
+
+// TODO: test
+export async function listItemsApproveController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { listId, listItemId } = req.params;
+  const { isApproved } = req.body;
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+  if (list === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list ${listId}`,
+      },
+    });
+  } else if (listItem === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list item ${listItemId}`,
+      },
+    });
+  } else if (
+    list.type !== listItem?.type ||
+    list.countryId !== listItem.address.country.id
+  ) {
+    res.status(403).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`,
+      },
+    });
+  } else if (!userIsListEditor(req, list)) {
+    res.status(400).send({
+      error: {
+        message: "User doesn't have approving right on this list",
+      },
+    });
+  } else {
+    const updatedListItem = await togglerListItemIsApproved({
+      id: listItem.id,
+      isApproved,
+    });
+    res.json({ status: "OK", isApproved: updatedListItem.isApproved });
+  }
+}
+
+// TODO: test
+export async function listItemsPublishController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { listId, listItemId } = req.params;
+  const { isPublished } = req.body;
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+  if (list === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list ${listId}`,
+      },
+    });
+  } else if (listItem === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list item ${listItemId}`,
+      },
+    });
+  } else if (
+    list.type !== listItem?.type ||
+    list.countryId !== listItem.address.country.id
+  ) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`,
+      },
+    });
+  } else if (!userIsListPublisher(req, list)) {
+    res.status(403).send({
+      error: {
+        message: "User doesn't have publishing right on this list",
+      },
+    });
+  } else if (!listItem.isApproved) {
+    res.status(400).send({
+      error: {
+        message: "List item must be approved before publishing",
+      },
+    });
+  } else {
+    const updatedListItem = await togglerListItemIsPublished({
+      id: listItem.id,
+      isPublished,
+    });
+    res.json({ status: "OK", isPublished: updatedListItem.isPublished });
+  }
 }

@@ -3,8 +3,8 @@ import { logger } from "server/services/logger";
 import { CountriesWithData } from "../../types";
 import {
   createLawyerListItem,
-  approveListItem,
-  publishListItem,
+  togglerListItemIsApproved,
+  togglerListItemIsPublished,
 } from "../../listItem";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 
@@ -77,8 +77,8 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
 
     try {
       const newLawyer = await createLawyerListItem(lawyer);
-      await approveListItem({ reference: newLawyer.reference });
-      await publishListItem({ reference: newLawyer.reference });
+      await togglerListItemIsApproved({ id: newLawyer.id, isApproved: true });
+      await togglerListItemIsPublished({ id: newLawyer.id, isPublished: true });
       itemsInserted += 1;
     } catch (error) {
       errors.push(error.message);

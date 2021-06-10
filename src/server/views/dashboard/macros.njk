@@ -22,16 +22,117 @@
 {% endmacro %}
 
 
-{% macro listItemActionsBart(listItem) %}
+{% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
   <div class="dashboard__list-item-actions-bar">
-    <button class="govuk-button" data-module="govuk-button">
-      Approve
-    </button>
-    <button class="govuk-button" data-module="govuk-button">
-      Publish
-    </button>
-    <button class="govuk-button govuk-button--warning" data-module="govuk-button">
-      Block
-    </button>
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <div class="govuk-checkboxes govuk-checkboxes--small">          
+          <div class="govuk-checkboxes__item">
+            <input 
+              class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler" 
+              id="approve-{{listItem.id}}" 
+              name="approve" 
+              type="checkbox" 
+              value="approve" 
+              data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+              data-id="{{listItem.id}}"
+              {{-" checked" if listItem.isApproved }}
+              {{-" disabled" if not canApprove }}
+            >
+            <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
+              Approved
+            </label>
+          </div>
+            <div class="govuk-checkboxes__item">
+              <input 
+                class="govuk-checkboxes__input" 
+                id="publish-{{ listItem.id }}" 
+                name="publish" 
+                type="checkbox" 
+                value="publish" 
+                data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                data-id="{{ listItem.id }}"
+                aria-describedby="publish-{{ listItem.id }}-hint"
+                {{-" checked" if listItem.isPublished }}
+                {{-" disabled" if not canPublish or not listItem.isApproved }}
+              >
+              <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
+                Published
+              </label>
+            </div>
+        </div>
+      </fieldset>
+    </div>
   </div>
+  <script>
+    var approveCheckbox = document.getElementById("approve-{{listItem.id}}");
+    var publishCheckbox = document.getElementById("publish-{{listItem.id}}");
+    
+    approveCheckbox.onclick = function toggleListItemApproveStatus(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const isApproved = event.target.checked;
+      const id = event.target.getAttribute("data-id");
+      const title = event.target.getAttribute("data-title");
+      const action = isApproved ? "approve" : "disapprove";
+      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
+
+      if (window.confirm(confirmMessage)) {
+        fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isApproved })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (result) {
+          if (result.error !== undefined) {
+            alert("Oops, something went wrong, Error: " + error.message);
+          } else {
+            event.target.checked = result.isApproved;
+          
+            if (result.isApproved) {
+              publishCheckbox.disabled = false;
+            } else {
+              publishCheckbox.checked = false;
+              publishCheckbox.disabled = true;
+            }  
+          }
+        })
+        .catch(function () {
+          alert("Oops, something went wrong, please try again");
+        });
+      }
+    }
+
+    publishCheckbox.onclick = function toggleListItemPublishStatus(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const title = event.target.getAttribute("data-title");
+      const id = event.target.getAttribute("data-id");
+      const isPublished = event.target.checked;
+      const action = event.target.checked ? "publish" : "unpublish";
+      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
+
+      if (window.confirm(confirmMessage)) {
+        fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isPublished })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (result) {
+          if (result.error !== undefined) {
+            alert(result.error.message);
+          } else {
+            event.target.checked = result.isPublished;
+          }
+        })
+        .catch(function () {
+          alert("Oops, something went wrong, please try again");
+        });
+      }
+    }
+  </script>
 {% endmacro %}

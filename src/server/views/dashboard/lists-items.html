@@ -13,7 +13,7 @@
   {% else %}
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in listItems %}
-        {{ dashboardMacros.listItemActionsBart(listItem) }}
+        {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
         {% if list.type === 'covidTestProviders' %}
           {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem) }}
         {% endif %}

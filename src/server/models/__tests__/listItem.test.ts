@@ -3,9 +3,8 @@ import { LawyersFormWebhookData } from "server/services/form-runner";
 import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
 import {
-  approveListItem,
-  publishListItem,
-  blockListItem,
+  togglerListItemIsApproved,
+  togglerListItemIsPublished,
   createLawyerListItem,
   findPublishedLawyersPerCountry,
   setEmailIsVerified,
@@ -333,55 +332,66 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("approveLawyer", () => {
-    test("update command is correct", async () => {
+  describe("togglerListItemIsApproved", () => {
+    test("update command is correct when approving", async () => {
       const spy = spyListItemUpdate();
-      const result = await approveListItem({ reference: "reference" });
+      const result = await togglerListItemIsApproved({
+        id: 123,
+        isApproved: true,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isApproved: true,
-        },
+        where: { id: 123 },
+        data: { isApproved: true },
+      });
+
+      expect(result).toBe(sampleListItem);
+    });
+
+    test("update command is correct when disapproving ", async () => {
+      const spy = spyListItemUpdate();
+      const result = await togglerListItemIsApproved({
+        id: 123,
+        isApproved: false,
+      });
+
+      expect(spy).toHaveBeenCalledWith({
+        where: { id: 123 },
+        data: { isApproved: false, isPublished: false },
       });
 
       expect(result).toBe(sampleListItem);
     });
   });
 
-  describe("publishLawyer", () => {
-    test("update command is correct", async () => {
+  describe("togglerListItemIsPublished", () => {
+    test("update command is correct when publishing", async () => {
       const spy = spyListItemUpdate();
-      const result = await publishListItem({ reference: "reference" });
+      const result = await togglerListItemIsPublished({
+        id: 123,
+        isPublished: true,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isPublished: true,
-        },
+        where: { id: 123 },
+        data: { isPublished: true },
       });
 
       expect(result).toBe(sampleListItem);
     });
-  });
 
-  describe("blockLawyer", () => {
-    test("update command is correct", async () => {
+    test("update command is correct when hiding ", async () => {
       const spy = spyListItemUpdate();
-      const result = await blockListItem({ reference: "reference" });
+      const result = await togglerListItemIsPublished({
+        id: 123,
+        isPublished: false,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isBlocked: true,
-        },
+        where: { id: 123 },
+        data: { isPublished: false },
       });
+
       expect(result).toBe(sampleListItem);
     });
   });

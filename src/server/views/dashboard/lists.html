@@ -36,7 +36,7 @@
 
             <td class="govuk-table__cell govuk-table__cell--numeric">
               {% if userIsListEditor(req, list) or userIsListPublisher(req, list) %}
-                <a href="{{ dashboardRoutes.listsContentManagement.replace(':listId', list.id) }}" class="govuk-link">Content</a>
+                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">Content</a>
               {% endif %}
             </td>            
           </tr>

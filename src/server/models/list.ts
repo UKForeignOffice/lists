@@ -45,7 +45,9 @@ export async function findUserLists(
 }
 
 // TODO: test
-export async function findListById(listId: string): Promise<List | undefined> {
+export async function findListById(
+  listId: string | number
+): Promise<List | undefined> {
   try {
     const lists = (await prisma.list.findUnique({
       where: {
@@ -57,7 +59,7 @@ export async function findListById(listId: string): Promise<List | undefined> {
     })) as List;
     return lists ?? undefined;
   } catch (error) {
-    logger.error(`findList Error ${error.message}`);
+    logger.error(`findListById Error ${error.message}`);
     return undefined;
   }
 }
