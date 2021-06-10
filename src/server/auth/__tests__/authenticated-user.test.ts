@@ -31,12 +31,4 @@ describe("AuthenticatedUser", () => {
     expect(teamAdmin.ListsAdmin()).toBeTruthy();
     expect(notTeamAdmin.ListsAdmin()).toBeFalsy();
   });
-
-  test("isNewUser evaluation is correct", () => {
-    const newUser = createUser({ roles: [] });
-    const notNewUser = createUser({ roles: [UserRoles.ListEditor] });
-
-    expect(newUser.isNewUser()).toBeTruthy();
-    expect(notNewUser.isNewUser()).toBeFalsy();
-  });
 });

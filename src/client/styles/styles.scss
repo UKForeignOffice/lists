@@ -45,6 +45,10 @@ main.govuk-main-wrapper {
     top: -2rem;
   }
 
+  &__container {
+    min-height: 50vh;
+  }
+
   &__list-item-actions-bar {
     position: absolute;
     right: 0;

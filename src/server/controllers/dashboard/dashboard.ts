@@ -45,11 +45,24 @@ const DEFAULT_VIEW_PROPS = {
 };
 
 // TODO: test
-export function startRouteController(req: Request, res: Response): void {
-  res.render("dashboard/dashboard.html", {
-    ...DEFAULT_VIEW_PROPS,
-    req,
-  });
+export async function startRouteController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (req.user !== undefined) {
+    const lists = await findUserLists(req.user?.userData.email);
+    const isNewUser = !(
+      req.user?.isSuperAdmin() ||
+      req.user?.ListsAdmin() ||
+      (lists !== undefined && lists.length > 0)
+    );
+
+    res.render("dashboard/dashboard.html", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      isNewUser,
+    });
+  }
 }
 
 // TODO: test

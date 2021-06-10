@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { User, UserRoles } from "server/models/types";
 
 export class AuthenticatedUser {
@@ -18,9 +17,5 @@ export class AuthenticatedUser {
     return (
       this.userData.jsonData?.roles?.includes(UserRoles.ListsAdmin) === true
     );
-  }
-
-  isNewUser(): boolean {
-    return isEmpty(this.userData.jsonData?.roles);
   }
 }

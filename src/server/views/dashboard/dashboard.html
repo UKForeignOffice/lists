@@ -5,7 +5,7 @@
   <div class="dashboard__logout">
     <a href="/logout" class="govuk-link">Logout</a>
   </div>
-  <div class="govuk-width-container">
+  <div class="govuk-width-container dashboard__container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
         <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
@@ -22,7 +22,7 @@
         {% block dashboard %}
           <h1 class="govuk-heading-l">Dashboard</h1>
 
-          {% if req.user.isNewUser() %}
+          {% if isNewUser %}
             {% include "./partials/new-user-banner.html" %}
           {% endif %}
 
