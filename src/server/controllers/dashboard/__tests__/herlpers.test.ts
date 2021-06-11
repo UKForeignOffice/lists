@@ -10,7 +10,7 @@ describe("Dashboard Helpers", () => {
   describe("filterSuperAdminRole", () => {
     test("SuperAdmin role is filtered out", () => {
       const result = filterSuperAdminRole([
-        UserRoles.ListEditor,
+        UserRoles.ListsCreator,
         UserRoles.SuperAdmin,
       ]);
       expect(result).toHaveLength(1);

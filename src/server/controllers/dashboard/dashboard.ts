@@ -53,7 +53,7 @@ export async function startRouteController(
     const lists = await findUserLists(req.user?.userData.email);
     const isNewUser = !(
       req.user?.isSuperAdmin() ||
-      req.user?.ListsAdmin() ||
+      req.user?.isListsCreator() ||
       (lists !== undefined && lists.length > 0)
     );
 

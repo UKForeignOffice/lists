@@ -12,23 +12,23 @@ describe("AuthenticatedUser", () => {
 
   test("isSuperAdmin evaluation is correct", () => {
     const superAdmin = createUser({
-      roles: [UserRoles.SuperAdmin, UserRoles.ListsAdmin],
+      roles: [UserRoles.SuperAdmin],
     });
     const notSuperAdmin = createUser({
-      roles: [UserRoles.ListEditor, UserRoles.ListsAdmin],
+      roles: [UserRoles.ListsCreator],
     });
 
     expect(superAdmin.isSuperAdmin()).toBeTruthy();
     expect(notSuperAdmin.isSuperAdmin()).toBeFalsy();
   });
 
-  test("ListsAdmin evaluation is correct", () => {
-    const teamAdmin = createUser({
-      roles: [UserRoles.ListsAdmin, UserRoles.ListEditor],
+  test("isListsCreator evaluation is correct", () => {
+    const listsCreator = createUser({
+      roles: [UserRoles.ListsCreator],
     });
-    const notTeamAdmin = createUser({ roles: [UserRoles.ListEditor] });
+    const notListCreator = createUser({ roles: [UserRoles.SuperAdmin] });
 
-    expect(teamAdmin.ListsAdmin()).toBeTruthy();
-    expect(notTeamAdmin.ListsAdmin()).toBeFalsy();
+    expect(listsCreator.isListsCreator()).toBeTruthy();
+    expect(notListCreator.isListsCreator()).toBeFalsy();
   });
 });

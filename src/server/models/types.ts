@@ -53,12 +53,10 @@ export interface ListItemGetObject extends PrismaClient.ListItem {
   };
 }
 
-// User
 export enum UserRoles {
+  // Application Level Roles
   SuperAdmin = "SuperAdmin",
-  ListsAdmin = "ListsAdmin",
-  ListPublisher = "ListPublisher",
-  ListEditor = "ListEditor",
+  ListsCreator = "ListsCreator",
 }
 
 export interface UserJsonData extends PrismaClient.Prisma.JsonObject {

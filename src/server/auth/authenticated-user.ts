@@ -13,9 +13,9 @@ export class AuthenticatedUser {
     );
   }
 
-  ListsAdmin(): boolean {
+  isListsCreator(): boolean {
     return (
-      this.userData.jsonData?.roles?.includes(UserRoles.ListsAdmin) === true
+      this.userData.jsonData?.roles?.includes(UserRoles.ListsCreator) === true
     );
   }
 }

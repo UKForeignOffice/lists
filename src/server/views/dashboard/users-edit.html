@@ -5,7 +5,7 @@
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   {% if userSaved %}
-    {{ macros.successBanner("User updated successfully") }}
+    {{ dashboardMacros.successBanner("User updated successfully") }}
   {% endif %}
   
   <form class="form" action="{{ req.originalUrl }}" method="post" required>
@@ -23,7 +23,7 @@
         {% endif %}
         <div class="govuk-checkboxes">
           {% for name, role in UserRoles %}
-            {% if role === UserRoles.ListsAdmin %}
+            {% if role === UserRoles.ListsCreator %}
               <div class="govuk-checkboxes__item">
                 <input
                   aria-describedby="roles-{{role}}-hint"
@@ -41,8 +41,8 @@
                   {{ _.startCase(role) }}
                 </label>
                 <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
-                  {% if role === UserRoles.ListsAdmin %}
-                    A Lists Admin can create and manage their own lists
+                  {% if role === UserRoles.ListsCreator %}
+                    A Lists Creator can create new lists
                   {% endif %}
                 </div>
               </div>

@@ -11,10 +11,10 @@
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   {% if listCreated %}
-    {{ macros.successBanner("List created successfully") }}
+    {{ dashboardMacros.successBanner("List created successfully") }}
   {% endif %}
   {% if listUpdated %}
-    {{ macros.successBanner("List updated successfully") }}
+    {{ dashboardMacros.successBanner("List updated successfully") }}
   {% endif %}
   
   <form class="form" action="{{ req.originalUrl }}" method="post" required>
@@ -122,7 +122,7 @@
           </span>
         {% endif %}
         <div id="editors-hint" class="govuk-hint">
-          Editors can approve and block list items 
+          Editors can approve and disapprove list items 
         </div>
         <div id="editors-hint" class="govuk-hint">
           For multiple editors, please comma separate their emails addresses
@@ -145,7 +145,7 @@
           </span>
         {% endif %}
         <div id="editors-hint" class="govuk-hint">
-          Publishers can publish and block list items. 
+          Publishers can publish and unpublish list items. 
         </div>
         <div id="editors-hint" class="govuk-hint">
           For multiple publishers, please comma separate their emails addresses

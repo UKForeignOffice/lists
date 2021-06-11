@@ -76,8 +76,8 @@
       const id = event.target.getAttribute("data-id");
       const title = event.target.getAttribute("data-title");
       const action = isApproved ? "approve" : "disapprove";
-      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
-
+      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
+      
       if (window.confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
@@ -92,11 +92,13 @@
             event.target.checked = result.isApproved;
           
             if (result.isApproved) {
-              publishCheckbox.disabled = false;
+              if(`{{canPublish}}` === 'true') {
+                publishCheckbox.disabled = false;
+              }
             } else {
               publishCheckbox.checked = false;
               publishCheckbox.disabled = true;
-            }  
+            }
           }
         })
         .catch(function () {
@@ -114,7 +116,7 @@
       const isPublished = event.target.checked;
       const action = event.target.checked ? "publish" : "unpublish";
       const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
-
+      
       if (window.confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
