@@ -33,7 +33,7 @@ export function postLoginController(
   res: Response,
   next: NextFunction
 ): void {
-  const { emailAddress } = req.body;
+  const emailAddress = req.body.emailAddress?.trim();
 
   if (isGovUKEmailAddress(emailAddress)) {
     createAuthenticationPath({ email: emailAddress })
