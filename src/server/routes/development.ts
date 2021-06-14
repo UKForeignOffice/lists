@@ -55,13 +55,13 @@ router.get("/dev/list-env-names", (req, res) => {
   });
 });
 
-router.get("/dev/create-super-admin", (req, res) => {
-  const { email, key } = req.query;
+router.post("/dev/create-super-admin", (req, res) => {
+  const { email, key } = req.body;
 
   if (
     req.isAuthenticated() &&
     typeof email === "string" &&
-    key === GOVUK_NOTIFY_API_KEY
+    (GOVUK_NOTIFY_API_KEY ?? "").includes(key)
   ) {
     createUser({
       email,
