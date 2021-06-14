@@ -317,6 +317,10 @@ export async function getListItemsForList(list: List): Promise<ListItem[]> {
       address: {
         countryId: list.countryId,
       },
+      jsonData: {
+        path: ["metadata", "emailVerified"],
+        equals: true,
+      },
     };
 
     return await prisma.listItem.findMany({
