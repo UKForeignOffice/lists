@@ -58,11 +58,7 @@ router.get("/dev/list-env-names", (req, res) => {
 router.post("/dev/create-super-admin", (req, res) => {
   const { email, key } = req.body;
 
-  if (
-    req.isAuthenticated() &&
-    typeof email === "string" &&
-    (GOVUK_NOTIFY_API_KEY ?? "").includes(key)
-  ) {
+  if (typeof email === "string" && (GOVUK_NOTIFY_API_KEY ?? "").includes(key)) {
     createUser({
       email,
       jsonData: {
