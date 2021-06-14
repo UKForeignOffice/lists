@@ -4,7 +4,7 @@ import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
 import { authRoutes } from "./constants";
 import passport from "./passport";
-import { isLocalHost } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
@@ -38,7 +38,8 @@ export function postLoginController(
   if (isGovUKEmailAddress(emailAddress)) {
     createAuthenticationPath({ email: emailAddress })
       .then((authPath) => {
-        return `${req.protocol}://${req.get("host")}${authPath}`;
+        const protocol = isLocalHost ? "http" : "https";
+        return `${protocol}://${SERVICE_DOMAIN}${authPath}`;
       })
       .then(async (authLink) => {
         if (isLocalHost) {

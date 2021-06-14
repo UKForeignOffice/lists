@@ -109,7 +109,7 @@ describe("Auth Module", () => {
         expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
         expect(sendEmailSpy).toHaveBeenCalledWith(
           email,
-          "https://localhost/login?token=123Token"
+          "http://localhost/login?token=123Token"
         );
         done();
       });
