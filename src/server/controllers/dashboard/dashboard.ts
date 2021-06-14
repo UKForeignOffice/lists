@@ -15,7 +15,7 @@ import {
   updateList,
 } from "server/models/list";
 import {
-  getListItemsForList,
+  findListItemsForList,
   findListItemById,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
@@ -306,7 +306,7 @@ export async function listsItemsController(
     return next();
   }
 
-  const listItems = await getListItemsForList(list);
+  const listItems = await findListItemsForList(list);
 
   // get listItems based list parameters
   res.render("dashboard/lists-items.html", {
