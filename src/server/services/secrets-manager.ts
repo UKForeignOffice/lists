@@ -25,6 +25,7 @@ export async function createSecret(secretName: string): Promise<boolean> {
 
   try {
     await secretsManager.createSecret(params).promise();
+    logger.info(`SecretsManager created secret for ${secretName}`);
     return true;
   } catch (error) {
     logger.error(`SecretsManager createSecret Error: ${error.message}`);
@@ -38,6 +39,7 @@ export async function getSecretValue(secretName: string): Promise<string> {
 
   try {
     const result = await secretsManager.getSecretValue(params).promise();
+    logger.info(`SecretsManager got secret for ${secretName}`);
     return `${result.SecretString}`;
   } catch (error) {
     if (error.code === "ResourceNotFoundException") {
