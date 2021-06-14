@@ -3,7 +3,9 @@ import { exec } from "child_process";
 import rateLimit from "express-rate-limit";
 import { listAppliedMigrations } from "server/models/helpers";
 import { populateDb } from "server/models/db/helpers";
-import { isLocalHost } from "server/config";
+import { isLocalHost, GOVUK_NOTIFY_API_KEY } from "server/config";
+import { createUser } from "server/models/user";
+import { UserRoles } from "server/models/types";
 
 const router = express.Router();
 
@@ -51,6 +53,29 @@ router.get("/dev/list-env-names", (req, res) => {
     HOSTNAME: process.env.HOSTNAME,
     LISTS_SERVICE_HOST: process.env.LISTS_SERVICE_HOST,
   });
+});
+
+router.get("/dev/create-super-admin", (req, res) => {
+  const { email, key } = req.query;
+
+  if (
+    req.isAuthenticated() &&
+    typeof email === "string" &&
+    key === GOVUK_NOTIFY_API_KEY
+  ) {
+    createUser({
+      email,
+      jsonData: {
+        roles: [UserRoles.SuperAdmin],
+      },
+    })
+      .then(() => {
+        res.send("OK");
+      })
+      .catch((error: Error) => {
+        res.status(500).send({ error });
+      });
+  }
 });
 
 export default router;
