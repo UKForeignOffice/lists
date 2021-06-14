@@ -1,5 +1,6 @@
 import { isGovUKEmailAddress, isCountryNameValid } from "../validation";
 import { countriesList } from "server/services/metadata";
+import * as config from "server/config/server-config";
 
 describe("Utils Validation", () => {
   describe("isGovUKEmailAddress", () => {
@@ -8,7 +9,7 @@ describe("Utils Validation", () => {
       expect(result).toBe(true);
     });
 
-    test("valid email address", () => {
+    test("invalid email address", () => {
       const result = isGovUKEmailAddress("person@gmail.com");
       expect(result).toBe(false);
     });
@@ -16,6 +17,17 @@ describe("Utils Validation", () => {
     test("multiple emails fail", () => {
       const result = isGovUKEmailAddress("person@gmail.com,person@fco.gov.uk");
       expect(result).toBe(false);
+    });
+
+    test("it allows any email when isCybDev", () => {
+      // eslint-disable-next-line no-import-assign
+      Object.assign(config, { isCybDev: true });
+
+      const result = isGovUKEmailAddress("person@gmail.com");
+      expect(result).toBe(true);
+
+      // eslint-disable-next-line no-import-assign
+      Object.assign(config, { isCybDev: false });
     });
   });
 
@@ -28,7 +40,7 @@ describe("Utils Validation", () => {
     });
 
     test("invalid country name fails", () => {
-      const result = isCountryNameValid("Xortugal");
+      const result = isCountryNameValid("XYZ");
       expect(result).toBe(false);
     });
   });
