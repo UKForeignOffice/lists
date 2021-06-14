@@ -8,6 +8,7 @@ import {
   createLawyerListItem,
   findPublishedLawyersPerCountry,
   setEmailIsVerified,
+  checkListItemExists,
 } from "../listItem";
 
 const LawyerWebhookData: LawyersFormWebhookData = {
@@ -72,10 +73,6 @@ describe("ListItem Model:", () => {
       .mockResolvedValue(returnValue ?? sampleListItem);
   };
 
-  const spyPrismaQueryRaw = (returnValue: any): jest.SpyInstance => {
-    return jest.spyOn(prisma, "$queryRaw").mockResolvedValue(returnValue);
-  };
-
   const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
     const country = { id: "123TEST" };
 
@@ -95,9 +92,13 @@ describe("ListItem Model:", () => {
       .mockResolvedValue(returnValue ?? location);
   };
 
+  const spyListItemCount = (returnValue: any): jest.SpyInstance => {
+    return jest.spyOn(prisma.listItem, "count").mockResolvedValue(returnValue);
+  };
+
   describe("Create Lawyer", () => {
-    test("createLawyer command correctly calls $queryRaw to check if list item already exists", async () => {
-      const spyQueryRaw = spyPrismaQueryRaw([{ count: 1 }]);
+    test("createLawyer command correctly calls listItem count to check if record already exists", async () => {
+      const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
       try {
@@ -106,20 +107,24 @@ describe("ListItem Model:", () => {
         expect(error.message).toBe("Lawyer record already exists");
       }
 
-      const expectedQuery = `
-        SELECT COUNT(*) 
-        FROM "ListItem" 
-        WHERE "ListItem"."jsonData" @> '{"organisationName":"cartesian systems"}' 
-        LIMIT 1
-      `;
-      expect(spyQueryRaw.mock.calls[0][0].replace(/\s/g, "")).toEqual(
-        expectedQuery.replace(/\s/g, "")
-      );
+      expect(spyCount.mock.calls[0][0]).toEqual({
+        where: {
+          address: {
+            country: {
+              name: LawyerWebhookData.country,
+            },
+          },
+          jsonData: {
+            equals: LawyerWebhookData.organisationName.toLowerCase(),
+            path: ["organisationName"],
+          },
+        },
+      });
       expect(spyCountry).not.toHaveBeenCalled();
     });
 
     test("createLawyer command correctly calls country.upsert", async () => {
-      spyPrismaQueryRaw([{ count: 0 }]);
+      spyListItemCount(0);
       spyLocationService();
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
@@ -140,7 +145,7 @@ describe("ListItem Model:", () => {
     });
 
     test("createLawyer command correctly calls lawyer.create", async () => {
-      spyPrismaQueryRaw([{ count: 0 }]);
+      spyListItemCount(0);
       spyLocationService();
       spyCountryUpsert();
       const spy = spyListItemCreate();
@@ -454,6 +459,48 @@ describe("ListItem Model:", () => {
         },
       });
 
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("checkListItemExists", () => {
+    const countryName = "France";
+    const organisationName = "XYZ Corp";
+
+    test("listItem.count call is correct", async () => {
+      const spy = spyListItemCount(0);
+
+      await checkListItemExists({ countryName, organisationName });
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          address: {
+            country: {
+              name: countryName,
+            },
+          },
+          jsonData: {
+            equals: organisationName.toLowerCase(),
+            path: ["organisationName"],
+          },
+        },
+      });
+    });
+
+    test("it returns false when list item doesn't exist", async () => {
+      spyListItemCount(0);
+      const result = await checkListItemExists({
+        countryName,
+        organisationName,
+      });
+      expect(result).toBe(false);
+    });
+
+    test("it returns true when list item exists", async () => {
+      spyListItemCount(1);
+      const result = await checkListItemExists({
+        countryName,
+        organisationName,
+      });
       expect(result).toBe(true);
     });
   });

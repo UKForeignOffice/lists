@@ -161,30 +161,28 @@ function fetchPublishedListItemQuery(props: {
   `;
 }
 
-async function checkListItemExists({
+export async function checkListItemExists({
   organisationName,
+  countryName,
 }: {
-  organisationName?: string;
+  organisationName: string;
+  countryName: string;
 }): Promise<boolean> {
-  const jsonQuery: {
-    organisationName?: string;
-  } = {};
+  const total = await prisma.listItem.count({
+    where: {
+      jsonData: {
+        path: ["organisationName"],
+        equals: organisationName.toLocaleLowerCase(),
+      },
+      address: {
+        country: {
+          name: startCase(countryName),
+        },
+      },
+    },
+  });
 
-  if (organisationName !== undefined) {
-    jsonQuery.organisationName = pgescape.string(
-      organisationName?.toLowerCase()
-    );
-  }
-
-  const query = `
-    SELECT COUNT(*) 
-    FROM "ListItem" 
-    WHERE "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}' 
-    LIMIT 1
-  `;
-
-  const result = await prisma.$queryRaw(query);
-  return result?.["0"].count > 0;
+  return total > 0;
 }
 
 async function createLawyerListItemObject(
@@ -310,7 +308,7 @@ async function createCovidTestSupplierListItemObject(
 // Model API
 
 // TODO: test
-export async function getListItemsForList(list: List): Promise<ListItem[]> {
+export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
     const where = {
       type: list.type,
@@ -527,6 +525,7 @@ export async function createLawyerListItem(
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationName,
+    countryName: webhookData.country,
   });
 
   if (exists) {
@@ -579,6 +578,7 @@ export async function createCovidTestSupplierListItem(
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationName,
+    countryName: webhookData.country,
   });
 
   if (exists) {
