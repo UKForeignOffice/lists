@@ -45,8 +45,8 @@ router.get(`${dashboardRoutes.start}/dev/list-env-names`, (req, res) => {
   res.json({ keys });
 });
 
-router.get(`${dashboardRoutes.start}/dev/create-super-admin`, (req, res) => {
-  const { email, key } = req.query;
+router.post(`${dashboardRoutes.start}/dev/create-super-admin`, (req, res) => {
+  const { email, key } = req.body;
 
   if (
     typeof email === "string" &&
@@ -64,6 +64,12 @@ router.get(`${dashboardRoutes.start}/dev/create-super-admin`, (req, res) => {
       .catch((error: Error) => {
         res.status(500).send({ error });
       });
+  } else {
+    res.send(
+      `Got email: ${email} and key is valid ${(
+        GOVUK_NOTIFY_API_KEY ?? ""
+      ).includes(`${key}`)}`
+    );
   }
 });
 
