@@ -46,19 +46,18 @@ router.get("/dev/list-env-names", (req, res) => {
   function isUpperCase(str: string): boolean {
     return str === str.toUpperCase();
   }
-  const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
 
-  res.json({
-    keys,
-    HOSTNAME: process.env.HOSTNAME,
-    LISTS_SERVICE_HOST: process.env.LISTS_SERVICE_HOST,
-  });
+  const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
+  res.json({ keys });
 });
 
-router.post("/dev/create-super-admin", (req, res) => {
-  const { email, key } = req.body;
+router.get("/dev/create-super-admin", (req, res) => {
+  const { email, key } = req.query;
 
-  if (typeof email === "string" && (GOVUK_NOTIFY_API_KEY ?? "").includes(key)) {
+  if (
+    typeof email === "string" &&
+    (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
+  ) {
     createUser({
       email,
       jsonData: {
