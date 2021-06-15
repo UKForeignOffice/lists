@@ -13,9 +13,7 @@
           "schema": {}
         }
       ],
-      "next": [
-        { "path": "/does-someone-at-your-organisation-speak-fluent-english" }
-      ]
+      "next": [{ "path": "/does-someone-at-your-organisation-speak-english" }]
     },
     {
       "title": "Summary",
@@ -25,8 +23,8 @@
       "next": []
     },
     {
-      "path": "/does-someone-at-your-organisation-speak-fluent-english",
-      "title": "Does someone at your organisation speak fluent English?",
+      "path": "/does-someone-at-your-organisation-speak-english",
+      "title": "Does someone at your organisation speak English?",
       "components": [
         {
           "name": "speakEnglish",
