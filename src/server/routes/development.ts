@@ -59,7 +59,7 @@ router.get("/dev/create-super-admin", (req, res) => {
     (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
   ) {
     createUser({
-      email,
+      email: `${email}`,
       jsonData: {
         roles: [UserRoles.SuperAdmin],
       },
