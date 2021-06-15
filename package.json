@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "test": "jest --collect-coverage",
+    "test": "jest --collect-coverage --detectOpenHandles",
     "test:dev": "jest --watch",
     "test:coverage": "jest --coverage",
     "prisma:generate": "npx prisma generate --schema ./src/server/models/db/schema.prisma",
