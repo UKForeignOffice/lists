@@ -4,6 +4,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { getSecretValue } from "server/services/secrets-manager";
 import { isLocalHost, REDIS_HOST, REDIS_PORT } from "server/config";
+import { logger } from "server/services/logger";
 
 const ONE_HOUR = 3600000;
 const ONE_DAY = 24 * ONE_HOUR;
@@ -21,6 +22,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
     secret: secret,
     saveUninitialized: true,
     resave: false,
+    proxy: !isLocalHost,
     cookie: {
       secure: !isLocalHost,
       maxAge: isLocalHost ? ONE_DAY : ONE_HOUR,
@@ -29,6 +31,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
   };
 
   if (REDIS_HOST !== undefined && REDIS_PORT !== undefined) {
+    logger.info("Configure Express Session will create redis client");
     const RedisStore = connectRedis(session);
     const redisClient = redis.createClient({
       host: REDIS_HOST,

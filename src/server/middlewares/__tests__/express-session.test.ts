@@ -36,6 +36,7 @@ describe("Express Session", () => {
       secret: "123ABC",
       saveUninitialized: true,
       resave: false,
+      proxy: !isLocalHost,
       cookie: { secure: !isLocalHost },
       name: "lists_sid",
     });
