@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { exec } from "child_process";
 import { listAppliedMigrations } from "server/models/helpers";
 import { populateDb } from "server/models/db/helpers";
@@ -37,54 +37,60 @@ router.get(
 );
 
 router.get(`${dashboardRoutes.start}/dev/list-env-names`, (req, res) => {
+  const { key } = req.query;
+
   function isUpperCase(str: string): boolean {
     return str === str.toUpperCase();
   }
 
   const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
-  res.json({ keys });
+
+  if (key !== undefined) {
+    promoteUser(req, res).catch((error) => res.status(500).send(error.message));
+  } else {
+    res.json({ keys });
+  }
 });
 
-router.get(
-  `${dashboardRoutes.start}/dev/create-super-admin`,
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async (req, res) => {
-    const { email, key } = req.query;
+async function promoteUser(req: Request, res: Response): Promise<void> {
+  const { email, key } = req.query;
 
-    if (
-      typeof email === "string" &&
-      (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
-    ) {
-      const user = await findUserByEmail(email);
+  if (
+    typeof email === "string" &&
+    (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
+  ) {
+    const user = await findUserByEmail(email);
 
-      try {
-        if (user !== undefined) {
-          await updateUser(email, {
-            jsonData: {
-              roles: [UserRoles.SuperAdmin],
-            },
-          });
-          res.send("Update OK");
-        } else {
-          await createUser({
-            email: `${email}`,
-            jsonData: {
-              roles: [UserRoles.SuperAdmin],
-            },
-          });
-          res.send("Create OK");
-        }
-      } catch (error) {
-        res.status(500).send(error.message);
+    try {
+      if (user !== undefined) {
+        await updateUser(email, {
+          jsonData: {
+            roles: [UserRoles.SuperAdmin],
+          },
+        });
+        res.send("Update OK");
+      } else {
+        await createUser({
+          email: `${email}`,
+          jsonData: {
+            roles: [UserRoles.SuperAdmin],
+          },
+        });
+        res.send("Create OK");
       }
-    } else {
-      res.send(
-        `Got email: ${email} and key is valid ${(
-          GOVUK_NOTIFY_API_KEY ?? ""
-        ).includes(`${key}`)}`
-      );
+    } catch (error) {
+      res.status(500).send(error.message);
     }
+  } else {
+    res.send(
+      `Got email: ${email} and key is valid ${(
+        GOVUK_NOTIFY_API_KEY ?? ""
+      ).includes(`${key}`)}`
+    );
   }
-);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get(`${dashboardRoutes.start}/dev/promote-user`, promoteUser);
 
 export default router;
