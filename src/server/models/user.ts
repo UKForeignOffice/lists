@@ -31,7 +31,7 @@ export async function createUser(
   try {
     return (await prisma.user.create({ data })) as User;
   } catch (error) {
-    logger.error(`findUserByEmail Error ${error.message}`);
+    logger.error(`createUser Error ${error.message}`);
     return undefined;
   }
 }
@@ -52,7 +52,7 @@ export async function updateUser(
       data,
     })) as User;
   } catch (error) {
-    logger.error(`findUserByEmail Error ${error.message}`);
+    logger.error(`updateUser Error ${error.message}`);
     return undefined;
   }
 }
@@ -62,7 +62,7 @@ export async function findUsers(): Promise<User[]> {
   try {
     return (await prisma.user.findMany()) as User[];
   } catch (error) {
-    logger.error(`listUsers Error ${error.message}`);
+    logger.error(`findUsers Error ${error.message}`);
     return [];
   }
 }
@@ -73,7 +73,7 @@ export async function isSuperAdminUser(email: string): Promise<boolean> {
     const user = await findUserByEmail(email);
     return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
   } catch (error) {
-    logger.error(`isSuperAdmin Error: ${error.message}`);
+    logger.error(`isSuperAdminUser Error: ${error.message}`);
     throw error;
   }
 }
