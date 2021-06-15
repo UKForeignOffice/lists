@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import { createSecret, getSecretValue } from "../secrets-manager";
 import { SecretsManager } from "aws-sdk";
+import { logger } from "../logger";
 
 describe("Secrets Manager", () => {
   describe("createSecret", () => {
     test("aws sdk createSecret call is correct", async () => {
+      jest.spyOn(logger, "info").mockImplementation(jest.fn());
       jest.spyOn(crypto, "randomBytes").mockImplementation(() => ({
         toString: jest.fn().mockReturnValue("123SECRET"),
       }));
@@ -33,7 +35,7 @@ describe("Secrets Manager", () => {
 
     test("it create secret if secret doesn't exist", async () => {
       const secretManager = new SecretsManager();
-      
+
       jest
         .spyOn(secretManager.getSecretValue(), "promise")
         .mockRejectedValueOnce({ code: "ResourceNotFoundException" });
