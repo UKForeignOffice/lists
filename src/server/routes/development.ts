@@ -3,7 +3,7 @@ import { exec } from "child_process";
 import { listAppliedMigrations } from "server/models/helpers";
 import { populateDb } from "server/models/db/helpers";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
-import { createUser } from "server/models/user";
+import { createUser, findUserByEmail, updateUser } from "server/models/user";
 import { UserRoles } from "server/models/types";
 import { dashboardRoutes } from "server/controllers/dashboard";
 
@@ -45,32 +45,46 @@ router.get(`${dashboardRoutes.start}/dev/list-env-names`, (req, res) => {
   res.json({ keys });
 });
 
-router.post(`${dashboardRoutes.start}/dev/create-super-admin`, (req, res) => {
-  const { email, key } = req.body;
+router.get(
+  `${dashboardRoutes.start}/dev/create-super-admin`,
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  async (req, res) => {
+    const { email, key } = req.query;
 
-  if (
-    typeof email === "string" &&
-    (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
-  ) {
-    createUser({
-      email: `${email}`,
-      jsonData: {
-        roles: [UserRoles.SuperAdmin],
-      },
-    })
-      .then(() => {
-        res.send("OK");
-      })
-      .catch((error: Error) => {
-        res.status(500).send({ error });
-      });
-  } else {
-    res.send(
-      `Got email: ${email} and key is valid ${(
-        GOVUK_NOTIFY_API_KEY ?? ""
-      ).includes(`${key}`)}`
-    );
+    if (
+      typeof email === "string" &&
+      (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
+    ) {
+      const user = await findUserByEmail(email);
+
+      try {
+        if (user !== undefined) {
+          await updateUser(email, {
+            jsonData: {
+              roles: [UserRoles.SuperAdmin],
+            },
+          });
+          res.send("Update OK");
+        } else {
+          await createUser({
+            email: `${email}`,
+            jsonData: {
+              roles: [UserRoles.SuperAdmin],
+            },
+          });
+          res.send("Create OK");
+        }
+      } catch (error) {
+        res.status(500).send(error.message);
+      }
+    } else {
+      res.send(
+        `Got email: ${email} and key is valid ${(
+          GOVUK_NOTIFY_API_KEY ?? ""
+        ).includes(`${key}`)}`
+      );
+    }
   }
-});
+);
 
 export default router;
