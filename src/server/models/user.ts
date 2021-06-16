@@ -60,7 +60,11 @@ export async function updateUser(
 // TODO: test
 export async function findUsers(): Promise<User[]> {
   try {
-    return (await prisma.user.findMany()) as User[];
+    return (await prisma.user.findMany({
+      orderBy: {
+        email: "asc",
+      },
+    })) as User[];
   } catch (error) {
     logger.error(`findUsers Error ${error.message}`);
     return [];
