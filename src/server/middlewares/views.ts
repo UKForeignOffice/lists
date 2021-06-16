@@ -5,6 +5,7 @@ import { Express } from "express";
 import { version } from "../../../package.json";
 import { GA_TRACKING_ID, SERVICE_NAME, SERVICE_DOMAIN } from "server/config";
 import { enforceHttps } from "server/utils/security";
+import { logger } from "server/services/logger";
 
 const ROOT = process.cwd();
 
@@ -38,6 +39,7 @@ export const configureViews = (server: Express): void => {
 
     // cspNonce see Helmet configuration
     engine.addGlobal("cspNonce", res.locals.cspNonce);
+    logger.info(`Setting global nonce ${res.locals.cspNonce}`);
     next();
   });
 };
