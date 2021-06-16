@@ -21,6 +21,20 @@
   </div>
 {% endmacro %}
 
+{% macro errorBanner(error) %}
+  <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="error-summary-title">
+      There is a problem
+    </h2>
+    <div class="govuk-error-summary__body">
+      <ul class="govuk-list govuk-error-summary__list">
+        <li>
+          <a href="{{error.href}}">{{error.text}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endmacro %}
 
 {% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
   <div class="dashboard__list-item-actions-bar">
@@ -38,6 +52,7 @@
               data-id="{{listItem.id}}"
               {{-" checked" if listItem.isApproved }}
               {{-" disabled" if not canApprove }}
+              onclick="dashboardApi.approveListItem('{{approve-{{ listItem.id }}')"
             >
             <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
               Approved
@@ -55,6 +70,7 @@
                 aria-describedby="publish-{{ listItem.id }}-hint"
                 {{-" checked" if listItem.isPublished }}
                 {{-" disabled" if not canPublish or not listItem.isApproved }}
+                onclick="dashboardApi.publishListItem('{{publish-{{ listItem.id }}')"
               >
               <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
                 Published
