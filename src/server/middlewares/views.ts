@@ -3,12 +3,7 @@ import _ from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
-import {
-  GA_TRACKING_ID,
-  isLocalHost,
-  SERVICE_NAME,
-  SERVICE_DOMAIN,
-} from "server/config";
+import { GA_TRACKING_ID, SERVICE_NAME, SERVICE_DOMAIN } from "server/config";
 import { enforceHttps } from "server/utils/security";
 
 const ROOT = process.cwd();
@@ -30,10 +25,9 @@ export const configureViews = (server: Express): void => {
       express: server,
     })
     .addGlobal("appVersion", version)
-    .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
-    .addGlobal("isLocalHOST", isLocalHost)
     .addGlobal("SERVICE_NAME", SERVICE_NAME)
     .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
+    .addGlobal("GA_TRACKING_ID", GA_TRACKING_ID)
     .addGlobal("enforceHttps", enforceHttps)
     .addGlobal("_", _);
 
@@ -41,6 +35,9 @@ export const configureViews = (server: Express): void => {
   server.use((req, res, next) => {
     const cookiesPolicy = req.cookies.lists_cookies_policy ?? "{}";
     engine.addGlobal("cookiesPolicy", cookiesPolicy);
+
+    // cspNonce see Helmet configuration
+    engine.addGlobal("cspNonce", res.locals.cspNonce);
     next();
   });
 };
