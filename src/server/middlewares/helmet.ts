@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { IncomingMessage, ServerResponse } from "http";
-import { get } from "lodash";
+import { get, set } from "lodash";
 import helmet from "helmet";
 import crypto from "crypto";
 import { SERVICE_DOMAIN } from "server/config";
@@ -25,8 +25,8 @@ const GOOGLE_STATIC_DOMAINS = ["www.gstatic.com"];
 
 export function configureHelmet(server: Express): void {
   server.use((_req, res, next) => {
-    const nonce = crypto.randomBytes(16).toString("hex");
-    res.locals.cspNonce = nonce;
+    const nonce = crypto.randomBytes(8).toString("hex");
+    set(res, "locals.cspNonce", nonce);
     next();
   });
 
