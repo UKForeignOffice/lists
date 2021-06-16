@@ -52,7 +52,6 @@
               data-id="{{listItem.id}}"
               {{-" checked" if listItem.isApproved }}
               {{-" disabled" if not canApprove }}
-              onclick="dashboardApi.approveListItem('{{approve-{{ listItem.id }}')"
             >
             <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
               Approved
@@ -70,7 +69,6 @@
                 aria-describedby="publish-{{ listItem.id }}-hint"
                 {{-" checked" if listItem.isPublished }}
                 {{-" disabled" if not canPublish or not listItem.isApproved }}
-                onclick="dashboardApi.publishListItem('{{publish-{{ listItem.id }}')"
               >
               <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
                 Published

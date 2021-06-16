@@ -8,10 +8,8 @@
     {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ _.startCase(list.country.name) }}
   </h1>
 
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
   <p class="govuk-body">
-    Link to apply to this list is: <br/>
+    Link to apply to enter this list is: <br/>
     <a class="govuk-link" target="_blank" href="https://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
       http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
     </a>

@@ -13,11 +13,16 @@
   {% if listCreated %}
     {{ dashboardMacros.successBanner("List created successfully") }}
   {% endif %}
+
   {% if listUpdated %}
     {{ dashboardMacros.successBanner("List updated successfully") }}
   {% endif %}
+
+  {% if error.field %}
+    {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
   
-  <form class="form" action="{{ req.originalUrl }}" method="post" required>
+  <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
       <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">

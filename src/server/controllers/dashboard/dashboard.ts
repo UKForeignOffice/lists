@@ -174,28 +174,52 @@ export async function listsEditController(
       req.body.administrators.split(",").map(trim).map(toLower)
     );
 
-    if (editors.some((email) => !isGovUKEmailAddress(email))) {
+    if (
+      editors.length === 0 ||
+      editors.some((email) => !isGovUKEmailAddress(email))
+    ) {
       error = {
         field: "editors",
-        text: "Editors contain an invalid email address",
+        text:
+          editors.length === 0
+            ? "You must indicated at least one editor"
+            : "Editors contain an invalid email address",
         href: "#editors",
       };
-    } else if (publishers.some((email) => !isGovUKEmailAddress(email))) {
+    } else if (
+      publishers.length === 0 ||
+      publishers.some((email) => !isGovUKEmailAddress(email))
+    ) {
       error = {
         field: "publishers",
-        text: "Publishers contain an invalid email address",
+        text:
+          publishers.length === 0
+            ? "You must indicated at least one editor"
+            : "Publishers contain an invalid email address",
         href: "#editors",
       };
-    } else if (administrators.some((email) => !isGovUKEmailAddress(email))) {
+    } else if (
+      administrators.length === 0 ||
+      administrators.some((email) => !isGovUKEmailAddress(email))
+    ) {
       error = {
         field: "administrators",
-        text: "Administrators contain an invalid email address",
+        text:
+          administrators.length === 0
+            ? "You must indicated at least one editor"
+            : "Administrators contain an invalid email address",
         href: "#administrators",
       };
     }
 
     if (listId === "new") {
-      if (!isCountryNameValid(req.body.country)) {
+      if (req.body.serviceType === undefined) {
+        error = {
+          field: "serviceType",
+          text: "Please select service type",
+          href: "#serviceType",
+        };
+      } else if (!isCountryNameValid(req.body.country)) {
         error = {
           field: "country",
           text: "Invalid country name",
