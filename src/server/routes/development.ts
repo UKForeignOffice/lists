@@ -3,9 +3,15 @@ import { exec } from "child_process";
 import { listAppliedMigrations } from "server/models/helpers";
 import { populateDb } from "server/models/db/helpers";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
-import { createUser, findUserByEmail, updateUser } from "server/models/user";
+import {
+  createUser,
+  findUserByEmail,
+  findUsers,
+  updateUser,
+} from "server/models/user";
 import { UserRoles } from "server/models/types";
 import { dashboardRoutes } from "server/controllers/dashboard";
+import { noop } from "lodash";
 
 const router = express.Router();
 
@@ -46,9 +52,19 @@ router.get(`${dashboardRoutes.start}/dev/list-env-names`, (req, res) => {
   const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
 
   if (key !== undefined) {
-    promoteUser(req, res).catch((error) => res.status(500).send(error.message));
+    promoteUser(req, res).catch(noop);
   } else {
     res.json({ keys });
+  }
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get(`${dashboardRoutes.start}/dev/list-users`, async (req, res) => {
+  try {
+    const users = await findUsers();
+    res.json({ users });
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 });
 
