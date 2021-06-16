@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 const TRUSTED = [
-  "self",
+  "'self'",
   `${SERVICE_DOMAIN}`,
   ...(isLocalHost ? ["localhost:3000"] : []),
 ];
