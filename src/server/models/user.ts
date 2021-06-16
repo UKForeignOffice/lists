@@ -3,7 +3,6 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
 
-// TODO: test
 export async function findUserByEmail(
   email: string
 ): Promise<User | undefined> {
@@ -19,7 +18,6 @@ export async function findUserByEmail(
   }
 }
 
-// TODO: test
 export async function createUser(
   data: UserCreateInput
 ): Promise<User | undefined> {
