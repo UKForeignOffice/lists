@@ -3,9 +3,13 @@ import { IncomingMessage, ServerResponse } from "http";
 import { get } from "lodash";
 import helmet from "helmet";
 import crypto from "crypto";
-import { isLocalHost } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
-const TRUSTED = ["self", ...(isLocalHost ? ["localhost:3000"] : [])];
+const TRUSTED = [
+  "self",
+  `${SERVICE_DOMAIN}`,
+  ...(isLocalHost ? ["localhost:3000"] : []),
+];
 
 const GOVUK_DOMAINS = [
   "*.publishing.service.gov.uk",
