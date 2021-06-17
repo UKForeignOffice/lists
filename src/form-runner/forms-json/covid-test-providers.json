@@ -112,7 +112,7 @@
         }
       ],
       "next": [{ "path": "/website-address" }],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/organisation-name",
@@ -128,7 +128,7 @@
         }
       ],
       "next": [{ "path": "/main-point-of-contact" }],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/website-address",
@@ -144,7 +144,7 @@
         }
       ],
       "next": [{ "path": "/email-address" }],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/email-address",
@@ -161,7 +161,7 @@
         }
       ],
       "next": [{ "path": "/telephone-number" }],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/what-booking-options-do-you-offer",
@@ -261,7 +261,7 @@
         }
       ],
       "next": [{ "path": "/address" }],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/address",
@@ -315,7 +315,7 @@
           "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-covid-19-test"
         }
       ],
-      "section": "UsBplV"
+      "section": "organisationDetails"
     },
     {
       "path": "/what-is-the-name-of-the-local-regulatory-authority",
@@ -933,7 +933,9 @@
       ]
     }
   ],
-  "sections": [{ "name": "UsBplV", "title": "Organisation details" }],
+  "sections": [
+    { "name": "organisationDetails", "title": "Organisation details" }
+  ],
   "phaseBanner": {},
   "metadata": {},
   "fees": [],
