@@ -27,14 +27,14 @@ export async function getServer(): Promise<Express> {
   configureCompression(server);
   configureStaticServer(server);
   configureFormRunnerProxy(
-    // form runner proxy must be initialized before body parser
+    // form runner proxy must be initialized before body and cookie parsers
     server
   );
   configureCookieParser(server);
   configureBodyParser(server);
+  configureViews(server);
   await configureExpressSession(server);
   await configureAuth(server);
-  configureViews(server);
   configureRouter(server);
   configureErrorHandlers(server);
 

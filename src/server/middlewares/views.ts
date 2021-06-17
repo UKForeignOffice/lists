@@ -1,5 +1,5 @@
 import path from "path";
-import _ from "lodash";
+import _, { get } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
@@ -33,8 +33,10 @@ export const configureViews = (server: Express): void => {
 
   // dynamic globals
   server.use((req, res, next) => {
-    const cookiesPolicy = req.cookies.lists_cookies_policy ?? "{}";
-    engine.addGlobal("cookiesPolicy", cookiesPolicy);
+    engine.addGlobal(
+      "cookiesPolicy",
+      get(req, "cookies.lists_cookies_policy", {})
+    );
 
     // cspNonce see Helmet configuration
     engine.addGlobal("cspNonce", res.locals.cspNonce);
