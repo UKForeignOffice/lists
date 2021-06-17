@@ -5,7 +5,7 @@ import helmet from "helmet";
 import crypto from "crypto";
 import { SERVICE_DOMAIN } from "server/config";
 
-const TRUSTED = ["'self'", `${SERVICE_DOMAIN}`];
+const TRUSTED = ["self", `${SERVICE_DOMAIN}`];
 
 const GOVUK_DOMAINS = [
   "*.publishing.service.gov.uk",

@@ -41,7 +41,7 @@
           <form class="form" method="post">
             <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
               <h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--l" for="email-address">
-                  Please enter your GOV.UK email address
+                  Please enter your GOV.UK email address {{cspNonce}}
                 </label>
               </h1>
               <div id="email-address-hint" class="govuk-hint">
