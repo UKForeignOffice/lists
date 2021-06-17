@@ -206,8 +206,7 @@
           "condition": "aKWhJY"
         },
         {
-          "path": "/is-your-organisation-able-to-provide-covid-19-tests-within-72-hours",
-          "condition": "GsOdFH"
+          "path": "/is-your-organisation-able-to-provide-covid-19-tests-within-72-hours"
         }
       ]
     },
@@ -441,8 +440,7 @@
           "condition": "JuFDfz"
         },
         {
-          "path": "/can-your-organisation-provide-covid-19-test-results-in-english-french-or-spanish",
-          "condition": "OwAxOd"
+          "path": "/can-your-organisation-provide-covid-19-test-results-in-english-french-or-spanish"
         }
       ]
     },
@@ -1113,9 +1111,9 @@
         "conditions": [
           {
             "field": {
-              "name": "ecmUgv",
+              "name": "meetUKstandards",
               "type": "YesNoField",
-              "display": "QualifiedUK"
+              "display": "Can your organisation provide COVID-19 tests that meet UK standards?"
             },
             "operator": "is",
             "value": { "type": "Value", "value": "true", "display": "true" }
@@ -1167,9 +1165,9 @@
         "conditions": [
           {
             "field": {
-              "name": "XGspIO",
+              "name": "provideResultsInEnglishFrenchSpanish",
               "type": "YesNoField",
-              "display": "provideCertificate2"
+              "display": "Can your organisation provide COVID-19 test results in English, French or Spanish? "
             },
             "operator": "is",
             "value": { "type": "Value", "value": "true", "display": "true" }
@@ -1185,9 +1183,9 @@
         "conditions": [
           {
             "field": {
-              "name": "XGspIO",
+              "name": "provideResultsInEnglishFrenchSpanish",
               "type": "YesNoField",
-              "display": "provideCertificate2"
+              "display": "Can your organisation provide COVID-19 test results in English, French or Spanish? "
             },
             "operator": "is",
             "value": { "type": "Value", "value": "false", "display": "false" }
@@ -1215,15 +1213,15 @@
     },
     {
       "name": "JuFDfz",
-      "displayName": "notQualifiedUK",
+      "displayName": "notQualifiedCovidUK",
       "value": {
-        "name": "notQualifiedUK",
+        "name": "notQualifiedCovidUK",
         "conditions": [
           {
             "field": {
-              "name": "ecmUgv",
+              "name": "meetUKstandards",
               "type": "YesNoField",
-              "display": "QualifiedUK"
+              "display": "Can your organisation provide COVID-19 tests that meet UK standards?"
             },
             "operator": "is",
             "value": { "type": "Value", "value": "false", "display": "false" }
@@ -1239,9 +1237,9 @@
         "conditions": [
           {
             "field": {
-              "name": "sXQotu",
+              "name": "provideTestResultsIn72Hours",
               "type": "YesNoField",
-              "display": "72 hours"
+              "display": "Is your organisation able to provide Covid-19 tests within 72 hours?"
             },
             "operator": "is",
             "value": { "type": "Value", "value": "true", "display": "true" }
@@ -1257,9 +1255,9 @@
         "conditions": [
           {
             "field": {
-              "name": "sXQotu",
+              "name": "provideTestResultsIn72Hours",
               "type": "YesNoField",
-              "display": "72 hours"
+              "display": "Is your organisation able to provide Covid-19 tests within 72 hours?"
             },
             "operator": "is",
             "value": { "type": "Value", "value": "false", "display": "false" }
