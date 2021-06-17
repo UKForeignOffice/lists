@@ -9,8 +9,8 @@
   </h1>
 
   <p class="govuk-body">
-    Link to apply to enter this list is: <br/>
-    <a class="govuk-link" target="_blank" href="https://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
+    Link to apply to enter this list is:<br/>
+    <a class="govuk-link" target="_blank" href="http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
       http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
     </a>
   </p>
