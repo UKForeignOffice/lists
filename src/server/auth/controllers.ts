@@ -62,11 +62,5 @@ export function postLoginController(
 
 export function getLogoutController(req: Request, res: Response): void {
   req.logout();
-  req.session.destroy((error) => {
-    if (error !== null) {
-      logger.error(`getLogoutController Error: ${error}`);
-    } else {
-      res.redirect("/login");
-    }
-  });
+  res.redirect("/login");
 }

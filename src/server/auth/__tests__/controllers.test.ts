@@ -25,9 +25,7 @@ describe("Auth Module", () => {
       protocol: "https",
       get: jest.fn().mockReturnValue("localhost"),
       logout: jest.fn(),
-      session: {
-        destroy: jest.fn(),
-      },
+      session: {},
       logIn: jest.fn(),
     };
     res = {
@@ -141,12 +139,10 @@ describe("Auth Module", () => {
   describe("getLogoutController", () => {
     test("logout is correct", () => {
       expect(req.logout).not.toHaveBeenCalled();
-      expect(req.session.destroy).not.toHaveBeenCalled();
 
       getLogoutController(req, res);
 
       expect(req.logout).toHaveBeenCalled();
-      expect(req.session.destroy).toHaveBeenCalled();
     });
   });
 
