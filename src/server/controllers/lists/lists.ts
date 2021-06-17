@@ -204,7 +204,9 @@ export function listsDataIngestionController(req: Request, res: Response): any {
     .createListItem(serviceType, data)
     .then(async (listItem) => {
       const { reference } = listItem;
-      const email = get(listItem?.jsonData, "email");
+      const email =
+        get(listItem?.jsonData, "contactEmailAddress") ??
+        get(listItem?.jsonData, "email");
 
       if (email !== null && !isCybDev) {
         const confirmationLink = createConfirmationLink(req, reference);

@@ -22,7 +22,6 @@ import {
   filterAllowedLegalAreas,
 } from "./helpers";
 import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
-import { isCybDev } from "server/config";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -54,16 +53,29 @@ async function getPlaceGeoPoint(props: {
 }
 
 async function createAddressGeoLocation(
-  lawyer: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
 ): Promise<number | boolean> {
-  const location = await geoLocatePlaceByText(`
-      ${lawyer.addressLine1}, 
-      ${lawyer.addressLine2 ?? ""}, 
-      ${lawyer.city} - 
-      ${lawyer.country} - 
-      ${lawyer.postcode}
-  `);
+  let address: string;
 
+  if ("organisationDetails" in item) {
+    address = `
+      ${item.organisationDetails.addressLine1}, 
+      ${item.organisationDetails.addressLine2 ?? ""}, 
+      ${item.organisationDetails.city} - 
+      ${item.organisationDetails.country} - 
+      ${item.organisationDetails.postcode}
+    `;
+  } else {
+    address = `
+      ${item.addressLine1}, 
+      ${item.addressLine2 ?? ""}, 
+      ${item.city} - 
+      ${item.country} - 
+      ${item.postcode}
+    `;
+  }
+
+  const location = await geoLocatePlaceByText(address);
   const point = location?.Geometry?.Point;
 
   if (isArray(point)) {
@@ -248,53 +260,70 @@ async function createCovidTestSupplierListItemObject(
   covidTestProvider: CovidTestSupplierFormWebhookData
 ): Promise<CovidTestSupplierListItemCreateInput> {
   try {
-    const country = await createCountry(covidTestProvider.country);
+    const country = await createCountry(
+      covidTestProvider.organisationDetails.country
+    );
     const geoLocationId = await createAddressGeoLocation(covidTestProvider);
-
-    // TODO if geoLocation fails?
 
     return {
       type: ServiceType.covidTestProviders,
-      isApproved: isCybDev,
-      isPublished: isCybDev,
+      isApproved: false,
+      isPublished: false,
       jsonData: {
-        organisationName: covidTestProvider.organisationName
+        organisationName: covidTestProvider.organisationDetails.organisationName
           .toLowerCase()
           .trim(),
-        contactName: `${covidTestProvider.firstName.trim()} ${
-          covidTestProvider.middleName?.trim() ?? ""
-        } ${covidTestProvider.surname.trim()}`,
-        telephone: covidTestProvider.phoneNumber,
-        email: covidTestProvider.emailAddress.toLowerCase().trim(),
-        website: covidTestProvider.websiteAddress.toLowerCase().trim(),
+        contactName: covidTestProvider.organisationDetails.contactName.trim(),
+        contactEmailAddress:
+          covidTestProvider.organisationDetails.contactEmailAddress
+            .toLocaleLowerCase()
+            .trim(),
+        contactPhoneNumber:
+          covidTestProvider.organisationDetails.contactPhoneNumber
+            .toLocaleLowerCase()
+            .trim(),
+        telephone: covidTestProvider.organisationDetails.phoneNumber,
+        email: covidTestProvider.organisationDetails.emailAddress
+          .toLowerCase()
+          .trim(),
+        website: covidTestProvider.organisationDetails.websiteAddress
+          .toLowerCase()
+          .trim(),
+        openingTimes: covidTestProvider.openingTimes,
         regulatoryAuthority: covidTestProvider.regulatoryAuthority,
-        providesCertificateTranslation:
-          covidTestProvider.providesCertificateTranslation,
+        provideResultsInEnglishFrenchSpanish:
+          covidTestProvider.provideResultsInEnglishFrenchSpanish,
+        provideTestResultsIn72Hours:
+          covidTestProvider.provideTestResultsIn72Hours,
+        provideResultsWhenClosed: covidTestProvider.provideResultsWhenClosed,
+        resultsFormat: covidTestProvider.resultsFormat
+          ?.split(",")
+          .map(trim)
+          .map(toLower),
         bookingOptions: covidTestProvider.bookingOptions
           ?.split(",")
           .map(trim)
           .map(toLower),
-        testTypes: covidTestProvider.testTypes
-          ?.split(",")
-          .map(trim)
-          .map(toLower),
         turnaroundTime: Number(covidTestProvider.turnaroundTime),
-        price: Number(covidTestProvider.price),
       },
       address: {
         create: {
-          firstLine: covidTestProvider.addressLine1,
-          secondLine: covidTestProvider.addressLine2,
-          postCode: covidTestProvider.postcode,
-          city: covidTestProvider.city,
+          firstLine: covidTestProvider.organisationDetails.addressLine1,
+          secondLine: covidTestProvider.organisationDetails.addressLine2,
+          postCode: covidTestProvider.organisationDetails.postcode,
+          city: covidTestProvider.organisationDetails.city,
           country: {
             connect: { id: country.id },
           },
-          geoLocation: {
-            connect: {
-              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
-            },
-          },
+          ...(typeof geoLocationId === "number"
+            ? {
+                geoLocation: {
+                  connect: {
+                    id: geoLocationId,
+                  },
+                },
+              }
+            : {}),
         },
       },
     };
@@ -577,8 +606,8 @@ export async function createCovidTestSupplierListItem(
   webhookData: CovidTestSupplierFormWebhookData
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
-    organisationName: webhookData.organisationName,
-    countryName: webhookData.country,
+    organisationName: webhookData.organisationDetails.organisationName,
+    countryName: webhookData.organisationDetails.country,
   });
 
   if (exists) {

@@ -51,25 +51,30 @@ export interface LawyersFormWebhookData {
 
 export interface CovidTestSupplierFormWebhookData {
   speakEnglish: boolean;
-  firstName: string;
-  middleName: string | undefined;
-  surname: string;
-  organisationName: string;
-  websiteAddress: string;
-  emailAddress: string;
-  phoneNumber: string;
-  addressLine1: string;
-  addressLine2: string | undefined;
-  city: string;
-  postcode: string;
-  country: string;
-  memberOfRegulatoryAuthority: boolean;
+  isQualified: boolean;
+  affiliatedWithRegulatoryAuthority: boolean;
   regulatoryAuthority: string;
-  declarationConfirm: string; // "confirm"
-  providesCertificateTranslation: boolean;
-  bookingOptions: string;
-  turnaroundTimes: string;
-  testTypes: string;
+  meetUKstandards: boolean;
+  provideResultsInEnglishFrenchSpanish: boolean;
+  provideTestResultsIn72Hours: boolean;
+  organisationDetails: {
+    organisationName: string;
+    contactName: string;
+    contactEmailAddress: string;
+    contactPhoneNumber: string;
+    websiteAddress: string;
+    emailAddress: string;
+    phoneNumber: string;
+    addressLine1: string;
+    addressLine2: string | undefined;
+    city: string;
+    postcode: string;
+    country: string;
+  };
   turnaroundTime: string;
-  price: string;
+  resultsFormat: string;
+  openingTimes: string;
+  provideResultsWhenClosed: boolean;
+  bookingOptions: string;
+  declarationConfirm: string;
 }
