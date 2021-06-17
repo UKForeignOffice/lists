@@ -7,6 +7,6 @@
     </li>
   {% endif %}
   {% for item in searchResults %}
-    {{ macros.covidTestProvidersListItem(item) }}
+    {{ macros.covidTestProvidersListItem(item, false) }}
   {% endfor %}
 </ul>

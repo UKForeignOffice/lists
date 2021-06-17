@@ -24,7 +24,7 @@
       {% for listItem in listItems %}
         {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
         {% if list.type === 'covidTestProviders' %}
-          {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem) }}
+          {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
         {% endif %}
         {% if list.type === 'lawyers' %}
           {{  lawyersMacros.lawyersListItem(listItem) }}

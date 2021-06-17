@@ -296,10 +296,7 @@ async function createCovidTestSupplierListItemObject(
         provideTestResultsIn72Hours:
           covidTestProvider.provideTestResultsIn72Hours,
         provideResultsWhenClosed: covidTestProvider.provideResultsWhenClosed,
-        resultsFormat: covidTestProvider.resultsFormat
-          ?.split(",")
-          .map(trim)
-          .map(toLower),
+        resultsFormat: covidTestProvider.resultsFormat?.split(",").map(trim),
         bookingOptions: covidTestProvider.bookingOptions
           ?.split(",")
           .map(trim)
