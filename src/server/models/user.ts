@@ -34,7 +34,6 @@ export async function createUser(
   }
 }
 
-// TODO: test
 export async function updateUser(
   email: string,
   data: UserUpdateInput
@@ -55,7 +54,6 @@ export async function updateUser(
   }
 }
 
-// TODO: test
 export async function findUsers(): Promise<User[]> {
   try {
     return (await prisma.user.findMany({
@@ -69,7 +67,6 @@ export async function findUsers(): Promise<User[]> {
   }
 }
 
-// TODO: test
 export async function isSuperAdminUser(email: string): Promise<boolean> {
   try {
     const user = await findUserByEmail(email);

@@ -1,7 +1,13 @@
 import { pick } from "lodash";
 import { prisma } from "../db/prisma-client";
 import { UserRoles } from "../types";
-import { findUserByEmail, createUser } from "../user";
+import {
+  findUserByEmail,
+  createUser,
+  updateUser,
+  findUsers,
+  isSuperAdminUser,
+} from "../user";
 
 describe("User Model:", () => {
   const sampleUser = {
@@ -15,9 +21,18 @@ describe("User Model:", () => {
   };
 
   const spyUserFindUnique = (
-    returnValue: any = sampleUser
+    returnValue: any = sampleUser,
+    shouldReject: boolean = false
   ): jest.SpyInstance => {
-    return jest.spyOn(prisma.user, "findUnique").mockResolvedValue(returnValue);
+    const spy = jest.spyOn(prisma.user, "findUnique");
+
+    if (shouldReject) {
+      spy.mockRejectedValue(returnValue);
+    } else {
+      spy.mockResolvedValue(returnValue);
+    }
+
+    return spy;
   };
 
   const spyUserCreate = (
@@ -25,6 +40,36 @@ describe("User Model:", () => {
     shouldReject: boolean = false
   ): jest.SpyInstance => {
     const spy = jest.spyOn(prisma.user, "create");
+
+    if (shouldReject) {
+      spy.mockRejectedValue(returnValue);
+    } else {
+      spy.mockResolvedValue(returnValue);
+    }
+
+    return spy;
+  };
+
+  const spyUserUpdate = (
+    returnValue: any = sampleUser,
+    shouldReject: boolean = false
+  ): jest.SpyInstance => {
+    const spy = jest.spyOn(prisma.user, "update");
+
+    if (shouldReject) {
+      spy.mockRejectedValue(returnValue);
+    } else {
+      spy.mockResolvedValue(returnValue);
+    }
+
+    return spy;
+  };
+
+  const spyFindMany = (
+    returnValue: any[] = [sampleUser],
+    shouldReject: boolean = false
+  ): jest.SpyInstance => {
+    const spy = jest.spyOn(prisma.user, "findMany");
 
     if (shouldReject) {
       spy.mockRejectedValue(returnValue);
@@ -101,6 +146,97 @@ describe("User Model:", () => {
       const result = await createUser(newUser);
 
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe("updateUser", () => {
+    test("update command is correct", async () => {
+      const spy = spyUserUpdate();
+      const user = {
+        email: sampleUser.email,
+        jsonData: { ...sampleUser.jsonData },
+      };
+
+      const result = await updateUser(user.email, user);
+
+      expect(result).toBe(sampleUser);
+      expect(spy).toHaveBeenCalledWith({
+        where: { email: user.email },
+        data: {
+          ...user,
+        },
+      });
+    });
+
+    test("it won't update if user email address is not gov uk", async () => {
+      const spy = spyUserUpdate();
+      const user = {
+        email: "notgovuk@email.com",
+        jsonData: { ...sampleUser.jsonData },
+      };
+
+      const result = await updateUser(user.email, user);
+
+      expect(result).toBeUndefined();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test("it returns undefined if update query fails", async () => {
+      spyUserUpdate(sampleUser, true);
+      const user = {
+        email: sampleUser.email,
+        jsonData: { ...sampleUser.jsonData },
+      };
+
+      const result = await updateUser(user.email, user);
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("findUsers", () => {
+    test("findMany command is correct", async () => {
+      const spy = spyFindMany();
+
+      const result = await findUsers();
+
+      expect(result).toMatchObject([sampleUser]);
+      expect(spy).toHaveBeenCalledWith({
+        orderBy: {
+          email: "asc",
+        },
+      });
+    });
+
+    test("it returns an empty list if findMany command fails", async () => {
+      spyFindMany([sampleUser], true);
+
+      const result = await findUsers();
+
+      expect(result).toMatchObject([]);
+    });
+  });
+
+  describe("isSuperAdminUser", () => {
+    test("it returns true when user is a SuperAdmin", async () => {
+      spyUserFindUnique();
+
+      const result = await isSuperAdminUser(sampleUser.email);
+
+      expect(result).toBeTruthy();
+    });
+
+    test("it returns false when user is not a SuperAdmin", async () => {
+      spyUserFindUnique({
+        ...sampleUser,
+        jsonData: {
+          roles: [],
+        },
+      });
+
+      const result = await isSuperAdminUser(sampleUser.email);
+
+      expect(result).toBeFalsy();
     });
   });
 });
