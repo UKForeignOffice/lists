@@ -582,7 +582,10 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     let andWhere: string = "";
 
     if (props.turnaroundTime > 0) {
-      andWhere = `AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= ${props.turnaroundTime}`;
+      andWhere = pgescape(
+        `AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= %s`,
+        props.turnaroundTime
+      );
     }
 
     const countryName = startCase(toLower(props.countryName));
