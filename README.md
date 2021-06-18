@@ -97,6 +97,8 @@ To by pass them you can use the `--no-verify` flag, e.g: `git commit -m 'msg' --
 
 We are following [Github flow](https://guides.github.com/introduction/flow/) and CI is going to run tests and various checks once you open a PR to master, if all checks pass you'll be able to merge it.
 
+We use [CircleCI](https://circleci.com) for CI. Config for this is committed alongside the code, in .circleci/config.yml. The pipeline is here: https://app.circleci.com/pipelines/github/UKForeignOffice/lists
+
 ## Deploy Development Environment
 
 Push your changes to `deploy-dev` branch and the CI will build and deploy the development environment (you might need to use "the `--force`").
