@@ -6,12 +6,14 @@ form_runner_forms_folder="$form_runner_folder/runner/dist/server/forms"
 form_runner_env_file="$form_runner_folder/runner/.env"
 forms_json_folder=./src/form-runner/forms-json
 
+# rm -rf ./lib
+
 if [ -n "$(ls -A "$form_runner_folder/node_modules/.bin" 2>/dev/null)" ]
 then
   echo "Form Runner Already Installed"
 else
   echo "Installing Form Runner"
-  git clone --depth 1 --branch 3.1.0-rc.7525 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
+  git clone --depth 1 --branch 3.1.0-rc.8283 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
   cd $form_runner_folder
   yarn install
   yarn run build:dependencies
