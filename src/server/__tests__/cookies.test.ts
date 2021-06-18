@@ -90,16 +90,14 @@ describe("Cookies", () => {
       const radios = $html(":radio");
       const successBanner = $html(".govuk-notification-banner");
 
-      const cookiesPolicy = JSON.parse(
-        headers["set-cookie"]
-          .find((elm: string) => elm?.includes("cookies_policy"))
-          .split("=")[1]
-          .split(";")[0]
-          .trim()
-      );
+      const cookiesPolicy = headers["set-cookie"]
+        .find((elm: string) => elm?.includes("lists_cookies_policy"))
+        .split("=")[1]
+        .split(";")[0]
+        .trim();
 
       expect(successBanner.length).toBe(1);
-      expect(cookiesPolicy).toEqual({ isSet: true, analytics: "on" });
+      expect(cookiesPolicy).toEqual('j:{"isSet":true,"analytics":"on"}');
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
       expect(radios.eq(0).attr("checked")).toBe("checked");
@@ -120,16 +118,14 @@ describe("Cookies", () => {
       const radios = $html(":radio");
       const successBanner = $html(".govuk-notification-banner");
 
-      const cookiesPolicy = JSON.parse(
-        headers["set-cookie"]
-          .find((elm: string) => elm?.includes("cookies_policy"))
-          .split("=")[1]
-          .split(";")[0]
-          .trim()
-      );
+      const cookiesPolicy = headers["set-cookie"]
+        .find((elm: string) => elm?.includes("lists_cookies_policy"))
+        .split("=")[1]
+        .split(";")[0]
+        .trim();
 
       expect(successBanner.length).toBe(1);
-      expect(cookiesPolicy).toEqual({ isSet: true, analytics: "off" });
+      expect(cookiesPolicy).toEqual('j:{"isSet":true,"analytics":"off"}');
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
       expect(radios.eq(0).attr("checked")).toBe(undefined);

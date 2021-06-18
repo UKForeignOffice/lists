@@ -1,6 +1,6 @@
 import { upperFirst, isNumber, isArray } from "lodash";
 import { logger } from "server/services/logger";
-import { db } from "./db/database";
+import { getDbPool } from "./db/database";
 import { CountriesWithData, CountryName, LegalAreas } from "./types";
 
 const countriesWithData: CountriesWithData[] = [
@@ -25,6 +25,7 @@ export const rawInsertGeoLocation = async (
       return false;
     }
 
+    const db = getDbPool();
     const result = await db.query(`
       INSERT INTO public."GeoLocation" (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
     `);
@@ -40,6 +41,7 @@ export const listAppliedMigrations = async (): Promise<any> => {
   const query = "SELECT * from _prisma_migrations";
 
   try {
+    const db = getDbPool();
     const { rows } = await db.query(query);
     return { migrations: rows };
   } catch (error) {

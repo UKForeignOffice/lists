@@ -1,23 +1,37 @@
 import { NextFunction, Request, Response } from "express";
-import { noop } from "lodash";
+import { get, noop } from "lodash";
 import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
-import { DEFAULT_VIEW_PROPS, listsRoutes } from "./constants";
+import { DEFAULT_VIEW_PROPS } from "./constants";
+import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
-import {
-  searchLawyers,
-  lawyersGetController,
-  lawyersDataIngestionController,
-} from "./lawyers";
+import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
   regionFromParams,
   getAllRequestParams,
   queryStringFromParams,
-  practiceAreaFromParams,
+  parseListValues,
   getCountryLawyerRedirectLink,
+  removeQueryParameter,
+  createConfirmationLink,
 } from "./helpers";
 import { logger } from "server/services/logger";
+import { legalPracticeAreasList } from "server/services/metadata";
+import { questions } from "./questionnaire";
+import { QuestionError, QuestionName } from "./types";
+import { searchLawyers, lawyersQuestionsSequence } from "./lawyers";
+import {
+  searchCovidTestProvider,
+  covidTestProviderQuestionsSequence,
+} from "./covid-test-provider";
+import { formRunnerPostRequestSchema } from "./schemas";
+import { parseFormRunnerWebhookObject } from "server/services/form-runner";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/services/form-runner/types";
+import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 
 export function listsStartPageController(req: Request, res: Response): void {
   return res.render("lists/start-page", {
@@ -57,19 +71,66 @@ export function listsGetController(
   next: NextFunction
 ): void {
   const params = getAllRequestParams(req);
-
+  const queryString = queryStringFromParams(params);
   const { serviceType } = params;
+
+  let questionsSequence: QuestionName[];
+  let partialPageTitle: string = "";
+  let partialToRender: string = "";
+  let error: boolean | QuestionError = false;
 
   if (serviceType === undefined) {
     res.render("lists/question-page.html", {
       ...DEFAULT_VIEW_PROPS,
       ...params,
       partialToRender: "question-service-type.html",
-      serviceLabel: getServiceLabel(serviceType),
+      getServiceLabel,
     });
-  } else if (serviceType === "lawyers") {
-    lawyersGetController(req, res, next);
+    return;
   }
+
+  switch (serviceType) {
+    case ServiceType.lawyers:
+      questionsSequence = lawyersQuestionsSequence;
+      break;
+    case ServiceType.covidTestProviders:
+      questionsSequence = covidTestProviderQuestionsSequence;
+      break;
+    default:
+      questionsSequence = [];
+  }
+
+  const askQuestion = questionsSequence.some((questionName) => {
+    const question = questions[questionName];
+
+    if (question.needsToAnswer(req)) {
+      partialToRender = question.getViewPartialName(req);
+      partialPageTitle = question.pageTitle(req);
+      error = question.validate(req);
+      return true;
+    }
+
+    return false;
+  });
+
+  if (askQuestion) {
+    res.render("lists/question-page.html", {
+      ...DEFAULT_VIEW_PROPS,
+      ...params,
+      error,
+      queryString,
+      partialToRender,
+      partialPageTitle,
+      removeQueryParameter,
+      legalPracticeAreasList,
+      serviceLabel: getServiceLabel(params.serviceType),
+    });
+
+    return;
+  }
+
+  // redirect to results page
+  res.redirect(`${listsRoutes.results}?${queryString}`);
 }
 
 export function listsResultsController(
@@ -79,7 +140,7 @@ export function listsResultsController(
 ): void {
   const params = getAllRequestParams(req);
   const { serviceType, country, legalAid, region } = params;
-  const practiceArea = practiceAreaFromParams(params);
+  const practiceArea = parseListValues("practiceArea", params);
 
   trackListsSearch({
     serviceType,
@@ -90,10 +151,15 @@ export function listsResultsController(
   }).catch(noop);
 
   switch (serviceType) {
-    case "lawyers":
-      searchLawyers(req, res, next).catch((error) =>
+    case ServiceType.lawyers:
+      searchLawyers(req, res).catch((error) =>
         logger.error("Lists Result Controller", { error })
       );
+      break;
+    case ServiceType.covidTestProviders:
+      searchCovidTestProvider(req, res).catch((error) => {
+        logger.error("Lists Result Controller", { error });
+      });
       break;
     default:
       next();
@@ -105,29 +171,53 @@ export function listRedirectToLawyersController(
   res: Response
 ): void {
   const params = getAllRequestParams(req);
-  params.serviceType = "lawyers";
+  params.serviceType = ServiceType.lawyers;
   const queryString = queryStringFromParams(params);
 
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 
-export function listsDataIngestionController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  const { serviceType } = req.params;
+export function listsDataIngestionController(req: Request, res: Response): any {
+  const serviceType = req.params.serviceType as ServiceType;
+  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  switch (serviceType) {
-    case "lawyers":
-      lawyersDataIngestionController(req, res, next);
-      break;
-    default:
-      res.status(500).send({
-        error:
-          "Service Type is incorrect, please make sure form's webhook output configuration is correct",
-      });
+  if (!(serviceType in ServiceType)) {
+    res.status(500).send({
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+    });
+    return;
   }
+
+  if (error !== undefined) {
+    res.status(422).send({ error: error.message });
+    return;
+  }
+
+  const data =
+    parseFormRunnerWebhookObject<
+      LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+    >(value);
+
+  listItem
+    .createListItem(serviceType, data)
+    .then(async (listItem) => {
+      const { reference } = listItem;
+      const email =
+        get(listItem?.jsonData, "contactEmailAddress") ??
+        get(listItem?.jsonData, "email");
+
+      if (email !== null) {
+        const confirmationLink = createConfirmationLink(req, reference);
+        sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
+      }
+
+      res.json({});
+    })
+    .catch((error) => {
+      logger.error(`listsDataIngestionController Error: ${error.message}`);
+      res.status(500).send({ error: error.message });
+    });
 }
 
 export function listsConfirmApplicationController(

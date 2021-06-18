@@ -1,0 +1,38 @@
+<h1 class="govuk-heading-m">Disclaimer</h1>
+<p class="govuk-body">
+  The Foreign, Commonwealth & Development Office (FCDO) provides lists of
+  service providers for information only, to assist British nationals who
+  may need support overseas. This list is not exhaustive, and is subject to
+  change at any time. None of the service providers are endorsed or
+  recommended by the FCDO. You should research whether a service provider
+  will be suitable. The FCDO does not accept any liability arising to any
+  person for any loss or damage suffered through using these service
+  providers or this information
+</p>
+<form class="form" action="{{ nextRoute }}" method="post">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'read-disclaimer' }}">
+    {% if error.field === 'read-disclaimer' %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+      </span>
+    {% endif %}
+    <div class="govuk-checkboxes">
+      <div class="govuk-checkboxes__item">
+        <input class="govuk-checkboxes__input" id="read-disclaimer" name="readDisclaimer" type="checkbox" value="ok">
+        <label class="govuk-label govuk-checkboxes__label" for="read-disclaimer">
+          I have read and agree with the above statement.
+        </label>
+      </div>
+    </div>
+    <input 
+      aria-hidden="true"
+      class="govuk-checkboxes__input govuk-visually-hidden" 
+      name="readDisclaimer" 
+      type="checkbox" 
+      value="" 
+      checked
+    >
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>
+

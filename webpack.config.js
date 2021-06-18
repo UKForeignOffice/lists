@@ -108,11 +108,6 @@ const client = {
       openAnalyzer: false,
     }),
   ],
-  externals: [
-    nodeExternals({
-      modulesDir: "node_modules",
-    }),
-  ],
 };
 
 const server = {

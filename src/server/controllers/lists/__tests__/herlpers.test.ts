@@ -2,7 +2,7 @@ import {
   countryHasLegalAid,
   queryStringFromParams,
   regionFromParams,
-  practiceAreaFromParams,
+  parseListValues,
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
+import { SERVICE_DOMAIN } from "server/config";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -70,7 +71,9 @@ describe("Lawyers List:", () => {
         practiceArea: ["Corporate", "Real Estate"],
       };
 
-      expect(practiceAreaFromParams(params)).toEqual(params.practiceArea);
+      expect(parseListValues("practiceArea", params)).toEqual(
+        params.practiceArea
+      );
     });
 
     test("returns practiceArea array when string", () => {
@@ -78,7 +81,7 @@ describe("Lawyers List:", () => {
         practiceArea: "Corporate, Real Estate",
       };
 
-      expect(practiceAreaFromParams(params)).toEqual([
+      expect(parseListValues("practiceArea", params)).toEqual([
         "Corporate",
         "Real Estate",
       ]);
@@ -113,10 +116,8 @@ describe("Lawyers List:", () => {
       expect(getServiceLabel("lawyers")).toEqual("a lawyer");
     });
 
-    test("medical assistance label is returned correctly", () => {
-      expect(getServiceLabel("medical facilities")).toEqual(
-        "medical assistance"
-      );
+    test("Covid test provider label is returned correctly", () => {
+      expect(getServiceLabel("covidTestProviders")).toEqual("a COVID-19 test");
     });
 
     test("undefined is returned when service name is unknown", () => {
@@ -177,11 +178,13 @@ describe("Lawyers List:", () => {
   describe("createConfirmationLink", () => {
     test("confirmation link is correct", () => {
       const req: any = {
-        get: jest.fn().mockReturnValue("localhost"),
+        headers: {
+          host: "localhost",
+        },
         protocol: "https",
       };
       expect(createConfirmationLink(req, "123")).toBe(
-        "https://localhost/confirm/123"
+        `https://${SERVICE_DOMAIN}/confirm/123`
       );
     });
   });

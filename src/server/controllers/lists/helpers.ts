@@ -11,9 +11,10 @@ import {
   lowerCase,
 } from "lodash";
 
-import { listsRoutes } from "./constants";
+import { SERVICE_DOMAIN } from "server/config";
+import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
-import { CountryName } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
@@ -40,7 +41,6 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
 export function regionFromParams(
   params: ListsRequestParams
 ): string | undefined {
-  // TODO: this can be simplified if regions is required but allow user to select unsure
   if (!("region" in params)) {
     return undefined;
   }
@@ -67,21 +67,22 @@ export function regionFromParams(
   }
 }
 
-export function practiceAreaFromParams(
+export function parseListValues(
+  paramName: string,
   params: ListsRequestParams
 ): string[] | undefined {
-  if (!("practiceArea" in params)) {
+  if (!(`${paramName}` in params)) {
     return undefined;
   }
 
-  const { practiceArea } = params;
+  const value = get(params, paramName);
 
-  if (isArray(practiceArea)) {
-    return without(practiceArea, "");
+  if (isArray(value)) {
+    return without(value, "");
   }
 
-  if (isString(practiceArea)) {
-    return without(practiceArea.split(",").map(trim), "");
+  if (isString(value)) {
+    return without(value.split(",").map(trim), "");
   }
 }
 
@@ -89,10 +90,10 @@ export function getServiceLabel(
   serviceType: string | undefined
 ): string | undefined {
   switch (serviceType) {
-    case "lawyers":
+    case ServiceType.lawyers:
       return "a lawyer";
-    case "medical facilities":
-      return "medical assistance";
+    case ServiceType.covidTestProviders:
+      return "a COVID-19 test";
     default:
       return undefined;
   }
@@ -134,51 +135,11 @@ export const countryHasLegalAid = (() => {
     countriesWithLegalAid.includes(lowerCase(country));
 })();
 
-export function needToReadNotice(readNotice?: string): boolean {
-  return readNotice === undefined;
-}
-
-export function needToAnswerCountry(
-  country?: ListsRequestParams["country"]
-): boolean {
-  return country === undefined || country === "";
-}
-
-export function needToAnswerRegion(
-  region?: ListsRequestParams["region"]
-): boolean {
-  return region === undefined || region === "";
-}
-
-export function needToAnswerPracticeArea(
-  practiceArea?: ListsRequestParams["practiceArea"]
-): boolean {
-  return practiceArea === undefined || practiceArea.length === 0;
-}
-
-export function needToAnswerLegalAid(
-  legalAid?: ListsRequestParams["legalAid"]
-): boolean {
-  return legalAid === undefined || legalAid === "";
-}
-
-export function needToAnswerProBono(
-  proBono?: ListsRequestParams["proBono"]
-): boolean {
-  return proBono === undefined || proBono === "";
-}
-
-export function needToReadDisclaimer(
-  readDisclaimer?: ListsRequestParams["readDisclaimer"]
-): boolean {
-  return readDisclaimer === undefined || readDisclaimer === "";
-}
-
 export function createConfirmationLink(
   req: Request,
   reference: string
 ): string {
-  const host = `${req.protocol}://${req.get("host")}`;
+  const host = `https://${SERVICE_DOMAIN}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;

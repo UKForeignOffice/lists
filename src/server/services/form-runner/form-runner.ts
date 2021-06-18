@@ -51,7 +51,7 @@ export async function startFormRunner(): Promise<boolean> {
 
 export async function isFormRunnerReady(): Promise<boolean> {
   try {
-    const { status } = await request(FORM_RUNNER_URL).get("/status");
+    const { status } = await request(FORM_RUNNER_URL).get("/health-check");
     return status === 200;
   } catch (error) {
     return false;

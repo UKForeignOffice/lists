@@ -33,7 +33,7 @@ describe("Secrets Manager", () => {
 
     test("it create secret if secret doesn't exist", async () => {
       const secretManager = new SecretsManager();
-      
+
       jest
         .spyOn(secretManager.getSecretValue(), "promise")
         .mockRejectedValueOnce({ code: "ResourceNotFoundException" });

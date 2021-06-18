@@ -1,0 +1,25 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  <table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--l">Users</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Email</th>
+        <th scope="col" class="govuk-table__header">Roles</th>
+        <th scope="col" class="govuk-table__header govuk-table__header--numeric"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for user in users %}
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">{{ user.email }}</th>
+          <td class="govuk-table__cell">{{ user.jsonData.roles.join(", ") }}</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">
+            <a href="{{ dashboardRoutes.usersEdit.replace(':userEmail', user.email) }}" class="govuk-link">Edit</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

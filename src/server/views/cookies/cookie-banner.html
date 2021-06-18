@@ -14,10 +14,10 @@
       </div>
 
       <div class="govuk-button-group">
-        <button value="accept" type="button" name="cookies" class="govuk-button" onclick="acceptAnalyticsCookies()">
+        <button id="accept-analytics-cookies" type="button" name="cookies" class="govuk-button">
           Accept analytics cookies
         </button>
-        <button value="reject" type="button" name="cookies" class="govuk-button" onclick="rejectAnalyticsCookies()">
+        <button id="reject-analytics-cookies" type="button" name="cookies" class="govuk-button">
           Reject analytics cookies
         </button>
         <a class="govuk-link" href="/help/cookies">View cookies</a>
@@ -39,8 +39,10 @@
   </div>
 </div>
 
+<script nonce="{{cspNonce}}">
+  var acceptButton = document.getElementById("accept-analytics-cookies");
+  var rejectButton = document.getElementById("reject-analytics-cookies");
 
-<script>
   function toggleAnalyticsCookies(isOn) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/help/cookies", true);
@@ -55,12 +57,14 @@
     banner.style.display = 'none';
   }
 
-  function acceptAnalyticsCookies() {
+  acceptButton.onclick = function acceptAnalyticsCookies(event) {
+    event.stopPropagation();
     toggleAnalyticsCookies(true);
     removeCookieBanner();
   }
 
-  function rejectAnalyticsCookies() {
+  rejectButton.rejectButton = function rejectAnalyticsCookies() {
+    event.stopPropagation();
     toggleAnalyticsCookies(false);
     removeCookieBanner();
   }

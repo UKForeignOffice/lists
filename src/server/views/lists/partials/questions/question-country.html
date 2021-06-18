@@ -14,14 +14,14 @@
     <select id="country-autocomplete" name="country" className="govuk-input--error">
       <option value=""></option>
       {% for country in countriesList %}
-      <option value="{{ country.value.toLowerCase() }}">{{ country.text }}</option>
+      <option value="{{ country.value }}">{{ country.text }}</option>
       {% endfor %}
     </select>
   </div>
   <button class="govuk-button" data-module="govuk-button">Continue</button>
 </form>
 
-<script>
+<script nonce="{{cspNonce}}">
   accessibleAutocomplete.enhanceSelectElement({
     defaultValue: '',
     selectElement: document.querySelector('#country-autocomplete'),

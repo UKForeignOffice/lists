@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { SecretsManager } from "aws-sdk";
 import { AWS_REGION } from "server/config";
 import { logger } from "./logger";
+
 let secretsManager: SecretsManager;
 
 export function getAWSSecretsManager(): SecretsManager {

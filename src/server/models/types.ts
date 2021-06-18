@@ -1,18 +1,45 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 
+export enum ServiceType {
+  "lawyers" = "lawyers",
+  "covidTestProviders" = "covidTestProviders",
+}
+
 export type CountriesWithData = Extract<
   CountryName,
   "Thailand" | "France" | "Italy" | "Spain"
 >;
+
 export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
-export type ListItem = PrismaClient.ListItem;
-export type ListItemCreateInput = PrismaClient.Prisma.ListItemCreateInput;
 
-interface ListItemGetObject extends PrismaClient.ListItem {
+// List
+export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
+  editors: string[];
+  publishers: string[];
+  administrators: string[];
+}
+
+export interface List extends PrismaClient.List {
+  jsonData: ListJsonData;
+  country?: Partial<Country>;
+}
+
+export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
+  jsonData: ListJsonData;
+}
+
+export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
+  jsonData: ListJsonData;
+}
+
+// ListItem
+export type ListItem = PrismaClient.ListItem;
+
+export interface ListItemGetObject extends PrismaClient.ListItem {
   address: {
     firstLine: string;
     secondLine?: string;
@@ -24,6 +51,28 @@ interface ListItemGetObject extends PrismaClient.ListItem {
     };
     geoLocationId?: number;
   };
+}
+
+export enum UserRoles {
+  // Application Level Roles
+  SuperAdmin = "SuperAdmin",
+  ListsCreator = "ListsCreator",
+}
+
+export interface UserJsonData extends PrismaClient.Prisma.JsonObject {
+  roles?: UserRoles[];
+}
+
+export interface User extends PrismaClient.User {
+  jsonData: UserJsonData;
+}
+
+export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {
+  jsonData: UserJsonData;
+}
+
+export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
+  jsonData: UserJsonData;
 }
 
 // Lawyer
@@ -54,13 +103,39 @@ export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
   };
 }
 
-export interface LawyerListItemCreateInput extends ListItemCreateInput {
-  type: "lawyer";
+export interface LawyerListItemCreateInput
+  extends PrismaClient.Prisma.ListItemCreateInput {
+  type: ServiceType.lawyers;
   jsonData: LawyerListItemJsonData;
 }
 
 export interface LawyerListItemGetObject extends ListItemGetObject {
-  type: "lawyer";
+  type: ServiceType.lawyers;
+  jsonData: LawyerListItemJsonData;
+}
+
+// Covid 19 Test Supplier
+export interface CovidTestSupplierListItemJsonData
+  extends PrismaClient.Prisma.JsonObject {
+  contactName: string;
+  organisationName: string;
+  telephone: string;
+  email: string;
+  website: string;
+  regulatoryAuthority: string;
+  metadata?: {
+    emailVerified?: boolean;
+  };
+}
+
+export interface CovidTestSupplierListItemCreateInput
+  extends PrismaClient.Prisma.ListItemCreateInput {
+  type: ServiceType.covidTestProviders;
+  jsonData: CovidTestSupplierListItemJsonData;
+}
+
+export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
+  type: ServiceType.covidTestProviders;
   jsonData: LawyerListItemJsonData;
 }
 

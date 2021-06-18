@@ -1,40 +1,7 @@
 import { prisma } from "./prisma-client";
-import { db } from "./database";
+import { getDbPool } from "./database";
 import { logger } from "server/services/logger";
 import { seedDb } from "./seed-data/seed-db";
-
-export const createPostgis = async (): Promise<string> => {
-  const createPostGisExtension = "CREATE EXTENSION postgis;";
-
-  try {
-    await db.query(createPostGisExtension);
-    return "postgis extension OK";
-  } catch (error) {
-    logger.error("createPostgis extension error:", error);
-    return error;
-  }
-};
-
-export const createGeoLocationTable = async (): Promise<"OK" | string> => {
-  const createGeoTable = `
-     CREATE TABLE public."GeoLocation" (
-        "id" SERIAL NOT NULL,
-        "location" geography(POINT),
-        PRIMARY KEY ("id")
-     );
-     CREATE INDEX location_geo_idx
-     ON "GeoLocation"
-     USING GIST (location);
-  `;
-
-  try {
-    await db.query(createGeoTable);
-    return "GeoLocation created successfully";
-  } catch (error) {
-    logger.error("createGeoLocationTable error:", error);
-    return error;
-  }
-};
 
 export const describeDb = async (): Promise<any> => {
   const query = `
@@ -43,6 +10,7 @@ export const describeDb = async (): Promise<any> => {
   `;
 
   try {
+    const db = getDbPool();
     const result = await db.query(query);
     return result;
   } catch (error) {
@@ -58,6 +26,7 @@ export const dumpDb = async (): Promise<any> => {
   const countryQuery = 'SELECT * from "Country"';
 
   try {
+    const db = getDbPool();
     const lawyers = await db.query(lawyersQuery);
     const address = await db.query(addressQuery);
     const geo = await db.query(geoQuery);
@@ -69,12 +38,8 @@ export const dumpDb = async (): Promise<any> => {
   }
 };
 
-export async function prepareAndSeedDb(): Promise<string[]> {
+export async function populateDb(): Promise<string[]> {
   try {
-    logger.info("Prepare Database: Installing Postgis");
-    await createPostgis();
-    logger.info("Prepare Database: Create GeoLocation Table");
-    await createGeoLocationTable();
     logger.info("Prepare Database: Seeding data");
     return await seedDb(prisma);
   } catch (error) {

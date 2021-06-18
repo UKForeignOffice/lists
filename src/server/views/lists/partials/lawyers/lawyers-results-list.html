@@ -1,0 +1,12 @@
+{% import "./macros.njk" as macros %}
+
+<ul class="govuk-list">
+  {% if searchResults.length === 0 %}
+    <li>
+      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.lawyers }}">try again</a>
+    </li>
+  {% endif %}
+  {% for item in searchResults %}
+    {{ macros.lawyersListItem(item) }}
+  {% endfor %}
+</ul>

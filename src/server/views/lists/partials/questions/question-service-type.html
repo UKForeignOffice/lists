@@ -8,15 +8,15 @@
       </h1>
       <div class="govuk-radios">
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="where-do-you-live" name="serviceType" type="radio" value="lawyers" required>
+          <input class="govuk-radios__input" id="where-do-you-live" name="serviceType" type="radio" value="{{ ServiceType.lawyers }}" required>
           <label class="govuk-label govuk-radios__label" for="where-do-you-live">
             Lawyers
           </label>
         </div>
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="where-do-you-live-2" name="serviceType" type="radio" value="medical-facilities" required>
+          <input class="govuk-radios__input" id="where-do-you-live-2" name="serviceType" type="radio" value="{{ ServiceType.covidTestProvider }}" required>
           <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
-            Medical facilities
+            Covid test providers
           </label>
         </div>
       </div>

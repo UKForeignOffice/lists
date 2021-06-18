@@ -1,22 +1,27 @@
-import { isArray, uniq, startCase, toLower, merge, get } from "lodash";
+import { isArray, uniq, startCase, toLower, merge, get, trim } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
-  Country,
   Point,
+  Country,
   ListItem,
-  LawyerListItemCreateInput,
-  LawyerListItemGetObject,
+  ServiceType,
   LawyerListItemJsonData,
+  LawyerListItemGetObject,
+  LawyerListItemCreateInput,
+  CovidTestSupplierListItemCreateInput,
+  List,
+  ListItemGetObject,
 } from "./types";
 import {
-  filterAllowedLegalAreas,
   geoPointIsValid,
   rawInsertGeoLocation,
+  filterAllowedLegalAreas,
 } from "./helpers";
+import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -48,16 +53,29 @@ async function getPlaceGeoPoint(props: {
 }
 
 async function createAddressGeoLocation(
-  lawyer: LawyersFormWebhookData
+  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
 ): Promise<number | boolean> {
-  const location = await geoLocatePlaceByText(`
-      ${lawyer.addressLine1}, 
-      ${lawyer.addressLine2 ?? ""}, 
-      ${lawyer.city} - 
-      ${lawyer.country} - 
-      ${lawyer.postcode}
-  `);
+  let address: string;
 
+  if ("organisationDetails" in item) {
+    address = `
+      ${item.organisationDetails.addressLine1}, 
+      ${item.organisationDetails.addressLine2 ?? ""}, 
+      ${item.organisationDetails.city} - 
+      ${item.organisationDetails.country} - 
+      ${item.organisationDetails.postcode}
+    `;
+  } else {
+    address = `
+      ${item.addressLine1}, 
+      ${item.addressLine2 ?? ""}, 
+      ${item.city} - 
+      ${item.country} - 
+      ${item.postcode}
+    `;
+  }
+
+  const location = await geoLocatePlaceByText(address);
   const point = location?.Geometry?.Point;
 
   if (isArray(point)) {
@@ -146,7 +164,7 @@ function fetchPublishedListItemQuery(props: {
     INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
     ${whereType}
     ${whereCountryName}
-    ${andWhere}
+    ${andWhere ?? ""}
     AND "ListItem"."isApproved" = true
     AND "ListItem"."isPublished" = true
     AND "ListItem"."isBlocked" = false
@@ -155,30 +173,28 @@ function fetchPublishedListItemQuery(props: {
   `;
 }
 
-async function checkListItemExists({
+export async function checkListItemExists({
   organisationName,
+  countryName,
 }: {
-  organisationName?: string;
+  organisationName: string;
+  countryName: string;
 }): Promise<boolean> {
-  const jsonQuery: {
-    organisationName?: string;
-  } = {};
+  const total = await prisma.listItem.count({
+    where: {
+      jsonData: {
+        path: ["organisationName"],
+        equals: organisationName.toLocaleLowerCase(),
+      },
+      address: {
+        country: {
+          name: startCase(countryName),
+        },
+      },
+    },
+  });
 
-  if (organisationName !== undefined) {
-    jsonQuery.organisationName = pgescape.string(
-      organisationName?.toLowerCase()
-    );
-  }
-
-  const query = `
-    SELECT COUNT(*) 
-    FROM "ListItem" 
-    WHERE "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}' 
-    LIMIT 1
-  `;
-
-  const result = await prisma.$queryRaw(query);
-  return result?.["0"].count > 0;
+  return total > 0;
 }
 
 async function createLawyerListItemObject(
@@ -191,14 +207,14 @@ async function createLawyerListItemObject(
     const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {
-      type: "lawyer",
+      type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
       jsonData: {
         organisationName: lawyer.organisationName.toLowerCase().trim(),
-        contactName: `${lawyer.firstName} ${lawyer.middleName ?? ""} ${
-          lawyer.surname
-        }`.trim(),
+        contactName: `${lawyer.firstName.trim()} ${
+          lawyer.middleName?.trim() ?? ""
+        } ${lawyer.surname.trim()}`,
         telephone: lawyer.phoneNumber,
         email: lawyer.emailAddress.toLowerCase().trim(),
         website: lawyer.websiteAddress.toLowerCase().trim(),
@@ -224,7 +240,11 @@ async function createLawyerListItemObject(
           country: {
             connect: { id: country.id },
           },
-          ...(typeof geoLocationId === "number" ? { geoLocationId } : {}),
+          geoLocation: {
+            connect: {
+              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
+            },
+          },
         },
       },
     };
@@ -235,8 +255,245 @@ async function createLawyerListItemObject(
   }
 }
 
+// TODO: Test
+async function createCovidTestSupplierListItemObject(
+  covidTestProvider: CovidTestSupplierFormWebhookData
+): Promise<CovidTestSupplierListItemCreateInput> {
+  try {
+    const country = await createCountry(
+      covidTestProvider.organisationDetails.country
+    );
+    const geoLocationId = await createAddressGeoLocation(covidTestProvider);
+
+    return {
+      type: ServiceType.covidTestProviders,
+      isApproved: false,
+      isPublished: false,
+      jsonData: {
+        organisationName: covidTestProvider.organisationDetails.organisationName
+          .toLowerCase()
+          .trim(),
+        contactName: covidTestProvider.organisationDetails.contactName.trim(),
+        contactEmailAddress:
+          covidTestProvider.organisationDetails.contactEmailAddress
+            .toLocaleLowerCase()
+            .trim(),
+        contactPhoneNumber:
+          covidTestProvider.organisationDetails.contactPhoneNumber
+            .toLocaleLowerCase()
+            .trim(),
+        telephone: covidTestProvider.organisationDetails.phoneNumber,
+        email: covidTestProvider.organisationDetails.emailAddress
+          .toLowerCase()
+          .trim(),
+        website: covidTestProvider.organisationDetails.websiteAddress
+          .toLowerCase()
+          .trim(),
+        openingTimes: covidTestProvider.openingTimes,
+        regulatoryAuthority: covidTestProvider.regulatoryAuthority,
+        provideResultsInEnglishFrenchSpanish:
+          covidTestProvider.provideResultsInEnglishFrenchSpanish,
+        provideTestResultsIn72Hours:
+          covidTestProvider.provideTestResultsIn72Hours,
+        provideResultsWhenClosed: covidTestProvider.provideResultsWhenClosed,
+        resultsFormat: covidTestProvider.resultsFormat?.split(",").map(trim),
+        bookingOptions: covidTestProvider.bookingOptions
+          ?.split(",")
+          .map(trim)
+          .map(toLower),
+        turnaroundTime: Number(covidTestProvider.turnaroundTime),
+      },
+      address: {
+        create: {
+          firstLine: covidTestProvider.organisationDetails.addressLine1,
+          secondLine: covidTestProvider.organisationDetails.addressLine2,
+          postCode: covidTestProvider.organisationDetails.postcode,
+          city: covidTestProvider.organisationDetails.city,
+          country: {
+            connect: { id: country.id },
+          },
+          ...(typeof geoLocationId === "number"
+            ? {
+                geoLocation: {
+                  connect: {
+                    id: geoLocationId,
+                  },
+                },
+              }
+            : {}),
+        },
+      },
+    };
+  } catch (error) {
+    const message = `createCovidTestSupplierListItemObject Error: ${error.message}`;
+    logger.error(message);
+    throw new Error(message);
+  }
+}
+
 // Model API
 
+// TODO: test
+export async function findListItemsForList(list: List): Promise<ListItem[]> {
+  try {
+    const where = {
+      type: list.type,
+      address: {
+        countryId: list.countryId,
+      },
+      jsonData: {
+        path: ["metadata", "emailVerified"],
+        equals: true,
+      },
+    };
+
+    return await prisma.listItem.findMany({
+      where,
+      include: {
+        address: {
+          select: {
+            id: true,
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    logger.error(`approveLawyer Error ${error.message}`);
+    throw new Error("Failed to approve lawyer");
+  }
+}
+
+export async function findListItemById(
+  id: string | number
+): Promise<ListItemGetObject> {
+  try {
+    return (await prisma.listItem.findUnique({
+      where: { id: Number(id) },
+      include: {
+        address: {
+          select: {
+            id: true,
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    })) as ListItemGetObject;
+  } catch (error) {
+    logger.error(`findListItemById Error ${error.message}`);
+    throw new Error("Failed to approve lawyer");
+  }
+}
+
+export async function togglerListItemIsApproved({
+  id,
+  isApproved,
+}: {
+  id: number;
+  isApproved: boolean;
+}): Promise<ListItem> {
+  const data: {
+    isApproved: boolean;
+    isPublished?: boolean;
+  } = { isApproved };
+
+  if (!isApproved) {
+    data.isPublished = false;
+  }
+
+  try {
+    return await prisma.listItem.update({
+      where: { id },
+      data,
+    });
+  } catch (error) {
+    logger.error(`togglerListItemIsApproved Error ${error.message}`);
+    throw error;
+  }
+}
+
+export async function togglerListItemIsPublished({
+  id,
+  isPublished,
+}: {
+  id: number;
+  isPublished: boolean;
+}): Promise<ListItem> {
+  try {
+    return await prisma.listItem.update({
+      where: { id },
+      data: { isPublished },
+    });
+  } catch (error) {
+    logger.error(`publishLawyer Error ${error.message}`);
+    throw new Error("Failed to publish lawyer");
+  }
+}
+
+export async function setEmailIsVerified({
+  reference,
+}: {
+  reference: string;
+}): Promise<boolean> {
+  try {
+    const item = await prisma.listItem.findUnique({
+      where: { reference },
+    });
+
+    if (get(item, "jsonData.metadata.emailVerified") === true) {
+      return true;
+    }
+
+    const jsonData = merge(item?.jsonData, {
+      metadata: { emailVerified: true },
+    });
+
+    await prisma.listItem.update({
+      where: { reference },
+      data: { jsonData },
+    });
+
+    return true;
+  } catch (error) {
+    const message = `setEmailIsVerified Error ${error.message}`;
+    logger.error(message);
+    throw new Error(message);
+  }
+}
+
+export async function createListItem(
+  serviceType: ServiceType,
+  webhookData: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+): Promise<ListItem> {
+  switch (serviceType) {
+    case ServiceType.lawyers:
+      return await createLawyerListItem(webhookData as LawyersFormWebhookData);
+    case ServiceType.covidTestProviders:
+      return await createCovidTestSupplierListItem(
+        webhookData as CovidTestSupplierFormWebhookData
+      );
+  }
+}
+
+// Lawyers
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
   region?: string;
@@ -276,7 +533,7 @@ export async function findPublishedLawyersPerCountry(props: {
     });
 
     const query = fetchPublishedListItemQuery({
-      type: "lawyer",
+      type: ServiceType.lawyers,
       countryName,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
@@ -294,108 +551,82 @@ export async function createLawyerListItem(
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationName,
+    countryName: webhookData.country,
   });
 
   if (exists) {
-    throw new Error("Record already exists");
+    throw new Error("Lawyer record already exists");
   }
 
   try {
-    const lawyerData = await createLawyerListItemObject(webhookData);
-    return await prisma.listItem.create({ data: lawyerData });
+    const data = await createLawyerListItemObject(webhookData);
+    return await prisma.listItem.create({ data });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
-    throw new Error(`createLawyerListItem Error: ${error.message}`);
+    throw error;
   }
 }
 
-export async function approveListItem({
-  reference,
-}: {
-  reference: string;
-}): Promise<ListItem> {
-  try {
-    return await prisma.listItem.update({
-      where: {
-        reference,
-      },
-      data: {
-        isApproved: true,
-      },
-    });
-  } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
-    throw new Error("Failed to approve lawyer");
+// Covid Test Suppliers
+// TODO test
+export async function findPublishedCovidTestSupplierPerCountry(props: {
+  countryName: string;
+  region: string;
+  turnaroundTime: number;
+}): Promise<LawyerListItemGetObject[]> {
+  if (props.countryName === undefined) {
+    throw new Error("Country name is missing");
   }
-}
 
-export async function publishListItem({
-  reference,
-}: {
-  reference: string;
-}): Promise<ListItem> {
   try {
-    return await prisma.listItem.update({
-      where: {
-        reference,
-      },
-      data: {
-        isPublished: true,
-      },
-    });
-  } catch (error) {
-    logger.error(`publishLawyer Error ${error.message}`);
-    throw new Error("Failed to publish lawyer");
-  }
-}
+    let andWhere: string = "";
 
-export async function blockListItem({
-  reference,
-}: {
-  reference: string;
-}): Promise<ListItem> {
-  try {
-    return await prisma.listItem.update({
-      where: {
-        reference,
-      },
-      data: {
-        isBlocked: true,
-      },
-    });
-  } catch (error) {
-    logger.error(`blockLawyer Error ${error.message}`);
-    throw new Error("Failed to publish lawyer");
-  }
-}
-
-export async function setEmailIsVerified({
-  reference,
-}: {
-  reference: string;
-}): Promise<boolean> {
-  try {
-    const item = await prisma.listItem.findUnique({
-      where: { reference },
-    });
-
-    if (get(item, "jsonData.metadata.emailVerified") === true) {
-      return true;
+    if (props.turnaroundTime > 0) {
+      andWhere = pgescape(
+        `AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= %s`,
+        props.turnaroundTime
+      );
     }
 
-    const jsonData = merge(item?.jsonData, {
-      metadata: { emailVerified: true },
+    const countryName = startCase(toLower(props.countryName));
+
+    const fromGeoPoint = await getPlaceGeoPoint({
+      countryName,
+      text: props.region,
     });
 
-    await prisma.listItem.update({
-      where: { reference },
-      data: { jsonData },
+    const query = fetchPublishedListItemQuery({
+      type: ServiceType.covidTestProviders,
+      countryName,
+      fromGeoPoint,
+      andWhere,
     });
 
-    return true;
+    return await prisma.$queryRaw(query);
   } catch (error) {
-    const message = `setEmailIsVerified Error ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
+    logger.error("findPublishedCovidTestSupplierPerCountry ERROR: ", error);
+    return [];
+  }
+}
+
+// TODO test
+export async function createCovidTestSupplierListItem(
+  webhookData: CovidTestSupplierFormWebhookData
+): Promise<ListItem> {
+  const exists = await checkListItemExists({
+    organisationName: webhookData.organisationDetails.organisationName,
+    countryName: webhookData.organisationDetails.country,
+  });
+
+  if (exists) {
+    throw new Error("Covid Test Supplier Record already exists");
+  }
+
+  try {
+    const data = await createCovidTestSupplierListItemObject(webhookData);
+    return await prisma.listItem.create({ data });
+  } catch (error) {
+    logger.error(`createLawyerListItem Error: ${error.message}`);
+    throw error;
   }
 }

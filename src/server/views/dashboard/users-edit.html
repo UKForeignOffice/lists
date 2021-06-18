@@ -1,0 +1,62 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">Editing User</h1>
+  <h4 class="govuk-heading-s">{{ user.email }}</h4>
+
+  {% if userSaved %}
+    {{ dashboardMacros.successBanner("User updated successfully") }}
+  {% endif %}
+
+  {% if error.field %}
+    {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
+  
+  <form class="form" action="{{ req.originalUrl }}" method="post" required>
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'roles' }}">
+      <fieldset class="govuk-fieldset" aria-describedby="roles">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="roles">
+            Roles
+          </label>
+        </h3>
+        {% if error.field === 'roles' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div class="govuk-checkboxes">
+          {% for name, role in UserRoles %}
+            {% if role === UserRoles.ListsCreator %}
+              <div class="govuk-checkboxes__item">
+                <input
+                  aria-describedby="roles-{{role}}-hint"
+                  class="govuk-checkboxes__input"
+                  id="roles-{{role}}"
+                  name="roles"
+                  type="checkbox"
+                  value="{{ role }}"
+                  {{-" checked" if _.includes(user.jsonData.roles, role) }}
+                />
+                <label
+                  class="govuk-label govuk-checkboxes__label"
+                  for="roles-{{ role }}"
+                >
+                  {{ _.startCase(role) }}
+                </label>
+                <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
+                  {% if role === UserRoles.ListsCreator %}
+                    A Lists Creator can create new lists
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Save</button>
+  </form>
+
+
+{% endblock %}

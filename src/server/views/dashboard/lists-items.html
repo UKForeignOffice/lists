@@ -1,0 +1,35 @@
+{% extends "./dashboard.html" %}
+{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
+{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">
+    {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ _.startCase(list.country.name) }}
+  </h1>
+
+  <p class="govuk-body">
+    Link to apply to enter this list is:<br/>
+    <a class="govuk-link" target="_blank" href="http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
+      http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
+    </a>
+  </p>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  
+  {% if listItems.length === 0 %}
+    <p class="govuk-body">This list is empty</p>
+  {% else %}
+    <ul class="govuk-list dashboard__content-list">
+      {% for listItem in listItems %}
+        {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
+        {% if list.type === 'covidTestProviders' %}
+          {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
+        {% endif %}
+        {% if list.type === 'lawyers' %}
+          {{  lawyersMacros.lawyersListItem(listItem) }}
+        {% endif %}
+      {% endfor %}
+    </ul>  
+  {% endif %}
+{% endblock %}

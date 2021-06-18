@@ -16,6 +16,18 @@ export function ensureAuthenticated(
   }
 }
 
+export function ensureUserIsSuperAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  if (req.isAuthenticated() && req.user.isSuperAdmin()) {
+    next();
+  } else {
+    res.status(405).send("Not allowed");
+  }
+}
+
 export async function configureAuth(server: Express): Promise<void> {
   await configurePassport(server);
   server.use(authRouter);

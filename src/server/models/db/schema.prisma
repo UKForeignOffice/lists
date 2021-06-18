@@ -1,11 +1,27 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native"]
+  previewFeatures = ["filterJson"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model List {
+  id                  Int      @id @default(autoincrement())
+  reference           String   @default(uuid()) @unique
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  type                String
+  country             Country  @relation(fields: [countryId], references: [id])
+  countryId   Int
+  
+  jsonData            Json
+
+  @@index([type, countryId])
 }
 
 model ListItem {
@@ -41,17 +57,17 @@ model Address {
   
   ListItem    ListItem[]
   
+  geoLocation    GeoLocation?  @relation(fields: [geoLocationId], references: [id])
   geoLocationId   Int?
 }
 
-// Prisma does not support PostGis geography types so Address.geoLocation 
-// is temporarily moved to a separate table GeoLocation which is created using raw sql
-// please see ../helpers
-// model GeoLocation {
-//   id          Int @id @default(autoincrement())
-//   location    geography(POINT)
-//   address     Address[]
-// }
+model GeoLocation {
+  id          Int @id @default(autoincrement())
+  location    Unsupported("geography(POINT)")
+  address     Address[]
+
+  @@index([location])
+}
 
 model Country {
   id        Int       @id @default(autoincrement())
@@ -60,4 +76,14 @@ model Country {
 
   name      String    @db.VarChar(255) @unique
   address   Address[]
+  list      List[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  email     String    @unique
+  jsonData  Json
 }

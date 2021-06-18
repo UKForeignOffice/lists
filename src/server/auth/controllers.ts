@@ -4,9 +4,11 @@ import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
 import { authRoutes } from "./constants";
 import passport from "./passport";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
-  successReturnToOrRedirect: "/",
+  successReturnToOrRedirect: "/dashboard",
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 
@@ -31,14 +33,18 @@ export function postLoginController(
   res: Response,
   next: NextFunction
 ): void {
-  const { emailAddress } = req.body;
+  const emailAddress = req.body.emailAddress?.trim();
 
   if (isGovUKEmailAddress(emailAddress)) {
-    createAuthenticationPath({ emailAddress })
+    createAuthenticationPath({ email: emailAddress })
       .then((authPath) => {
-        return `${req.protocol}://${req.get("host")}${authPath}`;
+        const protocol = isLocalHost ? "http" : "https";
+        return `${protocol}://${SERVICE_DOMAIN}${authPath}`;
       })
       .then(async (authLink) => {
+        if (isLocalHost) {
+          logger.warn(authLink);
+        }
         return await sendAuthenticationEmail(emailAddress, authLink);
       })
       .then(() => {
@@ -56,7 +62,5 @@ export function postLoginController(
 
 export function getLogoutController(req: Request, res: Response): void {
   req.logout();
-  req.session.destroy(() => {
-    res.redirect("/");
-  });
+  res.redirect("/login");
 }

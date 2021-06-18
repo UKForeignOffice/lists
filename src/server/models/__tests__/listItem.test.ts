@@ -1,15 +1,14 @@
 import { toLower, startCase } from "lodash";
-
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
 import {
-  approveListItem,
-  publishListItem,
-  blockListItem,
+  togglerListItemIsApproved,
+  togglerListItemIsPublished,
   createLawyerListItem,
   findPublishedLawyersPerCountry,
   setEmailIsVerified,
+  checkListItemExists,
 } from "../listItem";
 
 const LawyerWebhookData: LawyersFormWebhookData = {
@@ -74,10 +73,6 @@ describe("ListItem Model:", () => {
       .mockResolvedValue(returnValue ?? sampleListItem);
   };
 
-  const spyPrismaQueryRaw = (returnValue: any): jest.SpyInstance => {
-    return jest.spyOn(prisma, "$queryRaw").mockResolvedValue(returnValue);
-  };
-
   const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
     const country = { id: "123TEST" };
 
@@ -97,31 +92,39 @@ describe("ListItem Model:", () => {
       .mockResolvedValue(returnValue ?? location);
   };
 
+  const spyListItemCount = (returnValue: any): jest.SpyInstance => {
+    return jest.spyOn(prisma.listItem, "count").mockResolvedValue(returnValue);
+  };
+
   describe("Create Lawyer", () => {
-    test("createLawyer command correctly calls $queryRaw to check if list item already exists", async () => {
-      const spyQueryRaw = spyPrismaQueryRaw([{ count: 1 }]);
+    test("createLawyer command correctly calls listItem count to check if record already exists", async () => {
+      const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
       try {
         await createLawyerListItem(LawyerWebhookData);
       } catch (error) {
-        expect(error.message).toBe("Record already exists");
+        expect(error.message).toBe("Lawyer record already exists");
       }
 
-      const expectedQuery = `
-        SELECT COUNT(*) 
-        FROM "ListItem" 
-        WHERE "ListItem"."jsonData" @> '{"organisationName":"cartesian systems"}' 
-        LIMIT 1
-      `;
-      expect(spyQueryRaw.mock.calls[0][0].replace(/\s/g, "")).toEqual(
-        expectedQuery.replace(/\s/g, "")
-      );
+      expect(spyCount.mock.calls[0][0]).toEqual({
+        where: {
+          address: {
+            country: {
+              name: LawyerWebhookData.country,
+            },
+          },
+          jsonData: {
+            equals: LawyerWebhookData.organisationName.toLowerCase(),
+            path: ["organisationName"],
+          },
+        },
+      });
       expect(spyCountry).not.toHaveBeenCalled();
     });
 
     test("createLawyer command correctly calls country.upsert", async () => {
-      spyPrismaQueryRaw([{ count: 0 }]);
+      spyListItemCount(0);
       spyLocationService();
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
@@ -142,7 +145,7 @@ describe("ListItem Model:", () => {
     });
 
     test("createLawyer command correctly calls lawyer.create", async () => {
-      spyPrismaQueryRaw([{ count: 0 }]);
+      spyListItemCount(0);
       spyLocationService();
       spyCountryUpsert();
       const spy = spyListItemCreate();
@@ -155,7 +158,7 @@ describe("ListItem Model:", () => {
 
       expect(spy).toHaveBeenCalledWith({
         data: {
-          type: "lawyer",
+          type: "lawyers",
           isApproved: false,
           isPublished: false,
           address: {
@@ -165,6 +168,11 @@ describe("ListItem Model:", () => {
               postCode: "123456",
               city: "Touraine",
               country: { connect: { id: "123TEST" } },
+              geoLocation: {
+                connect: {
+                  id: undefined,
+                },
+              },
             },
           },
           jsonData: {
@@ -242,7 +250,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
         INNER JOIN "Country" ON "Address"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
-        WHERE "ListItem"."type" = 'lawyer'
+        WHERE "ListItem"."type" = 'lawyers'
         AND "Country".name = 'France'
         AND "ListItem"."jsonData" @> '{"legalAid":true,"proBonoService":true}'
         AND "ListItem"."isApproved" = true
@@ -329,55 +337,66 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("approveLawyer", () => {
-    test("update command is correct", async () => {
+  describe("togglerListItemIsApproved", () => {
+    test("update command is correct when approving", async () => {
       const spy = spyListItemUpdate();
-      const result = await approveListItem({ reference: "reference" });
+      const result = await togglerListItemIsApproved({
+        id: 123,
+        isApproved: true,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isApproved: true,
-        },
+        where: { id: 123 },
+        data: { isApproved: true },
+      });
+
+      expect(result).toBe(sampleListItem);
+    });
+
+    test("update command is correct when disapproving ", async () => {
+      const spy = spyListItemUpdate();
+      const result = await togglerListItemIsApproved({
+        id: 123,
+        isApproved: false,
+      });
+
+      expect(spy).toHaveBeenCalledWith({
+        where: { id: 123 },
+        data: { isApproved: false, isPublished: false },
       });
 
       expect(result).toBe(sampleListItem);
     });
   });
 
-  describe("publishLawyer", () => {
-    test("update command is correct", async () => {
+  describe("togglerListItemIsPublished", () => {
+    test("update command is correct when publishing", async () => {
       const spy = spyListItemUpdate();
-      const result = await publishListItem({ reference: "reference" });
+      const result = await togglerListItemIsPublished({
+        id: 123,
+        isPublished: true,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isPublished: true,
-        },
+        where: { id: 123 },
+        data: { isPublished: true },
       });
 
       expect(result).toBe(sampleListItem);
     });
-  });
 
-  describe("blockLawyer", () => {
-    test("update command is correct", async () => {
+    test("update command is correct when hiding ", async () => {
       const spy = spyListItemUpdate();
-      const result = await blockListItem({ reference: "reference" });
+      const result = await togglerListItemIsPublished({
+        id: 123,
+        isPublished: false,
+      });
 
       expect(spy).toHaveBeenCalledWith({
-        where: {
-          reference: "reference",
-        },
-        data: {
-          isBlocked: true,
-        },
+        where: { id: 123 },
+        data: { isPublished: false },
       });
+
       expect(result).toBe(sampleListItem);
     });
   });
@@ -440,6 +459,48 @@ describe("ListItem Model:", () => {
         },
       });
 
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("checkListItemExists", () => {
+    const countryName = "France";
+    const organisationName = "XYZ Corp";
+
+    test("listItem.count call is correct", async () => {
+      const spy = spyListItemCount(0);
+
+      await checkListItemExists({ countryName, organisationName });
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          address: {
+            country: {
+              name: countryName,
+            },
+          },
+          jsonData: {
+            equals: organisationName.toLowerCase(),
+            path: ["organisationName"],
+          },
+        },
+      });
+    });
+
+    test("it returns false when list item doesn't exist", async () => {
+      spyListItemCount(0);
+      const result = await checkListItemExists({
+        countryName,
+        organisationName,
+      });
+      expect(result).toBe(false);
+    });
+
+    test("it returns true when list item exists", async () => {
+      spyListItemCount(1);
+      const result = await checkListItemExists({
+        countryName,
+        organisationName,
+      });
       expect(result).toBe(true);
     });
   });

@@ -1,12 +1,8 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { logger } from "server/services/logger";
 import { getSecretValue } from "server/services/secrets-manager";
-import {
-  JWT_ALGORITHM,
-  JWT_EXPIRE_TIME,
-  authRoutes,
-} from "./constants";
-import { User } from "./types";
+import { User } from "server/models/types";
+import { JWT_ALGORITHM, JWT_EXPIRE_TIME, authRoutes } from "./constants";
 
 const JWT_OPTIONS: SignOptions = {
   algorithm: JWT_ALGORITHM,
@@ -20,10 +16,12 @@ export async function getJwtSecret(): Promise<string> {
     JWT_SECRET = await getSecretValue("JWT_SECRET");
   }
 
-  return JWT_SECRET
+  return JWT_SECRET;
 }
 
-export async function createAuthenticationJWT(user: User): Promise<string | boolean> {
+export async function createAuthenticationJWT(
+  user: Pick<User, "email">
+): Promise<string | boolean> {
   try {
     const secret = await getJwtSecret();
     return jwt.sign({ user }, secret, JWT_OPTIONS);
@@ -33,7 +31,9 @@ export async function createAuthenticationJWT(user: User): Promise<string | bool
   }
 }
 
-export async function createAuthenticationPath(user: User): Promise<string | boolean> {
+export async function createAuthenticationPath(
+  user: Pick<User, "email">
+): Promise<string | boolean> {
   try {
     const token = await createAuthenticationJWT(user);
     return `${authRoutes.login}?token=${token}`;

@@ -14,7 +14,7 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
     ...req.body,
   };
 
-  res.cookie("cookies_policy", JSON.stringify(cookiesPolicy), {
+  res.cookie("lists_cookies_policy", cookiesPolicy, {
     encode: String,
     maxAge: ONE_YEAR,
     httpOnly: true,

@@ -1,0 +1,178 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">
+    {% if listId === 'new' %}
+      Create new list
+    {% else %}
+      Editing list {{ listId }}
+    {% endif %}
+  </h1>
+  <h4 class="govuk-heading-s">{{ user.email }}</h4>
+
+  {% if listCreated %}
+    {{ dashboardMacros.successBanner("List created successfully") }}
+  {% endif %}
+
+  {% if listUpdated %}
+    {{ dashboardMacros.successBanner("List updated successfully") }}
+  {% endif %}
+
+  {% if error.field %}
+    {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
+  
+  <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+          <h3 class="govuk-fieldset__heading govuk-heading-m">
+            Service Type?
+          </h3>
+        </legend>
+        {% if error.field === 'serviceType' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div class="govuk-radios">
+          {% for prop, serviceType in ServiceType %}
+            <div class="govuk-radios__item">
+              <input 
+                class="govuk-radios__input" 
+                id="serviceType-{{ serviceType }}" 
+                name="serviceType" 
+                type="radio" 
+                value="{{ serviceType }}"
+                {{-" checked" if list.type === serviceType }}
+                {{-" disabled" if listId !== 'new' }}
+              >
+              <label class="govuk-label govuk-radios__label" for="serviceType">
+                {{ _.startCase(serviceType) }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </fieldset>
+    </div>
+    
+    
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
+      <h3 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--m" for="country-autocomplete">
+          Which country is this list for?
+        </label>
+      </h3>
+      {% if error.field === 'country' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <div class="govuk-hint">
+        Please leave it empty if this list is not for any specific country
+      </div>
+      
+      {% if listId !== 'new' %}
+        <input class="govuk-input" name="country" type="text" value="{{list.country.name}}" disabled>
+      {% else %}
+        <select id="country-autocomplete" name="country" className="govuk-input--error">
+          <option value=""></option>
+          {% for country in countriesList %}
+            <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name ===  country.value}}>{{ country.text }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
+    </div>
+
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'administrators' }}">
+      <fieldset class="govuk-fieldset">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="administrators">
+            Administrators
+          </label>
+        </h3>
+        {% if error.field === 'administrators' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="administrators-hint" class="govuk-hint">
+          Administrators can manage list settings
+        </div>
+        <div id="administrators-hint-2" class="govuk-hint">
+          For multiple administrators, please comma separate their emails addresses
+        </div>
+        <input 
+          class="govuk-input" 
+          id="administrators" 
+          name="administrators" 
+          type="text" 
+          aria-describedby="administrators-hint administrators-hint-2" 
+          value="{{list.jsonData.administrators or req.user.userData.email}}"
+        >
+      </fieldset>
+    </div>
+    
+    
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'editors' }}">
+      <fieldset class="govuk-fieldset">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="editors">
+            Editors
+          </label>
+        </h3>
+        {% if error.field === 'editors' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="editors-hint" class="govuk-hint">
+          Editors can approve and disapprove list items 
+        </div>
+        <div id="editors-hint" class="govuk-hint">
+          For multiple editors, please comma separate their emails addresses
+        </div>
+        <input class="govuk-input" id="editors" name="editors" type="text" aria-describedby="editors-hint" value="{{list.jsonData.editors}}">
+      </fieldset>
+    </div>
+
+
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publishers' }}">
+      <fieldset class="govuk-fieldset">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--m" for="publishers">
+            Publishers
+          </label>
+        </h3>
+        {% if error.field === 'publishers' %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+          </span>
+        {% endif %}
+        <div id="editors-hint" class="govuk-hint">
+          Publishers can publish and unpublish list items. 
+        </div>
+        <div id="editors-hint" class="govuk-hint">
+          For multiple publishers, please comma separate their emails addresses
+        </div>
+        <input class="govuk-input" id="publishers" name="publishers" type="text" aria-describedby="publishers-hint" value="{{list.jsonData.publishers}}">
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">
+      {% if listId === 'new' %}
+        Create
+      {% else %}
+        Save
+      {% endif %}
+      
+    </button>
+  </form>
+  <script nonce="{{cspNonce}}">
+    accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '{{list.country.name}}',
+      selectElement: document.querySelector('#country-autocomplete'),
+      autoselect: true,
+      confirmOnBlur: true
+    })
+  </script>
+{% endblock %}
