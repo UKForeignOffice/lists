@@ -572,14 +572,21 @@ export async function createLawyerListItem(
 export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;
   region: string;
+  turnaroundTime: number;
 }): Promise<LawyerListItemGetObject[]> {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
 
-  const countryName = startCase(toLower(props.countryName));
-
   try {
+    let andWhere: string = "";
+
+    if (props.turnaroundTime > 0) {
+      andWhere = `AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= ${props.turnaroundTime}`;
+    }
+
+    const countryName = startCase(toLower(props.countryName));
+
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,
       text: props.region,
@@ -589,6 +596,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       type: ServiceType.covidTestProviders,
       countryName,
       fromGeoPoint,
+      andWhere,
     });
 
     return await prisma.$queryRaw(query);

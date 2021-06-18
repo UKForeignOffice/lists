@@ -35,5 +35,5 @@ export interface ListsRequestParams {
   proBono?: "yes" | "no" | "";
   readNotice?: string;
   readDisclaimer?: string;
-  resultsTurnAround?: string | string[];
+  resultsTurnaround?: string;
 }

@@ -22,12 +22,13 @@ export async function searchCovidTestProvider(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region } = params;
+  const { serviceType, country, region, resultsTurnaround } = params;
 
   const searchResults = await listItem.findPublishedCovidTestSupplierPerCountry(
     {
       countryName: `${country}`,
       region: `${region}`,
+      turnaroundTime: Number(resultsTurnaround),
     }
   );
 
