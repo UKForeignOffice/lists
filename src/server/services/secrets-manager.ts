@@ -60,7 +60,7 @@ export async function rotateSecret(secretName: string): Promise<boolean> {
       SecretString: generateRandomSecret(),
     };
 
-    await secretsManager.updateSecret(params).promise();
+    await secretsManager.putSecretValue(params).promise();
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
