@@ -2,6 +2,7 @@ import { Express, Request, Response, NextFunction } from "express";
 import { configurePassport } from "./passport";
 import { authRoutes } from "./constants";
 import authRouter from "./routes";
+import { configureExpressSession } from "./express-session";
 
 export function ensureAuthenticated(
   req: Request,
@@ -29,6 +30,7 @@ export function ensureUserIsSuperAdmin(
 }
 
 export async function configureAuth(server: Express): Promise<void> {
+  await configureExpressSession(server);
   await configurePassport(server);
   server.use(authRouter);
 }

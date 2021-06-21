@@ -194,22 +194,26 @@ export function listsDataIngestionController(req: Request, res: Response): any {
     return;
   }
 
-  const data =
-    parseFormRunnerWebhookObject<
-      LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-    >(value);
+  const data = parseFormRunnerWebhookObject<
+    LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  >(value);
 
   listItem
     .createListItem(serviceType, data)
     .then(async (listItem) => {
       const { reference } = listItem;
+      const contactName = get(listItem?.jsonData, "contactName");
       const email =
         get(listItem?.jsonData, "contactEmailAddress") ??
         get(listItem?.jsonData, "email");
 
       if (email !== null) {
         const confirmationLink = createConfirmationLink(req, reference);
-        sendApplicationConfirmationEmail(email, confirmationLink).catch(noop);
+        sendApplicationConfirmationEmail(
+          contactName,
+          email,
+          confirmationLink
+        ).catch(noop);
       }
 
       res.json({});

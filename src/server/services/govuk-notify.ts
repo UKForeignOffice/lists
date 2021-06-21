@@ -27,6 +27,7 @@ if (GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID === undefined) {
 const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY.trim());
 
 export async function sendApplicationConfirmationEmail(
+  contactName: string,
   emailAddress: string,
   confirmationLink: string
 ): Promise<boolean> {
@@ -36,6 +37,7 @@ export async function sendApplicationConfirmationEmail(
       emailAddress,
       {
         personalisation: {
+          contactName,
           confirmationLink,
         },
       }

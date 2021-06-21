@@ -53,6 +53,9 @@ const secretsManager = {
   createSecret: jest.fn().mockReturnValue({
     promise: jest.fn().mockResolvedValue({}),
   }),
+  putSecretValue: jest.fn().mockReturnValue({
+    promise: jest.fn().mockResolvedValue({}),
+  }),
   getSecretValue: jest.fn().mockReturnValue({
     promise: jest.fn().mockResolvedValue({
       SecretString: "123ABC",
