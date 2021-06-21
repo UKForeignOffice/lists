@@ -1,4 +1,4 @@
-FROM node:14.17-alpine3.13 AS base
+FROM node:16.3.0-alpine3.13 AS base
 RUN mkdir -p /usr/src/app && \
     addgroup -g 1001 appuser && \
     adduser -S -u 1001 -G appuser appuser && \
