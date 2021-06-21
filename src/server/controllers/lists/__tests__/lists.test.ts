@@ -211,6 +211,7 @@ describe("Lists Controllers", () => {
 
       setTimeout(() => {
         expect(spy).toHaveBeenCalledWith(
+          createdListItem.jsonData.contactName,
           createdListItem.jsonData.email,
           `https://${SERVICE_DOMAIN}/confirm/${createdListItem.reference}`
         );

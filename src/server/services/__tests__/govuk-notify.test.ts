@@ -11,10 +11,12 @@ import {
 describe("GOVUK Notify service:", () => {
   test("sendApplicationConfirmationEmail notify.sendEmail command is correct", async () => {
     const notifyClient = new NotifyClient();
+    const contactName = "Ada Lovelace";
     const emailAddress = "testemail@gov.uk";
     const confirmationLink = "https://localhost/confirm/123Reference";
 
     const result = await sendApplicationConfirmationEmail(
+      contactName,
       emailAddress,
       confirmationLink
     );
@@ -23,7 +25,7 @@ describe("GOVUK Notify service:", () => {
     expect(notifyClient.sendEmail).toHaveBeenCalledWith(
       GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
       emailAddress,
-      { personalisation: { confirmationLink } }
+      { personalisation: { confirmationLink, contactName } }
     );
   });
 
