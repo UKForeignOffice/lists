@@ -9,11 +9,13 @@ const JWT_OPTIONS: SignOptions = {
   expiresIn: JWT_EXPIRE_TIME,
 };
 
+const SECRET_NAME = "JWT_SECRET";
+
 let JWT_SECRET: string;
 
 export async function getJwtSecret(): Promise<string> {
   if (JWT_SECRET === undefined) {
-    JWT_SECRET = await getSecretValue("JWT_SECRET");
+    JWT_SECRET = await getSecretValue(SECRET_NAME);
   }
 
   return JWT_SECRET;
