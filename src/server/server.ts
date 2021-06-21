@@ -7,7 +7,6 @@ import {
   configureCompression,
   configureStaticServer,
   configureErrorHandlers,
-  configureExpressSession,
   configureFormRunnerProxy,
   configureCookieParser,
 } from "./middlewares";
@@ -33,7 +32,6 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
-  await configureExpressSession(server);
   await configureAuth(server);
   configureRouter(server);
   configureErrorHandlers(server);
