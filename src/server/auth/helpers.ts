@@ -30,7 +30,7 @@ export function ensureUserIsSuperAdmin(
 }
 
 export async function configureAuth(server: Express): Promise<void> {
-  await configurePassport(server);
   await configureExpressSession(server);
+  await configurePassport(server);
   server.use(authRouter);
 }
