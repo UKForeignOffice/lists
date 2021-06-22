@@ -35,7 +35,7 @@ export const configureViews = (server: Express): void => {
   server.use((req, res, next) => {
     engine.addGlobal(
       "cookiesPolicy",
-      get(req, "cookies.lists_cookies_policy", {})
+      JSON.parse(get(req, "cookies.lists_cookies_policy", "{}"))
     );
 
     // cspNonce see Helmet configuration
