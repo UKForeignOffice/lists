@@ -15,6 +15,7 @@ import {
   CovidTestSupplierListItemCreateInput,
   List,
   ListItemGetObject,
+  CountryName,
 } from "./types";
 import {
   geoPointIsValid,
@@ -490,6 +491,34 @@ export async function createListItem(
       return await createCovidTestSupplierListItem(
         webhookData as CovidTestSupplierFormWebhookData
       );
+  }
+}
+
+// TODO test
+export async function some(
+  countryName: CountryName,
+  serviceType: ServiceType
+): Promise<boolean> {
+  try {
+    const result = await prisma.listItem.findMany({
+      where: {
+        type: serviceType,
+        address: {
+          country: {
+            name: startCase(toLower(countryName)),
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+      take: 1,
+    });
+
+    return result.length > 0;
+  } catch (error) {
+    logger.error(`countryHasAnyListItem Error: ${error.message}`);
+    return false;
   }
 }
 

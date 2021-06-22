@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { CountryName } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 
 export enum QuestionName {
   "readNotice" = "readNotice",
@@ -27,7 +27,7 @@ export interface Question {
 }
 
 export interface ListsRequestParams {
-  serviceType?: string;
+  serviceType?: ServiceType;
   country?: CountryName | "";
   region?: string;
   practiceArea?: string | string[];

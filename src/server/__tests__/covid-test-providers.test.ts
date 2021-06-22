@@ -3,11 +3,17 @@ import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
+import { listItem } from "server/models";
 
 describe("Covid Test Providers List:", () => {
   let server: Express;
 
+  function mockListItemSome(resolvedValue = true): jest.SpyInstance {
+    return jest.spyOn(listItem, "some").mockResolvedValue(resolvedValue);
+  }
+
   beforeAll(async () => {
+    mockListItemSome();
     server = await getServer();
   }, 30000);
 
@@ -248,5 +254,18 @@ describe("Covid Test Providers List:", () => {
 
       expect(await axe(text)).toHaveNoViolations();
     });
+  });
+
+  test("redirect is correct when country has no covid test providers available", async () => {
+    mockListItemSome(false);
+
+    const { status, header } = await request(server)
+      .post("/find?serviceType=covidTestProviders&readNotice=ok&country=spain")
+      .type("text/html");
+
+    expect(status).toBe(302);
+    expect(header.location).toBe(
+      "/private-beta?serviceType=covidTestProviders"
+    );
   });
 });

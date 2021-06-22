@@ -2,6 +2,7 @@ export {
   listsGetController,
   listsPostController,
   listsResultsController,
+  listsGetPrivateBetaPage,
   listsStartPageController,
   listsDataIngestionController,
   listRedirectToLawyersController,

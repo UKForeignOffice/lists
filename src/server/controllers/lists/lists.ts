@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { get, noop } from "lodash";
-import { countryHasLawyers } from "server/models/helpers";
 import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS } from "./constants";
 import { listsRoutes } from "./routes";
@@ -39,20 +38,45 @@ export function listsStartPageController(req: Request, res: Response): void {
   });
 }
 
-export function listsPostController(req: Request, res: Response): void {
+export async function listsPostController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   const params = getAllRequestParams(req);
   const queryString = queryStringFromParams(params);
 
   const { country, serviceType } = params;
 
-  if (country !== undefined && country !== "" && !countryHasLawyers(country)) {
-    // data hasn't been migrated, redirect user to legacy FCDO pages
-    trackListsSearch({
-      serviceType,
-      country,
-    }).catch(noop);
+  if (country !== undefined && country !== "" && serviceType !== undefined) {
+    try {
+      const hasItems = await listItem.some(country, serviceType);
+      let redirectLink: string | undefined;
 
-    return res.redirect(getCountryLawyerRedirectLink(country));
+      if (!hasItems) {
+        switch (serviceType) {
+          case ServiceType.lawyers:
+            redirectLink = getCountryLawyerRedirectLink(country);
+            break;
+          case ServiceType.covidTestProviders:
+            redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
+            break;
+          default:
+            redirectLink = undefined;
+        }
+
+        if (redirectLink !== undefined) {
+          trackListsSearch({
+            serviceType,
+            country,
+          }).catch(noop);
+
+          return res.redirect(redirectLink);
+        }
+      }
+    } catch (error) {
+      return next(error);
+    }
   }
 
   res.redirect(`${listsRoutes.finder}?${queryString}`);
@@ -170,7 +194,10 @@ export function listRedirectToLawyersController(
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 
-export function listsDataIngestionController(req: Request, res: Response): any {
+export function listsDataIngestionController(
+  req: Request,
+  res: Response
+): void {
   const serviceType = req.params.serviceType as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
@@ -227,4 +254,21 @@ export function listsConfirmApplicationController(
     .setEmailIsVerified({ reference })
     .then(() => res.render("lists/application-confirmation-page.html"))
     .catch(next);
+}
+
+export function listsGetPrivateBetaPage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const { serviceType } = req.query;
+
+  if (serviceType === undefined) {
+    return next();
+  }
+
+  res.render(`lists/private-beta-page.html`, {
+    serviceType,
+    ServiceType,
+  });
 }
