@@ -15,7 +15,7 @@ import { noop } from "lodash";
 
 const router = express.Router();
 
-router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
+router.get(`/dev/reset-db`, (req, res) => {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:reset", () => {
