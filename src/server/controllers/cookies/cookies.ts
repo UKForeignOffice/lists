@@ -11,13 +11,13 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
     isSet: boolean;
   } = {
     isSet: true,
-    ...req.body,
+    analytics: req.body.analytics,
   };
 
-  res.cookie("lists_cookies_policy", cookiesPolicy, {
-    encode: String,
+  res.cookie("lists_cookies_policy", JSON.stringify(cookiesPolicy), {
     maxAge: ONE_YEAR,
     httpOnly: true,
+    secure: true,
   });
 
   res.render(COOKIES_PAGE_VIEW, {
