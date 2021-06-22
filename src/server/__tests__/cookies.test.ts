@@ -97,7 +97,9 @@ describe("Cookies", () => {
         .trim();
 
       expect(successBanner.length).toBe(1);
-      expect(cookiesPolicy).toEqual('j:{"isSet":true,"analytics":"on"}');
+      expect(cookiesPolicy).toEqual(
+        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "on" }))
+      );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
       expect(radios.eq(0).attr("checked")).toBe("checked");
@@ -125,7 +127,9 @@ describe("Cookies", () => {
         .trim();
 
       expect(successBanner.length).toBe(1);
-      expect(cookiesPolicy).toEqual('j:{"isSet":true,"analytics":"off"}');
+      expect(cookiesPolicy).toEqual(
+        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "off" }))
+      );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
       expect(radios.eq(0).attr("checked")).toBe(undefined);
