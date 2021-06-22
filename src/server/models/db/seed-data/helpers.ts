@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { logger } from "server/services/logger";
-import { CountriesWithData } from "../../types";
 import {
   createLawyerListItem,
   togglerListItemIsApproved,
@@ -47,7 +46,7 @@ function createLawyerJson(
 }
 
 type PopulateCountryLawyers = (
-  countryName: CountriesWithData,
+  countryName: string,
   lawyers: any[],
   prisma: PrismaClient
 ) => Promise<
