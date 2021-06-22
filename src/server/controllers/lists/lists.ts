@@ -8,7 +8,6 @@ import { listItem } from "server/models";
 import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
-  regionFromParams,
   getAllRequestParams,
   queryStringFromParams,
   parseListValues,
@@ -42,15 +41,9 @@ export function listsStartPageController(req: Request, res: Response): void {
 
 export function listsPostController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
-  const region = regionFromParams(params);
+  const queryString = queryStringFromParams(params);
 
   const { country, serviceType } = params;
-
-  if (region !== undefined) {
-    params.region = region;
-  }
-
-  const queryString = queryStringFromParams(params);
 
   if (country !== undefined && country !== "" && !countryHasLawyers(country)) {
     // data hasn't been migrated, redirect user to legacy FCDO pages

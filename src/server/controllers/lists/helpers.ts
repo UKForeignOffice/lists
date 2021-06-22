@@ -38,35 +38,6 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
     .join("&");
 }
 
-export function regionFromParams(
-  params: ListsRequestParams
-): string | undefined {
-  if (!("region" in params)) {
-    return undefined;
-  }
-
-  let regions: string[] = [];
-
-  if (typeof params.region === "string") {
-    regions = params.region.split(/,/);
-  }
-
-  if (regions[0] === "unsure" && regions[1] !== undefined) {
-    // user is just posting region form, which includes hidden input with value unknown
-    return regions[1];
-  }
-
-  if (regions[0] === "unsure" && regions[1] === undefined) {
-    // user posted empty region
-    return "unsure";
-  }
-
-  if (regions[0] !== "unsure") {
-    // region has already been defined
-    return regions[0];
-  }
-}
-
 export function parseListValues(
   paramName: string,
   params: ListsRequestParams

@@ -1,7 +1,6 @@
 import {
   countryHasLegalAid,
   queryStringFromParams,
-  regionFromParams,
   parseListValues,
   getServiceLabel,
   getAllRequestParams,
@@ -36,32 +35,6 @@ describe("Lawyers List:", () => {
       };
 
       expect(queryStringFromParams(params)).toEqual("propA=a&propB=1&propC=c");
-    });
-  });
-
-  describe("regionFromParams", () => {
-    test("region is correct when params is string list", () => {
-      const params = {
-        region: "madrid",
-      };
-
-      expect(regionFromParams(params)).toBe("madrid");
-    });
-
-    test("region is correct when only unsure is selected", () => {
-      const params = {
-        region: "unsure,",
-      };
-
-      expect(regionFromParams(params)).toBe("");
-    });
-
-    test("region is correct when unsure and a value are passed", () => {
-      const params = {
-        region: "unsure,madrid",
-      };
-
-      expect(regionFromParams(params)).toBe("madrid");
     });
   });
 
