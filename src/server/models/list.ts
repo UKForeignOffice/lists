@@ -106,6 +106,7 @@ export async function createList(listData: {
     const administrators = compact(
       listData.administrators.map(trim).map(toLower)
     );
+
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
     }
