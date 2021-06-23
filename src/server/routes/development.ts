@@ -73,6 +73,8 @@ async function promoteUser(req: Request, res: Response): Promise<void> {
 
   if (
     typeof email === "string" &&
+    typeof key === "string" &&
+    key?.length > 10 &&
     (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
   ) {
     const user = await findUserByEmail(email);
