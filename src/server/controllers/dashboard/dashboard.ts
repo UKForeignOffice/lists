@@ -24,7 +24,7 @@ import { UserRoles, ServiceType, List } from "server/models/types";
 import {
   filterSuperAdminRole,
   userIsListPublisher,
-  userIsListEditor,
+  userIsListValidator,
   userIsListAdministrator,
 } from "./helpers";
 import { countriesList } from "server/services/metadata";
@@ -40,7 +40,7 @@ const DEFAULT_VIEW_PROPS = {
   countriesList,
   ServiceType,
   userIsListPublisher,
-  userIsListEditor,
+  userIsListValidator,
   userIsListAdministrator,
 };
 
@@ -164,8 +164,8 @@ export async function listsEditController(
   let error: QuestionError | {} = {};
 
   if (isPost) {
-    const editors: string[] = compact(
-      req.body.editors.split(",").map(trim).map(toLower)
+    const validators: string[] = compact(
+      req.body.validators.split(",").map(trim).map(toLower)
     );
     const publishers: string[] = compact(
       req.body.publishers.split(",").map(trim).map(toLower)
@@ -175,16 +175,16 @@ export async function listsEditController(
     );
 
     if (
-      editors.length === 0 ||
-      editors.some((email) => !isGovUKEmailAddress(email))
+      validators.length === 0 ||
+      validators.some((email) => !isGovUKEmailAddress(email))
     ) {
       error = {
-        field: "editors",
+        field: "validators",
         text:
-          editors.length === 0
-            ? "You must indicated at least one editor"
-            : "Editors contain an invalid email address",
-        href: "#editors",
+          validators.length === 0
+            ? "You must indicated at least one validator"
+            : "Validators contain an invalid email address",
+        href: "#validators",
       };
     } else if (
       publishers.length === 0 ||
@@ -194,9 +194,9 @@ export async function listsEditController(
         field: "publishers",
         text:
           publishers.length === 0
-            ? "You must indicated at least one editor"
+            ? "You must indicated at least one publisher"
             : "Publishers contain an invalid email address",
-        href: "#editors",
+        href: "#publishers",
       };
     } else if (
       administrators.length === 0 ||
@@ -206,7 +206,7 @@ export async function listsEditController(
         field: "administrators",
         text:
           administrators.length === 0
-            ? "You must indicated at least one editor"
+            ? "You must indicated at least one administrator"
             : "Administrators contain an invalid email address",
         href: "#administrators",
       };
@@ -248,7 +248,7 @@ export async function listsEditController(
         const data = {
           country: req.body.country,
           serviceType: req.body.serviceType,
-          editors: req.body.editors.split(","),
+          validators: req.body.validators.split(","),
           publishers: req.body.publishers.split(","),
           administrators: req.body.administrators.split(","),
           createdBy: `${req.user?.userData.email}`,
@@ -270,7 +270,7 @@ export async function listsEditController(
           if (list !== undefined && userIsListAdministrator(req, list)) {
             await updateList(
               Number(listId),
-              pick(data, ["editors", "publishers", "administrators"])
+              pick(data, ["validators", "publishers", "administrators"])
             );
             return res.redirect(
               `${dashboardRoutes.listsEdit.replace(
@@ -287,7 +287,7 @@ export async function listsEditController(
       list = {
         type: req.body.serviceType,
         jsonData: {
-          editors: req.body.editors,
+          validators: req.body.validators,
           publishers: req.body.publishers,
           administrators: req.body.administrators,
         },
@@ -338,7 +338,7 @@ export async function listsItemsController(
     req,
     list,
     listItems,
-    canApprove: userIsListEditor(req, list),
+    canApprove: userIsListValidator(req, list),
     canPublish: userIsListPublisher(req, list),
   });
 }
@@ -384,7 +384,7 @@ export async function listItemsApproveController(
         message: `Trying to edit a list item which does not belong to list ${listId}`,
       },
     });
-  } else if (!userIsListEditor(req, list)) {
+  } else if (!userIsListValidator(req, list)) {
     res.status(400).send({
       error: {
         message: "User doesn't have approving right on this list",

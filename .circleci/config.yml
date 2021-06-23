@@ -68,8 +68,8 @@ jobs:
           name: Publish docker image
           command: |
             eval $(aws ecr get-login --no-include-email --region eu-west-2)
-            docker build --build-arg NODE_ENV=production -t 545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists:$CIRCLE_SHA1 .
-            docker push 545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists
+            docker build --build-arg NODE_ENV=production -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1 .
+            docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists
 
   deploy:
     <<: *defaults
@@ -129,13 +129,13 @@ jobs:
             curl checkip.amazonaws.com
 
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: prod
+          cluster-name: fco-forms-test
           aws-region: eu-west-2
           install-kubectl: true
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists=545108028694.dkr.ecr.eu-west-2.amazonaws.com/fcdo/lists:$CIRCLE_SHA1
+          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
 workflows:
@@ -148,6 +148,8 @@ workflows:
               only: /.*/
 
       - publish:
+          context:
+            - AWS
           requires:
             - build
           filters:
@@ -155,29 +157,17 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - deploy-dev
+                - deploy-test
 
       - deploy:
-          name: deploy-dev
-          namespace: dev-lists
+          name: deploy-test
+          namespace: test-lists
           context:
             - VPN
+            - AWS
           requires:
             - publish
           filters:
             branches:
               only:
-                - deploy-dev
-
-      - deploy:
-          name: deploy-prod
-          namespace: prod-lists
-          context:
-            - VPN
-          requires:
-            - publish
-          filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
-            branches:
-              ignore: /.*/
+                - deploy-test
