@@ -1,7 +1,7 @@
 import {
   filterSuperAdminRole,
   userIsListAdministrator,
-  userIsListEditor,
+  userIsListValidator,
   userIsListPublisher,
 } from "../helpers";
 import { UserRoles } from "server/models/types";
@@ -96,8 +96,8 @@ describe("Dashboard Helpers", () => {
     });
   });
 
-  describe("userIsListEditor", () => {
-    test("it return true when user is a list editor", () => {
+  describe("userIsListValidator", () => {
+    test("it return true when user is a list validator", () => {
       const req: any = {
         user: {
           userData: {
@@ -108,15 +108,15 @@ describe("Dashboard Helpers", () => {
 
       const list: any = {
         jsonData: {
-          editors: ["a@a.com", "user@test.com"],
+          validators: ["a@a.com", "user@test.com"],
         },
       };
 
-      const result = userIsListEditor(req, list);
+      const result = userIsListValidator(req, list);
       expect(result).toBe(true);
     });
 
-    test("it return false when user is not a list editor", () => {
+    test("it return false when user is not a list validator", () => {
       const req: any = {
         user: {
           userData: {
@@ -127,11 +127,11 @@ describe("Dashboard Helpers", () => {
 
       const list: any = {
         jsonData: {
-          editors: ["a@a.com"],
+          validators: ["a@a.com"],
         },
       };
 
-      const result = userIsListEditor(req, list);
+      const result = userIsListValidator(req, list);
       expect(result).toBe(false);
     });
   });
