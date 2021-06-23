@@ -79,10 +79,7 @@
     </div>
   </div>
   <script nonce="{{cspNonce}}">
-    var approveCheckbox = document.getElementById("approve-{{listItem.id}}");
-    var publishCheckbox = document.getElementById("publish-{{listItem.id}}");
-    
-    approveCheckbox.onclick = function toggleListItemApproveStatus(event) {
+    document.getElementById("approve-{{listItem.id}}").onclick = function toggleListItemApproveStatus(event) {
       event.preventDefault();
       event.stopPropagation();
 
@@ -91,6 +88,7 @@
       const title = event.target.getAttribute("data-title");
       const action = isApproved ? "approve" : "disapprove";
       const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
+      const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
       
       if (window.confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
@@ -121,7 +119,7 @@
       }
     }
 
-    publishCheckbox.onclick = function toggleListItemPublishStatus(event) {
+    document.getElementById("publish-{{listItem.id}}").onclick = function toggleListItemPublishStatus(event) {
       event.preventDefault();
       event.stopPropagation();
 
