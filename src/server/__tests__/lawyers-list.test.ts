@@ -3,11 +3,17 @@ import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
+import { listItem } from "server/models";
 
 describe("Lawyers List:", () => {
   let server: Express;
 
+  function mockListItemSome(resolvedValue = true): jest.SpyInstance {
+    return jest.spyOn(listItem, "some").mockResolvedValue(resolvedValue);
+  }
+
   beforeAll(async () => {
+    mockListItemSome();
     server = await getServer();
   }, 30000);
 
@@ -343,5 +349,18 @@ describe("Lawyers List:", () => {
 
       expect(await axe(text)).toHaveNoViolations();
     });
+  });
+
+  test("redirect is correct when country has no lawyers available", async () => {
+    mockListItemSome(false);
+
+    const { status, header } = await request(server)
+      .post("/find?serviceType=lawyers&readNotice=ok&country=spain")
+      .type("text/html");
+
+    expect(status).toBe(302);
+    expect(header.location).toBe(
+      "https://www.gov.uk/government/publications/spain-list-of-lawyers"
+    );
   });
 });

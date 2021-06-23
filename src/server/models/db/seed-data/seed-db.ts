@@ -1,16 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { logger } from "server/services/logger";
-
 import { populateCountryLawyers } from "./helpers";
-import { CountriesWithData } from "../../types";
-
 import { thailandLawyers } from "./thailand";
 import { franceLawyers } from "./france";
 import { italyLawyers } from "./italy";
 import { spainLawyers } from "./spain";
 
 const CountriesData: Array<{
-  name: CountriesWithData;
+  name: "Thailand" | "France" | "Italy" | "Spain";
   lawyers: any;
 }> = [
   {

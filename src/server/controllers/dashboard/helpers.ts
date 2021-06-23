@@ -19,7 +19,7 @@ export function userIsListPublisher(req: Request, list: List): boolean {
   return email !== undefined ? list.jsonData.publishers.includes(email) : false;
 }
 
-export function userIsListEditor(req: Request, list: List): boolean {
+export function userIsListValidator(req: Request, list: List): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list.jsonData.editors.includes(email) : false;
+  return email !== undefined ? list.jsonData.validators.includes(email) : false;
 }

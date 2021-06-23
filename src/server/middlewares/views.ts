@@ -33,10 +33,18 @@ export const configureViews = (server: Express): void => {
 
   // dynamic globals
   server.use((req, res, next) => {
-    engine.addGlobal(
-      "cookiesPolicy",
-      get(req, "cookies.lists_cookies_policy", {})
-    );
+    let cookiesPolicy = {};
+
+    try {
+      cookiesPolicy = JSON.parse(
+        get(req, "cookies.lists_cookies_policy", "{}")
+      );
+    } catch (error) {
+      // cleanup legacy json cookie
+      res.clearCookie("lists_cookies_policy");
+    }
+
+    engine.addGlobal("cookiesPolicy", cookiesPolicy);
 
     // cspNonce see Helmet configuration
     engine.addGlobal("cspNonce", res.locals.cspNonce);

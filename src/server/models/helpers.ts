@@ -1,20 +1,7 @@
-import { upperFirst, isNumber, isArray } from "lodash";
+import { isNumber, isArray } from "lodash";
 import { logger } from "server/services/logger";
 import { getDbPool } from "./db/database";
-import { CountriesWithData, CountryName, LegalAreas } from "./types";
-
-const countriesWithData: CountriesWithData[] = [
-  "Thailand",
-  "France",
-  "Italy",
-  "Spain",
-];
-
-export const countryHasLawyers = (countryName: CountryName): boolean => {
-  return countriesWithData.includes(
-    upperFirst(countryName) as CountriesWithData
-  );
-};
+import { LegalAreas } from "./types";
 
 export const rawInsertGeoLocation = async (
   point: number[]
