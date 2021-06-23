@@ -29,7 +29,7 @@ export async function findUserLists(
         ) as c
       ) as country
       FROM public."List"
-      WHERE "jsonData"->'editors' @> '"${emailAddress}"'
+      WHERE "jsonData"->'validators' @> '"${emailAddress}"'
       OR "jsonData"->'publishers' @> '"${emailAddress}"'
       OR "jsonData"->'administrators' @> '"${emailAddress}"'
       ORDER BY id ASC
@@ -93,16 +93,16 @@ export async function findListByCountryAndType(
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  editors: string[];
+  validators: string[];
   publishers: string[];
   administrators: string[];
   createdBy: string;
 }): Promise<List | undefined> {
   try {
     // TODO: validate country+type list won't duplicate
-    const editors = compact(listData.editors.map(trim).map(toLower));
-    if (editors.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Editors contain a non GOV UK email address");
+    const validators = compact(listData.validators.map(trim).map(toLower));
+    if (validators.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Validators contain a non GOV UK email address");
     }
 
     const publishers = compact(listData.publishers.map(trim).map(toLower));
@@ -113,6 +113,7 @@ export async function createList(listData: {
     const administrators = compact(
       listData.administrators.map(trim).map(toLower)
     );
+
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
     }
@@ -134,7 +135,7 @@ export async function createList(listData: {
         },
       },
       jsonData: {
-        editors,
+        validators,
         publishers,
         administrators,
         createdBy: listData.createdBy,
@@ -153,15 +154,15 @@ export async function createList(listData: {
 export async function updateList(
   listId: number,
   listData: {
-    editors: string[];
+    validators: string[];
     publishers: string[];
     administrators: string[];
   }
 ): Promise<List | undefined> {
   try {
-    const editors = compact(listData.editors.map(trim).map(toLower));
-    if (editors.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Editors contain a non GOV UK email address");
+    const validators = compact(listData.validators.map(trim).map(toLower));
+    if (validators.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Validators contain a non GOV UK email address");
     }
 
     const publishers = compact(listData.publishers.map(trim).map(toLower));
@@ -178,7 +179,7 @@ export async function updateList(
 
     const data: ListUpdateInput = {
       jsonData: {
-        editors,
+        validators,
         publishers,
         administrators,
       },

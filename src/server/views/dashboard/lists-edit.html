@@ -68,9 +68,6 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
-      <div class="govuk-hint">
-        Please leave it empty if this list is not for any specific country
-      </div>
       
       {% if listId !== 'new' %}
         <input class="govuk-input" name="country" type="text" value="{{list.country.name}}" disabled>
@@ -88,7 +85,7 @@
       <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--m" for="administrators">
-            Administrators
+            Users that can manage this settings
           </label>
         </h3>
         {% if error.field === 'administrators' %}
@@ -96,11 +93,8 @@
             <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
           </span>
         {% endif %}
-        <div id="administrators-hint" class="govuk-hint">
-          Administrators can manage list settings
-        </div>
         <div id="administrators-hint-2" class="govuk-hint">
-          For multiple administrators, please comma separate their emails addresses
+          Enter the user’s email address, please separate multiple addresses with commas
         </div>
         <input 
           class="govuk-input" 
@@ -114,25 +108,22 @@
     </div>
     
     
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'editors' }}">
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'validators' }}">
       <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="editors">
-            Editors
+          <label class="govuk-label govuk-label--m" for="validators">
+            Users that can validate content
           </label>
         </h3>
-        {% if error.field === 'editors' %}
+        {% if error.field === 'validators' %}
           <span class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
           </span>
         {% endif %}
-        <div id="editors-hint" class="govuk-hint">
-          Editors can approve and disapprove list items 
+        <div id="validators-hint" class="govuk-hint">
+          Enter the user’s email address, please separate multiple addresses with commas
         </div>
-        <div id="editors-hint" class="govuk-hint">
-          For multiple editors, please comma separate their emails addresses
-        </div>
-        <input class="govuk-input" id="editors" name="editors" type="text" aria-describedby="editors-hint" value="{{list.jsonData.editors}}">
+        <input class="govuk-input" id="validators" name="validators" type="text" aria-describedby="validators-hint" value="{{list.jsonData.validators}}">
       </fieldset>
     </div>
 
@@ -141,7 +132,7 @@
       <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--m" for="publishers">
-            Publishers
+            Users that can publish content
           </label>
         </h3>
         {% if error.field === 'publishers' %}
@@ -149,11 +140,8 @@
             <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
           </span>
         {% endif %}
-        <div id="editors-hint" class="govuk-hint">
-          Publishers can publish and unpublish list items. 
-        </div>
-        <div id="editors-hint" class="govuk-hint">
-          For multiple publishers, please comma separate their emails addresses
+        <div id="publishers-hint" class="govuk-hint">
+          Enter the user’s email address, please separate multiple addresses with commas
         </div>
         <input class="govuk-input" id="publishers" name="publishers" type="text" aria-describedby="publishers-hint" value="{{list.jsonData.publishers}}">
       </fieldset>

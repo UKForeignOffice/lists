@@ -54,7 +54,7 @@
               {{-" disabled" if not canApprove }}
             >
             <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-              Approved
+              Validate
             </label>
           </div>
             <div class="govuk-checkboxes__item">
@@ -71,7 +71,7 @@
                 {{-" disabled" if not canPublish or not listItem.isApproved }}
               >
               <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                Published
+                Publish
               </label>
             </div>
         </div>
@@ -79,20 +79,18 @@
     </div>
   </div>
   <script nonce="{{cspNonce}}">
-    var approveCheckbox = document.getElementById("approve-{{listItem.id}}");
-    var publishCheckbox = document.getElementById("publish-{{listItem.id}}");
-    
-    approveCheckbox.onclick = function toggleListItemApproveStatus(event) {
+    document.getElementById("approve-{{listItem.id}}").onclick = function toggleListItemApproveStatus(event) {
       event.preventDefault();
       event.stopPropagation();
 
       const isApproved = event.target.checked;
       const id = event.target.getAttribute("data-id");
       const title = event.target.getAttribute("data-title");
-      const action = isApproved ? "approve" : "disapprove";
+      const action = isApproved ? "validate" : "invalidate";
       const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
+      const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
       
-      if (window.confirm(confirmMessage)) {
+      if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -113,6 +111,10 @@
               publishCheckbox.checked = false;
               publishCheckbox.disabled = true;
             }
+
+            setTimeout(function () {
+              alert(title + " " + action + "d successfully");
+            });
           }
         })
         .catch(function () {
@@ -121,7 +123,7 @@
       }
     }
 
-    publishCheckbox.onclick = function toggleListItemPublishStatus(event) {
+    document.getElementById("publish-{{listItem.id}}").onclick = function toggleListItemPublishStatus(event) {
       event.preventDefault();
       event.stopPropagation();
 
@@ -131,7 +133,7 @@
       const action = event.target.checked ? "publish" : "unpublish";
       const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
       
-      if (window.confirm(confirmMessage)) {
+      if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -144,6 +146,10 @@
           } else {
             event.target.checked = result.isPublished;
           }
+
+          setTimeout(function () {
+            alert(title + " " + action + "ed successfully");
+          });
         })
         .catch(function () {
           alert("Oops, something went wrong, please try again");

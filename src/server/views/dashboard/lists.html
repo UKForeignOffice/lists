@@ -25,18 +25,20 @@
       <tbody class="govuk-table__body">
         {% for list in lists %}
           <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">{{ _.startCase(list.type) }}</th>
+            <td scope="row" class="govuk-table__header">
+              {% if userIsListValidator(req, list) or userIsListPublisher(req, list) %}
+                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">{{ _.startCase(list.type) }}</a>
+              {% else %}
+                {{ _.startCase(list.type) }}
+              {% endif %}
+            </td>
             <td class="govuk-table__cell">{{ list.country.name }}</td>
             
+            <td class="govuk-table__cell govuk-table__cell--numeric"></td>
+
             <td class="govuk-table__cell govuk-table__cell--numeric">
               {% if userIsListAdministrator(req, list) %}
                 <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
-              {% endif %}
-            </td>
-
-            <td class="govuk-table__cell govuk-table__cell--numeric">
-              {% if userIsListEditor(req, list) or userIsListPublisher(req, list) %}
-                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">Content</a>
               {% endif %}
             </td>            
           </tr>

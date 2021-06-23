@@ -15,7 +15,7 @@ import { noop } from "lodash";
 
 const router = express.Router();
 
-router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
+router.get(`/dev/reset-db`, (req, res) => {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:reset", () => {
@@ -73,6 +73,8 @@ async function promoteUser(req: Request, res: Response): Promise<void> {
 
   if (
     typeof email === "string" &&
+    typeof key === "string" &&
+    key?.length > 10 &&
     (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
   ) {
     const user = await findUserByEmail(email);

@@ -36,6 +36,7 @@ body:not(.js-enabled) .govuk-cookie-banner.no-js {
 
 main.govuk-main-wrapper {
   position: relative;
+  min-height: 50vh;
 }
 
 .dashboard {

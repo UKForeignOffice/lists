@@ -6,11 +6,6 @@ export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
 }
 
-export type CountriesWithData = Extract<
-  CountryName,
-  "Thailand" | "France" | "Italy" | "Spain"
->;
-
 export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
@@ -18,7 +13,7 @@ export type Country = PrismaClient.Country;
 
 // List
 export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
-  editors: string[];
+  validators: string[];
   publishers: string[];
   administrators: string[];
 }
