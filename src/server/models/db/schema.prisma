@@ -87,3 +87,14 @@ model User {
   email     String    @unique
   jsonData  Json
 }
+
+model Audit {
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  type                String?
+  jsonData            Json
+
+  @@index([type])
+}
