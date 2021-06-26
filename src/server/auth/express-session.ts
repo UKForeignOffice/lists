@@ -1,11 +1,11 @@
-import redis from "redis";
 import { Express } from "express";
 import { random, noop } from "lodash";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
-import { isLocalHost, REDIS_HOST, REDIS_PORT } from "server/config";
+import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
+import { getRedisClient, isRedisAvailable } from "server/services/redis";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -37,17 +37,16 @@ export async function configureExpressSession(server: Express): Promise<void> {
     name: "lists_sid",
   };
 
-  if (REDIS_HOST !== undefined && REDIS_PORT !== undefined) {
-    logger.info("Configure Express Session will create redis client");
+  if (isRedisAvailable()) {
+    const redisClient = getRedisClient();
     const RedisStore = connectRedis(session);
-    const redisClient = redis.createClient({
-      host: REDIS_HOST,
-      port: REDIS_PORT,
-    });
+
     options.store = new RedisStore({
       client: redisClient,
       prefix: "lists_session_",
     });
+
+    logger.info("Redis session storage initialized successfully");
   }
 
   server.use(session(options));

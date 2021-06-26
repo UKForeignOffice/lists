@@ -1,19 +1,17 @@
-import * as redis from "redis";
 import * as session from "express-session";
 import * as connectRedis from "connect-redis";
-import { configureExpressSession } from "../express-session";
 import { isLocalHost } from "server/config";
+import * as redisService from "server/services/redis";
+import { configureExpressSession } from "../express-session";
 
-jest.mock("redis", () => ({
-  createClient: jest.fn(),
-}));
 jest.mock("express-session", () => jest.fn());
 jest.mock("connect-redis", () => jest.fn());
 
 describe("Express Session", () => {
   let server: any;
-  let spySession: any;
-  let spyRedisCreateClient: any;
+  let spySession: jest.SpyInstance;
+  let spyGetRedisClient: jest.SpyInstance;
+  let spyIsRedisAvailable: jest.SpyInstance;
   let mockRedisStore: any;
 
   beforeEach(() => {
@@ -23,9 +21,8 @@ describe("Express Session", () => {
 
     mockRedisStore = jest.fn();
     spySession = jest.spyOn(session, "default");
-    spyRedisCreateClient = jest
-      .spyOn(redis, "createClient")
-      .mockReturnValue("redis.createClient" as any);
+    spyGetRedisClient = jest.spyOn(redisService, "getRedisClient");
+    spyIsRedisAvailable = jest.spyOn(redisService, "isRedisAvailable");
     jest.spyOn(connectRedis, "default").mockReturnValue(mockRedisStore);
   });
 
@@ -45,13 +42,10 @@ describe("Express Session", () => {
   test("session initialization Redis store is correct", async () => {
     await configureExpressSession(server);
 
-    expect(spyRedisCreateClient).toHaveBeenCalledWith({
-      host: process.env.REDIS_HOST,
-      port: Number(process.env.REDIS_PORT),
-    });
-
+    expect(spyIsRedisAvailable).toHaveBeenCalled();
+    expect(spyGetRedisClient).toHaveBeenCalled();
     expect(mockRedisStore).toHaveBeenCalledWith({
-      client: "redis.createClient",
+      client: redisService.getRedisClient(),
       prefix: "lists_session_",
     });
 
