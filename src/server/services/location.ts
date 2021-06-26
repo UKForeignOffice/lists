@@ -4,7 +4,7 @@ import { logger } from "./logger";
 
 const INDEX_PARAMS = {
   DataSource: "Esri",
-  IndexName: LOCATION_SERVICE_INDEX_NAME,
+  IndexName: `${LOCATION_SERVICE_INDEX_NAME}`,
   PricingPlan: "RequestBasedUsage",
   DataSourceConfiguration: {
     IntendedUse: "SingleUse",
