@@ -11,7 +11,6 @@ import {
   ListUpdateInput,
 } from "./types";
 
-// TODO: test
 export async function findUserLists(
   email: string
 ): Promise<List[] | undefined> {
@@ -36,15 +35,13 @@ export async function findUserLists(
     `;
 
     const lists = await prisma.$queryRaw(query);
-
     return lists ?? undefined;
   } catch (error) {
-    logger.error(`findUserLists Error ${error.message}`);
+    logger.error(`findUserLists Error: ${error.message}`);
     return undefined;
   }
 }
 
-// TODO: test
 export async function findListById(
   listId: string | number
 ): Promise<List | undefined> {
@@ -59,12 +56,11 @@ export async function findListById(
     })) as List;
     return lists ?? undefined;
   } catch (error) {
-    logger.error(`findListById Error ${error.message}`);
+    logger.error(`findListById Error: ${error.message}`);
     return undefined;
   }
 }
 
-// TODO: test
 export async function findListByCountryAndType(
   country: CountryName,
   type: ServiceType
@@ -81,15 +77,13 @@ export async function findListByCountryAndType(
         country: true,
       },
     })) as List[];
-
     return lists ?? undefined;
   } catch (error) {
-    logger.error(`findList Error ${error.message}`);
+    logger.error(`findListByCountryAndType Error: ${error.message}`);
     return undefined;
   }
 }
 
-// TODO: test
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
@@ -113,7 +107,6 @@ export async function createList(listData: {
     const administrators = compact(
       listData.administrators.map(trim).map(toLower)
     );
-
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
     }
@@ -145,12 +138,11 @@ export async function createList(listData: {
     const list = (await prisma.list.create({ data })) as List;
     return list ?? undefined;
   } catch (error) {
-    logger.error(`createList Error ${error.message}`);
+    logger.error(`createList Error: ${error.message}`);
     throw error;
   }
 }
 
-// TODO: test
 export async function updateList(
   listId: number,
   listData: {
@@ -193,7 +185,7 @@ export async function updateList(
     })) as List;
     return list ?? undefined;
   } catch (error) {
-    logger.error(`updateList Error ${error.message}`);
+    logger.error(`updateList Error: ${error.message}`);
     throw error;
   }
 }

@@ -141,7 +141,7 @@ export async function listsController(
     return res.redirect(authRoutes.logout);
   }
 
-  const lists = await findUserLists(req.user?.userData.email);
+  const lists = (await findUserLists(req.user?.userData.email)) ?? [];
 
   res.render("dashboard/lists.html", {
     ...DEFAULT_VIEW_PROPS,
