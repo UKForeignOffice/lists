@@ -59,6 +59,7 @@ services:
       - DATABASE_URL=postgresql://postgresuser:postgrespass@postgres:5432/lists
   redis:
     image: "redis:alpine"
+    command: redis-server --requirepass redispassword
     ports:
       - 6379:6379
   redisinsight:

@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { omitBy, isNil } from "lodash";
 import { logger } from "server/services/logger";
 import { GA_TRACKING_ID, GA_API_SECRET } from "server/config";
+import { throwIfConfigVarIsUndefined } from "server/utils/validation";
 
 export interface GA_Search_Params {
   serviceType?: string;
@@ -27,18 +28,14 @@ export async function trackListsSearch(
   try {
     return await postEvent(event);
   } catch (error) {
-    logger.error("Google Analytics trackListSearch Error:", error);
+    logger.error(`Google Analytics trackListSearch Error: ${error.message}`);
     return false;
   }
 }
 
 async function postEvent(event: GA_Event): Promise<boolean> {
-  if (GA_TRACKING_ID === undefined || GA_API_SECRET === undefined) {
-    logger.error(
-      "Google Analytics, missing environment variables GA_TRACKING_ID and GA_API_SECRET"
-    );
-    return false;
-  }
+  throwIfConfigVarIsUndefined("GA_TRACKING_ID");
+  throwIfConfigVarIsUndefined("GA_API_SECRET");
 
   const url = `https://www.google-analytics.com/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`;
 
@@ -53,7 +50,7 @@ async function postEvent(event: GA_Event): Promise<boolean> {
 
     return true;
   } catch (error) {
-    logger.error("Google Analytics Post Event Error:", error);
-    return false;
+    logger.error(`Google Analytics Post Event Error: ${error.message}`);
+    throw error;
   }
 }

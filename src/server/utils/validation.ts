@@ -1,6 +1,8 @@
 import Joi from "joi";
+import { get } from "lodash";
 import { countriesList } from "server/services/metadata";
 import { isCybDev } from "server/config";
+import * as config from "server/config";
 
 const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
 
@@ -25,4 +27,10 @@ export function isGovUKEmailAddress(email: string): boolean {
 
 export function isCountryNameValid(countryName: string): boolean {
   return countriesList.some((country) => country.value === countryName);
+}
+
+export function throwIfConfigVarIsUndefined(varName: string): void {
+  if (get(config, varName) === undefined) {
+    throw new Error(`Environment variable ${varName} is missing`);
+  }
 }

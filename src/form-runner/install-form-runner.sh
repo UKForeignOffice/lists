@@ -40,6 +40,8 @@ echo "LOG_LEVEL=error" >> $form_runner_env_file
 if test -f ".env"; then
   sed -n '/^REDIS_HOST/p' .env >> $form_runner_env_file
   sed -n '/^REDIS_PORT/p' .env >> $form_runner_env_file
+  sed -n '/^REDIS_TLS/p' .env >> $form_runner_env_file
+  sed -n '/^REDIS_PASSWORD/p' .env >> $form_runner_env_file
   sed -n '/^sandbox/p' .env >> $form_runner_env_file
 fi
 
