@@ -1,16 +1,12 @@
-import { get } from "lodash";
 import { NotifyClient } from "notifications-node-client";
 import * as config from "server/config";
 import { logger } from "./logger";
-import { isGovUKEmailAddress } from "server/utils/validation";
+import {
+  isGovUKEmailAddress,
+  throwIfConfigVarIsUndefined,
+} from "server/utils/validation";
 
 let notifyClient: any;
-
-function throwIfConfigVarIsUndefined(varName: string): void {
-  if (get(config, varName) === undefined) {
-    throw new Error(`Environment variable ${varName} is missing`);
-  }
-}
 
 export function getNotifyClient(): any {
   if (notifyClient === undefined) {
