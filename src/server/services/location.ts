@@ -4,7 +4,7 @@ import { logger } from "./logger";
 
 const INDEX_PARAMS = {
   DataSource: "Esri",
-  IndexName: LOCATION_SERVICE_INDEX_NAME ?? "",
+  IndexName: LOCATION_SERVICE_INDEX_NAME,
   PricingPlan: "RequestBasedUsage",
   DataSourceConfiguration: {
     IntendedUse: "SingleUse",
@@ -34,7 +34,7 @@ export async function checkIfPlaceIndexExists(
     const result = await location.listPlaceIndexes().promise();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
-    logger.error("Location service:", error);
+    logger.error(`checkIfPlaceIndexExists Error: ${error.message}`);
     return false;
   }
 }
@@ -51,7 +51,7 @@ export async function createPlaceIndex(): Promise<boolean> {
     await location.createPlaceIndex(INDEX_PARAMS).promise();
     return true;
   } catch (error) {
-    logger.error(error);
+    logger.error(`createPlaceIndex error: ${error.message}`);
     return false;
   }
 }
@@ -74,7 +74,7 @@ export async function geoLocatePlaceByText(
     const response = await location.searchPlaceIndexForText(query).promise();
     return response?.Results?.[0]?.Place;
   } catch (error) {
-    logger.error(error);
+    logger.error(`geoLocatePlaceByText Error: ${error.message}`);
     return undefined;
   }
 }
