@@ -1,30 +1,32 @@
+import { get } from "lodash";
 import { NotifyClient } from "notifications-node-client";
-import {
-  GOVUK_NOTIFY_API_KEY,
-  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
-  GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
-} from "server/config";
+import * as config from "server/config";
 import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 
-if (GOVUK_NOTIFY_API_KEY === undefined) {
-  throw new Error("Environment variable GOVUK_NOTIFY_API_KEY is missing");
+let notifyClient: any;
+
+function throwIfConfigVarIsUndefined(varName: string): void {
+  if (get(config, varName) === undefined) {
+    throw new Error(`Environment variable ${varName} is missing`);
+  }
 }
 
-if (
-  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID ===
-  undefined
-) {
-  throw new Error(
-    "Environment variable PROFESSIONAL_APPLICATION_TEMPLATE_ID is missing"
-  );
-}
+export function getNotifyClient(): any {
+  if (notifyClient === undefined) {
+    throwIfConfigVarIsUndefined("GOVUK_NOTIFY_API_KEY");
+    throwIfConfigVarIsUndefined(
+      "GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID"
+    );
+    throwIfConfigVarIsUndefined(
+      "GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID"
+    );
 
-if (GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID === undefined) {
-  throw new Error("Environment variable AUTHENTICATION_TEMPLATE_ID is missing");
-}
+    notifyClient = new NotifyClient(config.GOVUK_NOTIFY_API_KEY?.trim());
+  }
 
-const notifyClient = new NotifyClient(GOVUK_NOTIFY_API_KEY.trim());
+  return notifyClient;
+}
 
 export async function sendApplicationConfirmationEmail(
   contactName: string,
@@ -32,8 +34,8 @@ export async function sendApplicationConfirmationEmail(
   confirmationLink: string
 ): Promise<boolean> {
   try {
-    const { statusText } = await notifyClient.sendEmail(
-      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
+    const { statusText } = await getNotifyClient().sendEmail(
+      config.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
       emailAddress,
       {
         personalisation: {
@@ -61,8 +63,8 @@ export async function sendAuthenticationEmail(
   }
 
   try {
-    const result = await notifyClient.sendEmail(
-      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
+    const result = await getNotifyClient().sendEmail(
+      config.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
       emailAddress,
       {
         personalisation: {
@@ -73,7 +75,7 @@ export async function sendAuthenticationEmail(
 
     return result.statusText === "Created";
   } catch (error) {
-    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
+    logger.error(`sendAuthenticationEmail Error: ${error.message}`);
     return false;
   }
 }
