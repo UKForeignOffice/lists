@@ -75,7 +75,7 @@
     "@types/passport": "^1.0.6",
     "@types/passport-jwt": "^3.0.5",
     "@types/pg": "^8.6.0",
-    "@types/redis": "^2.8.29",
+    "@types/redis": "^2.8.30",
     "@types/supertest": "^2.0.11",
     "babel-plugin-module-resolver": "^4.1.0",
     "cheerio": "^1.0.0-rc.10",
