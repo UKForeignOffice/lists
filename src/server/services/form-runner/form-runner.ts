@@ -9,6 +9,15 @@ export const FORM_RUNNER_URL = "localhost:3001";
 
 let isStarting = false;
 
+export async function isFormRunnerReady(): Promise<boolean> {
+  try {
+    const { status } = await request(FORM_RUNNER_URL).get("/health-check");
+    return status === 200;
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
 
@@ -16,6 +25,7 @@ export async function startFormRunner(): Promise<boolean> {
     logger.info("Form Runner Starting");
 
     isStarting = true;
+
     const formRunner = spawn(`npm run form-runner:start`, {
       shell: true,
     });
@@ -46,15 +56,6 @@ export async function startFormRunner(): Promise<boolean> {
     if (isReady) {
       return true;
     }
-  }
-}
-
-export async function isFormRunnerReady(): Promise<boolean> {
-  try {
-    const { status } = await request(FORM_RUNNER_URL).get("/health-check");
-    return status === 200;
-  } catch (error) {
-    return false;
   }
 }
 
