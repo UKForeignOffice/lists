@@ -3,7 +3,7 @@
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
     <li>
-      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.covidTestProvider }}">try again</a>
+      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.covidTestProviders }}">try again</a>
     </li>
   {% endif %}
   {% for item in searchResults %}
