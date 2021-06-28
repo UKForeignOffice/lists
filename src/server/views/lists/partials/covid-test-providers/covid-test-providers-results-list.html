@@ -7,6 +7,9 @@
     </li>
   {% endif %}
   {% for item in searchResults %}
-    {{ macros.covidTestProvidersListItem(item, false) }}
+    <li>
+      {{ macros.covidTestProvidersListItem(item, false) }}
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    </li>
   {% endfor %}
 </ul>

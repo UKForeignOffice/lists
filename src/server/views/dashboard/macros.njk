@@ -37,8 +37,8 @@
 {% endmacro %}
 
 {% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
-  <div class="dashboard__list-item-actions-bar">
-    <div class="govuk-form-group">
+  <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
+    <div class="govuk-form-group govuk-!-margin-bottom-0">
       <fieldset class="govuk-fieldset">
         <div class="govuk-checkboxes govuk-checkboxes--small">          
           <div class="govuk-checkboxes__item">
@@ -54,7 +54,9 @@
               {{-" disabled" if not canApprove }}
             >
             <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-              Validate
+              <span class="govuk-visually-hidden">
+                Confirm that {{ _.startCase(listItem.jsonData.organisationName) }}
+              </span> Details have been checked
             </label>
           </div>
             <div class="govuk-checkboxes__item">
@@ -71,7 +73,7 @@
                 {{-" disabled" if not canPublish or not listItem.isApproved }}
               >
               <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                Publish
+                Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
               </label>
             </div>
         </div>
