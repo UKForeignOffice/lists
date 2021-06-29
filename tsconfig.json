@@ -16,6 +16,11 @@
       "server/*": ["server/*"]
     }
   },
-  "include": ["src", "src/server/**/*", "src/client/**/*"],
+  "include": [
+    "src",
+    "src/server/**/*",
+    "src/client/**/*",
+    "node_modules/jest-extended/types/**/*.d.ts"
+  ],
   "ignore": ["dist"]
 }
