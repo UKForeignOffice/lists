@@ -8,11 +8,6 @@
     {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ _.startCase(list.country.name) }}
   </h1>
 
-  <div class="govuk-hint">
-    Commodo eiusmod Lorem irure enim Lorem magna velit amet culpa qui id nulla Lorem.
-    Labore exercitation amet labore do.
-  </div>
-
   <p class="govuk-body">
     Link to apply to enter this list is:<br/>
     <a class="govuk-link" target="_blank" href="http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
