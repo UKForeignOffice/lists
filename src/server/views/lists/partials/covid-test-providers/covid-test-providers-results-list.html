@@ -3,10 +3,13 @@
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
     <li>
-      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.covidTestProvider }}">try again</a>
+      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.covidTestProviders }}">try again</a>
     </li>
   {% endif %}
   {% for item in searchResults %}
-    {{ macros.covidTestProvidersListItem(item, false) }}
+    <li>
+      {{ macros.covidTestProvidersListItem(item, false) }}
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    </li>
   {% endfor %}
 </ul>

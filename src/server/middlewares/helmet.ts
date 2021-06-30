@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, RequestHandler } from "express";
 import { IncomingMessage, ServerResponse } from "http";
 import { get, set } from "lodash";
 import helmet from "helmet";
@@ -58,6 +58,6 @@ export function configureHelmet(server: Express): void {
           "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
         },
       },
-    })
+    }) as RequestHandler
   );
 }

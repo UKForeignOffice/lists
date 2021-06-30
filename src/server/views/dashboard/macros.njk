@@ -37,8 +37,8 @@
 {% endmacro %}
 
 {% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
-  <div class="dashboard__list-item-actions-bar">
-    <div class="govuk-form-group">
+  <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
+    <div class="govuk-form-group govuk-!-margin-bottom-0">
       <fieldset class="govuk-fieldset">
         <div class="govuk-checkboxes govuk-checkboxes--small">          
           <div class="govuk-checkboxes__item">
@@ -54,7 +54,9 @@
               {{-" disabled" if not canApprove }}
             >
             <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-              Validate
+              <span class="govuk-visually-hidden">
+                Confirm that {{ _.startCase(listItem.jsonData.organisationName) }}
+              </span> Details have been checked
             </label>
           </div>
             <div class="govuk-checkboxes__item">
@@ -71,7 +73,7 @@
                 {{-" disabled" if not canPublish or not listItem.isApproved }}
               >
               <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                Publish
+                Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
               </label>
             </div>
         </div>
@@ -83,18 +85,23 @@
       event.preventDefault();
       event.stopPropagation();
 
-      const isApproved = event.target.checked;
+      const isConfirming = event.target.checked;
       const id = event.target.getAttribute("data-id");
       const title = event.target.getAttribute("data-title");
-      const action = isApproved ? "validate" : "invalidate";
-      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
       const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
+      
+      const action = isConfirming ? "confirm" : "unconfirm";
+      let confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
+      
+      if (isConfirming) {
+        confirmMessage += '\n\nBy ticking "Details have been checked" you confirm that the provider’s details meet the requirements to be added to the list.'
+      }
       
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isApproved })
+          body: JSON.stringify({ isApproved: isConfirming })
         }).then(function (response) {
           return response.json();
         }).then(function (result) {
@@ -113,7 +120,11 @@
             }
 
             setTimeout(function () {
-              alert(title + " " + action + "d successfully");
+              if (isConfirming) {
+                alert("You have successfully confirmed " + title + "’s details meet the requirements to be added to the list.");
+              } else {
+                alert(title + " details have been unconfirmed");
+              }
             });
           }
         })
@@ -129,15 +140,21 @@
 
       const title = event.target.getAttribute("data-title");
       const id = event.target.getAttribute("data-id");
-      const isPublished = event.target.checked;
+      const isPublishing = event.target.checked;
       const action = event.target.checked ? "publish" : "unpublish";
-      const confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
+      let confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
+
+      if (isPublishing) {
+        confirmMessage += "\n\nThis will automatically upload the provider’s details on GOV.UK. You can unpublish or remove the provider details by unticking the 'Publish these details' checkbox"
+      } else {
+        confirmMessage  += "\n\nThis will automatically remove the provider’s details from GOV.UK. You can republish the provider details by reticking the 'Publish these details' checkbox"
+      }
       
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isPublished })
+          body: JSON.stringify({ isPublished: isPublishing })
         }).then(function (response) {
           return response.json();
         }).then(function (result) {
@@ -148,7 +165,11 @@
           }
 
           setTimeout(function () {
-            alert(title + " " + action + "ed successfully");
+            if(isPublishing) {
+              alert(title + " has been successfully published on GOV.UK Find a Professional Service Abroad");
+            } else {
+              alert(title + " has been successfully removed from GOV.UK Find a Professional Service Abroad");
+            }
           });
         })
         .catch(function () {

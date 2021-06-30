@@ -22,13 +22,16 @@
   {% else %}
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in listItems %}
-        {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
-        {% if list.type === 'covidTestProviders' %}
-          {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
-        {% endif %}
-        {% if list.type === 'lawyers' %}
-          {{  lawyersMacros.lawyersListItem(listItem) }}
-        {% endif %}
+        <li>
+          {% if list.type === 'covidTestProviders' %}
+            {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
+          {% endif %}
+          {% if list.type === 'lawyers' %}
+            {{  lawyersMacros.lawyersListItem(listItem) }}
+          {% endif %}
+          {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        </li>
       {% endfor %}
     </ul>  
   {% endif %}

@@ -7,6 +7,9 @@
     </li>
   {% endif %}
   {% for item in searchResults %}
-    {{ macros.lawyersListItem(item) }}
+    <li>
+      {{ macros.lawyersListItem(item) }}
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    </li>
   {% endfor %}
 </ul>

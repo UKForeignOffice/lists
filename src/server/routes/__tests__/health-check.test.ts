@@ -2,7 +2,7 @@ import { Express } from "express";
 import request from "supertest";
 import { getServer } from "../../server";
 
-describe("Health-check route", () => {
+describe("Health-check routes", () => {
   let server: Express;
 
   beforeAll(async () => {
