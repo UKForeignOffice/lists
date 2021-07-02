@@ -392,7 +392,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "approve",
         itemId: 123,
-        user: 1,
+        userId: 1,
       });
     });
 
@@ -416,7 +416,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "disapprove",
         itemId: 123,
-        user: 1,
+        userId: 1,
       });
     });
 
@@ -453,7 +453,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "publish",
         itemId: 123,
-        user: 1,
+        userId: 1,
       });
     });
 
@@ -477,7 +477,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "unpublish",
         itemId: 123,
-        user: 1,
+        userId: 1,
       });
     });
 

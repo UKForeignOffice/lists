@@ -33,7 +33,7 @@ describe("Audit Model:", () => {
       expect(spy).toHaveBeenCalledWith({
         data: {
           type: "listItem",
-          jsonData: { eventName: "approve", itemId: 123, user: 1 },
+          jsonData: { eventName: "approve", itemId: 123, userId: 1 },
         },
       });
     });
