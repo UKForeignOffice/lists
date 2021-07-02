@@ -15,7 +15,7 @@ import { noop } from "lodash";
 
 const router = express.Router();
 
-router.get(`/dev/reset-db`, (req, res) => {
+router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:reset", () => {
@@ -26,6 +26,20 @@ router.get(`/dev/reset-db`, (req, res) => {
       .catch((error) => {
         res.send({ error });
       });
+  });
+});
+
+router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
+  req.setTimeout(5 * 60 * 1000);
+
+  exec("npm run prisma:deploy", (error, stdout, stderr) => {
+    if (error !== null) {
+      res.send(error);
+    } else if (stderr.length > 0) {
+      res.send(stderr);
+    } else {
+      res.send(stdout);
+    }
   });
 });
 
