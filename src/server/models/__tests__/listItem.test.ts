@@ -1,7 +1,7 @@
 import { toLower, startCase } from "lodash";
-import { LawyersFormWebhookData } from "server/services/form-runner";
-import * as locationService from "server/services/location";
 import { prisma } from "../db/prisma-client";
+import * as locationService from "server/services/location";
+import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
   togglerListItemIsApproved,
   togglerListItemIsPublished,
@@ -9,7 +9,9 @@ import {
   findPublishedLawyersPerCountry,
   setEmailIsVerified,
   checkListItemExists,
+  findListItemsForList,
 } from "../listItem";
+import * as audit from "../audit";
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   speakEnglish: true,
@@ -55,10 +57,27 @@ describe("ListItem Model:", () => {
     jsonData: { organisationName: "The Amazing Lawyers" },
   };
 
-  const spyListItemFindUnique = (returnValue?: any): jest.SpyInstance => {
+  const spyListItemFindUnique = (
+    returnValue: any = sampleListItem
+  ): jest.SpyInstance => {
     return jest
       .spyOn(prisma.listItem, "findUnique")
-      .mockResolvedValue(returnValue ?? sampleListItem);
+      .mockResolvedValue(returnValue);
+  };
+
+  const spyListItemFindMany = (
+    returnValue: any = [sampleListItem],
+    shouldReject = false
+  ): jest.SpyInstance => {
+    const spy = jest.spyOn(prisma.listItem, "findMany");
+
+    if (shouldReject) {
+      spy.mockRejectedValue(returnValue);
+    } else {
+      spy.mockResolvedValue(returnValue);
+    }
+
+    return spy;
   };
 
   const spyListItemCreate = (returnValue?: any): jest.SpyInstance => {
@@ -94,6 +113,20 @@ describe("ListItem Model:", () => {
 
   const spyListItemCount = (returnValue: any): jest.SpyInstance => {
     return jest.spyOn(prisma.listItem, "count").mockResolvedValue(returnValue);
+  };
+
+  const spyPrismaTransaction = (): jest.SpyInstance => {
+    return jest
+      .spyOn(prisma, "$transaction")
+      .mockImplementation((values) => Promise.all(values) as never);
+  };
+
+  const spyAuditRecordListItemEvent = (
+    returnValue: any = {}
+  ): jest.SpyInstance => {
+    return jest
+      .spyOn(audit, "recordListItemEvent")
+      .mockResolvedValue(returnValue);
   };
 
   describe("Create Lawyer", () => {
@@ -339,65 +372,124 @@ describe("ListItem Model:", () => {
 
   describe("togglerListItemIsApproved", () => {
     test("update command is correct when approving", async () => {
-      const spy = spyListItemUpdate();
+      const spyUpdate = spyListItemUpdate();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
       const result = await togglerListItemIsApproved({
         id: 123,
         isApproved: true,
+        userId: 1,
       });
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(spyUpdate).toHaveBeenCalledWith({
         where: { id: 123 },
         data: { isApproved: true },
       });
 
       expect(result).toBe(sampleListItem);
+      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "approve",
+        itemId: 123,
+        user: 1,
+      });
     });
 
     test("update command is correct when disapproving ", async () => {
-      const spy = spyListItemUpdate();
+      const spyUpdate = spyListItemUpdate();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
       const result = await togglerListItemIsApproved({
         id: 123,
         isApproved: false,
-      });
-
-      expect(spy).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isApproved: false, isPublished: false },
+        userId: 1,
       });
 
       expect(result).toBe(sampleListItem);
+      expect(spyUpdate).toHaveBeenCalledWith({
+        where: { id: 123 },
+        data: { isApproved: false, isPublished: false },
+      });
+      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "disapprove",
+        itemId: 123,
+        user: 1,
+      });
+    });
+
+    test("it rejects if userId is undefined", async () => {
+      await expect(
+        togglerListItemIsApproved({
+          id: 123,
+          isApproved: false,
+        } as any)
+      ).rejects.toEqual(
+        new Error("togglerListItemIsApproved Error: userId is undefined")
+      );
     });
   });
 
   describe("togglerListItemIsPublished", () => {
     test("update command is correct when publishing", async () => {
-      const spy = spyListItemUpdate();
+      const spyUpdate = spyListItemUpdate();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
       const result = await togglerListItemIsPublished({
         id: 123,
         isPublished: true,
+        userId: 1,
       });
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(result).toBe(sampleListItem);
+      expect(spyUpdate).toHaveBeenCalledWith({
         where: { id: 123 },
         data: { isPublished: true },
       });
-
-      expect(result).toBe(sampleListItem);
+      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "publish",
+        itemId: 123,
+        user: 1,
+      });
     });
 
     test("update command is correct when hiding ", async () => {
-      const spy = spyListItemUpdate();
+      const spyUpdate = spyListItemUpdate();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
       const result = await togglerListItemIsPublished({
         id: 123,
         isPublished: false,
-      });
-
-      expect(spy).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isPublished: false },
+        userId: 1,
       });
 
       expect(result).toBe(sampleListItem);
+      expect(spyUpdate).toHaveBeenCalledWith({
+        where: { id: 123 },
+        data: { isPublished: false },
+      });
+      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "unpublish",
+        itemId: 123,
+        user: 1,
+      });
+    });
+
+    test("it rejects if userId is undefined", async () => {
+      await expect(
+        togglerListItemIsPublished({
+          id: 123,
+          isApproved: false,
+        } as any)
+      ).rejects.toEqual(
+        new Error("togglerListItemIsPublished Error: userId is undefined")
+      );
     });
   });
 
@@ -502,6 +594,49 @@ describe("ListItem Model:", () => {
         organisationName,
       });
       expect(result).toBe(true);
+    });
+  });
+
+  describe("findListItemsForList", () => {
+    test("findMany command is correct", async () => {
+      const spyFindMany = spyListItemFindMany();
+
+      const result = await findListItemsForList({
+        type: "lawyers",
+        countryId: 1,
+      } as any);
+
+      expect(result).toEqual([sampleListItem]);
+      expect(spyFindMany).toHaveBeenCalledWith({
+        where: {
+          type: "lawyers",
+          address: { countryId: 1 },
+          jsonData: { path: ["metadata", "emailVerified"], equals: true },
+        },
+        include: {
+          address: {
+            select: {
+              id: true,
+              firstLine: true,
+              secondLine: true,
+              city: true,
+              postCode: true,
+              country: { select: { id: true, name: true } },
+            },
+          },
+        },
+      });
+    });
+
+    test("it rejects when findMany command fails", async () => {
+      spyListItemFindMany({ message: "findMany error message" }, true);
+
+      await expect(
+        findListItemsForList({
+          type: "lawyers",
+          countryId: 1,
+        } as any)
+      ).rejects.toEqual(new Error("Failed to approve lawyer"));
     });
   });
 });

@@ -16,6 +16,7 @@ import {
   List,
   ListItemGetObject,
   CountryName,
+  User,
 } from "./types";
 import {
   geoPointIsValid,
@@ -23,6 +24,7 @@ import {
   filterAllowedLegalAreas,
 } from "./helpers";
 import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
+import { recordListItemEvent } from "./audit";
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -334,7 +336,6 @@ async function createCovidTestSupplierListItemObject(
 
 // Model API
 
-// TODO: test
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
     const where = {
@@ -407,24 +408,38 @@ export async function findListItemById(
 export async function togglerListItemIsApproved({
   id,
   isApproved,
+  userId,
 }: {
   id: number;
   isApproved: boolean;
+  userId: User["id"];
 }): Promise<ListItem> {
   const data: {
     isApproved: boolean;
     isPublished?: boolean;
   } = { isApproved };
 
+  if (userId === undefined) {
+    throw new Error("togglerListItemIsApproved Error: userId is undefined");
+  }
+
   if (!isApproved) {
     data.isPublished = false;
   }
 
   try {
-    return await prisma.listItem.update({
-      where: { id },
-      data,
-    });
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: { id },
+        data,
+      }),
+      recordListItemEvent({
+        eventName: isApproved ? "approve" : "disapprove",
+        itemId: id,
+        userId,
+      }),
+    ]);
+    return listItem;
   } catch (error) {
     logger.error(`togglerListItemIsApproved Error ${error.message}`);
     throw error;
@@ -434,15 +449,29 @@ export async function togglerListItemIsApproved({
 export async function togglerListItemIsPublished({
   id,
   isPublished,
+  userId,
 }: {
   id: number;
   isPublished: boolean;
+  userId: User["id"];
 }): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("togglerListItemIsPublished Error: userId is undefined");
+  }
+
   try {
-    return await prisma.listItem.update({
-      where: { id },
-      data: { isPublished },
-    });
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: { id },
+        data: { isPublished },
+      }),
+      recordListItemEvent({
+        eventName: isPublished ? "publish" : "unpublish",
+        itemId: id,
+        userId,
+      }),
+    ]);
+    return listItem;
   } catch (error) {
     logger.error(`publishLawyer Error ${error.message}`);
     throw new Error("Failed to publish lawyer");
