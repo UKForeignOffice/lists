@@ -93,7 +93,6 @@ export async function createList(listData: {
   createdBy: string;
 }): Promise<List | undefined> {
   try {
-    // TODO: validate country+type list won't duplicate
     const validators = compact(listData.validators.map(trim).map(toLower));
     if (validators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Validators contain a non GOV UK email address");
