@@ -20,7 +20,6 @@ router.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 router.get(dashboardRoutes.start, startRouteController);
 
 // Users
-// TODO: test ensureUserIsSuperAdmin
 router.get(
   dashboardRoutes.usersList,
   ensureUserIsSuperAdmin,
