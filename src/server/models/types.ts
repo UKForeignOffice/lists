@@ -6,13 +6,14 @@ export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
 }
 
+export type JsonObject = PrismaClient.Prisma.JsonObject;
 export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
 
 // List
-export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
+export interface ListJsonData extends JsonObject {
   validators: string[];
   publishers: string[];
   administrators: string[];
@@ -54,24 +55,8 @@ export enum UserRoles {
   ListsCreator = "ListsCreator",
 }
 
-export interface UserJsonData extends PrismaClient.Prisma.JsonObject {
-  roles?: UserRoles[];
-}
-
-export interface User extends PrismaClient.User {
-  jsonData: UserJsonData;
-}
-
-export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {
-  jsonData: UserJsonData;
-}
-
-export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
-  jsonData: UserJsonData;
-}
-
-// Lawyer
-export interface LawyerListItemJsonData extends PrismaClient.Prisma.JsonObject {
+// Lawyer ListItem
+export interface LawyerListItemJsonData extends JsonObject {
   contactName: string;
   organisationName: string;
   telephone: string;
@@ -109,9 +94,8 @@ export interface LawyerListItemGetObject extends ListItemGetObject {
   jsonData: LawyerListItemJsonData;
 }
 
-// Covid 19 Test Supplier
-export interface CovidTestSupplierListItemJsonData
-  extends PrismaClient.Prisma.JsonObject {
+// Covid 19 Test Supplier ListItem
+export interface CovidTestSupplierListItemJsonData extends JsonObject {
   contactName: string;
   organisationName: string;
   telephone: string;
@@ -148,3 +132,47 @@ export type LegalAreas =
   | "personal injury"
   | "real estate"
   | "tax";
+
+// User
+export interface UserJsonData extends JsonObject {
+  roles?: UserRoles[];
+}
+
+export interface User extends PrismaClient.User {
+  jsonData: UserJsonData;
+}
+
+export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {
+  jsonData: UserJsonData;
+}
+
+export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
+  jsonData: UserJsonData;
+}
+
+// Audit
+export type AuditListItemEventName =
+  | "approve"
+  | "disapprove"
+  | "publish"
+  | "unpublish";
+
+export interface AuditJsonData extends JsonObject {
+  eventName: AuditListItemEventName;
+  userId: User["id"];
+  itemId: User["id"] | List["id"] | ListItem["id"];
+  metadata?: PrismaClient.Prisma.JsonObject;
+}
+
+export interface Audit extends PrismaClient.Audit {
+  jsonData: AuditJsonData;
+}
+
+export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
+  type: "user" | "list" | "listItem";
+  jsonData: AuditJsonData;
+}
+
+export interface AuditUpdateInput extends PrismaClient.Prisma.AuditUpdateInput {
+  jsonData: AuditJsonData;
+}
