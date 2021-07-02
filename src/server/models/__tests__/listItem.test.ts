@@ -444,11 +444,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "approve",
         itemId: 123,
-<<<<<<< HEAD
         userId: 1,
-=======
-        user: 1,
->>>>>>> 382ef24 (Audit record list item approve and publish events)
       });
     });
 
@@ -472,11 +468,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "disapprove",
         itemId: 123,
-<<<<<<< HEAD
         userId: 1,
-=======
-        user: 1,
->>>>>>> 382ef24 (Audit record list item approve and publish events)
       });
     });
 
@@ -537,11 +529,7 @@ describe("ListItem Model:", () => {
       expect(spyAudit).toHaveBeenCalledWith({
         eventName: "unpublish",
         itemId: 123,
-<<<<<<< HEAD
         userId: 1,
-=======
-        user: 1,
->>>>>>> 382ef24 (Audit record list item approve and publish events)
       });
     });
 
