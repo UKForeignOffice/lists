@@ -76,8 +76,16 @@ export const populateCountryLawyers: PopulateCountryLawyers = async (
 
     try {
       const newLawyer = await createLawyerListItem(lawyer);
-      await togglerListItemIsApproved({ id: newLawyer.id, isApproved: true });
-      await togglerListItemIsPublished({ id: newLawyer.id, isPublished: true });
+      await togglerListItemIsApproved({
+        id: newLawyer.id,
+        isApproved: true,
+        userId: 0,
+      });
+      await togglerListItemIsPublished({
+        id: newLawyer.id,
+        isPublished: true,
+        userId: 0,
+      });
       itemsInserted += 1;
     } catch (error) {
       errors.push(error.message);

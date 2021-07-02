@@ -359,6 +359,11 @@ export async function listItemsApproveController(
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const { isApproved } = req.body;
+  const userId = req.user?.userData.id;
+
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
 
   const list = await findListById(listId);
   const listItem = await findListItemById(listItemId);
@@ -394,6 +399,7 @@ export async function listItemsApproveController(
     const updatedListItem = await togglerListItemIsApproved({
       id: listItem.id,
       isApproved,
+      userId,
     });
     res.json({ status: "OK", isApproved: updatedListItem.isApproved });
   }
@@ -406,6 +412,11 @@ export async function listItemsPublishController(
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const { isPublished } = req.body;
+  const userId = req.user?.userData.id;
+
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
 
   const list = await findListById(listId);
   const listItem = await findListItemById(listItemId);
@@ -447,6 +458,7 @@ export async function listItemsPublishController(
     const updatedListItem = await togglerListItemIsPublished({
       id: listItem.id,
       isPublished,
+      userId,
     });
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });
   }
