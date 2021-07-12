@@ -533,7 +533,7 @@
       "title": "Which body has authorised your organisation to provide COVID-19 tests?",
       "components": [
         {
-          "name": "affiliatedWithRegulatoryAuthority",
+          "name": "regulatoryAuthority",
           "options": {
             "optionalText": true
           },
