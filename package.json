@@ -73,7 +73,7 @@
     "@types/node": "^15.12.5",
     "@types/nunjucks": "^3.1.4",
     "@types/passport": "^1.0.6",
-    "@types/passport-jwt": "^3.0.5",
+    "@types/passport-jwt": "^3.0.6",
     "@types/pg": "^8.6.0",
     "@types/redis": "^2.8.30",
     "@types/supertest": "^2.0.11",
