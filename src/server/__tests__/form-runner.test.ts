@@ -27,8 +27,15 @@ describe("Form Runner:", () => {
 
   test("lawyers form is responding correctly", async () => {
     const response = await request(server)
+      .get("/application/lawyers/register-to-the-find-a-lawyer-abroad-service")
+      .type("text/html");
+    expect(response.status).toBe(200);
+  });
+
+  test("covid-test-providers form is responding correctly", async () => {
+    const response = await request(server)
       .get(
-        "/application/lawyers/register-to-the-find-a-lawyer-abroad-service?visit=Suv0rr6BR2"
+        "/application/covid-test-providers/register-to-the-find-a-covid-19-test-provider-abroad-service"
       )
       .type("text/html");
     expect(response.status).toBe(200);
