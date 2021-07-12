@@ -625,6 +625,9 @@ describe("ListItem Model:", () => {
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
     });
 

@@ -368,6 +368,9 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   } catch (error) {
     logger.error(`approveLawyer Error ${error.message}`);
