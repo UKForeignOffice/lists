@@ -92,7 +92,7 @@
     "lint-staged": "^11.0.0",
     "mini-css-extract-plugin": "^2.1.0",
     "nock": "^13.1.1",
-    "nodemon": "^2.0.9",
+    "nodemon": "^2.0.12",
     "nodemon-webpack-plugin": "^4.5.2",
     "postcss-loader": "^6.1.0",
     "prettier": "2.3.2",
