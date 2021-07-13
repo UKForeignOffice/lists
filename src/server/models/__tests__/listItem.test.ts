@@ -12,9 +12,11 @@ import {
   findListItemsForList,
   some,
   findPublishedCovidTestSupplierPerCountry,
+  createCovidTestSupplierListItem,
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
+import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
 
 jest.mock("../db/prisma-client");
 
@@ -53,6 +55,36 @@ const LawyerWebhookData: LawyersFormWebhookData = {
     country: "france",
     emailAddress: "outofhours@email.com",
   },
+  declarationConfirm: "confirm",
+};
+
+const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
+  speakEnglish: true,
+  isQualified: true,
+  affiliatedWithRegulatoryAuthority: true,
+  regulatoryAuthority: "Health Authority",
+  meetUKstandards: true,
+  provideResultsInEnglishFrenchSpanish: true,
+  provideTestResultsIn72Hours: true,
+  organisationDetails: {
+    organisationName: "Covid Test Provider Name",
+    contactName: "Contact Name",
+    contactEmailAddress: "aa@aa.com",
+    contactPhoneNumber: "777654321",
+    websiteAddress: "www.website.com",
+    emailAddress: "contact@email.com",
+    phoneNumber: "777654321",
+    addressLine1: "Cogito, Ergo Sum",
+    addressLine2: "Street",
+    city: "Touraine",
+    postcode: "123456",
+    country: "france",
+  },
+  turnaroundTime: "1",
+  resultsFormat: "Email,SMS",
+  openingTimes: "Monday to Friday, 9am-5pm",
+  provideResultsWhenClosed: false,
+  bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
 };
 
@@ -790,6 +822,76 @@ describe("ListItem Model:", () => {
       });
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe.only("createCovidTestSupplierListItem", () => {
+    test("it rejects when listItem already exists", async () => {
+      spyListItemCount(1);
+
+      await expect(
+        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+      ).rejects.toEqual(new Error("Covid Test Supplier Record already exists"));
+    });
+
+    test("listItem create command is correct", async () => {
+      spyListItemCount(0);
+      spyLocationService();
+      spyCountryUpsert();
+      const spy = spyListItemCreate();
+
+      await createCovidTestSupplierListItem(CovidTestProviderWebhookData);
+
+      expect(spy).toHaveBeenCalledWith({
+        data: {
+          type: "covidTestProviders",
+          isApproved: false,
+          isPublished: false,
+          jsonData: {
+            organisationName: "covid test provider name",
+            contactName: "Contact Name",
+            contactEmailAddress: "aa@aa.com",
+            contactPhoneNumber: "777654321",
+            telephone: "777654321",
+            email: "contact@email.com",
+            website: "www.website.com",
+            openingTimes: "Monday to Friday, 9am-5pm",
+            regulatoryAuthority: "Health Authority",
+            provideResultsInEnglishFrenchSpanish: true,
+            provideTestResultsIn72Hours: true,
+            provideResultsWhenClosed: false,
+            resultsFormat: ["Email", "SMS"],
+            bookingOptions: ["website", "in person"],
+            turnaroundTime: 1,
+          },
+          address: {
+            create: {
+              firstLine: "Cogito, Ergo Sum",
+              secondLine: "Street",
+              postCode: "123456",
+              city: "Touraine",
+              country: {
+                connect: {
+                  id: "123TEST",
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    test("it rejects when listItem create command fails", async () => {
+      spyListItemCount(0);
+      spyLocationService();
+      spyCountryUpsert();
+
+      const error = { message: "Create Error" };
+      prisma.listItem.create.mockRejectedValue(error);
+
+      await expect(
+        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+      ).rejects.toEqual(error);
     });
   });
 });

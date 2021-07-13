@@ -668,7 +668,6 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
   }
 }
 
-// TODO test
 export async function createCovidTestSupplierListItem(
   webhookData: CovidTestSupplierFormWebhookData
 ): Promise<ListItem> {
