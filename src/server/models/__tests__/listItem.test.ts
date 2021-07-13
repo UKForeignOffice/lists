@@ -10,8 +10,10 @@ import {
   setEmailIsVerified,
   checkListItemExists,
   findListItemsForList,
+  some,
 } from "../listItem";
 import * as audit from "../audit";
+import { ServiceType } from "../types";
 
 jest.mock("../db/prisma-client");
 
@@ -640,6 +642,62 @@ describe("ListItem Model:", () => {
           countryId: 1,
         } as any)
       ).rejects.toEqual(new Error("Failed to approve lawyer"));
+    });
+  });
+
+  describe("some", () => {
+    test("findMany command is correct", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      await some("united kingdom" as any, ServiceType.covidTestProviders);
+
+      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
+        where: {
+          type: ServiceType.covidTestProviders,
+          address: {
+            country: {
+              name: startCase(toLower("united kingdom")),
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+        take: 1,
+      });
+    });
+
+    test("it returns true when findMany finds listItems", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(true);
+    });
+
+    test("it returns false when findMany does not find listItems", async () => {
+      prisma.listItem.findMany.mockResolvedValue([]);
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(false);
+    });
+
+    test("it returns false when findMany rejects", async () => {
+      prisma.listItem.findMany.mockRejectedValue("");
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(false);
     });
   });
 });
