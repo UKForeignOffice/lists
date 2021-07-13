@@ -825,7 +825,7 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe.only("createCovidTestSupplierListItem", () => {
+  describe("createCovidTestSupplierListItem", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
