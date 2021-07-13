@@ -1,5 +1,5 @@
 import { toLower, startCase } from "lodash";
-import { prisma } from "../db/prisma-client";
+import { prisma } from "../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
@@ -12,6 +12,8 @@ import {
   findListItemsForList,
 } from "../listItem";
 import * as audit from "../audit";
+
+jest.mock("../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   speakEnglish: true,
@@ -52,73 +54,59 @@ const LawyerWebhookData: LawyersFormWebhookData = {
 };
 
 describe("ListItem Model:", () => {
-  const sampleListItem = {
+  const sampleListItem: any = {
     id: "123ABC",
     jsonData: { organisationName: "The Amazing Lawyers" },
   };
 
+  const sampleCountry: any = { id: "123TEST", name: "United Kingdom" };
+
+  const sampleLocation: any = {
+    Geometry: {
+      Point: [1, 1],
+    },
+  };
+
   const spyListItemFindUnique = (
-    returnValue: any = sampleListItem
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.findUnique.mockResolvedValue(returnValue);
+  };
+
+  const spyListItemCreate = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.create.mockResolvedValue(
+      returnValue ?? sampleListItem
+    );
+  };
+
+  const spyListItemUpdate = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.update.mockResolvedValue(returnValue);
+  };
+
+  const spyCountryUpsert = (returnValue = sampleCountry): jest.SpyInstance => {
+    return prisma.country.upsert.mockResolvedValue(returnValue);
+  };
+
+  const spyLocationService = (
+    returnValue = sampleLocation
   ): jest.SpyInstance => {
     return jest
-      .spyOn(prisma.listItem, "findUnique")
+      .spyOn(locationService, "geoLocatePlaceByText")
       .mockResolvedValue(returnValue);
   };
 
-  const spyListItemFindMany = (
-    returnValue: any = [sampleListItem],
-    shouldReject = false
-  ): jest.SpyInstance => {
-    const spy = jest.spyOn(prisma.listItem, "findMany");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  };
-
-  const spyListItemCreate = (returnValue?: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "create")
-      .mockResolvedValue(returnValue ?? sampleListItem);
-  };
-
-  const spyListItemUpdate = (returnValue?: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "update")
-      .mockResolvedValue(returnValue ?? sampleListItem);
-  };
-
-  const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
-    const country = { id: "123TEST" };
-
-    return jest
-      .spyOn(prisma.country, "upsert")
-      .mockResolvedValue(returnValue ?? country);
-  };
-
-  const spyLocationService = (returnValue?: any): jest.SpyInstance => {
-    const location = {
-      Geometry: {
-        Point: [1, 1],
-      },
-    };
-    return jest
-      .spyOn(locationService, "geoLocatePlaceByText")
-      .mockResolvedValue(returnValue ?? location);
-  };
-
   const spyListItemCount = (returnValue: any): jest.SpyInstance => {
-    return jest.spyOn(prisma.listItem, "count").mockResolvedValue(returnValue);
+    return prisma.listItem.count.mockResolvedValue(returnValue);
   };
 
   const spyPrismaTransaction = (): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma, "$transaction")
-      .mockImplementation((values) => Promise.all(values) as never);
+    return prisma.$transaction.mockImplementation(
+      (values) => Promise.all(values) as never
+    );
   };
 
   const spyAuditRecordListItemEvent = (
@@ -599,15 +587,14 @@ describe("ListItem Model:", () => {
 
   describe("findListItemsForList", () => {
     test("findMany command is correct", async () => {
-      const spyFindMany = spyListItemFindMany();
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
 
-      const result = await findListItemsForList({
+      await findListItemsForList({
         type: "lawyers",
         countryId: 1,
       } as any);
 
-      expect(result).toEqual([sampleListItem]);
-      expect(spyFindMany).toHaveBeenCalledWith({
+      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
         where: {
           type: "lawyers",
           address: { countryId: 1 },
@@ -631,8 +618,21 @@ describe("ListItem Model:", () => {
       });
     });
 
+    test("findMany result is correct", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      const result = await findListItemsForList({
+        type: "lawyers",
+        countryId: 1,
+      } as any);
+
+      expect(result).toEqual([sampleListItem]);
+    });
+
     test("it rejects when findMany command fails", async () => {
-      spyListItemFindMany({ message: "findMany error message" }, true);
+      prisma.listItem.findMany.mockRejectedValue({
+        message: "findMany error message",
+      });
 
       await expect(
         findListItemsForList({

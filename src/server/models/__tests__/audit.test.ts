@@ -1,27 +1,31 @@
 import { recordListItemEvent } from "../audit";
-import { prisma } from "../db/prisma-client";
+import { prisma } from "../db/__mocks__/prisma-client";
+
+jest.mock("../db/prisma-client");
 
 describe("Audit Model:", () => {
-  const sampleAuditObject = {};
-
-  function spyAuditCreate(
-    returnValue: any = sampleAuditObject,
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma.audit, "create");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
+  const sampleAuditObject: any = {};
 
   describe("recordListItemEvent", () => {
     test("create command is correct", async () => {
-      const spy = spyAuditCreate();
+      prisma.audit.create.mockResolvedValue(sampleAuditObject);
+
+      await recordListItemEvent({
+        eventName: "approve",
+        itemId: 123,
+        userId: 1,
+      });
+
+      expect(prisma.audit.create).toHaveBeenCalledWith({
+        data: {
+          type: "listItem",
+          jsonData: { eventName: "approve", itemId: 123, userId: 1 },
+        },
+      });
+    });
+
+    test("create command result is correct", async () => {
+      prisma.audit.create.mockResolvedValue(sampleAuditObject);
 
       const result = await recordListItemEvent({
         eventName: "approve",
@@ -30,12 +34,6 @@ describe("Audit Model:", () => {
       });
 
       expect(result).toBe(sampleAuditObject);
-      expect(spy).toHaveBeenCalledWith({
-        data: {
-          type: "listItem",
-          jsonData: { eventName: "approve", itemId: 123, userId: 1 },
-        },
-      });
     });
   });
 });

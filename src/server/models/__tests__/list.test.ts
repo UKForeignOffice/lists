@@ -5,15 +5,16 @@ import {
   createList,
   updateList,
 } from "../list";
-import { prisma } from "../db/prisma-client";
+import { prisma } from "../db/__mocks__/prisma-client";
 import { logger } from "server/services/logger";
 import { ServiceType } from "../types";
 import { compact } from "lodash";
 
+jest.mock("../db/prisma-client");
 jest.mock("server/services/logger");
 
 describe("List Model:", () => {
-  const sampleList = {
+  const sampleList: any = {
     id: 1,
     reference: "123Reference",
     createdAt: "2021-06-23T11:13:55.236+00:00",
@@ -31,84 +32,9 @@ describe("List Model:", () => {
     },
   };
 
-  function spyQueryRaw(
-    returnValue: any = [sampleList],
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma, "$queryRaw");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
-
-  function spyListFindUnique(
-    returnValue: any = sampleList,
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma.list, "findUnique");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
-
-  function spyListFindMany(
-    returnValue: any = [sampleList],
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma.list, "findMany");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
-
-  function spyListCreate(
-    returnValue: any = sampleList,
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma.list, "create");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
-
-  function spyListUpdate(
-    returnValue: any = sampleList,
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(prisma.list, "update");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  }
-
   describe("findUserLists", () => {
     test("query is correct", async () => {
-      const spy = spyQueryRaw();
+      prisma.$queryRaw.mockResolvedValue([sampleList]);
 
       await findUserLists("test@gov.uk");
 
@@ -129,13 +55,16 @@ describe("List Model:", () => {
         ORDER BY id ASC    
       `.replace(/\s\s+/g, " ");
 
-      const query = spy.mock.calls[0][0].replace(/\s\s+/g, " ");
+      const query = (prisma.$queryRaw.mock.calls[0][0] as string).replace(
+        /\s\s+/g,
+        " "
+      );
 
       expect(query).toEqual(expectedQuery);
     });
 
     test("returned value is correct", async () => {
-      spyQueryRaw();
+      prisma.$queryRaw.mockResolvedValue([sampleList]);
 
       const result = await findUserLists("test@gov.uk");
 
@@ -143,7 +72,7 @@ describe("List Model:", () => {
     });
 
     test("it returns undefined when queryRaw fails", async () => {
-      spyQueryRaw({ message: "queryRaw error message" }, true);
+      prisma.$queryRaw.mockRejectedValue({ message: "queryRaw error message" });
 
       const result = await findUserLists("test@gov.uk");
 
@@ -156,11 +85,11 @@ describe("List Model:", () => {
 
   describe("findListById", () => {
     test("findUnique call is correct", async () => {
-      const spy = spyListFindUnique();
+      prisma.list.findUnique.mockResolvedValue(sampleList);
 
       await findListById(1);
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(prisma.list.findUnique).toHaveBeenCalledWith({
         where: {
           id: 1,
         },
@@ -171,7 +100,7 @@ describe("List Model:", () => {
     });
 
     test("returned value is correct", async () => {
-      spyListFindUnique();
+      prisma.list.findUnique.mockResolvedValue(sampleList);
 
       const result = await findListById(1);
 
@@ -179,7 +108,9 @@ describe("List Model:", () => {
     });
 
     test("it returns undefined when findUnique call fails", async () => {
-      spyListFindUnique({ message: "findUnique error message" }, true);
+      prisma.list.findUnique.mockRejectedValue({
+        message: "findUnique error message",
+      });
 
       const result = await findListById(1);
 
@@ -192,14 +123,14 @@ describe("List Model:", () => {
 
   describe("findListByCountryAndType", () => {
     test("findMany call is correct", async () => {
-      const spy = spyListFindMany();
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       await findListByCountryAndType(
         "United Kingdom",
         ServiceType.covidTestProviders
       );
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: {
           country: {
             name: "United Kingdom",
@@ -213,7 +144,7 @@ describe("List Model:", () => {
     });
 
     test("returned value is correct", async () => {
-      spyListFindMany();
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       const result = await findListByCountryAndType(
         "United Kingdom",
@@ -224,7 +155,9 @@ describe("List Model:", () => {
     });
 
     test("it returns undefined when findUnique call fails", async () => {
-      spyListFindMany({ message: "findMany error message" }, true);
+      prisma.list.findMany.mockRejectedValue({
+        message: "findMany error message",
+      });
 
       const result = await findListByCountryAndType(
         "United Kingdom",
@@ -249,11 +182,11 @@ describe("List Model:", () => {
     };
 
     test("create call is correct", async () => {
-      const spy = spyListCreate();
+      prisma.list.create.mockResolvedValue(sampleList);
 
       await createList(listData);
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(prisma.list.create).toHaveBeenCalledWith({
         data: {
           type: listData.serviceType,
           country: {
@@ -277,7 +210,7 @@ describe("List Model:", () => {
     });
 
     test("it throws when prisma create rejects", async () => {
-      spyListCreate({ message: "Create error message" }, true);
+      prisma.list.create.mockRejectedValue({ message: "Create error message" });
 
       await expect(createList(listData)).rejects.toEqual({
         message: "Create error message",
@@ -346,11 +279,11 @@ describe("List Model:", () => {
     };
 
     test("create call is correct", async () => {
-      const spy = spyListUpdate();
+      prisma.list.update.mockResolvedValue(sampleList);
 
       await updateList(listId, listData);
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(prisma.list.update).toHaveBeenCalledWith({
         where: {
           id: listId,
         },
@@ -365,7 +298,7 @@ describe("List Model:", () => {
     });
 
     test("it throws when prisma create rejects", async () => {
-      spyListUpdate({ message: "Update error message" }, true);
+      prisma.list.update.mockRejectedValue({ message: "Update error message" });
 
       await expect(updateList(listId, listData)).rejects.toEqual({
         message: "Update error message",
