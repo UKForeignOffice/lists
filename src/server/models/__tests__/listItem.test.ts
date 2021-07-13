@@ -11,6 +11,7 @@ import {
   checkListItemExists,
   findListItemsForList,
   some,
+  findPublishedCovidTestSupplierPerCountry,
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
@@ -698,6 +699,97 @@ describe("ListItem Model:", () => {
       );
 
       expect(result).toEqual(false);
+    });
+  });
+
+  describe("findPublishedCovidTestSupplierPerCountry", () => {
+    test("it throws when countryName is undefined", async () => {
+      await expect(
+        findPublishedCovidTestSupplierPerCountry({} as any)
+      ).rejects.toEqual(new Error("Country name is missing"));
+    });
+
+    test("queryRaw command is correct", async () => {
+      spyLocationService();
+      const spyQueryRaw = prisma.$queryRaw.mockResolvedValue([]);
+
+      await findPublishedCovidTestSupplierPerCountry({
+        countryName: "ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+      const expectedQuery = `
+      SELECT
+        "ListItem"."id",
+        "ListItem"."reference",
+        "ListItem"."type",
+        "ListItem"."jsonData",
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine", 
+              "Address"."secondLine", 
+              "Address"."city", 
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                        SELECT name
+                        FROM "Country"
+                        WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+            FROM "Address"
+            WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+        ST_Distance(
+          "GeoLocation".location,
+          ST_GeographyFromText('Point(1 1)')
+        ) AS distanceInMeters
+        FROM "ListItem"
+        INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+        WHERE "ListItem"."type" = 'covidTestProviders'
+        AND "Country".name = 'Ghana'
+        AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= 1
+        AND "ListItem"."isApproved" = true
+        AND "ListItem"."isPublished" = true
+        AND "ListItem"."isBlocked" = false
+        ORDER BY distanceInMeters ASC
+        LIMIT 20
+    `.replace(/\s\s+/g, " ");
+      expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
+    });
+
+    test("result is correct", async () => {
+      spyLocationService();
+      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+
+      const result = await findPublishedCovidTestSupplierPerCountry({
+        countryName: "Ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      expect(result).toEqual([sampleListItem]);
+    });
+
+    test("it returns an empty list when queryRaw rejects", async () => {
+      spyLocationService();
+      prisma.$queryRaw.mockRejectedValue("");
+
+      const result = await findPublishedCovidTestSupplierPerCountry({
+        countryName: "Ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      expect(result).toEqual([]);
     });
   });
 });
