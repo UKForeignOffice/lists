@@ -34,7 +34,7 @@ export async function createAuthenticationJWT(
     return jwt.sign({ user }, secret, JWT_OPTIONS);
   } catch (error) {
     logger.error(`createLoginJWT Error: ${error.message}`);
-    return false;
+    throw error;
   }
 }
 
@@ -46,6 +46,6 @@ export async function createAuthenticationPath(
     return `${authRoutes.login}?token=${token}`;
   } catch (error) {
     logger.error(`createLoginJWT Error: ${error.message}`);
-    return false;
+    throw error;
   }
 }

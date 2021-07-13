@@ -1,5 +1,5 @@
 import { toLower, startCase } from "lodash";
-import { prisma } from "../db/prisma-client";
+import { prisma } from "../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
@@ -10,8 +10,15 @@ import {
   setEmailIsVerified,
   checkListItemExists,
   findListItemsForList,
+  some,
+  findPublishedCovidTestSupplierPerCountry,
+  createCovidTestSupplierListItem,
 } from "../listItem";
 import * as audit from "../audit";
+import { ServiceType } from "../types";
+import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
+
+jest.mock("../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   speakEnglish: true,
@@ -51,74 +58,90 @@ const LawyerWebhookData: LawyersFormWebhookData = {
   declarationConfirm: "confirm",
 };
 
+const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
+  speakEnglish: true,
+  isQualified: true,
+  affiliatedWithRegulatoryAuthority: true,
+  regulatoryAuthority: "Health Authority",
+  meetUKstandards: true,
+  provideResultsInEnglishFrenchSpanish: true,
+  provideTestResultsIn72Hours: true,
+  organisationDetails: {
+    organisationName: "Covid Test Provider Name",
+    contactName: "Contact Name",
+    contactEmailAddress: "aa@aa.com",
+    contactPhoneNumber: "777654321",
+    websiteAddress: "www.website.com",
+    emailAddress: "contact@email.com",
+    phoneNumber: "777654321",
+    addressLine1: "Cogito, Ergo Sum",
+    addressLine2: "Street",
+    city: "Touraine",
+    postcode: "123456",
+    country: "france",
+  },
+  turnaroundTime: "1",
+  resultsFormat: "Email,SMS",
+  openingTimes: "Monday to Friday, 9am-5pm",
+  provideResultsWhenClosed: false,
+  bookingOptions: "Website,In Person",
+  declarationConfirm: "confirm",
+};
+
 describe("ListItem Model:", () => {
-  const sampleListItem = {
+  const sampleListItem: any = {
     id: "123ABC",
     jsonData: { organisationName: "The Amazing Lawyers" },
   };
 
+  const sampleCountry: any = { id: "123TEST", name: "United Kingdom" };
+
+  const sampleLocation: any = {
+    Geometry: {
+      Point: [1, 1],
+    },
+  };
+
   const spyListItemFindUnique = (
-    returnValue: any = sampleListItem
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.findUnique.mockResolvedValue(returnValue);
+  };
+
+  const spyListItemCreate = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.create.mockResolvedValue(
+      returnValue ?? sampleListItem
+    );
+  };
+
+  const spyListItemUpdate = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.update.mockResolvedValue(returnValue);
+  };
+
+  const spyCountryUpsert = (returnValue = sampleCountry): jest.SpyInstance => {
+    return prisma.country.upsert.mockResolvedValue(returnValue);
+  };
+
+  const spyLocationService = (
+    returnValue = sampleLocation
   ): jest.SpyInstance => {
     return jest
-      .spyOn(prisma.listItem, "findUnique")
+      .spyOn(locationService, "geoLocatePlaceByText")
       .mockResolvedValue(returnValue);
   };
 
-  const spyListItemFindMany = (
-    returnValue: any = [sampleListItem],
-    shouldReject = false
-  ): jest.SpyInstance => {
-    const spy = jest.spyOn(prisma.listItem, "findMany");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(returnValue);
-    } else {
-      spy.mockResolvedValue(returnValue);
-    }
-
-    return spy;
-  };
-
-  const spyListItemCreate = (returnValue?: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "create")
-      .mockResolvedValue(returnValue ?? sampleListItem);
-  };
-
-  const spyListItemUpdate = (returnValue?: any): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma.listItem, "update")
-      .mockResolvedValue(returnValue ?? sampleListItem);
-  };
-
-  const spyCountryUpsert = (returnValue?: any): jest.SpyInstance => {
-    const country = { id: "123TEST" };
-
-    return jest
-      .spyOn(prisma.country, "upsert")
-      .mockResolvedValue(returnValue ?? country);
-  };
-
-  const spyLocationService = (returnValue?: any): jest.SpyInstance => {
-    const location = {
-      Geometry: {
-        Point: [1, 1],
-      },
-    };
-    return jest
-      .spyOn(locationService, "geoLocatePlaceByText")
-      .mockResolvedValue(returnValue ?? location);
-  };
-
   const spyListItemCount = (returnValue: any): jest.SpyInstance => {
-    return jest.spyOn(prisma.listItem, "count").mockResolvedValue(returnValue);
+    return prisma.listItem.count.mockResolvedValue(returnValue);
   };
 
   const spyPrismaTransaction = (): jest.SpyInstance => {
-    return jest
-      .spyOn(prisma, "$transaction")
-      .mockImplementation((values) => Promise.all(values) as never);
+    return prisma.$transaction.mockImplementation(
+      (values) => Promise.all(values) as never
+    );
   };
 
   const spyAuditRecordListItemEvent = (
@@ -599,15 +622,14 @@ describe("ListItem Model:", () => {
 
   describe("findListItemsForList", () => {
     test("findMany command is correct", async () => {
-      const spyFindMany = spyListItemFindMany();
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
 
-      const result = await findListItemsForList({
+      await findListItemsForList({
         type: "lawyers",
         countryId: 1,
       } as any);
 
-      expect(result).toEqual([sampleListItem]);
-      expect(spyFindMany).toHaveBeenCalledWith({
+      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
         where: {
           type: "lawyers",
           address: { countryId: 1 },
@@ -631,8 +653,21 @@ describe("ListItem Model:", () => {
       });
     });
 
+    test("findMany result is correct", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      const result = await findListItemsForList({
+        type: "lawyers",
+        countryId: 1,
+      } as any);
+
+      expect(result).toEqual([sampleListItem]);
+    });
+
     test("it rejects when findMany command fails", async () => {
-      spyListItemFindMany({ message: "findMany error message" }, true);
+      prisma.listItem.findMany.mockRejectedValue({
+        message: "findMany error message",
+      });
 
       await expect(
         findListItemsForList({
@@ -640,6 +675,223 @@ describe("ListItem Model:", () => {
           countryId: 1,
         } as any)
       ).rejects.toEqual(new Error("Failed to approve lawyer"));
+    });
+  });
+
+  describe("some", () => {
+    test("findMany command is correct", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      await some("united kingdom" as any, ServiceType.covidTestProviders);
+
+      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
+        where: {
+          type: ServiceType.covidTestProviders,
+          address: {
+            country: {
+              name: startCase(toLower("united kingdom")),
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+        take: 1,
+      });
+    });
+
+    test("it returns true when findMany finds listItems", async () => {
+      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(true);
+    });
+
+    test("it returns false when findMany does not find listItems", async () => {
+      prisma.listItem.findMany.mockResolvedValue([]);
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(false);
+    });
+
+    test("it returns false when findMany rejects", async () => {
+      prisma.listItem.findMany.mockRejectedValue("");
+
+      const result = await some(
+        "united kingdom" as any,
+        ServiceType.covidTestProviders
+      );
+
+      expect(result).toEqual(false);
+    });
+  });
+
+  describe("findPublishedCovidTestSupplierPerCountry", () => {
+    test("it throws when countryName is undefined", async () => {
+      await expect(
+        findPublishedCovidTestSupplierPerCountry({} as any)
+      ).rejects.toEqual(new Error("Country name is missing"));
+    });
+
+    test("queryRaw command is correct", async () => {
+      spyLocationService();
+      const spyQueryRaw = prisma.$queryRaw.mockResolvedValue([]);
+
+      await findPublishedCovidTestSupplierPerCountry({
+        countryName: "ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      const query = spyQueryRaw.mock.calls[0][0] as string;
+      const expectedQuery = `
+      SELECT
+        "ListItem"."id",
+        "ListItem"."reference",
+        "ListItem"."type",
+        "ListItem"."jsonData",
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine", 
+              "Address"."secondLine", 
+              "Address"."city", 
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                        SELECT name
+                        FROM "Country"
+                        WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+            FROM "Address"
+            WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+        ST_Distance(
+          "GeoLocation".location,
+          ST_GeographyFromText('Point(1 1)')
+        ) AS distanceInMeters
+        FROM "ListItem"
+        INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+        WHERE "ListItem"."type" = 'covidTestProviders'
+        AND "Country".name = 'Ghana'
+        AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= 1
+        AND "ListItem"."isApproved" = true
+        AND "ListItem"."isPublished" = true
+        AND "ListItem"."isBlocked" = false
+        ORDER BY distanceInMeters ASC
+        LIMIT 20
+    `.replace(/\s\s+/g, " ");
+      expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
+    });
+
+    test("result is correct", async () => {
+      spyLocationService();
+      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+
+      const result = await findPublishedCovidTestSupplierPerCountry({
+        countryName: "Ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      expect(result).toEqual([sampleListItem]);
+    });
+
+    test("it returns an empty list when queryRaw rejects", async () => {
+      spyLocationService();
+      prisma.$queryRaw.mockRejectedValue("");
+
+      const result = await findPublishedCovidTestSupplierPerCountry({
+        countryName: "Ghana",
+        region: "Accra",
+        turnaroundTime: 1,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("createCovidTestSupplierListItem", () => {
+    test("it rejects when listItem already exists", async () => {
+      spyListItemCount(1);
+
+      await expect(
+        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+      ).rejects.toEqual(new Error("Covid Test Supplier Record already exists"));
+    });
+
+    test("listItem create command is correct", async () => {
+      spyListItemCount(0);
+      spyLocationService();
+      spyCountryUpsert();
+      const spy = spyListItemCreate();
+
+      await createCovidTestSupplierListItem(CovidTestProviderWebhookData);
+
+      expect(spy).toHaveBeenCalledWith({
+        data: {
+          type: "covidTestProviders",
+          isApproved: false,
+          isPublished: false,
+          jsonData: {
+            organisationName: "covid test provider name",
+            contactName: "Contact Name",
+            contactEmailAddress: "aa@aa.com",
+            contactPhoneNumber: "777654321",
+            telephone: "777654321",
+            email: "contact@email.com",
+            website: "www.website.com",
+            openingTimes: "Monday to Friday, 9am-5pm",
+            regulatoryAuthority: "Health Authority",
+            provideResultsInEnglishFrenchSpanish: true,
+            provideTestResultsIn72Hours: true,
+            provideResultsWhenClosed: false,
+            resultsFormat: ["Email", "SMS"],
+            bookingOptions: ["website", "in person"],
+            turnaroundTime: 1,
+          },
+          address: {
+            create: {
+              firstLine: "Cogito, Ergo Sum",
+              secondLine: "Street",
+              postCode: "123456",
+              city: "Touraine",
+              country: {
+                connect: {
+                  id: "123TEST",
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    test("it rejects when listItem create command fails", async () => {
+      spyListItemCount(0);
+      spyLocationService();
+      spyCountryUpsert();
+
+      const error = { message: "Create Error" };
+      prisma.listItem.create.mockRejectedValue(error);
+
+      await expect(
+        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+      ).rejects.toEqual(error);
     });
   });
 });

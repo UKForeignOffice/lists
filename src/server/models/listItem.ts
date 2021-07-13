@@ -526,7 +526,6 @@ export async function createListItem(
   }
 }
 
-// TODO test
 export async function some(
   countryName: CountryName,
   serviceType: ServiceType
@@ -629,7 +628,6 @@ export async function createLawyerListItem(
 }
 
 // Covid Test Suppliers
-// TODO test
 export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;
   region: string;
@@ -670,7 +668,6 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
   }
 }
 
-// TODO test
 export async function createCovidTestSupplierListItem(
   webhookData: CovidTestSupplierFormWebhookData
 ): Promise<ListItem> {
