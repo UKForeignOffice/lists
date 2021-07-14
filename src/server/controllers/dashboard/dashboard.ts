@@ -36,7 +36,7 @@ import {
 import { QuestionError } from "../lists/types";
 import { authRoutes } from "server/auth";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
-import { createListItemBaseSearchLink } from "../lists/helpers";
+import { createListSearchBaseLink } from "../lists/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -465,7 +465,7 @@ export async function listItemsPublishController(
     });
 
     if (updatedListItem.isPublished) {
-      const searchLink = createListItemBaseSearchLink(updatedListItem);
+      const searchLink = createListSearchBaseLink(updatedListItem.type);
       const { contactName, contactEmailAddress } =
         getListItemContactInformation(updatedListItem);
       sendDataPublishedEmail(

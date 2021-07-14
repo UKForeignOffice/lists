@@ -14,7 +14,7 @@ import {
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
-import { CountryName, ListItem, ServiceType } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
@@ -116,11 +116,11 @@ export function createConfirmationLink(
   return `${host}${path}`;
 }
 
-export function createListItemBaseSearchLink(listItem: ListItem): string {
-  if (listItem === undefined) {
-    throw new Error("createListItemBaseSearchLink listItem is undefined");
+export function createListSearchBaseLink(serviceType: string): string {
+  if (serviceType === undefined) {
+    throw new Error("createListSearchBaseLink serviceType is undefined");
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${listItem.type}`;
+  return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${serviceType}`;
 }
