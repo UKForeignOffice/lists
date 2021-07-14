@@ -553,6 +553,24 @@ export async function some(
   }
 }
 
+// ListItem Helpers
+export function getListItemContactInformation(listItem: ListItem): {
+  contactName: string;
+  contactEmailAddress: string;
+  contactPhoneNumber: string;
+} {
+  const contactName = get(listItem?.jsonData, "contactName");
+  const contactEmailAddress =
+    get(listItem?.jsonData, "contactEmailAddress") ??
+    get(listItem?.jsonData, "emailAddress") ??
+    get(listItem?.jsonData, "email");
+  const contactPhoneNumber =
+    get(listItem?.jsonData, "contactPhoneNumber") ??
+    get(listItem?.jsonData, "phoneNumber");
+
+  return { contactName, contactEmailAddress, contactPhoneNumber };
+}
+
 // Lawyers
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;

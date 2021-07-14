@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim, pick, compact } from "lodash";
+import { startCase, toLower, trim, pick, compact, noop } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -19,6 +19,7 @@ import {
   findListItemById,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
+  getListItemContactInformation,
 } from "server/models/listItem";
 import { UserRoles, ServiceType, List } from "server/models/types";
 import {
@@ -34,6 +35,8 @@ import {
 } from "server/utils/validation";
 import { QuestionError } from "../lists/types";
 import { authRoutes } from "server/auth";
+import { sendDataPublishedEmail } from "server/services/govuk-notify";
+import { createListItemBaseSearchLink } from "../lists/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -460,6 +463,18 @@ export async function listItemsPublishController(
       isPublished,
       userId,
     });
+
+    if (updatedListItem.isPublished) {
+      const searchLink = createListItemBaseSearchLink(updatedListItem);
+      const { contactName, contactEmailAddress } =
+        getListItemContactInformation(updatedListItem);
+      sendDataPublishedEmail(
+        contactName,
+        contactEmailAddress,
+        searchLink
+      ).catch(noop);
+    }
+
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });
   }
 }

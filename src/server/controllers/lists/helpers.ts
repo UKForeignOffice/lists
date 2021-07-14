@@ -11,10 +11,10 @@ import {
   lowerCase,
 } from "lodash";
 
-import { SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName, ListItem, ServiceType } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
@@ -114,4 +114,13 @@ export function createConfirmationLink(
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;
+}
+
+export function createListItemBaseSearchLink(listItem: ListItem): string {
+  if (listItem === undefined) {
+    throw new Error("createListItemBaseSearchLink listItem is undefined");
+  }
+
+  const protocol = isLocalHost ? "http" : "https";
+  return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${listItem.type}`;
 }
