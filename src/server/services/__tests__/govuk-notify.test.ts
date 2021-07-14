@@ -199,7 +199,8 @@ describe("GOVUK Notify service:", () => {
 
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
-      const searchLink = "https://localhost/confirm/123Reference";
+      const searchLink =
+        "http://localhost:3000/find?serviceType=covidTestProviders";
 
       const result = await sendDataPublishedEmail(
         contactName,
@@ -223,7 +224,8 @@ describe("GOVUK Notify service:", () => {
 
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
-      const searchLink = "https://localhost/confirm/123Reference";
+      const searchLink =
+        "http://localhost:3000/find?serviceType=covidTestProviders";
 
       const result = await sendDataPublishedEmail(
         contactName,
