@@ -11,7 +11,7 @@ import {
   lowerCase,
 } from "lodash";
 
-import { SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
@@ -114,4 +114,13 @@ export function createConfirmationLink(
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;
+}
+
+export function createListSearchBaseLink(serviceType: string): string {
+  if (serviceType === undefined) {
+    throw new Error("createListSearchBaseLink serviceType is undefined");
+  }
+
+  const protocol = isLocalHost ? "http" : "https";
+  return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${serviceType}`;
 }

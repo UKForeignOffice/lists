@@ -13,6 +13,7 @@ import {
   some,
   findPublishedCovidTestSupplierPerCountry,
   createCovidTestSupplierListItem,
+  getListItemContactInformation,
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
@@ -892,6 +893,42 @@ describe("ListItem Model:", () => {
       await expect(
         createCovidTestSupplierListItem(CovidTestProviderWebhookData)
       ).rejects.toEqual(error);
+    });
+  });
+
+  describe("getListItemContactInformation", () => {
+    test("contact information is correct when email and phoneNumber are set", () => {
+      const listItem: any = {
+        jsonData: {
+          contactName: "ABC",
+          phoneNumber: "123",
+          email: "123",
+        },
+      };
+
+      const contactInfo = getListItemContactInformation(listItem);
+      expect(contactInfo).toEqual({
+        contactName: "ABC",
+        contactPhoneNumber: "123",
+        contactEmailAddress: "123",
+      });
+    });
+
+    test("contact information is correct when contactEmailAddress and contactPhoneNumber are set", () => {
+      const listItem: any = {
+        jsonData: {
+          contactName: "ABC",
+          contactPhoneNumber: "123",
+          contactEmailAddress: "123",
+        },
+      };
+
+      const contactInfo = getListItemContactInformation(listItem);
+      expect(contactInfo).toEqual({
+        contactName: "ABC",
+        contactPhoneNumber: "123",
+        contactEmailAddress: "123",
+      });
     });
   });
 });

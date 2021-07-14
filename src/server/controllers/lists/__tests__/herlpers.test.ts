@@ -7,6 +7,7 @@ import {
   removeQueryParameter,
   getCountryLawyerRedirectLink,
   createConfirmationLink,
+  createListSearchBaseLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { get } from "lodash";
@@ -158,6 +159,30 @@ describe("Lawyers List:", () => {
       };
       expect(createConfirmationLink(req, "123")).toBe(
         `https://${SERVICE_DOMAIN}/confirm/123`
+      );
+    });
+  });
+
+  describe("createListSearchBaseLink", () => {
+    test("search link is correct", () => {
+      const listItem: any = {
+        type: "covidTestProviders",
+      };
+
+      const link = createListSearchBaseLink(listItem.type);
+
+      expect(link).toBe(
+        "https://test-domain/find?serviceType=covidTestProviders"
+      );
+    });
+
+    test("it throws when listItem is undefined", () => {
+      const listItem: any = {
+        type: undefined,
+      };
+
+      expect(() => createListSearchBaseLink(listItem.type)).toThrowError(
+        "createListSearchBaseLink serviceType is undefined"
       );
     });
   });

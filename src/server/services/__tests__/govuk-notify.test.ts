@@ -3,19 +3,22 @@ import {
   getNotifyClient,
   sendApplicationConfirmationEmail,
   sendAuthenticationEmail,
+  sendDataPublishedEmail,
 } from "../govuk-notify";
 import { logger } from "server/services/logger";
 
 const {
   GOVUK_NOTIFY_API_KEY,
-  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+  GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
+  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
 } = process.env;
 
 const mocks: { [name: string]: undefined | string } = {
   GOVUK_NOTIFY_API_KEY,
-  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+  GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
+  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
 };
 
 jest.mock("server/config", () => ({
@@ -27,6 +30,9 @@ jest.mock("server/config", () => ({
   },
   get GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID() {
     return mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
+  },
+  get GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID() {
+    return mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
   },
 }));
 
@@ -42,6 +48,15 @@ describe("GOVUK Notify service:", () => {
       mocks.GOVUK_NOTIFY_API_KEY = GOVUK_NOTIFY_API_KEY;
     });
 
+    test("it throws when environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing", () => {
+      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID = undefined;
+      expect(() => getNotifyClient()).toThrowError(
+        "Environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing"
+      );
+      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID =
+        GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
+    });
+
     test("it throws when environment variable GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID is missing", () => {
       mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID =
         undefined;
@@ -54,62 +69,15 @@ describe("GOVUK Notify service:", () => {
         GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
     });
 
-    test("it throws when environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing", () => {
-      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID = undefined;
+    test("it throws when environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing", () => {
+      mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID = undefined;
+
       expect(() => getNotifyClient()).toThrowError(
-        "Environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing"
-      );
-      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID =
-        GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
-    });
-  });
-
-  describe("sendApplicationConfirmationEmail", () => {
-    test("notify.sendEmail command is correct", async () => {
-      const notifyClient = getNotifyClient();
-
-      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
-      });
-
-      const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
-      const confirmationLink = "https://localhost/confirm/123Reference";
-
-      const result = await sendApplicationConfirmationEmail(
-        contactName,
-        emailAddress,
-        confirmationLink
+        "Environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing"
       );
 
-      expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
-        emailAddress,
-        { personalisation: { confirmationLink, contactName } }
-      );
-    });
-
-    test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = getNotifyClient();
-      const error = new Error("sendEmail error message");
-
-      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
-
-      const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
-      const confirmationLink = "https://localhost/confirm/123Reference";
-
-      const result = await sendApplicationConfirmationEmail(
-        contactName,
-        emailAddress,
-        confirmationLink
-      );
-
-      expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "sendApplicationConfirmationEmail Error: sendEmail error message"
-      );
+      mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID =
+        GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
     });
   });
 
@@ -168,6 +136,106 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(false);
       expect(logger.error).toHaveBeenCalledWith(
         "sendAuthenticationEmail Error: sendEmail error message"
+      );
+    });
+  });
+
+  describe("sendApplicationConfirmationEmail", () => {
+    test("notify.sendEmail command is correct", async () => {
+      const notifyClient = getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const confirmationLink = "https://localhost/confirm/123Reference";
+
+      const result = await sendApplicationConfirmationEmail(
+        contactName,
+        emailAddress,
+        confirmationLink
+      );
+
+      expect(result).toBe(true);
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+        emailAddress,
+        { personalisation: { confirmationLink, contactName } }
+      );
+    });
+
+    test("it returns false when sendEmail rejects", async () => {
+      const notifyClient = getNotifyClient();
+      const error = new Error("sendEmail error message");
+
+      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const confirmationLink = "https://localhost/confirm/123Reference";
+
+      const result = await sendApplicationConfirmationEmail(
+        contactName,
+        emailAddress,
+        confirmationLink
+      );
+
+      expect(result).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        "sendApplicationConfirmationEmail Error: sendEmail error message"
+      );
+    });
+  });
+
+  describe("sendDataPublishedEmail", () => {
+    test("notify.sendEmail command is correct", async () => {
+      const notifyClient = getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const searchLink =
+        "http://localhost:3000/find?serviceType=covidTestProviders";
+
+      const result = await sendDataPublishedEmail(
+        contactName,
+        emailAddress,
+        searchLink
+      );
+
+      expect(result).toBe(true);
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
+        emailAddress,
+        { personalisation: { searchLink, contactName } }
+      );
+    });
+
+    test("it returns false when sendEmail rejects", async () => {
+      const notifyClient = getNotifyClient();
+      const error = new Error("sendEmail error message");
+
+      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const searchLink =
+        "http://localhost:3000/find?serviceType=covidTestProviders";
+
+      const result = await sendDataPublishedEmail(
+        contactName,
+        emailAddress,
+        searchLink
+      );
+
+      expect(result).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        "sendDataPublishedEmail Error: sendEmail error message"
       );
     });
   });
