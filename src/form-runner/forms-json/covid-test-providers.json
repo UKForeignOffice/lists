@@ -84,14 +84,14 @@
           "name": "beQbsQ",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> Provide the details of the main point of contact for your organisation. This should be the person who can be contacted by the British embassy.  <div/>\n\n<div class=\"govuk-hint\">These details are for the embassy only and will not be shared publically <div/>\n\n\n\n",
+          "content": "<p class=\"govuk-hint\">Please provide the details of the person who will be the main point of contact for your organisation. This person will be contacted by the British embassy. We will send a confirmation email to the email address provided.</br>\nThese details are for the embassy only and will not be shared publically.\n</p>\n\n\n\n",
           "schema": {}
         },
         {
           "name": "contactName",
           "options": {},
           "type": "TextField",
-          "title": "Full name",
+          "title": "Contact full name",
           "nameHasError": false,
           "schema": {},
           "hint": ""
@@ -438,7 +438,7 @@
       ],
       "next": [
         {
-          "path": "/what-are-the-opening-times-of-your-organisation"
+          "path": "/how-can-people-book-a-covid-19-test-with-your-organisation"
         }
       ]
     },
@@ -489,46 +489,6 @@
       "next": []
     },
     {
-      "path": "/what-are-the-opening-times-of-your-organisation",
-      "title": "What are the opening times of your organisation?",
-      "components": [
-        {
-          "name": "openingTimes",
-          "options": {},
-          "type": "TextField",
-          "title": "Opening times",
-          "schema": {},
-          "hint": "Please state the days of the week you are open, followed by the hours, for example Monday to Friday, 9am-5pm. \n\nIf you are open at the weekend, please also specify your opening times on Saturday and Sunday for example, Saturday, 10am-5pm, Sunday 11am-3pm. ",
-          "nameHasError": false
-        }
-      ],
-      "next": [
-        {
-          "path": "/does-your-organisation-provide-covid-19-test-results-on-the-days-you-are-not-open"
-        }
-      ]
-    },
-    {
-      "path": "/does-your-organisation-provide-covid-19-test-results-on-the-days-you-are-not-open",
-      "title": "Does your organisation provide COVID-19 test results on the days you are not open?",
-      "components": [
-        {
-          "name": "provideResultsWhenClosed",
-          "options": {},
-          "type": "YesNoField",
-          "hint": "For example, if you are not open at the weekend and are unable to provide a test result in your usual timescale.",
-          "title": "Does your company or facility provide COVID-19 test results on the days you are not open?",
-          "schema": {},
-          "nameHasError": false
-        }
-      ],
-      "next": [
-        {
-          "path": "/how-can-people-book-a-covid-19-test-with-your-organisation"
-        }
-      ]
-    },
-    {
       "path": "/which-body-has-authorised-your-organisation-to-provide-covid-19-tests",
       "title": "Which body has authorised your organisation to provide COVID-19 tests?",
       "components": [
@@ -559,9 +519,12 @@
           "options": {},
           "type": "YesNoField",
           "title": "Is your organisation able to provide Covid-19 tests within 72 hours?",
-          "hint": "This is the time it takes from a person taking a test to receiving a result. ",
+          "hint": "This is the time it takes from a person taking a test to receiving a result. British nationals require that they receive the result of the COVID-19 test  within 72 hours before returning to the UK",
           "schema": {},
-          "nameHasError": false
+          "nameHasError": false,
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
