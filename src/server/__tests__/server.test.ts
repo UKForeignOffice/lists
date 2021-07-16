@@ -1,3 +1,4 @@
+import { assign } from "lodash";
 import * as helmet from "server/middlewares/helmet";
 import * as logger from "server/middlewares/logger";
 import * as compression from "server/middlewares/compression";
@@ -9,9 +10,35 @@ import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
 import * as auth from "server/auth/helpers";
 import * as router from "server/routes";
+
+import * as serverConfig from "server/config/server-config";
 import { getServer } from "../server";
 
 describe("Server:", () => {
+  describe("trust proxy", () => {
+    test("it is correctly configured in production", async () => {
+      assign(serverConfig, { isProd: true });
+      jest.resetModules();
+
+      const server = await getServer();
+
+      expect(server.locals.settings["trust proxy"]).toEqual([
+        "loopback",
+        "linklocal",
+        "uniquelocal",
+      ]);
+    });
+
+    test("it is not configured outside production", async () => {
+      assign(serverConfig, { isProd: false });
+      jest.resetModules();
+
+      const server = await getServer();
+
+      expect(server.locals.settings["trust proxy"]).toEqual(false);
+    });
+  });
+
   describe("getServer", () => {
     test("configureHelmet", async () => {
       const spy = jest.spyOn(helmet, "configureHelmet");
