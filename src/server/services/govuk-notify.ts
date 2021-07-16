@@ -12,7 +12,7 @@ export function getNotifyClient(): any {
   if (notifyClient === undefined) {
     const requiredTemplateIds = [
       "GOVUK_NOTIFY_API_KEY",
-      "GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID",
+      // "GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID",
       "GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID",
       "GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID",
     ];
