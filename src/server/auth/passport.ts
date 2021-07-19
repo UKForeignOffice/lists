@@ -27,7 +27,12 @@ export async function configurePassport(server: Express): Promise<void> {
     new JwtStrategy(OPTIONS, async (token, done) => {
       const { user } = token;
 
-      if (user.email !== undefined) {
+      if (user?.email === undefined) {
+        logger.warn(
+          `JwtStrategy token is invalid for user ${JSON.stringify(user)}`
+        );
+        done(new Error("Invalid authentication token"));
+      } else {
         let userData = await findUserByEmail(user.email);
 
         if (userData === undefined) {
@@ -40,9 +45,6 @@ export async function configurePassport(server: Express): Promise<void> {
         }
 
         done(null, userData);
-      } else {
-        logger.warn(`JwtStrategy failed to login user ${JSON.stringify(user)}`);
-        done(null, false);
       }
     })
   );
