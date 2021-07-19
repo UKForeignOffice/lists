@@ -237,30 +237,7 @@
           "condition": "aKWhJY"
         },
         {
-          "path": "/is-your-organisation-able-to-provide-covid-19-tests-within-72-hours"
-        }
-      ]
-    },
-    {
-      "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-covid-19-test",
-      "title": "How quickly can your organisation provide the result of a COVID-19 test?",
-      "components": [
-        {
-          "name": "turnaroundTime",
-          "options": {
-            "hideTitle": true
-          },
-          "type": "RadiosField",
-          "title": "How quickly can your company or facility provide the result of a COVID-19 test?",
-          "hint": "This is the fastest time in hours it takes from someone taking a COVID-19 test to receiving their test result.",
-          "nameHasError": false,
-          "list": "QsQEVS",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/how-does-your-organisation-provide-confirmation-of-a-covid-19-test-result"
+          "path": "/is-your-organisation-able-to-provide-covid-19-test-results-within-72-hours"
         }
       ]
     },
@@ -359,7 +336,7 @@
       ],
       "next": [
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-covid-19-test"
+          "path": "/how-does-your-organisation-provide-confirmation-of-a-covid-19-test-result"
         }
       ],
       "section": "organisationDetails"
@@ -372,7 +349,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide COVID-19 tests\n  </li>\n  <li>\n    supply COVID-19 tests to UK standard \n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find a COVID-19 Test Supplier Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n </li>  <li>\n    aware that you cannot use the FCDO or the embassy logo on your website\n  </li>\n</ul>\n",
+          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide COVID-19 tests\n  </li>\n  <li>\n    provide COVID-19 tests to the applicable Department for Transport standards for entry to the UK \n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find a COVID-19 Test Supplier Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n </li>  <li>\n    aware that you cannot use the FCDO or the embassy logo on your website\n  </li>\n</ul>\n",
           "schema": {}
         },
         {
@@ -511,14 +488,14 @@
       ]
     },
     {
-      "path": "/is-your-organisation-able-to-provide-covid-19-tests-within-72-hours",
-      "title": "Is your organisation able to provide Covid-19 tests within 72 hours?",
+      "path": "/is-your-organisation-able-to-provide-covid-19-test-results-within-72-hours",
+      "title": "Is your organisation able to provide Covid-19 test results within 72 hours?",
       "components": [
         {
           "name": "provideTestResultsIn72Hours",
           "options": {},
           "type": "YesNoField",
-          "title": "Is your organisation able to provide Covid-19 tests within 72 hours?",
+          "title": "Is your organisation able to provide Covid-19 test results within 72 hours?",
           "hint": "This is the time it takes from a person taking a test to receiving a result. British nationals require that they receive the result of the COVID-19 test  within 72 hours before returning to the UK",
           "schema": {},
           "nameHasError": false,
@@ -529,12 +506,12 @@
       ],
       "next": [
         {
-          "path": "/organisation-name",
-          "condition": "cGloxD"
-        },
-        {
           "path": "/your-organisation-cannot-be-added-to-this-service-xTjpdJ",
           "condition": "dPKpVg"
+        },
+        {
+          "path": "/which-type-of-tests-does-your-organisation-provide",
+          "condition": "cGloxD"
         }
       ]
     },
@@ -551,6 +528,129 @@
         }
       ],
       "next": []
+    },
+    {
+      "path": "/which-type-of-tests-does-your-organisation-provide",
+      "title": "Which type of tests does your organisation provide?",
+      "components": [
+        {
+          "name": "yMUmdI",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">The test must meet performance standards of ≥97% specificity and ≥80% sensitivity at viral loads above 100,000 copies/ml. Types of tests you could provide include a nucleic acid test, including a polymerase chain reaction (PCR) test; derivative technologies including loop-mediated isothermal amplification (LAMP) tests; or an antigen test, such as a test from a lateral flow device. <br />\nPlease only select the tests that meet the above standards. \n</div>",
+          "schema": {}
+        },
+        {
+          "name": "testTypes",
+          "options": {
+            "hideTitle": true
+          },
+          "type": "CheckboxesField",
+          "title": "Please select the tests your organisation provide that meet the above standards",
+          "nameHasError": false,
+          "list": "qeBVvX",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-an-antigen-test",
+          "condition": "dUkpXe"
+        },
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
+          "condition": "ZXEIRy"
+        },
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "condition": "nwbiEe"
+        }
+      ]
+    },
+    {
+      "path": "/how-quickly-can-your-organisation-provide-the-result-of-an-antigen-test",
+      "title": "How quickly can your organisation provide the result of an Antigen test?",
+      "components": [
+        {
+          "name": "turnaroundTimeAntigen",
+          "options": {},
+          "type": "RadiosField",
+          "title": "How quickly can your organisation provide the result of an Antigen test?",
+          "nameHasError": false,
+          "list": "QsQEVS",
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
+          "condition": "EHbQWj"
+        },
+        {
+          "path": "/organisation-name",
+          "condition": "zmnAij"
+        },
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "condition": "HcKSfZ"
+        }
+      ]
+    },
+    {
+      "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
+      "title": "How quickly can your organisation provide the result of a LAMP test?",
+      "components": [
+        {
+          "name": "turnaroundTimeLamp",
+          "options": {
+            "required": true
+          },
+          "type": "RadiosField",
+          "nameHasError": false,
+          "list": "QsQEVS",
+          "title": "How quickly can your organisation provide the result of a LAMP test?",
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "condition": "LWVkUo"
+        },
+        {
+          "path": "/organisation-name",
+          "condition": "kvwlDM"
+        }
+      ]
+    },
+    {
+      "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+      "title": "How quickly can your organisation provide the result of a PCR test?",
+      "components": [
+        {
+          "name": "turnaroundTimePCR",
+          "options": {},
+          "type": "RadiosField",
+          "nameHasError": false,
+          "title": "How quickly can your organisation provide the result of a PCR test?",
+          "list": "QsQEVS",
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
+        }
+      ],
+      "next": [
+        {
+          "path": "/organisation-name"
+        }
+      ]
     }
   ],
   "lists": [
@@ -1682,6 +1782,25 @@
           "value": "Sunday"
         }
       ]
+    },
+    {
+      "title": "testsTypes",
+      "name": "qeBVvX",
+      "type": "string",
+      "items": [
+        {
+          "text": "Antigen",
+          "value": "Antigen"
+        },
+        {
+          "text": "Loop-mediated Isothermal Amplification (LAMP)",
+          "value": "Loop-mediated Isothermal Amplification (LAMP)"
+        },
+        {
+          "text": "Polymerase Chain Reaction (PCR)",
+          "value": "Polymerase Chain Reaction (PCR)"
+        }
+      ]
     }
   ],
   "sections": [
@@ -2091,7 +2210,197 @@
           }
         ]
       }
+    },
+    {
+      "name": "LWVkUo",
+      "displayName": "provideTestPCRYes",
+      "value": {
+        "name": "provideTestPCRYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "contains",
+            "value": {
+              "type": "Value",
+              "value": "Polymerase Chain Reaction (PCR)",
+              "display": "Polymerase Chain Reaction (PCR)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "EHbQWj",
+      "displayName": "provideTestLampYes",
+      "value": {
+        "name": "provideTestLampYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "contains",
+            "value": {
+              "type": "Value",
+              "value": "Loop-mediated Isothermal Amplification (LAMP)",
+              "display": "Loop-mediated Isothermal Amplification (LAMP)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "dUkpXe",
+      "displayName": "provideTestAntigenYes",
+      "value": {
+        "name": "provideTestAntigenYes",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "contains",
+            "value": {
+              "type": "Value",
+              "value": "Antigen",
+              "display": "Antigen"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "kvwlDM",
+      "displayName": "provideTestPCRNo",
+      "value": {
+        "name": "provideTestPCRNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "Polymerase Chain Reaction (PCR)",
+              "display": "Polymerase Chain Reaction (PCR)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HcKSfZ",
+      "displayName": "provideTestLampNo",
+      "value": {
+        "name": "provideTestLampNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "Loop-mediated Isothermal Amplification (LAMP)",
+              "display": "Loop-mediated Isothermal Amplification (LAMP)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ecccMB",
+      "displayName": "provideTestAntigenNo",
+      "value": {
+        "name": "provideTestAntigenNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "testTypes",
+              "type": "CheckboxesField",
+              "display": "which types of tests"
+            },
+            "operator": "does not contain",
+            "value": {
+              "type": "Value",
+              "value": "Antigen",
+              "display": "Antigen"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "zmnAij",
+      "displayName": "provideTestLampAndPCRNo",
+      "value": {
+        "name": "provideTestLampAndPCRNo",
+        "conditions": [
+          {
+            "conditionName": "HcKSfZ",
+            "conditionDisplayName": "provideTestLampNo"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "kvwlDM",
+            "conditionDisplayName": "provideTestPCRNo"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ZXEIRy",
+      "displayName": "provideTestAntigenNoAndLampYes",
+      "value": {
+        "name": "provideTestAntigenNoAndLampYes",
+        "conditions": [
+          {
+            "conditionName": "ecccMB",
+            "conditionDisplayName": "provideTestAntigenNo"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "EHbQWj",
+            "conditionDisplayName": "provideTestLampYes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "nwbiEe",
+      "displayName": "provideTestAntigenAndLampNoAndPCRYes",
+      "value": {
+        "name": "provideTestAntigenAndLampNoAndPCRYes",
+        "conditions": [
+          {
+            "conditionName": "ecccMB",
+            "conditionDisplayName": "provideTestAntigenNo"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "HcKSfZ",
+            "conditionDisplayName": "provideTestLampNo"
+          },
+          {
+            "coordinator": "and",
+            "conditionName": "LWVkUo",
+            "conditionDisplayName": "provideTestPCRYes"
+          }
+        ]
+      }
     }
-  ],
-  "skipSummary": false
+  ]
 }
