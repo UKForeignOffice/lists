@@ -69,7 +69,7 @@ describe("GOVUK Notify service:", () => {
         GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
     });
 
-    test.skip("it throws when environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing", () => {
+    test("it throws when environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing", () => {
       mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID = undefined;
 
       expect(() => getNotifyClient()).toThrowError(
