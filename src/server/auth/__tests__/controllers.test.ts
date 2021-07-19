@@ -8,7 +8,11 @@ import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
 import * as userModel from "server/models/user";
 import { getServer } from "server/server";
-import { noop } from "lodash";
+import { assign, noop } from "lodash";
+import { logger } from "server/services/logger";
+import * as serverConfig from "server/config/server-config";
+
+jest.mock("server/services/logger");
 
 describe("Auth Module", () => {
   let req: any, res: any, next: any;
@@ -39,6 +43,24 @@ describe("Auth Module", () => {
     jest.restoreAllMocks();
   });
 
+  function spySendAuthenticationEmail(shouldReject?: boolean): any {
+    const spy = jest.spyOn(notifyService, "sendAuthenticationEmail");
+
+    if (shouldReject === true) {
+      spy.mockRejectedValue("Error");
+    } else {
+      spy.mockResolvedValue(true);
+    }
+
+    return spy;
+  }
+
+  function spyCreateAuthenticationPath(): any {
+    return jest
+      .spyOn(tokenService, "createAuthenticationPath")
+      .mockResolvedValue("/login?token=123Token");
+  }
+
   describe("getLoginController", () => {
     test("next function is called when token parameter is present", () => {
       req.query.token = "123abc";
@@ -62,24 +84,6 @@ describe("Auth Module", () => {
   });
 
   describe("postLoginController", () => {
-    function spySendAuthenticationEmail(shouldReject?: boolean): any {
-      const spy = jest.spyOn(notifyService, "sendAuthenticationEmail");
-
-      if (shouldReject === true) {
-        spy.mockRejectedValue("Error");
-      } else {
-        spy.mockResolvedValue(true);
-      }
-
-      return spy;
-    }
-
-    function spyCreateAuthenticationPath(): any {
-      return jest
-        .spyOn(tokenService, "createAuthenticationPath")
-        .mockResolvedValue("/login?token=123Token");
-    }
-
     test("authentication request is successful when email address is gov.uk", (done) => {
       const emailAddress = "person@depto.gov.uk";
       req.body.emailAddress = emailAddress;
@@ -133,6 +137,44 @@ describe("Auth Module", () => {
       req.body.emailAddress = "someemail@gmail.com";
       postLoginController(req, res, next);
       expect(res.render).toHaveBeenCalledWith("login", { error: true });
+    });
+
+    test("authLink is not logged outside localhost", (done) => {
+      req.body.emailAddress = "person@depto.gov.uk";
+
+      spyCreateAuthenticationPath();
+      spySendAuthenticationEmail();
+
+      postLoginController(req, res, next);
+
+      setTimeout(() => {
+        expect(logger.warn).not.toHaveBeenCalled();
+        expect(res.render).toHaveBeenCalledWith("login", { success: true });
+        done();
+      });
+    });
+
+    test("authLink is logged on localhost", (done) => {
+      assign(serverConfig, { isLocalHost: true });
+      jest.resetModules();
+
+      req.body.emailAddress = "person@depto.gov.uk";
+
+      spyCreateAuthenticationPath();
+      spySendAuthenticationEmail();
+
+      postLoginController(req, res, next);
+
+      setTimeout(() => {
+        expect(logger.warn).toHaveBeenCalledWith(
+          "http://test-domain/login?token=123Token"
+        );
+        expect(res.render).toHaveBeenCalledWith("login", { success: true });
+
+        assign(serverConfig, { isLocalHost: false });
+        jest.resetModules();
+        done();
+      });
     });
   });
 

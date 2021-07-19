@@ -1,15 +1,6 @@
 import querystring from "querystring";
 import { Request } from "express";
-import {
-  get,
-  omit,
-  trim,
-  mapKeys,
-  isArray,
-  without,
-  isString,
-  lowerCase,
-} from "lodash";
+import { get, omit, trim, mapKeys, isArray, without, lowerCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRoutes } from "./routes";
@@ -49,10 +40,8 @@ export function parseListValues(
   const value = get(params, paramName);
 
   if (isArray(value)) {
-    return without(value, "");
-  }
-
-  if (isString(value)) {
+    return without(value, "", undefined);
+  } else {
     return without(value.split(",").map(trim), "");
   }
 }

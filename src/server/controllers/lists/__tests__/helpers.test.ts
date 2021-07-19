@@ -10,8 +10,9 @@ import {
   createListSearchBaseLink,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
-import { get } from "lodash";
+import { assign, get } from "lodash";
 import { SERVICE_DOMAIN } from "server/config";
+import * as serverConfig from "server/config/server-config";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -36,6 +37,38 @@ describe("Lawyers List:", () => {
       };
 
       expect(queryStringFromParams(params)).toEqual("propA=a&propB=1&propC=c");
+    });
+
+    test("query string is built correctly when value is preceded comma", () => {
+      const params = {
+        propA: ",a",
+        propB: 1,
+        propC: "c",
+      };
+
+      expect(queryStringFromParams(params)).toEqual("propA=a&propB=1&propC=c");
+    });
+  });
+
+  describe("parseListValues", () => {
+    test("values are correct when param is an array", () => {
+      const params: any = {
+        a: ["a", "b", "", undefined],
+      };
+
+      const result = parseListValues("a", params);
+
+      expect(result).toEqual(["a", "b"]);
+    });
+
+    test("values are correct when param is a string", () => {
+      const params: any = {
+        a: "a,b,",
+      };
+
+      const result = parseListValues("a", params);
+
+      expect(result).toEqual(["a", "b"]);
     });
   });
 
@@ -184,6 +217,22 @@ describe("Lawyers List:", () => {
       expect(() => createListSearchBaseLink(listItem.type)).toThrowError(
         "createListSearchBaseLink serviceType is undefined"
       );
+    });
+
+    test("protocol is http on localhost", () => {
+      assign(serverConfig, { isLocalHost: true });
+      jest.resetModules();
+
+      const listItem: any = { type: "covidTestProviders" };
+
+      const link = createListSearchBaseLink(listItem.type);
+
+      expect(link).toBe(
+        "http://test-domain/find?serviceType=covidTestProviders"
+      );
+
+      assign(serverConfig, { isLocalHost: false });
+      jest.resetModules();
     });
   });
 });
