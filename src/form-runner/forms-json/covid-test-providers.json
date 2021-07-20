@@ -541,7 +541,7 @@
           "schema": {}
         },
         {
-          "name": "testTypes",
+          "name": "providedTests",
           "options": {
             "hideTitle": true
           },
@@ -2219,7 +2219,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
@@ -2241,7 +2241,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
@@ -2263,7 +2263,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
@@ -2285,7 +2285,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
@@ -2307,7 +2307,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
@@ -2329,7 +2329,7 @@
         "conditions": [
           {
             "field": {
-              "name": "testTypes",
+              "name": "providedTests",
               "type": "CheckboxesField",
               "display": "which types of tests"
             },
