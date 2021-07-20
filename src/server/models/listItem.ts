@@ -1,17 +1,17 @@
 import {
-  isArray,
-  uniq,
-  startCase,
-  toLower,
-  merge,
   get,
+  uniq,
   trim,
+  merge,
+  toLower,
+  isArray,
   compact,
+  startCase,
 } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
-import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
+import { geoLocatePlaceByText } from "server/services/location";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
   List,
