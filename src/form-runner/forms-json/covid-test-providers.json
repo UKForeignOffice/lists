@@ -178,7 +178,7 @@
           "title": "Email address",
           "nameHasError": false,
           "schema": {},
-          "hint": "This is the email address your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK."
+          "hint": "This is the email address your organisation wishes to be contacted on by British nationals. This will be published on GOV.UK."
         }
       ],
       "next": [
@@ -510,7 +510,7 @@
           "condition": "dPKpVg"
         },
         {
-          "path": "/which-type-of-tests-does-your-organisation-provide",
+          "path": "/which-type-of-covid-19-tests-does-your-organisation-provide",
           "condition": "cGloxD"
         }
       ]
@@ -530,8 +530,8 @@
       "next": []
     },
     {
-      "path": "/which-type-of-tests-does-your-organisation-provide",
-      "title": "Which type of tests does your organisation provide?",
+      "path": "/which-type-of-covid-19-tests-does-your-organisation-provide",
+      "title": "Which type of COVID-19 tests does your organisation provide?",
       "components": [
         {
           "name": "yMUmdI",
