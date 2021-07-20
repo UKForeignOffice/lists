@@ -96,12 +96,20 @@ export interface LawyerListItemGetObject extends ListItemGetObject {
 
 // Covid 19 Test Supplier ListItem
 export interface CovidTestSupplierListItemJsonData extends JsonObject {
-  contactName: string;
   organisationName: string;
+  contactName: string;
+  contactPhoneNumber: string;
+  contactEmailAddress: string;
   telephone: string;
   email: string;
   website: string;
   regulatoryAuthority: string;
+  resultsFormat: string[];
+  bookingOptions: string[];
+  providedTests: Array<{
+    type: string;
+    turnaroundTime: number;
+  }>;
   metadata?: {
     emailVerified?: boolean;
   };

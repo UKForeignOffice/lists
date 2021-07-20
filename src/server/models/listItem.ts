@@ -1,22 +1,31 @@
-import { isArray, uniq, startCase, toLower, merge, get, trim } from "lodash";
+import {
+  isArray,
+  uniq,
+  startCase,
+  toLower,
+  merge,
+  get,
+  trim,
+  compact,
+} from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
+  List,
+  User,
   Point,
   Country,
   ListItem,
   ServiceType,
+  CountryName,
+  ListItemGetObject,
   LawyerListItemJsonData,
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
-  List,
-  ListItemGetObject,
-  CountryName,
-  User,
 } from "./types";
 import {
   geoPointIsValid,
@@ -260,58 +269,71 @@ async function createLawyerListItemObject(
 
 // TODO: Test
 async function createCovidTestSupplierListItemObject(
-  covidTestProvider: CovidTestSupplierFormWebhookData
+  formData: CovidTestSupplierFormWebhookData
 ): Promise<CovidTestSupplierListItemCreateInput> {
   try {
-    const country = await createCountry(
-      covidTestProvider.organisationDetails.country
-    );
-    const geoLocationId = await createAddressGeoLocation(covidTestProvider);
+    const country = await createCountry(formData.organisationDetails.country);
+    const geoLocationId = await createAddressGeoLocation(formData);
 
     return {
       type: ServiceType.covidTestProviders,
       isApproved: false,
       isPublished: false,
       jsonData: {
-        organisationName: covidTestProvider.organisationDetails.organisationName
+        organisationName: formData.organisationDetails.organisationName
           .toLowerCase()
           .trim(),
-        contactName: covidTestProvider.organisationDetails.contactName.trim(),
-        contactEmailAddress:
-          covidTestProvider.organisationDetails.contactEmailAddress
-            .toLocaleLowerCase()
-            .trim(),
-        contactPhoneNumber:
-          covidTestProvider.organisationDetails.contactPhoneNumber
-            .toLocaleLowerCase()
-            .trim(),
-        telephone: covidTestProvider.organisationDetails.phoneNumber,
-        email: covidTestProvider.organisationDetails.emailAddress
+        contactName: formData.organisationDetails.contactName.trim(),
+        contactEmailAddress: formData.organisationDetails.contactEmailAddress
+          .toLocaleLowerCase()
+          .trim(),
+        contactPhoneNumber: formData.organisationDetails.contactPhoneNumber
+          .toLocaleLowerCase()
+          .trim(),
+        telephone: formData.organisationDetails.phoneNumber,
+        email: formData.organisationDetails.emailAddress.toLowerCase().trim(),
+        website: formData.organisationDetails.websiteAddress
           .toLowerCase()
           .trim(),
-        website: covidTestProvider.organisationDetails.websiteAddress
-          .toLowerCase()
-          .trim(),
-        openingTimes: covidTestProvider.openingTimes,
-        regulatoryAuthority: covidTestProvider.regulatoryAuthority,
-        provideResultsInEnglishFrenchSpanish:
-          covidTestProvider.provideResultsInEnglishFrenchSpanish,
-        provideTestResultsIn72Hours:
-          covidTestProvider.provideTestResultsIn72Hours,
-        provideResultsWhenClosed: covidTestProvider.provideResultsWhenClosed,
-        resultsFormat: covidTestProvider.resultsFormat?.split(",").map(trim),
-        bookingOptions: covidTestProvider.bookingOptions
-          ?.split(",")
+        regulatoryAuthority: formData.regulatoryAuthority,
+        resultsFormat: formData.resultsFormat.split(",").map(trim),
+        bookingOptions: formData.bookingOptions
+          .split(",")
           .map(trim)
           .map(toLower),
-        turnaroundTime: Number(covidTestProvider.turnaroundTime),
+        providedTests: compact(
+          formData.providedTests
+            .split(", ")
+            .map(trim)
+            .map((testName) => {
+              switch (testName) {
+                case "Antigen":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimeAntigen),
+                  };
+                case "Loop-mediated Isothermal Amplification (LAMP)":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimeLamp),
+                  };
+                case "Polymerase Chain Reaction (PCR)":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimePCR),
+                  };
+                default:
+                  return undefined;
+              }
+            })
+        ),
       },
       address: {
         create: {
-          firstLine: covidTestProvider.organisationDetails.addressLine1,
-          secondLine: covidTestProvider.organisationDetails.addressLine2,
-          postCode: covidTestProvider.organisationDetails.postcode,
-          city: covidTestProvider.organisationDetails.city,
+          firstLine: formData.organisationDetails.addressLine1,
+          secondLine: formData.organisationDetails.addressLine2,
+          postCode: formData.organisationDetails.postcode,
+          city: formData.organisationDetails.city,
           country: {
             connect: { id: country.id },
           },
