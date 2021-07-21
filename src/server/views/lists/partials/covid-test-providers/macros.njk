@@ -8,9 +8,6 @@
     </p>
   {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Opening times</strong>: {{ item.jsonData.openingTimes }}
-  </p>
-  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>: 
       {{ item.address.firstLine }} 
       {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
@@ -47,16 +44,16 @@
         </p>  
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Turnaround time</strong>: {{ item.jsonData.turnaroundTime }} hour{{ "s" if item.jsonData.turnaroundTime > 1}} 
+        <strong>Available tests</strong>:
+        {% for item in _.orderBy(item.jsonData.providedTests, ["turnaroundTime"]) %}
+          {{ item.type }} (results in {{item.turnaroundTime}} hour{{ "s" if item.turnaroundTime > 1}}){{", " if not loop.last}}
+        {% endfor %}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Results formats</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Provide results when closed</strong>: {{ "Yes" if item.jsonData.provideResultsWhenClosed else "No" }}
-      </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Provides certificate translation</strong>: {{ "Yes" if item.jsonData.provideResultsInEnglishFrenchSpanish else "No" }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
