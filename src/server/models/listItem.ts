@@ -1,22 +1,31 @@
-import { isArray, uniq, startCase, toLower, merge, get, trim } from "lodash";
+import {
+  get,
+  uniq,
+  trim,
+  merge,
+  toLower,
+  isArray,
+  compact,
+  startCase,
+} from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
-import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
+import { geoLocatePlaceByText } from "server/services/location";
 import { LawyersFormWebhookData } from "server/services/form-runner";
 import {
+  List,
+  User,
   Point,
   Country,
   ListItem,
   ServiceType,
+  CountryName,
+  ListItemGetObject,
   LawyerListItemJsonData,
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
-  List,
-  ListItemGetObject,
-  CountryName,
-  User,
 } from "./types";
 import {
   geoPointIsValid,
@@ -198,140 +207,6 @@ export async function checkListItemExists({
   });
 
   return total > 0;
-}
-
-async function createLawyerListItemObject(
-  lawyer: LawyersFormWebhookData
-): Promise<LawyerListItemCreateInput> {
-  try {
-    const country = await createCountry(lawyer.country);
-    const geoLocationId = await createAddressGeoLocation(lawyer);
-    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(/;|,/) ?? []);
-    const outOfHours = parseOutOfHoursObject(lawyer);
-
-    return {
-      type: ServiceType.lawyers,
-      isApproved: false,
-      isPublished: false,
-      jsonData: {
-        organisationName: lawyer.organisationName.toLowerCase().trim(),
-        contactName: `${lawyer.firstName.trim()} ${
-          lawyer.middleName?.trim() ?? ""
-        } ${lawyer.surname.trim()}`,
-        telephone: lawyer.phoneNumber,
-        email: lawyer.emailAddress.toLowerCase().trim(),
-        website: lawyer.websiteAddress.toLowerCase().trim(),
-        legalPracticeAreas: filterAllowedLegalAreas(
-          legalPracticeAreasList.map((name: string) =>
-            name.trim().toLowerCase()
-          )
-        ),
-        regulatoryAuthority: lawyer.regulatoryAuthority,
-        englishSpeakLead: lawyer.englishSpeakLead,
-        representedBritishNationalsBefore:
-          lawyer.representedBritishNationalsBefore,
-        legalAid: lawyer.canProvideLegalAid,
-        proBonoService: lawyer.canOfferProBono,
-        outOfHours,
-      },
-      address: {
-        create: {
-          firstLine: lawyer.addressLine1,
-          secondLine: lawyer.addressLine2,
-          postCode: lawyer.postcode,
-          city: lawyer.city,
-          country: {
-            connect: { id: country.id },
-          },
-          geoLocation: {
-            connect: {
-              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
-            },
-          },
-        },
-      },
-    };
-  } catch (error) {
-    const message = `createLawyerInsertObject Error: ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
-  }
-}
-
-// TODO: Test
-async function createCovidTestSupplierListItemObject(
-  covidTestProvider: CovidTestSupplierFormWebhookData
-): Promise<CovidTestSupplierListItemCreateInput> {
-  try {
-    const country = await createCountry(
-      covidTestProvider.organisationDetails.country
-    );
-    const geoLocationId = await createAddressGeoLocation(covidTestProvider);
-
-    return {
-      type: ServiceType.covidTestProviders,
-      isApproved: false,
-      isPublished: false,
-      jsonData: {
-        organisationName: covidTestProvider.organisationDetails.organisationName
-          .toLowerCase()
-          .trim(),
-        contactName: covidTestProvider.organisationDetails.contactName.trim(),
-        contactEmailAddress:
-          covidTestProvider.organisationDetails.contactEmailAddress
-            .toLocaleLowerCase()
-            .trim(),
-        contactPhoneNumber:
-          covidTestProvider.organisationDetails.contactPhoneNumber
-            .toLocaleLowerCase()
-            .trim(),
-        telephone: covidTestProvider.organisationDetails.phoneNumber,
-        email: covidTestProvider.organisationDetails.emailAddress
-          .toLowerCase()
-          .trim(),
-        website: covidTestProvider.organisationDetails.websiteAddress
-          .toLowerCase()
-          .trim(),
-        openingTimes: covidTestProvider.openingTimes,
-        regulatoryAuthority: covidTestProvider.regulatoryAuthority,
-        provideResultsInEnglishFrenchSpanish:
-          covidTestProvider.provideResultsInEnglishFrenchSpanish,
-        provideTestResultsIn72Hours:
-          covidTestProvider.provideTestResultsIn72Hours,
-        provideResultsWhenClosed: covidTestProvider.provideResultsWhenClosed,
-        resultsFormat: covidTestProvider.resultsFormat?.split(",").map(trim),
-        bookingOptions: covidTestProvider.bookingOptions
-          ?.split(",")
-          .map(trim)
-          .map(toLower),
-        turnaroundTime: Number(covidTestProvider.turnaroundTime),
-      },
-      address: {
-        create: {
-          firstLine: covidTestProvider.organisationDetails.addressLine1,
-          secondLine: covidTestProvider.organisationDetails.addressLine2,
-          postCode: covidTestProvider.organisationDetails.postcode,
-          city: covidTestProvider.organisationDetails.city,
-          country: {
-            connect: { id: country.id },
-          },
-          ...(typeof geoLocationId === "number"
-            ? {
-                geoLocation: {
-                  connect: {
-                    id: geoLocationId,
-                  },
-                },
-              }
-            : {}),
-        },
-      },
-    };
-  } catch (error) {
-    const message = `createCovidTestSupplierListItemObject Error: ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
-  }
 }
 
 // Model API
@@ -572,6 +447,85 @@ export function getListItemContactInformation(listItem: ListItem): {
 }
 
 // Lawyers
+async function createLawyerListItemObject(
+  lawyer: LawyersFormWebhookData
+): Promise<LawyerListItemCreateInput> {
+  try {
+    const country = await createCountry(lawyer.country);
+    const geoLocationId = await createAddressGeoLocation(lawyer);
+    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(/;|,/) ?? []);
+    const outOfHours = parseOutOfHoursObject(lawyer);
+
+    return {
+      type: ServiceType.lawyers,
+      isApproved: false,
+      isPublished: false,
+      jsonData: {
+        organisationName: lawyer.organisationName.toLowerCase().trim(),
+        contactName: `${lawyer.firstName.trim()} ${
+          lawyer.middleName?.trim() ?? ""
+        } ${lawyer.surname.trim()}`,
+        telephone: lawyer.phoneNumber,
+        email: lawyer.emailAddress.toLowerCase().trim(),
+        website: lawyer.websiteAddress.toLowerCase().trim(),
+        legalPracticeAreas: filterAllowedLegalAreas(
+          legalPracticeAreasList.map((name: string) =>
+            name.trim().toLowerCase()
+          )
+        ),
+        regulatoryAuthority: lawyer.regulatoryAuthority,
+        englishSpeakLead: lawyer.englishSpeakLead,
+        representedBritishNationalsBefore:
+          lawyer.representedBritishNationalsBefore,
+        legalAid: lawyer.canProvideLegalAid,
+        proBonoService: lawyer.canOfferProBono,
+        outOfHours,
+      },
+      address: {
+        create: {
+          firstLine: lawyer.addressLine1,
+          secondLine: lawyer.addressLine2,
+          postCode: lawyer.postcode,
+          city: lawyer.city,
+          country: {
+            connect: { id: country.id },
+          },
+          geoLocation: {
+            connect: {
+              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
+            },
+          },
+        },
+      },
+    };
+  } catch (error) {
+    const message = `createLawyerInsertObject Error: ${error.message}`;
+    logger.error(message);
+    throw new Error(message);
+  }
+}
+
+export async function createLawyerListItem(
+  webhookData: LawyersFormWebhookData
+): Promise<ListItem> {
+  const exists = await checkListItemExists({
+    organisationName: webhookData.organisationName,
+    countryName: webhookData.country,
+  });
+
+  if (exists) {
+    throw new Error("Lawyer record already exists");
+  }
+
+  try {
+    const data = await createLawyerListItemObject(webhookData);
+    return await prisma.listItem.create({ data });
+  } catch (error) {
+    logger.error(`createLawyerListItem Error: ${error.message}`);
+    throw error;
+  }
+}
+
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
   region?: string;
@@ -624,20 +578,117 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 }
 
-export async function createLawyerListItem(
-  webhookData: LawyersFormWebhookData
+// Covid Test Suppliers
+// TODO: Test
+async function createCovidTestSupplierListItemObject(
+  formData: CovidTestSupplierFormWebhookData
+): Promise<CovidTestSupplierListItemCreateInput> {
+  try {
+    const country = await createCountry(formData.organisationDetails.country);
+    const geoLocationId = await createAddressGeoLocation(formData);
+
+    return {
+      type: ServiceType.covidTestProviders,
+      isApproved: false,
+      isPublished: false,
+      jsonData: {
+        organisationName: formData.organisationDetails.organisationName
+          .toLowerCase()
+          .trim(),
+        contactName: formData.organisationDetails.contactName.trim(),
+        contactEmailAddress: formData.organisationDetails.contactEmailAddress
+          .toLocaleLowerCase()
+          .trim(),
+        contactPhoneNumber: formData.organisationDetails.contactPhoneNumber
+          .toLocaleLowerCase()
+          .trim(),
+        telephone: formData.organisationDetails.phoneNumber,
+        email: formData.organisationDetails.emailAddress.toLowerCase().trim(),
+        website: formData.organisationDetails.websiteAddress
+          .toLowerCase()
+          .trim(),
+        regulatoryAuthority: formData.regulatoryAuthority,
+        resultsFormat: formData.resultsFormat.split(",").map(trim),
+        bookingOptions: formData.bookingOptions
+          .split(",")
+          .map(trim)
+          .map(toLower),
+        providedTests: compact(
+          formData.providedTests
+            .split(", ")
+            .map(trim)
+            .map((testName) => {
+              switch (testName) {
+                case "Antigen":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimeAntigen),
+                  };
+                case "Loop-mediated Isothermal Amplification (LAMP)":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimeLamp),
+                  };
+                case "Polymerase Chain Reaction (PCR)":
+                  return {
+                    type: testName,
+                    turnaroundTime: Number(formData.turnaroundTimePCR),
+                  };
+                default:
+                  return undefined;
+              }
+            })
+        ),
+        fastestTurnaround: Math.min(
+          ...compact([
+            Number(formData.turnaroundTimeAntigen),
+            Number(formData.turnaroundTimeLamp),
+            Number(formData.turnaroundTimePCR),
+          ])
+        ),
+      },
+      address: {
+        create: {
+          firstLine: formData.organisationDetails.addressLine1,
+          secondLine: formData.organisationDetails.addressLine2,
+          postCode: formData.organisationDetails.postcode,
+          city: formData.organisationDetails.city,
+          country: {
+            connect: { id: country.id },
+          },
+          ...(typeof geoLocationId === "number"
+            ? {
+                geoLocation: {
+                  connect: {
+                    id: geoLocationId,
+                  },
+                },
+              }
+            : {}),
+        },
+      },
+    };
+  } catch (error) {
+    const message = `createCovidTestSupplierListItemObject Error: ${error.message}`;
+    logger.error(message);
+    throw new Error(message);
+  }
+}
+
+export async function createCovidTestSupplierListItem(
+  webhookData: CovidTestSupplierFormWebhookData
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
-    organisationName: webhookData.organisationName,
-    countryName: webhookData.country,
+    organisationName: webhookData.organisationDetails.organisationName,
+    countryName: webhookData.organisationDetails.country,
   });
 
   if (exists) {
-    throw new Error("Lawyer record already exists");
+    throw new Error("Covid Test Supplier Record already exists");
   }
 
   try {
-    const data = await createLawyerListItemObject(webhookData);
+    const data = await createCovidTestSupplierListItemObject(webhookData);
     return await prisma.listItem.create({ data });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
@@ -645,7 +696,6 @@ export async function createLawyerListItem(
   }
 }
 
-// Covid Test Suppliers
 export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;
   region: string;
@@ -660,7 +710,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
 
     if (props.turnaroundTime > 0) {
       andWhere = pgescape(
-        `AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= %s`,
+        `AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= %s`,
         props.turnaroundTime
       );
     }
@@ -683,26 +733,5 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
   } catch (error) {
     logger.error("findPublishedCovidTestSupplierPerCountry ERROR: ", error);
     return [];
-  }
-}
-
-export async function createCovidTestSupplierListItem(
-  webhookData: CovidTestSupplierFormWebhookData
-): Promise<ListItem> {
-  const exists = await checkListItemExists({
-    organisationName: webhookData.organisationDetails.organisationName,
-    countryName: webhookData.organisationDetails.country,
-  });
-
-  if (exists) {
-    throw new Error("Covid Test Supplier Record already exists");
-  }
-
-  try {
-    const data = await createCovidTestSupplierListItemObject(webhookData);
-    return await prisma.listItem.create({ data });
-  } catch (error) {
-    logger.error(`createLawyerListItem Error: ${error.message}`);
-    throw error;
   }
 }

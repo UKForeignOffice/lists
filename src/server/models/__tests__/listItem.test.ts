@@ -67,6 +67,11 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
   meetUKstandards: true,
   provideResultsInEnglishFrenchSpanish: true,
   provideTestResultsIn72Hours: true,
+  providedTests:
+    "Antigen, Loop-mediated Isothermal Amplification (LAMP), Polymerase Chain Reaction (PCR)",
+  turnaroundTimeAntigen: "1",
+  turnaroundTimeLamp: "48",
+  turnaroundTimePCR: "24",
   organisationDetails: {
     organisationName: "Covid Test Provider Name",
     contactName: "Contact Name",
@@ -81,10 +86,7 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
     postcode: "123456",
     country: "france",
   },
-  turnaroundTime: "1",
   resultsFormat: "Email,SMS",
-  openingTimes: "Monday to Friday, 9am-5pm",
-  provideResultsWhenClosed: false,
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
 };
@@ -789,7 +791,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'covidTestProviders'
         AND "Country".name = 'Ghana'
-        AND ("ListItem"."jsonData"->>'turnaroundTime')::int <= 1
+        AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= 1
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
@@ -856,14 +858,24 @@ describe("ListItem Model:", () => {
             telephone: "777654321",
             email: "contact@email.com",
             website: "www.website.com",
-            openingTimes: "Monday to Friday, 9am-5pm",
             regulatoryAuthority: "Health Authority",
-            provideResultsInEnglishFrenchSpanish: true,
-            provideTestResultsIn72Hours: true,
-            provideResultsWhenClosed: false,
             resultsFormat: ["Email", "SMS"],
             bookingOptions: ["website", "in person"],
-            turnaroundTime: 1,
+            fastestTurnaround: 1,
+            providedTests: [
+              {
+                turnaroundTime: 1,
+                type: "Antigen",
+              },
+              {
+                turnaroundTime: 48,
+                type: "Loop-mediated Isothermal Amplification (LAMP)",
+              },
+              {
+                turnaroundTime: 24,
+                type: "Polymerase Chain Reaction (PCR)",
+              },
+            ],
           },
           address: {
             create: {

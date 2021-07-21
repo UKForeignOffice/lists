@@ -71,10 +71,11 @@ export interface CovidTestSupplierFormWebhookData {
     postcode: string;
     country: string;
   };
-  turnaroundTime: string;
+  providedTests: string;
+  turnaroundTimeAntigen: string;
+  turnaroundTimeLamp: string;
+  turnaroundTimePCR: string;
   resultsFormat: string;
-  openingTimes: string;
-  provideResultsWhenClosed: boolean;
   bookingOptions: string;
   declarationConfirm: string;
 }
