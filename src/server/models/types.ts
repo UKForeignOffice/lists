@@ -110,6 +110,7 @@ export interface CovidTestSupplierListItemJsonData extends JsonObject {
     type: string;
     turnaroundTime: number;
   }>;
+  fastestTurnaround: number;
   metadata?: {
     emailVerified?: boolean;
   };
