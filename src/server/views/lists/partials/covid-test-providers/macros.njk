@@ -8,32 +8,24 @@
     </p>
   {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Opening times</strong>: {{ item.jsonData.openingTimes }}
-  </p>
-  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>: 
       {{ item.address.firstLine }} 
       {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
       {{ "-" if item.address.postCode }} {{ item.address.postCode }} 
       {{ "-" if item.address.city }} {{ item.address.city }}
   </p>
-  {% if item.jsonData.email %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
-    </p>
-  {% endif %}
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+        <strong>Available tests</strong>:
+        {% for item in _.orderBy(item.jsonData.providedTests, ["turnaroundTime"]) %}
+          {{ item.type }} (results in {{item.turnaroundTime}} hour{{ "s" if item.turnaroundTime > 1}}){{", " if not loop.last}}
+        {% endfor %}
+      </p>
   {% if item.jsonData.website %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
     </p>
   {% endif %}
-
-  {% if (not item.jsonData.email) or (not item.jsonData.website) %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-    </p>
-  {% endif %}
-
+  
   <details class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary">
       <span class="govuk-details__summary-text">
@@ -46,17 +38,16 @@
           <strong>Telephone</strong>: {{ item.jsonData.telephone }}
         </p>  
       {% endif %}
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Turnaround time</strong>: {{ item.jsonData.turnaroundTime }} hour{{ "s" if item.jsonData.turnaroundTime > 1}} 
-      </p>
+      {% if item.jsonData.email %}
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
+        </p>
+      {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Results formats</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Provide results when closed</strong>: {{ "Yes" if item.jsonData.provideResultsWhenClosed else "No" }}
-      </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Provides certificate translation</strong>: {{ "Yes" if item.jsonData.provideResultsInEnglishFrenchSpanish else "No" }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
