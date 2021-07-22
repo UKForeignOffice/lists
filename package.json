@@ -90,7 +90,7 @@
     "jest": "^27.0.6",
     "jest-axe": "^5.0.1",
     "jest-extended": "^0.11.5",
-    "jest-mock-extended": "^1.0.16",
+    "jest-mock-extended": "^1.0.18",
     "lint-staged": "^11.0.0",
     "mini-css-extract-plugin": "^2.1.0",
     "nock": "^13.1.1",
