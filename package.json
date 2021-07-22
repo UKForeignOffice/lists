@@ -24,7 +24,7 @@
   "dependencies": {
     "@prisma/client": "^2.27.0",
     "accessible-autocomplete": "^2.0.3",
-    "aws-sdk": "^2.943.0",
+    "aws-sdk": "^2.951.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "connect-redis": "^6.0.0",
