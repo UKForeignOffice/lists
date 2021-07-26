@@ -587,6 +587,33 @@ async function createCovidTestSupplierListItemObject(
     const country = await createCountry(formData.organisationDetails.country);
     const geoLocationId = await createAddressGeoLocation(formData);
 
+    const providedTests = compact(
+      formData.providedTests
+        .split(", ")
+        .map(trim)
+        .map((testName) => {
+          switch (testName) {
+            case "Antigen":
+              return {
+                type: testName,
+                turnaroundTime: parseInt(formData.turnaroundTimeAntigen, 10),
+              };
+            case "Loop-mediated Isothermal Amplification (LAMP)":
+              return {
+                type: testName,
+                turnaroundTime: parseInt(formData.turnaroundTimeLamp, 10),
+              };
+            case "Polymerase Chain Reaction (PCR)":
+              return {
+                type: testName,
+                turnaroundTime: parseInt(formData.turnaroundTimePCR, 10),
+              };
+            default:
+              return undefined;
+          }
+        })
+    );
+
     return {
       type: ServiceType.covidTestProviders,
       isApproved: false,
@@ -613,38 +640,9 @@ async function createCovidTestSupplierListItemObject(
           .split(",")
           .map(trim)
           .map(toLower),
-        providedTests: compact(
-          formData.providedTests
-            .split(", ")
-            .map(trim)
-            .map((testName) => {
-              switch (testName) {
-                case "Antigen":
-                  return {
-                    type: testName,
-                    turnaroundTime: Number(formData.turnaroundTimeAntigen),
-                  };
-                case "Loop-mediated Isothermal Amplification (LAMP)":
-                  return {
-                    type: testName,
-                    turnaroundTime: Number(formData.turnaroundTimeLamp),
-                  };
-                case "Polymerase Chain Reaction (PCR)":
-                  return {
-                    type: testName,
-                    turnaroundTime: Number(formData.turnaroundTimePCR),
-                  };
-                default:
-                  return undefined;
-              }
-            })
-        ),
+        providedTests,
         fastestTurnaround: Math.min(
-          ...compact([
-            Number(formData.turnaroundTimeAntigen),
-            Number(formData.turnaroundTimeLamp),
-            Number(formData.turnaroundTimePCR),
-          ])
+          ...providedTests.map((test) => test.turnaroundTime)
         ),
       },
       address: {

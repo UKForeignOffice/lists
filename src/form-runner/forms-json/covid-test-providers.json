@@ -1683,23 +1683,23 @@
       "items": [
         {
           "text": "up to 1 hour",
-          "value": 1
+          "value": "1 hour"
         },
         {
           "text": "up to 12 hours",
-          "value": 12
+          "value": "12 hours"
         },
         {
           "text": "up to 24 hours",
-          "value": 24
+          "value": "24 hours"
         },
         {
           "text": "up to 48 hours",
-          "value": 48
+          "value": "48 hours"
         },
         {
           "text": "up to 72 hours",
-          "value": 72
+          "value": "72 hours"
         }
       ]
     },
