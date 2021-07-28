@@ -58,6 +58,14 @@ export function configureHelmet(server: Express): void {
           "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
         },
       },
+      frameguard: {
+        action: "deny",
+      },
     }) as RequestHandler
   );
+
+  server.use(helmet.hsts());
+  server.use(helmet.noSniff());
+  server.use(helmet.expectCt());
+  server.use(helmet.xssFilter());
 }
