@@ -1,4 +1,4 @@
-import { Express, RequestHandler } from "express";
+import { Express } from "express";
 import { IncomingMessage, ServerResponse } from "http";
 import { get, set } from "lodash";
 import helmet from "helmet";
@@ -37,27 +37,30 @@ export function configureHelmet(server: Express): void {
     return `'nonce-${get(res, "locals.cspNonce")}'`;
   };
 
+  server.use(helmet.frameguard({ action: "deny" }));
+  server.use(helmet.referrerPolicy({ policy: "no-referrer" }));
   server.use(
-    helmet({
-      referrerPolicy: { policy: "no-referrer" },
-      contentSecurityPolicy: {
-        useDefaults: true,
-        directives: {
-          defaultSrc: [
-            ...TRUSTED,
-            ...GOVUK_DOMAINS,
-            ...GOOGLE_ANALYTICS_DOMAINS,
-          ],
-          "script-src": [
-            ...TRUSTED,
-            ...GOVUK_DOMAINS,
-            ...GOOGLE_ANALYTICS_DOMAINS,
-            ...GOOGLE_STATIC_DOMAINS,
-            generateCspNonce,
-          ],
-          "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
-        },
+    helmet.contentSecurityPolicy({
+      useDefaults: true,
+      directives: {
+        defaultSrc: [...TRUSTED, ...GOVUK_DOMAINS, ...GOOGLE_ANALYTICS_DOMAINS],
+        "script-src": [
+          ...TRUSTED,
+          ...GOVUK_DOMAINS,
+          ...GOOGLE_ANALYTICS_DOMAINS,
+          ...GOOGLE_STATIC_DOMAINS,
+          generateCspNonce,
+        ],
+        "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
       },
-    }) as RequestHandler
+    })
   );
+  server.use(helmet.hsts());
+  server.use(helmet.noSniff());
+  server.use(helmet.ieNoOpen());
+  server.use(helmet.expectCt());
+  server.use(helmet.xssFilter());
+  server.use(helmet.hidePoweredBy());
+  server.use(helmet.dnsPrefetchControl());
+  server.use(helmet.permittedCrossDomainPolicies());
 }
