@@ -1,11 +1,20 @@
 import {
+  listsGetController,
+  listsResultsController,
+  listsGetPrivateBetaPage,
   listsDataIngestionController,
-  listRedirectToLawyersController,
   listsConfirmApplicationController,
 } from "../lists";
 import { listItem } from "server/models";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
+import { ServiceType } from "server/models/types";
+import * as lawyers from "../lawyers";
+import * as covidTestProviders from "../covid-test-provider";
+import { DEFAULT_VIEW_PROPS } from "../constants";
+import { getServiceLabel } from "../helpers";
+
+jest.mock("server/services/google-analytics");
 
 const webhookPayload = {
   questions: [
@@ -120,16 +129,16 @@ describe("Lists Controllers", () => {
       .mockResolvedValue(true);
   }
 
-  describe("listRedirectToLawyersController", () => {
-    test("redirect is correct", () => {
-      req.query.qParam = 1;
-      req.body.bParam = 2;
+  describe("listsGetController", () => {
+    test("it renders question page when serviceType is undefined", () => {
+      listsGetController(req, res, next);
 
-      listRedirectToLawyersController(req, res);
-
-      expect(res.redirect).toHaveBeenCalledWith(
-        "/find?qParam=1&bParam=2&reference=123ABC&serviceType=lawyers"
-      );
+      expect(res.render).toHaveBeenCalledWith("lists/question-page.html", {
+        ...DEFAULT_VIEW_PROPS,
+        ...{ ...req.params, ...req.query, ...req.body },
+        partialToRender: "question-service-type.html",
+        getServiceLabel,
+      });
     });
   });
 
@@ -280,6 +289,58 @@ describe("Lists Controllers", () => {
         expect(next).toHaveBeenCalledWith(error);
         done();
       });
+    });
+  });
+
+  describe("listsGetPrivateBetaPage", () => {
+    test("it calls next when serviceType query parameter is undefined", () => {
+      req.query.serviceType = undefined;
+
+      listsGetPrivateBetaPage(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    test("it calls render with the correct template path and parameters", () => {
+      req.query.serviceType = "testServiceType";
+
+      listsGetPrivateBetaPage(req, res, next);
+
+      expect(res.render).toHaveBeenCalledWith("lists/private-beta-page.html", {
+        serviceType: "testServiceType",
+        ServiceType,
+      });
+    });
+  });
+
+  describe("listsResultsController", () => {
+    test("it invokes searchLayer with correct parameters", () => {
+      const spySearchLawyers = jest.spyOn(lawyers, "searchLawyers");
+      req.params.serviceType = ServiceType.lawyers;
+
+      listsResultsController(req, res, next);
+
+      expect(spySearchLawyers).toHaveBeenCalledWith(req, res);
+    });
+
+    test("it invokes searchCovidTestProvider with correct parameters", () => {
+      const spySearchCovidTestProviders = jest.spyOn(
+        covidTestProviders,
+        "searchCovidTestProvider"
+      );
+      req.params.serviceType = ServiceType.covidTestProviders;
+
+      listsResultsController(req, res, next);
+
+      expect(spySearchCovidTestProviders).toHaveBeenCalledWith(req, res);
+    });
+
+    test("it invokes next when serviceType is unknown", () => {
+      req.params.serviceType = "any";
+
+      listsResultsController(req, res, next);
+
+      expect(next).toHaveBeenCalled();
     });
   });
 });

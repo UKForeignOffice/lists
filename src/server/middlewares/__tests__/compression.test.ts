@@ -19,10 +19,10 @@ describe("Compress middleware", () => {
 
   test("is not compressing when x-no-compression header is present", async () => {
     const { headers } = await request(server)
-      .get("/")
+      .get("/find?serviceType=covidTestProviders")
       .set("x-no-compression", "true")
       .set("Accept-Encoding", "gzip");
 
-    expect(headers.vary.indexOf("Accept-Encoding") > -1).toBe(false);
+    expect(headers.vary).toBe(undefined);
   });
 });

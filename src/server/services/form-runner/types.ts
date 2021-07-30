@@ -59,6 +59,7 @@ export interface CovidTestSupplierFormWebhookData {
   provideTestResultsIn72Hours: boolean;
   organisationDetails: {
     organisationName: string;
+    locationName: string;
     contactName: string;
     contactEmailAddress: string;
     contactPhoneNumber: string;

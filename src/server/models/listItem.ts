@@ -187,17 +187,34 @@ function fetchPublishedListItemQuery(props: {
 
 export async function checkListItemExists({
   organisationName,
+  locationName,
   countryName,
 }: {
   organisationName: string;
+  locationName?: string;
   countryName: string;
 }): Promise<boolean> {
-  const total = await prisma.listItem.count({
-    where: {
+  const jsonDataQuery = [
+    {
       jsonData: {
         path: ["organisationName"],
         equals: organisationName.toLocaleLowerCase(),
       },
+    },
+  ];
+
+  if (locationName !== undefined) {
+    jsonDataQuery.push({
+      jsonData: {
+        path: ["locationName"],
+        equals: locationName.toLocaleLowerCase(),
+      },
+    });
+  }
+
+  const total = await prisma.listItem.count({
+    where: {
+      AND: jsonDataQuery,
       address: {
         country: {
           name: startCase(countryName),
@@ -678,6 +695,7 @@ export async function createCovidTestSupplierListItem(
 ): Promise<ListItem> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationDetails.organisationName,
+    locationName: webhookData.organisationDetails.locationName,
     countryName: webhookData.organisationDetails.country,
   });
 
