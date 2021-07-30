@@ -1,5 +1,4 @@
 import { Express } from "express";
-import { listsRoutes } from "server/controllers/lists";
 import request from "supertest";
 import { getServer } from "../../server";
 
@@ -9,13 +8,6 @@ describe("Lists routes", () => {
   beforeAll(async () => {
     server = await getServer();
   }, 30000);
-
-  test("lists start route is redirecting correctly", async () => {
-    const { status, headers } = await request(server).get(listsRoutes.start);
-
-    expect(status).toEqual(302);
-    expect(headers.location).toBe("/find?serviceType=lawyers");
-  });
 
   test("lists finder route is ready", async () => {
     const { status } = await request(server).get(

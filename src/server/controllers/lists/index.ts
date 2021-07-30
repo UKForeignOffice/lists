@@ -3,9 +3,7 @@ export {
   listsPostController,
   listsResultsController,
   listsGetPrivateBetaPage,
-  listsStartPageController,
   listsDataIngestionController,
-  listRedirectToLawyersController,
   listsConfirmApplicationController,
 } from "./lists";
 

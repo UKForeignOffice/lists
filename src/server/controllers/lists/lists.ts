@@ -31,13 +31,6 @@ import {
 } from "server/services/form-runner/types";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 
-export function listsStartPageController(req: Request, res: Response): void {
-  return res.render("lists/start-page", {
-    nextRoute: listsRoutes.finder,
-    previousRoute: listsRoutes.start,
-  });
-}
-
 export async function listsPostController(
   req: Request,
   res: Response,
@@ -183,17 +176,6 @@ export function listsResultsController(
   }
 }
 
-export function listRedirectToLawyersController(
-  req: Request,
-  res: Response
-): void {
-  const params = getAllRequestParams(req);
-  params.serviceType = ServiceType.lawyers;
-  const queryString = queryStringFromParams(params);
-
-  res.redirect(`${listsRoutes.finder}?${queryString}`);
-}
-
 export function listsDataIngestionController(
   req: Request,
   res: Response
@@ -267,7 +249,7 @@ export function listsGetPrivateBetaPage(
     return next();
   }
 
-  res.render(`lists/private-beta-page.html`, {
+  res.render("lists/private-beta-page.html", {
     serviceType,
     ServiceType,
   });
