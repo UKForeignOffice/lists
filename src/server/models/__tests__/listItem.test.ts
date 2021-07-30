@@ -74,6 +74,7 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
   turnaroundTimePCR: "24",
   organisationDetails: {
     organisationName: "Covid Test Provider Name",
+    locationName: "London",
     contactName: "Contact Name",
     contactEmailAddress: "aa@aa.com",
     contactPhoneNumber: "777654321",
@@ -168,14 +169,18 @@ describe("ListItem Model:", () => {
 
       expect(spyCount.mock.calls[0][0]).toEqual({
         where: {
+          AND: [
+            {
+              jsonData: {
+                equals: LawyerWebhookData.organisationName.toLowerCase(),
+                path: ["organisationName"],
+              },
+            },
+          ],
           address: {
             country: {
               name: LawyerWebhookData.country,
             },
-          },
-          jsonData: {
-            equals: LawyerWebhookData.organisationName.toLowerCase(),
-            path: ["organisationName"],
           },
         },
       });
@@ -584,21 +589,61 @@ describe("ListItem Model:", () => {
   describe("checkListItemExists", () => {
     const countryName = "France";
     const organisationName = "XYZ Corp";
+    const locationName = "Location Name";
 
-    test("listItem.count call is correct", async () => {
+    test("listItem.count call is correct without organisationName", async () => {
       const spy = spyListItemCount(0);
 
       await checkListItemExists({ countryName, organisationName });
+
       expect(spy).toHaveBeenCalledWith({
         where: {
+          AND: [
+            {
+              jsonData: {
+                path: ["organisationName"],
+                equals: organisationName.toLowerCase(),
+              },
+            },
+          ],
           address: {
             country: {
               name: countryName,
             },
           },
-          jsonData: {
-            equals: organisationName.toLowerCase(),
-            path: ["organisationName"],
+        },
+      });
+    });
+
+    test("listItem.count call is correct with organisationName", async () => {
+      const spy = spyListItemCount(0);
+
+      await checkListItemExists({
+        countryName,
+        organisationName,
+        locationName,
+      });
+
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            {
+              jsonData: {
+                path: ["organisationName"],
+                equals: organisationName.toLowerCase(),
+              },
+            },
+            {
+              jsonData: {
+                path: ["locationName"],
+                equals: locationName.toLowerCase(),
+              },
+            },
+          ],
+          address: {
+            country: {
+              name: countryName,
+            },
           },
         },
       });
