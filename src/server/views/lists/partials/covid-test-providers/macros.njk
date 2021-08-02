@@ -52,10 +52,6 @@
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
       </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Regulatory authority</strong>: {{ _.startCase(item.jsonData.regulatoryAuthority) }}
-      </p>
-      
       
       {% if isDashboard %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -69,8 +65,9 @@
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
           <strong>Contact email address</strong>: {{ item.jsonData.contactEmailAddress.toLowerCase() }}
         </p>
-
-        
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Regulatory authority</strong>: {{ _.startCase(item.jsonData.regulatoryAuthority) }}
+        </p>        
       {% endif %}
     </div>
   </details>      
