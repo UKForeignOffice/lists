@@ -1,6 +1,6 @@
 {% macro covidTestProvidersListItem(item, isDashboard = false) %}
   <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
-    {{ _.startCase(item.jsonData.organisationName) }}
+    {{ _.startCase(item.jsonData.organisationName) }}{{ " - " if item.jsonData.locationName }}{{ _.startCase(item.jsonData.locationName) }}
   </h2>
   {% if item.distanceinmeters >= 0 %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
