@@ -135,6 +135,15 @@
           "title": "Organisation name",
           "nameHasError": false,
           "schema": {}
+        },
+        {
+          "name": "locationName",
+          "options": {
+            "required": false
+          },
+          "type": "TextField",
+          "title": "Location name",
+          "nameHasError": false
         }
       ],
       "next": [
