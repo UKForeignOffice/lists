@@ -37,11 +37,11 @@ export const configureViews = (server: Express): void => {
 
     try {
       cookiesPolicy = JSON.parse(
-        get(req, "cookies.lists_cookies_policy", "{}")
+        get(req, "cookies.cookies_policy", "{}")
       );
     } catch (error) {
       // cleanup legacy json cookie
-      res.clearCookie("lists_cookies_policy");
+      res.clearCookie("cookies_policy");
     }
 
     engine.addGlobal("cookiesPolicy", cookiesPolicy);

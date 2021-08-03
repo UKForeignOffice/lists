@@ -91,14 +91,14 @@ describe("Cookies", () => {
       const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = headers["set-cookie"]
-        .find((elm: string) => elm?.includes("lists_cookies_policy"))
+        .find((elm: string) => elm?.includes("cookies_policy"))
         .split("=")[1]
         .split(";")[0]
         .trim();
 
       expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual(
-        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "on" }))
+        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "on", usage: true }))
       );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
@@ -121,14 +121,14 @@ describe("Cookies", () => {
       const successBanner = $html(".govuk-notification-banner");
 
       const cookiesPolicy = headers["set-cookie"]
-        .find((elm: string) => elm?.includes("lists_cookies_policy"))
+        .find((elm: string) => elm?.includes("cookies_policy"))
         .split("=")[1]
         .split(";")[0]
         .trim();
 
       expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual(
-        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "off" }))
+        encodeURIComponent(JSON.stringify({ isSet: true, analytics: "off", usage: false }))
       );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");
