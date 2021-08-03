@@ -63,7 +63,7 @@
     removeCookieBanner();
   }
 
-  rejectButton.rejectButton = function rejectAnalyticsCookies() {
+  rejectButton.onclick = function rejectAnalyticsCookies() {
     event.stopPropagation();
     toggleAnalyticsCookies(false);
     removeCookieBanner();

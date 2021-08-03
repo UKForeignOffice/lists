@@ -9,12 +9,14 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
   const cookiesPolicy: {
     analytics: "on" | "off";
     isSet: boolean;
+    usage: boolean;
   } = {
     isSet: true,
     analytics: req.body.analytics,
+    usage: req.body.analytics === "on"
   };
 
-  res.cookie("lists_cookies_policy", JSON.stringify(cookiesPolicy), {
+  res.cookie("cookies_policy", JSON.stringify(cookiesPolicy), {
     maxAge: ONE_YEAR,
     httpOnly: true,
     secure: true,
