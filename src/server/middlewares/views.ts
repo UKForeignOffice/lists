@@ -3,7 +3,7 @@ import _, { get } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
-import { GA_TRACKING_ID, SERVICE_NAME, SERVICE_DOMAIN } from "server/config";
+import { GA_TRACKING_ID, SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
 
 const ROOT = process.cwd();
@@ -24,6 +24,7 @@ export const configureViews = (server: Express): void => {
       autoescape: true,
       express: server,
     })
+    .addGlobal("isProd", isProd)
     .addGlobal("appVersion", version)
     .addGlobal("SERVICE_NAME", SERVICE_NAME)
     .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
