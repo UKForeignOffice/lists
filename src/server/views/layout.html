@@ -7,17 +7,21 @@
 
 {% block head %}
 
-  {% if GA_TRACKING_ID and cookiesPolicy.analytics === "on" %}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GA_TRACKING_ID }}"></script>
-    <script nonce="{{cspNonce}}">
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '{{ GA_TRACKING_ID }}', {
-        'cookie_prefix': 'lists',
-      });
-    </script>
-  {% endif %}
+  <!-- Google Tag Manager -->
+  <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KZWHG2G');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google Tag Manager -->
+  <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
+  <!-- End Google Tag Manager -->
 
   <link as="font" href="/assets/fonts/bold-affa96571d-v2.woff" type="font/woff2" crossorigin="anonymous">
   <link as="font" href="/assets/fonts/bold-b542beb274-v2.woff2" type="font/woff2" crossorigin="anonymous">
@@ -49,6 +53,17 @@
   <script nonce="{{cspNonce}}">
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
   </script>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KZWHG2G" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCZSN93" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
   {% if not cookiesPolicy.isSet %}
     {% include "cookies/cookie-banner.html" %}
   {% endif %} 
@@ -65,7 +80,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="text/javascript" src="/assets/main.js"></script>
+  <script type="text/javascript" src="/assets/main.js" nonce="{{cspNonce}}"></script>
 {% endblock %}
 
 {% block footer %}
