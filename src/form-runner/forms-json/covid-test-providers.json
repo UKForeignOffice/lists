@@ -143,7 +143,8 @@
           },
           "type": "TextField",
           "title": "Location name",
-          "nameHasError": false
+          "nameHasError": false,
+          "hint": "If your organisation has more than one location, write down the specific name of the branch, building, street or temporary location of your testing site. For example, London Oxford Street, or Peckham Leisure Centre"
         }
       ],
       "next": [
@@ -345,7 +346,7 @@
       ],
       "next": [
         {
-          "path": "/how-does-your-organisation-provide-confirmation-of-a-covid-19-test-result"
+          "path": "/how-does-your-organisation-communicate-that-a-covid-19-test-result-is-ready"
         }
       ],
       "section": "organisationDetails"
@@ -408,17 +409,17 @@
       "next": []
     },
     {
-      "path": "/how-does-your-organisation-provide-confirmation-of-a-covid-19-test-result",
-      "title": "How does your organisation provide confirmation of a COVID-19 test result?",
+      "path": "/how-does-your-organisation-provide-proof-of-a-covid-19-test-result",
+      "title": "How does your organisation provide proof of a COVID-19 test result?",
       "components": [
         {
           "name": "resultsFormat",
           "options": {},
           "type": "CheckboxesField",
-          "title": "How does your company or facility provide confirmation of a COVID-19 test result?",
+          "title": "How does your organisation provide proof of a COVID-19 test result?",
           "list": "iLIaYP",
           "schema": {},
-          "hint": "Choose as many options as relevant. You must provide confirmation in at least one of these formats to meet the requirements. ",
+          "hint": "This is the format that confirms the result of a COVID-19 test, which can then be used as proof before travelling. Choose as many options as relevant. You must provide confirmation in at least one of these formats to meet the requirements.",
           "nameHasError": false
         }
       ],
@@ -658,6 +659,26 @@
       "next": [
         {
           "path": "/organisation-name"
+        }
+      ]
+    },
+    {
+      "path": "/how-does-your-organisation-communicate-that-a-covid-19-test-result-is-ready",
+      "title": "How does your organisation communicate that a COVID-19 test result is ready?",
+      "components": [
+        {
+          "name": "resultsReadyFormat",
+          "options": {},
+          "type": "CheckboxesField",
+          "title": "How does your organisation communicate that a COVID-19 test result is ready?",
+          "list": "sSINuN",
+          "nameHasError": false,
+          "hint": "This is how you let someone know that their test result is ready to access. Choose as many options as relevant."
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-does-your-organisation-provide-proof-of-a-covid-19-test-result"
         }
       ]
     }
@@ -1641,24 +1662,24 @@
       "type": "string",
       "items": [
         {
-          "text": "Website",
-          "value": "Website"
+          "text": "Email",
+          "value": "Email"
+        },
+        {
+          "text": "In Person",
+          "value": "In Person"
         },
         {
           "text": "Phone",
           "value": "Phone"
         },
         {
-          "text": "Email",
-          "value": "Email"
-        },
-        {
           "text": "SMS",
           "value": "SMS"
         },
         {
-          "text": "In Person",
-          "value": "In Person"
+          "text": "Website",
+          "value": "Website"
         }
       ]
     },
@@ -1808,6 +1829,34 @@
         {
           "text": "Polymerase Chain Reaction (PCR)",
           "value": "Polymerase Chain Reaction (PCR)"
+        }
+      ]
+    },
+    {
+      "title": "resultsCommunicationFormats",
+      "name": "sSINuN",
+      "type": "string",
+      "items": [
+        {
+          "text": "Email",
+          "value": "Email"
+        },
+        {
+          "text": "Phone call",
+          "value": "Phone call"
+        },
+        {
+          "text": "SMS message",
+          "description": "",
+          "value": "SMS message"
+        },
+        {
+          "text": "On-site in-person",
+          "value": "On-site in-person"
+        },
+        {
+          "text": "Other",
+          "value": "Other"
         }
       ]
     }
