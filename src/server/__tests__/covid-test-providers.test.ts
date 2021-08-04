@@ -62,7 +62,7 @@ describe("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Which country do you need a COVID-19 test in?"
+        "Which country do you need a COVID-19 test provider in?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
