@@ -37,7 +37,7 @@ const client = {
   node: {
     __dirname: false,
   },
-  devtool: "eval-cheap-module-source-map",
+  devtool: "cheap-module-source-map",
   module: {
     rules: [
       {
@@ -115,7 +115,7 @@ const server = {
   mode: environment,
   watch: devMode,
   entry: path.resolve(__dirname, "src", "server", "index.ts"),
-  devtool: "eval-cheap-module-source-map",
+  devtool: "cheap-module-source-map",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "server.js",
