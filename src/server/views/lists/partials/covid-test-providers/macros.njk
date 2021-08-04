@@ -22,7 +22,7 @@
       </p>
   {% if item.jsonData.website %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+      <strong>Website</strong>: <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
     </p>
   {% endif %}
   
@@ -35,12 +35,12 @@
     <div class="govuk-details__text">
       {% if (item.jsonData.email) and (item.jsonData.website) %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Telephone</strong>: <a href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
+          <strong>Telephone</strong>: <a class="telephone" href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
         </p>  
       {% endif %}
       {% if item.jsonData.email %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
+          <strong>Email</strong>: <a class="govuk-link email" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
