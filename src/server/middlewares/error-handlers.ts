@@ -15,7 +15,7 @@ const acceptsJSON = (req: Request): boolean => {
 };
 
 export const configureErrorHandlers = (server: Express): void => {
-  server.use(function (req: Request, res: Response, next: NextFunction) {
+  server.use(function (req: Request, res: Response) {
     logger.warn("404 Not found", { path: req.path });
 
     res.status(404);
@@ -23,7 +23,7 @@ export const configureErrorHandlers = (server: Express): void => {
     if (acceptsHTML(req)) {
       res.render("errors/404.html");
     } else if (acceptsJSON(req)) {
-      res.send({
+      res.json({
         error: "The resource you where looking for is not available.",
       });
     } else {
@@ -38,7 +38,6 @@ export const configureErrorHandlers = (server: Express): void => {
     err: HttpException,
     req: Request,
     res: Response,
-    next: NextFunction
   ) {
     logger.error("500 Error", err);
 
@@ -47,7 +46,7 @@ export const configureErrorHandlers = (server: Express): void => {
     if (acceptsHTML(req)) {
       res.render("errors/500.html");
     } else if (acceptsJSON(req)) {
-      res.send({
+      res.json({
         error: "Sorry, there is a problem with the service",
       });
     } else {
