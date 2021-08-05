@@ -47,7 +47,7 @@
         <strong>Results formats</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Provide results when closed</strong>: {{ "Yes" if item.jsonData.provideResultsWhenClosed else "No" }}
+        <strong>Communicates results</strong>: {{ item.jsonData.resultsReadyFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
