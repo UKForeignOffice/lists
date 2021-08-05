@@ -653,6 +653,7 @@ async function createCovidTestSupplierListItemObject(
           .trim(),
         regulatoryAuthority: formData.regulatoryAuthority,
         resultsFormat: formData.resultsFormat.split(",").map(trim),
+        resultsReadyFormat: formData.resultsReadyFormat.split(",").map(trim),
         bookingOptions: formData.bookingOptions
           .split(",")
           .map(trim)

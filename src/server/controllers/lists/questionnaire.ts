@@ -1,10 +1,10 @@
 import { Request } from "express";
 import { startCase, kebabCase } from "lodash";
 import {
+  parseListValues,
+  getServiceLabel,
   countryHasLegalAid,
   getAllRequestParams,
-  getServiceLabel,
-  parseListValues,
 } from "./helpers";
 import { QuestionName, Question } from "./types";
 
@@ -12,15 +12,15 @@ export const questions: {
   [key in QuestionName]: Question;
 } = {
   readNotice: {
+    getViewPartialName(req) {
+      const { serviceType } = getAllRequestParams(req);
+      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.html`;
+    },
     pageTitle(req) {
       const { country, serviceType } = getAllRequestParams(req);
       return country === undefined || country === ""
         ? `Find ${getServiceLabel(serviceType)} Abroad`
         : `Find ${getServiceLabel(serviceType)} in ${startCase(country)}`;
-    },
-    getViewPartialName(req) {
-      const { serviceType } = getAllRequestParams(req);
-      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.html`;
     },
     needsToAnswer(req) {
       const { readNotice } = getAllRequestParams(req);

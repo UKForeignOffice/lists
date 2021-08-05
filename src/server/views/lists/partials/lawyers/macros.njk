@@ -32,7 +32,7 @@
 
   {% if (not item.jsonData.email) or (not item.jsonData.website) %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Telephone</strong>: {{ item.jsonData.telephone }}
+      <strong>Telephone</strong>: <a href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
     </p>  
   {% endif %}
 

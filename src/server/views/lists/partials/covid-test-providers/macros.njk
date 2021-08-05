@@ -1,6 +1,6 @@
 {% macro covidTestProvidersListItem(item, isDashboard = false) %}
   <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
-    {{ _.startCase(item.jsonData.organisationName) }}
+    {{ _.startCase(item.jsonData.organisationName) }}{{ " - " if item.jsonData.locationName }}{{ _.startCase(item.jsonData.locationName) }}
   </h2>
   {% if item.distanceinmeters >= 0 %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
@@ -22,7 +22,7 @@
       </p>
   {% if item.jsonData.website %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+      <strong>Website</strong>: <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
     </p>
   {% endif %}
   
@@ -35,27 +35,23 @@
     <div class="govuk-details__text">
       {% if (item.jsonData.email) and (item.jsonData.website) %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Telephone</strong>: {{ item.jsonData.telephone }}
+          <strong>Telephone</strong>: <a class="telephone" href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
         </p>  
       {% endif %}
       {% if item.jsonData.email %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
+          <strong>Email</strong>: <a class="govuk-link email" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Results formats</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Provide results when closed</strong>: {{ "Yes" if item.jsonData.provideResultsWhenClosed else "No" }}
+        <strong>Communicates results</strong>: {{ item.jsonData.resultsReadyFormat.map(_.startCase).join(", ") }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
       </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Regulatory authority</strong>: {{ _.startCase(item.jsonData.regulatoryAuthority) }}
-      </p>
-      
       
       {% if isDashboard %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -69,8 +65,9 @@
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
           <strong>Contact email address</strong>: {{ item.jsonData.contactEmailAddress.toLowerCase() }}
         </p>
-
-        
+        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+          <strong>Regulatory authority</strong>: {{ _.startCase(item.jsonData.regulatoryAuthority) }}
+        </p>        
       {% endif %}
     </div>
   </details>      
