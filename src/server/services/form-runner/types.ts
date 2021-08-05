@@ -77,6 +77,7 @@ export interface CovidTestSupplierFormWebhookData {
   turnaroundTimeLamp: string;
   turnaroundTimePCR: string;
   resultsFormat: string;
+  resultsReadyFormat: string;
   bookingOptions: string;
   declarationConfirm: string;
 }

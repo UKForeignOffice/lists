@@ -87,6 +87,7 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
     postcode: "123456",
     country: "france",
   },
+  resultsReadyFormat: "Email,SMS",
   resultsFormat: "Email,SMS",
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
@@ -276,6 +277,16 @@ describe("ListItem Model:", () => {
           },
         },
       });
+    });
+
+    test("createLawyer throws listItem.create error", async () => {
+      spyListItemCount(0);
+      spyLocationService();
+      spyCountryUpsert();
+      const error = new Error("CREATE ERROR");
+      prisma.listItem.create.mockRejectedValueOnce(error);
+
+      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toEqual(error);
     });
   });
 
@@ -873,6 +884,10 @@ describe("ListItem Model:", () => {
     });
   });
 
+  describe("createCovidTestSupplierListItemObject", () => {
+    // TODO
+  });
+
   describe("createCovidTestSupplierListItem", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
@@ -904,6 +919,7 @@ describe("ListItem Model:", () => {
             email: "contact@email.com",
             website: "www.website.com",
             regulatoryAuthority: "Health Authority",
+            resultsReadyFormat: ["Email", "SMS"],
             resultsFormat: ["Email", "SMS"],
             bookingOptions: ["website", "in person"],
             fastestTurnaround: 1,
