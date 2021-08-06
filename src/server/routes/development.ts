@@ -2,12 +2,7 @@ import express, { Request, Response } from "express";
 import { exec } from "child_process";
 import { populateDb } from "server/models/db/helpers";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
-import {
-  createUser,
-  findUserByEmail,
-  findUsers,
-  updateUser,
-} from "server/models/user";
+import { createUser, updateUser, findUserByEmail } from "server/models/user";
 import { UserRoles } from "server/models/types";
 import { dashboardRoutes } from "server/controllers/dashboard";
 
@@ -39,16 +34,6 @@ router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
       res.send(stdout);
     }
   });
-});
-
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get(`${dashboardRoutes.start}/dev/list-users`, async (req, res) => {
-  try {
-    const users = await findUsers();
-    res.json({ users });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
 });
 
 async function promoteUser(req: Request, res: Response): Promise<void> {
