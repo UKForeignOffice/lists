@@ -19,25 +19,6 @@ export const describeDb = async (): Promise<any> => {
   }
 };
 
-export const dumpDb = async (): Promise<any> => {
-  const lawyersQuery = 'SELECT * from "Lawyer"';
-  const addressQuery = 'SELECT * from "Address"';
-  const geoQuery = 'SELECT * from "GeoLocation"';
-  const countryQuery = 'SELECT * from "Country"';
-
-  try {
-    const db = getDbPool();
-    const lawyers = await db.query(lawyersQuery);
-    const address = await db.query(addressQuery);
-    const geo = await db.query(geoQuery);
-    const country = await db.query(countryQuery);
-    return { lawyers, address, geo, country };
-  } catch (error) {
-    logger.error("dumpDb error:", error);
-    return error;
-  }
-};
-
 export async function populateDb(): Promise<string[]> {
   try {
     logger.info("Prepare Database: Seeding data");
