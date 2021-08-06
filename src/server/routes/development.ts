@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import { exec } from "child_process";
-import { listAppliedMigrations } from "server/models/helpers";
 import { populateDb } from "server/models/db/helpers";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
 import {
@@ -41,19 +40,6 @@ router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
     }
   });
 });
-
-router.get(
-  `${dashboardRoutes.start}/dev/list-applied-migrations`,
-  (req, res) => {
-    listAppliedMigrations()
-      .then((result) => {
-        res.json({ result });
-      })
-      .catch((error) => {
-        res.json({ error });
-      });
-  }
-);
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(`${dashboardRoutes.start}/dev/list-users`, async (req, res) => {

@@ -24,19 +24,6 @@ export const rawInsertGeoLocation = async (
   }
 };
 
-export const listAppliedMigrations = async (): Promise<any> => {
-  const query = "SELECT * from _prisma_migrations";
-
-  try {
-    const db = getDbPool();
-    const { rows } = await db.query(query);
-    return { migrations: rows };
-  } catch (error) {
-    logger.error("listAppliedMigrations error:", error);
-    return error;
-  }
-};
-
 export function filterAllowedLegalAreas(legalAreas: string[]): LegalAreas[] {
   const allowed = [
     "bankruptcy",
