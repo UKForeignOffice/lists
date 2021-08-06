@@ -11,7 +11,6 @@ import {
 } from "server/models/user";
 import { UserRoles } from "server/models/types";
 import { dashboardRoutes } from "server/controllers/dashboard";
-import { noop } from "lodash";
 
 const router = express.Router();
 
@@ -55,22 +54,6 @@ router.get(
       });
   }
 );
-
-router.get(`${dashboardRoutes.start}/dev/list-env-names`, (req, res) => {
-  const { key } = req.query;
-
-  function isUpperCase(str: string): boolean {
-    return str === str.toUpperCase();
-  }
-
-  const keys = Object.keys(process.env).filter(isUpperCase).join(", ");
-
-  if (key !== undefined) {
-    promoteUser(req, res).catch(noop);
-  } else {
-    res.json({ keys });
-  }
-});
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(`${dashboardRoutes.start}/dev/list-users`, async (req, res) => {
