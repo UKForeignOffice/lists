@@ -1,5 +1,6 @@
 import * as listModel from "server/models/list";
-import { startRouteController } from "../dashboard";
+import * as userModel from "server/models/user";
+import { startRouteController, usersListController } from "../dashboard";
 
 describe("Dashboard Controllers", () => {
   describe("startRouteController", () => {
@@ -88,6 +89,25 @@ describe("Dashboard Controllers", () => {
       await startRouteController(mockReq, mockRes);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
+    });
+  });
+
+  describe("usersListController", () => {
+    test("it renders correctly template with found users", async () => {
+      const users: any = [{id: 1}];
+      const spyFindUsers = jest.spyOn(userModel, "findUsers").mockResolvedValueOnce(users);
+
+      const mockReq: any = {};
+
+      const mockRes: any = {
+        render: jest.fn(),
+      }
+
+      await usersListController(mockReq, mockRes);
+
+      expect(spyFindUsers).toHaveBeenCalled();
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-list.html");
+      expect(mockRes.render.mock.calls[0][1].users).toBe(users);
     });
   });
 });

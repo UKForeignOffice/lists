@@ -47,7 +47,6 @@ const DEFAULT_VIEW_PROPS = {
   userIsListAdministrator,
 };
 
-// TODO: test
 export async function startRouteController(
   req: Request,
   res: Response
@@ -67,7 +66,6 @@ export async function startRouteController(
   }
 }
 
-// TODO: test
 export async function usersListController(
   req: Request,
   res: Response
