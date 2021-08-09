@@ -108,12 +108,9 @@
         },
         {
           "name": "contactPhoneNumber",
-          "options": {
-            "hideTitle": false
-          },
-          "type": "TelephoneNumberField",
+          "options": {},
+          "type": "TextField",
           "title": "Telephone number",
-          "schema": {},
           "nameHasError": false
         }
       ],
@@ -220,8 +217,8 @@
       ]
     },
     {
-      "path": "/can-your-organisation-provide-covid-19-test-results-in-english-french-or-spanish",
-      "title": "Can your organisation provide COVID-19 test results in English, French or Spanish? ",
+      "path": "/can-your-organisation-provide-covid-19-test-results-in-english-or-french-or-spanish",
+      "title": "Can your organisation provide COVID-19 test results in English or French or Spanish? ",
       "components": [
         {
           "name": "mCWgAH",
@@ -236,9 +233,12 @@
             "hideTitle": true
           },
           "type": "YesNoField",
-          "title": "Can your organisation provide COVID-19 test results in English, French or Spanish? ",
+          "title": "Can your organisation provide COVID-19 test results in English or French or Spanish? ",
           "schema": {},
-          "nameHasError": false
+          "nameHasError": false,
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
@@ -271,14 +271,11 @@
       "components": [
         {
           "name": "phoneNumber",
-          "options": {
-            "optionalText": true
-          },
-          "type": "TelephoneNumberField",
+          "options": {},
+          "type": "TextField",
           "title": "Phone number",
-          "nameHasError": false,
-          "schema": {},
-          "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK."
+          "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK.",
+          "nameHasError": false
         }
       ],
       "next": [
@@ -341,7 +338,11 @@
           "title": "Country",
           "nameHasError": false,
           "list": "country",
-          "schema": {}
+          "schema": {},
+          "hint": "Please write the country in English",
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
@@ -457,7 +458,7 @@
           "condition": "JuFDfz"
         },
         {
-          "path": "/can-your-organisation-provide-covid-19-test-results-in-english-french-or-spanish"
+          "path": "/can-your-organisation-provide-covid-19-test-results-in-english-or-french-or-spanish"
         }
       ]
     },
@@ -1762,12 +1763,16 @@
           "value": "email"
         },
         {
+          "text": "Printed document collected in person",
+          "value": "printed document collected in person"
+        },
+        {
           "text": "SMS message",
           "value": "sms"
         },
         {
-          "text": "Printed document collected in person",
-          "value": "printed document collected in person"
+          "text": "Website",
+          "value": "Website"
         }
       ]
     },
