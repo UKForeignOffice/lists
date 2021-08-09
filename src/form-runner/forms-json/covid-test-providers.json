@@ -227,7 +227,7 @@
           "name": "mCWgAH",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> When you send the results of a COVID-19 test to an individual they must be written in English, French or Spanish. </div>",
+          "content": "<div class=\"govuk-hint\"> When you send the results of a COVID-19 test to an individual they must be written in English or French or Spanish. </div>",
           "schema": {}
         },
         {
