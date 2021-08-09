@@ -8,7 +8,7 @@ const formRunnerQuestionSchema = Joi.object({
       key: Joi.string(),
       title: Joi.string(),
       type: Joi.string(),
-      answer: Joi.alternatives().try(Joi.boolean(), Joi.string(), Joi.number()),
+      answer: Joi.alternatives().try(Joi.boolean(), Joi.string().allow(null), Joi.number()),
     })
   ),
   index: Joi.number(),
