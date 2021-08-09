@@ -203,7 +203,7 @@ export async function checkListItemExists({
     },
   ];
 
-  if (locationName !== undefined) {
+  if (locationName !== undefined && locationName !== null) {
     jsonDataQuery.push({
       jsonData: {
         path: ["locationName"],
