@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim, pick, compact, noop } from "lodash";
+import { startCase, toLower, trim, pick, compact, noop, get } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -54,11 +54,10 @@ export async function startRouteController(
 ): Promise<void> {
   if (req.user !== undefined) {
     const lists = await findUserLists(req.user?.userData.email);
-    const isNewUser = !(
-      req.user?.isSuperAdmin() ||
-      req.user?.isListsCreator() ||
-      (lists !== undefined && lists.length > 0)
-    );
+    const isNewUser =
+      !req.user?.isSuperAdmin() &&
+      !req.user?.isListsCreator() &&
+      get(lists ?? [], "length") === 0;
 
     res.render("dashboard/dashboard.html", {
       ...DEFAULT_VIEW_PROPS,
