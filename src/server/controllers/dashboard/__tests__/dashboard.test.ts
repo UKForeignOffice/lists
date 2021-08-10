@@ -5,6 +5,7 @@ import {
   startRouteController,
   usersListController,
   usersEditController,
+  listsController,
 } from "../dashboard";
 
 describe("Dashboard Controllers", () => {
@@ -163,6 +164,15 @@ describe("Dashboard Controllers", () => {
       expect(spyIsSuperAdmin).toHaveBeenCalledWith(mockReq.params.userEmail);
     });
 
+    test("it invokes next with isSuperAdmin rejected error", async () => {
+      const error = new Error("isSuperAdmin rejected");
+      jest.spyOn(userModel, "isSuperAdminUser").mockRejectedValueOnce(error);
+
+      await usersEditController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+
     test("it renders correct template with correct user value", async () => {
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
@@ -204,6 +214,64 @@ describe("Dashboard Controllers", () => {
       mockReq.body = { roles: "" };
 
       await usersEditController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("listsController", () => {
+    let mockReq: any;
+    let mockRes: any;
+    let mockNext: any;
+
+    beforeEach(() => {
+      mockReq = {
+        user: {
+          userData: {
+            email: "testemail@govuk.com",
+          },
+        },
+      };
+
+      mockRes = {
+        render: jest.fn(),
+        redirect: jest.fn(),
+      };
+
+      mockNext = jest.fn();
+    });
+
+    test("it redirects if authenticated user email address is not defined", async () => {
+      mockReq.user.userData.email = undefined;
+      await listsController(mockReq, mockRes, mockNext);
+      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
+    });
+
+    test("it renders correct template with found lists", async () => {
+      const lists: any = [{id: 1}];
+      const spy = jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
+      
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists.html");
+      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
+    });
+
+    test("it renders correct with empty list when findUserLists result is undefined", async () => {
+      const lists: any = undefined;
+      jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
+      
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].lists).toBeArrayOfSize(0);
+    });
+
+    test("it invokes next with findUserLists error", async () => {
+      const error = { message: "error" };
+      jest.spyOn(listModel, "findUserLists").mockRejectedValueOnce(error);
+
+      await listsController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });

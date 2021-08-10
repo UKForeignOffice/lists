@@ -131,22 +131,25 @@ export async function usersEditController(
   });
 }
 
-// TODO: test
 export async function listsController(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> {
   if (req.user?.userData.email === undefined) {
     return res.redirect(authRoutes.logout);
   }
 
-  const lists = (await findUserLists(req.user?.userData.email)) ?? [];
-
-  res.render("dashboard/lists.html", {
-    ...DEFAULT_VIEW_PROPS,
-    req,
-    lists,
-  });
+  try {
+    const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    res.render("dashboard/lists.html", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      lists,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 // TODO: test
