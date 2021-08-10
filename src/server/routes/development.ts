@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import { exec } from "child_process";
-import { populateDb } from "server/models/db/helpers";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";
 import { UserRoles } from "server/models/types";
@@ -9,16 +8,8 @@ import { dashboardRoutes } from "server/controllers/dashboard";
 const router = express.Router();
 
 router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
-  req.setTimeout(5 * 60 * 1000);
-
-  exec("npm run prisma:reset", () => {
-    populateDb()
-      .then((results) => {
-        res.send({ results });
-      })
-      .catch((error) => {
-        res.send({ error });
-      });
+  exec("npm run prisma:reset", (error, stdout, stderr) => {
+    res.send({ error, stdout, stderr });
   });
 });
 
@@ -36,6 +27,7 @@ router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
   });
 });
 
+// TODO: DEPRECATE once application is deployed in production environment
 async function promoteUser(req: Request, res: Response): Promise<void> {
   const { email, key } = req.query;
 
