@@ -1,18 +1,45 @@
+import { listItem } from "server/models";
 import * as listModel from "server/models/list";
-import { UserRoles } from "server/models/types";
+import * as listItemModel from "server/models/listItem";
+import { List, UserRoles } from "server/models/types";
 import * as userModel from "server/models/user";
 import {
   startRouteController,
   usersListController,
   usersEditController,
   listsController,
+  listsItemsController,
 } from "../dashboard";
 
 describe("Dashboard Controllers", () => {
-  describe("startRouteController", () => {
-    let mockReq: any;
-    let mockRes: any;
+  let mockReq: any;
+  let mockRes: any;
+  let mockNext: any;
 
+  beforeEach(() => {
+    mockReq = {
+      params: {
+        userEmail: "user@gov.uk",
+      },
+      user: {
+        userData: {
+          email: "testemail@govuk.com",
+        },
+        isSuperAdmin: jest.fn(),
+        isListsCreator: jest.fn(),
+      },
+    };
+
+    mockRes = {
+      render: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    mockNext = jest.fn();
+  });
+
+  describe("startRouteController", () => {
     function mockFindUserLists(resolvedValue: any): jest.SpyInstance {
       return jest
         .spyOn(listModel, "findUserLists")
@@ -28,10 +55,6 @@ describe("Dashboard Controllers", () => {
           isSuperAdmin: jest.fn(),
           isListsCreator: jest.fn(),
         },
-      };
-
-      mockRes = {
-        render: jest.fn(),
       };
     });
 
@@ -121,33 +144,6 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("usersEditController", () => {
-    let mockReq: any;
-    let mockRes: any;
-    let mockNext: any;
-
-    beforeEach(() => {
-      mockReq = {
-        params: {
-          userEmail: "user@gov.uk",
-        },
-        user: {
-          userData: {
-            email: "testemail@govuk.com",
-          },
-          isSuperAdmin: jest.fn(),
-          isListsCreator: jest.fn(),
-        },
-      };
-
-      mockRes = {
-        render: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-        send: jest.fn()
-      };
-
-      mockNext = jest.fn();
-    });
-
     test("it invokes next when userEmail param is not defined", async () => {
       mockReq.params.userEmail = undefined;
       await usersEditController(mockReq, mockRes, mockNext);
@@ -155,12 +151,16 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it returns 405 when trying to edit a SuperAdmin", async () => {
-      const spyIsSuperAdmin = jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(true);
+      const spyIsSuperAdmin = jest
+        .spyOn(userModel, "isSuperAdminUser")
+        .mockResolvedValueOnce(true);
 
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(405);
-      expect(mockRes.send).toHaveBeenCalledWith("Not allowed to edit super admin account");
+      expect(mockRes.send).toHaveBeenCalledWith(
+        "Not allowed to edit super admin account"
+      );
       expect(spyIsSuperAdmin).toHaveBeenCalledWith(mockReq.params.userEmail);
     });
 
@@ -176,8 +176,10 @@ describe("Dashboard Controllers", () => {
     test("it renders correct template with correct user value", async () => {
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(userBeingEdited);
-      
+      const spyFindUser = jest
+        .spyOn(userModel, "findUserByEmail")
+        .mockResolvedValueOnce(userBeingEdited);
+
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(spyFindUser).toHaveBeenCalledWith(mockReq.params.userEmail);
@@ -188,19 +190,21 @@ describe("Dashboard Controllers", () => {
     test("it correctly updates user removing SuperAdmin role", async () => {
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyUpdateUser = jest.spyOn(userModel, "updateUser").mockResolvedValueOnce(userBeingEdited);
+      const spyUpdateUser = jest
+        .spyOn(userModel, "updateUser")
+        .mockResolvedValueOnce(userBeingEdited);
 
       mockReq.method = "POST";
       mockReq.body = {
         roles: `${UserRoles.SuperAdmin},${UserRoles.ListsCreator}`,
-      }
+      };
 
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
         jsonData: {
           roles: [UserRoles.ListsCreator],
-        }
+        },
       });
       expect(mockRes.render.mock.calls[0][1].userSaved).toBe(true);
     });
@@ -248,9 +252,11 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{id: 1}];
-      const spy = jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
-      
+      const lists: any = [{ id: 1 }];
+      const spy = jest
+        .spyOn(listModel, "findUserLists")
+        .mockResolvedValueOnce(lists);
+
       await listsController(mockReq, mockRes, mockNext);
 
       expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
@@ -261,7 +267,7 @@ describe("Dashboard Controllers", () => {
     test("it renders correct with empty list when findUserLists result is undefined", async () => {
       const lists: any = undefined;
       jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
-      
+
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].lists).toBeArrayOfSize(0);
@@ -274,6 +280,107 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("listsItemsController", () => {
+    let list: List;
+    let listItems: any[];
+    let spyFindListById: jest.SpyInstance;
+    let spyFindListItemsForList: jest.SpyInstance;
+
+    beforeEach(() => {
+      list = {
+        id: 1,
+        reference: "123reference",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        type: "covidTestProviders",
+        jsonData: {
+          title: "test",
+          validators: [],
+          publishers: [],
+          administrators: [],
+        },
+        countryId: 1,
+      };
+
+      listItems = [{ id: 1 }];
+
+      spyFindListById = jest.spyOn(listModel, "findListById");
+      spyFindListItemsForList = jest.spyOn(
+        listItemModel,
+        "findListItemsForList"
+      );
+    });
+
+    test("it renders correctly", async () => {
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemsForList.mockResolvedValueOnce(listItems);
+
+      mockReq.params.listId = 1;
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      const renderCall = mockRes.render.mock.calls[0];
+      expect(spyFindListById).toHaveBeenCalledWith(mockReq.params.listId);
+      expect(renderCall[0]).toBe("dashboard/lists-items.html");
+      expect(renderCall[1].list).toBe(list);
+      expect(renderCall[1].listItems).toBe(listItems);
+      expect(renderCall[1].canApprove).toBeFalse();
+      expect(renderCall[1].canPublish).toBeFalse();
+    });
+
+    test("it invokes next when list is not found", async () => {
+      spyFindListById.mockResolvedValueOnce(undefined);
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
+      expect(spyFindListItemsForList).not.toHaveBeenCalled();
+    });
+
+    test("it invokes next with findListById error", async () => {
+      const error = { message: "error" };
+      spyFindListById.mockRejectedValueOnce(error);
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(spyFindListItemsForList).not.toHaveBeenCalled();
+    });
+
+    test("it invokes next with findListItemsForList error", async () => {
+      const error = { message: "error" };
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemsForList.mockRejectedValueOnce(error);
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(mockRes.render).not.toHaveBeenCalled();
+    });
+
+    test("template property canApprove is correct when user is list validator", async () => {
+      list.jsonData.validators = [mockReq.user.userData.email];
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemsForList.mockResolvedValueOnce(listItems);
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].canApprove).toBeTrue();
+      expect(mockRes.render.mock.calls[0][1].canPublish).toBeFalse();
+    });
+
+    test("template property canPublish is correct when user is list publisher", async () => {
+      list.jsonData.publishers = [mockReq.user.userData.email];
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemsForList.mockResolvedValueOnce(listItems);
+
+      await listsItemsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].canApprove).toBeFalse();
+      expect(mockRes.render.mock.calls[0][1].canPublish).toBeTrue();
     });
   });
 });

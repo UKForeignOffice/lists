@@ -319,30 +319,32 @@ export async function listsEditController(
   });
 }
 
-// TODO: test
 export async function listsItemsController(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { listId } = req.params;
-  const list = await findListById(listId);
+  try {
+    const { listId } = req.params;
+    const list = await findListById(listId);
+    
+    if (list === undefined) {
+      return next();
+    }
 
-  if (list === undefined) {
-    return next();
+    const listItems = await findListItemsForList(list);
+
+    res.render("dashboard/lists-items.html", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItems,
+      canApprove: userIsListValidator(req, list),
+      canPublish: userIsListPublisher(req, list),
+    });    
+  } catch (error) {
+    next(error);
   }
-
-  const listItems = await findListItemsForList(list);
-
-  // get listItems based list parameters
-  res.render("dashboard/lists-items.html", {
-    ...DEFAULT_VIEW_PROPS,
-    req,
-    list,
-    listItems,
-    canApprove: userIsListValidator(req, list),
-    canPublish: userIsListPublisher(req, list),
-  });
 }
 
 // TODO: test
