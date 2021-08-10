@@ -2,8 +2,8 @@ import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 
 export enum ServiceType {
-  "lawyers" = "lawyers",
   "covidTestProviders" = "covidTestProviders",
+  "lawyers" = "lawyers",
 }
 
 export type JsonObject = PrismaClient.Prisma.JsonObject;
