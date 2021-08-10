@@ -22,9 +22,6 @@ export const AWS_REGION = "eu-west-1";
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME;
 
-// Google Analytics
-export const { GA_TRACKING_ID, GA_API_SECRET } = process.env;
-
 // GOVUK Notify
 export const {
   GOVUK_NOTIFY_API_KEY,
