@@ -348,15 +348,6 @@ export async function listsItemsController(
 }
 
 // TODO: test
-export async function listItemsEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  next();
-}
-
-// TODO: test
 export async function listItemsApproveController(
   req: Request,
   res: Response

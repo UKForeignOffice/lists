@@ -5,7 +5,6 @@ export {
   listsController,
   listsEditController,
   listsItemsController,
-  listItemsEditController,
   listItemsApproveController,
   listItemsPublishController,
 } from "./dashboard";
