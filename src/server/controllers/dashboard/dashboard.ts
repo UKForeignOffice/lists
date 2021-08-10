@@ -79,7 +79,6 @@ export async function usersListController(
   });
 }
 
-// TODO: test
 export async function usersEditController(
   req: Request,
   res: Response,
