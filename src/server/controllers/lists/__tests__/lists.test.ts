@@ -14,8 +14,6 @@ import * as covidTestProviders from "../covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
 
-jest.mock("server/services/google-analytics");
-
 const webhookPayload = {
   questions: [
     {
