@@ -9,9 +9,6 @@ process.env.SERVICE_DOMAIN = "test-domain";
 process.env.SERVICE_NAME = "Service Name";
 process.env.LOCAL_HOST = "false";
 
-process.env.GA_TRACKING_ID = "123ABC";
-process.env.GA_API_SECRET = "123ABC";
-
 process.env.GOVUK_NOTIFY_API_KEY = "123_Notify_API_Key";
 process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID =
   "123ABC";

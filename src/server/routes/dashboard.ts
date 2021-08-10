@@ -9,7 +9,6 @@ import {
   usersListController,
   usersEditController,
   listsItemsController,
-  listItemsEditController,
   listItemsApproveController,
   listItemsPublishController,
 } from "server/controllers/dashboard";
@@ -37,7 +36,6 @@ router.all(dashboardRoutes.listsEdit, listsEditController);
 router.get(dashboardRoutes.listsItems, listsItemsController);
 
 // list items
-router.put(dashboardRoutes.listsItemsEdit, listItemsEditController);
 router.put(dashboardRoutes.listsItemsApprove, listItemsApproveController);
 router.put(dashboardRoutes.listsItemsPublish, listItemsPublishController);
 

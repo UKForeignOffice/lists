@@ -14,8 +14,6 @@ import * as covidTestProviders from "../covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
 
-jest.mock("server/services/google-analytics");
-
 const webhookPayload = {
   questions: [
     {
@@ -131,7 +129,7 @@ describe("Lists Controllers", () => {
 
   describe("listsGetController", () => {
     test("it renders question page when serviceType is undefined", () => {
-      listsGetController(req, res, next);
+      listsGetController(req, res);
 
       expect(res.render).toHaveBeenCalledWith("lists/question-page.html", {
         ...DEFAULT_VIEW_PROPS,

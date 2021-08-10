@@ -79,7 +79,6 @@ export async function usersListController(
   });
 }
 
-// TODO: test
 export async function usersEditController(
   req: Request,
   res: Response,
@@ -132,22 +131,25 @@ export async function usersEditController(
   });
 }
 
-// TODO: test
 export async function listsController(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> {
   if (req.user?.userData.email === undefined) {
     return res.redirect(authRoutes.logout);
   }
 
-  const lists = (await findUserLists(req.user?.userData.email)) ?? [];
-
-  res.render("dashboard/lists.html", {
-    ...DEFAULT_VIEW_PROPS,
-    req,
-    lists,
-  });
+  try {
+    const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    res.render("dashboard/lists.html", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      lists,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 // TODO: test
@@ -317,39 +319,32 @@ export async function listsEditController(
   });
 }
 
-// TODO: test
 export async function listsItemsController(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { listId } = req.params;
-  const list = await findListById(listId);
+  try {
+    const { listId } = req.params;
+    const list = await findListById(listId);
+    
+    if (list === undefined) {
+      return next();
+    }
 
-  if (list === undefined) {
-    return next();
+    const listItems = await findListItemsForList(list);
+
+    res.render("dashboard/lists-items.html", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItems,
+      canApprove: userIsListValidator(req, list),
+      canPublish: userIsListPublisher(req, list),
+    });    
+  } catch (error) {
+    next(error);
   }
-
-  const listItems = await findListItemsForList(list);
-
-  // get listItems based list parameters
-  res.render("dashboard/lists-items.html", {
-    ...DEFAULT_VIEW_PROPS,
-    req,
-    list,
-    listItems,
-    canApprove: userIsListValidator(req, list),
-    canPublish: userIsListPublisher(req, list),
-  });
-}
-
-// TODO: test
-export async function listItemsEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  next();
 }
 
 // TODO: test

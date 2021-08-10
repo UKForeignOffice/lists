@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { get, noop } from "lodash";
-import { trackListsSearch } from "server/services/google-analytics";
 import { DEFAULT_VIEW_PROPS } from "./constants";
 import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
@@ -9,7 +8,6 @@ import {
   getServiceLabel,
   getAllRequestParams,
   queryStringFromParams,
-  parseListValues,
   getCountryLawyerRedirectLink,
   removeQueryParameter,
   createConfirmationLink,
@@ -59,11 +57,6 @@ export async function listsPostController(
         }
 
         if (redirectLink !== undefined) {
-          trackListsSearch({
-            serviceType,
-            country,
-          }).catch(noop);
-
           return res.redirect(redirectLink);
         }
       }
@@ -75,11 +68,7 @@ export async function listsPostController(
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 
-export function listsGetController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function listsGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
   const queryString = queryStringFromParams(params);
   const { serviceType } = params;
@@ -149,16 +138,7 @@ export function listsResultsController(
   next: NextFunction
 ): void {
   const params = getAllRequestParams(req);
-  const { serviceType, country, legalAid, region } = params;
-  const practiceArea = parseListValues("practiceArea", params);
-
-  trackListsSearch({
-    serviceType,
-    country,
-    region,
-    practiceArea: practiceArea?.join(","),
-    legalAid,
-  }).catch(noop);
+  const { serviceType } = params;
 
   switch (serviceType) {
     case ServiceType.lawyers:
