@@ -101,7 +101,9 @@ export interface CovidTestSupplierListItemJsonData extends JsonObject {
   contactPhoneNumber: string;
   contactEmailAddress: string;
   telephone: string;
+  additionalTelephone?: string;
   email: string;
+  additionalEmail?: string;
   website: string;
   regulatoryAuthority: string;
   resultsReadyFormat: string[];

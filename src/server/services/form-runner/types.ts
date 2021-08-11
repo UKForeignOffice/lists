@@ -65,7 +65,9 @@ export interface CovidTestSupplierFormWebhookData {
     contactPhoneNumber: string;
     websiteAddress: string;
     emailAddress: string;
+    additionalEmailAddress?: string;
     phoneNumber: string;
+    additionalPhoneNumber?: string;
     addressLine1: string;
     addressLine2: string | undefined;
     city: string;
