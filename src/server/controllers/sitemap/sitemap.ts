@@ -1,20 +1,22 @@
 import { Request, Response } from "express";
+import { ServiceType } from "server/models/types";
 import { countriesList } from "server/services/metadata";
 import { listsRoutes } from "../lists";
+import { getServiceLabel } from "../lists/helpers";
 
 export function sitemapController(req: Request, res: Response): void {
-  const sections = [
-    {
-      title: "Find a lawyer per country",
+  const sections = Object.keys(ServiceType).map(serviceType => {
+    return {
+      title: `Find ${getServiceLabel(serviceType)} per country`,
       links: countriesList.map(({ value }) => {
         return {
           title: value,
-          href: `${listsRoutes.start}?country=${value}&serviceType=lawyers`,
+          href: `${listsRoutes.finder}?country=${value}&serviceType=${serviceType}`,
         };
       }),
-    },
-  ];
-
+    };
+  });
+  
   res.render("sitemap.html", {
     sections,
   });
