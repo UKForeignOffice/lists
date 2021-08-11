@@ -186,6 +186,15 @@
           "nameHasError": false,
           "schema": {},
           "hint": "This is the email address your organisation wishes to be contacted on by British nationals. This will be published on GOV.UK."
+        },
+        {
+          "name": "additionalEmailAddress",
+          "options": {
+            "required": false
+          },
+          "type": "EmailAddressField",
+          "title": "Additional email address",
+          "nameHasError": false
         }
       ],
       "next": [
@@ -275,6 +284,15 @@
           "type": "TextField",
           "title": "Phone number",
           "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK.",
+          "nameHasError": false
+        },
+        {
+          "name": "additionalPhoneNumber",
+          "options": {
+            "required": false
+          },
+          "type": "TextField",
+          "title": "Additional phone number",
           "nameHasError": false
         }
       ],

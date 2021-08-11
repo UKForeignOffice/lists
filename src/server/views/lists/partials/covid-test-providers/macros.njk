@@ -35,12 +35,20 @@
     <div class="govuk-details__text">
       {% if (item.jsonData.email) and (item.jsonData.website) %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Telephone</strong>: <a class="telephone" href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
+          <strong>Telephone</strong>: 
+          <a class="govuk-link telephone" href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>{{", " if item.jsonData.additionalTelephone}}
+          {% if item.jsonData.additionalTelephone %}
+            <a class="govuk-link telephone" href="tel:{{ item.jsonData.additionalTelephone }}">{{ item.jsonData.additionalTelephone }}</a>
+          {% endif %}
         </p>  
       {% endif %}
       {% if item.jsonData.email %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Email</strong>: <a class="govuk-link email" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
+          <strong>Email</strong>: 
+            <a class="govuk-link email" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>{{", " if item.jsonData.additionalEmail}}
+            {% if item.jsonData.additionalEmail %}
+            <a class="govuk-link email" href="tel:{{ item.jsonData.additionalEmail }}">{{ item.jsonData.additionalEmail }}</a>
+          {% endif %}
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
