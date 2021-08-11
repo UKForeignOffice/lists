@@ -647,7 +647,9 @@ async function createCovidTestSupplierListItemObject(
           .toLocaleLowerCase()
           .trim(),
         telephone: formData.organisationDetails.phoneNumber,
+        additionalTelephone: formData.organisationDetails.additionalPhoneNumber,
         email: formData.organisationDetails.emailAddress.toLowerCase().trim(),
+        additionalEmail: formData.organisationDetails.additionalEmailAddress,
         website: formData.organisationDetails.websiteAddress
           .toLowerCase()
           .trim(),
