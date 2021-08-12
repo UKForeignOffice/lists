@@ -515,9 +515,8 @@ async function createLawyerListItemObject(
       },
     };
   } catch (error) {
-    const message = `createLawyerInsertObject Error: ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
+    logger.error(error);
+    throw error;
   }
 }
 
@@ -686,9 +685,8 @@ async function createCovidTestSupplierListItemObject(
       },
     };
   } catch (error) {
-    const message = `createCovidTestSupplierListItemObject Error: ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
+    logger.error(error);
+    throw error;
   }
 }
 
