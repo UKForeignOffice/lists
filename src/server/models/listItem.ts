@@ -382,7 +382,7 @@ export async function setEmailIsVerified({
     const item = await prisma.listItem.findUnique({
       where: { reference },
     });
-
+    
     if (get(item, "jsonData.metadata.emailVerified") === true) {
       return true;
     }
@@ -398,9 +398,8 @@ export async function setEmailIsVerified({
 
     return true;
   } catch (error) {
-    const message = `setEmailIsVerified Error ${error.message}`;
-    logger.error(message);
-    throw new Error(message);
+    logger.error(error);
+    throw error;
   }
 }
 
