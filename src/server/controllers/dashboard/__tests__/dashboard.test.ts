@@ -60,20 +60,37 @@ describe("Dashboard Controllers", () => {
     test("it renders correct template", async () => {
       mockFindUserLists(undefined);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/dashboard.html");
+    });
+
+    test("it redirects to logout if req.user is undefined", async () => {
+      mockReq.user = undefined;
+
+      await startRouteController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
     });
 
     test("it calls findUserLists correctly", async () => {
       const usersLists: any = [{ id: 1 }];
       const spyFindUsersList = mockFindUserLists(usersLists);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(spyFindUsersList).toHaveBeenCalledWith(
         mockReq.user.userData.email
       );
+    });
+
+    test("it calls next with findUsersList error", async () => {
+      const error = new Error("test error");
+      jest.spyOn(listModel, "findUserLists").mockRejectedValueOnce(error);
+
+      await startRouteController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
     });
 
     test("it identifies a new user correctly", async () => {
@@ -81,7 +98,7 @@ describe("Dashboard Controllers", () => {
       mockReq.user.isSuperAdmin.mockReturnValueOnce(false);
       mockReq.user.isListsCreator.mockReturnValueOnce(false);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
     });
@@ -90,7 +107,7 @@ describe("Dashboard Controllers", () => {
       mockFindUserLists(undefined);
       mockReq.user.isSuperAdmin.mockReturnValueOnce(true);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
     });
@@ -99,7 +116,7 @@ describe("Dashboard Controllers", () => {
       mockFindUserLists(undefined);
       mockReq.user.isListsCreator.mockReturnValueOnce(true);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
     });
@@ -107,7 +124,7 @@ describe("Dashboard Controllers", () => {
     test("a user with access to existing lists is not a new user", async () => {
       mockFindUserLists([{ id: 1 }]);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
     });
@@ -115,7 +132,7 @@ describe("Dashboard Controllers", () => {
     test("a new user is correctly indicated via isNewUser view prop", async () => {
       mockFindUserLists(undefined);
 
-      await startRouteController(mockReq, mockRes);
+      await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
     });
@@ -128,17 +145,20 @@ describe("Dashboard Controllers", () => {
         .spyOn(userModel, "findUsers")
         .mockResolvedValueOnce(users);
 
-      const mockReq: any = {};
-
-      const mockRes: any = {
-        render: jest.fn(),
-      };
-
-      await usersListController(mockReq, mockRes);
+      await usersListController(mockReq, mockRes, mockNext);
 
       expect(spyFindUsers).toHaveBeenCalled();
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-list.html");
       expect(mockRes.render.mock.calls[0][1].users).toBe(users);
+    });
+
+    test("it invokes next with findUsers error", async () => {
+      const error = new Error("test error");
+      jest.spyOn(userModel, "findUsers").mockRejectedValueOnce(error);
+
+      await usersListController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
 

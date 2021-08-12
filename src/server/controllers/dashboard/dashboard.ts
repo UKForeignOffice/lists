@@ -49,9 +49,14 @@ const DEFAULT_VIEW_PROPS = {
 
 export async function startRouteController(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> {
-  if (req.user !== undefined) {
+  try {
+    if (req.user === undefined) {
+      return res.redirect(authRoutes.logout);
+    }
+
     const lists = await findUserLists(req.user?.userData.email);
     const isNewUser =
       !req.user?.isSuperAdmin() &&
@@ -60,23 +65,29 @@ export async function startRouteController(
 
     res.render("dashboard/dashboard.html", {
       ...DEFAULT_VIEW_PROPS,
-      req,
       isNewUser,
+      req,
     });
+  } catch (error) {
+    next(error);
   }
 }
 
 export async function usersListController(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> {
-  // seeing users list
-  const users = await findUsers();
-  res.render("dashboard/users-list.html", {
-    ...DEFAULT_VIEW_PROPS,
-    users,
-    req,
-  });
+  try {
+    const users = await findUsers();
+    res.render("dashboard/users-list.html", {
+      ...DEFAULT_VIEW_PROPS,
+      users,
+      req,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function usersEditController(
@@ -84,51 +95,51 @@ export async function usersEditController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { userEmail } = req.params;
-
-  if (typeof userEmail !== "string") {
-    return next();
-  }
-
-  let userSaved = false;
-  let isEditingSuperAdminUser = false;
-
   try {
-    isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
-    if (isEditingSuperAdminUser) {
-      // disallow editing of SuperAdmins
-      res.status(405).send("Not allowed to edit super admin account");
-      return;
-    }
-  } catch (error) {
-    return next(error);
-  }
+    const { userEmail } = req.params;
 
-  if (req.method === "POST") {
-    const roles = (req.body.roles ?? "").split(",").map(trim);
+    if (typeof userEmail !== "string") {
+      return next();
+    }
+
+    let userSaved = false;
+    let isEditingSuperAdminUser = false;
 
     try {
+      isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
+      if (isEditingSuperAdminUser) {
+        // disallow editing of SuperAdmins
+        res.status(405).send("Not allowed to edit super admin account");
+        return;
+      }
+    } catch (error) {
+      return next(error);
+    }
+
+    if (req.method === "POST") {
+      const roles = (req.body.roles ?? "").split(",").map(trim);
+
       await updateUser(userEmail, {
         jsonData: {
           roles: filterSuperAdminRole(roles),
         },
       });
+
       userSaved = true;
-    } catch (error) {
-      next(error);
-      return;
     }
+
+    const user = await findUserByEmail(`${userEmail}`);
+
+    res.render("dashboard/users-edit.html", {
+      ...DEFAULT_VIEW_PROPS,
+      UserRoles,
+      userSaved,
+      user,
+      req,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  const user = await findUserByEmail(`${userEmail}`);
-
-  res.render("dashboard/users-edit.html", {
-    ...DEFAULT_VIEW_PROPS,
-    UserRoles,
-    userSaved,
-    user,
-    req,
-  });
 }
 
 export async function listsController(
@@ -136,12 +147,13 @@ export async function listsController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  if (req.user?.userData.email === undefined) {
-    return res.redirect(authRoutes.logout);
-  }
-
   try {
+    if (req.user?.userData.email === undefined) {
+      return res.redirect(authRoutes.logout);
+    }
+
     const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    
     res.render("dashboard/lists.html", {
       ...DEFAULT_VIEW_PROPS,
       req,
@@ -327,7 +339,7 @@ export async function listsItemsController(
   try {
     const { listId } = req.params;
     const list = await findListById(listId);
-    
+
     if (list === undefined) {
       return next();
     }
@@ -341,7 +353,7 @@ export async function listsItemsController(
       listItems,
       canApprove: userIsListValidator(req, list),
       canPublish: userIsListPublisher(req, list),
-    });    
+    });
   } catch (error) {
     next(error);
   }
