@@ -6,7 +6,7 @@ let db: Pool;
 export function getDbPool(): Pool {
   if (db === undefined) {
     db = new Pool({
-      connectionString: DATABASE_URL ?? "",
+      connectionString: DATABASE_URL,
     });
   }
 

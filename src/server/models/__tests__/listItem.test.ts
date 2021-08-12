@@ -94,29 +94,20 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
 };
 
 describe("ListItem Model:", () => {
-  const sampleListItem: any = {
-    id: "123ABC",
-    jsonData: { organisationName: "The Amazing Lawyers" },
-  };
-
-  const sampleCountry: any = { id: "123TEST", name: "United Kingdom" };
-
-  const sampleLocation: any = {
-    Geometry: {
-      Point: [1, 1],
-    },
-  };
+  let sampleListItem: any;
+  let sampleCountry: any;
+  let sampleLocation: any;
 
   const spyListItemFindUnique = (
     returnValue = sampleListItem
   ): jest.SpyInstance => {
-    return prisma.listItem.findUnique.mockResolvedValue(returnValue);
+    return prisma.listItem.findUnique.mockResolvedValueOnce(returnValue);
   };
 
   const spyListItemCreate = (
     returnValue = sampleListItem
   ): jest.SpyInstance => {
-    return prisma.listItem.create.mockResolvedValue(
+    return prisma.listItem.create.mockResolvedValueOnce(
       returnValue ?? sampleListItem
     );
   };
@@ -124,7 +115,7 @@ describe("ListItem Model:", () => {
   const spyListItemUpdate = (
     returnValue = sampleListItem
   ): jest.SpyInstance => {
-    return prisma.listItem.update.mockResolvedValue(returnValue);
+    return prisma.listItem.update.mockResolvedValueOnce(returnValue);
   };
 
   const spyCountryUpsert = (returnValue = sampleCountry): jest.SpyInstance => {
@@ -156,6 +147,21 @@ describe("ListItem Model:", () => {
       .spyOn(audit, "recordListItemEvent")
       .mockResolvedValue(returnValue);
   };
+
+  beforeEach(() => {
+    sampleListItem = {
+      id: "123ABC",
+      jsonData: { organisationName: "The Amazing Lawyers" },
+    };
+
+    sampleCountry = { id: "123TEST", name: "United Kingdom" };
+
+    sampleLocation = {
+      Geometry: {
+        Point: [1, 1],
+      },
+    };
+  });
 
   describe("Create Lawyer", () => {
     test("createLawyer command correctly calls listItem count to check if record already exists", async () => {
@@ -286,7 +292,9 @@ describe("ListItem Model:", () => {
       const error = new Error("CREATE ERROR");
       prisma.listItem.create.mockRejectedValueOnce(error);
 
-      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toEqual(error);
+      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toEqual(
+        error
+      );
     });
   });
 
@@ -594,6 +602,24 @@ describe("ListItem Model:", () => {
       });
 
       expect(result).toBe(true);
+    });
+
+    test("it throws listItem.findUnique error", async () => {
+      const reference = "123ABC";
+      const error = new Error("listItem.findUnique error");
+      prisma.listItem.findUnique.mockRejectedValueOnce(error);
+
+      await expect(setEmailIsVerified({ reference })).rejects.toEqual(error);
+    });
+
+    test("it throws listItem.update error", async () => {
+      const reference = "123ABC";
+      const error = new Error("listItem.update error");
+
+      spyListItemFindUnique();
+      prisma.listItem.update.mockRejectedValueOnce(error);
+
+      await expect(setEmailIsVerified({ reference })).rejects.toEqual(error);
     });
   });
 
