@@ -1,3 +1,4 @@
+import { authRoutes } from "server/auth";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem";
 import { List, UserRoles } from "server/models/types";
@@ -8,21 +9,28 @@ import {
   usersEditController,
   listsController,
   listsItemsController,
+  listsEditController,
 } from "../dashboard";
 
 describe("Dashboard Controllers", () => {
   let mockReq: any;
   let mockRes: any;
   let mockNext: any;
+  let list: List;
+  let spyFindListById: jest.SpyInstance;
+  let spyUpdateList: jest.SpyInstance;
+  let spyCreateList: jest.SpyInstance;
 
   beforeEach(() => {
     mockReq = {
+      method: "GET",
       params: {
         userEmail: "user@gov.uk",
       },
+      query: {},
       user: {
         userData: {
-          email: "testemail@govuk.com",
+          email: "authemail@gov.uk",
         },
         isSuperAdmin: jest.fn(),
         isListsCreator: jest.fn(),
@@ -31,11 +39,31 @@ describe("Dashboard Controllers", () => {
 
     mockRes = {
       render: jest.fn(),
+      redirect: jest.fn(),
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
     };
 
     mockNext = jest.fn();
+
+    spyFindListById = jest.spyOn(listModel, "findListById");
+    spyCreateList = jest.spyOn(listModel, "createList");
+    spyUpdateList = jest.spyOn(listModel, "updateList");
+
+    list = {
+      id: 1,
+      reference: "123reference",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      type: "covidTestProviders",
+      jsonData: {
+        title: "test",
+        validators: [],
+        publishers: [],
+        administrators: [mockReq.user.userData.email],
+      },
+      countryId: 1,
+    };
   });
 
   describe("startRouteController", () => {
@@ -70,7 +98,7 @@ describe("Dashboard Controllers", () => {
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalled();
+      expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
     });
 
     test("it calls findUserLists correctly", async () => {
@@ -243,27 +271,6 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("listsController", () => {
-    let mockReq: any;
-    let mockRes: any;
-    let mockNext: any;
-
-    beforeEach(() => {
-      mockReq = {
-        user: {
-          userData: {
-            email: "testemail@govuk.com",
-          },
-        },
-      };
-
-      mockRes = {
-        render: jest.fn(),
-        redirect: jest.fn(),
-      };
-
-      mockNext = jest.fn();
-    });
-
     test("it redirects if authenticated user email address is not defined", async () => {
       mockReq.user.userData.email = undefined;
       await listsController(mockReq, mockRes, mockNext);
@@ -303,30 +310,13 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("listsItemsController", () => {
-    let list: List;
     let listItems: any[];
-    let spyFindListById: jest.SpyInstance;
+
     let spyFindListItemsForList: jest.SpyInstance;
 
     beforeEach(() => {
-      list = {
-        id: 1,
-        reference: "123reference",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        type: "covidTestProviders",
-        jsonData: {
-          title: "test",
-          validators: [],
-          publishers: [],
-          administrators: [],
-        },
-        countryId: 1,
-      };
-
       listItems = [{ id: 1 }];
 
-      spyFindListById = jest.spyOn(listModel, "findListById");
       spyFindListItemsForList = jest.spyOn(
         listItemModel,
         "findListItemsForList"
@@ -400,6 +390,255 @@ describe("Dashboard Controllers", () => {
 
       expect(mockRes.render.mock.calls[0][1].canApprove).toBeFalse();
       expect(mockRes.render.mock.calls[0][1].canPublish).toBeTrue();
+    });
+  });
+
+  describe("listsEditController", () => {
+    test("it renders correct template for new list", async () => {
+      mockReq.params.listId = "new";
+
+      await listsEditController(mockReq, mockRes, mockNext);
+
+      expect(spyFindListById).not.toHaveBeenCalled();
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.html");
+      expect(mockRes.render.mock.calls[0][1]).toContainKeys([
+        "dashboardRoutes",
+        "countriesList",
+        "ServiceType",
+        "userIsListPublisher",
+        "userIsListPublisher",
+        "userIsListValidator",
+        "userIsListAdministrator",
+        "req",
+      ]);
+      expect(mockRes.render.mock.calls[0][1]).toMatchObject({
+        listId: "new",
+        isPost: false,
+        list: undefined,
+        listCreated: undefined,
+        listUpdated: undefined,
+        error: {},
+      });
+    });
+
+    test("it renders correct template for existing list", async () => {
+      mockReq.params.listId = 1;
+      spyFindListById.mockReturnValueOnce(list);
+
+      await listsEditController(mockReq, mockRes, mockNext);
+
+      expect(spyFindListById).toHaveBeenCalledWith(mockReq.params.listId);
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.html");
+      expect(mockRes.render.mock.calls[0][1].list).toBe(list);
+    });
+
+    describe("Create and Update", () => {
+      beforeEach(() => {
+        mockReq.body = {
+          serviceType: "serviceType",
+          country: "United Kingdom",
+          administrators: "email@gov.uk",
+          validators: "email@gov.uk",
+          publishers: "email@gov.uk",
+        };
+
+        mockReq.method = "POST";
+      });
+
+      test("it errors when posting undefined serviceType", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.serviceType = undefined;
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "serviceType",
+          href: "#serviceType",
+          text: "Please select service type",
+        });
+      });
+
+      test("it errors when posting invalid country name", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.country = "London";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "country",
+          href: "#country",
+          text: "Invalid country name",
+        });
+      });
+
+      test("it errors when posting empty administrators", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.administrators = "";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "administrators",
+          href: "#administrators",
+          text: "You must indicated at least one administrator",
+        });
+      });
+
+      test("it errors when posting non gov.uk administrator email address", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.administrators = "email@gmail.com";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "administrators",
+          href: "#administrators",
+          text: "Administrators contain an invalid email address",
+        });
+      });
+
+      test("it errors when posting empty validators", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.validators = "";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "validators",
+          href: "#validators",
+          text: "You must indicated at least one validator",
+        });
+      });
+
+      test("it errors when posting non gov.uk validators email address", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.validators = "email@gmail.com";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "validators",
+          href: "#validators",
+          text: "Validators contain an invalid email address",
+        });
+      });
+
+      test("it errors when posting empty publishers", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.publishers = "";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "publishers",
+          href: "#publishers",
+          text: "You must indicated at least one publisher",
+        });
+      });
+
+      test("it errors when posting non gov.uk publishers email address", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.publishers = "email@gmail.com";
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockRes.render.mock.calls[0][1].error).toMatchObject({
+          field: "publishers",
+          href: "#publishers",
+          text: "Publishers contain an invalid email address",
+        });
+      });
+
+      test("it creates list and redirect correctly", async () => {
+        mockReq.params.listId = "new";
+        spyCreateList.mockResolvedValueOnce(list);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(spyCreateList).toHaveBeenCalledWith({
+          serviceType: "serviceType",
+          country: "United Kingdom",
+          administrators: ["email@gov.uk"],
+          publishers: ["email@gov.uk"],
+          validators: ["email@gov.uk"],
+          createdBy: mockReq.user.userData.email,
+        });
+        expect(mockRes.redirect).toHaveBeenCalledWith(
+          `/dashboard/lists/${list.id}?listCreated=true`
+        );
+      });
+
+      test("it invokes next with createList error", async () => {
+        mockReq.params.listId = "new";
+        const err = new Error("createList error");
+        spyCreateList.mockRejectedValueOnce(err);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockNext).toHaveBeenCalledWith(err);
+      });
+
+      test("it updates existing list and redirects correctly", async () => {
+        mockReq.params.listId = list.id;
+        list.jsonData.administrators = [mockReq.user.userData.email];
+
+        spyFindListById.mockResolvedValueOnce(list);
+        spyUpdateList.mockResolvedValueOnce(list);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(spyFindListById).toHaveBeenCalledWith(list.id);
+        expect(spyUpdateList.mock.calls[0][0]).toBe(1);
+        expect(spyUpdateList).toHaveBeenCalledWith(list.id, {
+          administrators: ["email@gov.uk"],
+          publishers: ["email@gov.uk"],
+          validators: ["email@gov.uk"],
+        });
+        expect(mockRes.redirect).toHaveBeenCalledWith(
+          `/dashboard/lists/${list.id}?listUpdated=true`
+        );
+      });
+
+      test("it invokes next with updateList error", async () => {
+        mockReq.params.listId = list.id;
+        list.jsonData.administrators = [mockReq.user.userData.email];
+
+        const error = new Error("updateList error");
+        spyFindListById.mockResolvedValueOnce(list);
+        spyUpdateList.mockRejectedValueOnce(error);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(mockNext).toHaveBeenCalledWith(error);
+      });
+
+      test("it will not update a list the user is has no administrator right", async () => {
+        mockReq.params.listId = list.id;
+        list.jsonData.administrators = ["other@email.gov.uk"];
+
+        spyFindListById.mockResolvedValue(list);
+        spyUpdateList.mockResolvedValueOnce(list);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(spyFindListById).toHaveBeenCalledWith(list.id);
+        expect(spyUpdateList).not.toHaveBeenCalled();
+      });
+
+      test("it invokes next with findListById error", async () => {
+        mockReq.params.listId = list.id;
+        list.jsonData.administrators = ["other@email.gov.uk"];
+
+        const error = new Error("updateList error");
+        spyFindListById.mockResolvedValueOnce(error);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(spyFindListById).toHaveBeenCalledWith(list.id);
+        expect(spyUpdateList).not.toHaveBeenCalled();
+      });
     });
   });
 });
