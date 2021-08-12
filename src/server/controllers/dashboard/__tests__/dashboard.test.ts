@@ -568,6 +568,28 @@ describe("Dashboard Controllers", () => {
         );
       });
 
+      test("it errors when trying to create a that already exists", async () => {
+        mockReq.params.listId = "new";
+        mockReq.body.serviceType = "covidTestProviders";
+
+        const spyFindListByCountryAndType = jest
+          .spyOn(listModel, "findListByCountryAndType")
+          .mockResolvedValueOnce([list]);
+
+        await listsEditController(mockReq, mockRes, mockNext);
+
+        expect(spyCreateList).not.toHaveBeenCalled();
+        expect(spyFindListByCountryAndType).toHaveBeenCalledWith(
+          mockReq.body.country,
+          mockReq.body.serviceType
+        );
+        expect(mockRes.render.mock.calls[0][1].error).toEqual({
+          field: "serviceType",
+          href: "#serviceType",
+          text: "A Covid Test Providers list for United Kingdom already exists",
+        });
+      });
+
       test("it invokes next with createList error", async () => {
         mockReq.params.listId = "new";
         const err = new Error("createList error");
