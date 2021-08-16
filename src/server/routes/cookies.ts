@@ -1,13 +1,13 @@
 import express from "express";
 import {
   cookiesPageRoute,
-  cookiesPageGETController,
-  cookiesPagePOSTController,
+  cookiesGETController,
+  cookiesPOSTController,
 } from "server/controllers/cookies";
 
 const router = express.Router();
 
-router.get(cookiesPageRoute, cookiesPageGETController);
-router.post(cookiesPageRoute, cookiesPagePOSTController);
+router.get(cookiesPageRoute, cookiesGETController);
+router.post(cookiesPageRoute, cookiesPOSTController);
 
 export default router;

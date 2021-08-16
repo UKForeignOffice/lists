@@ -1,4 +1,5 @@
 import path from "path";
+import { Buffer } from 'buffer';
 import _, { get } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
@@ -37,7 +38,7 @@ export const configureViews = (server: Express): void => {
 
     try {
       cookiesPolicy = JSON.parse(
-        get(req, "cookies.cookies_policy", "{}")
+        Buffer.from(get(req, "cookies.cookies_policy", "{}"), 'base64').toString('ascii')
       );
     } catch (error) {
       // cleanup legacy json cookie
