@@ -9,9 +9,11 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
   const cookiesPolicy: {
     analytics: "on" | "off";
     isSet: boolean;
+    essential: boolean;
     usage: boolean;
   } = {
     isSet: true,
+    essential: true,
     analytics: req.body.analytics,
     usage: req.body.analytics === "on"
   };
