@@ -81,7 +81,7 @@ describe("Cookies", () => {
     });
 
     test("accept analytics works correctly", async () => {
-      const { text, headers } = await request(server)
+      const { text } = await request(server)
         .post(pageLink)
         .type("form")
         .send({ analytics: "on" });
