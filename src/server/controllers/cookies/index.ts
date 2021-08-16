@@ -1,2 +1,2 @@
 export { cookiesPageRoute } from "./constants";
-export { cookiesPageGETController, cookiesPagePOSTController } from "./cookies";
+export { cookiesGETController, cookiesPOSTController } from "./cookies";

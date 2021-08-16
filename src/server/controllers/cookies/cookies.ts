@@ -1,11 +1,13 @@
+import { Buffer } from 'buffer';
 import { Request, Response } from "express";
 import { COOKIES_PAGE_VIEW, ONE_YEAR } from "./constants";
+import { isLocalHost } from "server/config";
 
-export function cookiesPageGETController(req: Request, res: Response): void {
+export function cookiesGETController(req: Request, res: Response): void {
   res.render(COOKIES_PAGE_VIEW);
 }
 
-export function cookiesPagePOSTController(req: Request, res: Response): void {
+export function cookiesPOSTController(req: Request, res: Response): void {
   const cookiesPolicy: {
     analytics: "on" | "off";
     isSet: boolean;
@@ -14,15 +16,22 @@ export function cookiesPagePOSTController(req: Request, res: Response): void {
   } = {
     isSet: true,
     essential: true,
-    analytics: req.body.analytics,
-    usage: req.body.analytics === "on"
+    analytics: req.body.analytics ?? "off",
+    usage: req.body.analytics === "on",
   };
 
-  res.cookie("cookies_policy", JSON.stringify(cookiesPolicy), {
-    maxAge: ONE_YEAR,
-    httpOnly: true,
-    secure: true,
-  });
+  res.cookie(
+    "cookies_policy",
+    Buffer.from(JSON.stringify(cookiesPolicy)).toString("base64"),
+    {
+      maxAge: ONE_YEAR,
+      secure: !isLocalHost,
+      // disable encode as it breaks form-runner
+      encode: v => v,
+      // allow cookie to be accessed by JS due to form-runner requirement
+      httpOnly: false,
+    }
+  );
 
   res.render(COOKIES_PAGE_VIEW, {
     cookiesSettingsSaved: true,

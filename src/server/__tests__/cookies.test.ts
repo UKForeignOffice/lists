@@ -81,7 +81,7 @@ describe("Cookies", () => {
     });
 
     test("accept analytics works correctly", async () => {
-      const { text, headers } = await request(server)
+      const { text } = await request(server)
         .post(pageLink)
         .type("form")
         .send({ analytics: "on" });
@@ -90,17 +90,7 @@ describe("Cookies", () => {
       const radios = $html(":radio");
       const successBanner = $html(".govuk-notification-banner");
 
-      const cookiesPolicy = headers["set-cookie"]
-        .find((elm: string) => elm?.includes("cookies_policy"))
-        .split("=")[1]
-        .split(";")[0]
-        .trim();
-
       expect(successBanner.length).toBe(1);
-      expect(cookiesPolicy).toEqual(
-        encodeURIComponent(JSON.stringify({ isSet: true, essential: true, analytics: "on", usage: true }))
-      );
-
       expect(radios.eq(0).attr("name")).toBe("analytics");
       expect(radios.eq(0).attr("checked")).toBe("checked");
       expect(radios.eq(0).attr("value")).toBe("on");
@@ -128,7 +118,7 @@ describe("Cookies", () => {
 
       expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual(
-        encodeURIComponent(JSON.stringify({ isSet: true, essential: true, analytics: "off", usage: false }))
+        Buffer.from(JSON.stringify({ isSet: true, essential: true, analytics: "off", usage: false })).toString("base64")
       );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");

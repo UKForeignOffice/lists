@@ -1,4 +1,5 @@
 import path from "path";
+import { Buffer } from "buffer";
 import _, { get } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
@@ -14,6 +15,8 @@ const VIEWS_PATHS = [
   path.join(ROOT, "/node_modules/govuk-frontend/govuk/"),
   path.join(ROOT, "/node_modules/govuk-frontend/govuk/components"),
 ];
+
+const EMPTY_BASE64_COOKIE = Buffer.from(JSON.stringify({})).toString("base64");
 
 export const configureViews = (server: Express): void => {
   server.engine("html", nunjucks.render);
@@ -37,7 +40,10 @@ export const configureViews = (server: Express): void => {
 
     try {
       cookiesPolicy = JSON.parse(
-        get(req, "cookies.cookies_policy", "{}")
+        Buffer.from(
+          get(req, "cookies.cookies_policy", EMPTY_BASE64_COOKIE),
+          "base64"
+        ).toString("ascii")
       );
     } catch (error) {
       // cleanup legacy json cookie
