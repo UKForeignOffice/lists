@@ -161,7 +161,7 @@ workflows:
           name: deploy-test
           namespace: test-lists
           context:
-            # - VPN
+            - VPN
             - AWS
           requires:
             - publish
