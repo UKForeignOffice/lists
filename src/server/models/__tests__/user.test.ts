@@ -1,4 +1,4 @@
-import { pick } from "lodash";
+import { omit, pick } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { UserRoles } from "../types";
 import {
@@ -103,14 +103,14 @@ describe("User Model:", () => {
         jsonData: { ...sampleUser.jsonData },
       };
 
-      const result = await updateUser(user.email, user);
+      const result = await updateUser(sampleUser.email, user);
 
       expect(result).toBe(sampleUser);
       expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { email: user.email },
-        data: {
+        where: { email: sampleUser.email },
+        data: omit({
           ...user,
-        },
+        }, ["email"]),
       });
     });
 

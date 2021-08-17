@@ -1,3 +1,4 @@
+import { omit } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
@@ -8,7 +9,7 @@ export async function findUserByEmail(
 ): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
-      where: { email },
+      where: { email: email.toLowerCase() },
     })) as User;
 
     return user ?? undefined;
@@ -27,7 +28,12 @@ export async function createUser(
   }
 
   try {
-    return (await prisma.user.create({ data })) as User;
+    return (await prisma.user.create({
+      data: {
+        ...data,
+        email: data.email.toLowerCase(),        
+      },
+    })) as User;
   } catch (error) {
     logger.error(`createUser Error ${error.message}`);
     return undefined;
@@ -46,7 +52,7 @@ export async function updateUser(
   try {
     return (await prisma.user.update({
       where: { email },
-      data,
+      data: omit(data, ["email"]),
     })) as User;
   } catch (error) {
     logger.error(`updateUser Error ${error.message}`);
