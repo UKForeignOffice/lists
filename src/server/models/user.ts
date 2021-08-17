@@ -51,7 +51,7 @@ export async function updateUser(
 
   try {
     return (await prisma.user.update({
-      where: { email },
+      where: { email: email.toLocaleLowerCase() },
       data: omit(data, ["email"]),
     })) as User;
   } catch (error) {

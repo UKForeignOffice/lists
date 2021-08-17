@@ -67,12 +67,17 @@ describe("User Model:", () => {
 
     test("create command is correct", async () => {
       prisma.user.create.mockResolvedValue(sampleUser);
-      const newUser = pick(sampleUser, ["email", "jsonData"]);
-
-      await createUser(newUser);
+      
+      await createUser({
+        email: sampleUser.email.toUpperCase(),
+        jsonData: sampleUser.jsonData,
+      });
 
       expect(prisma.user.create).toHaveBeenCalledWith({
-        data: newUser,
+        data: {
+          email: sampleUser.email.toLowerCase(),
+          jsonData: sampleUser.jsonData,
+        },
       });
     });
 
@@ -103,7 +108,7 @@ describe("User Model:", () => {
         jsonData: { ...sampleUser.jsonData },
       };
 
-      const result = await updateUser(sampleUser.email, user);
+      const result = await updateUser(sampleUser.email.toUpperCase(), user);
 
       expect(result).toBe(sampleUser);
       expect(prisma.user.update).toHaveBeenCalledWith({
