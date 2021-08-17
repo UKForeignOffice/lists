@@ -97,4 +97,5 @@ model Audit {
   jsonData            Json
 
   @@index([type])
+  @@index([jsonData])
 }
