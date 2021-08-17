@@ -13,4 +13,4 @@ CREATE TABLE "Audit" (
 CREATE INDEX "Audit.type_index" ON "Audit"("type");
 
 -- CreateIndex
-CREATE INDEX "Audit.jsonData_gin" ON "Audit" USING gin ("jsonData");
+CREATE INDEX "Audit.jsonData_index" ON "Audit" USING gin ("jsonData");
