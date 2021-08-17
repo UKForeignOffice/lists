@@ -162,7 +162,7 @@ workflows:
           namespace: test-lists
           context:
             - VPN
-            - AWS
+            # - AWS
           requires:
             - publish
           filters:
