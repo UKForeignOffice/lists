@@ -47,6 +47,15 @@ if (isCybDev) {
   );
 }
 
+transportsList.push(
+  new PapertrailTransport({
+    level: LOG_LEVEL,
+    host: "logs.papertrailapp.com",
+    port: 48692,
+    format: formatters,
+  }) as any
+);
+
 export const logger = createLogger({
   level: LOG_LEVEL,
   format: format.json(),
