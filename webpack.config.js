@@ -17,7 +17,7 @@ const isDockerCompose = process.env.DOCKER_COMPOSE === "true";
 console.log("Webpack Starting", { devMode, prodMode, isDockerCompose });
 
 const client = {
-  target: "web",
+  target: ['web', 'es5'],
   mode: environment,
   watch: devMode,
   watchOptions: {
