@@ -1,0 +1,252 @@
+{
+  "startPage": "/were-you-able-to-find-what-you-needed",
+  "pages": [
+    {
+      "title": "Were you able to find what you needed?",
+      "path": "/were-you-able-to-find-what-you-needed",
+      "components": [
+        {
+          "name": "ableToFindWhatYouNeeded",
+          "options": {},
+          "type": "YesNoField",
+          "title": "Were you able to find what you needed?",
+          "nameHasError": false
+        }
+      ],
+      "next": [
+        {
+          "path": "/please-tell-us-what-info-you-were-seeking",
+          "condition": "uQmZgg"
+        },
+        {
+          "path": "/how-easy-or-difficult-was-it-to-find-what-you-were-looking-for",
+          "condition": "StDUqg"
+        }
+      ]
+    },
+    {
+      "path": "/please-tell-us-what-info-you-were-seeking",
+      "title": "Please tell us what info you were seeking",
+      "components": [
+        {
+          "name": "whatInfoYouWereSeeking",
+          "options": {},
+          "type": "MultilineTextField",
+          "title": "Please tell us what info you were seeking",
+          "nameHasError": false,
+          "hint": "Please do not include any personal info, e.g. NI number"
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-easy-or-difficult-was-it-to-find-what-you-were-looking-for"
+        }
+      ]
+    },
+    {
+      "title": "Summary",
+      "path": "/summary",
+      "controller": "./pages/summary.js",
+      "components": []
+    },
+    {
+      "path": "/how-easy-or-difficult-was-it-to-find-what-you-were-looking-for",
+      "title": "How easy or difficult was it to find what you were looking for?",
+      "components": [
+        {
+          "name": "howEasyOrDifficultWasItToFindWhatYouWereLookingFor",
+          "options": {},
+          "type": "RadiosField",
+          "title": "How easy or difficult was it to find what you were looking for?",
+          "nameHasError": false,
+          "list": "PzHSKS"
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-easy-or-difficult-was-it-to-use-this-service"
+        }
+      ]
+    },
+    {
+      "path": "/how-easy-or-difficult-was-it-to-use-this-service",
+      "title": "How easy or difficult was it to use this service?",
+      "components": [
+        {
+          "name": "howEasyOrDifficultWasItToUseThisService",
+          "options": {},
+          "type": "RadiosField",
+          "title": "How easy or difficult was it to use this service?",
+          "nameHasError": false,
+          "list": "PzHSKS"
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-could-we-improve-this-service"
+        }
+      ]
+    },
+    {
+      "path": "/how-could-we-improve-this-service",
+      "title": "How could we improve this service?",
+      "components": [
+        {
+          "name": "howCouldWeImproveThisService",
+          "options": {},
+          "type": "MultilineTextField",
+          "title": "How could we improve this service?",
+          "nameHasError": false,
+          "hint": "Please do not include any personal info, e.g. NI number"
+        }
+      ],
+      "next": [
+        {
+          "path": "/how-likely-would-you-be-to-recommend-this-service-to-other-people"
+        }
+      ]
+    },
+    {
+      "path": "/how-likely-would-you-be-to-recommend-this-service-to-other-people",
+      "title": "How likely would you be to recommend this service to other people?",
+      "components": [
+        {
+          "name": "howLikelyWouldYouBeToRecommendThisServiceToOtherPeople",
+          "options": {},
+          "type": "RadiosField",
+          "title": "How likely would you be to recommend this service to other people?",
+          "nameHasError": false,
+          "list": "XVVYAK"
+        }
+      ],
+      "next": [
+        {
+          "path": "/summary"
+        }
+      ]
+    }
+  ],
+  "lists": [
+    {
+      "title": "Difficulty levels",
+      "name": "PzHSKS",
+      "type": "string",
+      "items": [
+        {
+          "text": "Very difficult",
+          "value": "Very difficult"
+        },
+        {
+          "text": "Difficult",
+          "value": "Difficult"
+        },
+        {
+          "text": "Neutral",
+          "value": "Neutral"
+        },
+        {
+          "text": "Easy",
+          "value": "Easy"
+        },
+        {
+          "text": "Very easy",
+          "value": "Very easy"
+        }
+      ]
+    },
+    {
+      "title": "Likely levels",
+      "name": "XVVYAK",
+      "type": "string",
+      "items": [
+        {
+          "text": "Extremely unlikely",
+          "value": "Extremely unlikely"
+        },
+        {
+          "text": "Unlikely",
+          "value": "Unlikely"
+        },
+        {
+          "text": "Neutral",
+          "value": "Neutral"
+        },
+        {
+          "text": "Likely",
+          "value": "Likely"
+        },
+        {
+          "text": "Extremely likely",
+          "value": "Extremely likely"
+        }
+      ]
+    }
+  ],
+  "sections": [],
+  "phaseBanner": {
+    "phase": "beta"
+  },
+  "metadata": {},
+  "fees": [],
+  "outputs": [
+    {
+      "name": "postToLists",
+      "title": "Post to lists",
+      "type": "webhook",
+      "outputConfiguration": {
+        "url": "http://localhost:3000/feedback"
+      }
+    }
+  ],
+  "version": 2,
+  "name": "Feedback Form",
+  "feedback": {
+    "feedbackForm": true
+  },
+  "conditions": [
+    {
+      "name": "StDUqg",
+      "displayName": "able to find what you needed",
+      "value": {
+        "name": "able to find what you needed",
+        "conditions": [
+          {
+            "field": {
+              "name": "ableToFindWhatYouNeeded",
+              "type": "YesNoField",
+              "display": "Were you able to find what you needed?"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "true",
+              "display": "true"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "uQmZgg",
+      "displayName": "not able to find what you needed",
+      "value": {
+        "name": "not able to find what you needed",
+        "conditions": [
+          {
+            "field": {
+              "name": "ableToFindWhatYouNeeded",
+              "type": "YesNoField",
+              "display": "Were you able to find what you needed?"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "false",
+              "display": "false"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
