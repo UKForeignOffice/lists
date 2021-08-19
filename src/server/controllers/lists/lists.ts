@@ -234,3 +234,19 @@ export function listsGetPrivateBetaPage(
     ServiceType,
   });
 }
+
+export function listsFeedbackPost(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  res.json({});
+}
+
+export function listsFeedbackSuccess(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  res.json({});
+}
