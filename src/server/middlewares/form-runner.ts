@@ -16,7 +16,7 @@ export function configureFormRunnerProxy(server: Express): void {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
-
+        
         const data = proxyResData.toString("utf8");
 
         const updatedData = data
@@ -24,8 +24,9 @@ export function configureFormRunnerProxy(server: Express): void {
             /(href|src)="\/([^'"]+)/g,
             `$1="${FORM_RUNNER_BASE_ROUTE}/$2`
           )
+          .replace(/\/application\/help\/cookies/g, "/help/cookies")
           .replace(/<form(.*)>/g, `<form $1 action="${userReq.originalUrl}">`);
-
+        
         return updatedData;
       },
       userResHeaderDecorator(headers, _, userRes) {
