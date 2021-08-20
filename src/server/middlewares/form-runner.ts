@@ -1,5 +1,6 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
+import { listsRoutes } from "server/controllers/lists";
 import {
   FORM_RUNNER_BASE_ROUTE,
   FORM_RUNNER_URL,
@@ -18,19 +19,22 @@ export function configureFormRunnerProxy(server: Express): void {
         }
 
         const data = proxyResData.toString("utf8");
-
-        const updatedData = data
+       
+        return data
           .replace(
-            /(href|src)="\/([^'"]+)/g,
-            `$1="${FORM_RUNNER_BASE_ROUTE}/$2`
+            /(href|src)=('|")\/([^'"]+)/g,
+            `$1=$2${FORM_RUNNER_BASE_ROUTE}/$3`
           )
-          .replace(/<form(.*)>/g, `<form $1 action="${userReq.originalUrl}">`);
-
-        return updatedData;
+          .replace(/\/application\/help\/cookies/g, "/help/cookies")
+          .replace(/<form (.*)>/g, `<form action="${userReq.originalUrl}" $1>`);
       },
       userResHeaderDecorator(headers, _, userRes) {
-        // adjust redirect location
-        if (userRes.statusCode === 302) {
+        if (userRes.statusCode === 302 && (headers.location?? "").includes("/feedback/status")) {
+          // submission of feedback form was successful and form-runner is now redirecting user to the status page
+          // but instead we are redirecting user to the lists feedback success page
+          // this is necessary because form runner status page content is not ideal for feedback forms
+          headers.location = listsRoutes.feedbackSuccess;
+        } else if (userRes.statusCode === 302) {
           return {
             ...headers,
             location: `${FORM_RUNNER_BASE_ROUTE}${headers.location}`,
