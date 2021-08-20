@@ -248,5 +248,5 @@ export function listsFeedbackSuccess(
   res: Response,
   next: NextFunction
 ): void {
-  res.json({});
+  res.render("lists/feedback-success-page.html", {});
 }
