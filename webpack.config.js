@@ -74,13 +74,6 @@ const client = {
         ],
       },
       {
-        test: /\.(png|svg|jpg|gif|ico)$/,
-        loader: "file-loader",
-        options: {
-          name: "images/[name].[ext]",
-        },
-      },
-      {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         loader: "file-loader",
         options: {
