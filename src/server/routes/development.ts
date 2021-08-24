@@ -8,7 +8,7 @@ import { dashboardRoutes } from "server/controllers/dashboard";
 
 const router = express.Router();
 
-router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req: string, res) => {
+router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
