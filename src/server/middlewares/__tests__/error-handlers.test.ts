@@ -97,4 +97,4 @@ describe("Error handlers middleware", () => {
       expect(res.send).toHaveBeenCalledWith("Sorry, there is a problem with the service");
     });
   });
-})
+});

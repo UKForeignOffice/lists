@@ -1,5 +1,6 @@
 import proxy from "express-http-proxy";
 import { configureFormRunnerProxy } from "../form-runner";
+import * as feedbackHelpers from "server/controllers/feedback/helpers";
 
 jest.mock("express-http-proxy", () => ({
   __esModule: true,
@@ -124,6 +125,37 @@ describe("FormRunner middleware", () => {
         </form>
       `);
     });
+
+    test("feedback success page content is correct", () => {
+      jest.spyOn(feedbackHelpers, "getFeedbackSuccessContent").mockReturnValueOnce("<p>Success</p>");
+      userReq.baseUrl = "/application/feedback/status";
+      const { userResDecorator } = (proxy as any).mock.calls[0][1];
+      proxyResData.toString.mockReturnValueOnce(`
+        <link rel="shortcut href="/assets/images/favicon.ico">
+        <img src='/assets/img/logo.png' />
+        <link rel="shortcut href="/assets/js/main.js">
+        <script src="/assets/js/main.js"></script>
+        <body>
+          <div>...</div>
+          <main class="123" id="123"></main>
+          <div>...</div>
+        </body>
+      `);
+
+      const result = userResDecorator(proxyRes, proxyResData, userReq);
+
+      expect(result).toBe(`
+        <link rel="shortcut href="/application/assets/images/favicon.ico">
+        <img src='/application/assets/img/logo.png' />
+        <link rel="shortcut href="/application/assets/js/main.js">
+        <script src="/application/assets/js/main.js"></script>
+        <body>
+          <div>...</div>
+          <main class="123" id="123"><p>Success</p></main>
+          <div>...</div>
+        </body>
+      `);
+    });
   });
 
   describe("userResHeaderDecorator", () => {
@@ -142,18 +174,6 @@ describe("FormRunner middleware", () => {
       expect(resultHeaders).toEqual({
         ...headers,
         location: "/application/form-name",
-      });
-    });
-
-    test("it redirects /feedback/status correctly", () => {
-      headers.location = "/feedback/status";
-      const { userResHeaderDecorator } = (proxy as any).mock.calls[0][1];
-
-      const resultHeaders = userResHeaderDecorator(headers, undefined, userRes);
-
-      expect(resultHeaders).toEqual({
-        ...headers,
-        location: "/feedback/success",
       });
     });
   });

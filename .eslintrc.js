@@ -8,6 +8,7 @@ module.exports = {
   },
   rules: {
     "no-console": ["error"],
+    "eol-last": ["error"],
     "@typescript-eslint/restrict-template-expressions": 0,
   },
   ignorePatterns: [

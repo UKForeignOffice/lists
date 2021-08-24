@@ -99,3 +99,14 @@ model Audit {
   @@index([type])
   @@index([jsonData])
 }
+
+model Feedback {
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  type                String
+  jsonData            Json
+
+  @@index([type])
+}
