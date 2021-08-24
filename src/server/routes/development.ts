@@ -1,4 +1,5 @@
-import express, { Request, Response } from "express";
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import express from "express";
 import { exec } from "child_process";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";
@@ -7,13 +8,7 @@ import { dashboardRoutes } from "server/controllers/dashboard";
 
 const router = express.Router();
 
-router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
-  exec("npm run prisma:reset", (error, stdout, stderr) => {
-    res.send({ error, stdout, stderr });
-  });
-});
-
-router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
+router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req: string, res) => {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
@@ -27,8 +22,15 @@ router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
   });
 });
 
-// TODO: DEPRECATE once application is deployed in production environment
-async function promoteUser(req: Request, res: Response): Promise<void> {
+// TODO: once prod is ready this route should be available only on localhost
+router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
+  exec("npm run prisma:reset", (error, stdout, stderr) => {
+    res.send({ error, stdout, stderr });
+  });
+});
+
+// TODO: once prod is ready this route should be available only on localhost
+router.get(`${dashboardRoutes.start}/dev/promote-user`, async (req, res) =>{
   const { email, key } = req.query;
 
   if (
@@ -66,9 +68,6 @@ async function promoteUser(req: Request, res: Response): Promise<void> {
       ).includes(`${key}`)}`
     );
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get(`${dashboardRoutes.start}/dev/promote-user`, promoteUser);
+});
 
 export default router;
