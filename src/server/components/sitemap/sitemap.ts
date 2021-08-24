@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { ServiceType } from "server/models/types";
 import { countriesList } from "server/services/metadata";
-import { listsRoutes } from "../../controllers/lists";
-import { getServiceLabel } from "../../controllers/lists/helpers";
+import { listsRoutes, getServiceLabel } from "server/components/lists";
 
 export function sitemapController(req: Request, res: Response): void {
   const sections = Object.keys(ServiceType).map(serviceType => {

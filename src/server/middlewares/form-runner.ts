@@ -1,6 +1,6 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
-import { listsRoutes } from "server/controllers/lists";
+import { listsRoutes } from "server/components/lists";
 import {
   FORM_RUNNER_BASE_ROUTE,
   FORM_RUNNER_URL,

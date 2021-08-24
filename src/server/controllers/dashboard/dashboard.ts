@@ -28,15 +28,17 @@ import {
   userIsListValidator,
   userIsListAdministrator,
 } from "./helpers";
-import { countriesList } from "server/services/metadata";
 import {
   isGovUKEmailAddress,
   isCountryNameValid,
 } from "server/utils/validation";
-import { QuestionError } from "../lists/types";
+import {
+  createListSearchBaseLink,
+  QuestionError,
+} from "server/components/lists";
 import { authRoutes } from "server/components/auth";
+import { countriesList } from "server/services/metadata";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
-import { createListSearchBaseLink } from "../lists/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,

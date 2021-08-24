@@ -1,4 +1,4 @@
-import { getServiceLabel } from "server/controllers/lists/helpers";
+import { getServiceLabel } from "server/components/lists";
 import { ServiceType } from "server/models/types";
 import { sitemapController } from "../sitemap";
 
