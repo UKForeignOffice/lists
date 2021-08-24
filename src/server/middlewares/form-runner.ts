@@ -1,6 +1,5 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
-import { listsRoutes } from "server/controllers/lists";
 import { getFeedbackSuccessContent } from "server/controllers/feedback/helpers";
 import {
   FORM_RUNNER_BASE_ROUTE,
