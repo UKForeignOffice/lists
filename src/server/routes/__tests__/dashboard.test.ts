@@ -5,8 +5,8 @@ import { dashboardRoutes } from "server/controllers/dashboard";
 
 let mockIsAuthenticated = false;
 
-jest.mock("server/auth/helpers", () => ({
-  ...jest.requireActual("server/auth/helpers"),
+jest.mock("server/components/auth/helpers", () => ({
+  ...jest.requireActual("server/components/auth/helpers"),
   ensureAuthenticated: jest.fn().mockImplementation((req, res, next) => {
     if (mockIsAuthenticated) {
       next();

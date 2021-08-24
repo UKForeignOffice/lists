@@ -10,7 +10,7 @@ import {
   configureFormRunnerProxy,
   configureCookieParser,
 } from "./middlewares";
-import { configureAuth } from "./auth";
+import { configureAuth } from "./components/auth";
 import { configureRouter } from "./routes";
 import { isProd } from "server/config";
 

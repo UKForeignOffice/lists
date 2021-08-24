@@ -34,7 +34,7 @@ import {
   isCountryNameValid,
 } from "server/utils/validation";
 import { QuestionError } from "../lists/types";
-import { authRoutes } from "server/auth";
+import { authRoutes } from "server/components/auth";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
 import { createListSearchBaseLink } from "../lists/helpers";
 

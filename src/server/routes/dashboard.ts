@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { ensureAuthenticated, ensureUserIsSuperAdmin } from "server/auth";
+import { ensureAuthenticated, ensureUserIsSuperAdmin } from "server/components/auth";
 import {
   dashboardRoutes,
   listsController,

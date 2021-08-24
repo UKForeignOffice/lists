@@ -1,4 +1,4 @@
-import { authRoutes } from "server/auth";
+import { authRoutes } from "server/components/auth";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem";
 import { List, UserRoles } from "server/models/types";

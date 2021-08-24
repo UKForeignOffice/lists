@@ -8,7 +8,7 @@ import * as formRunner from "server/middlewares/form-runner";
 import * as cookieParser from "server/middlewares/cookie-parser";
 import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
-import * as auth from "server/auth/helpers";
+import * as auth from "server/components/auth/helpers";
 import * as router from "server/routes";
 
 import * as serverConfig from "server/config/server-config";
