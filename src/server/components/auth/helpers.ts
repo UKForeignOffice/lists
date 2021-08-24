@@ -1,7 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { configurePassport } from "./passport";
 import { authRoutes } from "./constants";
-import authRouter from "./routes";
+import { authRouter } from "./router";
 import { configureExpressSession } from "./express-session";
 
 export function ensureAuthenticated(

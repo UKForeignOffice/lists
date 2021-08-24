@@ -5,7 +5,6 @@ import {
   ensureUserIsSuperAdmin,
 } from "server/components/auth";
 import {
-  dashboardRoutes,
   listsController,
   listsEditController,
   startRouteController,
@@ -14,7 +13,22 @@ import {
   listsItemsController,
   listItemsApproveController,
   listItemsPublishController,
-} from "server/components/dashboard";
+} from "./dashboard";
+
+export const dashboardRoutes = {
+  start: "/dashboard",
+
+  // users
+  usersList: "/dashboard/users",
+  usersEdit: "/dashboard/users/:userEmail",
+
+  // lists
+  lists: "/dashboard/lists",
+  listsEdit: "/dashboard/lists/:listId",
+  listsItems: "/dashboard/lists/:listId/items",
+  listsItemsApprove: "/dashboard/lists/:listId/items/:listItemId/approve",
+  listsItemsPublish: "/dashboard/lists/:listId/items/:listItemId/publish",
+};
 
 export const dashboardRouter = express.Router();
 

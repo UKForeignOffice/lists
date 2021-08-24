@@ -1,18 +1,18 @@
 import { Express } from "express";
-import healthCheckRouter from "./health-check";
-import developmentRouter from "./development";
-import { listsRouter } from "../components/lists/router";
-import { sitemapRouter } from "server/components/sitemap";
-import { dashboardRouter } from "../components/dashboard";
+import { listsRouter } from "server/components/lists";
 import { cookiesRouter } from "server/components/cookies";
-import feedbackRouter from "./feedback";
+import { sitemapRouter } from "server/components/sitemap";
+import { feedbackRouter } from "server/components/feedback";
+import { dashboardRouter } from "server/components/dashboard";
+import { developmentRouter } from "server/components/development";
+import { healthCheckRouter } from "server/components/healthCheck";
 
 export const configureRouter = (server: Express): void => {
-  server.use(healthCheckRouter);
   server.use(listsRouter);
-  server.use(sitemapRouter);
-  server.use(developmentRouter);
-  server.use(dashboardRouter);
   server.use(cookiesRouter);
+  server.use(sitemapRouter);
   server.use(feedbackRouter);
+  server.use(dashboardRouter);
+  server.use(developmentRouter);
+  server.use(healthCheckRouter);
 };

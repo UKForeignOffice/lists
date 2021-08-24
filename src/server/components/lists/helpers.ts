@@ -3,7 +3,7 @@ import { Request } from "express";
 import { get, omit, trim, mapKeys, isArray, without, lowerCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
-import { listsRoutes } from "./routes";
+import { listsRoutes } from "./router";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
 import {

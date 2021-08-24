@@ -1,0 +1,1 @@
+export { healthCheckRouter } from "./router";

@@ -4,3 +4,4 @@ export {
   ensureAuthenticated,
   ensureUserIsSuperAdmin,
 } from "./helpers";
+export { authRouter } from "./router";

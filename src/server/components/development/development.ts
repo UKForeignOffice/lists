@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { exec } from "child_process";
-import express from "express";
+import { Request, Response } from "express";
 import { UserRoles } from "server/models/types";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
-import { dashboardRoutes } from "server/components/dashboard";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";
 
-export const router = express.Router();
 
-router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
+export function deployDb(req: Request, res: Response): void {
   req.setTimeout(5 * 60 * 1000);
 
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
@@ -20,17 +18,15 @@ router.get(`${dashboardRoutes.start}/dev/deploy-db`, (req, res) => {
       res.send(stdout);
     }
   });
-});
+}
 
-// TODO: once prod is ready this route should be available only on localhost
-router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
+export function resetDb(req: Request, res: Response): void {
   exec("npm run prisma:reset", (error, stdout, stderr) => {
     res.send({ error, stdout, stderr });
   });
-});
+}
 
-// TODO: once prod is ready this route should be available only on localhost
-router.get(`${dashboardRoutes.start}/dev/promote-user`, async (req, res) =>{
+export async function promoteUser(req: Request, res: Response): Promise<void> {
   const { email, key } = req.query;
 
   if (
@@ -68,6 +64,4 @@ router.get(`${dashboardRoutes.start}/dev/promote-user`, async (req, res) =>{
       ).includes(`${key}`)}`
     );
   }
-});
-
-export default router;
+}
