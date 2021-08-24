@@ -1,7 +1,7 @@
 import request from "supertest";
 import { Express } from "express";
 import { getServer } from "../../server";
-import { dashboardRoutes } from "server/controllers/dashboard";
+import { dashboardRoutes } from "server/components/dashboard";
 
 let mockIsAuthenticated = false;
 

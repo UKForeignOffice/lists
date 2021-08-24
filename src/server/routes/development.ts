@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
 import { exec } from "child_process";
-import { GOVUK_NOTIFY_API_KEY } from "server/config";
-import { createUser, updateUser, findUserByEmail } from "server/models/user";
+import express, { Request, Response } from "express";
 import { UserRoles } from "server/models/types";
-import { dashboardRoutes } from "server/controllers/dashboard";
+import { GOVUK_NOTIFY_API_KEY } from "server/config";
+import { dashboardRoutes } from "server/components/dashboard";
+import { createUser, updateUser, findUserByEmail } from "server/models/user";
 
-const router = express.Router();
+export const router = express.Router();
 
 router.get(`${dashboardRoutes.start}/dev/reset-db`, (req, res) => {
   exec("npm run prisma:reset", (error, stdout, stderr) => {
