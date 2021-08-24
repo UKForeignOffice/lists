@@ -188,3 +188,23 @@ export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
 export interface AuditUpdateInput extends PrismaClient.Prisma.AuditUpdateInput {
   jsonData: AuditJsonData;
 }
+
+// Feedback
+export interface Feedback extends PrismaClient.Feedback {}
+
+export interface FeedbackJsonData extends JsonObject {
+  questionsAndAnswers: Array<{
+    question: string;
+    answer: string | number | boolean | undefined;
+  }>
+  metadata?: PrismaClient.Prisma.JsonObject;
+}
+
+export interface FeedbackCreateInput extends PrismaClient.Prisma.FeedbackCreateInput {
+  jsonData: FeedbackJsonData;
+}
+
+export interface FeedbackUpdateInput extends PrismaClient.Prisma.FeedbackUpdateInput {
+  jsonData: FeedbackJsonData;
+}
+

@@ -5,6 +5,7 @@ import developmentRouter from "./development";
 import sitemapRouter from "./sitemap";
 import dashboardRouter from "./dashboard";
 import cookiesRouter from "./cookies";
+import feedbackRouter from "./feedback";
 
 export const configureRouter = (server: Express): void => {
   server.use(healthCheckRouter);
@@ -13,4 +14,5 @@ export const configureRouter = (server: Express): void => {
   server.use(developmentRouter);
   server.use(dashboardRouter);
   server.use(cookiesRouter);
+  server.use(feedbackRouter);
 };

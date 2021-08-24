@@ -21,8 +21,10 @@ import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
 } from "./covid-test-provider";
-import { formRunnerPostRequestSchema } from "./schemas";
-import { parseFormRunnerWebhookObject } from "server/services/form-runner";
+import {
+  parseFormRunnerWebhookObject,
+  formRunnerPostRequestSchema,
+} from "server/services/form-runner";
 import {
   CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,
@@ -233,20 +235,4 @@ export function listsGetPrivateBetaPage(
     serviceType,
     ServiceType,
   });
-}
-
-export function listsFeedbackPost(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  res.json({});
-}
-
-export function listsFeedbackSuccess(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  res.render("lists/feedback-success-page.html", {});
 }

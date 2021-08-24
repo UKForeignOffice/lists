@@ -1,64 +1,114 @@
 # FCDO Lists
 
+## Architecture
+
+### Server
+
+Main Technologies:
+
+- [Typescript](https://www.typescriptlang.org/)
+- [NodeJS](https://nodejs.org/en/)
+- [ExpressJS](https://expressjs.com/)
+- [Prisma ORM](https://www.prisma.io/)
+- [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend)
+- [Mozilla Nunjucks](https://mozilla.github.io/nunjucks/)
+- [Jest](https://jestjs.io/)
+
+The lists server is a NodeJs/Typescript application built on top of ExpressJS and the codebase organisation is based on Model-View-Controller.
+All HTML is server side rendered and we are using govuk-frontend library for components, the client-side Javascript is minimal with only scripts needed by govuk-frontend components.
+
+### Form runner
+
+The lists server depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder) to deploy form journeys for data ingestion, this is how it works:
+
+1. During the build the CI executes the `src/form-runner/install-form-runner.sh` script which installs and configures the form-runner application inside the lists container (under `/lib` folder)
+2. When the lists server is starting it first initializes the form-runner on a separate process, which becomes available on `PORT:3001` and only once the form-runner is responding then the lists server starts listening to requests. At this stage both services are now running in parallel inside the same container, lists server on `PORT:3000` and form-runner on `PORT:3001`
+3. Lists server is the only application responding to external requests and it has a form-runner middleware responsible for proxying all requests from `/application/{formName}` to the form-runner application running on `http://localhost:3001`, allowing user's to go through form journeys seamlessly
+4. Once users complete a form-journey application the form-runner posts the data to (`localhost:3000/ingest/:serviceType`) and the lists application validates and ingests the data
+
+
+### Databases
+
+**PostgreSQL**
+
+We are using Postgres on AWS RDS with Postgis extension for spatial queries.
+The server's data layer is built using [Prisma ORM](https://www.prisma.io/) and you can find the database schema specification in `src/server/models/db/schema.prisma`.
+We are using a mix between relational and JSONB so we can benefit from relational structured data and have the flexibility of unstructured schemas for the various types of lists we are planning to work with. **Important**: Because Prisma doesn't support PostGIS types and advanced JSONB operators, some queries are handwritten instead of using prisma models.
+
+**Redis**
+
+Redis is used on both lists and form-runner applications to store user sessions and for other caching purposes.
+
+### AWS Location Service
+
+The lists server also depends on [AWS Location Service](https://aws.amazon.com/location/) for geo location data.
+
+
 ## Development
 
-#### Starting Lists Server
+#### Starting local development required services
 
-You can start all services by running:
+Lists depends on both Postgres and Redis, and you can start these services by running:
 
 ```bash
 docker-compose up
 ```
 
-Compose will start the following services:
+Compose will start the following:
 
-1. `lists`: The lists application, accessible on `PORT:3000`
-2. `PostgreSQL`: The PostgreSQL database with PostGIS, accessible on `PORT:5432`
-3. `pgadmin`: The PgAdmin GUI app so you can manage the database, accessible on `PORT:8080`
-4. `pghero`: A performance dashboard for Postgres, accessible on `PORT:8081`
+1. `PostgreSQL`: The PostgreSQL database with PostGIS, accessible on [http://localhost:5432](http://localhost:5432)
+2. `PgAdmin`: The PgAdmin GUI app so you can manage the database, accessible on [http://localhost:8080](http://localhost:8080)
+3. `PgHero`: A performance dashboard for Postgres, accessible on [http://localhost:8081](http://localhost:8081)
+4. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
+5. `RedisInsight`: Redis desktop GUI so you can manager the database, accessible on [http://localhost:8001](http://localhost:8001)
 
-If you like you can start each service independently:
+Note: See `docker-compose.yml` file for respective usernames and passwords.
 
-1. `docker-compose up lists`
-2. `docker-compose up postgres`
-3. `docker-compose up pgadmin`
-4. `docker-compose up pghero`
+### Local environment variables
 
-To force a rebuild (for example if a new npm module has been installed) use the **--build** flag `docker-compose up --build lists`
+Ideally try ot get a `.env` file from another engineer, otherwise please create the file in the root of the project and configure all the environment variables listed below.
+
+Lists variables:
+
+| name                        |  type   | required | description                                                                                                |
+| --------------------------- | :-----: | :------: | :--------------------------------------------------------------------------------------------------------- |
+| DEBUG                       | boolean |  false   | Enable logger service metadata logging                                                                     |
+| LOG_LEVEL                   | string  |  false   | Set logger service log level, possible values are error (default), warn, info, http, verbose, debug, silly |
+| LOCAL_HOST                  | boolean |  false   | Remember to set this to true when running locally                                                          |
+| SERVICE_NAME                | string  |   true   | The name of the service used in HTML templates such as page header and titles                              |
+| SERVICE_DOMAIN              | string  |   true   | The domain in which this service is running e.g: `localhost:3000`                                          |
+| DATABASE_URL                | string  |   true   | Postgres connection url, e.g: postgresql://postgresuser:postgrespass@localhost:5432/lists                  |
+| REDIS_HOST                  | string  |   true   | Redis host address e.g: localhost                                                                          |
+| REDIS_PORT                  | number  |   true   | Redis port number address 6379 localhost                                                                   |
+| AWS_ACCESS_KEY_ID           | string  |   true   | AWS access key id                                                                                          |
+| AWS_SECRET_ACCESS_KEY       | string  |   true   | AWS secret access key                                                                                      |
+| LOCATION_SERVICE_INDEX_NAME | string  |   true   | AWS location service index name                                                                            |
+| GOVUK_NOTIFY (various)      | string  |   true   | Several GOVUK Notify variables are required, please see `govuk-notify.ts` for a fll list                   |
+
+Form runner variables:
+
+| name    |  type   | required | description                                                                             |
+| ------- | :-----: | :------: | :-------------------------------------------------------------------------------------- |
+| sandbox | boolean |  false   | Configure form-runner to work locally with a single redis instance instead of a cluster |
+
+### Starting Lists service
+```
+npm run dev
+```
+
+To above command will start the service in watch mode and whenever you change any file the application will be recompiled and restarted. 
+
 
 ### Preparing the database
 
-After starting the services the next step is to prepare the database, first run the following command:
-
 ```bash
-npm run prisma:migrate
+npm run prisma:reset
 ```
 
-Then with the application running, open the browser and navigate to `http://localhost:3000/dev/reset-db`.
-
-This is what is going to happen:
+The above npm script will invoke `prisma migrate` and this is what is going to happen:
 
 - Database will reset and **all data will be removed**
-- Postgis extension is installed
-- GeoLocation table is created
-- Data is seeded
-
-### Debugging
-
-If you are using VSCode the debugger is already configured with `Docker: Attach to Node` (see `.vscode/launch.json`), just start debugging and enjoy it.
-
-### PgAdmin
-
-Use PgAdmin service to connect and manage Postgres, run `docker-compose up pgadmin` and open the service at `http://localhost:8080/`.
-
-- `username=dev@gov.uk`
-- `password=password`
-
-Then create a server with the following connection settings:
-
-- `HostName=postgres`
-- `username=postgresuser`
-- `password=postgrespass`
+- All prisma migrations will be applied
 
 ### Codebase
 
@@ -71,7 +121,7 @@ Then create a server with the following connection settings:
     ├── dist                      # Babel's build output folder (npm start/dev points here)
     ├── src
     │   ├── client                # Client side related code and assets such as styles and images.
-    │   ├── form-runner           # Form runner forms JSON files and it's install script (please read the Architecture section below)
+    │   ├── form-runner           # Form runner forms JSON files and it's install script (please see the architecture section above)
     │   ├── server                # NodeJS server codebase
     │   └── types.d.ts            # Typescript's global type definition file
     ├── LICENSE
@@ -116,42 +166,4 @@ We manage releases with [Github Release](https://docs.github.com/en/github/admin
 3. Once a new tag is released the CI will test, build and deploy the production environment
 4. Please make sure the new version has been released successfully, for that open the production application and check the footer, make sure the version number is the same as in the package.json file
 
-## Architecture
 
-### Server
-
-Main Technologies:
-
-- [Typescript](https://www.typescriptlang.org/)
-- [NodeJS](https://nodejs.org/en/)
-- [ExpressJS](https://expressjs.com/)
-- [Prisma ORM](https://www.prisma.io/)
-- [GOV.UK Frontend](https://github.com/alphagov/govuk-frontend)
-- [Mozilla Nunjucks](https://mozilla.github.io/nunjucks/)
-- [Jest](https://jestjs.io/)
-
-Server is a NodeJs/Typescript application built on top of ExpressJS and the codebase organisation is based on Model-View-Controller.
-All HTML is server side rendered and we are using govuk-frontend library for components, we want to keep client-side Javascript minimal with only scripts needed by govuk-frontend components.
-
-### Database
-
-We are using Postgres on AWS RDS with Postgis extension for spatial queries.
-The server's data layer is built using Prisma ORM and you can find the database schema specification in `src/server/models/db/schema.prisma`.
-We are using a mix between relational and JSONB, this way we can benefit from relational structured data and have the flexibility of unstructured schemas for the various professional services we are planning to integrate with. If you read the database schema you will see that the `ListItem` model contains both structured types and also the jsonData column which is JSONB.
-
-**Important**: Because Prisma doesn't support PostGIS types and advanced JSONB operators, most queries are handwritten instead of using prisma models.
-
-### FormRunner
-
-Lists also depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder) to deploy form journeys for data ingestion, for example when lawyers want to submit their data to join the service.
-
-The form-runner is controlled by the server and this is how it works:
-
-1. During the build the CI executes the `src/form-runner/install-form-runner.sh` script, this script installs and configures the form-runner application inside the lists image (under `/lib` folder).
-2. When the lists server is starting it also initializes the form-runner as a child process, which becomes available on `PORT 3001`. At this stage both services are now running in parallel inside the same pod, lists server on `PORT 3000` and form-runner on `PORT 30001`.
-3. Lists server has a form-runner middleware which proxies requests from `/application/{formName}` to the form-runner, allowing user's to go through form journeys.
-4. Once users complete their application, the form-runner posts the data to (`localhost:30000/ingest/:serviceType`), the route controller validates and ingests the data.
-
-### AWS Location Service
-
-Lists server also depends on [AWS Location Service](https://aws.amazon.com/location/) for geo location data.

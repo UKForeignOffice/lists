@@ -7,3 +7,4 @@ export {
 } from "./form-runner";
 
 export { FormRunnerWebhookData, LawyersFormWebhookData } from "./types";
+export { formRunnerPostRequestSchema } from "./schemas";

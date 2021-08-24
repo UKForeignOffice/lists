@@ -1,31 +1,5 @@
 version: "3.9"
 services:
-  lists:
-    platform: linux/amd64
-    container_name: lists
-    environment:
-      - DOCKER_COMPOSE=true
-      - NODE_ENV=development
-      - ERROR_LEVEL=error
-      - PORT=3000
-      - SERVICE_NAME=Lists Service
-      - DATABASE_URL=postgresql://postgresuser:postgrespass@postgres:5432/lists
-      - GOVUK_NOTIFY_API_KEY=lists_test_key-51af028d-d3a7-491a-9d9a-b657dc9bc133-86592bf4-0952-4327-a008-3cabbcd4c49a
-      - GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID=5fc30bd9-6f58-4beb-9b52-4e8885e15671
-      - GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID=fbeb637c-288b-4f6b-83f7-7ea7696ab245
-      - GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID=242dd021-0c41-404f-9530-bc25f2b2ee5f
-    build:
-      context: .
-    volumes:
-      - ./:/usr/src/app:delegated
-      - /usr/src/app/node_modules
-      - /user/src/app/lib
-    ports:
-      - "3000:3000"
-      - "9229:9229"
-    command: npm run dev
-    depends_on:
-      - postgres
   postgres:
     platform: linux/amd64
     image: "postgis/postgis"
@@ -51,12 +25,16 @@ services:
       - "8080:8080"
     links:
       - postgres
+    depends_on:
+      - postgres
   pghero:
     image: "ankane/pghero"
     ports:
       - "8081:8080"
     environment:
       - DATABASE_URL=postgresql://postgresuser:postgrespass@postgres:5432/lists
+    depends_on:
+      - postgres
   redis:
     image: "redis:alpine"
     command: redis-server --requirepass redispassword
@@ -66,3 +44,5 @@ services:
     image: "redislabs/redisinsight:latest"
     ports:
       - "8001:8001"
+    depends_on:
+      - redis
