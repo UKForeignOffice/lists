@@ -2,7 +2,7 @@ import { Express } from "express";
 import healthCheckRouter from "./health-check";
 import listsFinderRouter from "./lists";
 import developmentRouter from "./development";
-import sitemapRouter from "./sitemap";
+import { sitemapRouter } from "server/components/sitemap";
 import dashboardRouter from "./dashboard";
 import { cookiesRouter } from "server/components/cookies";
 
