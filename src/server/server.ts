@@ -7,9 +7,9 @@ import {
   configureCompression,
   configureStaticServer,
   configureErrorHandlers,
-  configureFormRunnerProxy,
   configureCookieParser,
 } from "./middlewares";
+import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
 import { initCookies } from "./components/cookies";
@@ -29,14 +29,12 @@ export async function getServer(): Promise<Express> {
     server.set("trust proxy", false);
   }
 
+  // middlewares
   configureHelmet(server);
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
-  configureFormRunnerProxy(
-    // form runner proxy must be initialized before body and cookie parsers
-    server
-  );
+  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
@@ -50,6 +48,8 @@ export async function getServer(): Promise<Express> {
   await initDashboard(server);
   await initDevelopment(server);
   await initHealthCheck(server);
+
+  // error handlers
   configureErrorHandlers(server);
 
   return server;

@@ -3,9 +3,7 @@ import request from "supertest";
 import { spawn } from "child_process";
 import { logger } from "server/services/logger";
 import { FormRunnerWebhookData } from "./types";
-
-export const FORM_RUNNER_BASE_ROUTE = "/application";
-export const FORM_RUNNER_URL = "localhost:3001";
+import { FORM_RUNNER_URL } from "./constants";
 
 let isStarting = false;
 

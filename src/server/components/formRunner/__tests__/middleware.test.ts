@@ -1,5 +1,5 @@
 import proxy from "express-http-proxy";
-import { configureFormRunnerProxy } from "../form-runner";
+import { configureFormRunnerProxyMiddleware } from "../proxyMiddleware";
 import * as feedbackHelpers from "server/components/feedback/helpers";
 
 jest.mock("express-http-proxy", () => ({
@@ -15,7 +15,7 @@ describe("FormRunner middleware", () => {
       use: jest.fn(),
     };
 
-    configureFormRunnerProxy(server);
+    configureFormRunnerProxyMiddleware(server);
   });
 
   test("it initializes proxy middleware correctly", () => {

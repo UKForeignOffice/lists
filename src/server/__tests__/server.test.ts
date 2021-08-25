@@ -4,10 +4,11 @@ import * as logger from "server/middlewares/logger";
 import * as compression from "server/middlewares/compression";
 import * as staticServer from "server/middlewares/static";
 import * as errorHandlers from "server/middlewares/error-handlers";
-import * as formRunner from "server/middlewares/form-runner";
 import * as cookieParser from "server/middlewares/cookie-parser";
 import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
+
+import * as formRunner from "server/components/formRunner/proxyMiddleware";
 import * as auth from "server/components/auth/helpers";
 import * as cookies from "server/components/cookies/helpers";
 import * as dashboard from "server/components/dashboard/helpers";
@@ -71,14 +72,14 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureFormRunnerProxy", async () => {
-      const spy = jest.spyOn(formRunner, "configureFormRunnerProxy");
+    test("configureFormRunnerProxyMiddleware", async () => {
+      const spy = jest.spyOn(formRunner, "configureFormRunnerProxyMiddleware");
       const server = await getServer();
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureFormRunnerProxy is called before body and cookie parsers", async () => {
-      const spyFormRunner = jest.spyOn(formRunner, "configureFormRunnerProxy");
+    test("configureFormRunnerProxyMiddleware is called before body and cookie parsers", async () => {
+      const spyFormRunner = jest.spyOn(formRunner, "configureFormRunnerProxyMiddleware");
       const spyCookieParser: any = jest.spyOn(
         cookieParser,
         "configureCookieParser"
@@ -109,7 +110,7 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureFormRunnerProxy", async () => {
+    test("configureErrorHandlers", async () => {
       const spy = jest.spyOn(errorHandlers, "configureErrorHandlers");
       const server = await getServer();
       expect(spy).toHaveBeenCalledWith(server);

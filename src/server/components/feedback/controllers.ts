@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { createFeedback } from "server/models/feedback";
 import { FeedbackJsonData } from "server/models/types";
 import {
-  formRunnerPostRequestSchema,
   FormRunnerWebhookData,
-} from "server/services/form-runner";
+  formRunnerPostRequestSchema,
+} from "server/components/formRunner";
 
 export async function feedbackIngest(
   req: Request,

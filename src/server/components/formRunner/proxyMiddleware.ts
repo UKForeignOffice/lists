@@ -1,12 +1,14 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
+import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
 import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
-import {
-  FORM_RUNNER_BASE_ROUTE,
-  FORM_RUNNER_URL,
-} from "server/services/form-runner";
 
-export function configureFormRunnerProxy(server: Express): void {
+/**
+ * Proxy middleware for the form runner
+ * @param app Express app
+ * Important: this middleware must be added before body and cookie parsers middlewares
+ */
+export function configureFormRunnerProxyMiddleware(server: Express): void {
   server.use(
     `${FORM_RUNNER_BASE_ROUTE}/*`,
     proxy(FORM_RUNNER_URL, {
@@ -19,7 +21,7 @@ export function configureFormRunnerProxy(server: Express): void {
         }
 
         let data = proxyResData.toString("utf8");
-        
+
         if (userReq.baseUrl.includes("/feedback/status")) {
           // replace content of status page for feedback form
           data = data.replace(

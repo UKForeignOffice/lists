@@ -1,34 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import { get, noop } from "lodash";
-import { DEFAULT_VIEW_PROPS } from "./constants";
 import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
+import { DEFAULT_VIEW_PROPS } from "./constants";
 import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
   getAllRequestParams,
-  queryStringFromParams,
-  getCountryLawyerRedirectLink,
   removeQueryParameter,
+  queryStringFromParams,
   createConfirmationLink,
+  getCountryLawyerRedirectLink,
 } from "./helpers";
-import { logger } from "server/services/logger";
-import { legalPracticeAreasList } from "server/services/metadata";
 import { questions } from "./questionnaire";
+import { logger } from "server/services/logger";
 import { QuestionError, QuestionName } from "./types";
+import { legalPracticeAreasList } from "server/services/metadata";
 import { searchLawyers, lawyersQuestionsSequence } from "./searches/lawyers";
 import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
 } from "./searches/covid-test-provider";
 import {
-  parseFormRunnerWebhookObject,
-  formRunnerPostRequestSchema,
-} from "server/services/form-runner";
-import {
-  CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,
-} from "server/services/form-runner/types";
+  formRunnerPostRequestSchema,
+  parseFormRunnerWebhookObject,
+  CovidTestSupplierFormWebhookData,
+} from "server/components/formRunner";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 
 export async function listsPostController(

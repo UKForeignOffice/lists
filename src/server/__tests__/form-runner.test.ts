@@ -4,7 +4,7 @@ import { getServer } from "../server";
 import {
   startFormRunner,
   isFormRunnerReady,
-} from "server/services/form-runner";
+} from "server/components/formRunner";
 
 describe("Form Runner:", () => {
   let server: Express;

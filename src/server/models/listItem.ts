@@ -12,7 +12,10 @@ import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { logger } from "server/services/logger";
 import { geoLocatePlaceByText } from "server/services/location";
-import { LawyersFormWebhookData } from "server/services/form-runner";
+import {
+  LawyersFormWebhookData,
+  CovidTestSupplierFormWebhookData,
+} from "server/components/formRunner";
 import {
   List,
   User,
@@ -32,7 +35,6 @@ import {
   rawInsertGeoLocation,
   filterAllowedLegalAreas,
 } from "./helpers";
-import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
 import { recordListItemEvent } from "./audit";
 
 // Helpers
@@ -382,7 +384,7 @@ export async function setEmailIsVerified({
     const item = await prisma.listItem.findUnique({
       where: { reference },
     });
-    
+
     if (get(item, "jsonData.metadata.emailVerified") === true) {
       return true;
     }
