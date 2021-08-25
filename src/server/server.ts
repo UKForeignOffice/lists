@@ -4,7 +4,7 @@ import {
   configureHelmet,
   configureLogger,
   configureBodyParser,
-  // configureCompression,
+  configureCompression,
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
@@ -32,7 +32,7 @@ export async function getServer(): Promise<Express> {
   // middlewares
   configureHelmet(server);
   configureLogger(server);
-  // configureCompression(server);
+  configureCompression(server);
   configureStaticServer(server);
   configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
