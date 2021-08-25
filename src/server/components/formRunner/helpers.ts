@@ -52,6 +52,7 @@ export async function startFormRunner(): Promise<boolean> {
     const isReady = await isFormRunnerReady();
 
     if (isReady) {
+      logger.info("Form Runner Started");
       return true;
     }
   }
