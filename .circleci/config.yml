@@ -149,6 +149,7 @@ workflows:
 
       - publish:
           context:
+            - VPN
             - AWS
           requires:
             - build
