@@ -1,1 +1,1 @@
-export { initSitemap } from "./controllers";
+export { initSitemap } from "./helpers";

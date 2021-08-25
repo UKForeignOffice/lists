@@ -1,6 +1,6 @@
 import { getServiceLabel } from "server/components/lists";
 import { ServiceType } from "server/models/types";
-import { sitemapController } from "../sitemap";
+import { sitemapController } from "../controllers";
 
 describe("SiteMap", () => {
   let mockReq: any;
