@@ -16,11 +16,11 @@ import { logger } from "server/services/logger";
 import { legalPracticeAreasList } from "server/services/metadata";
 import { questions } from "./questionnaire";
 import { QuestionError, QuestionName } from "./types";
-import { searchLawyers, lawyersQuestionsSequence } from "./lawyers";
+import { searchLawyers, lawyersQuestionsSequence } from "./searches/lawyers";
 import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
-} from "./covid-test-provider";
+} from "./searches/covid-test-provider";
 import {
   parseFormRunnerWebhookObject,
   formRunnerPostRequestSchema,

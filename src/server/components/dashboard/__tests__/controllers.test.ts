@@ -10,7 +10,7 @@ import {
   listsController,
   listsItemsController,
   listsEditController,
-} from "../dashboard";
+} from "../controllers";
 
 describe("Dashboard Controllers", () => {
   let mockReq: any;

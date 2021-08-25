@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { deployDb, resetDb, promoteUser } from "./development";
+import { deployDb, resetDb, promoteUser } from "./controllers";
 import { ensureAuthenticated } from "server/components/auth";
 import { developmentRoutes } from "./routes";
 

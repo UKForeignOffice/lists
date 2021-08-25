@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { listItem } from "server/models";
-import { DEFAULT_VIEW_PROPS } from "./constants";
+import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
   queryStringFromParams,
   parseListValues,
-} from "./helpers";
-import { QuestionName } from "./types";
+} from "../helpers";
+import { QuestionName } from "../types";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,

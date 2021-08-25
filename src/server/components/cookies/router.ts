@@ -1,6 +1,6 @@
 import express from "express";
 import { cookiesPageRoute } from "./routes";
-import { cookiesGETController, cookiesPOSTController } from "./cookies";
+import { cookiesGETController, cookiesPOSTController } from "./controllers";
 
 export const cookiesRouter = express.Router();
 

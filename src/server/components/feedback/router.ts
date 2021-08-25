@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { feedbackIngest } from "./feedback";
+import { feedbackIngest } from "./controllers";
 import { feedbackRoutes } from "./routes";
 
 export const feedbackRouter = express.Router();

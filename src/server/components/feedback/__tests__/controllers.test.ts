@@ -1,4 +1,4 @@
-import { feedbackIngest } from "../feedback";
+import { feedbackIngest } from "../controllers";
 import * as feedbackModel from "server/models/feedback";
 
 describe("Lists Controllers", () => {

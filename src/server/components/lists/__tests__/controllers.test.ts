@@ -4,13 +4,13 @@ import {
   listsGetPrivateBetaPage,
   listsDataIngestionController,
   listsConfirmApplicationController,
-} from "../lists";
+} from "../controllers";
 import { listItem } from "server/models";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
 import { ServiceType } from "server/models/types";
-import * as lawyers from "../lawyers";
-import * as covidTestProviders from "../covid-test-provider";
+import * as lawyers from "../searches/lawyers";
+import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
 

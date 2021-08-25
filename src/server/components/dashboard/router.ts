@@ -13,7 +13,7 @@ import {
   listsItemsController,
   listItemsApproveController,
   listItemsPublishController,
-} from "./dashboard";
+} from "./controllers";
 import { dashboardRoutes } from "./routes";
 
 export const dashboardRouter = express.Router();

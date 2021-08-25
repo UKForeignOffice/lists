@@ -7,7 +7,7 @@ import {
   listsGetPrivateBetaPage,
   listsDataIngestionController,
   listsConfirmApplicationController,
-} from "./lists";
+} from "./controllers";
 import { listsRoutes } from "./routes";
 
 export const listsRouter = express.Router();
