@@ -13,7 +13,7 @@
     {% endif %}
     {% if country %}
       <p class="govuk-body">
-        Country?<br />
+        Country<br />
         <strong>{{ _.upperFirst(country) }}</strong>
         <a 
           class="govuk-link" 
@@ -24,7 +24,7 @@
     {% endif %} 
     {% if region %}
       <p class="govuk-body">
-        Area?<br />
+        Area<br />
         <strong>{{ _.upperFirst(region) }}</strong>
         <a 
           class="govuk-link" 
@@ -35,7 +35,7 @@
     {% endif %} 
     {% if practiceArea %}
       <p class="govuk-body">
-        Which field of law do you need?<br />
+        Field of law<br />
         <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
         <a 
           class="govuk-link" 
@@ -46,7 +46,7 @@
     {% endif %} 
     {% if legalAid %}
       <p class="govuk-body">
-        Are you interested in legal aid?<br />
+        Legal aid<br />
         <strong>{{ _.startCase(legalAid) }}</strong>
         <a 
           class="govuk-link" 
@@ -57,7 +57,7 @@
     {% endif %}
     {% if proBono %}
       <p class="govuk-body">
-        Are you interested in pro bono services?<br />
+        Pro bono<br />
         <strong>{{ _.startCase(proBono) }}</strong>
         <a 
           class="govuk-link" 
@@ -68,7 +68,7 @@
     {% endif %} 
     {% if resultsTurnaround %}
       <p class="govuk-body">
-        Results turnaround time?<br />
+        Results speed<br />
         <strong>{{ _.split(resultsTurnaround, ",").map(_.startCase).join(", ") }} hour{{ "s" if resultsTurnaround > 1 else ""}}</strong>
         <a 
           class="govuk-link" 

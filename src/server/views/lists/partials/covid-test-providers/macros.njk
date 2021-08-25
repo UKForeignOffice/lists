@@ -1,7 +1,12 @@
 {% macro covidTestProvidersListItem(item, isDashboard = false) %}
-  <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
     {{ _.startCase(item.jsonData.organisationName) }}{{ " - " if item.jsonData.locationName }}{{ _.startCase(item.jsonData.locationName) }}
   </h2>
+  {% if item.jsonData.website %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-4">
+      <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+    </p>
+  {% endif %}
   {% if item.distanceinmeters >= 0 %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Distance</strong>:  {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
@@ -15,21 +20,22 @@
       {{ "-" if item.address.city }} {{ item.address.city }}
   </p>
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Available tests</strong>:
-        {% for item in _.orderBy(item.jsonData.providedTests, ["turnaroundTime"]) %}
-          {{ item.type }} (results in {{item.turnaroundTime}} hour{{ "s" if item.turnaroundTime > 1}}){{", " if not loop.last}}
-        {% endfor %}
-      </p>
-  {% if item.jsonData.website %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Website</strong>: <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
-    </p>
-  {% endif %}
+    <strong>Test types</strong>:
+    {% for item in _.orderBy(item.jsonData.providedTests, ["turnaroundTime"]) %}
+      <br />&nbsp;&nbsp;&nbsp;&nbsp;{{ item.type }} (results in {{item.turnaroundTime}} hour{{ "s" if item.turnaroundTime > 1}}){{", " if not loop.last}}
+    {% endfor %}
+  </p>
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Booking a test</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
+  </p>
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Results format</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
+  </p>
   
   <details class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary">
       <span class="govuk-details__summary-text">
-        Details
+        Contact details
       </span>
     </summary>
     <div class="govuk-details__text">
@@ -52,15 +58,8 @@
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Results formats</strong>: {{ item.jsonData.resultsFormat.map(_.startCase).join(", ") }}
-      </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Communicates results</strong>: {{ item.jsonData.resultsReadyFormat.map(_.startCase).join(", ") }}
       </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Booking options</strong>: {{ item.jsonData.bookingOptions.map(_.startCase).join(", ") }}
-      </p>
-      
       {% if isDashboard %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-2">The information below is only available inside the dashboard and will not be made publicly available.</p>
