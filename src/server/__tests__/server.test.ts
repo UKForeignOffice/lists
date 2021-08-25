@@ -4,12 +4,20 @@ import * as logger from "server/middlewares/logger";
 import * as compression from "server/middlewares/compression";
 import * as staticServer from "server/middlewares/static";
 import * as errorHandlers from "server/middlewares/error-handlers";
-import * as formRunner from "server/middlewares/form-runner";
 import * as cookieParser from "server/middlewares/cookie-parser";
 import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
-import * as auth from "server/auth/helpers";
-import * as router from "server/routes";
+
+import * as formRunner from "server/components/formRunner/proxyMiddleware";
+import * as auth from "server/components/auth/helpers";
+import * as cookies from "server/components/cookies/helpers";
+import * as dashboard from "server/components/dashboard/helpers";
+import * as development from "server/components/development/helpers";
+import * as feedback from "server/components/feedback/helpers";
+import * as healthCheck from "server/components/healthCheck/helpers";
+import * as lists from "server/components/lists/helpers";
+import * as sitemap from "server/components/sitemap/helpers";
+
 
 import * as serverConfig from "server/config/server-config";
 import { getServer } from "../server";
@@ -64,14 +72,14 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureFormRunnerProxy", async () => {
-      const spy = jest.spyOn(formRunner, "configureFormRunnerProxy");
+    test("configureFormRunnerProxyMiddleware", async () => {
+      const spy = jest.spyOn(formRunner, "configureFormRunnerProxyMiddleware");
       const server = await getServer();
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureFormRunnerProxy is called before body and cookie parsers", async () => {
-      const spyFormRunner = jest.spyOn(formRunner, "configureFormRunnerProxy");
+    test("configureFormRunnerProxyMiddleware is called before body and cookie parsers", async () => {
+      const spyFormRunner = jest.spyOn(formRunner, "configureFormRunnerProxyMiddleware");
       const spyCookieParser: any = jest.spyOn(
         cookieParser,
         "configureCookieParser"
@@ -102,20 +110,56 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureAuth", async () => {
-      const spy = jest.spyOn(auth, "configureAuth");
-      const server = await getServer();
-      expect(spy).toHaveBeenCalledWith(server);
-    });
-
-    test("configureRouter", async () => {
-      const spy = jest.spyOn(router, "configureRouter");
-      const server = await getServer();
-      expect(spy).toHaveBeenCalledWith(server);
-    });
-
-    test("configureFormRunnerProxy", async () => {
+    test("configureErrorHandlers", async () => {
       const spy = jest.spyOn(errorHandlers, "configureErrorHandlers");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initAuth", async () => {
+      const spy = jest.spyOn(auth, "initAuth");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initCookies", async () => {
+      const spy = jest.spyOn(cookies, "initCookies");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initDashboard", async () => {
+      const spy = jest.spyOn(dashboard, "initDashboard");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initDevelopment", async () => {
+      const spy = jest.spyOn(development, "initDevelopment");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initFeedback", async () => {
+      const spy = jest.spyOn(feedback, "initFeedback");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initHealthCheck", async () => {
+      const spy = jest.spyOn(healthCheck, "initHealthCheck");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initLists", async () => {
+      const spy = jest.spyOn(lists, "initLists");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initSitemap", async () => {
+      const spy = jest.spyOn(sitemap, "initSitemap");
       const server = await getServer();
       expect(spy).toHaveBeenCalledWith(server);
     });

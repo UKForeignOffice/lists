@@ -1,7 +1,10 @@
 import { toLower, startCase } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
-import { LawyersFormWebhookData } from "server/services/form-runner";
+import {
+  LawyersFormWebhookData,
+  CovidTestSupplierFormWebhookData,
+} from "server/components/formRunner";
 import {
   togglerListItemIsApproved,
   togglerListItemIsPublished,
@@ -17,7 +20,6 @@ import {
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
-import { CovidTestSupplierFormWebhookData } from "server/services/form-runner/types";
 
 jest.mock("../db/prisma-client");
 

@@ -14,14 +14,13 @@ Main Technologies:
 - [Mozilla Nunjucks](https://mozilla.github.io/nunjucks/)
 - [Jest](https://jestjs.io/)
 
-The lists server is a NodeJs/Typescript application built on top of ExpressJS and the codebase organisation is based on Model-View-Controller.
-All HTML is server side rendered and we are using govuk-frontend library for components, the client-side Javascript is minimal with only scripts needed by govuk-frontend components.
+The lists server is a NodeJs/Typescript application built on top of ExpressJS, all HTML is server side rendered and we are using govuk-frontend library for components, the client-side Javascript is minimal with only scripts required by govuk-frontend components and a few polyfills.
 
 ### Form runner
 
 The lists server depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder) to deploy form journeys for data ingestion, this is how it works:
 
-1. During the build the CI executes the `src/form-runner/install-form-runner.sh` script which installs and configures the form-runner application inside the lists container (under `/lib` folder)
+1. During the build the CI executes the `src/server/components/formRunner/install-form-runner.sh` script which installs and configures the form-runner application inside the lists container (under `/lib` folder)
 2. When the lists server is starting it first initializes the form-runner on a separate process, which becomes available on `PORT:3001` and only once the form-runner is responding then the lists server starts listening to requests. At this stage both services are now running in parallel inside the same container, lists server on `PORT:3000` and form-runner on `PORT:3001`
 3. Lists server is the only application responding to external requests and it has a form-runner middleware responsible for proxying all requests from `/application/{formName}` to the form-runner application running on `http://localhost:3001`, allowing user's to go through form journeys seamlessly
 4. Once users complete a form-journey application the form-runner posts the data to (`localhost:3000/ingest/:serviceType`) and the lists application validates and ingests the data
@@ -33,7 +32,7 @@ The lists server depends on [XGovFormBuilder/digital-form-builder](https://githu
 
 We are using Postgres on AWS RDS with Postgis extension for spatial queries.
 The server's data layer is built using [Prisma ORM](https://www.prisma.io/) and you can find the database schema specification in `src/server/models/db/schema.prisma`.
-We are using a mix between relational and JSONB so we can benefit from relational structured data and have the flexibility of unstructured schemas for the various types of lists we are planning to work with. **Important**: Because Prisma doesn't support PostGIS types and advanced JSONB operators, some queries are handwritten instead of using prisma models.
+We are using a mix between relational and JSONB so we can benefit from relational structured data and also have the flexibility of unstructured schemas for the various types of lists we are planning to work with. **Important**: Because Prisma doesn't support PostGIS types and advanced JSONB operators, some queries are handwritten instead of using prisma models.
 
 **Redis**
 
@@ -114,21 +113,26 @@ The above npm script will invoke `prisma migrate` and this is what is going to h
 
     .
     ├── .circleci                 # CircleCI configurations
-    ├── .github                   # Github configuration such as workflows, dependabot and etc
-    ├── .jest                     # Jest related configuration files, such as environment variables
+    ├── .github                   # Github configuration such as workflows and dependabot
+    ├── .husky                    # Husky git hooks configuration
+    ├── .jest                     # Jest related configuration files
     ├── .vscode                   # VSCode related settings
-    ├── config                    # General development configuration files not directly related to the source code, such as local postgres config file
+    ├── config                    # Local development configuration files, such as local postgres config file
     ├── dist                      # Babel's build output folder (npm start/dev points here)
     ├── src
     │   ├── client                # Client side related code and assets such as styles and images.
-    │   ├── form-runner           # Form runner forms JSON files and it's install script (please see the architecture section above)
     │   ├── server                # NodeJS server codebase
+    |   |   ├── components        # Server features are self-contained within the various folders here (except for their respective views)|   |   ├── config            # Environment configuration files
+    |   |   ├── middlewares       # Express middlewares
+    |   |   ├── models            # Postgres schema, models and helpers
+    |   |   ├── services          # Various services the application integrates with
+    |   |   ├── utils             # Several utility helper functions
+    |   |   ├── views             # Nunjucks html views
     │   └── types.d.ts            # Typescript's global type definition file
     ├── LICENSE
     └── README.md
 
-Webpack will watch `/src` folder and will rebuild when changes occur, then Nodemon will restart the application whenever a file changes `/dist`.
-Note: When the application is build inside docker a `/dist` folder will be created on your workspace, this is necessary so VSCode debugging works properly.
+Webpack will watch `/src` folder and will rebuild when changes occur, then Nodemon will restart the application whenever a file changes inside `/dist`.
 
 ### Code Style and Lint
 

@@ -12,6 +12,24 @@ describe("Cookies", () => {
     server = await getServer();
   }, 30000);
 
+  describe("Cookies routes", () => {
+    test("get /help/cookies is responding correctly", async () => {
+      const { text, status } = await request(server)
+        .get("/help/cookies")
+        .type("text/html");
+      expect(status).toEqual(200);
+      expect(text.includes(`Cookies on ${process.env.SERVICE_NAME}`)).toBe(true);
+    });
+  
+    test("post /help/cookies is responding correctly", async () => {
+      const { text, status } = await request(server)
+        .post("/help/cookies")
+        .type("text/html");
+      expect(status).toEqual(200);
+      expect(text.includes(`Your cookie settings were saved`)).toBe(true);
+    });
+  });
+
   describe("Banner without JS", () => {
     test("it renders no-javascript banner correctly", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");

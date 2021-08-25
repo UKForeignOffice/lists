@@ -1,1 +1,0 @@
-export { sitemapController } from "./sitemap";

@@ -11,6 +11,11 @@ describe("Cookies", () => {
     server = await getServer();
   }, 30000);
 
+  test("/sitemap is responding correctly", async () => {
+    const { status } = await request(server).get("/sitemap");
+    expect(status).toEqual(200);
+  });
+
   test("sitemap route loads successfully", async () => {
     const { status, text } = await request(server)
       .get(sitemapPath)
