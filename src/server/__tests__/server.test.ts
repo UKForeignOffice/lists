@@ -8,14 +8,14 @@ import * as formRunner from "server/middlewares/form-runner";
 import * as cookieParser from "server/middlewares/cookie-parser";
 import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
-import * as auth from "server/components/auth";
-import * as cookies from "server/components/cookies";
-import * as dashboard from "server/components/dashboard";
-import * as development from "server/components/development";
-import * as feedback from "server/components/feedback";
-import * as healthCheck from "server/components/healthCheck";
-import * as lists from "server/components/lists";
-import * as sitemap from "server/components/sitemap";
+import * as auth from "server/components/auth/helpers";
+import * as cookies from "server/components/cookies/helpers";
+import * as dashboard from "server/components/dashboard/helpers";
+import * as development from "server/components/development/helpers";
+import * as feedback from "server/components/feedback/helpers";
+import * as healthCheck from "server/components/healthCheck/helpers";
+import * as lists from "server/components/lists/helpers";
+import * as sitemap from "server/components/sitemap/helpers";
 
 
 import * as serverConfig from "server/config/server-config";
