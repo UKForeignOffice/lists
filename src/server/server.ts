@@ -4,7 +4,7 @@ import {
   configureHelmet,
   configureLogger,
   configureBodyParser,
-  configureCompression,
+  // configureCompression,
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
