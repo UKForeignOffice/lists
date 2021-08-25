@@ -199,8 +199,8 @@ describe("Covid Test Providers List:", () => {
     );
   });
 
-  describe.only("Covid Test Providers results page", () => {
-    test.only("GET request answers box is correct", async () => {
+  describe("Covid Test Providers results page", () => {
+    test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
           "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
