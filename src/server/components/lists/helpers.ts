@@ -1,15 +1,20 @@
 import querystring from "querystring";
-import { Request } from "express";
+import { Express, Request } from "express";
 import { get, omit, trim, mapKeys, isArray, without, lowerCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
-import { listsRoutes } from "./router";
+import { listsRouter } from "./router";
+import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
+
+export async function initLists(server: Express): Promise<void> {
+  server.use(listsRouter);
+}
 
 export function queryStringFromParams(params: { [name: string]: any }): string {
   return Object.keys(params)

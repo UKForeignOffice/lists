@@ -1,11 +1,8 @@
 import express from "express";
-import {
-  cookiesPageRoute,
-  cookiesGETController,
-  cookiesPOSTController,
-} from "server/components/cookies";
+import { cookiesPageRoute } from "./routes";
+import { cookiesGETController, cookiesPOSTController } from "./cookies";
 
-export const router = express.Router();
+export const cookiesRouter = express.Router();
 
-router.get(cookiesPageRoute, cookiesGETController);
-router.post(cookiesPageRoute, cookiesPOSTController);
+cookiesRouter.get(cookiesPageRoute, cookiesGETController);
+cookiesRouter.post(cookiesPageRoute, cookiesPOSTController);

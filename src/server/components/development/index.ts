@@ -1,1 +1,1 @@
-export { developmentRouter } from "./router";
+export { initDevelopment } from "./helpers";

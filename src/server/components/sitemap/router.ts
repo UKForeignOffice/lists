@@ -1,6 +1,7 @@
 import express from "express";
+import { sitemapRoute } from "./routes";
 import { sitemapController } from "./sitemap";
 
 export const sitemapRouter = express.Router();
 
-sitemapRouter.get("/sitemap", sitemapController);
+sitemapRouter.get(sitemapRoute, sitemapController);

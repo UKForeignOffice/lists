@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
-import { authRoutes } from "./constants";
+import { authRoutes } from "./routes";
 import passport from "./passport";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";

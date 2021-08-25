@@ -1,6 +1,6 @@
 import { Express } from "express";
 import request from "supertest";
-import { getServer } from "../../server";
+import { getServer } from "../server";
 
 describe("Feedback routes", () => {
   let server: Express;

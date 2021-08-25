@@ -5,7 +5,7 @@ import {
   postLoginController,
   getLogoutController,
 } from "./controllers";
-import { authRoutes } from "./constants";
+import { authRoutes } from "./routes";
 
 export const authRouter = express.Router();
 

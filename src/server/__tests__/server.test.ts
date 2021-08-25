@@ -8,8 +8,15 @@ import * as formRunner from "server/middlewares/form-runner";
 import * as cookieParser from "server/middlewares/cookie-parser";
 import * as bodyParser from "server/middlewares/body-parser";
 import * as views from "server/middlewares/views";
-import * as auth from "server/components/auth/helpers";
-import * as router from "server/routes";
+import * as auth from "server/components/auth";
+import * as cookies from "server/components/cookies";
+import * as dashboard from "server/components/dashboard";
+import * as development from "server/components/development";
+import * as feedback from "server/components/feedback";
+import * as healthCheck from "server/components/healthCheck";
+import * as lists from "server/components/lists";
+import * as sitemap from "server/components/sitemap";
+
 
 import * as serverConfig from "server/config/server-config";
 import { getServer } from "../server";
@@ -102,20 +109,56 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("configureAuth", async () => {
-      const spy = jest.spyOn(auth, "configureAuth");
-      const server = await getServer();
-      expect(spy).toHaveBeenCalledWith(server);
-    });
-
-    test("configureRouter", async () => {
-      const spy = jest.spyOn(router, "configureRouter");
-      const server = await getServer();
-      expect(spy).toHaveBeenCalledWith(server);
-    });
-
     test("configureFormRunnerProxy", async () => {
       const spy = jest.spyOn(errorHandlers, "configureErrorHandlers");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initAuth", async () => {
+      const spy = jest.spyOn(auth, "initAuth");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initCookies", async () => {
+      const spy = jest.spyOn(cookies, "initCookies");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initDashboard", async () => {
+      const spy = jest.spyOn(dashboard, "initDashboard");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initDevelopment", async () => {
+      const spy = jest.spyOn(development, "initDevelopment");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initFeedback", async () => {
+      const spy = jest.spyOn(feedback, "initFeedback");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initHealthCheck", async () => {
+      const spy = jest.spyOn(healthCheck, "initHealthCheck");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initLists", async () => {
+      const spy = jest.spyOn(lists, "initLists");
+      const server = await getServer();
+      expect(spy).toHaveBeenCalledWith(server);
+    });
+
+    test("initSitemap", async () => {
+      const spy = jest.spyOn(sitemap, "initSitemap");
       const server = await getServer();
       expect(spy).toHaveBeenCalledWith(server);
     });

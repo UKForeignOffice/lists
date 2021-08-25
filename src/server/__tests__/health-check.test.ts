@@ -1,6 +1,6 @@
 import { Express } from "express";
 import request from "supertest";
-import { getServer } from "../../server";
+import { getServer } from "../server";
 
 describe("Health-check routes", () => {
   let server: Express;

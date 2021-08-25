@@ -1,11 +1,12 @@
 import express from "express";
+import { healthCheckRoutes } from "./routes";
 
 export const healthCheckRouter = express.Router();
 
-healthCheckRouter.get("/health-check", (req, res) => {
+healthCheckRouter.get(healthCheckRoutes.healthCheck, (req, res) => {
   res.send({ status: "OK" });
 });
 
-healthCheckRouter.get("/ping", (req, res) => {
+healthCheckRouter.get(healthCheckRoutes.ping, (req, res) => {
   res.send({ status: "OK" });
 });

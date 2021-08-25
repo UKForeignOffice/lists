@@ -1,1 +1,1 @@
-export { sitemapRouter } from "./router";
+export { initSitemap } from "./helpers";

@@ -10,8 +10,14 @@ import {
   configureFormRunnerProxy,
   configureCookieParser,
 } from "./middlewares";
-import { configureAuth } from "./components/auth";
-import { configureRouter } from "./routes";
+import { initAuth } from "./components/auth";
+import { initLists } from "./components/lists";
+import { initCookies } from "./components/cookies";
+import { initSitemap } from "./components/sitemap";
+import { initFeedback } from "./components/feedback";
+import { initDashboard } from "./components/dashboard";
+import { initDevelopment } from "./components/development";
+import { initHealthCheck } from "./components/healthCheck";
 import { isProd } from "server/config";
 
 const server = express();
@@ -34,8 +40,16 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
-  await configureAuth(server);
-  configureRouter(server);
+  
+  // initialize components
+  await initAuth(server);
+  await initLists(server);
+  await initCookies(server);
+  await initSitemap(server);
+  await initFeedback(server);
+  await initDashboard(server);
+  await initDevelopment(server);
+  await initHealthCheck(server);
   configureErrorHandlers(server);
 
   return server;

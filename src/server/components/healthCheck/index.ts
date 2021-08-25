@@ -1,1 +1,1 @@
-export { healthCheckRouter } from "./router";
+export { initHealthCheck } from './helpers';

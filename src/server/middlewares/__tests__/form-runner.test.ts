@@ -1,6 +1,6 @@
 import proxy from "express-http-proxy";
 import { configureFormRunnerProxy } from "../form-runner";
-import * as feedbackHelpers from "server/controllers/feedback/helpers";
+import * as feedbackHelpers from "server/components/feedback/helpers";
 
 jest.mock("express-http-proxy", () => ({
   __esModule: true,

@@ -1,1 +1,2 @@
-export { dashboardRouter, dashboardRoutes } from "./router";
+export { dashboardRoutes } from "./routes";
+export { initDashboard } from "./helpers";

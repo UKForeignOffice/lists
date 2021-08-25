@@ -1,3 +1,10 @@
+import { Express } from 'express';
+import { feedbackRouter } from "./router";
+
+export async function initFeedback(server: Express): Promise<void> {
+  server.use(feedbackRouter);
+}
+
 export function getFeedbackSuccessContent(): string {
   // used by form-runner middleware to replace form submission success page content
   return `

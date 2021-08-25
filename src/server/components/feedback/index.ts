@@ -1,1 +1,2 @@
-export { feedbackRouter } from "./router";
+export { initFeedback } from './helpers';
+

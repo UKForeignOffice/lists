@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { startCase, toLower, trim, pick, compact, noop, get } from "lodash";
-import { dashboardRoutes } from "./router";
+import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
   findUsers,

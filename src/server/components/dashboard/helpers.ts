@@ -1,5 +1,10 @@
-import { Request } from "express";
+import { Express, Request } from "express";
 import { UserRoles, List } from "server/models/types";
+import { dashboardRouter } from "./router";
+
+export async function initDashboard(server: Express): Promise<void> {
+  server.use(dashboardRouter);
+}
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {

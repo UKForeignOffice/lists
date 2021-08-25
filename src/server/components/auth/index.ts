@@ -1,6 +1,6 @@
-export { authRoutes } from "./constants";
+export { authRoutes } from "./routes";
 export {
-  configureAuth,
+  initAuth,
   ensureAuthenticated,
   ensureUserIsSuperAdmin,
 } from "./helpers";

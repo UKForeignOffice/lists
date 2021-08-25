@@ -1,6 +1,6 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { configurePassport } from "./passport";
-import { authRoutes } from "./constants";
+import { authRoutes } from "./routes";
 import { authRouter } from "./router";
 import { configureExpressSession } from "./express-session";
 
@@ -29,7 +29,7 @@ export function ensureUserIsSuperAdmin(
   }
 }
 
-export async function configureAuth(server: Express): Promise<void> {
+export async function initAuth(server: Express): Promise<void> {
   await configureExpressSession(server);
   await configurePassport(server);
   server.use(authRouter);

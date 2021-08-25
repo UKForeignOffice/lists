@@ -8,17 +8,7 @@ import {
   listsDataIngestionController,
   listsConfirmApplicationController,
 } from "./lists";
-
-export const listsRoutes = {
-  start: "/",
-  finder: "/find",
-  results: "/results",
-  feedback: "/feedback",
-  feedbackSuccess: "/feedback/success",
-  privateBeta: "/private-beta",
-  formRunnerWebhook: "/ingest/:serviceType",
-  confirmApplication: "/confirm/:reference",
-};
+import { listsRoutes } from "./routes";
 
 export const listsRouter = express.Router();
 

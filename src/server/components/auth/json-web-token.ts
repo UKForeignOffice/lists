@@ -3,7 +3,8 @@ import { random, noop } from "lodash";
 import { logger } from "server/services/logger";
 import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { User } from "server/models/types";
-import { JWT_ALGORITHM, JWT_EXPIRE_TIME, authRoutes } from "./constants";
+import { JWT_ALGORITHM, JWT_EXPIRE_TIME } from "./constants";
+import { authRoutes } from "./routes";
 
 const ONE_MINUTE = 60000;
 const SECRET_NAME = "JWT_SECRET";
