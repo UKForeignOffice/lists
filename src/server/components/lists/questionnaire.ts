@@ -49,7 +49,7 @@ export const questions: {
       if (country === "") {
         return {
           field: "country",
-          text: "Country field is not allowed to be empty",
+          text: "You must give a country name",
           href: "#country-autocomplete",
         };
       }
@@ -75,7 +75,7 @@ export const questions: {
       if (region === "") {
         return {
           field: "region",
-          text: "Area field is not allowed to be empty",
+          text: "You must give a city or area",
           href: "#area",
         };
       }
