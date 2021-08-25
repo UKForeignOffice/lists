@@ -4,7 +4,7 @@ root_folder=$(pwd)
 form_runner_folder="$root_folder/lib/form-runner"
 form_runner_forms_folder="$form_runner_folder/runner/dist/server/forms"
 form_runner_env_file="$form_runner_folder/runner/.env"
-forms_json_folder=./src/form-runner/forms-json
+forms_json_folder="$root_folder/src/server/components/formRunner/forms-json"
 
 # rm -rf ./lib
 
@@ -23,7 +23,7 @@ else
   rm -rf ./designer
   rm -rf ./docs
   rm -rf ./smoke-tests
-  rm ./runner/src/server/forms/*
+  rm ./runner/dist/server/forms/*
   echo "Form Runner Installed Successfully"
 fi
 
