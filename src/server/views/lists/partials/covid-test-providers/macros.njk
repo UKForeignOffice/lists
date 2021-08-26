@@ -4,7 +4,9 @@
   </h2>
   {% if item.jsonData.website %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-4">
-      <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+      <a class="govuk-link website" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">
+        {{ enforceHttps(item.jsonData.website) }}
+      </a>
     </p>
   {% endif %}
   {% if item.distanceinmeters >= 0 %}
