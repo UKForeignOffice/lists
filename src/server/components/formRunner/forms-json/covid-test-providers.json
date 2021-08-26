@@ -9,65 +9,71 @@
           "name": "rhnpiT",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">COVID-19 test providers based outside of the UK can register online to be added to the Foreign, Commonwealth & Development Office’s Find a COVID-19 Test Provider Abroad service.</p>\n<p class=\"govuk-body\">British nationals may use this service to help them book a COVID-19 test abroad before they return home to the UK.</p>\n<p class=\"govuk-body\">You can sign up on behalf of your organisation. </p>\n<p class=\"govuk-body\">To be eligible to be added to the COVID-19 test providers list you need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>someone at your organisation able to speak English</li>\n  <li>to be legally authorised to provide COVID-19 tests that meet the applicable standard (\"UK standards\") for travellers returning to England, Wales, Scotland and Northern Ireland</li>\n  <li>to provide COVID-19 tests results via email, SMS or printed paper in English, French or Spanish</li>\n  <li>up to date contact details</li>\n</ul>\n<p class=\"govuk-body\">Please read the <a href=\"https://www.gov.uk/guidance/coronavirus-covid-19-testing-for-people-travelling-to-england?step-by-step-nav=8c0c7b83-5e0b-4bed-9121-1c394e2f96f3\" target=\"_blank\" class=\"govuk-link\">coronavirus test guidance</a> for more information on UK standards for Covid-19 test providers.</p>",
+          "content": "<p class=\"govuk-body\">COVID-19 test providers outside the UK can register online to be added to the UK Foreign, Commonwealth & Development Office (FCDO) Find a COVID-19 test provider abroad service. The service helps British nationals book a test abroad before they return to the UK.</p>\n<p class=\"govuk-body\">To be eligible to be added to the provider list your organisation will need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>to be legally authorised to provide COVID-19 tests that meet the applicable standard (‘UK standards’) for travellers returning to England, Wales, Scotland and Northern Ireland</li>\n  <li>to be able to communicate with customers in English</li>\n  <li>to provide COVID-19 tests results over email, SMS or printed paper in English, French or Spanish</li>\n  <li>contact details (main contact name, email address and telephone number)</li>\n</ul>\n<p class=\"govuk-body\">Read the <a href=\"https://www.gov.uk/guidance/coronavirus-covid-19-testing-for-people-travelling-to-england?step-by-step-nav=8c0c7b83-5e0b-4bed-9121-1c394e2f96f3\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"govuk-link\">coronavirus test guidance</a> for more information on UK standards for COVID-19 test providers.</p>\n<p class=\"govuk-body govuk-!-font-weight-bold\">If you have more than 1 test site</p>\n<p class=\"govuk-body\">If you have more than 1 test site you will need to fill in a separate registration form for each site you want to be included in the list.</p>",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/does-someone-at-your-organisation-speak-english"
+          "path": "/can-your-organisation-communicate-with-customers-in-english"
         }
       ]
     },
     {
-      "title": "Summary",
+      "title": "Check answers before you submit",
       "path": "/summary",
       "controller": "./pages/summary.js",
       "components": [],
       "next": []
     },
     {
-      "path": "/does-someone-at-your-organisation-speak-english",
-      "title": "Does someone at your organisation speak English?",
+      "path": "/can-your-organisation-communicate-with-customers-in-english",
+      "title": "Can your organisation communicate with customers in English?",
       "components": [
         {
           "name": "speakEnglish",
           "options": {},
           "type": "YesNoField",
-          "title": "Does someone at your organisation speak fluent English?",
+          "title": "Can your organisation communicate with customers in English?",
           "nameHasError": false,
           "schema": {},
-          "hint": ""
+          "hint": "If a British national needs to communicate in English you will need to have someone in your organisation who can provide support. ",
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
         {
-          "path": "/is-your-organisation-authorised-to-provide-covid-19-tests",
+          "path": "/is-your-organisation-authorised-to-provide-covid-19-tests-in-your-country",
           "condition": "oV9fvQl39FkGahoM46257"
         },
         {
-          "path": "/your-organisation-cannot-be-added-to-this-service",
+          "path": "/your-organisation-cannot-be-added-to-the-service",
           "condition": "50_TW9NLlvr2820-1-Qt6"
         }
       ]
     },
     {
-      "path": "/is-your-organisation-authorised-to-provide-covid-19-tests",
-      "title": "Is your organisation authorised to provide COVID-19 tests? ",
+      "path": "/is-your-organisation-authorised-to-provide-covid-19-tests-in-your-country",
+      "title": "Is your organisation authorised to provide COVID-19 tests in your country?",
       "components": [
         {
           "name": "isQualified",
           "options": {},
           "type": "YesNoField",
-          "title": "Is your organisation authorised to provide COVID-19 tests? ",
+          "title": "Is your organisation authorised to provide COVID-19 tests in your country?",
           "hint": "",
           "nameHasError": false,
-          "schema": {}
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
         {
-          "path": "/your-organisation-cannot-be-added-to-this-service-JUIJlK",
+          "path": "/your-organisation-cannot-be-added-to-the-service-LOuPJR",
           "condition": "vLZMxH"
         },
         {
@@ -84,7 +90,7 @@
           "name": "beQbsQ",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-hint\">Please provide the details of the person who will be the main point of contact for your organisation. This person will be contacted by the British embassy. We will send a confirmation email to the email address provided.</br>\nThese details are for the embassy only and will not be shared publically.\n</p>\n\n\n\n",
+          "content": "<p class=\"govuk-hint\">Please provide the details of the person who will be the main point of contact for your organisation. This person will be contacted by the British embassy.</br>\nThese details are for the embassy only and will not be shared publicly.</br>\nProvide details for the main point of contact in your organisation. We will send a verification email to the address you provide.\n</p>\n\n\n\n",
           "schema": {}
         },
         {
@@ -139,9 +145,9 @@
             "required": false
           },
           "type": "TextField",
-          "title": "Location name",
+          "title": "Test site location name",
           "nameHasError": false,
-          "hint": "If your organisation has more than one location, write down the specific name of the branch, building, street or temporary location of your testing site. For example, London Oxford Street, or Peckham Leisure Centre"
+          "hint": "Give the specific name of the branch, building, street or temporary location of your testing site. For example, London Oxford Street, or Peckham Leisure Centre.</br>\nIf you have more than 1 test site you will need to fill in a separate registration form for each site.\n"
         }
       ],
       "next": [
@@ -179,22 +185,13 @@
         {
           "name": "emailAddress",
           "options": {
-            "optionalText": true
+            "hideTitle": true
           },
           "type": "EmailAddressField",
           "title": "Email address",
           "nameHasError": false,
           "schema": {},
-          "hint": "This is the email address your organisation wishes to be contacted on by British nationals. This will be published on GOV.UK."
-        },
-        {
-          "name": "additionalEmailAddress",
-          "options": {
-            "required": false
-          },
-          "type": "EmailAddressField",
-          "title": "Additional email address",
-          "nameHasError": false
+          "hint": "This will be published on GOV.UK. British nationals will use this email address to contact your organisation about COVID-19 tests."
         }
       ],
       "next": [
@@ -226,14 +223,14 @@
       ]
     },
     {
-      "path": "/can-your-organisation-provide-covid-19-test-results-in-english-or-french-or-spanish",
-      "title": "Can your organisation provide COVID-19 test results in English or French or Spanish? ",
+      "path": "/can-your-organisation-provide-test-results-in-english-or-french-or-spanish",
+      "title": "Can your organisation provide test results in English or French or Spanish?",
       "components": [
         {
           "name": "mCWgAH",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> When you send the results of a COVID-19 test to an individual they must be written in English or French or Spanish. </div>",
+          "content": "<div class=\"govuk-hint\">\nWhen you provide COVID-19 test results they must be in English or French or Spanish.</br>\nYou only need to provide results in 1 of these languages to be added to the list.\n</div>",
           "schema": {}
         },
         {
@@ -242,7 +239,7 @@
             "hideTitle": true
           },
           "type": "YesNoField",
-          "title": "Can your organisation provide COVID-19 test results in English or French or Spanish? ",
+          "title": "Can your organisation provide test results in English or French or Spanish?",
           "schema": {},
           "nameHasError": false,
           "values": {
@@ -252,23 +249,23 @@
       ],
       "next": [
         {
-          "path": "/your-organisation-cannot-be-added-to-this-service-bRxISG",
+          "path": "/your-organisation-cannot-be-added-to-the-service-nnBVLr",
           "condition": "aKWhJY"
         },
         {
-          "path": "/is-your-organisation-able-to-provide-covid-19-test-results-within-72-hours"
+          "path": "/can-your-organisation-provide-covid-19-test-results-within-72-hours"
         }
       ]
     },
     {
-      "path": "/your-organisation-cannot-be-added-to-this-service-JUIJlK",
-      "title": "Your organisation cannot be added to this service ",
+      "path": "/your-organisation-cannot-be-added-to-the-service-LOuPJR",
+      "title": "Your organisation cannot be added to the service",
       "components": [
         {
           "name": "gjJiCS",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n    Your organisation cannot be added to the Find a COVID-19 Test Provider Abroad service if you are not authorised to provide COVID-19 tests.  \n</div>",
+          "content": "<div class=\"govuk-hint\">\nOnly organisations that are authorised to provide COVID-19 tests can be added to the 'Find a COVID-19 test provider abroad' service. \n</div>",
           "schema": {}
         }
       ],
@@ -284,15 +281,6 @@
           "type": "TextField",
           "title": "Phone number",
           "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK.",
-          "nameHasError": false
-        },
-        {
-          "name": "additionalPhoneNumber",
-          "options": {
-            "required": false
-          },
-          "type": "TextField",
-          "title": "Additional phone number",
           "nameHasError": false
         }
       ],
@@ -343,9 +331,12 @@
         },
         {
           "name": "postcode",
-          "options": {},
+          "options": {
+            "required": false,
+            "optionalText": false
+          },
           "type": "TextField",
-          "title": "Postcode",
+          "title": "Postcode or area code",
           "nameHasError": false,
           "schema": {}
         },
@@ -378,7 +369,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide COVID-19 tests\n  </li>\n  <li>\n    provide COVID-19 tests to the applicable Department for Transport standards for entry to the UK \n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find a COVID-19 Test Supplier Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n </li>  <li>\n    aware that you cannot use the FCDO or the embassy logo on your website\n  </li>  <li>\n  aware that by submitting your details you are agreeing for your details to appear on the GOV.UK list of covid test providers\n  </li>\n</ul>\n",
+          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide COVID-19 tests\n  </li>\n  <li>\n    able to provide COVID-19 tests to the applicable Department for Transport standards for entry to the UK \n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a COVID-19 test provider abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n </li>  <li>\n    aware that you cannot use the FCDO or the embassy logo on your website\n  </li>  <li>\n  aware that by submitting your details you are agreeing for your details to appear on the GOV.UK list of covid test providers\n  </li>\n</ul>\n",
           "schema": {}
         },
         {
@@ -400,28 +391,28 @@
       ]
     },
     {
-      "path": "/your-organisation-cannot-be-added-to-this-service",
-      "title": "Your organisation cannot be added to this service ",
+      "path": "/your-organisation-cannot-be-added-to-the-service",
+      "title": "Your organisation cannot be added to the service",
       "components": [
         {
           "name": "vCQCMd",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n   Your organisation can only be added to the Find a Covid-19 Test Provider Abroad service if someone at your organisation speaks fluent English. \n\n</div>",
+          "content": "<div class=\"govuk-hint\">\nYour organisation can only be added to the 'Find a COVID-19 test provider abroad' service if someone at your organisation can provide support to English-speaking British nationals.\n</div>",
           "schema": {}
         }
       ],
       "next": []
     },
     {
-      "path": "/your-organisation-cannot-be-added-to-this-service-bRxISG",
-      "title": "Your organisation cannot be added to this service ",
+      "path": "/your-organisation-cannot-be-added-to-the-service-nnBVLr",
+      "title": "Your organisation cannot be added to the service",
       "components": [
         {
           "name": "duqJXO",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n   Your organisation cannot be added to the Find a COVID-19 Test Provider Abroad service if you cannot communicate COVID-19 test results in either English, French or Spanish.\n</div>",
+          "content": "<div class=\"govuk-hint\">\nOnly organisations that can communicate COVID-19 test results in at least 1 of English or French or Spanish can be added to the 'Find a COVID-19 test provider abroad' service. \n</div>",
           "schema": {}
         }
       ],
@@ -472,23 +463,23 @@
       ],
       "next": [
         {
-          "path": "/your-organisation-cannot-be-added-to-this-service-dqthmo",
+          "path": "/your-organisation-cannot-be-added-to-the-service-GNXIoZ",
           "condition": "JuFDfz"
         },
         {
-          "path": "/can-your-organisation-provide-covid-19-test-results-in-english-or-french-or-spanish"
+          "path": "/can-your-organisation-provide-test-results-in-english-or-french-or-spanish"
         }
       ]
     },
     {
-      "path": "/your-organisation-cannot-be-added-to-this-service-dqthmo",
-      "title": "Your organisation cannot be added to this service",
+      "path": "/your-organisation-cannot-be-added-to-the-service-GNXIoZ",
+      "title": "Your organisation cannot be added to the service",
       "components": [
         {
           "name": "vTPFBI",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> Your organisation cannot be added to the Find a COVID-19 Test Provider Abroad service if you are not able to provide COVID-19 tests that meet UK standards.\n<div/>",
+          "content": "<div class=\"govuk-hint\">\nOnly organisations that meet UK standards can be added to the 'Find a COVID-19 test provider abroad' service.\n<div/>",
           "schema": {}
         }
       ],
@@ -517,14 +508,14 @@
       ]
     },
     {
-      "path": "/is-your-organisation-able-to-provide-covid-19-test-results-within-72-hours",
-      "title": "Is your organisation able to provide Covid-19 test results within 72 hours?",
+      "path": "/can-your-organisation-provide-covid-19-test-results-within-72-hours",
+      "title": "Can your organisation provide COVID-19 test results within 72 hours?",
       "components": [
         {
           "name": "provideTestResultsIn72Hours",
           "options": {},
           "type": "YesNoField",
-          "title": "Is your organisation able to provide Covid-19 test results within 72 hours?",
+          "title": "Can your organisation provide COVID-19 test results within 72 hours?",
           "hint": "This is the time it takes from a person taking a test to receiving a result. British nationals require that they receive the result of the COVID-19 test  within 72 hours before returning to the UK",
           "schema": {},
           "nameHasError": false,
@@ -535,32 +526,32 @@
       ],
       "next": [
         {
-          "path": "/your-organisation-cannot-be-added-to-this-service-xTjpdJ",
+          "path": "/your-organisation-cannot-be-added-to-the-service-IiiQSw",
           "condition": "dPKpVg"
         },
         {
-          "path": "/which-type-of-covid-19-tests-does-your-organisation-provide",
+          "path": "/which-covid-19-tests-does-your-organisation-provide",
           "condition": "cGloxD"
         }
       ]
     },
     {
-      "path": "/your-organisation-cannot-be-added-to-this-service-xTjpdJ",
-      "title": "Your organisation cannot be added to this service",
+      "path": "/your-organisation-cannot-be-added-to-the-service-IiiQSw",
+      "title": "Your organisation cannot be added to the service",
       "components": [
         {
           "name": "FaxMPv",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n   Your organisation cannot be added to the Find a COVID-19 Test Provider Abroad service if you cannot provide COVID-19 test results within 72 hours of someone taking a test.\n</div>",
+          "content": "<div class=\"govuk-hint\">\nOnly organisations that can provide COVID-19 test results within 72 hours can be added to the 'Find a COVID-19 test provider abroad' service.\n</div>",
           "schema": {}
         }
       ],
       "next": []
     },
     {
-      "path": "/which-type-of-covid-19-tests-does-your-organisation-provide",
-      "title": "Which type of COVID-19 tests does your organisation provide?",
+      "path": "/which-covid-19-tests-does-your-organisation-provide",
+      "title": "Which COVID-19 tests does your organisation provide?",
       "components": [
         {
           "name": "yMUmdI",
@@ -575,7 +566,7 @@
             "hideTitle": true
           },
           "type": "CheckboxesField",
-          "title": "Please select the tests your organisation provide that meet the above standards",
+          "title": "Which COVID-19 tests does your organisation provide?",
           "nameHasError": false,
           "list": "qeBVvX",
           "schema": {}
@@ -583,28 +574,28 @@
       ],
       "next": [
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-an-antigen-test",
+          "path": "/how-fast-can-your-organisation-provide-an-antigen-test-result",
           "condition": "dUkpXe"
         },
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
+          "path": "/how-fast-can-your-organisation-provide-a-lamp-test-result",
           "condition": "ZXEIRy"
         },
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "path": "/how-fast-can-your-organisation-provide-a-pcr-test-result",
           "condition": "nwbiEe"
         }
       ]
     },
     {
-      "path": "/how-quickly-can-your-organisation-provide-the-result-of-an-antigen-test",
-      "title": "How quickly can your organisation provide the result of an Antigen test?",
+      "path": "/how-fast-can-your-organisation-provide-an-antigen-test-result",
+      "title": "How fast can your organisation provide an Antigen test result?",
       "components": [
         {
           "name": "turnaroundTimeAntigen",
           "options": {},
           "type": "RadiosField",
-          "title": "How quickly can your organisation provide the result of an Antigen test?",
+          "title": "How fast can your organisation provide an Antigen test result?",
           "nameHasError": false,
           "list": "QsQEVS",
           "schema": {},
@@ -615,7 +606,7 @@
       ],
       "next": [
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
+          "path": "/how-fast-can-your-organisation-provide-a-lamp-test-result",
           "condition": "EHbQWj"
         },
         {
@@ -623,14 +614,14 @@
           "condition": "zmnAij"
         },
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "path": "/how-fast-can-your-organisation-provide-a-pcr-test-result",
           "condition": "HcKSfZ"
         }
       ]
     },
     {
-      "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-lamp-test",
-      "title": "How quickly can your organisation provide the result of a LAMP test?",
+      "path": "/how-fast-can-your-organisation-provide-a-lamp-test-result",
+      "title": "How fast can your organisation provide a LAMP test result?",
       "components": [
         {
           "name": "turnaroundTimeLamp",
@@ -640,16 +631,17 @@
           "type": "RadiosField",
           "nameHasError": false,
           "list": "QsQEVS",
-          "title": "How quickly can your organisation provide the result of a LAMP test?",
+          "title": "How fast can your organisation provide a LAMP test result?",
           "schema": {},
           "values": {
             "type": "listRef"
-          }
+          },
+          "hint": "Loop-mediated Isothermal Amplification (LAMP)"
         }
       ],
       "next": [
         {
-          "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
+          "path": "/how-fast-can-your-organisation-provide-a-pcr-test-result",
           "condition": "LWVkUo"
         },
         {
@@ -659,20 +651,21 @@
       ]
     },
     {
-      "path": "/how-quickly-can-your-organisation-provide-the-result-of-a-pcr-test",
-      "title": "How quickly can your organisation provide the result of a PCR test?",
+      "path": "/how-fast-can-your-organisation-provide-a-pcr-test-result",
+      "title": "How fast can your organisation provide a PCR test result?",
       "components": [
         {
           "name": "turnaroundTimePCR",
           "options": {},
           "type": "RadiosField",
           "nameHasError": false,
-          "title": "How quickly can your organisation provide the result of a PCR test?",
+          "title": "How fast can your organisation provide a PCR test result?",
           "list": "QsQEVS",
           "schema": {},
           "values": {
             "type": "listRef"
-          }
+          },
+          "hint": "Polymerase Chain Reaction (PCR)"
         }
       ],
       "next": [
@@ -1685,8 +1678,8 @@
           "value": "Email"
         },
         {
-          "text": "In Person",
-          "value": "In Person"
+          "text": "In person",
+          "value": "In person"
         },
         {
           "text": "Phone",
