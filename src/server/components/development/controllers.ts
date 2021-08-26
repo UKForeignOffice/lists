@@ -8,15 +8,9 @@ import { createUser, updateUser, findUserByEmail } from "server/models/user";
 
 export function deployDb(req: Request, res: Response): void {
   req.setTimeout(5 * 60 * 1000);
-
+  
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
-    if (error !== null) {
-      res.send(error);
-    } else if (stderr.length > 0) {
-      res.send(stderr);
-    } else {
-      res.send(stdout);
-    }
+    res.send({ error, stdout, stderr });
   });
 }
 
@@ -27,6 +21,7 @@ export function resetDb(req: Request, res: Response): void {
 }
 
 export async function promoteUser(req: Request, res: Response): Promise<void> {
+  // TODO: limit this to localhost only once we have a production server set up
   const { email, key } = req.query;
 
   if (
