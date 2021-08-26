@@ -57,9 +57,6 @@
           {% endif %}
         </p>
       {% endif %}
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Communicates results</strong>: {{ item.jsonData.resultsReadyFormat.map(_.startCase).join(", ") }}
-      </p>
       {% if isDashboard %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-2">The information below is only available inside the dashboard and will not be made publicly available.</p>
