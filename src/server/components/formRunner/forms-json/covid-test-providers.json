@@ -90,7 +90,7 @@
           "name": "beQbsQ",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-hint\">Please provide the details of the person who will be the main point of contact for your organisation. This person will be contacted by the British embassy.</br>\nThese details are for the embassy only and will not be shared publicly.</br>\nProvide details for the main point of contact in your organisation. We will send a verification email to the address you provide.\n</p>\n\n\n\n",
+          "content": "<p class=\"govuk-hint\">\nThese details are for the British embassy to use when they contact you about your registration and will not be shared publicly.\n</br>\nProvide details for the main point of contact in your organisation. We will send a verification email to the address you provide.\n</p>\n\n\n\n",
           "schema": {}
         },
         {
@@ -333,7 +333,7 @@
           "name": "postcode",
           "options": {
             "required": false,
-            "optionalText": false
+            "optionalText": true
           },
           "type": "TextField",
           "title": "Postcode or area code",
