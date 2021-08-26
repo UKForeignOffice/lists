@@ -104,7 +104,8 @@ export function createConfirmationLink(
   req: Request,
   reference: string
 ): string {
-  const host = `https://${SERVICE_DOMAIN}`;
+  const protocol = isLocalHost ? "http" : "https";
+  const host = `${protocol}://${SERVICE_DOMAIN}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
 
   return `${host}${path}`;

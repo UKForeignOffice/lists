@@ -1,8 +1,7 @@
 import redis, { RedisClient } from "redis";
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from "server/config";
 import { getRedisClient, isRedisAvailable } from "../redis";
-
-jest.spyOn(redis, "createClient");
+import { logger } from "server/services/logger";
 
 let mockRedisHost: string | undefined = "localhost";
 jest.mock("server/config", () => ({
@@ -14,6 +13,7 @@ jest.mock("server/config", () => ({
 describe("Redis Service:", () => {
   describe("createClient", () => {
     test("parameters are correct", () => {
+      jest.spyOn(redis, "createClient");
       getRedisClient();
 
       expect(redis.createClient).toHaveBeenCalledWith({
@@ -27,6 +27,16 @@ describe("Redis Service:", () => {
       const redisClient = getRedisClient();
 
       expect(redisClient instanceof RedisClient).toBe(true);
+    });
+
+    it("logs redis errors correctly", () => {
+      const mockError = new Error("mock error");
+      const spyLogger = jest.spyOn(logger, "error");
+      const redisClient = getRedisClient();      
+      
+      redisClient.emit("error", mockError);
+
+      expect(spyLogger).toHaveBeenCalledWith(`Redis Error: ${mockError.message}`);
     });
   });
 
