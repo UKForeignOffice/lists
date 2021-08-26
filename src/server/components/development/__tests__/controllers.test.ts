@@ -1,10 +1,9 @@
 import childProcess from "child_process";
-import { resetDb, deployDb, promoteUser } from "../controllers";
+import { resetDb, deployDb } from "../controllers";
 
 describe("Development controllers", () => {
   let req: any;
   let res: any;
-  let next: any;
 
   beforeEach(() => {
     req = {
@@ -19,7 +18,6 @@ describe("Development controllers", () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
     };
-    next = jest.fn();
   });
 
   describe("deployDb", () => {
