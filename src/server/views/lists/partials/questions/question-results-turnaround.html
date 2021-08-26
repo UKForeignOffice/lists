@@ -3,19 +3,21 @@
     <fieldset class="govuk-fieldset" aria-describedby="results-turnaround-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="resultsTurnaround">
-          How quickly after taking the COVID-19 test do you need the provider to turnaround the result? 
+          How fast do you need your result from when you take the test? 
         </label>
       </h1>
       <div id="practice-area-hint" class="govuk-hint">
         You must take the test in the 3 days before the day on which you will arrive in England. 
-        For example, if you travel directly to England on Friday, you can take the test on or after Tuesday 
-        and will need to have the negative result available before boarding on Friday
+        For example, if you travel directly to England on a Friday, you must take the test on or after Tuesday and need to have the negative result before boarding on Friday.
       </div>
       {% if error.field === 'results-turnaround' %}
         <span class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
+      <div class="govuk-body govuk-!-font-weight-bold">
+        Time from taking test
+      </div>
       <div class="govuk-radios">
         {% for turnAround in [1, 12, 24, 48, 72] %}
         <div class="govuk-radios__item">

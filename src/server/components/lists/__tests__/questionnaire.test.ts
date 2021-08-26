@@ -86,7 +86,7 @@ describe("Questionnaire", () => {
       const result = country.validate(req);
       expect(result).toEqual({
         field: "country",
-        text: "Country field is not allowed to be empty",
+        text: "You must give a country name",
         href: "#country-autocomplete",
       });
     });
@@ -127,7 +127,7 @@ describe("Questionnaire", () => {
       const result = region.validate(req);
       expect(result).toEqual({
         field: "region",
-        text: "Area field is not allowed to be empty",
+        text: "You must give a city or area",
         href: "#area",
       });
     });
