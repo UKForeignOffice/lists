@@ -83,10 +83,10 @@ describe("Cookies", () => {
       const radios = $html(":radio");
       const pageText = main.text();
 
-      expect(pageText.includes(`Cookies on ${SERVICE_NAME}`)).toBe(true);
+      expect(pageText.includes("Cookies")).toBe(true);
       expect(
         pageText.includes(
-          "We use 2 types of cookie. You can choose which cookies you're happy for us to use."
+          "We use 2 types of cookie."
         )
       ).toBe(true);
       expect(pageText.includes("Use cookies that measure my website use")).toBe(

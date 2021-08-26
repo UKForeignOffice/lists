@@ -5,7 +5,7 @@ import { axe } from "jest-axe";
 import { getServer } from "../server";
 import { listItem } from "server/models";
 
-describe("Covid Test Providers List:", () => {
+describe.only("Covid Test Providers List:", () => {
   let server: Express;
 
   function mockListItemSome(resolvedValue = true): jest.SpyInstance {
@@ -31,7 +31,7 @@ describe("Covid Test Providers List:", () => {
       expect(pageHeader.text().trim()).toBe(
         "Find a COVID-19 test provider abroad"
       );
-      expect(continueButton.text()).toBe("Continue");
+      expect(continueButton.text()).toBe("Start now");
     });
 
     test("Covid Test Providers land page accessibility", async () => {
@@ -96,7 +96,7 @@ describe("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Which area in Spain do you need a COVID-19 test provider from?"
+        "Where in Spain do you need to find a COVID-19 test provider?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -130,7 +130,7 @@ describe("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "How quickly after taking the COVID-19 test do you need the provider to turnaround the result?"
+        "How fast do you need your result from when you take the test?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -215,7 +215,7 @@ describe("Covid Test Providers List:", () => {
 
       // country answer
       expect(answers.eq(1).text()).toEqual(`
-        Country?
+        Country
         Spain
         Change
       `);
@@ -226,7 +226,7 @@ describe("Covid Test Providers List:", () => {
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-        Area?
+        Area
         Madrid
         Change
       `);
@@ -235,11 +235,11 @@ describe("Covid Test Providers List:", () => {
       );
 
       // turnaround
-      expect(answers.eq(3).text()).toEqual(`
-        Results turnaround time?
+      expect(answers.eq(3).text().replace(/\s\s+/g, " ")).toEqual(`
+        Results speed
         12 hours
         Change
-      `);
+      `.replace(/\s\s+/g, " "));
       expect(answers.eq(3).find("a").attr("href")).toEqual(
         "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
       );

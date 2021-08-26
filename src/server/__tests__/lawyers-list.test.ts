@@ -93,7 +93,7 @@ describe("Lawyers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Which area in Spain do you need a lawyer from?"
+        "Where in Spain do you need to find a lawyer?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -300,7 +300,7 @@ describe("Lawyers List:", () => {
 
       // country answer
       expect(answers.eq(1).text()).toEqual(`
-        Country?
+        Country
         Spain
         Change
       `);
@@ -311,7 +311,7 @@ describe("Lawyers List:", () => {
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-        Area?
+        Area
         Madrid
         Change
       `);
@@ -321,7 +321,7 @@ describe("Lawyers List:", () => {
 
       // legal practice areas
       expect(answers.eq(3).text()).toEqual(`
-        Which field of law do you need?
+        Fields of law
         Maritime, Real Estate
         Change
       `);
@@ -331,7 +331,7 @@ describe("Lawyers List:", () => {
 
       // legal aid
       expect(answers.eq(4).text()).toEqual(`
-        Are you interested in legal aid?
+        Legal aid
         No
         Change
       `);
