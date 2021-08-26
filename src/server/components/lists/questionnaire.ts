@@ -180,7 +180,7 @@ export const questions: {
       if (readDisclaimer === "") {
         return {
           field: "read-disclaimer",
-          text: "Disclaimer is not allowed to be empty",
+          text: "You must accept the disclaimer to use this service",
           href: "#read-disclaimer",
         };
       }
@@ -228,12 +228,12 @@ export const questions: {
     validate(req: Request) {
       const params = getAllRequestParams(req);
       const resultsTurnaround = parseListValues("resultsTurnaround", params);
-
-      if (resultsTurnaround?.join("") === "") {
+      
+      if (resultsTurnaround === undefined || resultsTurnaround.length === 0) {
         return {
-          field: "practice-area",
-          text: "Practice area is not allowed to be empty",
-          href: "#practice-area-bankruptcy",
+          field: "results-turnaround",
+          text: "You must select an option",
+          href: "#results-turnaround-1",
         };
       }
 

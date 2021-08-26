@@ -299,7 +299,7 @@ describe("Questionnaire", () => {
       const result = readDisclaimer.validate(req);
       expect(result).toEqual({
         field: "read-disclaimer",
-        text: "Disclaimer is not allowed to be empty",
+        text: "You must accept the disclaimer to use this service",
         href: "#read-disclaimer",
       });
     });
@@ -380,9 +380,9 @@ describe("Questionnaire", () => {
       req.params.resultsTurnaround = "";
       const result = resultsTurnaround.validate(req);
       expect(result).toEqual({
-        field: "practice-area",
-        text: "Practice area is not allowed to be empty",
-        href: "#practice-area-bankruptcy",
+        field: "results-turnaround",
+        text: "You must select an option",
+        href: "#results-turnaround-1",
       });
     });
   });
