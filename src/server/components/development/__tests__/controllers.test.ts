@@ -24,7 +24,7 @@ describe("Development controllers", () => {
 
   describe("deployDb", () => {
     it("invokes npm run prisma:deploy and responds correctly", () => {
-      const spy = jest.spyOn(childProcess, "exec");
+      const spy = jest.spyOn(childProcess, "exec").mockImplementation(jest.fn());
 
       deployDb(req, res);
       // @ts-expect-error
@@ -43,7 +43,7 @@ describe("Development controllers", () => {
 
   describe("resetDb", () => {
     it("invokes npm run prisma:reset and responds correctly", () => {
-      const spy = jest.spyOn(childProcess, "exec");
+      const spy = jest.spyOn(childProcess, "exec").mockImplementation(jest.fn());
 
       resetDb(req, res);
       // @ts-expect-error
