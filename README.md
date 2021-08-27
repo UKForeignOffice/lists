@@ -122,7 +122,8 @@ The above npm script will invoke `prisma migrate` and this is what is going to h
     ├── src
     │   ├── client                # Client side related code and assets such as styles and images.
     │   ├── server                # NodeJS server codebase
-    |   |   ├── components        # Server features are self-contained within the various folders here (except for their respective views)|   |   ├── config            # Environment configuration files
+    |   |   ├── components        # Server features are self-contained (besides views) within the various folders here 
+    |   |   |   ├── config            # Environment configuration files
     |   |   ├── middlewares       # Express middlewares
     |   |   ├── models            # Postgres schema, models and helpers
     |   |   ├── services          # Various services the application integrates with
