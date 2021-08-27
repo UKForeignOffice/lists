@@ -127,7 +127,7 @@ export interface CovidTestSupplierListItemCreateInput
 
 export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
   type: ServiceType.covidTestProviders;
-  jsonData: LawyerListItemJsonData;
+  jsonData: CovidTestSupplierListItemJsonData;
 }
 
 export type LegalAreas =
