@@ -21,6 +21,7 @@ import {
   togglerListItemIsPublished,
   getListItemContactInformation,
 } from "server/models/listItem";
+import { findFeedbackByType } from "server/models/feedback";
 import { UserRoles, ServiceType, List } from "server/models/types";
 import {
   filterSuperAdminRole,
@@ -482,5 +483,23 @@ export async function listItemsPublishController(
     }
 
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });
+  }
+}
+
+// TODO: test
+export async function feedbackController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const feedbacksList = await findFeedbackByType("serviceFeedback");
+    res.render("dashboard/feedbacks-list.html", {
+      ...DEFAULT_VIEW_PROPS,
+      feedbacksList,
+      req,
+    });
+  } catch (error) {
+    next(error);
   }
 }

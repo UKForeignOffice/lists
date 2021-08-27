@@ -16,7 +16,7 @@ export function getFeedbackSuccessContent(): string {
           </h1>
         </div>
         <p class="govuk-body">
-          Your feedback will help us improve the service....
+          Your feedback will help us to improve this service.
         </p>
       </div>
     </div>

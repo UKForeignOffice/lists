@@ -10,10 +10,11 @@
       <div class="govuk-grid-column-one-quarter">
         <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
           <ul class="govuk-list">
+            {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
             {% if req.user.isSuperAdmin() %}
+              {{ dashboardMacros.navMenu("Feedback", dashboardRoutes.feedback, req) }}
               {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
             {% endif %}
-            {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
           </ul>
         </nav>
       </div>

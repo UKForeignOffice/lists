@@ -3,6 +3,7 @@ import { Express } from "express";
 import request from "supertest";
 import { getServer } from "../server";
 import { SERVICE_NAME } from "server/config";
+import { capitalize } from "lodash";
 
 describe("Cookies", () => {
   const pageLink = "/find?serviceType=lawyers";
@@ -18,9 +19,11 @@ describe("Cookies", () => {
         .get("/help/cookies")
         .type("text/html");
       expect(status).toEqual(200);
-      expect(text.includes(`Cookies on ${process.env.SERVICE_NAME}`)).toBe(true);
+      expect(
+        text.includes(`Cookies on ${capitalize(process.env.SERVICE_NAME)}`)
+      ).toBe(true);
     });
-  
+
     test("post /help/cookies is responding correctly", async () => {
       const { text, status } = await request(server)
         .post("/help/cookies")
@@ -38,10 +41,9 @@ describe("Cookies", () => {
       const cookieBanner = $html(".govuk-cookie-banner").eq(1);
       const cookiePageLink = cookieBanner.find("a");
 
-      expect(cookieBanner.text().includes(`Cookies on ${SERVICE_NAME}`)).toBe(
-        true
-      );
-
+      expect(
+        cookieBanner.text().includes(`Cookies on ${capitalize(SERVICE_NAME)}`)
+      ).toBe(true);
       expect(
         cookieBanner
           .text()
@@ -49,7 +51,6 @@ describe("Cookies", () => {
             "We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our cookies page."
           )
       ).toBe(true);
-
       expect(cookiePageLink.attr("href")).toBe("/help/cookies");
     });
   });
@@ -64,9 +65,9 @@ describe("Cookies", () => {
       const acceptButton = cookieBanner.find("button").eq(0);
       const rejectButton = cookieBanner.find("button").eq(1);
 
-      expect(cookieBanner.text().includes(`Cookies on ${SERVICE_NAME}`)).toBe(
-        true
-      );
+      expect(
+        cookieBanner.text().includes(`Cookies on ${capitalize(SERVICE_NAME)}`)
+      ).toBe(true);
       expect(acceptButton.text().trim()).toEqual("Accept analytics cookies");
       expect(rejectButton.text().trim()).toEqual("Reject analytics cookies");
     });
@@ -84,11 +85,7 @@ describe("Cookies", () => {
       const pageText = main.text();
 
       expect(pageText.includes("Cookies")).toBe(true);
-      expect(
-        pageText.includes(
-          "We use 2 types of cookie."
-        )
-      ).toBe(true);
+      expect(pageText.includes("We use 2 types of cookie.")).toBe(true);
       expect(pageText.includes("Use cookies that measure my website use")).toBe(
         true
       );
@@ -136,7 +133,14 @@ describe("Cookies", () => {
 
       expect(successBanner.length).toBe(1);
       expect(cookiesPolicy).toEqual(
-        Buffer.from(JSON.stringify({ isSet: true, essential: true, analytics: "off", usage: false })).toString("base64")
+        Buffer.from(
+          JSON.stringify({
+            isSet: true,
+            essential: true,
+            analytics: "off",
+            usage: false,
+          })
+        ).toString("base64")
       );
 
       expect(radios.eq(0).attr("name")).toBe("analytics");

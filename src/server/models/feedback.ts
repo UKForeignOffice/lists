@@ -18,7 +18,8 @@ export async function createFeedback(
 }
 
 export async function findFeedbackByType(
-  type: Feedback["type"]
+  type: Feedback["type"],
+  order: "asc" | "desc" = "desc"
 ): Promise<Feedback[]> {
   if (type === undefined) {
     throw new Error("Feedback type is required");
@@ -27,6 +28,7 @@ export async function findFeedbackByType(
   try {
     return await prisma.feedback.findMany({
       where: { type },
+      orderBy: { id: order }
     });
   } catch (error) {
     logger.error(`findFeedbackByType Error: ${error.message}`);

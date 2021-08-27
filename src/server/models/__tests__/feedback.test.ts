@@ -43,7 +43,7 @@ describe("Feedback Model:", () => {
       updatedAt: new Date(),
       type: "feedback",
       questionsAndAnswers,
-    }
+    };
   });
 
   describe("createFeedback", () => {
@@ -59,7 +59,7 @@ describe("Feedback Model:", () => {
 
     it("should create a feedback object", async () => {
       prisma.feedback.create.mockResolvedValueOnce(sampleFeedback);
-      
+
       const feedback = await createFeedback({
         type: "feedback",
         jsonData: { questionsAndAnswers },
@@ -70,14 +70,14 @@ describe("Feedback Model:", () => {
         data: {
           type: "feedback",
           jsonData: { questionsAndAnswers },
-        }
+        },
       });
     });
-    
+
     it("throws when when feedback.create fails", async () => {
       const error = new Error("error");
       prisma.feedback.create.mockRejectedValueOnce(error);
-      
+
       await expect(
         createFeedback({
           type: "feedback",
@@ -96,25 +96,24 @@ describe("Feedback Model:", () => {
     });
 
     it("invokes findMany with correct parameters", async () => {
-      prisma.feedback.findMany.mockResolvedValueOnce(
-        [sampleFeedback]
-      );
+      prisma.feedback.findMany.mockResolvedValueOnce([sampleFeedback]);
 
       const results = await findFeedbackByType("feedback");
 
       expect(results).toEqual([sampleFeedback]);
       expect(prisma.feedback.findMany).toHaveBeenCalledWith({
         where: { type: "feedback" },
-      });      
+        orderBy: {
+          id: "desc",
+        },
+      });
     });
 
     it("throws when when feedback.findMany fails", async () => {
       const error = new Error("error");
       prisma.feedback.findMany.mockRejectedValueOnce(error);
-      
-      await expect(
-        findFeedbackByType("feedback")
-      ).rejects.toThrow(error);
+
+      await expect(findFeedbackByType("feedback")).rejects.toThrow(error);
     });
   });
 });

@@ -1,0 +1,45 @@
+{% extends "./dashboard.html" %}
+
+{% block dashboard %}
+  {% if feedbacksList.length === 0 %}
+    <p class="govuk-body">There are no feedbacks</p>
+  {% else %}
+    <h1 class="govuk-heading-l">Feedbacks</h1>
+    <ul class="govuk-list">
+      {% for feedback in feedbacksList %}
+        <li class="govuk-list__item">
+          <dl class="govuk-summary-list govuk-summary-list--no-border">
+            <div class="govuk-summary-list__row" style="display:flex;">
+              <dt class="govuk-summary-list__key" style="width: 50%;">
+                Number
+              </dt>
+              <dd class="govuk-summary-list__value">
+                {{ feedback.id }}
+              </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">
+                Received
+              </dt>
+              <dd class="govuk-summary-list__value">
+                {{ parseDate(feedback.createdAt, "PPPP") }} - {{ parseDate(feedback.createdAt, "p") }}
+              </dd>
+            </div>
+            {% for question in _.get(feedback, "jsonData.questionsAndAnswers", []) %}
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  {{ question.question }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ question.answer }}
+                </dd>
+              </div>
+            {% endfor %} 
+          </dl>
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
+
