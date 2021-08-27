@@ -205,7 +205,7 @@ export const questions: {
       if (readDisclaimer === "") {
         return {
           field: "read-disclaimer",
-          text: "Disclaimer is not allowed to be empty",
+          text: "You must accept the disclaimer to use this service",
           href: "#read-disclaimer",
         };
       }
