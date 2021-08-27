@@ -11,7 +11,7 @@ import * as views from "server/middlewares/views";
 import * as formRunner from "server/components/formRunner/proxyMiddleware";
 import * as auth from "server/components/auth/helpers";
 import * as cookies from "server/components/cookies/helpers";
-import * as dashboard from "server/components/dashboard/helpers";
+import * as dashboard from "server/components/dashboard";
 import * as development from "server/components/development/helpers";
 import * as feedback from "server/components/feedback/helpers";
 import * as healthCheck from "server/components/healthCheck/helpers";
