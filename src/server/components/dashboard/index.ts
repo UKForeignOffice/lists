@@ -1,2 +1,7 @@
+import { Express } from "express";
+import { dashboardRouter } from "./router";
+
 export { dashboardRoutes } from "./routes";
-export { initDashboard } from "./helpers";
+export async function initDashboard(server: Express): Promise<void> {
+  server.use(dashboardRouter);
+}
