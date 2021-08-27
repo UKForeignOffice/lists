@@ -494,7 +494,6 @@ export async function feedbackController(
 ): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");
-    console.log(JSON.stringify(feedbacksList, null, 2));
     res.render("dashboard/feedbacks-list.html", {
       ...DEFAULT_VIEW_PROPS,
       feedbacksList,
