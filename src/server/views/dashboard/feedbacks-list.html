@@ -4,23 +4,42 @@
   {% if feedbacksList.length === 0 %}
     <p class="govuk-body">There are no feedbacks</p>
   {% else %}
-    {% for feedback in feedbacksList %}
-      <h1 class="govuk-heading-l">Feedbacks</h1>
-      <table class="govuk-table">
-        <caption class="govuk-table__caption govuk-table__caption--s">
-          {{ feedback.id }} - 
-          {{ parseDate(feedback.createdAt) }}
-        </caption>
-        <tbody class="govuk-table__body">
+    <h1 class="govuk-heading-l">Feedbacks</h1>
+    <ul class="govuk-list">
+      {% for feedback in feedbacksList %}
+        <li class="govuk-list__item">
+          <dl class="govuk-summary-list govuk-summary-list--no-border">
+            <div class="govuk-summary-list__row" style="display:flex;">
+              <dt class="govuk-summary-list__key" style="width: 50%;">
+                Number
+              </dt>
+              <dd class="govuk-summary-list__value">
+                {{ feedback.id }}
+              </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">
+                Received
+              </dt>
+              <dd class="govuk-summary-list__value">
+                {{ parseDate(feedback.createdAt, "PPPP") }} - {{ parseDate(feedback.createdAt, "p") }}
+              </dd>
+            </div>
             {% for question in _.get(feedback, "jsonData.questionsAndAnswers", []) %}
-              <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">{{ question.question }}</th>
-                <td class="govuk-table__cell">{{ question.answer }}</td>
-              </tr>
-            {% endfor %}        
-        </tbody>
-      </table>
-      <hr class="govuk-section-break govuk-section-break--s">
-    {% endfor %}
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  {{ question.question }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ question.answer }}
+                </dd>
+              </div>
+            {% endfor %} 
+          </dl>
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        </li>
+      {% endfor %}
+    </ul>
   {% endif %}
 {% endblock %}
+
