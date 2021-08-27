@@ -47,7 +47,7 @@ export async function listsPostController(
       if (!hasItems) {
         switch (serviceType) {
           case ServiceType.lawyers:
-            // redirectLink = getCountryLawyerRedirectLink(country);
+            redirectLink = getCountryLawyerRedirectLink(country);
             break;
           case ServiceType.covidTestProviders:
             redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
