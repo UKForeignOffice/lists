@@ -6,6 +6,7 @@ import {
 } from "server/components/auth";
 import {
   listsController,
+  feedbackController,
   listsEditController,
   startRouteController,
   usersListController,
@@ -39,5 +40,18 @@ dashboardRouter.all(dashboardRoutes.listsEdit, listsEditController);
 dashboardRouter.get(dashboardRoutes.listsItems, listsItemsController);
 
 // list items
-dashboardRouter.put(dashboardRoutes.listsItemsApprove, listItemsApproveController);
-dashboardRouter.put(dashboardRoutes.listsItemsPublish, listItemsPublishController);
+dashboardRouter.put(
+  dashboardRoutes.listsItemsApprove,
+  listItemsApproveController
+);
+dashboardRouter.put(
+  dashboardRoutes.listsItemsPublish,
+  listItemsPublishController
+);
+
+// feedback
+dashboardRouter.get(
+  dashboardRoutes.feedback,
+  ensureUserIsSuperAdmin,
+  feedbackController
+);

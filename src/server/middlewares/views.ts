@@ -1,11 +1,12 @@
 import path from "path";
 import { Buffer } from "buffer";
-import _, { get } from "lodash";
+import _, { get, capitalize } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
 import { version } from "../../../package.json";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
+import { parseDate } from "server/utils/date";
 
 const ROOT = process.cwd();
 
@@ -29,9 +30,10 @@ export const configureViews = (server: Express): void => {
     })
     .addGlobal("isProd", isProd)
     .addGlobal("appVersion", version)
-    .addGlobal("SERVICE_NAME", SERVICE_NAME)
+    .addGlobal("SERVICE_NAME", capitalize(SERVICE_NAME))
     .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
     .addGlobal("enforceHttps", enforceHttps)
+    .addGlobal("parseDate", parseDate)
     .addGlobal("_", _);
 
   // dynamic globals
