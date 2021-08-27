@@ -93,7 +93,7 @@ export const questions: {
     needsToAnswer(req: Request) {
       const params = getAllRequestParams(req);
       const practiceArea = parseListValues("practiceArea", params);
-      return practiceArea === undefined || practiceArea.length === 0;
+      return practiceArea?.length === 0 || practiceArea === undefined;
     },
     validate(req: Request) {
       const params = getAllRequestParams(req);
@@ -205,7 +205,7 @@ export const questions: {
       if (readDisclaimer === "") {
         return {
           field: "read-disclaimer",
-          text: "Disclaimer is not allowed to be empty",
+          text: "You must accept the disclaimer to use this service",
           href: "#read-disclaimer",
         };
       }
@@ -221,15 +221,15 @@ export const questions: {
       return "How long after taking the Covid test do you need the provider to turnaround the results?";
     },
     needsToAnswer(req: Request) {
-      const params = getAllRequestParams(req);
-      const resultsTurnaround = parseListValues("resultsTurnaround", params);
-      return resultsTurnaround === undefined || resultsTurnaround.length === 0;
+      const { resultsTurnaround } = getAllRequestParams(req);
+      return (
+        resultsTurnaround === undefined || resultsTurnaround === "undefined"
+      );
     },
     validate(req: Request) {
-      const params = getAllRequestParams(req);
-      const resultsTurnaround = parseListValues("resultsTurnaround", params);
-      
-      if (resultsTurnaround === undefined || resultsTurnaround.length === 0) {
+      const { resultsTurnaround } = getAllRequestParams(req);
+
+      if (resultsTurnaround === "undefined") {
         return {
           field: "results-turnaround",
           text: "You must select an option",
