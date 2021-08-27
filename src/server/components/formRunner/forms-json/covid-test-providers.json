@@ -333,7 +333,7 @@
           "name": "postcode",
           "options": {
             "required": false,
-            "optionalText": true
+            "optionalText": false
           },
           "type": "TextField",
           "title": "Postcode or area code",

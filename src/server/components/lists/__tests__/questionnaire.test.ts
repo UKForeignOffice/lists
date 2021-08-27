@@ -340,7 +340,7 @@ describe("Questionnaire", () => {
       const result = readCovidDisclaimer.validate(req);
       expect(result).toEqual({
         field: "read-disclaimer",
-        text: "Disclaimer is not allowed to be empty",
+        text: "You must accept the disclaimer to use this service",
         href: "#read-disclaimer",
       });
     });
@@ -377,7 +377,7 @@ describe("Questionnaire", () => {
     });
 
     test("validates returns error when resultsTurnaround is falsy", () => {
-      req.params.resultsTurnaround = "";
+      req.params.resultsTurnaround = "undefined";
       const result = resultsTurnaround.validate(req);
       expect(result).toEqual({
         field: "results-turnaround",

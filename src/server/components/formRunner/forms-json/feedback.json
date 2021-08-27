@@ -16,33 +16,33 @@
       ],
       "next": [
         {
-          "path": "/please-tell-us-what-info-you-were-seeking",
+          "path": "/what-information-were-you-looking-for",
           "condition": "ighISZ"
         },
         {
-          "path": "/how-easy-or-difficult-was-it-to-find-what-you-were-looking-for",
+          "path": "/how-difficult-or-easy-was-it-to-find-what-you-were-looking-for",
           "condition": "bUgDMx"
         }
       ],
       "section": "fVyIwt"
     },
     {
-      "path": "/please-tell-us-what-info-you-were-seeking",
-      "title": "Please tell us what info you were seeking",
+      "path": "/what-information-were-you-looking-for",
+      "title": "What information were you looking for?",
       "components": [
         {
-          "name": "whatInfoYouWereSeeking",
+          "name": "whatInfoWereYouLookingFor",
           "options": {},
           "type": "MultilineTextField",
-          "title": "Please tell us what info you were seeking",
+          "title": "What information were you looking for?",
           "nameHasError": false,
-          "hint": "Please do not include any personal info, e.g. NI number",
+          "hint": "Do not include any personal information such as contact details.",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/how-could-we-improve-this-service"
+          "path": "/how-could-we-improve-this-service-optional"
         }
       ],
       "section": "fVyIwt"
@@ -55,54 +55,62 @@
       "section": "fVyIwt"
     },
     {
-      "path": "/how-easy-or-difficult-was-it-to-find-what-you-were-looking-for",
-      "title": "How easy or difficult was it to find what you were looking for?",
+      "path": "/how-difficult-or-easy-was-it-to-find-what-you-were-looking-for",
+      "title": "How difficult or easy was it to find what you were looking for?",
       "components": [
         {
           "name": "howEasyOrDifficultWasItToFindWhatYouWereLookingFor",
           "options": {},
           "type": "RadiosField",
-          "title": "How easy or difficult was it to find what you were looking for?",
+          "title": "How difficult or easy was it to find what you were looking for?",
           "nameHasError": false,
           "list": "PzHSKS",
-          "schema": {}
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
         {
-          "path": "/how-easy-or-difficult-was-it-to-use-this-service"
+          "path": "/how-difficult-or-easy-was-it-to-use-this-service"
         }
       ],
       "section": "fVyIwt"
     },
     {
-      "path": "/how-easy-or-difficult-was-it-to-use-this-service",
-      "title": "How easy or difficult was it to use this service?",
+      "path": "/how-difficult-or-easy-was-it-to-use-this-service",
+      "title": "How difficult or easy was it to use this service?",
       "components": [
         {
           "name": "howEasyOrDifficultWasItToUseThisService",
           "options": {},
           "type": "RadiosField",
-          "title": "How easy or difficult was it to use this service?",
+          "title": "How difficult or easy was it to use this service?",
           "nameHasError": false,
           "list": "PzHSKS",
-          "schema": {}
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
         {
-          "path": "/how-could-we-improve-this-service"
+          "path": "/how-could-we-improve-this-service-optional"
         }
       ],
       "section": "fVyIwt"
     },
     {
-      "path": "/how-could-we-improve-this-service",
-      "title": "How could we improve this service?",
+      "path": "/how-could-we-improve-this-service-optional",
+      "title": "How could we improve this service? (Optional)",
       "components": [
         {
           "name": "howCouldWeImproveThisService",
-          "options": {},
+          "options": {
+            "required": false
+          },
           "type": "MultilineTextField",
           "title": "How could we improve this service?",
           "nameHasError": false,
