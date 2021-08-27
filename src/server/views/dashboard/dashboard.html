@@ -12,7 +12,7 @@
           <ul class="govuk-list">
             {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
             {% if req.user.isSuperAdmin() %}
-              {{ dashboardMacros.navMenu("Feedback", dashboardRoutes.feedback, req) }}
+              {{ dashboardMacros.navMenu("Feedbacks", dashboardRoutes.feedback, req) }}
               {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
             {% endif %}
           </ul>
