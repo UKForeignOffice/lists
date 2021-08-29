@@ -110,8 +110,7 @@
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-node-externals": "^3.0.0",
-    "winston-papertrail-transport": "^1.0.9"
+    "webpack-node-externals": "^3.0.0"
   },
   "lint-staged": {
     "*.{js,json,yml,yaml,css,scss,ts,tsx,md},!webpack.config.js": "prettier --write --ignore-unknown",
