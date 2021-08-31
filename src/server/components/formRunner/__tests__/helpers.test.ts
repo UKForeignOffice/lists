@@ -59,8 +59,13 @@ describe("Form Runner Service:", () => {
         on: jest.fn(),
       };
 
+      const mockStdout = {
+        on: jest.fn(),
+      };
+
       jest.spyOn(child_process, "spawn").mockReturnValue({
         stderr: mockStderr,
+        stdout: mockStdout,
         on: jest.fn(),
         once: jest.fn(),
       } as any);
