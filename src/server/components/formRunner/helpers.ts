@@ -32,6 +32,10 @@ export async function startFormRunner(): Promise<boolean> {
       logger.error(`Form Runner Error: ${data.toString()}`);
     });
 
+    formRunner.stdout.on("data", (data) => {
+      logger.info(`Form Runner stdout: ${data.toString()}`);
+    });
+
     formRunner.on("exit", (code, signal) => {
       isStarting = false;
       logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
