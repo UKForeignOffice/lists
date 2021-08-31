@@ -19,7 +19,7 @@
     </div>
     
     <div class="govuk-header__content">
-      <a href="https://find-a-professional-service-abroad.service.csd.fcdo.gov.uk/" class="govuk-header__link govuk-header__link--service-name">
+      <a href="http{{ 's' if SERVICE_DOMAIN !== 'localhost:3000'  }}://{{ SERVICE_DOMAIN }}/find?serviceType={{ serviceType }}" class="govuk-header__link govuk-header__link--service-name">
         {{ _.capitalize(SERVICE_NAME) }}
       </a>
     </div>    
