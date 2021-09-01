@@ -1,5 +1,7 @@
 jest.mock("server/services/logger");
-jest.mock("redis", () => jest.requireActual("redis-mock"));
+
+const ioredisMock = require('ioredis-mock');
+jest.setMock('ioredis', ioredisMock);
 
 beforeEach(() => {
   expect.hasAssertions();
