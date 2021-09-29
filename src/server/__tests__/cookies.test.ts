@@ -6,7 +6,7 @@ import { SERVICE_NAME } from "server/config";
 import { capitalize } from "lodash";
 
 describe("Cookies", () => {
-  const pageLink = "/find?serviceType=lawyers";
+  const pageLink = "/find?serviceType=covidTestProviders";
   let server: Express;
 
   beforeAll(async () => {
