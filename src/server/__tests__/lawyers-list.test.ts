@@ -5,7 +5,8 @@ import { axe } from "jest-axe";
 import { getServer } from "../server";
 import { listItem } from "server/models";
 
-describe("Lawyers List:", () => {
+// TODO: Re-enable tests when lawyers are reinstated
+describe.skip("Lawyers List:", () => {
   let server: Express;
 
   function mockListItemSome(resolvedValue = true): jest.SpyInstance {

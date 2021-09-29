@@ -4,7 +4,8 @@ import { countriesList } from "server/services/metadata";
 import { listsRoutes, getServiceLabel } from "server/components/lists";
 
 export function sitemapController(req: Request, res: Response): void {
-  const sections = Object.keys(ServiceType).map(serviceType => {
+  // TODO: Remove filter once lawyers are reinstated
+  const sections = Object.keys(ServiceType).filter(name => name !== ServiceType.lawyers).map(serviceType => {
     return {
       title: `Find ${getServiceLabel(serviceType)} per country`,
       links: countriesList.map(({ value }) => {

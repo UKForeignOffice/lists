@@ -5,6 +5,7 @@ import { sitemapController } from "../controllers";
 describe("SiteMap", () => {
   let mockReq: any;
   let mockRes: any;
+  let serviceTypes: string[];
 
   beforeEach(() => {
     mockReq = {};
@@ -12,20 +13,19 @@ describe("SiteMap", () => {
     mockRes = {
       render: jest.fn(),
     };
+
+    // TODO: Remove filter once lawyers are reinstated
+    serviceTypes = Object.keys(ServiceType).filter(name => name !== ServiceType.lawyers);
   });
 
   test("a section is rendered for each service type", () => {
     sitemapController(mockReq, mockRes);
 
     expect(mockRes.render.mock.calls[0][0]).toBe("sitemap.html");
-    expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(
-      Object.keys(ServiceType).length
-    );
+    expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(1);
   });
 
   test("section titles are correct", () => {
-    const serviceTypes = Object.keys(ServiceType);
-    
     sitemapController(mockReq, mockRes);
 
     const sections = mockRes.render.mock.calls[0][1].sections;
@@ -36,8 +36,6 @@ describe("SiteMap", () => {
   });
 
   test("section links are correct", () => {
-    const serviceTypes = Object.keys(ServiceType);
-    
     sitemapController(mockReq, mockRes);
 
     const sections = mockRes.render.mock.calls[0][1].sections;
