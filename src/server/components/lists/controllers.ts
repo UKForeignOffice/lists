@@ -10,13 +10,11 @@ import {
   removeQueryParameter,
   queryStringFromParams,
   createConfirmationLink,
-  getCountryLawyerRedirectLink,
 } from "./helpers";
 import { questions } from "./questionnaire";
 import { logger } from "server/services/logger";
 import { QuestionError, QuestionName } from "./types";
 import { legalPracticeAreasList } from "server/services/metadata";
-import { searchLawyers, lawyersQuestionsSequence } from "./searches/lawyers";
 import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
@@ -46,9 +44,6 @@ export async function listsPostController(
 
       if (!hasItems) {
         switch (serviceType) {
-          case ServiceType.lawyers:
-            redirectLink = getCountryLawyerRedirectLink(country);
-            break;
           case ServiceType.covidTestProviders:
             redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
             break;
@@ -89,9 +84,6 @@ export function listsGetController(req: Request, res: Response): void {
   }
 
   switch (serviceType) {
-    case ServiceType.lawyers:
-      questionsSequence = lawyersQuestionsSequence;
-      break;
     case ServiceType.covidTestProviders:
       questionsSequence = covidTestProviderQuestionsSequence;
       break;
@@ -141,11 +133,6 @@ export function listsResultsController(
   const { serviceType } = params;
 
   switch (serviceType) {
-    case ServiceType.lawyers:
-      searchLawyers(req, res).catch((error) =>
-        logger.error("Lists Result Controller", { error })
-      );
-      break;
     case ServiceType.covidTestProviders:
       searchCovidTestProvider(req, res).catch((error) => {
         logger.error("Lists Result Controller", { error });
