@@ -1,10 +1,12 @@
-import IORedis from 'ioredis';
-import redis, { RedisClient } from "redis";
+import IORedis from "ioredis";
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from "server/config";
 import { getRedisClient, isRedisAvailable, TRedisClient } from "../redis";
-import { logger } from "server/services/logger";
 
 let mockRedisHost: string | undefined = "localhost";
+
+jest.unmock('server/services/redis')
+
+jest.mock('ioredis');
 
 jest.mock("server/config", () => ({
   get REDIS_HOST() {
@@ -12,36 +14,9 @@ jest.mock("server/config", () => ({
   },
 }));
 
+jest.mock('server/services/logger')
+
 describe("Redis Service:", () => {
-  describe.skip("createClient", () => {
-    test("parameters are correct", () => {
-      jest.spyOn(redis, "createClient");
-      getRedisClient();
-
-      expect(redis.createClient).toHaveBeenCalledWith({
-        host: REDIS_HOST,
-        port: REDIS_PORT,
-        password: REDIS_PASSWORD,
-      });
-    });
-
-    test("exposed redisClient is correct", () => {
-      const redisClient = getRedisClient();
-
-      expect(redisClient instanceof RedisClient).toBe(true);
-    });
-
-    it("logs redis errors correctly", () => {
-      const mockError = new Error("mock error");
-      const spyLogger = jest.spyOn(logger, "error");
-      const redisClient = getRedisClient();      
-      
-      redisClient.emit("error", mockError);
-
-      expect(spyLogger).toHaveBeenCalledWith(`Redis Error: ${mockError.message}`);
-    });
-  });
-
   describe('getRedisClient', () => {
     let client: TRedisClient;
 
@@ -50,13 +25,21 @@ describe("Redis Service:", () => {
         client = getRedisClient(true, true);
       });
 
-      test.todo('should initiate Redis in cluster mode');
+      test('should initiate Redis in cluster mode', () => {
+        expect(IORedis.Cluster).toHaveBeenCalledWith([{
+          host: REDIS_HOST,
+          port: REDIS_PORT,
+        }], {
+          dnsLookup: expect.any(Function),
+          redisOptions: {
+            password: REDIS_PASSWORD,
+          },
+        });
+      });
 
       test('should return the correct client type', () => {
         expect(client).toBeInstanceOf(IORedis.Cluster);
       });
-
-      test.todo('should log Redis errors correctly');
     });
 
     describe('not in production', () => {
@@ -64,13 +47,17 @@ describe("Redis Service:", () => {
         client = getRedisClient(false, true);
       });
 
-      test.todo('should initiate Redis in normal mode');
+      test('should initiate Redis in normal mode', () => {
+        expect(IORedis).toHaveBeenCalledWith({
+          host: REDIS_HOST,
+          password: REDIS_PASSWORD,
+          port: REDIS_PORT,
+        });
+      });
 
       test('should return the correct client type', () => {
         expect(client).toBeInstanceOf(IORedis);
       });
-
-      test.todo('should log Redis errors correctly');
     });
   })
 
