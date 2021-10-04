@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { startCase, kebabCase } from "lodash";
+import { ServiceType } from "server/models/types";
 import {
   parseListValues,
   getServiceLabel,
@@ -62,8 +63,17 @@ export const questions: {
       return "questions/question-region.html";
     },
     pageTitle(req) {
-      const { country } = getAllRequestParams(req);
-      return `Which area in ${startCase(country)} do you need a lawyer from?`;
+      const { country, serviceType } = getAllRequestParams(req);
+      const formattedCountry = startCase(country);
+
+      switch (serviceType) {
+        case ServiceType.covidTestProviders:
+          return `Where in ${formattedCountry} do you need to find a COVID-19 test provider?`;
+        case ServiceType.lawyers:
+          return `Which area in ${formattedCountry} do you need a lawyer from?`;
+        default:
+          return "";
+      }
     },
     needsToAnswer(req: Request) {
       const { region } = getAllRequestParams(req);
