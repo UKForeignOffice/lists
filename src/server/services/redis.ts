@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import IORedis from "ioredis";
 import { logger } from "./logger";
 import {
   REDIS_HOST,
@@ -12,7 +12,7 @@ export type TRedisClient = IORedis.Cluster | IORedis.Redis;
 
 export type TGetRedisClient = () => TRedisClient;
 
-let redisClient: TRedisClient | undefined;
+let redisClient: TRedisClient;
 
 export function isRedisAvailable(): boolean {
   return REDIS_HOST !== undefined;
@@ -21,16 +21,21 @@ export function isRedisAvailable(): boolean {
 export function getRedisClient(): TRedisClient {
   if (redisClient === undefined) {
     if (isProd) {
-      redisClient = new IORedis.Cluster([{
-        host: REDIS_HOST,
-        port: REDIS_PORT,
-      }], {
-        dnsLookup: (address, callback) => callback(null, address),
-        redisOptions: {
-          password: REDIS_PASSWORD,
-          tls: REDIS_TLS ? {} : undefined,
-        },
-      });
+      redisClient = new IORedis.Cluster(
+        [
+          {
+            host: REDIS_HOST,
+            port: REDIS_PORT,
+          },
+        ],
+        {
+          dnsLookup: (address, callback) => callback(null, address),
+          redisOptions: {
+            password: REDIS_PASSWORD,
+            tls: REDIS_TLS ? {} : undefined,
+          },
+        }
+      );
     } else {
       redisClient = new IORedis({
         host: REDIS_HOST,
