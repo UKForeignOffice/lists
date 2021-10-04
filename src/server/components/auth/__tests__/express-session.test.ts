@@ -10,8 +10,7 @@ jest.mock("connect-redis", () => jest.fn());
 describe("Express Session", () => {
   let server: any;
   let spySession: jest.SpyInstance;
-  let spyGetRedisClient: jest.SpyInstance;
-  let spyIsRedisAvailable: jest.SpyInstance;
+  
   let mockRedisStore: any;
 
   beforeEach(() => {
@@ -21,8 +20,7 @@ describe("Express Session", () => {
 
     mockRedisStore = jest.fn();
     spySession = jest.spyOn(session, "default");
-    spyGetRedisClient = jest.spyOn(redisService, "getRedisClient");
-    spyIsRedisAvailable = jest.spyOn(redisService, "isRedisAvailable");
+    
     jest.spyOn(connectRedis, "default").mockReturnValue(mockRedisStore);
   });
 
@@ -40,10 +38,12 @@ describe("Express Session", () => {
   });
 
   test("session initialization Redis store is correct", async () => {
+    (redisService.isRedisAvailable as jest.Mock).mockReturnValueOnce(true);
+
     await configureExpressSession(server);
 
-    expect(spyIsRedisAvailable).toHaveBeenCalled();
-    expect(spyGetRedisClient).toHaveBeenCalled();
+    expect(redisService.isRedisAvailable).toHaveBeenCalled();
+    expect(redisService.getRedisClient).toHaveBeenCalled();
     expect(mockRedisStore).toHaveBeenCalledWith({
       client: redisService.getRedisClient(),
       prefix: "lists_session_",

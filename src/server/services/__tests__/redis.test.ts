@@ -1,44 +1,78 @@
-import redis, { RedisClient } from "redis";
+import IORedis from "ioredis";
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from "server/config";
-import { getRedisClient, isRedisAvailable } from "../redis";
-import { logger } from "server/services/logger";
+import { isRedisAvailable, TGetRedisClient, TRedisClient } from "../redis";
 
 let mockRedisHost: string | undefined = "localhost";
+let mockIsProd: boolean = true;
+
+jest.unmock('server/services/redis')
+
+jest.mock('ioredis');
+
 jest.mock("server/config", () => ({
+  get isProd() {
+    return mockIsProd;
+  },
   get REDIS_HOST() {
     return mockRedisHost;
   },
 }));
 
-describe("Redis Service:", () => {
-  describe("createClient", () => {
-    test("parameters are correct", () => {
-      jest.spyOn(redis, "createClient");
-      getRedisClient();
+jest.mock('server/services/logger')
 
-      expect(redis.createClient).toHaveBeenCalledWith({
-        host: REDIS_HOST,
-        port: REDIS_PORT,
-        password: REDIS_PASSWORD,
+describe("Redis Service:", () => {
+  describe('getRedisClient', () => {
+    let client: TRedisClient;
+    let getRedisClient: TGetRedisClient;
+
+    beforeEach(() => {
+      jest.isolateModules(() => {
+        ({ getRedisClient } = jest.requireActual('../redis')); 
       });
     });
 
-    test("exposed redisClient is correct", () => {
-      const redisClient = getRedisClient();
+    describe('in production', () => {
+      beforeEach(() => {
+        client = getRedisClient();
+      });
 
-      expect(redisClient instanceof RedisClient).toBe(true);
+      test('should initiate Redis in cluster mode', () => {
+        expect(IORedis.Cluster).toHaveBeenCalledWith([{
+          host: REDIS_HOST,
+          port: REDIS_PORT,
+        }], {
+          dnsLookup: expect.any(Function),
+          redisOptions: {
+            password: REDIS_PASSWORD,
+          },
+        });
+      });
+
+      test('should return the correct client type', () => {
+        expect(client).toBeInstanceOf(IORedis.Cluster);
+      });
     });
 
-    it("logs redis errors correctly", () => {
-      const mockError = new Error("mock error");
-      const spyLogger = jest.spyOn(logger, "error");
-      const redisClient = getRedisClient();      
-      
-      redisClient.emit("error", mockError);
+    describe('not in production', () => {
+      beforeEach(() => {
+        mockIsProd = false;
 
-      expect(spyLogger).toHaveBeenCalledWith(`Redis Error: ${mockError.message}`);
+        client = getRedisClient();
+      });
+
+      test('should initiate Redis in normal mode', () => {
+        expect(IORedis).toHaveBeenCalledWith({
+          host: REDIS_HOST,
+          password: REDIS_PASSWORD,
+          port: REDIS_PORT,
+        });
+      });
+
+      test('should return the correct client type', () => {
+        expect(client).toBeInstanceOf(IORedis);
+      });
     });
-  });
+  })
 
   describe("isRedisAvailable", () => {
     test("returns true when environment provides REDIS_HOST", () => {

@@ -1,5 +1,5 @@
 {
-  "version": "1.17.0",
+  "version": "1.17.1",
   "engines": {
     "node": ">=14"
   },
@@ -42,6 +42,7 @@
     "express-winston": "^4.1.0",
     "govuk-frontend": "^3.13.0",
     "helmet": "^4.6.0",
+    "ioredis": "^4.27.9",
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
@@ -53,7 +54,6 @@
     "pg-escape": "^0.2.0",
     "prisma": "^2.29.1",
     "promise-polyfill": "8.2.0",
-    "redis": "^3.1.2",
     "whatwg-fetch": "^3.6.2",
     "winston": "^3.3.3"
   },
@@ -72,6 +72,7 @@
     "@types/express-http-proxy": "^1.6.2",
     "@types/express-session": "^1.17.4",
     "@types/express-winston": "^4.0.0",
+    "@types/ioredis": "^4.27.5",
     "@types/jest": "^27.0.1",
     "@types/jest-axe": "^3.5.2",
     "@types/lodash": "^4.14.172",
@@ -82,7 +83,6 @@
     "@types/passport-jwt": "^3.0.6",
     "@types/pg": "^8.6.1",
     "@types/pg-escape": "^0.2.1",
-    "@types/redis": "^2.8.31",
     "@types/supertest": "^2.0.11",
     "babel-plugin-module-resolver": "^4.1.0",
     "cheerio": "^1.0.0-rc.10",
@@ -118,7 +118,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "lint-staged": {
-    "*.{js,json,yml,yaml,css,scss,ts,tsx,md},!webpack.config.js": "prettier --write --ignore-unknown",
-    "*.{ts,tsx,js,jsx},!webpack.config.js": "eslint --fix"
+    "*": "prettier --write --ignore-unknown",
+    "*.{ts,tsx,js,jsx}": "eslint --fix"
   }
 }
