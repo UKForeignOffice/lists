@@ -131,10 +131,10 @@ describe("Lists Controllers", () => {
     test("it renders question page when serviceType is undefined", () => {
       listsGetController(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("lists/question-page.html", {
+      expect(res.render).toHaveBeenCalledWith("lists/question-page.njk", {
         ...DEFAULT_VIEW_PROPS,
         ...{ ...req.params, ...req.query, ...req.body },
-        partialToRender: "question-service-type.html",
+        partialToRender: "question-service-type.njk",
         getServiceLabel,
       });
     });
@@ -270,7 +270,7 @@ describe("Lists Controllers", () => {
 
       setTimeout(() => {
         expect(res.render).toHaveBeenCalledWith(
-          "lists/application-confirmation-page.html"
+          "lists/application-confirmation-page.njk"
         );
         done();
       });
@@ -304,7 +304,7 @@ describe("Lists Controllers", () => {
 
       listsGetPrivateBetaPage(req, res, next);
 
-      expect(res.render).toHaveBeenCalledWith("lists/private-beta-page.html", {
+      expect(res.render).toHaveBeenCalledWith("lists/private-beta-page.njk", {
         serviceType: "testServiceType",
         ServiceType,
       });

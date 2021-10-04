@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
 
 {% block content %}
@@ -23,7 +23,7 @@
           <h1 class="govuk-heading-l">Dashboard</h1>
 
           {% if isNewUser %}
-            {% include "./partials/new-user-banner.html" %}
+            {% include "./partials/new-user-banner.njk" %}
           {% endif %}
 
         {% endblock %}

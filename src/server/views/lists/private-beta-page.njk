@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.njk" %}
 
 {% block pageTitle %}
   {{ SERVICE_NAME }} - You cannot use this service yet
@@ -9,7 +9,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if serviceType === ServiceType.covidTestProviders %}
-        {% include "lists/partials/covid-test-providers/covid-test-providers-private-beta.html" %}   
+        {% include "lists/partials/covid-test-providers/covid-test-providers-private-beta.njk" %}   
       {% endif %}
     </div>
   </div>

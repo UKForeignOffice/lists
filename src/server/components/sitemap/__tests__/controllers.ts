@@ -15,13 +15,15 @@ describe("SiteMap", () => {
     };
 
     // TODO: Remove filter once lawyers are reinstated
-    serviceTypes = Object.keys(ServiceType).filter(name => name !== ServiceType.lawyers);
+    serviceTypes = Object.keys(ServiceType).filter(
+      (name) => name !== ServiceType.lawyers
+    );
   });
 
   test("a section is rendered for each service type", () => {
     sitemapController(mockReq, mockRes);
 
-    expect(mockRes.render.mock.calls[0][0]).toBe("sitemap.html");
+    expect(mockRes.render.mock.calls[0][0]).toBe("sitemap.njk");
     expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(1);
   });
 
@@ -31,7 +33,9 @@ describe("SiteMap", () => {
     const sections = mockRes.render.mock.calls[0][1].sections;
     sections.forEach((section: any, index: any) => {
       const serviceType = serviceTypes[index];
-      expect(section.title).toBe(`Find ${getServiceLabel(serviceType)} per country`);
+      expect(section.title).toBe(
+        `Find ${getServiceLabel(serviceType)} per country`
+      );
     });
   });
 
@@ -41,7 +45,9 @@ describe("SiteMap", () => {
     const sections = mockRes.render.mock.calls[0][1].sections;
     sections.forEach((section: any, index: any) => {
       const serviceType = serviceTypes[index];
-      expect(section.links[0].href).toBe(`/find?country=Afghanistan&serviceType=${serviceType}`);
+      expect(section.links[0].href).toBe(
+        `/find?country=Afghanistan&serviceType=${serviceType}`
+      );
     });
   });
 });

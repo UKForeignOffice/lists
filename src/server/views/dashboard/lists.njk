@@ -1,4 +1,4 @@
-{% extends "./dashboard.html" %}
+{% extends "./dashboard.njk" %}
 
 {% block dashboard %}
   {% if req.user.isSuperAdmin() or req.user.isListsCreator() %}

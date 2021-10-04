@@ -21,7 +21,7 @@ describe("Questionnaire", () => {
     test("getViewPartialName is correct", () => {
       const partialName = readNotice.getViewPartialName(req);
       expect(partialName).toBe(
-        "covid-test-providers/covid-test-providers-notice.html"
+        "covid-test-providers/covid-test-providers-notice.njk"
       );
     });
 
@@ -58,7 +58,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = country.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-country.html");
+      expect(partialName).toBe("questions/question-country.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -98,7 +98,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = region.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-region.html");
+      expect(partialName).toBe("questions/question-region.njk");
     });
 
     test("pageTitle is correct for COVID test providers", () => {
@@ -150,7 +150,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = practiceArea.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-practice-area.html");
+      expect(partialName).toBe("questions/question-practice-area.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -191,7 +191,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = legalAid.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-legal-aid.html");
+      expect(partialName).toBe("questions/question-legal-aid.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -239,7 +239,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = proBono.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-pro-bono.html");
+      expect(partialName).toBe("questions/question-pro-bono.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -280,7 +280,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = readDisclaimer.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-disclaimer.html");
+      expect(partialName).toBe("questions/question-disclaimer.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -321,7 +321,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = readCovidDisclaimer.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-covid-disclaimer.html");
+      expect(partialName).toBe("questions/question-covid-disclaimer.njk");
     });
 
     test("pageTitle is correct", () => {
@@ -362,7 +362,7 @@ describe("Questionnaire", () => {
 
     test("getViewPartialName is correct", () => {
       const partialName = resultsTurnaround.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-results-turnaround.html");
+      expect(partialName).toBe("questions/question-results-turnaround.njk");
     });
 
     test("pageTitle is correct", () => {

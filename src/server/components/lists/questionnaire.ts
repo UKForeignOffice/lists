@@ -17,7 +17,7 @@ export const questions: TQuestions = {
   readNotice: {
     getViewPartialName(req) {
       const { serviceType } = getAllRequestParams(req);
-      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.html`;
+      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.njk`;
     },
     pageTitle(req) {
       const { country, serviceType } = getAllRequestParams(req);
@@ -35,7 +35,7 @@ export const questions: TQuestions = {
   },
   country: {
     getViewPartialName() {
-      return "questions/question-country.html";
+      return "questions/question-country.njk";
     },
     pageTitle(req: Request) {
       const { serviceType } = getAllRequestParams(req);
@@ -62,7 +62,7 @@ export const questions: TQuestions = {
   },
   region: {
     getViewPartialName() {
-      return "questions/question-region.html";
+      return "questions/question-region.njk";
     },
     pageTitle(req) {
       const { country, serviceType } = getAllRequestParams(req);
@@ -97,7 +97,7 @@ export const questions: TQuestions = {
   },
   practiceArea: {
     getViewPartialName() {
-      return "questions/question-practice-area.html";
+      return "questions/question-practice-area.njk";
     },
     pageTitle() {
       return "In which field of law do you need legal help?";
@@ -124,7 +124,7 @@ export const questions: TQuestions = {
   },
   legalAid: {
     getViewPartialName() {
-      return "questions/question-legal-aid.html";
+      return "questions/question-legal-aid.njk";
     },
     pageTitle() {
       return "Are you interested in legal aid?";
@@ -152,7 +152,7 @@ export const questions: TQuestions = {
   },
   proBono: {
     getViewPartialName() {
-      return "questions/question-pro-bono.html";
+      return "questions/question-pro-bono.njk";
     },
     pageTitle() {
       return "Are you interested in pro bono services?";
@@ -177,7 +177,7 @@ export const questions: TQuestions = {
   },
   readDisclaimer: {
     getViewPartialName() {
-      return "questions/question-disclaimer.html";
+      return "questions/question-disclaimer.njk";
     },
     pageTitle() {
       return "Disclaimer";
@@ -202,7 +202,7 @@ export const questions: TQuestions = {
   },
   readCovidDisclaimer: {
     getViewPartialName() {
-      return "questions/question-covid-disclaimer.html";
+      return "questions/question-covid-disclaimer.njk";
     },
     pageTitle() {
       return "Disclaimer";
@@ -227,7 +227,7 @@ export const questions: TQuestions = {
   },
   resultsTurnaround: {
     getViewPartialName() {
-      return "questions/question-results-turnaround.html";
+      return "questions/question-results-turnaround.njk";
     },
     pageTitle() {
       return "How long after taking the Covid test do you need the provider to turnaround the results?";
