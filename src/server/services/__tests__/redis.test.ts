@@ -1,14 +1,18 @@
 import IORedis from "ioredis";
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from "server/config";
-import { getRedisClient, isRedisAvailable, TRedisClient } from "../redis";
+import { isRedisAvailable, TGetRedisClient, TRedisClient } from "../redis";
 
 let mockRedisHost: string | undefined = "localhost";
+let mockIsProd: boolean = true;
 
 jest.unmock('server/services/redis')
 
 jest.mock('ioredis');
 
 jest.mock("server/config", () => ({
+  get isProd() {
+    return mockIsProd;
+  },
   get REDIS_HOST() {
     return mockRedisHost;
   },
@@ -19,10 +23,17 @@ jest.mock('server/services/logger')
 describe("Redis Service:", () => {
   describe('getRedisClient', () => {
     let client: TRedisClient;
+    let getRedisClient: TGetRedisClient;
+
+    beforeEach(() => {
+      jest.isolateModules(() => {
+        ({ getRedisClient } = jest.requireActual('../redis')); 
+      });
+    });
 
     describe('in production', () => {
       beforeEach(() => {
-        client = getRedisClient(true, true);
+        client = getRedisClient();
       });
 
       test('should initiate Redis in cluster mode', () => {
@@ -44,7 +55,9 @@ describe("Redis Service:", () => {
 
     describe('not in production', () => {
       beforeEach(() => {
-        client = getRedisClient(false, true);
+        mockIsProd = false;
+
+        client = getRedisClient();
       });
 
       test('should initiate Redis in normal mode', () => {
