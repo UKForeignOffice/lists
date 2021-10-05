@@ -19,9 +19,14 @@ const GOOGLE_ANALYTICS_DOMAINS = [
   "ssl.google-analytics.com",
   "stats.g.doubleclick.net",
   "www.googletagmanager.com",
+  "tagmanager.google.com",
 ];
 
-const GOOGLE_STATIC_DOMAINS = ["www.gstatic.com"];
+const GOOGLE_STATIC_DOMAINS = ["www.gstatic.com", "ssl.gstatic.com"];
+
+const GOOGLE_FONTS_DOMAINS = ["fonts.gstatic.com"];
+
+const GOOGLE_STYLES_DOMAINS = ["fonts.googleapis.com"];
 
 const DATA = ["data:"];
 
@@ -53,8 +58,19 @@ export function configureHelmet(server: Express): void {
           ...GOOGLE_ANALYTICS_DOMAINS,
           ...GOOGLE_STATIC_DOMAINS,
         ],
-        "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
-        "img-src": [...TRUSTED, ...DATA, GOOGLE_ANALYTICS_DOMAINS[3]],
+        "style-src": [
+          ...TRUSTED,
+          ...GOVUK_DOMAINS,
+          GOOGLE_ANALYTICS_DOMAINS[4],
+          ...GOOGLE_STYLES_DOMAINS,
+        ],
+        "img-src": [
+          ...TRUSTED,
+          ...DATA,
+          ...GOOGLE_STATIC_DOMAINS,
+          GOOGLE_ANALYTICS_DOMAINS[3],
+        ],
+        "font-src": [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
       },
     })
   );
