@@ -5,7 +5,7 @@ import helmet from "helmet";
 import crypto from "crypto";
 import { SERVICE_DOMAIN } from "server/config";
 
-const TRUSTED = ["self", `${SERVICE_DOMAIN}`];
+const TRUSTED = ["'self'", SERVICE_DOMAIN ?? ""];
 
 const GOVUK_DOMAINS = [
   "*.publishing.service.gov.uk",
@@ -22,6 +22,8 @@ const GOOGLE_ANALYTICS_DOMAINS = [
 ];
 
 const GOOGLE_STATIC_DOMAINS = ["www.gstatic.com"];
+
+const DATA = ["data:"];
 
 export function configureHelmet(server: Express): void {
   server.use((_req, res, next) => {
@@ -45,13 +47,14 @@ export function configureHelmet(server: Express): void {
       directives: {
         defaultSrc: [...TRUSTED, ...GOVUK_DOMAINS, ...GOOGLE_ANALYTICS_DOMAINS],
         "script-src": [
+          generateCspNonce,
           ...TRUSTED,
           ...GOVUK_DOMAINS,
           ...GOOGLE_ANALYTICS_DOMAINS,
           ...GOOGLE_STATIC_DOMAINS,
-          generateCspNonce,
         ],
         "style-src": [...TRUSTED, ...GOVUK_DOMAINS],
+        "img-src": [...TRUSTED, ...DATA, GOOGLE_ANALYTICS_DOMAINS[3]],
       },
     })
   );
