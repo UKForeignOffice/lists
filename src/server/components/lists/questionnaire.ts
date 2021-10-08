@@ -67,15 +67,12 @@ export const questions: Questions = {
     pageTitle(req) {
       const { country, serviceType } = getAllRequestParams(req);
       const formattedCountry = startCase(country);
+      const titles = {
+        [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you need to find a COVID-19 test provider?`,
+        [ServiceType.lawyers]: `Which area in ${formattedCountry} do you need a lawyer from?`,
+      };
 
-      switch (serviceType) {
-        case ServiceType.covidTestProviders:
-          return `Where in ${formattedCountry} do you need to find a COVID-19 test provider?`;
-        case ServiceType.lawyers:
-          return `Which area in ${formattedCountry} do you need a lawyer from?`;
-        default:
-          return "";
-      }
+      return serviceType !== undefined ? titles[serviceType] : "";
     },
     needsToAnswer(req: Request) {
       const { region } = getAllRequestParams(req);
