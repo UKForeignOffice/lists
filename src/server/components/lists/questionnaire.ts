@@ -9,11 +9,11 @@ import {
 } from "./helpers";
 import { QuestionName, Question } from "./types";
 
-type TQuestions = {
+type Questions = {
   [key in QuestionName]: Question;
 };
 
-export const questions: TQuestions = {
+export const questions: Questions = {
   readNotice: {
     getViewPartialName(req) {
       const { serviceType } = getAllRequestParams(req);
