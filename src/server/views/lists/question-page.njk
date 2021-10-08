@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.njk" %}
 
 {% block pageTitle %}
   {{ SERVICE_NAME }}{{ " - " + partialPageTitle if partialPageTitle }}
@@ -20,7 +20,7 @@
     {# temporary remove answer-box from lawyers start page, until other services are added #}
     {% if partialToRender.indexOf("-notice") === -1 %}
       <div class="govuk-grid-column-one-third">
-        {% include "lists/partials/answers-box.html" %}
+        {% include "lists/partials/answers-box.njk" %}
       </div>
     {% endif %} 
   </div>

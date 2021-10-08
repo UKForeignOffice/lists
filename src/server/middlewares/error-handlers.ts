@@ -21,7 +21,7 @@ export const configureErrorHandlers = (server: Express): void => {
     res.status(404);
 
     if (acceptsHTML(req)) {
-      res.render("errors/404.html");
+      res.render("errors/404.njk");
     } else if (acceptsJSON(req)) {
       res.json({
         error: "The resource you where looking for is not available.",
@@ -34,17 +34,13 @@ export const configureErrorHandlers = (server: Express): void => {
     }
   });
 
-  server.use(function (
-    err: HttpException,
-    req: Request,
-    res: Response,
-  ) {
+  server.use(function (err: HttpException, req: Request, res: Response) {
     logger.error("500 Error", err);
 
     res.status("status" in err ? err.status : 500);
 
     if (acceptsHTML(req)) {
-      res.render("errors/500.html");
+      res.render("errors/500.njk");
     } else if (acceptsJSON(req)) {
       res.json({
         error: "Sorry, there is a problem with the service",

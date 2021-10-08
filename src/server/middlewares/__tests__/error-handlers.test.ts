@@ -7,11 +7,11 @@ describe("Error handlers middleware", () => {
 
   beforeEach(() => {
     server = {
-      use: jest.fn()
+      use: jest.fn(),
     };
 
     req = {
-      accepts: jest.fn(() => "json")
+      accepts: jest.fn(() => "json"),
     };
 
     res = {
@@ -19,15 +19,15 @@ describe("Error handlers middleware", () => {
       json: jest.fn(),
       render: jest.fn(),
       send: jest.fn(),
-      type: jest.fn().mockReturnThis()
+      type: jest.fn().mockReturnThis(),
     };
   });
-  
+
   test("it configures error handler", () => {
     configureErrorHandlers(server);
     expect(server.use).toHaveBeenCalledTimes(2);
   });
-  
+
   describe("404 error handler", () => {
     let handle404: any;
 
@@ -41,10 +41,10 @@ describe("Error handlers middleware", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    test("it renders errors/404.html when request expects HTML", () => {
+    test("it renders errors/404.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle404(req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/404.html");
+      expect(res.render).toHaveBeenCalledWith("errors/404.njk");
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -58,7 +58,9 @@ describe("Error handlers middleware", () => {
     test("it responds with text when request does not accepts either HTMl nor JSON", () => {
       req.accepts.mockReturnValue("something else");
       handle404(req, res);
-      expect(res.send).toHaveBeenCalledWith("The resource you where looking for is not available.");
+      expect(res.send).toHaveBeenCalledWith(
+        "The resource you where looking for is not available."
+      );
     });
   });
 
@@ -77,10 +79,10 @@ describe("Error handlers middleware", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
 
-    test("it renders errors/500.html when request expects HTML", () => {
+    test("it renders errors/500.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle500(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/500.html");
+      expect(res.render).toHaveBeenCalledWith("errors/500.njk");
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -94,7 +96,9 @@ describe("Error handlers middleware", () => {
     test("it responds with text when request does not accepts either HTMl nor JSON", () => {
       req.accepts.mockReturnValue("something else");
       handle500(error, req, res);
-      expect(res.send).toHaveBeenCalledWith("Sorry, there is a problem with the service");
+      expect(res.send).toHaveBeenCalledWith(
+        "Sorry, there is a problem with the service"
+      );
     });
   });
 });

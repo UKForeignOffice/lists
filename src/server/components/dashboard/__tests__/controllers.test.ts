@@ -90,7 +90,7 @@ describe("Dashboard Controllers", () => {
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/dashboard.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/dashboard.njk");
     });
 
     test("it redirects to logout if req.user is undefined", async () => {
@@ -176,7 +176,7 @@ describe("Dashboard Controllers", () => {
       await usersListController(mockReq, mockRes, mockNext);
 
       expect(spyFindUsers).toHaveBeenCalled();
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-list.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-list.njk");
       expect(mockRes.render.mock.calls[0][1].users).toBe(users);
     });
 
@@ -230,7 +230,7 @@ describe("Dashboard Controllers", () => {
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(spyFindUser).toHaveBeenCalledWith(mockReq.params.userEmail);
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-edit.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-edit.njk");
       expect(mockRes.render.mock.calls[0][1].user).toBe(userBeingEdited);
     });
 
@@ -286,7 +286,7 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists.njk");
       expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
     });
 
@@ -333,7 +333,7 @@ describe("Dashboard Controllers", () => {
 
       const renderCall = mockRes.render.mock.calls[0];
       expect(spyFindListById).toHaveBeenCalledWith(mockReq.params.listId);
-      expect(renderCall[0]).toBe("dashboard/lists-items.html");
+      expect(renderCall[0]).toBe("dashboard/lists-items.njk");
       expect(renderCall[1].list).toBe(list);
       expect(renderCall[1].listItems).toBe(listItems);
       expect(renderCall[1].canApprove).toBeFalse();
@@ -400,7 +400,7 @@ describe("Dashboard Controllers", () => {
       await listsEditController(mockReq, mockRes, mockNext);
 
       expect(spyFindListById).not.toHaveBeenCalled();
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.njk");
       expect(mockRes.render.mock.calls[0][1]).toContainKeys([
         "dashboardRoutes",
         "countriesList",
@@ -428,7 +428,7 @@ describe("Dashboard Controllers", () => {
       await listsEditController(mockReq, mockRes, mockNext);
 
       expect(spyFindListById).toHaveBeenCalledWith(mockReq.params.listId);
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.html");
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-edit.njk");
       expect(mockRes.render.mock.calls[0][1].list).toBe(list);
     });
 

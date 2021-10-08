@@ -1,4 +1,4 @@
-{% extends "./template.html" %}
+{% extends "./template.njk" %}
 
 {% from "back-link/macro.njk" import govukBackLink %}
 {% from "footer/macro.njk" import govukFooter -%}
@@ -12,7 +12,8 @@
     <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
+    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KZWHG2G');</script>
     <!-- End Google Tag Manager -->
 
@@ -20,7 +21,8 @@
     <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
+    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
     <!-- End Google Tag Manager -->
   {% endif %}
@@ -48,7 +50,7 @@
 {% endblock %}
 
 {% block header %}
-  {% include "includes/header.html" %}
+  {% include "includes/header.njk" %}
 {% endblock %}
 
 {% block bodyStart %}
@@ -69,13 +71,13 @@
       <!-- End Google Tag Manager (noscript) -->
     {% endif %}
   {% if not cookiesPolicy.isSet %}
-    {% include "cookies/cookie-banner.html" %}
+    {% include "cookies/cookie-banner.njk" %}
   {% endif %}
 {% endblock %}
 
 {% block beforeContent %}
   <div role="complementary" title="Phase Banner">
-    {% include "includes/phase-banner.html" %}
+    {% include "includes/phase-banner.njk" %}
   </div>
 {% endblock %}
 
@@ -88,7 +90,7 @@
 {% endblock %}
 
 {% block footer %}
-    {% include "includes/footer.html" %}
+    {% include "includes/footer.njk" %}
 {% endblock %}
 
 

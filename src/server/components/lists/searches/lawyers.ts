@@ -36,7 +36,7 @@ export async function searchLawyers(
     practiceArea,
   });
 
-  res.render("lists/results-page.html", {
+  res.render("lists/results-page.njk", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
     searchResults: searchResults,

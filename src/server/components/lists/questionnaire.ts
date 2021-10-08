@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { startCase, kebabCase } from "lodash";
+import { ServiceType } from "server/models/types";
 import {
   parseListValues,
   getServiceLabel,
@@ -8,13 +9,15 @@ import {
 } from "./helpers";
 import { QuestionName, Question } from "./types";
 
-export const questions: {
+type Questions = {
   [key in QuestionName]: Question;
-} = {
+};
+
+export const questions: Questions = {
   readNotice: {
     getViewPartialName(req) {
       const { serviceType } = getAllRequestParams(req);
-      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.html`;
+      return `${kebabCase(serviceType)}/${kebabCase(serviceType)}-notice.njk`;
     },
     pageTitle(req) {
       const { country, serviceType } = getAllRequestParams(req);
@@ -32,7 +35,7 @@ export const questions: {
   },
   country: {
     getViewPartialName() {
-      return "questions/question-country.html";
+      return "questions/question-country.njk";
     },
     pageTitle(req: Request) {
       const { serviceType } = getAllRequestParams(req);
@@ -59,11 +62,17 @@ export const questions: {
   },
   region: {
     getViewPartialName() {
-      return "questions/question-region.html";
+      return "questions/question-region.njk";
     },
     pageTitle(req) {
-      const { country } = getAllRequestParams(req);
-      return `Which area in ${startCase(country)} do you need a lawyer from?`;
+      const { country, serviceType } = getAllRequestParams(req);
+      const formattedCountry = startCase(country);
+      const titles = {
+        [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you need to find a COVID-19 test provider?`,
+        [ServiceType.lawyers]: `Which area in ${formattedCountry} do you need a lawyer from?`,
+      };
+
+      return serviceType !== undefined ? titles[serviceType] : "";
     },
     needsToAnswer(req: Request) {
       const { region } = getAllRequestParams(req);
@@ -85,7 +94,7 @@ export const questions: {
   },
   practiceArea: {
     getViewPartialName() {
-      return "questions/question-practice-area.html";
+      return "questions/question-practice-area.njk";
     },
     pageTitle() {
       return "In which field of law do you need legal help?";
@@ -112,7 +121,7 @@ export const questions: {
   },
   legalAid: {
     getViewPartialName() {
-      return "questions/question-legal-aid.html";
+      return "questions/question-legal-aid.njk";
     },
     pageTitle() {
       return "Are you interested in legal aid?";
@@ -140,7 +149,7 @@ export const questions: {
   },
   proBono: {
     getViewPartialName() {
-      return "questions/question-pro-bono.html";
+      return "questions/question-pro-bono.njk";
     },
     pageTitle() {
       return "Are you interested in pro bono services?";
@@ -165,7 +174,7 @@ export const questions: {
   },
   readDisclaimer: {
     getViewPartialName() {
-      return "questions/question-disclaimer.html";
+      return "questions/question-disclaimer.njk";
     },
     pageTitle() {
       return "Disclaimer";
@@ -190,7 +199,7 @@ export const questions: {
   },
   readCovidDisclaimer: {
     getViewPartialName() {
-      return "questions/question-covid-disclaimer.html";
+      return "questions/question-covid-disclaimer.njk";
     },
     pageTitle() {
       return "Disclaimer";
@@ -215,7 +224,7 @@ export const questions: {
   },
   resultsTurnaround: {
     getViewPartialName() {
-      return "questions/question-results-turnaround.html";
+      return "questions/question-results-turnaround.njk";
     },
     pageTitle() {
       return "How long after taking the Covid test do you need the provider to turnaround the results?";

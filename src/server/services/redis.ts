@@ -8,17 +8,17 @@ import {
   isProd,
 } from "server/config";
 
-export type TRedisClient = IORedis.Cluster | IORedis.Redis;
+export type RedisClient = IORedis.Cluster | IORedis.Redis;
 
-export type TGetRedisClient = () => TRedisClient;
+export type GetRedisClient = () => RedisClient;
 
-let redisClient: TRedisClient;
+let redisClient: RedisClient;
 
 export function isRedisAvailable(): boolean {
   return REDIS_HOST !== undefined;
 }
 
-export function getRedisClient(): TRedisClient {
+export function getRedisClient(): RedisClient {
   if (redisClient === undefined) {
     if (isProd) {
       redisClient = new IORedis.Cluster(
