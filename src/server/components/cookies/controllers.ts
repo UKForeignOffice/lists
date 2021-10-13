@@ -1,6 +1,7 @@
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
 import { Request, Response } from "express";
 import { COOKIES_PAGE_VIEW, ONE_YEAR } from "./constants";
+import { cookiesPageRoute } from "./routes";
 import { isLocalHost } from "server/config";
 
 export function cookiesGETController(req: Request, res: Response): void {
@@ -8,16 +9,13 @@ export function cookiesGETController(req: Request, res: Response): void {
 }
 
 export function cookiesPOSTController(req: Request, res: Response): void {
-  const cookiesPolicy: {
-    analytics: "on" | "off";
-    isSet: boolean;
-    essential: boolean;
-    usage: boolean;
-  } = {
+  const { cookies, referrer, redirect } = req.body;
+  const accept = cookies === "accept";
+  const cookiesPolicy = {
     isSet: true,
     essential: true,
-    analytics: req.body.analytics ?? "off",
-    usage: req.body.analytics === "on",
+    analytics: accept ? "on" : "off",
+    usage: accept,
   };
 
   res.cookie(
@@ -27,14 +25,23 @@ export function cookiesPOSTController(req: Request, res: Response): void {
       maxAge: ONE_YEAR,
       secure: !isLocalHost,
       // disable encode as it breaks form-runner
-      encode: v => v,
+      encode: (v) => v,
       // allow cookie to be accessed by JS due to form-runner requirement
       httpOnly: false,
     }
   );
 
-  res.render(COOKIES_PAGE_VIEW, {
-    cookiesSettingsSaved: true,
-    cookiesPolicy,
-  });
+  if (referrer === cookiesPageRoute) {
+    // If the referrer is the cookie page then load back the page.
+    res.render(COOKIES_PAGE_VIEW, {
+      cookiesSettingsSaved: true,
+      cookiesPolicy,
+    });
+  } else if (redirect !== "false") {
+    // If the payload doesn't include a redirect is false flag (i.e. request is via fetch) then redirect back to the page you were on. This is primarily for users with JS disabled.
+    res.redirect(referrer);
+  } else {
+    // Otherwise return nothing.
+    res.end();
+  }
 }

@@ -40,6 +40,8 @@
           </p>
 
           <form data-module="cookie-settings" method="post">
+            <input name="referrer" type="hidden" value="{{ currentLocation }}" />
+
             <fieldset class="govuk-fieldset" aria-describedby="hint-analytics">
               <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                 <h2 class="govuk-fieldset__heading">
@@ -72,9 +74,9 @@
                     <input
                       type="radio"
                       class="govuk-radios__input"
-                      name="analytics"
+                      name="cookies"
                       id="radio-analytics-0"
-                      value="on"
+                      value="accept"
                       {% if cookiesPolicy.analytics === "on" %} checked {% endif %}
                     />
                     <label for="radio-analytics-0" class="govuk-label govuk-radios__label">
@@ -86,9 +88,9 @@
                     <input
                       type="radio"
                       class="govuk-radios__input"
-                      name="analytics"
+                      name="cookies"
                       id="radio-analytics-1"
-                      value="off"
+                      value="reject"
                       {% if cookiesPolicy.analytics !== "on" %} checked {% endif %}
                     />
                     <label for="radio-analytics-1" class="gem-c-label govuk-label govuk-radios__label">

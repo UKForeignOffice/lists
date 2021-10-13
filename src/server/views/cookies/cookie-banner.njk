@@ -1,76 +1,83 @@
-<div id="cookie-banner-container" role="region" aria-label="Cookies on {{SERVICE_NAME}}">
-  <div class="govuk-cookie-banner">
-    <div class="govuk-cookie-banner__message govuk-width-container">
+{% from "cookie-banner/macro.njk" import govukCookieBanner %}
 
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-          <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on {{SERVICE_NAME}}</h2>
+{% set cookieBannerHtml %}
+  <p>We use some essential cookies to make this service work.</p>
 
-          <div class="govuk-cookie-banner__content">
-            <p>We use some essential cookies to make this service work.</p>
-            <p>We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
-          </div>
-        </div>
-      </div>
+  <p>We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+{% endset %}
 
-      <div class="govuk-button-group">
-        <button id="accept-analytics-cookies" type="button" name="cookies" class="govuk-button">
-          Accept analytics cookies
-        </button>
-        <button id="reject-analytics-cookies" type="button" name="cookies" class="govuk-button">
-          Reject analytics cookies
-        </button>
-        <a class="govuk-link" href="/help/cookies">View cookies</a>
-      </div>
-    </div>
-  </div>
-  <div class="govuk-cookie-banner no-js">
-    <div class="govuk-cookie-banner__message govuk-width-container">
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-          <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on {{SERVICE_NAME}}</h2>
+{% set cookieBannerHeader %}
+  Cookies on {{ SERVICE_NAME }}
+{% endset %}
 
-          <div class="govuk-cookie-banner__content">
-            <p class="govuk-body">We use cookies to make this service work and collect analytics information. To accept or reject cookies, please visit our <a class="govuk-link" href="/help/cookies">cookies page</a>.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="global-cookie-message">
+  <form id="global-cookie-message-form" method="post" action="/help/cookies">
+    <input id="global-cookie-message-form-referrer" name="referrer" type="hidden" value="{{ currentLocation }}" />
+
+    {{ govukCookieBanner({
+      ariaLabel: cookieBannerHeader,
+      messages: [
+        {
+          headingText: cookieBannerHeader,
+          html: cookieBannerHtml,
+          actions: [
+            {
+              text: "Accept analytics cookies",
+              type: "submit",
+              name: "cookies",
+              value: "accept"
+            },
+            {
+              text: "Reject analytics cookies",
+              type: "submit",
+              name: "cookies",
+              value: "reject"
+            },
+            {
+              text: "View cookies",
+              href: "/help/cookies"
+            }
+          ]
+        }
+      ]
+    }) }}
+  </form>
 </div>
 
 <script nonce="{{cspNonce}}">
-  var acceptButton = document.getElementById("accept-analytics-cookies");
-  var rejectButton = document.getElementById("reject-analytics-cookies");
+  var banner = document.getElementById('global-cookie-message');
+  var form = document.getElementById('global-cookie-message-form');
+  var formData = new FormData(form);
+  var buttons = form.querySelectorAll('button[name="cookies"]');
 
-  function toggleAnalyticsCookies(isOn) {
-    fetch("/help/cookies", {
+  // FormData doesn't pick up the value of buttons so you need to set this using a button click event
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      formData.set(button.name, button.value);
+    });
+  });
+
+  // Submit cookie preferences via AJAX if JS is enabled
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Tell the endpoint we don't want to redirect back after submitting
+    formData.set('redirect', false);
+
+    var action = e.target.getAttribute('action');
+    var body = Object.fromEntries(formData.entries());
+
+    fetch(action, {
       method: "POST",
       credentials: 'same-origin',
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        analytics: isOn ? "on" : "off"
-      })
+      body: JSON.stringify(body),
+    }).then(() => {
+      banner.style.display = 'none';
     });
-  }
-
-  function removeCookieBanner() {
-    var banner = document.querySelector(".govuk-cookie-banner");
-    banner.style.display = 'none';
-  }
-
-  acceptButton.onclick = function acceptAnalyticsCookies(event) {
-    event.stopPropagation();
-    toggleAnalyticsCookies(true);
-    removeCookieBanner();
-  }
-
-  rejectButton.onclick = function rejectAnalyticsCookies() {
-    event.stopPropagation();
-    toggleAnalyticsCookies(false);
-    removeCookieBanner();
-  }
+  });
 </script>

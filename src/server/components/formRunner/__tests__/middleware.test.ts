@@ -36,7 +36,7 @@ describe("FormRunner middleware", () => {
     let proxyRes: any;
     let proxyResData: any;
     let userReq: any;
-    
+
     beforeEach(() => {
       proxyRes = {};
 
@@ -70,7 +70,7 @@ describe("FormRunner middleware", () => {
       `);
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
-      
+
       expect(result).toBe(`
         <link rel="shortcut href="/application/assets/images/favicon.ico">
         <img src='/application/assets/img/logo.png' />
@@ -87,7 +87,7 @@ describe("FormRunner middleware", () => {
       `);
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
-      
+
       expect(result).toBe(`
         <a href="/help/cookies/">Cookies</a>
         <a href="/help/cookies/">Cookies</a>
@@ -111,23 +111,25 @@ describe("FormRunner middleware", () => {
       `);
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
-      
+
       expect(result).toBe(`
-        <form action="/application/form/123" id="123" class="form">
+        <form id="123" class="form">
           <button></button>
         </form>
         <link rel="shortcut href="/application/assets/images/favicon.ico">
         <img src='/application/assets/img/logo.png' />
         <link rel="shortcut href="/application/assets/js/main.js">
         <script src="/application/assets/js/main.js"></script>
-        <form action="/application/form/123" id="123" class="form">
+        <form id="123" class="form">
           <button></button>
         </form>
       `);
     });
 
     test("feedback success page content is correct", () => {
-      jest.spyOn(feedbackHelpers, "getFeedbackSuccessContent").mockReturnValueOnce("<p>Success</p>");
+      jest
+        .spyOn(feedbackHelpers, "getFeedbackSuccessContent")
+        .mockReturnValueOnce("<p>Success</p>");
       userReq.baseUrl = "/application/feedback/status";
       const { userResDecorator } = (proxy as any).mock.calls[0][1];
       proxyResData.toString.mockReturnValueOnce(`
