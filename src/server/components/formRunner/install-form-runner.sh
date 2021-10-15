@@ -36,7 +36,6 @@ echo "PORT=3001" >> $form_runner_env_file
 echo "PRIVACY_POLICY_URL=https://www.gov.uk/help/privacy-notice" >> $form_runner_env_file
 echo "FEEDBACK_LINK=mailto:digitalservicesfeedback@fco.gov.uk" >> $form_runner_env_file
 echo "LOG_LEVEL=error" >> $form_runner_env_file
-echo "COOKIE_FORM_URL=/help/cookies" >> $form_runner_env_file
 if [ "$NODE_ENV" == "production" ]; then
   echo "GTM_ID_1=GTM-N5V9Z7G" >> $form_runner_env_file
   echo "GTM_ID_2=GTM-KM3NZSZ" >> $form_runner_env_file

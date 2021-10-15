@@ -36,19 +36,10 @@ describe("Cookies", () => {
       expect(text.includes(`Your cookie settings were saved`)).toBe(true);
     });
 
-    test("post /help/cookies is responding correctly when no referrer is set and redirect is set to false", async () => {
-      const { status } = await request(server).post("/help/cookies").send({
-        cookies: "accept",
-        redirect: "false",
-      });
-
-      expect(status).toEqual(200);
-    });
-
-    test("post /help/cookies is responding correctly when referrer is set and redirect is not false", async () => {
+    test("post /help/cookies is responding correctly when no referrer is not the cookie page", async () => {
       const { status } = await request(server).post("/help/cookies").send({
         cookies: "reject",
-        referrer: "/",
+        referrer: "/elsewhere",
       });
 
       expect(status).toEqual(302);

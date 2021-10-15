@@ -9,7 +9,7 @@ export function cookiesGETController(req: Request, res: Response): void {
 }
 
 export function cookiesPOSTController(req: Request, res: Response): void {
-  const { cookies, referrer, redirect } = req.body;
+  const { cookies, referrer } = req.body;
   const accept = cookies === "accept";
   const cookiesPolicy = {
     isSet: true,
@@ -37,11 +37,8 @@ export function cookiesPOSTController(req: Request, res: Response): void {
       cookiesSettingsSaved: true,
       cookiesPolicy,
     });
-  } else if (redirect !== "false") {
-    // If the payload doesn't include a redirect is false flag (i.e. request is via fetch) then redirect back to the page you were on. This is primarily for users with JS disabled.
-    res.redirect(referrer);
   } else {
-    // Otherwise return nothing.
-    res.end();
+    // Otherwise go back to where you got here from.
+    res.redirect(referrer);
   }
 }

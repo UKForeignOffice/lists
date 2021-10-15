@@ -3,7 +3,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { get, set } from "lodash";
 import helmet from "helmet";
 import crypto from "crypto";
-import { SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 const TRUSTED = ["'self'", SERVICE_DOMAIN ?? ""];
 
@@ -71,6 +71,7 @@ export function configureHelmet(server: Express): void {
           GOOGLE_ANALYTICS_DOMAINS[3],
         ],
         "font-src": [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
+        upgradeInsecureRequests: isLocalHost ? null : [], // Do not upgrade requests to HTTPS when running locally
       },
     })
   );
