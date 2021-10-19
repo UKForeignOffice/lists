@@ -45,6 +45,23 @@
 </div>
 
 <script nonce="{{cspNonce}}">
+  // IE11 polyfill
+  if (!Object.fromEntries) {
+    Object.fromEntries = function fromEntries(entries) {
+      if (!entries) {
+        throw new Error('Object.fromEntries() requires a single iterable argument');
+      }
+
+      var obj = {};
+      
+      for (var i = 0; i < entries.length; i++) {
+        obj[entries[i][0]] = entries[i][1];
+      }
+
+      return obj;
+    }
+  }
+
   var banner = document.getElementById('global-cookie-message');
   var form = document.getElementById('global-cookie-message-form');
   var formData = new FormData(form);
@@ -63,7 +80,7 @@
     e.stopPropagation();
 
     var action = e.target.getAttribute('action');
-    var body = Object.fromEntries(formData.entries());
+    var body = Object.fromEntries(Array.from(formData.entries()));
 
     fetch(action, {
       method: "POST",
