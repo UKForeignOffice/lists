@@ -29,8 +29,7 @@ export function cookiesPOSTController(req: Request, res: Response): void {
       secure: !isLocalHost,
       // disable encode as it breaks form-runner
       encode: (v) => v,
-      // allow cookie to be accessed by JS due to form-runner requirement
-      httpOnly: false,
+      httpOnly: true,
     }
   );
 
