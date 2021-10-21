@@ -51,26 +51,27 @@ export function configureHelmet(server: Express): void {
       useDefaults: true,
       directives: {
         defaultSrc: [...TRUSTED, ...GOVUK_DOMAINS, ...GOOGLE_ANALYTICS_DOMAINS],
-        "script-src": [
+        scriptSrc: [
           generateCspNonce,
           ...TRUSTED,
           ...GOVUK_DOMAINS,
           ...GOOGLE_ANALYTICS_DOMAINS,
           ...GOOGLE_STATIC_DOMAINS,
         ],
-        "style-src": [
+        styleSrc: [
           ...TRUSTED,
           ...GOVUK_DOMAINS,
           GOOGLE_ANALYTICS_DOMAINS[4],
           ...GOOGLE_STYLES_DOMAINS,
         ],
-        "img-src": [
+        imgSrc: [
           ...TRUSTED,
           ...DATA,
           ...GOOGLE_STATIC_DOMAINS,
           GOOGLE_ANALYTICS_DOMAINS[3],
         ],
-        "font-src": [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
+        fontSrc: [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
+        frameSrc: [...TRUSTED, ...DATA, GOOGLE_ANALYTICS_DOMAINS[3]],
         upgradeInsecureRequests: isLocalHost ? null : [], // Do not upgrade requests to HTTPS when running locally
       },
     })
