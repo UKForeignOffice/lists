@@ -1,3 +1,4 @@
+export { configureAccessControl } from "./access-control";
 export { configureHelmet } from "./helmet";
 export { configureLogger } from "./logger";
 export { configureCompression } from "./compression";
