@@ -1,5 +1,5 @@
 {
-  "version": "1.19.0",
+  "version": "0.0.0-development",
   "engines": {
     "node": ">=14"
   },
@@ -20,7 +20,7 @@
     "prisma:reset": "npx prisma migrate reset --schema ./src/server/models/db/schema.prisma --force",
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
-    "release": "semantic-release --dry-run",
+    "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "version:patch": "npm --no-git-tag-version version patch",
@@ -128,8 +128,7 @@
   },
   "release": {
     "branches": [
-      "master",
-      "feature/automated-releases-babel"
+      "master"
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",

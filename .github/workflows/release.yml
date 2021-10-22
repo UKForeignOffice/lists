@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - feature/automated-releases-babel
+      - master
 
 jobs:
   release:
