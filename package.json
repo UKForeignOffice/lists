@@ -20,6 +20,7 @@
     "prisma:reset": "npx prisma migrate reset --schema ./src/server/models/db/schema.prisma --force",
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
+    "release": "semantic-release --dry-run",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "version:patch": "npm --no-git-tag-version version patch",
@@ -111,6 +112,7 @@
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
     "sass-loader": "^12.1.0",
+    "semantic-release": "^18.0.0",
     "supertest": "^6.1.6",
     "ts-standard": "^10.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
@@ -123,5 +125,15 @@
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
     "*.{ts,tsx,js,jsx}": "eslint --fix"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
   }
 }
