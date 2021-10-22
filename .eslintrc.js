@@ -15,7 +15,9 @@ module.exports = {
     "playground/",
     "dist/",
     ".eslintrc.js",
+    "babel.config.js",
     "jest.config.js",
+    "webpack.config.js",
     "src/form-runner/form-runner-app/",
   ],
 };

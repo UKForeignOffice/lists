@@ -1,6 +1,7 @@
 const path = require("path");
 const dotenv = require("dotenv");
 const CopyPlugin = require("copy-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -17,7 +18,7 @@ const isDockerCompose = process.env.DOCKER_COMPOSE === "true";
 console.log("Webpack Starting", { devMode, prodMode, isDockerCompose });
 
 const client = {
-  target: ['web', 'es5'],
+  target: ["web", "es5"],
   mode: environment,
   watch: devMode,
   watchOptions: {
@@ -41,15 +42,9 @@ const client = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: [
-          {
-            loader: "ts-loader",
-            options: {
-              transpileOnly: true,
-            },
-          },
-        ],
+        test: /\.(js|jsx|tsx|ts)$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
       },
       {
         test: /\.(sa|sc|c)ss$/,
@@ -93,6 +88,15 @@ const client = {
       defaultSizes: "gzip",
       openAnalyzer: false,
     }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: "write-references",
+      },
+    }),
   ],
 };
 
@@ -118,15 +122,8 @@ const server = {
     rules: [
       {
         test: /\.(js|jsx|tsx|ts)$/,
+        use: "babel-loader",
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "ts-loader",
-            options: {
-              transpileOnly: true,
-            },
-          },
-        ],
       },
     ],
   },
@@ -144,6 +141,15 @@ const server = {
           }),
         ]
       : []),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: "write-references",
+      },
+    }),
   ],
   externals: [
     nodeExternals({
