@@ -56,6 +56,10 @@ export const configureViews = (server: Express): void => {
 
     // cspNonce see Helmet configuration
     engine.addGlobal("cspNonce", res.locals.cspNonce);
+
+    // Retrieve current location in templates
+    engine.addGlobal("currentLocation", req.originalUrl);
+
     next();
   });
 };

@@ -22,18 +22,6 @@ input {
   border: 2px solid govuk-colour("red");
 }
 
-body .govuk-cookie-banner {
-  display: none;
-}
-
-body.js-enabled .govuk-cookie-banner:not(.no-js) {
-  display: block;
-}
-
-body:not(.js-enabled) .govuk-cookie-banner.no-js {
-  display: block;
-}
-
 main.govuk-main-wrapper {
   position: relative;
   min-height: 50vh;
