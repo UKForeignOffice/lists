@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import {
+  configureAccessControl,
   configureViews,
   configureHelmet,
   configureLogger,
@@ -30,6 +31,7 @@ export async function getServer(): Promise<Express> {
   }
 
   // middlewares
+  configureAccessControl(server);
   configureHelmet(server);
   configureLogger(server);
   configureCompression(server);
@@ -38,7 +40,7 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
-  
+
   // initialize components
   await initAuth(server);
   await initLists(server);
