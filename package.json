@@ -128,7 +128,8 @@
   },
   "release": {
     "branches": [
-      "master"
+      "master",
+      "feature/automated-releases-babel"
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",
