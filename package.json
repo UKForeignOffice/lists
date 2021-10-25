@@ -1,5 +1,7 @@
 {
-  "version": "1.19.0",
+  "name": "lists",
+  "version": "0.0.0-development",
+  "private": true,
   "engines": {
     "node": ">=14"
   },
@@ -8,7 +10,8 @@
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
-    "start:prod": "NODE_ENV=production nodemon ./dist/server.js",
+    "commit": "cz",
+    "start:prod": "NODE_ENV=production node ./dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
@@ -20,6 +23,7 @@
     "prisma:reset": "npx prisma migrate reset --schema ./src/server/models/db/schema.prisma --force",
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
+    "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "version:patch": "npm --no-git-tag-version version patch",
@@ -64,6 +68,8 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-typescript": "^7.15.0",
+    "@commitlint/cli": "^13.2.1",
+    "@commitlint/config-conventional": "^13.2.0",
     "@types/body-parser": "^1.19.1",
     "@types/cheerio": "^0.22.30",
     "@types/compression": "^1.7.1",
@@ -86,14 +92,18 @@
     "@types/pg-escape": "^0.2.1",
     "@types/supertest": "^2.0.11",
     "@types/url-parse": "^1.4.4",
+    "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^4.1.0",
     "cheerio": "^1.0.0-rc.10",
+    "commitizen": "^4.2.4",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.2.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard-with-typescript": "^20.0.0",
     "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^6.4.0",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "jest-axe": "^5.0.1",
@@ -109,8 +119,8 @@
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
     "sass-loader": "^12.1.0",
+    "semantic-release": "^18.0.0",
     "supertest": "^6.1.6",
-    "ts-loader": "^9.2.5",
     "ts-standard": "^10.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.3.5",
@@ -122,5 +132,15 @@
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
     "*.{ts,tsx,js,jsx}": "eslint --fix"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "release": {
+    "branches": [
+      "master"
+    ]
   }
 }

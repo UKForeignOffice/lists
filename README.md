@@ -25,7 +25,6 @@ The lists server depends on [XGovFormBuilder/digital-form-builder](https://githu
 3. Lists server is the only application responding to external requests and it has a form-runner middleware responsible for proxying all requests from `/application/{formName}` to the form-runner application running on `http://localhost:3001`, allowing user's to go through form journeys seamlessly
 4. Once users complete a form-journey application the form-runner posts the data to (`localhost:3000/ingest/:serviceType`) and the lists application validates and ingests the data
 
-
 ### Databases
 
 **PostgreSQL**
@@ -41,7 +40,6 @@ Redis is used on both lists and form-runner applications to store user sessions 
 ### AWS Location Service
 
 The lists server also depends on [AWS Location Service](https://aws.amazon.com/location/) for geo location data.
-
 
 ## Development
 
@@ -91,12 +89,12 @@ Form runner variables:
 | sandbox | boolean |  false   | Configure form-runner to work locally with a single redis instance instead of a cluster |
 
 ### Starting Lists service
+
 ```
 npm run dev
 ```
 
-To above command will start the service in watch mode and whenever you change any file the application will be recompiled and restarted. 
-
+To above command will start the service in watch mode and whenever you change any file the application will be recompiled and restarted.
 
 ### Preparing the database
 
@@ -122,7 +120,7 @@ The above npm script will invoke `prisma migrate` and this is what is going to h
     ├── src
     │   ├── client                # Client side related code and assets such as styles and images.
     │   ├── server                # NodeJS server codebase
-    |   |   ├── components        # Server features are self-contained (besides views) within the various folders here 
+    |   |   ├── components        # Server features are self-contained (besides views) within the various folders here
     |   |   |   ├── config            # Environment configuration files
     |   |   ├── middlewares       # Express middlewares
     |   |   ├── models            # Postgres schema, models and helpers
@@ -164,11 +162,14 @@ git push origin HEAD:deploy-dev --force
 
 ## Continuous Delivery
 
-We manage releases with [Github Release](https://docs.github.com/en/github/administering-a-repository/managing-releases-in-a-repository) and to deploy a new production version of the application please follow these steps:
+All code merged or committed to the `master` branch will be automatically versioned using [Semantic Release](https://github.com/semantic-release/semantic-release).
 
-1. Update package.json with the correct [Semantic Version](https://semver.org/)
-2. Create a new release with Github Release tool, please make sure you add a good title and description of changes
-3. Once a new tag is released the CI will test, build and deploy the production environment
-4. Please make sure the new version has been released successfully, for that open the production application and check the footer, make sure the version number is the same as in the package.json file
+Semantic Release will read the commit messages and increment the version number accordingly as well as automatically publishing a release on GitHub with auto generated release notes.
 
+## Commit messages
 
+This project uses Conventional Commits to version the package correctly and generate release notes. To find out more about Conventional Commits and how to use them, [click here](https://www.conventionalcommits.org/en/v1.0.0/).
+
+You can generate valid commit messages by running `npm run commit` and following the instructions on your terminal window. Windows users should use the Bash terminal from the Windows Subsystem for Linux to run this.
+
+All commit messages are run through a validator and any invalid commit messages will be rejected.
