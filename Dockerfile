@@ -10,7 +10,7 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY --chown=appuser:appuser package.json tsconfig.json .babelrc.js webpack.config.js  ./
+COPY --chown=appuser:appuser package.json tsconfig.json babel.config.js webpack.config.js  ./
 USER 1001
 RUN npm install
 
