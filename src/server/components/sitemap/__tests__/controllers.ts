@@ -14,10 +14,7 @@ describe("SiteMap", () => {
       render: jest.fn(),
     };
 
-    // TODO: Remove filter once lawyers are reinstated
-    serviceTypes = Object.keys(ServiceType).filter(
-      (name) => name !== ServiceType.lawyers
-    );
+    serviceTypes = Object.keys(ServiceType);
   });
 
   test("a section is rendered for each service type", () => {
