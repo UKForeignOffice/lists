@@ -25,8 +25,7 @@ describe("Form Runner:", () => {
     expect(response.status).toBe(200);
   });
 
-  // TODO: Re-enable test when lawyers are reinstated
-  test.skip("lawyers form is responding correctly", async () => {
+  test("lawyers form is responding correctly", async () => {
     const response = await request(server)
       .get("/application/lawyers/register-to-the-find-a-lawyer-abroad-service")
       .type("text/html");

@@ -44,10 +44,7 @@ import { sendDataPublishedEmail } from "server/services/govuk-notify";
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
-  ServiceType: {
-    // TODO: Restore when lawyers list is re-instated or find a better way to control what should be shown
-    [ServiceType.covidTestProviders]: ServiceType.covidTestProviders,
-  },
+  ServiceType,
   userIsListPublisher,
   userIsListValidator,
   userIsListAdministrator,

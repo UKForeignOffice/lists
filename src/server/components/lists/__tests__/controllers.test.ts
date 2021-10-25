@@ -312,8 +312,7 @@ describe("Lists Controllers", () => {
   });
 
   describe("listsResultsController", () => {
-    // TODO: Re-enable test when lawyers are reinstated
-    test.skip("it invokes searchLayer with correct parameters", () => {
+    test("it invokes searchLayer with correct parameters", () => {
       const spySearchLawyers = jest.spyOn(lawyers, "searchLawyers");
       req.params.serviceType = ServiceType.lawyers;
 
