@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/automated-releases-babel
 
 jobs:
   release:
