@@ -19,9 +19,10 @@ jobs:
 
       - restore_cache:
           keys:
-            - form-runner-1-{{ checksum "src/form-runner/install-form-runner.sh" }}
+            - form-runner-1-{{ checksum "package-lock.json" }}
+            - form-runner-1-
 
-      - run: npm install
+      - run: npm ci
 
       - run:
           name: Prisma generate
