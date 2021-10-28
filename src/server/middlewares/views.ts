@@ -20,8 +20,8 @@ const VIEWS_PATHS = [
 const EMPTY_BASE64_COOKIE = Buffer.from(JSON.stringify({})).toString("base64");
 
 export const configureViews = (server: Express): void => {
-  server.engine("html", nunjucks.render);
-  server.set("view engine", "html");
+  server.engine("njk", nunjucks.render);
+  server.set("view engine", "njk");
 
   const engine = nunjucks
     .configure(VIEWS_PATHS, {

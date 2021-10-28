@@ -20,7 +20,7 @@ describe("SiteMap", () => {
   test("a section is rendered for each service type", () => {
     sitemapController(mockReq, mockRes);
 
-    expect(mockRes.render.mock.calls[0][0]).toBe("sitemap.njk");
+    expect(mockRes.render.mock.calls[0][0]).toBe("sitemap");
     expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(1);
   });
 

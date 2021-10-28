@@ -79,7 +79,7 @@ export function listsGetController(req: Request, res: Response): void {
   let error: boolean | QuestionError = false;
 
   if (serviceType === undefined) {
-    res.render("lists/question-page.njk", {
+    res.render("lists/question-page", {
       ...DEFAULT_VIEW_PROPS,
       ...params,
       partialToRender: "question-service-type.njk",
@@ -113,7 +113,7 @@ export function listsGetController(req: Request, res: Response): void {
   });
 
   if (askQuestion) {
-    res.render("lists/question-page.njk", {
+    res.render("lists/question-page", {
       ...DEFAULT_VIEW_PROPS,
       ...params,
       error,
@@ -214,7 +214,7 @@ export function listsConfirmApplicationController(
   const { reference } = req.params;
   listItem
     .setEmailIsVerified({ reference })
-    .then(() => res.render("lists/application-confirmation-page.njk"))
+    .then(() => res.render("lists/application-confirmation-page"))
     .catch(next);
 }
 
@@ -229,7 +229,7 @@ export function listsGetPrivateBetaPage(
     return next();
   }
 
-  res.render("lists/private-beta-page.njk", {
+  res.render("lists/private-beta-page", {
     serviceType,
     ServiceType,
   });

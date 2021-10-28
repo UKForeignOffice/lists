@@ -44,7 +44,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/404.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle404(req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/404.njk");
+      expect(res.render).toHaveBeenCalledWith("errors/404");
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -82,7 +82,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/500.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle500(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/500.njk");
+      expect(res.render).toHaveBeenCalledWith("errors/500");
     });
 
     test("it responds with json when request expects JSON", () => {

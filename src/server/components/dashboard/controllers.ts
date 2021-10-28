@@ -66,7 +66,7 @@ export async function startRouteController(
       !req.user?.isListsCreator() &&
       get(lists ?? [], "length") === 0;
 
-    res.render("dashboard/dashboard.njk", {
+    res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
       isNewUser,
       req,
@@ -83,7 +83,7 @@ export async function usersListController(
 ): Promise<void> {
   try {
     const users = await findUsers();
-    res.render("dashboard/users-list.njk", {
+    res.render("dashboard/users-list", {
       ...DEFAULT_VIEW_PROPS,
       users,
       req,
@@ -133,7 +133,7 @@ export async function usersEditController(
 
     const user = await findUserByEmail(`${userEmail}`);
 
-    res.render("dashboard/users-edit.njk", {
+    res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
       UserRoles,
       userSaved,
@@ -157,7 +157,7 @@ export async function listsController(
 
     const lists = (await findUserLists(req.user?.userData.email)) ?? [];
 
-    res.render("dashboard/lists.njk", {
+    res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       req,
       lists,
@@ -319,7 +319,7 @@ export async function listsEditController(
       }
     }
 
-    res.render("dashboard/lists-edit.njk", {
+    res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
       listCreated,
       listUpdated,
@@ -349,7 +349,7 @@ export async function listsItemsController(
 
     const listItems = await findListItemsForList(list);
 
-    res.render("dashboard/lists-items.njk", {
+    res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
@@ -494,7 +494,7 @@ export async function feedbackController(
 ): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");
-    res.render("dashboard/feedbacks-list.njk", {
+    res.render("dashboard/feedbacks-list", {
       ...DEFAULT_VIEW_PROPS,
       feedbacksList,
       req,

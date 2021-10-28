@@ -131,7 +131,7 @@ describe("Lists Controllers", () => {
     test("it renders question page when serviceType is undefined", () => {
       listsGetController(req, res);
 
-      expect(res.render).toHaveBeenCalledWith("lists/question-page.njk", {
+      expect(res.render).toHaveBeenCalledWith("lists/question-page", {
         ...DEFAULT_VIEW_PROPS,
         ...{ ...req.params, ...req.query, ...req.body },
         partialToRender: "question-service-type.njk",
@@ -270,7 +270,7 @@ describe("Lists Controllers", () => {
 
       setTimeout(() => {
         expect(res.render).toHaveBeenCalledWith(
-          "lists/application-confirmation-page.njk"
+          "lists/application-confirmation-page"
         );
         done();
       });
@@ -304,7 +304,7 @@ describe("Lists Controllers", () => {
 
       listsGetPrivateBetaPage(req, res, next);
 
-      expect(res.render).toHaveBeenCalledWith("lists/private-beta-page.njk", {
+      expect(res.render).toHaveBeenCalledWith("lists/private-beta-page", {
         serviceType: "testServiceType",
         ServiceType,
       });
