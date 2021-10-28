@@ -2,6 +2,7 @@ import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
 import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
+import { router } from "./router";
 
 /**
  * Proxy middleware for the form runner
@@ -9,6 +10,8 @@ import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
  * Important: this middleware must be added before body and cookie parsers middlewares
  */
 export function configureFormRunnerProxyMiddleware(server: Express): void {
+  server.use(router);
+
   server.use(
     `${FORM_RUNNER_BASE_ROUTE}/*`,
     proxy(FORM_RUNNER_URL, {
