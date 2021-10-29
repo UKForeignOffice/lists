@@ -167,6 +167,7 @@ describe("ListItem Model:", () => {
     sampleListItem = {
       id: "123ABC",
       jsonData: { organisationName: "The Amazing Lawyers" },
+      type: "lawyers",
     };
 
     sampleCountry = { id: "123TEST", name: "United Kingdom" };
@@ -183,11 +184,9 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Lawyer record already exists");
-      }
+      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toThrow(
+        "Lawyer record already exists"
+      );
 
       expect(spyCount.mock.calls[0][0]).toEqual({
         where: {
@@ -573,7 +572,9 @@ describe("ListItem Model:", () => {
 
       const result = await setEmailIsVerified({ reference });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
       expect(spy).toHaveBeenCalledWith({
         where: { reference },
       });
@@ -594,7 +595,9 @@ describe("ListItem Model:", () => {
 
       const result = await setEmailIsVerified({ reference });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
       expect(spyFindUnique).toHaveBeenCalled();
       expect(spyUpdate).not.toHaveBeenCalled();
     });
@@ -616,7 +619,9 @@ describe("ListItem Model:", () => {
         },
       });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
     });
 
     test("it throws listItem.findUnique error", async () => {

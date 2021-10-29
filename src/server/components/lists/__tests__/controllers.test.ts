@@ -103,6 +103,7 @@ describe("Lists Controllers", () => {
       render: jest.fn(),
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
+      sendStatus: jest.fn(),
       redirect: jest.fn(),
       json: jest.fn(),
     };
@@ -253,40 +254,49 @@ describe("Lists Controllers", () => {
   });
 
   describe("listsConfirmApplicationController", () => {
-    test("listItem.setEmailIsVerified call is correct", () => {
-      const spy = jest
-        .spyOn(listItem, "setEmailIsVerified")
-        .mockResolvedValue(true);
+    test("listItem.setEmailIsVerified call is correct", async () => {
+      const spy = jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({
+        type: ServiceType.lawyers,
+      });
 
-      listsConfirmApplicationController(req, res, next);
+      await listsConfirmApplicationController(req, res, next);
 
-      expect(spy).toHaveBeenCalledWith({ reference: "123ABC" });
-    });
-
-    test("it renders the correct view", (done) => {
-      jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue(true);
-
-      listsConfirmApplicationController(req, res, next);
-
-      setTimeout(() => {
-        expect(res.render).toHaveBeenCalledWith(
-          "lists/application-confirmation-page"
-        );
-        done();
+      expect(spy).toHaveBeenCalledWith({
+        reference: "123ABC",
       });
     });
 
-    test("next is invoked when setEmailIsVerified fails", (done) => {
+    test("it renders the correct view", async () => {
+      jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({
+        type: ServiceType.covidTestProviders,
+      });
+
+      await listsConfirmApplicationController(req, res, next);
+
+      expect(res.render).toHaveBeenCalledWith(
+        "lists/application-confirmation-page",
+        {
+          serviceName: "Find a COVID-19 test provider abroad",
+        }
+      );
+    });
+
+    test("should return 404 if no item is found", async () => {
+      jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({});
+
+      await listsConfirmApplicationController(req, res, next);
+
+      expect(res.sendStatus).toHaveBeenCalledWith(404);
+    });
+
+    test("next is invoked when setEmailIsVerified fails", async () => {
       const error = new Error("Error");
 
       jest.spyOn(listItem, "setEmailIsVerified").mockRejectedValue(error);
 
-      listsConfirmApplicationController(req, res, next);
+      await listsConfirmApplicationController(req, res, next);
 
-      setTimeout(() => {
-        expect(next).toHaveBeenCalledWith(error);
-        done();
-      });
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 

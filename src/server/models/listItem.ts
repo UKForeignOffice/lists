@@ -73,18 +73,18 @@ async function createAddressGeoLocation(
 
   if ("organisationDetails" in item) {
     address = `
-      ${item.organisationDetails.addressLine1}, 
-      ${item.organisationDetails.addressLine2 ?? ""}, 
-      ${item.organisationDetails.city} - 
-      ${item.organisationDetails.country} - 
+      ${item.organisationDetails.addressLine1},
+      ${item.organisationDetails.addressLine2 ?? ""},
+      ${item.organisationDetails.city} -
+      ${item.organisationDetails.country} -
       ${item.organisationDetails.postcode}
     `;
   } else {
     address = `
-      ${item.addressLine1}, 
-      ${item.addressLine2 ?? ""}, 
-      ${item.city} - 
-      ${item.country} - 
+      ${item.addressLine1},
+      ${item.addressLine2 ?? ""},
+      ${item.city} -
+      ${item.country} -
       ${item.postcode}
     `;
   }
@@ -154,9 +154,9 @@ function fetchPublishedListItemQuery(props: {
  	   	  SELECT ROW_TO_JSON(a)
  		    FROM (
 			    SELECT
-				    "Address"."firstLine", 
-				    "Address"."secondLine", 
-				    "Address"."city", 
+				    "Address"."firstLine",
+				    "Address"."secondLine",
+				    "Address"."city",
 				    "Address"."postCode",
 				    (
 					    SELECT ROW_TO_JSON(c)
@@ -170,7 +170,7 @@ function fetchPublishedListItemQuery(props: {
 			      WHERE "Address".id = "ListItem"."addressId"
  		    ) as a
  	    ) as address,
-      ${withDistance}	   
+      ${withDistance}
 
     FROM "ListItem"
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
@@ -375,21 +375,35 @@ export async function togglerListItemIsPublished({
   }
 }
 
+interface SetEmailIsVerified {
+  type?: ServiceType;
+}
+
 export async function setEmailIsVerified({
   reference,
 }: {
   reference: string;
-}): Promise<boolean> {
+}): Promise<SetEmailIsVerified> {
   try {
     const item = await prisma.listItem.findUnique({
       where: { reference },
     });
 
-    if (get(item, "jsonData.metadata.emailVerified") === true) {
-      return true;
+    if (item === null) {
+      return {};
     }
 
-    const jsonData = merge(item?.jsonData, {
+    // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
+    const { type } = item;
+    const serviceType = type as ServiceType;
+
+    if (get(item, "jsonData.metadata.emailVerified") === true) {
+      return {
+        type: serviceType,
+      };
+    }
+
+    const jsonData = merge(item.jsonData, {
       metadata: { emailVerified: true },
     });
 
@@ -398,7 +412,9 @@ export async function setEmailIsVerified({
       data: { jsonData },
     });
 
-    return true;
+    return {
+      type: serviceType,
+    };
   } catch (error) {
     logger.error(error);
     throw error;

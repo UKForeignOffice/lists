@@ -206,16 +206,41 @@ export function listsDataIngestionController(
     });
 }
 
-export function listsConfirmApplicationController(
+export async function listsConfirmApplicationController(
   req: Request,
   res: Response,
   next: NextFunction
-): void {
+): Promise<void> {
   const { reference } = req.params;
-  listItem
-    .setEmailIsVerified({ reference })
-    .then(() => res.render("lists/application-confirmation-page"))
-    .catch(next);
+
+  try {
+    const { type } = await listItem.setEmailIsVerified({
+      reference,
+    });
+
+    if (type !== undefined) {
+      let serviceName: string | null;
+
+      switch (type) {
+        case ServiceType.lawyers:
+          serviceName = "Find a lawyer abroad";
+          break;
+        case ServiceType.covidTestProviders:
+          serviceName = "Find a COVID-19 test provider abroad";
+          break;
+        default:
+          serviceName = "Find a professional service abroad";
+      }
+
+      res.render("lists/application-confirmation-page", {
+        serviceName,
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (e) {
+    next(e);
+  }
 }
 
 export function listsGetPrivateBetaPage(

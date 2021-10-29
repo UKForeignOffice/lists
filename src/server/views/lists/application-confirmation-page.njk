@@ -1,3 +1,5 @@
+{% from "panel/macro.njk" import govukPanel %}
+
 {% extends "layout.njk" %}
 
 {% block content %}
@@ -5,15 +7,13 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <main class="govuk-main-wrapper " id="main-content" role="main">
-          <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="govuk-panel__title">
-              Application confirmed
-            </h1>
-          </div>
-          <p class="govuk-body">
-            Your application to be added to the Foreign, Commonwealth & Development Office’s Find a Professional Service Abroad has been confirmed. 
-            The FCDO will contact you via email to tell you if your application has been successful.
-          </p>
+          {{ govukPanel({
+            titleText: "Application complete"
+          }) }}
+
+          <p class="govuk-body">We have received your application. We will contact you using the email address you provided if we have any questions about your details.</p>
+
+          <p class="govuk-body">If your application is approved your details will be published on the '{{ serviceName }}' service. You will receive an email when this happens.</p>
         </main>
       </div>
     </div>
