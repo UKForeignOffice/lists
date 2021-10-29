@@ -28,7 +28,7 @@ export interface LawyersFormWebhookData {
   city: string;
   postcode: string;
   country: string;
-  areasOfLaw: string; // "Bankruptcy, Corporate, Criminal, ..."
+  areasOfLaw: string[];
   canProvideLegalAid: boolean;
   canOfferProBono: boolean;
   representedBritishNationalsBefore: boolean;

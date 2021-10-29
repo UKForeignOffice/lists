@@ -471,7 +471,7 @@ async function createLawyerListItemObject(
   try {
     const country = await createCountry(lawyer.country);
     const geoLocationId = await createAddressGeoLocation(lawyer);
-    const legalPracticeAreasList = uniq(lawyer.areasOfLaw?.split(/;|,/) ?? []);
+    const legalPracticeAreasList = uniq(lawyer.areasOfLaw ?? []);
     const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {

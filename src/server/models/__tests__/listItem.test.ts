@@ -39,8 +39,21 @@ const LawyerWebhookData: LawyersFormWebhookData = {
   city: "Touraine",
   postcode: "123456",
   country: "France",
-  areasOfLaw:
-    "Bankruptcy, Corporate, Criminal, Employment, Family, Health, Immigration, Intellectual property, International, Maritime, Personal injury, Real estate, Tax",
+  areasOfLaw: [
+    "Bankruptcy",
+    "Corporate",
+    "Criminal",
+    "Employment",
+    "Family",
+    "Health",
+    "Immigration",
+    "Intellectual property",
+    "International",
+    "Maritime",
+    "Personal injury",
+    "Real estate",
+    "Tax",
+  ],
   canProvideLegalAid: true,
   canOfferProBono: true,
   representedBritishNationalsBefore: true,
@@ -311,9 +324,9 @@ describe("ListItem Model:", () => {
           SELECT ROW_TO_JSON(a)
           FROM (
             SELECT
-              "Address"."firstLine", 
-              "Address"."secondLine", 
-              "Address"."city", 
+              "Address"."firstLine",
+              "Address"."secondLine",
+              "Address"."city",
               "Address"."postCode",
               (
                 SELECT ROW_TO_JSON(c)
@@ -849,9 +862,9 @@ describe("ListItem Model:", () => {
           SELECT ROW_TO_JSON(a)
           FROM (
             SELECT
-              "Address"."firstLine", 
-              "Address"."secondLine", 
-              "Address"."city", 
+              "Address"."firstLine",
+              "Address"."secondLine",
+              "Address"."city",
               "Address"."postCode",
               (
                 SELECT ROW_TO_JSON(c)

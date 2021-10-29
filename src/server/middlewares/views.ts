@@ -3,7 +3,6 @@ import { Buffer } from "buffer";
 import _, { get, capitalize } from "lodash";
 import nunjucks from "nunjucks";
 import { Express } from "express";
-import { version } from "../../../package.json";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
 import { parseDate } from "server/utils/date";
@@ -20,8 +19,8 @@ const VIEWS_PATHS = [
 const EMPTY_BASE64_COOKIE = Buffer.from(JSON.stringify({})).toString("base64");
 
 export const configureViews = (server: Express): void => {
-  server.engine("html", nunjucks.render);
-  server.set("view engine", "html");
+  server.engine("njk", nunjucks.render);
+  server.set("view engine", "njk");
 
   const engine = nunjucks
     .configure(VIEWS_PATHS, {
@@ -29,7 +28,6 @@ export const configureViews = (server: Express): void => {
       express: server,
     })
     .addGlobal("isProd", isProd)
-    .addGlobal("appVersion", version)
     .addGlobal("SERVICE_NAME", capitalize(SERVICE_NAME))
     .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
     .addGlobal("enforceHttps", enforceHttps)

@@ -19,7 +19,7 @@ export function sitemapController(_req: Request, res: Response): void {
       };
     });
 
-  res.render("sitemap.njk", {
+  res.render("sitemap", {
     sections,
   });
 }

@@ -32,7 +32,7 @@ export async function searchCovidTestProvider(
     }
   );
 
-  res.render("lists/results-page.njk", {
+  res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
     searchResults: searchResults,
