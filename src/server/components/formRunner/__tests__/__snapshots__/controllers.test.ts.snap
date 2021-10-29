@@ -296,12 +296,6 @@ exports[`Form runner controllers statusController should output the correct cont
                   </a>
                 </li>
               
-                <li class=\\"govuk-footer__inline-list-item\\">
-                  <a class=\\"govuk-footer__link\\" href=\\"#\\">
-                    v0.0.0-development
-                  </a>
-                </li>
-              
             </ul>
           
           
@@ -338,6 +332,7 @@ exports[`Form runner controllers statusController should output the correct cont
     </div>
   </div>
 </footer>
+
 
 
 
