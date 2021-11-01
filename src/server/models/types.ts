@@ -57,27 +57,24 @@ export enum UserRoles {
 
 // Lawyer ListItem
 export interface LawyerListItemJsonData extends JsonObject {
+  country: string;
+  size: string;
+  speakEnglish: boolean;
+  regulators: string;
   contactName: string;
   organisationName: string;
-  telephone: string;
-  email: string;
-  website: string;
-  legalPracticeAreas: string[];
-  legalAid: boolean;
-  proBonoService: boolean;
-  regulatoryAuthority: string;
-  englishSpeakLead: boolean;
-  representedBritishNationalsBefore: boolean;
-  outOfHours?: {
-    telephone?: string;
-    email?: string;
-    address?: {
-      firstLine: string;
-      secondLine?: string;
-      postCode: string;
-      city: string;
-    };
-  };
+  emailAddress: string;
+  publishEmail: string;
+  publicEmailAddress?: string;
+  phoneNumber: string;
+  emergencyPhoneNumber?: string;
+  websiteAddress?: string;
+  regions: string;
+  areasOfLaw: string[];
+  legalAid?: boolean;
+  proBono?: boolean;
+  representedBritishNationals: boolean;
+  declaration: string[];
   metadata?: {
     emailVerified?: boolean;
   };
@@ -196,15 +193,16 @@ export interface FeedbackJsonData extends JsonObject {
   questionsAndAnswers: Array<{
     question: string;
     answer: string | number | boolean | undefined;
-  }>
+  }>;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
-export interface FeedbackCreateInput extends PrismaClient.Prisma.FeedbackCreateInput {
+export interface FeedbackCreateInput
+  extends PrismaClient.Prisma.FeedbackCreateInput {
   jsonData: FeedbackJsonData;
 }
 
-export interface FeedbackUpdateInput extends PrismaClient.Prisma.FeedbackUpdateInput {
+export interface FeedbackUpdateInput
+  extends PrismaClient.Prisma.FeedbackUpdateInput {
   jsonData: FeedbackJsonData;
 }
-

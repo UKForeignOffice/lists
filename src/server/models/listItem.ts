@@ -25,16 +25,11 @@ import {
   ServiceType,
   CountryName,
   ListItemGetObject,
-  LawyerListItemJsonData,
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
 } from "./types";
-import {
-  geoPointIsValid,
-  rawInsertGeoLocation,
-  filterAllowedLegalAreas,
-} from "./helpers";
+import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
 
 // Helpers
@@ -84,7 +79,7 @@ async function createAddressGeoLocation(
       ${item.addressLine1},
       ${item.addressLine2 ?? ""},
       ${item.city} -
-      ${item.country} -
+      ${item.addressCountry} -
       ${item.postcode}
     `;
   }
@@ -97,28 +92,6 @@ async function createAddressGeoLocation(
   }
 
   return false;
-}
-
-function parseOutOfHoursObject(
-  lawyer: LawyersFormWebhookData
-): LawyerListItemJsonData["outOfHours"] {
-  const telephone = lawyer.outOfHours?.phoneNumber;
-  const email = lawyer.outOfHours?.emailAddress;
-  const address =
-    lawyer.outOfHours?.country !== undefined
-      ? {
-          firstLine: `${lawyer.outOfHours?.addressLine1}`,
-          secondLine: lawyer.outOfHours?.addressLine2,
-          postCode: `${lawyer.outOfHours?.postcode}`,
-          city: `${lawyer.outOfHours?.city}`,
-        }
-      : {};
-
-  return {
-    email,
-    telephone,
-    ...address,
-  };
 }
 
 function fetchPublishedListItemQuery(props: {
@@ -485,44 +458,39 @@ async function createLawyerListItemObject(
   lawyer: LawyersFormWebhookData
 ): Promise<LawyerListItemCreateInput> {
   try {
-    const country = await createCountry(lawyer.country);
+    const {
+      addressCountry,
+      addressLine1,
+      addressLine2,
+      areasOfLaw,
+      city,
+      familyName,
+      firstAndMiddleNames,
+      postcode,
+      ...rest
+    } = lawyer;
+    const country = await createCountry(addressCountry);
     const geoLocationId = await createAddressGeoLocation(lawyer);
-    const legalPracticeAreasList = uniq(lawyer.areasOfLaw ?? []);
-    const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {
       type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
       jsonData: {
-        organisationName: lawyer.organisationName.toLowerCase().trim(),
-        contactName: `${lawyer.firstName.trim()} ${
-          lawyer.middleName?.trim() ?? ""
-        } ${lawyer.surname.trim()}`,
-        telephone: lawyer.phoneNumber,
-        email: lawyer.emailAddress.toLowerCase().trim(),
-        website: lawyer.websiteAddress.toLowerCase().trim(),
-        legalPracticeAreas: filterAllowedLegalAreas(
-          legalPracticeAreasList.map((name: string) =>
-            name.trim().toLowerCase()
-          )
-        ),
-        regulatoryAuthority: lawyer.regulatoryAuthority,
-        englishSpeakLead: lawyer.englishSpeakLead,
-        representedBritishNationalsBefore:
-          lawyer.representedBritishNationalsBefore,
-        legalAid: lawyer.canProvideLegalAid,
-        proBonoService: lawyer.canOfferProBono,
-        outOfHours,
+        ...rest,
+        areasOfLaw: uniq(areasOfLaw ?? []),
+        contactName: `${firstAndMiddleNames} ${familyName}`,
       },
       address: {
         create: {
-          firstLine: lawyer.addressLine1,
-          secondLine: lawyer.addressLine2,
-          postCode: lawyer.postcode,
-          city: lawyer.city,
+          firstLine: addressLine1,
+          secondLine: addressLine2,
+          postCode: postcode,
+          city,
           country: {
-            connect: { id: country.id },
+            connect: {
+              id: country.id,
+            },
           },
           geoLocation: {
             connect: {

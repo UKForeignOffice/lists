@@ -1,6 +1,5 @@
 import proxy from "express-http-proxy";
 import { configureFormRunnerProxyMiddleware } from "../proxyMiddleware";
-import * as feedbackHelpers from "server/components/feedback/helpers";
 
 jest.mock("express-http-proxy", () => ({
   __esModule: true,
@@ -71,12 +70,7 @@ describe("FormRunner middleware", () => {
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
 
-      expect(result).toBe(`
-        <link rel="shortcut href="/application/assets/images/favicon.ico">
-        <img src='/application/assets/img/logo.png' />
-        <link rel="shortcut href="/application/assets/js/main.js">
-        <script src="/application/assets/js/main.js"></script>
-      `);
+      expect(result).toMatchSnapshot();
     });
 
     test("cookies path is correctly pointing outside form-runner base route", () => {
@@ -88,10 +82,7 @@ describe("FormRunner middleware", () => {
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
 
-      expect(result).toBe(`
-        <a href="/help/cookies/">Cookies</a>
-        <a href="/help/cookies/">Cookies</a>
-      `);
+      expect(result).toMatchSnapshot();
     });
 
     test("action property is added to all form elements", () => {
@@ -112,26 +103,14 @@ describe("FormRunner middleware", () => {
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
 
-      expect(result).toBe(`
-        <form id="123" class="form">
-          <button></button>
-        </form>
-        <link rel="shortcut href="/application/assets/images/favicon.ico">
-        <img src='/application/assets/img/logo.png' />
-        <link rel="shortcut href="/application/assets/js/main.js">
-        <script src="/application/assets/js/main.js"></script>
-        <form id="123" class="form">
-          <button></button>
-        </form>
-      `);
+      expect(result).toMatchSnapshot();
     });
 
     test("feedback success page content is correct", () => {
-      jest
-        .spyOn(feedbackHelpers, "getFeedbackSuccessContent")
-        .mockReturnValueOnce("<p>Success</p>");
-      userReq.baseUrl = "/application/feedback/status";
       const { userResDecorator } = (proxy as any).mock.calls[0][1];
+
+      userReq.baseUrl = "/application/feedback/status";
+
       proxyResData.toString.mockReturnValueOnce(`
         <link rel="shortcut href="/assets/images/favicon.ico">
         <img src='/assets/img/logo.png' />
@@ -146,17 +125,29 @@ describe("FormRunner middleware", () => {
 
       const result = userResDecorator(proxyRes, proxyResData, userReq);
 
-      expect(result).toBe(`
-        <link rel="shortcut href="/application/assets/images/favicon.ico">
-        <img src='/application/assets/img/logo.png' />
-        <link rel="shortcut href="/application/assets/js/main.js">
-        <script src="/application/assets/js/main.js"></script>
+      expect(result).toMatchSnapshot();
+    });
+
+    test("should render the correct success page for other forms", () => {
+      const { userResDecorator } = (proxy as any).mock.calls[0][1];
+
+      userReq.baseUrl = "/application/lawyers/status";
+
+      proxyResData.toString.mockReturnValueOnce(`
+        <link rel="shortcut href="/assets/images/favicon.ico">
+        <img src='/assets/img/logo.png' />
+        <link rel="shortcut href="/assets/js/main.js">
+        <script src="/assets/js/main.js"></script>
         <body>
           <div>...</div>
-          <main class="123" id="123"><p>Success</p></main>
+          <main class="123" id="123"></main>
           <div>...</div>
         </body>
       `);
+
+      const result = userResDecorator(proxyRes, proxyResData, userReq);
+
+      expect(result).toMatchSnapshot();
     });
   });
 

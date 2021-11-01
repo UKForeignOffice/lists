@@ -1,7 +1,6 @@
 import { isNumber, isArray } from "lodash";
 import { logger } from "server/services/logger";
 import { getDbPool } from "./db/database";
-import { LegalAreas } from "./types";
 
 export const rawInsertGeoLocation = async (
   point: number[]
@@ -23,28 +22,6 @@ export const rawInsertGeoLocation = async (
     return false;
   }
 };
-
-export function filterAllowedLegalAreas(legalAreas: string[]): LegalAreas[] {
-  const allowed = [
-    "bankruptcy",
-    "corporate",
-    "criminal",
-    "employment",
-    "family",
-    "health",
-    "immigration",
-    "intellectual property",
-    "international",
-    "maritime",
-    "personal injury",
-    "real estate",
-    "tax",
-  ];
-
-  return legalAreas.filter((legalArea) =>
-    allowed.includes(legalArea.toLowerCase())
-  ) as LegalAreas[];
-}
 
 export function geoPointIsValid(geoPoint: any): boolean {
   return isArray(geoPoint) && isNumber(geoPoint[0]) && isNumber(geoPoint[1]);
