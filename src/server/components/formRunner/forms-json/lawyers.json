@@ -186,7 +186,7 @@
             "required": false
           },
           "type": "WebsiteField",
-          "title": "website",
+          "title": "Website",
           "schema": {},
           "hint": "Enter your full web address, for example:\n\nhttps://www.example.com or\nhttp://www.example.com"
         }
