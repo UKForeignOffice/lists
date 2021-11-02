@@ -142,33 +142,33 @@ describe("Lists Controllers", () => {
   });
 
   describe("listsDataIngestionController", () => {
-    test("it responds with 500 when serviceType is unknown", () => {
+    test("it responds with 500 when serviceType is unknown", async () => {
       req.params.serviceType = "other";
       req.body.questions = [{}];
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalled();
     });
 
-    test("it responds with 402 when posted data schema is incorrect", () => {
+    test("it responds with 402 when posted data schema is incorrect", async () => {
       req.params.serviceType = "lawyers";
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(422);
       expect(res.send).toHaveBeenCalled();
     });
 
-    test("createListItem is invoked correctly for lawyers", () => {
+    test("createListItem is invoked correctly for lawyers", async () => {
       const spy = spyCreateListItem();
       spySendApplicationConfirmationEmail();
 
       req.params.serviceType = "lawyers";
       req.body.questions = webhookPayload.questions;
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(spy).toHaveBeenCalledWith("lawyers", {
         emailAddress: "test@gov.uk",
@@ -181,14 +181,14 @@ describe("Lists Controllers", () => {
       });
     });
 
-    test("createListItem is invoked correctly for lawyers", () => {
+    test("createListItem is invoked correctly for lawyers", async () => {
       const spy = spyCreateListItem();
       spySendApplicationConfirmationEmail();
 
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(spy).toHaveBeenCalledWith("covidTestProviders", {
         emailAddress: "test@gov.uk",
@@ -201,13 +201,20 @@ describe("Lists Controllers", () => {
       });
     });
 
-    test("sendApplicationConfirmationEmail is invoked correctly", (done) => {
+    test("sendApplicationConfirmationEmail is invoked correctly", async () => {
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
-      const createdListItem: any = {
+      const createdListItem = {
+        address: {
+          country: {
+            name: "Italy",
+          },
+        },
         reference: "123ABC",
+        type: "lawyers",
         jsonData: {
+          contactName: "Test User",
           email: "test@email.com",
         },
       };
@@ -215,20 +222,19 @@ describe("Lists Controllers", () => {
       spyCreateListItem(createdListItem);
       const spy = spySendApplicationConfirmationEmail();
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledWith(
-          createdListItem.jsonData.contactName,
-          createdListItem.jsonData.email,
-          `https://${SERVICE_DOMAIN}/confirm/${createdListItem.reference}`
-        );
-        expect(res.json).toHaveBeenCalledWith({});
-        done();
-      });
+      expect(spy).toHaveBeenCalledWith(
+        "Test User",
+        "test@email.com",
+        "lawyers",
+        "Italy",
+        `https://${SERVICE_DOMAIN}/confirm/123ABC`
+      );
+      expect(res.json).toHaveBeenCalledWith({});
     });
 
-    test("it responds with 500 when createListItem fails", (done) => {
+    test("it responds with 500 when createListItem fails", async () => {
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
@@ -241,14 +247,11 @@ describe("Lists Controllers", () => {
 
       spyCreateListItem(createdListItem, true);
 
-      listsDataIngestionController(req, res);
+      await listsDataIngestionController(req, res);
 
-      setTimeout(() => {
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith({
-          error: "Ops.. something went wrong",
-        });
-        done();
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        error: "Ops.. something went wrong",
       });
     });
   });

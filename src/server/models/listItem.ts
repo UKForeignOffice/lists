@@ -28,9 +28,16 @@ import {
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
+  Address,
 } from "./types";
 import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
+
+interface ListItemWithAddressCountry extends ListItem {
+  address: Address & {
+    country: Country;
+  };
+}
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -397,7 +404,7 @@ export async function setEmailIsVerified({
 export async function createListItem(
   serviceType: ServiceType,
   webhookData: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   switch (serviceType) {
     case ServiceType.lawyers:
       return await createLawyerListItem(webhookData as LawyersFormWebhookData);
@@ -508,7 +515,7 @@ async function createLawyerListItemObject(
 
 export async function createLawyerListItem(
   webhookData: LawyersFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationName,
     countryName: webhookData.country,
@@ -520,7 +527,17 @@ export async function createLawyerListItem(
 
   try {
     const data = await createLawyerListItemObject(webhookData);
-    return await prisma.listItem.create({ data });
+
+    return await prisma.listItem.create({
+      data,
+      include: {
+        address: {
+          include: {
+            country: true,
+          },
+        },
+      },
+    });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;
@@ -678,7 +695,7 @@ async function createCovidTestSupplierListItemObject(
 
 export async function createCovidTestSupplierListItem(
   webhookData: CovidTestSupplierFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationDetails.organisationName,
     locationName: webhookData.organisationDetails.locationName,
@@ -691,7 +708,17 @@ export async function createCovidTestSupplierListItem(
 
   try {
     const data = await createCovidTestSupplierListItemObject(webhookData);
-    return await prisma.listItem.create({ data });
+
+    return await prisma.listItem.create({
+      data,
+      include: {
+        address: {
+          include: {
+            country: true,
+          },
+        },
+      },
+    });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;

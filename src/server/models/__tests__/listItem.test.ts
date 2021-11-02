@@ -285,6 +285,13 @@ describe("ListItem Model:", () => {
             declaration: ["confirm"],
           },
         },
+        include: {
+          address: {
+            include: {
+              country: true,
+            },
+          },
+        },
       });
     });
 
@@ -984,6 +991,13 @@ describe("ListItem Model:", () => {
                   id: "123TEST",
                 },
               },
+            },
+          },
+        },
+        include: {
+          address: {
+            include: {
+              country: true,
             },
           },
         },

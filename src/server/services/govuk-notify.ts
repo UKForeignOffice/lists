@@ -55,6 +55,8 @@ export async function sendAuthenticationEmail(
 export async function sendApplicationConfirmationEmail(
   contactName: string,
   emailAddress: string,
+  type: string,
+  country: string,
   confirmationLink: string
 ): Promise<boolean> {
   try {
@@ -63,8 +65,10 @@ export async function sendApplicationConfirmationEmail(
       emailAddress,
       {
         personalisation: {
-          contactName,
           confirmationLink,
+          contactName,
+          country,
+          type,
         },
       }
     );

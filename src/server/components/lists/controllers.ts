@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { get, noop } from "lodash";
+import { get } from "lodash";
 import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
 import { DEFAULT_VIEW_PROPS } from "./constants";
@@ -156,10 +156,10 @@ export function listsResultsController(
   }
 }
 
-export function listsDataIngestionController(
+export async function listsDataIngestionController(
   req: Request,
   res: Response
-): void {
+): Promise<void> {
   const serviceType = req.params.serviceType as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
@@ -180,30 +180,41 @@ export function listsDataIngestionController(
     LawyersFormWebhookData | CovidTestSupplierFormWebhookData
   >(value);
 
-  listItem
-    .createListItem(serviceType, data)
-    .then(async (listItem) => {
-      const { reference } = listItem;
-      const contactName = get(listItem?.jsonData, "contactName");
+  try {
+    const item = await listItem.createListItem(serviceType, data);
+    const { address, reference, type } = item;
+    const typeName = [ServiceType.covidTestProviders, ServiceType.lawyers].find(
+      (name) => name === type
+    );
+
+    if (typeName !== undefined) {
+      const { country } = address;
+      const contactName = get(item.jsonData, "contactName");
       const email =
-        get(listItem?.jsonData, "contactEmailAddress") ??
-        get(listItem?.jsonData, "email");
+        get(item.jsonData, "contactEmailAddress") ??
+        get(item.jsonData, "email");
 
       if (email !== null) {
         const confirmationLink = createConfirmationLink(req, reference);
-        sendApplicationConfirmationEmail(
+
+        await sendApplicationConfirmationEmail(
           contactName,
           email,
+          typeName,
+          country.name,
           confirmationLink
-        ).catch(noop);
+        );
       }
+    }
 
-      res.json({});
-    })
-    .catch((error) => {
-      logger.error(`listsDataIngestionController Error: ${error.message}`);
-      res.status(500).send({ error: error.message });
+    res.json({});
+  } catch (e) {
+    logger.error(`listsDataIngestionController Error: ${e.message}`);
+
+    res.status(500).send({
+      error: e.message,
     });
+  }
 }
 
 export async function listsConfirmApplicationController(

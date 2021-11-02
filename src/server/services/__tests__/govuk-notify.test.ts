@@ -151,10 +151,14 @@ describe("GOVUK Notify service:", () => {
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
       const confirmationLink = "https://localhost/confirm/123Reference";
+      const country = "Italy";
+      const type = "lawyers";
 
       const result = await sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
+        type,
+        country,
         confirmationLink
       );
 
@@ -162,7 +166,14 @@ describe("GOVUK Notify service:", () => {
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
         emailAddress,
-        { personalisation: { confirmationLink, contactName } }
+        {
+          personalisation: {
+            confirmationLink,
+            contactName,
+            country,
+            type,
+          },
+        }
       );
     });
 
@@ -175,10 +186,14 @@ describe("GOVUK Notify service:", () => {
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
       const confirmationLink = "https://localhost/confirm/123Reference";
+      const country = "Italy";
+      const type = "lawyers";
 
       const result = await sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
+        type,
+        country,
         confirmationLink
       );
 
