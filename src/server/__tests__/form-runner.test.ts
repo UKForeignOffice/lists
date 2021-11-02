@@ -6,8 +6,7 @@ import {
   isFormRunnerReady,
 } from "server/components/formRunner";
 
-// TODO: Tests stopped running on CI and results are inconsistent locally. Look at better ways to test this.
-describe.skip("Form Runner:", () => {
+describe("Form Runner:", () => {
   let server: Express;
 
   beforeAll(async () => {
