@@ -181,14 +181,21 @@
       "title": "Full website address (Optional)",
       "components": [
         {
+          "name": "rCHsNQ",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-hint\">Enter your full web address, for example: https://www.example.com or http://www.example.com.</p>\n\n<p class=\"govuk-hint\">If you do not know the full address, open your website in a new tab and copy the link.</p>"
+        },
+        {
           "name": "websiteAddress",
           "options": {
-            "required": false
+            "required": false,
+            "hideTitle": true
           },
           "type": "WebsiteField",
           "title": "Website",
           "schema": {},
-          "hint": "Enter your full web address, for example:\n\nhttps://www.example.com or\nhttp://www.example.com"
+          "hint": ""
         }
       ],
       "next": [
