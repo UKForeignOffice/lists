@@ -116,7 +116,7 @@
           "name": "mYwfbq",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> This will be published on GOV.UK if you are added to the list.\n \n\n</div>",
+          "content": "<p class=\"govuk-hint\">Give the address where clients can meet with you. This must match the country list you want to be added to.</p>\n\n<p class=\"govuk-hint\">This will be published on GOV.UK if you are added to the list.</p>",
           "schema": {}
         },
         {
