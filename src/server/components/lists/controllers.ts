@@ -195,17 +195,19 @@ export async function listsDataIngestionController(
         get(item.jsonData, "email") ??
         get(item.jsonData, "emailAddress");
 
-      if (email !== null) {
-        const confirmationLink = createConfirmationLink(req, reference);
-
-        await sendApplicationConfirmationEmail(
-          contactName,
-          email,
-          typeName,
-          country.name,
-          confirmationLink
-        );
+      if (email === null) {
+        throw new Error("No email address supplied");
       }
+
+      const confirmationLink = createConfirmationLink(req, reference);
+
+      await sendApplicationConfirmationEmail(
+        contactName,
+        email,
+        typeName,
+        country.name,
+        confirmationLink
+      );
     }
 
     res.json({});
