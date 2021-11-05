@@ -21,21 +21,25 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           return proxyResData;
         }
 
-        let data = proxyResData.toString("utf8");
+        let data: string = proxyResData.toString("utf8");
 
         // TODO: Find a better way to do this.
         if (userReq.baseUrl.includes("/status")) {
-          if (userReq.baseUrl.startsWith("/application/feedback")) {
-            // replace content of status page for feedback form
-            data = data.replace(
-              /(<main .*>)((.|\n)*?)(<\/main>)/im,
-              `$1${getFeedbackSuccessContent()}$4`
-            );
-          } else {
-            data = data.replace(
-              /(<main .*>)((.|\n)*?)(<\/main>)/im,
-              `$1${successPageContent}$4`
-            );
+          if (
+            data.search("Sorry, there is a problem with the service") === -1
+          ) {
+            if (userReq.baseUrl.startsWith("/application/feedback")) {
+              // replace content of status page for feedback form
+              data = data.replace(
+                /(<main .*>)((.|\n)*?)(<\/main>)/im,
+                `$1${getFeedbackSuccessContent()}$4`
+              );
+            } else {
+              data = data.replace(
+                /(<main .*>)((.|\n)*?)(<\/main>)/im,
+                `$1${successPageContent}$4`
+              );
+            }
           }
         }
 

@@ -234,7 +234,7 @@ describe("Lists Controllers", () => {
       expect(res.json).toHaveBeenCalledWith({});
     });
 
-    test("it responds with 500 when createListItem fails", async () => {
+    test("it responds with 422 when createListItem fails", async () => {
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
@@ -249,9 +249,9 @@ describe("Lists Controllers", () => {
 
       await listsDataIngestionController(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.status).toHaveBeenCalledWith(422);
       expect(res.send).toHaveBeenCalledWith({
-        error: "Ops.. something went wrong",
+        error: "Unable to process form",
       });
     });
   });

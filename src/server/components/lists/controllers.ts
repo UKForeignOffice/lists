@@ -214,8 +214,8 @@ export async function listsDataIngestionController(
   } catch (e) {
     logger.error(`listsDataIngestionController Error: ${e.message}`);
 
-    res.status(500).send({
-      error: e.message,
+    res.status(422).send({
+      error: "Unable to process form",
     });
   }
 }
