@@ -232,8 +232,10 @@ export async function listsConfirmApplicationController(
       reference,
     });
 
-    if (type !== undefined) {
-      let serviceName: string | null;
+    if (type === undefined) {
+      res.sendStatus(404);
+    } else {
+      let serviceName: string;
 
       switch (type) {
         case ServiceType.lawyers:
@@ -249,8 +251,6 @@ export async function listsConfirmApplicationController(
       res.render("lists/application-confirmation-page", {
         serviceName,
       });
-    } else {
-      res.sendStatus(404);
     }
   } catch (e) {
     next(e);
