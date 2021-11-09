@@ -1,13 +1,4 @@
-import {
-  get,
-  uniq,
-  trim,
-  merge,
-  toLower,
-  isArray,
-  compact,
-  startCase,
-} from "lodash";
+import { get, uniq, trim, merge, toLower, compact, startCase } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { logger } from "server/services/logger";
@@ -53,24 +44,29 @@ async function createCountry(country: string): Promise<Country> {
 async function getPlaceGeoPoint(props: {
   countryName?: string;
   text?: string;
-}): Promise<Point | undefined> {
+}): Promise<Point> {
   const { countryName, text } = props;
 
   if (text === undefined || countryName === undefined) {
-    return undefined;
+    return [0.0, 0.0];
   }
 
   try {
-    const place = await geoLocatePlaceByText(`${text}, ${countryName}`);
-    return place?.Geometry?.Point ?? undefined;
+    const { Geometry } = await geoLocatePlaceByText(`${text}, ${countryName}`);
+
+    if (Geometry.Point !== undefined) {
+      return Geometry.Point;
+    }
+
+    return [0.0, 0.0];
   } catch (error) {
-    return undefined;
+    return [0.0, 0.0];
   }
 }
 
 async function createAddressGeoLocation(
   item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<number | boolean> {
+): Promise<number> {
   let address: string;
 
   if ("organisationDetails" in item) {
@@ -91,14 +87,11 @@ async function createAddressGeoLocation(
     `;
   }
 
-  const location = await geoLocatePlaceByText(address);
-  const point = location?.Geometry?.Point;
+  const { Geometry } = await geoLocatePlaceByText(address);
 
-  if (isArray(point)) {
-    return await rawInsertGeoLocation(point);
-  }
+  const point = Geometry.Point ?? [0.0, 0.0];
 
-  return false;
+  return await rawInsertGeoLocation(point);
 }
 
 function fetchPublishedListItemQuery(props: {

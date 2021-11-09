@@ -57,24 +57,30 @@ export async function createPlaceIndex(): Promise<boolean> {
 }
 
 export async function geoLocatePlaceByText(
-  address: string
-): Promise<Location.Types.Place | undefined> {
-  const query = {
-    MaxResults: 1,
-    Text: address,
-    IndexName: INDEX_PARAMS.IndexName,
-  };
-
+  Text: string
+): Promise<Location.Types.Place> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
 
-  try {
-    const location = getAWSLocationService();
-    const response = await location.searchPlaceIndexForText(query).promise();
-    return response?.Results?.[0]?.Place;
-  } catch (error) {
-    logger.error(`geoLocatePlaceByText Error: ${error.message}`);
-    return undefined;
+  const location = getAWSLocationService();
+  const { Results } = await location
+    .searchPlaceIndexForText({
+      MaxResults: 1,
+      Text,
+      IndexName: INDEX_PARAMS.IndexName,
+    })
+    .promise();
+
+  // Return location if found
+  if (Results.length > 0) {
+    return Results[0].Place;
   }
+
+  // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)
+  return {
+    Geometry: {
+      Point: [0.0, 0.0],
+    },
+  };
 }

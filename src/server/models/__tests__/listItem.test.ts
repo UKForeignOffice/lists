@@ -20,6 +20,7 @@ import {
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
+import * as helpers from "../helpers";
 
 jest.mock("../db/prisma-client");
 
@@ -165,6 +166,8 @@ describe("ListItem Model:", () => {
         Point: [1, 1],
       },
     };
+
+    jest.spyOn(helpers, "rawInsertGeoLocation").mockResolvedValue(1);
   });
 
   describe("Create Lawyer", () => {
@@ -202,11 +205,7 @@ describe("ListItem Model:", () => {
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Record already exists");
-      }
+      await createLawyerListItem(LawyerWebhookData);
 
       const expectedCountryName = startCase(toLower(LawyerWebhookData.country));
 
@@ -223,11 +222,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Record already exists");
-      }
+      await createLawyerListItem(LawyerWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -246,7 +241,7 @@ describe("ListItem Model:", () => {
               },
               geoLocation: {
                 connect: {
-                  id: undefined,
+                  id: 1,
                 },
               },
             },
@@ -983,6 +978,11 @@ describe("ListItem Model:", () => {
           address: {
             create: {
               firstLine: "Cogito, Ergo Sum",
+              geoLocation: {
+                connect: {
+                  id: 1,
+                },
+              },
               secondLine: "Street",
               postCode: "123456",
               city: "Touraine",
