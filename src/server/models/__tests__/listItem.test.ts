@@ -161,11 +161,7 @@ describe("ListItem Model:", () => {
 
     sampleCountry = { id: "123TEST", name: "United Kingdom" };
 
-    sampleLocation = {
-      Geometry: {
-        Point: [1, 1],
-      },
-    };
+    sampleLocation = [1, 1];
 
     jest.spyOn(helpers, "rawInsertGeoLocation").mockResolvedValue(1);
   });

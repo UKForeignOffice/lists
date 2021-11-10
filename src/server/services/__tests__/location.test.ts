@@ -121,13 +121,7 @@ describe("Location service:", () => {
     test("locatePlaceByText response is correct", async () => {
       const result = await geoLocatePlaceByText("Bangkok, Thailand");
 
-      expect(result).toEqual({
-        Country: "THA",
-        Geometry: { Point: [100.50483000000008, 13.753360000000043] },
-        Label: "Bangkok, Phra Nakhon, Bangkok, THA",
-        Region: "Bangkok",
-        SubRegion: "Phra Nakhon",
-      });
+      expect(result).toEqual([100.50483000000008, 13.753360000000043]);
     });
 
     test("returns 0.0, 0.0 when searchPlaceIndexForText returns no results", async () => {
@@ -141,11 +135,7 @@ describe("Location service:", () => {
 
       const result = await geoLocatePlaceByText("Bangkok, Thailand");
 
-      expect(result).toEqual({
-        Geometry: {
-          Point: [0.0, 0.0],
-        },
-      });
+      expect(result).toEqual([0.0, 0.0]);
     });
   });
 });

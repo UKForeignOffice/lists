@@ -52,14 +52,10 @@ async function getPlaceGeoPoint(props: {
   }
 
   try {
-    const { Geometry } = await geoLocatePlaceByText(`${text}, ${countryName}`);
-
-    if (Geometry.Point !== undefined) {
-      return Geometry.Point;
-    }
-
-    return [0.0, 0.0];
+    return await geoLocatePlaceByText(`${text}, ${countryName}`);
   } catch (error) {
+    logger.error(error.message);
+
     return [0.0, 0.0];
   }
 }
@@ -87,9 +83,7 @@ async function createAddressGeoLocation(
     `;
   }
 
-  const { Geometry } = await geoLocatePlaceByText(address);
-
-  const point = Geometry.Point ?? [0.0, 0.0];
+  const point = await geoLocatePlaceByText(address);
 
   return await rawInsertGeoLocation(point);
 }

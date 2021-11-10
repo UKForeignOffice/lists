@@ -58,7 +58,7 @@ export async function createPlaceIndex(): Promise<boolean> {
 
 export async function geoLocatePlaceByText(
   Text: string
-): Promise<Location.Types.Place> {
+): Promise<Location.Types.Position> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
@@ -74,13 +74,9 @@ export async function geoLocatePlaceByText(
 
   // Return location if found
   if (Results.length > 0) {
-    return Results[0].Place;
+    return Results[0].Place.Geometry.Point ?? [0.0, 0.0];
   }
 
   // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)
-  return {
-    Geometry: {
-      Point: [0.0, 0.0],
-    },
-  };
+  return [0.0, 0.0];
 }
