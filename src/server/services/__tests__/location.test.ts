@@ -121,30 +121,21 @@ describe("Location service:", () => {
     test("locatePlaceByText response is correct", async () => {
       const result = await geoLocatePlaceByText("Bangkok, Thailand");
 
-      expect(result).toEqual({
-        Country: "THA",
-        Geometry: { Point: [100.50483000000008, 13.753360000000043] },
-        Label: "Bangkok, Phra Nakhon, Bangkok, THA",
-        Region: "Bangkok",
-        SubRegion: "Phra Nakhon",
-      });
+      expect(result).toEqual([100.50483000000008, 13.753360000000043]);
     });
 
-    test("returns undefined when searchPlaceIndexForText rejects", async () => {
-      const error = new Error("searchPlaceIndexForText error message");
-
+    test("returns 0.0, 0.0 when searchPlaceIndexForText returns no results", async () => {
       jest
         .spyOn(getAWSLocationService(), "searchPlaceIndexForText")
         .mockReturnValueOnce({
-          promise: jest.fn().mockRejectedValue(error),
+          promise: jest.fn().mockResolvedValueOnce({
+            Results: [],
+          }),
         } as any);
 
       const result = await geoLocatePlaceByText("Bangkok, Thailand");
 
-      expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith(
-        "geoLocatePlaceByText Error: searchPlaceIndexForText error message"
-      );
+      expect(result).toEqual([0.0, 0.0]);
     });
   });
 });

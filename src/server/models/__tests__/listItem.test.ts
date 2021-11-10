@@ -20,25 +20,28 @@ import {
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
+import * as helpers from "../helpers";
 
 jest.mock("../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
+  country: "Spain",
+  size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
-  englishSpeakLead: true,
-  qualifiedToPracticeLaw: true,
-  firstName: "Rene",
-  middleName: undefined,
-  surname: "Descartes",
-  organisationName: "Cartesian Systems",
-  websiteAddress: "www.cartesiansystems.com",
-  emailAddress: "aa@aa.com",
-  phoneNumber: "777766665555",
-  addressLine1: "Cogito, Ergo Sum",
-  addressLine2: "Street",
-  city: "Touraine",
-  postcode: "123456",
-  country: "France",
+  regulators: "Spanish BAR",
+  firstAndMiddleNames: "Lawyer In",
+  familyName: "Spain",
+  organisationName: "CYB Law",
+  addressLine1: "123 Calle",
+  city: "Seville",
+  postcode: "S3V1LLA",
+  addressCountry: "Spain",
+  emailAddress: "lawyer@example.com",
+  publishEmail: "Yes",
+  phoneNumber: "+34123456789",
+  emergencyPhoneNumber: "+34123456789",
+  websiteAddress: "https://www.cyb-law.com",
+  regions: "Seville, Malaga, Granada, Cadiz",
   areasOfLaw: [
     "Bankruptcy",
     "Corporate",
@@ -54,24 +57,10 @@ const LawyerWebhookData: LawyersFormWebhookData = {
     "Real estate",
     "Tax",
   ],
-  canProvideLegalAid: true,
-  canOfferProBono: true,
-  representedBritishNationalsBefore: true,
-  memberOfRegulatoryAuthority: true,
-  regulatoryAuthority: "IBA",
-  outOfHoursService: true,
-  outOfHoursContactDetailsDifferent: true,
-  outOfHoursContactDetailsDifferences: "phoneNumber, address, email",
-  outOfHours: {
-    phoneNumber: "88777766665555",
-    addressLine1: "Cogito, Ergo Sum",
-    addressLine2: "Street",
-    city: "Touraine",
-    postcode: "123456",
-    country: "france",
-    emailAddress: "outofhours@email.com",
-  },
-  declarationConfirm: "confirm",
+  legalAid: false,
+  proBono: false,
+  representedBritishNationals: true,
+  declaration: ["confirm"],
 };
 
 const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
@@ -167,15 +156,14 @@ describe("ListItem Model:", () => {
     sampleListItem = {
       id: "123ABC",
       jsonData: { organisationName: "The Amazing Lawyers" },
+      type: "lawyers",
     };
 
     sampleCountry = { id: "123TEST", name: "United Kingdom" };
 
-    sampleLocation = {
-      Geometry: {
-        Point: [1, 1],
-      },
-    };
+    sampleLocation = [1, 1];
+
+    jest.spyOn(helpers, "rawInsertGeoLocation").mockResolvedValue(1);
   });
 
   describe("Create Lawyer", () => {
@@ -183,11 +171,9 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Lawyer record already exists");
-      }
+      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toThrow(
+        "Lawyer record already exists"
+      );
 
       expect(spyCount.mock.calls[0][0]).toEqual({
         where: {
@@ -215,11 +201,7 @@ describe("ListItem Model:", () => {
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Record already exists");
-      }
+      await createLawyerListItem(LawyerWebhookData);
 
       const expectedCountryName = startCase(toLower(LawyerWebhookData.country));
 
@@ -236,11 +218,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      try {
-        await createLawyerListItem(LawyerWebhookData);
-      } catch (error) {
-        expect(error.message).toBe("Record already exists");
-      }
+      await createLawyerListItem(LawyerWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -249,51 +227,59 @@ describe("ListItem Model:", () => {
           isPublished: false,
           address: {
             create: {
-              firstLine: "Cogito, Ergo Sum",
-              secondLine: "Street",
-              postCode: "123456",
-              city: "Touraine",
-              country: { connect: { id: "123TEST" } },
+              firstLine: "123 Calle",
+              postCode: "S3V1LLA",
+              city: "Seville",
+              country: {
+                connect: {
+                  id: "123TEST",
+                },
+              },
               geoLocation: {
                 connect: {
-                  id: undefined,
+                  id: 1,
                 },
               },
             },
           },
           jsonData: {
-            organisationName: "cartesian systems",
-            contactName: "Rene  Descartes",
-            email: "aa@aa.com",
-            telephone: "777766665555",
-            website: "www.cartesiansystems.com",
-            regulatoryAuthority: "IBA",
-            englishSpeakLead: true,
-            representedBritishNationalsBefore: true,
-            legalAid: true,
-            proBonoService: true,
-            legalPracticeAreas: [
-              "bankruptcy",
-              "corporate",
-              "criminal",
-              "employment",
-              "family",
-              "health",
-              "immigration",
-              "intellectual property",
-              "international",
-              "maritime",
-              "personal injury",
-              "real estate",
-              "tax",
+            country: "Spain",
+            size: "Independent lawyer / sole practitioner",
+            contactName: "Lawyer In Spain",
+            speakEnglish: true,
+            regulators: "Spanish BAR",
+            organisationName: "CYB Law",
+            emailAddress: "lawyer@example.com",
+            publishEmail: "Yes",
+            phoneNumber: "+34123456789",
+            emergencyPhoneNumber: "+34123456789",
+            websiteAddress: "https://www.cyb-law.com",
+            regions: "Seville, Malaga, Granada, Cadiz",
+            areasOfLaw: [
+              "Bankruptcy",
+              "Corporate",
+              "Criminal",
+              "Employment",
+              "Family",
+              "Health",
+              "Immigration",
+              "Intellectual property",
+              "International",
+              "Maritime",
+              "Personal injury",
+              "Real estate",
+              "Tax",
             ],
-            outOfHours: {
-              email: "outofhours@email.com",
-              telephone: "88777766665555",
-              firstLine: "Cogito, Ergo Sum",
-              secondLine: "Street",
-              postCode: "123456",
-              city: "Touraine",
+            legalAid: false,
+            proBono: false,
+            representedBritishNationals: true,
+            declaration: ["confirm"],
+          },
+        },
+        include: {
+          address: {
+            include: {
+              country: true,
             },
           },
         },
@@ -573,7 +559,9 @@ describe("ListItem Model:", () => {
 
       const result = await setEmailIsVerified({ reference });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
       expect(spy).toHaveBeenCalledWith({
         where: { reference },
       });
@@ -594,7 +582,9 @@ describe("ListItem Model:", () => {
 
       const result = await setEmailIsVerified({ reference });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
       expect(spyFindUnique).toHaveBeenCalled();
       expect(spyUpdate).not.toHaveBeenCalled();
     });
@@ -616,7 +606,9 @@ describe("ListItem Model:", () => {
         },
       });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({
+        type: "lawyers",
+      });
     });
 
     test("it throws listItem.findUnique error", async () => {
@@ -982,6 +974,11 @@ describe("ListItem Model:", () => {
           address: {
             create: {
               firstLine: "Cogito, Ergo Sum",
+              geoLocation: {
+                connect: {
+                  id: 1,
+                },
+              },
               secondLine: "Street",
               postCode: "123456",
               city: "Touraine",
@@ -990,6 +987,13 @@ describe("ListItem Model:", () => {
                   id: "123TEST",
                 },
               },
+            },
+          },
+        },
+        include: {
+          address: {
+            include: {
+              country: true,
             },
           },
         },

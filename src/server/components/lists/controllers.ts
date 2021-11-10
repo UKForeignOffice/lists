@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { get, noop } from "lodash";
+import { get } from "lodash";
 import { listsRoutes } from "./routes";
 import { listItem } from "server/models";
 import { DEFAULT_VIEW_PROPS } from "./constants";
@@ -156,10 +156,10 @@ export function listsResultsController(
   }
 }
 
-export function listsDataIngestionController(
+export async function listsDataIngestionController(
   req: Request,
   res: Response
-): void {
+): Promise<void> {
   const serviceType = req.params.serviceType as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
@@ -180,42 +180,81 @@ export function listsDataIngestionController(
     LawyersFormWebhookData | CovidTestSupplierFormWebhookData
   >(value);
 
-  listItem
-    .createListItem(serviceType, data)
-    .then(async (listItem) => {
-      const { reference } = listItem;
-      const contactName = get(listItem?.jsonData, "contactName");
-      const email =
-        get(listItem?.jsonData, "contactEmailAddress") ??
-        get(listItem?.jsonData, "email");
+  try {
+    const item = await listItem.createListItem(serviceType, data);
+    const { address, reference, type } = item;
+    const typeName = [ServiceType.covidTestProviders, ServiceType.lawyers].find(
+      (name) => name === type
+    );
 
-      if (email !== null) {
-        const confirmationLink = createConfirmationLink(req, reference);
-        sendApplicationConfirmationEmail(
-          contactName,
-          email,
-          confirmationLink
-        ).catch(noop);
+    if (typeName !== undefined) {
+      const { country } = address;
+      const contactName = get(item.jsonData, "contactName");
+      const email =
+        get(item.jsonData, "contactEmailAddress") ??
+        get(item.jsonData, "email") ??
+        get(item.jsonData, "emailAddress");
+
+      if (email === null) {
+        throw new Error("No email address supplied");
       }
 
-      res.json({});
-    })
-    .catch((error) => {
-      logger.error(`listsDataIngestionController Error: ${error.message}`);
-      res.status(500).send({ error: error.message });
+      const confirmationLink = createConfirmationLink(req, reference);
+
+      await sendApplicationConfirmationEmail(
+        contactName,
+        email,
+        typeName,
+        country.name,
+        confirmationLink
+      );
+    }
+
+    res.json({});
+  } catch (e) {
+    logger.error(`listsDataIngestionController Error: ${e.message}`);
+
+    res.status(422).send({
+      error: "Unable to process form",
     });
+  }
 }
 
-export function listsConfirmApplicationController(
+export async function listsConfirmApplicationController(
   req: Request,
   res: Response,
   next: NextFunction
-): void {
+): Promise<void> {
   const { reference } = req.params;
-  listItem
-    .setEmailIsVerified({ reference })
-    .then(() => res.render("lists/application-confirmation-page"))
-    .catch(next);
+
+  try {
+    const { type } = await listItem.setEmailIsVerified({
+      reference,
+    });
+
+    if (type === undefined) {
+      res.sendStatus(404);
+    } else {
+      let serviceName: string;
+
+      switch (type) {
+        case ServiceType.lawyers:
+          serviceName = "Find a lawyer abroad";
+          break;
+        case ServiceType.covidTestProviders:
+          serviceName = "Find a COVID-19 test provider abroad";
+          break;
+        default:
+          serviceName = "Find a professional service abroad";
+      }
+
+      res.render("lists/application-confirmation-page", {
+        serviceName,
+      });
+    }
+  } catch (e) {
+    next(e);
+  }
 }
 
 export function listsGetPrivateBetaPage(

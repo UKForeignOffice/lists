@@ -1,181 +1,172 @@
 {
-  "startPage": "/register-to-the-find-a-lawyer-abroad-service",
+  "startPage": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
   "pages": [
     {
-      "title": "Register to the Find a Lawyer Abroad service",
-      "path": "/register-to-the-find-a-lawyer-abroad-service",
+      "title": "Apply to be added to the ‘Find a lawyer abroad’ service",
+      "path": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
       "components": [
         {
           "name": "rhnpiT",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">Lawyers based outside of the UK can register online to be added to the Foreign, Commonwealth & Development Office’s Find a Lawyer Abroad service.</p>\n<p class=\"govuk-body\">British nationals use this service to help them find the legal support abroad that best suits their needs.</p>\n<p class=\"govuk-body\">You need to register as an individual lawyer and not on behalf of your company. </p>\n<p class=\"govuk-body\">To be eligible to be added to the lawyer’s list you need:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>fluent English language skills</li>\n  <li>legal qualifications</li>\n  <li>up to date contact details</li>\n</ul>",
+          "content": "<p class=\"govuk-body\">Lawyers based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find a lawyer abroad' service.</p>\n<p class=\"govuk-body\">The 'Find a lawyer abroad' service provides lists of English-speaking lawyers in specific countries to help British nationals find the legal support that best suits their needs.</p>\n<p class=\"govuk-body\">To be eligible to be added to a list you need to be qualified to practise law in that country.</p>\n<p class=\"govuk-body\">You also need to be able to provide:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>legal services and support to customers in English</li>\n  <li>reliable contact details, including email address</li>\n</ul>\n<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must have access to the email address you provide. You will be sent a link that you must use to complete your application.\n  </strong>\n</div>\n",
+          "schema": {}
+        },
+        {
+          "name": "QLkbfP",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views.</p>\n\n<p class=\"govuk-body\">Email: <a href=\"#\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a></p>",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/do-you-speak-fluent-english"
+          "path": "/which-list-of-lawyers-do-you-want-to-be-added-to"
         }
-      ]
+      ],
+      "controller": "./pages/start.js"
     },
     {
-      "title": "Summary",
+      "title": "Check your answers",
       "path": "/summary",
       "controller": "./pages/summary.js",
       "components": []
     },
     {
-      "path": "/do-you-speak-fluent-english",
-      "title": "Do you speak fluent English?",
+      "path": "/can-you-provide-legal-services-and-support-to-customers-in-english",
+      "title": "Can you provide legal services and support to customers in English?",
       "components": [
         {
           "name": "speakEnglish",
           "options": {},
           "type": "YesNoField",
-          "title": "Do you speak English?",
+          "title": "English language service",
           "nameHasError": false,
           "schema": {},
-          "hint": "You can only be added to the Find a Lawyer Abroad service if you have excellent English language skills. ",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": ""
         }
       ],
       "next": [
         {
-          "path": "/are-you-the-english-speaking-lead-for-your-company",
-          "condition": "oV9fvQl39FkGahoM46257"
+          "path": "/you-cannot-be-added-to-the-service",
+          "condition": "50_TW9NLlvr2820-1-Qt6"
         },
         {
-          "path": "/you-need-to-speak-fluent-english-to-use-this-service",
-          "condition": "50_TW9NLlvr2820-1-Qt6"
+          "path": "/which-legal-regulator-or-local-bar-associations-are-you-registered-with",
+          "condition": "oV9fvQl39FkGahoM46257"
         }
       ]
     },
     {
-      "path": "/are-you-the-english-speaking-lead-for-your-company",
-      "title": "Are you the English speaking lead for your company?",
-      "components": [
-        {
-          "name": "englishSpeakLead",
-          "options": {},
-          "type": "YesNoField",
-          "title": "Are you the English speaking lead for your company?",
-          "nameHasError": false,
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/are-you-qualified-to-practice-law-in-your-country"
-        }
-      ]
-    },
-    {
-      "path": "/you-need-to-speak-fluent-english-to-use-this-service",
-      "title": "You need to speak fluent English to use this service",
+      "path": "/you-cannot-be-added-to-the-service",
+      "title": "You cannot be added to the service",
       "components": [
         {
           "name": "WlXNxl",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n   You can only be added to the Find a Lawyer Abroad service if you have excellent English language skills. \n\n</div>",
+          "content": "<div class=\"govuk-hint\">\nYou can only be added to the 'Find a lawyer abroad' service if you can provide support to English-speaking British nationals.\n\n</div>",
           "schema": {}
         }
       ],
       "next": []
     },
     {
-      "path": "/are-you-qualified-to-practice-law-in-your-country",
-      "title": "Are you qualified to practice law in your country?",
+      "path": "/your-name",
+      "title": "Your name ",
       "components": [
         {
-          "name": "qualifiedToPracticeLaw",
+          "name": "YBSPkn",
           "options": {},
-          "type": "YesNoField",
-          "title": "Are you qualified to practice law?",
-          "nameHasError": false,
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\"> This is how your name will appear on GOV.UK if you are added to the list. \n\n</div>",
           "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/you-need-to-be-qualified-to-practise-law-in-your-country-to-use-this-service",
-          "condition": "wQAJrkhE3WF5cKg-a0ocJ"
         },
         {
-          "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-or-body",
-          "condition": "sC_WI7140dW0LN5R7pbFk"
-        }
-      ]
-    },
-    {
-      "path": "/full-name",
-      "title": "Full name",
-      "components": [
-        {
-          "name": "firstName",
+          "name": "firstAndMiddleNames",
           "options": {},
           "type": "TextField",
-          "title": "First name",
+          "title": "First and middle names",
           "nameHasError": false,
           "schema": {}
         },
         {
-          "name": "middleName",
+          "name": "familyName",
           "options": {
-            "required": false
+            "required": true
           },
           "type": "TextField",
-          "title": "Middle name",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "surname",
-          "options": {},
-          "type": "TextField",
-          "title": "Surname",
+          "title": "Last name",
           "nameHasError": false,
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/company-name"
+          "path": "/company-name-and-address"
         }
       ]
     },
     {
-      "path": "/company-name",
-      "title": "Company name",
+      "path": "/company-name-and-address",
+      "title": "Company name and address",
       "components": [
+        {
+          "name": "mYwfbq",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-hint\">Give the address where clients can meet with you. This must match the country list you want to be added to.</p>\n\n<p class=\"govuk-hint\">This will be published on GOV.UK if you are added to the list.</p>",
+          "schema": {}
+        },
         {
           "name": "organisationName",
           "options": {},
           "type": "TextField",
-          "title": "Organisation name",
-          "nameHasError": false,
+          "title": "Company name",
           "schema": {}
-        }
-      ],
-      "next": [
+        },
         {
-          "path": "/website-address"
-        }
-      ]
-    },
-    {
-      "path": "/website-address",
-      "title": "Website address",
-      "components": [
+          "type": "TextField",
+          "title": "Address line 1",
+          "options": {
+            "hideTitle": false
+          },
+          "name": "addressLine1",
+          "schema": {}
+        },
         {
-          "name": "websiteAddress",
+          "name": "addressLine2",
+          "options": {
+            "required": false
+          },
+          "type": "TextField",
+          "title": "Address line 2",
+          "schema": {}
+        },
+        {
+          "name": "city",
           "options": {},
           "type": "TextField",
-          "title": "Website address",
-          "nameHasError": false,
+          "title": "Town or city ",
+          "schema": {}
+        },
+        {
+          "name": "postcode",
+          "options": {},
+          "type": "TextField",
+          "title": "Post code / area code",
+          "schema": {}
+        },
+        {
+          "name": "addressCountry",
+          "options": {},
+          "type": "SelectField",
+          "title": "Country",
+          "list": "country",
+          "values": {
+            "type": "listRef"
+          },
           "schema": {}
         }
       ],
@@ -186,20 +177,70 @@
       ]
     },
     {
+      "path": "/full-website-address-optional",
+      "title": "Full website address (Optional)",
+      "components": [
+        {
+          "name": "rCHsNQ",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-hint\">Enter your full web address, for example: https://www.example.com or http://www.example.com.</p>\n\n<p class=\"govuk-hint\">If you do not know the full address, open your website in a new tab and copy the link.</p>"
+        },
+        {
+          "name": "websiteAddress",
+          "options": {
+            "required": false,
+            "hideTitle": true
+          },
+          "type": "WebsiteField",
+          "title": "Website",
+          "schema": {},
+          "hint": ""
+        }
+      ],
+      "next": [
+        {
+          "path": "/which-regions-do-you-serve"
+        }
+      ]
+    },
+    {
       "path": "/email-address",
       "title": "Email address",
       "components": [
+        {
+          "name": "CetdZQ",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-body\">This email will be used:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    to send you a link you must use in order to submit this application\n  </li>\n  <li>\n    by the British Embassy if they need to contact you about your application\n  </li>\n </ul>",
+          "schema": {}
+        },
         {
           "name": "emailAddress",
           "options": {},
           "type": "EmailAddressField",
           "title": "Email address",
-          "nameHasError": false,
           "schema": {},
-          "hint": "This is the email address you wish to be contacted on by British nationals"
+          "hint": ""
+        },
+        {
+          "name": "publishEmail",
+          "options": {},
+          "type": "RadiosField",
+          "title": "Can we publish this email address on GOV.UK?",
+          "hint": "We need an email address to publish on GOV.UK so that British nationals can contact you.",
+          "list": "zBHphP",
+          "schema": {},
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
+        {
+          "path": "/email-address-for-govuk",
+          "condition": "ldtpZK"
+        },
         {
           "path": "/phone-number"
         }
@@ -213,16 +254,19 @@
           "name": "areasOfLaw",
           "options": {},
           "type": "CheckboxesField",
-          "title": "Areas of law practicsed",
-          "nameHasError": false,
+          "title": "Areas of law practised",
           "list": "iqn9pP",
           "schema": {},
-          "hint": "You can choose as many areas of law as relevant\n"
+          "hint": "Select all areas that apply."
         }
       ],
       "next": [
         {
           "path": "/can-you-provide-legal-aid-to-british-nationals"
+        },
+        {
+          "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+          "condition": "rCuWxL"
         }
       ]
     },
@@ -231,11 +275,10 @@
       "title": "Can you provide legal aid to British nationals?",
       "components": [
         {
-          "name": "canProvideLegalAid",
+          "name": "legalAid",
           "options": {},
           "type": "YesNoField",
-          "title": "Can you provide legal aid to British Nationals?",
-          "nameHasError": false,
+          "title": "Can you provide legal aid to British nationals?",
           "schema": {}
         }
       ],
@@ -250,13 +293,12 @@
       "title": "Can you offer pro bono service to British nationals?",
       "components": [
         {
-          "name": "canOfferProBono",
+          "name": "proBono",
           "options": {
             "required": true
           },
           "type": "YesNoField",
-          "title": "Can you offer pro bono service to British Nationals?",
-          "nameHasError": false,
+          "title": "Can you offer pro bono service to British nationals?",
           "schema": {}
         }
       ],
@@ -271,352 +313,10 @@
       "title": "Have you represented British nationals before?",
       "components": [
         {
-          "name": "representedBritishNationalsBefore",
+          "name": "representedBritishNationals",
           "options": {},
           "type": "YesNoField",
-          "title": "Have you represented British Nationals before?",
-          "schema": {},
-          "nameHasError": false,
-          "values": {
-            "type": "listRef"
-          }
-        }
-      ],
-      "next": [
-        {
-          "path": "/do-you-offer-out-of-hours-service"
-        }
-      ]
-    },
-    {
-      "path": "/are-you-a-member-of-a-local-bar-association-or-other-regulatory-authority-or-body",
-      "title": "Are you a member of a local bar association or other regulatory authority or body?",
-      "components": [
-        {
-          "name": "memberOfRegulatoryAuthority",
-          "options": {},
-          "type": "YesNoField",
-          "title": "Are you a member of a local bar association or other regulatory authority/body?",
-          "nameHasError": false,
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/what-is-the-name-of-the-local-bar-association-or-other-regulatory-authority",
-          "condition": "DzOdSI"
-        },
-        {
-          "path": "/not-a-member",
-          "condition": "VMgnBE"
-        }
-      ]
-    },
-    {
-      "path": "/do-you-offer-out-of-hours-service",
-      "title": "Do you offer out of hours service?",
-      "components": [
-        {
-          "name": "outOfHoursService",
-          "options": {},
-          "type": "YesNoField",
-          "title": "Do you offer out of hours service?",
-          "nameHasError": false,
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
-          "condition": "6ZEjcsVvflFMwoHRspRPd"
-        },
-        {
-          "path": "/declaration",
-          "condition": "WiHImXvXbzDvbsY90biLb"
-        }
-      ]
-    },
-    {
-      "path": "/are-the-contact-details-different-for-the-out-of-hours-service",
-      "title": "Are the contact details different for the out of hours service?",
-      "components": [
-        {
-          "name": "outOfHoursContactDetailsDifferent",
-          "options": {},
-          "type": "YesNoField",
-          "title": "Are the contact details different for the out of hours service?",
-          "nameHasError": false,
-          "schema": {},
-          "values": {
-            "type": "listRef"
-          }
-        }
-      ],
-      "next": [
-        {
-          "path": "/which-out-of-hours-contact-details-are-different",
-          "condition": "HbAUjaiVjoVTUhFXDxH8D"
-        },
-        {
-          "path": "/declaration",
-          "condition": "YzSeD8_Zz49h7BNzTOfw8"
-        }
-      ]
-    },
-    {
-      "path": "/which-out-of-hours-contact-details-are-different",
-      "title": "Which out of hours contact details are different?",
-      "components": [
-        {
-          "name": "outOfHoursContactDetailsDifferences",
-          "options": {},
-          "type": "CheckboxesField",
-          "title": "Which out of hours contact details are different?",
-          "nameHasError": false,
-          "list": "QrcJZH",
-          "schema": {},
-          "hint": "You can choose as many options as relevant\n"
-        }
-      ],
-      "next": [
-        {
-          "path": "/out-of-hours-phone-number",
-          "condition": "uwhxHa"
-        },
-        {
-          "path": "/out-of-hours-address",
-          "condition": "NzzQrT"
-        },
-        {
-          "path": "/out-of-hours-email",
-          "condition": "XAARcX"
-        },
-        {
-          "path": "/declaration",
-          "condition": "DWLEtI"
-        }
-      ]
-    },
-    {
-      "path": "/you-need-to-be-qualified-to-practise-law-in-your-country-to-use-this-service",
-      "title": "You need to be qualified to practise law in your country to use this service",
-      "components": [
-        {
-          "name": "gjJiCS",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n    You can only be added to the Find a Lawyer Abroad service if you are qualified to practice law in the country you are based. \n</div>",
-          "schema": {}
-        }
-      ],
-      "next": []
-    },
-    {
-      "path": "/phone-number",
-      "title": "Phone number",
-      "components": [
-        {
-          "name": "phoneNumber",
-          "options": {},
-          "type": "TelephoneNumberField",
-          "title": "Phone number",
-          "nameHasError": false,
-          "schema": {},
-          "hint": "This is the phone number you wish to be contacted on by British nationals"
-        }
-      ],
-      "next": [
-        {
-          "path": "/company-address"
-        }
-      ]
-    },
-    {
-      "path": "/company-address",
-      "title": "Company Address",
-      "components": [
-        {
-          "name": "addressLine1",
-          "options": {},
-          "type": "TextField",
-          "title": "Address line 1",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "addressLine2",
-          "options": {
-            "required": false
-          },
-          "type": "TextField",
-          "title": "Address line 2",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "city",
-          "options": {},
-          "type": "TextField",
-          "title": "Town or city",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "postcode",
-          "options": {},
-          "type": "TextField",
-          "title": "Postcode",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "country",
-          "options": {},
-          "type": "AutocompleteField",
-          "title": "Country",
-          "nameHasError": false,
-          "list": "country",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/in-what-areas-of-law-are-you-qualified-to-practise"
-        }
-      ]
-    },
-    {
-      "path": "/what-is-the-name-of-the-local-bar-association-or-other-regulatory-authority",
-      "title": "What is the name of the local bar association or other regulatory authority?",
-      "components": [
-        {
-          "name": "TQVySa",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-hint\">\n    Please specify the most relevant one\n</div>",
-          "schema": {}
-        },
-        {
-          "name": "KLBDAg",
-          "options": {
-            "hideTitle": true
-          },
-          "type": "TextField",
-          "title": "Regulatorybodyname",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/full-name"
-        }
-      ]
-    },
-    {
-      "path": "/not-a-member",
-      "title": "Not a member",
-      "components": [],
-      "next": []
-    },
-    {
-      "path": "/out-of-hours-phone-number",
-      "title": "Out of hours phone number",
-      "components": [
-        {
-          "name": "phoneNumber",
-          "options": {},
-          "type": "TelephoneNumberField",
-          "title": "Phone number",
-          "nameHasError": false,
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/out-of-hours-address",
-          "condition": "tZJmuK"
-        },
-        {
-          "path": "/out-of-hours-email",
-          "condition": "Ddafcu"
-        },
-        {
-          "path": "/declaration",
-          "condition": "bybXmC"
-        }
-      ],
-      "section": "outOfHours"
-    },
-    {
-      "path": "/out-of-hours-address",
-      "title": "Out of hours address",
-      "components": [
-        {
-          "name": "addressLine1",
-          "options": {},
-          "type": "TextField",
-          "title": "Address line 1",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "addressLine2",
-          "options": {
-            "required": false
-          },
-          "type": "TextField",
-          "title": "Address line 2",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "city",
-          "options": {},
-          "type": "TextField",
-          "title": "Town or city",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "postcode",
-          "options": {},
-          "type": "TextField",
-          "title": "Postcode",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "country",
-          "options": {},
-          "type": "AutocompleteField",
-          "title": "Country",
-          "nameHasError": false,
-          "list": "country",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/out-of-hours-email",
-          "condition": "SONTUr"
-        },
-        {
-          "path": "/declaration",
-          "condition": "GqOvZW"
-        }
-      ],
-      "section": "outOfHours"
-    },
-    {
-      "path": "/out-of-hours-email",
-      "title": "Out of hours email",
-      "components": [
-        {
-          "name": "emailAddress",
-          "options": {},
-          "type": "EmailAddressField",
-          "title": "Email address",
-          "nameHasError": false,
+          "title": "Have you represented British nationals before?",
           "schema": {}
         }
       ],
@@ -624,8 +324,62 @@
         {
           "path": "/declaration"
         }
+      ]
+    },
+    {
+      "path": "/phone-number",
+      "title": "Phone number",
+      "components": [
+        {
+          "name": "RpnRxn",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\"> These details will be published on GOV.UK and used by British nationals to contact you.\n\n</div>",
+          "schema": {}
+        },
+        {
+          "name": "phoneNumber",
+          "options": {},
+          "type": "TelephoneNumberField",
+          "title": "Phone number",
+          "schema": {},
+          "hint": "Include the country code, for example +49(0)74749561660"
+        },
+        {
+          "name": "emergencyPhoneNumber",
+          "options": {
+            "required": false
+          },
+          "type": "TelephoneNumberField",
+          "title": "Emergency / out of hours number",
+          "hint": "Only provide a number here if you can guarantee it will be answered outside of normal working hours.",
+          "schema": {}
+        }
       ],
-      "section": "outOfHours"
+      "next": [
+        {
+          "path": "/full-website-address-optional"
+        }
+      ]
+    },
+    {
+      "path": "/which-legal-regulator-or-local-bar-associations-are-you-registered-with",
+      "title": "Which legal regulator or local bar associations are you registered with?",
+      "components": [
+        {
+          "name": "regulators",
+          "options": {},
+          "type": "MultilineTextField",
+          "title": "Regulator(s)",
+          "hint": "The details you give may be checked by FCDO but will not be published on GOV.UK.\n",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/your-name"
+        }
+      ]
     },
     {
       "path": "/declaration",
@@ -635,17 +389,16 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">You must declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation;\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the Find A Lawyer Abroad service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way \n</ul>\n",
+          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n</ul>\n\n\n",
           "schema": {}
         },
         {
-          "name": "declarationConfirm",
+          "name": "declaration",
           "options": {
             "hideTitle": true
           },
           "type": "CheckboxesField",
-          "title": "Confirm",
-          "nameHasError": false,
+          "title": "Declaration",
           "list": "mpjiNq",
           "schema": {}
         }
@@ -655,6 +408,110 @@
           "path": "/summary"
         }
       ]
+    },
+    {
+      "path": "/which-list-of-lawyers-do-you-want-to-be-added-to",
+      "title": "Which list of lawyers do you want to be added to?",
+      "components": [
+        {
+          "name": "country",
+          "options": {},
+          "type": "SelectField",
+          "title": "Country list",
+          "list": "country",
+          "schema": {},
+          "hint": "Select country",
+          "values": {
+            "type": "listRef"
+          }
+        },
+        {
+          "name": "ZoFnKT",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country you select.\n  </strong>\n</div>"
+        }
+      ],
+      "next": [
+        {
+          "path": "/you-cannot-be-added-to-the-list-at-this-time"
+        },
+        {
+          "path": "/what-size-is-your-company-or-firm",
+          "condition": "qyYhch"
+        }
+      ]
+    },
+    {
+      "path": "/which-regions-do-you-serve",
+      "title": "Which regions do you serve?",
+      "components": [
+        {
+          "name": "regions",
+          "options": {},
+          "type": "TextField",
+          "title": "Regions covered",
+          "schema": {},
+          "hint": "For example: Valencia, Alicante, Murcia"
+        }
+      ],
+      "next": [
+        {
+          "path": "/in-what-areas-of-law-are-you-qualified-to-practise"
+        }
+      ]
+    },
+    {
+      "path": "/what-size-is-your-company-or-firm",
+      "title": "What size is your company or firm?",
+      "components": [
+        {
+          "name": "size",
+          "options": {},
+          "type": "RadiosField",
+          "title": "Company size",
+          "list": "mKafAn",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/can-you-provide-legal-services-and-support-to-customers-in-english"
+        }
+      ]
+    },
+    {
+      "path": "/email-address-for-govuk",
+      "title": "Email address for GOV.UK",
+      "components": [
+        {
+          "name": "publicEmailAddress",
+          "options": {},
+          "type": "EmailAddressField",
+          "title": "Email address (Public)",
+          "hint": "Please provide the email address your company wishes to be contacted on by British nationals. ",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/phone-number"
+        }
+      ]
+    },
+    {
+      "path": "/you-cannot-be-added-to-the-list-at-this-time",
+      "title": "You cannot be added to the list at this time",
+      "components": [
+        {
+          "name": "zcSPPo",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\"> This is a new service and is currently only taking applications from certain countries.\n \n\n</div>",
+          "schema": {}
+        }
+      ],
+      "next": []
     }
   ],
   "lists": [
@@ -722,6 +579,10 @@
       "title": "Countries",
       "type": "string",
       "items": [
+        {
+          "value": "No country entered",
+          "text": "Select country"
+        },
         {
           "text": "Afghanistan",
           "value": "Afghanistan"
@@ -1664,13 +1525,70 @@
       ]
     },
     {
-      "title": "Confirm",
+      "title": "Confirmed",
       "name": "mpjiNq",
       "type": "string",
       "items": [
         {
-          "text": "Confirm",
+          "text": "Confirmed",
           "value": "confirm"
+        }
+      ]
+    },
+    {
+      "title": "CountryList",
+      "name": "BrZcLy",
+      "type": "string",
+      "items": [
+        {
+          "text": "France",
+          "value": "France"
+        },
+        {
+          "text": "Germany",
+          "value": "Germany"
+        },
+        {
+          "text": "Other",
+          "value": "Other"
+        }
+      ]
+    },
+    {
+      "title": "Firmsizelist",
+      "name": "mKafAn",
+      "type": "string",
+      "items": [
+        {
+          "text": "Independent lawyer / sole practitioner",
+          "value": "Independent lawyer / sole practitioner"
+        },
+        {
+          "text": "Small firm (up to 15 legal professionals)",
+          "value": "Small firm (up to 15 legal professionals)"
+        },
+        {
+          "text": "Medium firm (16-349 legal professionals)",
+          "value": "Medium (16-350 legal professionals)"
+        },
+        {
+          "text": "Large firm (350+ legal professionals)",
+          "value": "Large firm (350+ legal professionals)"
+        }
+      ]
+    },
+    {
+      "title": "Publish Email",
+      "name": "zBHphP",
+      "type": "string",
+      "items": [
+        {
+          "text": "Yes, you can publish this email address on GOV.UK",
+          "value": "Yes"
+        },
+        {
+          "text": "No, I want to give a different email address",
+          "value": "noPublish"
         }
       ]
     }
@@ -1683,6 +1601,10 @@
     {
       "name": "outOfHours",
       "title": "Out of hours"
+    },
+    {
+      "name": "IZPVrj",
+      "title": "Company details"
     }
   ],
   "phaseBanner": {},
@@ -2257,6 +2179,245 @@
           }
         ]
       }
+    },
+    {
+      "name": "HqfgkP",
+      "displayName": "Regbodynone",
+      "value": {
+        "name": "Regbodynone",
+        "conditions": [
+          {
+            "field": {
+              "name": "KLBDAg",
+              "type": "TextField",
+              "display": "Regulatorybodyname"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "0",
+              "display": "0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "tWvFfJ",
+      "displayName": "Country list pilots",
+      "value": {
+        "name": "Country list pilots",
+        "conditions": [
+          {
+            "field": {
+              "name": "XIKxtK",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "France",
+              "display": "France"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "XIKxtK",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Germany",
+              "display": "Germany"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "XIKxtK",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Italy",
+              "display": "Italy"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "XIKxtK",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Portugal",
+              "display": "Portugal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "qyYhch",
+      "displayName": "Country pilots 2",
+      "value": {
+        "name": "Country pilots 2",
+        "conditions": [
+          {
+            "field": {
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "France",
+              "display": "France"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Germany",
+              "display": "Germany"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Italy",
+              "display": "Italy"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Portugal",
+              "display": "Portugal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "displayName": "hasDifferentEmail",
+      "name": "wXwbTl",
+      "value": {
+        "name": "hasDifferentEmail",
+        "conditions": [
+          {
+            "field": {
+              "name": "publishEmail",
+              "type": "RadiosField",
+              "display": "Can we publish this email address on GOV.UK?"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "noPublish",
+              "display": "No"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "displayName": "differentEmail",
+      "name": "ldtpZK",
+      "value": {
+        "name": "differentEmail",
+        "conditions": [
+          {
+            "field": {
+              "name": "publishEmail",
+              "type": "RadiosField",
+              "display": "Can we publish this email address on GOV.UK?"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "noPublish",
+              "display": "noPublish"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "displayName": "canPublishEmail",
+      "name": "IpDeau",
+      "value": {
+        "name": "canPublishEmail",
+        "conditions": [
+          {
+            "field": {
+              "name": "publishEmail",
+              "type": "RadiosField",
+              "display": "Can we publish this email address on GOV.UK?"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Yes",
+              "display": "Yes"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "displayName": "LegalaidNo",
+      "name": "rCuWxL",
+      "value": {
+        "name": "LegalaidNo",
+        "conditions": [
+          {
+            "field": {
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Portugal",
+              "display": "Portugal"
+            }
+          }
+        ]
+      }
     }
-  ]
+  ],
+  "skipSummary": false
 }

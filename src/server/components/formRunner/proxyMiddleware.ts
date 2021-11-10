@@ -2,7 +2,7 @@ import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
 import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
-import { router } from "./router";
+import { successPageContent } from "./helpers";
 
 /**
  * Proxy middleware for the form runner
@@ -10,27 +10,37 @@ import { router } from "./router";
  * Important: this middleware must be added before body and cookie parsers middlewares
  */
 export function configureFormRunnerProxyMiddleware(server: Express): void {
-  server.use(router);
-
   server.use(
     `${FORM_RUNNER_BASE_ROUTE}/*`,
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
-        return req.originalUrl.replace(`${FORM_RUNNER_BASE_ROUTE}`, "");
+        return req.originalUrl.replace(FORM_RUNNER_BASE_ROUTE, "");
       },
       userResDecorator: function (_, proxyResData, userReq) {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
 
-        let data = proxyResData.toString("utf8");
+        let data: string = proxyResData.toString("utf8");
 
-        if (userReq.baseUrl.includes("/feedback/status")) {
-          // replace content of status page for feedback form
-          data = data.replace(
-            /(<main .*>)((.|\n)*?)(<\/main>)/im,
-            `$1${getFeedbackSuccessContent()}$4`
-          );
+        // TODO: Find a better way to do this.
+        if (userReq.baseUrl.includes("/status")) {
+          if (
+            data.search("Sorry, there is a problem with the service") === -1
+          ) {
+            if (userReq.baseUrl.startsWith("/application/feedback")) {
+              // replace content of status page for feedback form
+              data = data.replace(
+                /(<main .*>)((.|\n)*?)(<\/main>)/im,
+                `$1${getFeedbackSuccessContent()}$4`
+              );
+            } else {
+              data = data.replace(
+                /(<main .*>)((.|\n)*?)(<\/main>)/im,
+                `$1${successPageContent}$4`
+              );
+            }
+          }
         }
 
         return data
@@ -40,7 +50,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           )
           .replace(/\/application\/help\/cookies/g, "/help/cookies");
       },
-      userResHeaderDecorator(headers, userReq, userRes) {
+      userResHeaderDecorator(headers, _userReq, userRes) {
         if (userRes.statusCode === 302) {
           return {
             ...headers,

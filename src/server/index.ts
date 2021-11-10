@@ -6,7 +6,7 @@ import { startFormRunner } from "server/components/formRunner";
 async function initApp(): Promise<void> {
   await startFormRunner();
   const server = await getServer();
-  
+
   server.listen(PORT, () => {
     logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
   });
@@ -19,5 +19,3 @@ async function initApp(): Promise<void> {
 initApp().catch((error) => {
   logger.error("Server initialization error", error);
 });
-
-

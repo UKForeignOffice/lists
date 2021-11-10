@@ -25,6 +25,8 @@ FROM build AS runner
 WORKDIR /usr/src/app
 USER 1001
 ARG NODE_ENV
+ARG DOCKER_TAG
 ENV NODE_ENV=$NODE_ENV
+ENV DOCKER_TAG=$DOCKER_TAG
 EXPOSE 3000
 CMD ["npm", "run", "start:prod"]

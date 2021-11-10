@@ -13,40 +13,30 @@ export interface FormRunnerWebhookData {
 }
 
 export interface LawyersFormWebhookData {
+  country: string;
+  size: string;
   speakEnglish: boolean;
-  englishSpeakLead: boolean;
-  qualifiedToPracticeLaw: boolean;
-  firstName: string;
-  middleName: string | undefined;
-  surname: string;
+  regulators: string;
+  firstAndMiddleNames: string;
+  familyName: string;
   organisationName: string;
-  websiteAddress: string;
-  emailAddress: string;
-  phoneNumber: string;
   addressLine1: string;
-  addressLine2: string | undefined;
+  addressLine2?: string;
   city: string;
   postcode: string;
-  country: string;
+  addressCountry: string;
+  emailAddress: string;
+  publishEmail: string;
+  publicEmailAddress?: string;
+  phoneNumber: string;
+  emergencyPhoneNumber?: string;
+  websiteAddress?: string;
+  regions: string;
   areasOfLaw: string[];
-  canProvideLegalAid: boolean;
-  canOfferProBono: boolean;
-  representedBritishNationalsBefore: boolean;
-  memberOfRegulatoryAuthority: boolean;
-  regulatoryAuthority: string;
-  outOfHoursService: boolean;
-  outOfHoursContactDetailsDifferent: boolean;
-  outOfHoursContactDetailsDifferences: string; // "phoneNumber, address, email"
-  outOfHours?: {
-    phoneNumber?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    city?: string;
-    postcode: string;
-    country: string;
-    emailAddress: string;
-  };
-  declarationConfirm: string; // "confirm"
+  legalAid?: boolean;
+  proBono?: boolean;
+  representedBritishNationals: boolean;
+  declaration: string[];
 }
 
 export interface CovidTestSupplierFormWebhookData {

@@ -70,9 +70,35 @@ export function parseFormRunnerWebhookObject<T>({
 
     fields.forEach((field) => {
       const { key, answer } = field;
-      set(acc, `${category !== undefined ? `${category}.` : ""}${key}`, answer);
+      set(
+        acc,
+        `${category !== undefined ? `${category}.` : ""}${key}`,
+        typeof answer === "string" ? answer.trim() : answer
+      );
     });
 
     return acc;
   }, {}) as T;
 }
+
+export const successPageContent = `
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+          Check your email
+        </h1>
+      </div>
+
+      <p class="govuk-body">We have sent you an email containing a link. You must use the link so that we can verify your email address.</p>
+
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          We cannot process your application unless you use the link.
+        </strong>
+      </div>
+    </div>
+  </div>
+`;

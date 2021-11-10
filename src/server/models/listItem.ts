@@ -1,13 +1,4 @@
-import {
-  get,
-  uniq,
-  trim,
-  merge,
-  toLower,
-  isArray,
-  compact,
-  startCase,
-} from "lodash";
+import { get, uniq, trim, merge, toLower, compact, startCase } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./db/prisma-client";
 import { logger } from "server/services/logger";
@@ -25,17 +16,19 @@ import {
   ServiceType,
   CountryName,
   ListItemGetObject,
-  LawyerListItemJsonData,
   LawyerListItemGetObject,
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
+  Address,
 } from "./types";
-import {
-  geoPointIsValid,
-  rawInsertGeoLocation,
-  filterAllowedLegalAreas,
-} from "./helpers";
+import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
+
+interface ListItemWithAddressCountry extends ListItem {
+  address: Address & {
+    country: Country;
+  };
+}
 
 // Helpers
 async function createCountry(country: string): Promise<Country> {
@@ -51,74 +44,48 @@ async function createCountry(country: string): Promise<Country> {
 async function getPlaceGeoPoint(props: {
   countryName?: string;
   text?: string;
-}): Promise<Point | undefined> {
+}): Promise<Point> {
   const { countryName, text } = props;
 
   if (text === undefined || countryName === undefined) {
-    return undefined;
+    return [0.0, 0.0];
   }
 
   try {
-    const place = await geoLocatePlaceByText(`${text}, ${countryName}`);
-    return place?.Geometry?.Point ?? undefined;
+    return await geoLocatePlaceByText(`${text}, ${countryName}`);
   } catch (error) {
-    return undefined;
+    logger.error(error.message);
+
+    return [0.0, 0.0];
   }
 }
 
 async function createAddressGeoLocation(
   item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<number | boolean> {
+): Promise<number> {
   let address: string;
 
   if ("organisationDetails" in item) {
     address = `
-      ${item.organisationDetails.addressLine1}, 
-      ${item.organisationDetails.addressLine2 ?? ""}, 
-      ${item.organisationDetails.city} - 
-      ${item.organisationDetails.country} - 
+      ${item.organisationDetails.addressLine1},
+      ${item.organisationDetails.addressLine2 ?? ""},
+      ${item.organisationDetails.city} -
+      ${item.organisationDetails.country} -
       ${item.organisationDetails.postcode}
     `;
   } else {
     address = `
-      ${item.addressLine1}, 
-      ${item.addressLine2 ?? ""}, 
-      ${item.city} - 
-      ${item.country} - 
+      ${item.addressLine1},
+      ${item.addressLine2 ?? ""},
+      ${item.city} -
+      ${item.addressCountry} -
       ${item.postcode}
     `;
   }
 
-  const location = await geoLocatePlaceByText(address);
-  const point = location?.Geometry?.Point;
+  const point = await geoLocatePlaceByText(address);
 
-  if (isArray(point)) {
-    return await rawInsertGeoLocation(point);
-  }
-
-  return false;
-}
-
-function parseOutOfHoursObject(
-  lawyer: LawyersFormWebhookData
-): LawyerListItemJsonData["outOfHours"] {
-  const telephone = lawyer.outOfHours?.phoneNumber;
-  const email = lawyer.outOfHours?.emailAddress;
-  const address =
-    lawyer.outOfHours?.country !== undefined
-      ? {
-          firstLine: `${lawyer.outOfHours?.addressLine1}`,
-          secondLine: lawyer.outOfHours?.addressLine2,
-          postCode: `${lawyer.outOfHours?.postcode}`,
-          city: `${lawyer.outOfHours?.city}`,
-        }
-      : {};
-
-  return {
-    email,
-    telephone,
-    ...address,
-  };
+  return await rawInsertGeoLocation(point);
 }
 
 function fetchPublishedListItemQuery(props: {
@@ -154,9 +121,9 @@ function fetchPublishedListItemQuery(props: {
  	   	  SELECT ROW_TO_JSON(a)
  		    FROM (
 			    SELECT
-				    "Address"."firstLine", 
-				    "Address"."secondLine", 
-				    "Address"."city", 
+				    "Address"."firstLine",
+				    "Address"."secondLine",
+				    "Address"."city",
 				    "Address"."postCode",
 				    (
 					    SELECT ROW_TO_JSON(c)
@@ -170,7 +137,7 @@ function fetchPublishedListItemQuery(props: {
 			      WHERE "Address".id = "ListItem"."addressId"
  		    ) as a
  	    ) as address,
-      ${withDistance}	   
+      ${withDistance}
 
     FROM "ListItem"
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
@@ -375,21 +342,35 @@ export async function togglerListItemIsPublished({
   }
 }
 
+interface SetEmailIsVerified {
+  type?: ServiceType;
+}
+
 export async function setEmailIsVerified({
   reference,
 }: {
   reference: string;
-}): Promise<boolean> {
+}): Promise<SetEmailIsVerified> {
   try {
     const item = await prisma.listItem.findUnique({
       where: { reference },
     });
 
-    if (get(item, "jsonData.metadata.emailVerified") === true) {
-      return true;
+    if (item === null) {
+      return {};
     }
 
-    const jsonData = merge(item?.jsonData, {
+    // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
+    const { type } = item;
+    const serviceType = type as ServiceType;
+
+    if (get(item, "jsonData.metadata.emailVerified") === true) {
+      return {
+        type: serviceType,
+      };
+    }
+
+    const jsonData = merge(item.jsonData, {
       metadata: { emailVerified: true },
     });
 
@@ -398,7 +379,9 @@ export async function setEmailIsVerified({
       data: { jsonData },
     });
 
-    return true;
+    return {
+      type: serviceType,
+    };
   } catch (error) {
     logger.error(error);
     throw error;
@@ -408,7 +391,7 @@ export async function setEmailIsVerified({
 export async function createListItem(
   serviceType: ServiceType,
   webhookData: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   switch (serviceType) {
     case ServiceType.lawyers:
       return await createLawyerListItem(webhookData as LawyersFormWebhookData);
@@ -469,44 +452,39 @@ async function createLawyerListItemObject(
   lawyer: LawyersFormWebhookData
 ): Promise<LawyerListItemCreateInput> {
   try {
-    const country = await createCountry(lawyer.country);
+    const {
+      addressCountry,
+      addressLine1,
+      addressLine2,
+      areasOfLaw,
+      city,
+      familyName,
+      firstAndMiddleNames,
+      postcode,
+      ...rest
+    } = lawyer;
+    const country = await createCountry(addressCountry);
     const geoLocationId = await createAddressGeoLocation(lawyer);
-    const legalPracticeAreasList = uniq(lawyer.areasOfLaw ?? []);
-    const outOfHours = parseOutOfHoursObject(lawyer);
 
     return {
       type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
       jsonData: {
-        organisationName: lawyer.organisationName.toLowerCase().trim(),
-        contactName: `${lawyer.firstName.trim()} ${
-          lawyer.middleName?.trim() ?? ""
-        } ${lawyer.surname.trim()}`,
-        telephone: lawyer.phoneNumber,
-        email: lawyer.emailAddress.toLowerCase().trim(),
-        website: lawyer.websiteAddress.toLowerCase().trim(),
-        legalPracticeAreas: filterAllowedLegalAreas(
-          legalPracticeAreasList.map((name: string) =>
-            name.trim().toLowerCase()
-          )
-        ),
-        regulatoryAuthority: lawyer.regulatoryAuthority,
-        englishSpeakLead: lawyer.englishSpeakLead,
-        representedBritishNationalsBefore:
-          lawyer.representedBritishNationalsBefore,
-        legalAid: lawyer.canProvideLegalAid,
-        proBonoService: lawyer.canOfferProBono,
-        outOfHours,
+        ...rest,
+        areasOfLaw: uniq(areasOfLaw ?? []),
+        contactName: `${firstAndMiddleNames} ${familyName}`,
       },
       address: {
         create: {
-          firstLine: lawyer.addressLine1,
-          secondLine: lawyer.addressLine2,
-          postCode: lawyer.postcode,
-          city: lawyer.city,
+          firstLine: addressLine1,
+          secondLine: addressLine2,
+          postCode: postcode,
+          city,
           country: {
-            connect: { id: country.id },
+            connect: {
+              id: country.id,
+            },
           },
           geoLocation: {
             connect: {
@@ -524,7 +502,7 @@ async function createLawyerListItemObject(
 
 export async function createLawyerListItem(
   webhookData: LawyersFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationName,
     countryName: webhookData.country,
@@ -536,7 +514,17 @@ export async function createLawyerListItem(
 
   try {
     const data = await createLawyerListItemObject(webhookData);
-    return await prisma.listItem.create({ data });
+
+    return await prisma.listItem.create({
+      data,
+      include: {
+        address: {
+          include: {
+            country: true,
+          },
+        },
+      },
+    });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;
@@ -694,7 +682,7 @@ async function createCovidTestSupplierListItemObject(
 
 export async function createCovidTestSupplierListItem(
   webhookData: CovidTestSupplierFormWebhookData
-): Promise<ListItem> {
+): Promise<ListItemWithAddressCountry> {
   const exists = await checkListItemExists({
     organisationName: webhookData.organisationDetails.organisationName,
     locationName: webhookData.organisationDetails.locationName,
@@ -707,7 +695,17 @@ export async function createCovidTestSupplierListItem(
 
   try {
     const data = await createCovidTestSupplierListItemObject(webhookData);
-    return await prisma.listItem.create({ data });
+
+    return await prisma.listItem.create({
+      data,
+      include: {
+        address: {
+          include: {
+            country: true,
+          },
+        },
+      },
+    });
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;

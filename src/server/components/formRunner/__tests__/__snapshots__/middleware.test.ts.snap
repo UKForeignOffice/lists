@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormRunner middleware userResDecorator action property is added to all form elements 1`] = `
+"
+        <form id=\\"123\\" class=\\"form\\">
+          <button></button>
+        </form>
+        <link rel=\\"shortcut href=\\"/application/assets/images/favicon.ico\\">
+        <img src='/application/assets/img/logo.png' />
+        <link rel=\\"shortcut href=\\"/application/assets/js/main.js\\">
+        <script src=\\"/application/assets/js/main.js\\"></script>
+        <form id=\\"123\\" class=\\"form\\">
+          <button></button>
+        </form>
+      "
+`;
+
+exports[`FormRunner middleware userResDecorator cookies path is correctly pointing outside form-runner base route 1`] = `
+"
+        <a href=\\"/help/cookies/\\">Cookies</a>
+        <a href=\\"/help/cookies/\\">Cookies</a>
+      "
+`;
+
+exports[`FormRunner middleware userResDecorator feedback success page content is correct 1`] = `
+"
+        <link rel=\\"shortcut href=\\"/application/assets/images/favicon.ico\\">
+        <img src='/application/assets/img/logo.png' />
+        <link rel=\\"shortcut href=\\"/application/assets/js/main.js\\">
+        <script src=\\"/application/assets/js/main.js\\"></script>
+        <body>
+          <div>...</div>
+          <main class=\\"123\\" id=\\"123\\">
+    <div class=\\"govuk-grid-row\\">
+      <div class=\\"govuk-grid-column-two-thirds\\">
+        <div class=\\"govuk-panel govuk-panel--confirmation\\">
+          <h1 class=\\"govuk-panel__title\\">
+            Thank you
+          </h1>
+        </div>
+        <p class=\\"govuk-body\\">
+          Your feedback will help us to improve this service.
+        </p>
+      </div>
+    </div>
+  </main>
+          <div>...</div>
+        </body>
+      "
+`;
+
+exports[`FormRunner middleware userResDecorator it appends form-runner base route to all href and src properties 1`] = `
+"
+        <link rel=\\"shortcut href=\\"/application/assets/images/favicon.ico\\">
+        <img src='/application/assets/img/logo.png' />
+        <link rel=\\"shortcut href=\\"/application/assets/js/main.js\\">
+        <script src=\\"/application/assets/js/main.js\\"></script>
+      "
+`;
+
+exports[`FormRunner middleware userResDecorator should render the correct success page for other forms 1`] = `
+"
+        <link rel=\\"shortcut href=\\"/application/assets/images/favicon.ico\\">
+        <img src='/application/assets/img/logo.png' />
+        <link rel=\\"shortcut href=\\"/application/assets/js/main.js\\">
+        <script src=\\"/application/assets/js/main.js\\"></script>
+        <body>
+          <div>...</div>
+          <main class=\\"123\\" id=\\"123\\">
+  <div class=\\"govuk-grid-row\\">
+    <div class=\\"govuk-grid-column-two-thirds\\">
+      <div class=\\"govuk-panel govuk-panel--confirmation\\">
+        <h1 class=\\"govuk-panel__title\\">
+          Check your email
+        </h1>
+      </div>
+
+      <p class=\\"govuk-body\\">We have sent you an email containing a link. You must use the link so that we can verify your email address.</p>
+
+      <div class=\\"govuk-warning-text\\">
+        <span class=\\"govuk-warning-text__icon\\" aria-hidden=\\"true\\">!</span>
+        <strong class=\\"govuk-warning-text__text\\">
+          <span class=\\"govuk-warning-text__assistive\\">Warning</span>
+          We cannot process your application unless you use the link.
+        </strong>
+      </div>
+    </div>
+  </div>
+</main>
+          <div>...</div>
+        </body>
+      "
+`;
