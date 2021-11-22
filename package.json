@@ -114,7 +114,7 @@
     "nock": "^13.2.1",
     "nodemon": "^2.0.12",
     "nodemon-webpack-plugin": "^4.5.2",
-    "postcss-loader": "^6.1.1",
+    "postcss-loader": "^6.2.0",
     "prettier": "2.3.2",
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
