@@ -43,4 +43,19 @@ main.govuk-main-wrapper {
       color: govuk-colour("green");
     }
   }
+
+  &__item-options {
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__item-publish {
+    width: 50%;
+  }
+
+  &__item-delete {
+    text-align: right;
+    width: 50%;
+  }
 }

@@ -18,13 +18,13 @@
   </p>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-  
+
   {% if listItems.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in listItems %}
-        <li>
+        <li id="item-{{ listItem.id }}">
           {% if list.type === 'covidTestProviders' %}
             {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
           {% endif %}
@@ -35,6 +35,6 @@
           <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         </li>
       {% endfor %}
-    </ul>  
+    </ul>
   {% endif %}
 {% endblock %}

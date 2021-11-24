@@ -162,6 +162,7 @@ export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
 // Audit
 export type AuditListItemEventName =
   | "approve"
+  | "delete"
   | "disapprove"
   | "publish"
   | "unpublish";

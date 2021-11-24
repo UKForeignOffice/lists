@@ -13,27 +13,27 @@
     </p>
   {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Address</strong>: 
-      {{ item.address.firstLine }} 
+    <strong>Address</strong>:
+      {{ item.address.firstLine }}
       {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
-      {{ "-" if item.address.postCode }} {{ item.address.postCode }} 
+      {{ "-" if item.address.postCode }} {{ item.address.postCode }}
       {{ "-" if item.address.city }} {{ item.address.city }}
   </p>
-  {% if item.jsonData.email %}
+  {% if item.jsonData.emailAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.email }}">{{ item.jsonData.email }}</a>
+      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.emailAddress }}">{{ item.jsonData.emailAddress }}</a>
     </p>
   {% endif %}
-  {% if item.jsonData.website %}
+  {% if item.jsonData.websiteAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Website</strong>: <a class="govuk-link" href="{{ enforceHttps(item.jsonData.website) }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.website }}</a>
+      <strong>Website</strong>: <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.websiteAddress }}</a>
     </p>
   {% endif %}
 
-  {% if (not item.jsonData.email) or (not item.jsonData.website) %}
+  {% if (not item.jsonData.emailAddress) or (not item.jsonData.websiteAddress) %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Telephone</strong>: <a href="tel:{{ item.jsonData.telephone }}">{{ item.jsonData.telephone }}</a>
-    </p>  
+      <strong>Telephone</strong>: <a href="tel:{{ item.jsonData.phoneNumber }}">{{ item.jsonData.phoneNumber }}</a>
+    </p>
   {% endif %}
 
   <details class="govuk-details" data-module="govuk-details">
@@ -43,22 +43,22 @@
       </span>
     </summary>
     <div class="govuk-details__text">
-      {% if (item.jsonData.email) and (item.jsonData.website) %}
+      {% if (item.jsonData.emailAddress) and (item.jsonData.websiteAddress) %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Telephone</strong>: {{ item.jsonData.telephone }}
-      </p>  
-      {% endif %}    
-      {% if item.jsonData.legalPracticeAreas %}
+        <strong>Telephone</strong>: {{ item.jsonData.phoneNumber }}
+      </p>
+      {% endif %}
+      {% if item.jsonData.areasOfLaw %}
         <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Legal Practice Areas</strong>: {{ item.jsonData.legalPracticeAreas.map(_.startCase).join(", ") }}
+          <strong>Legal Practice Areas</strong>: {{ item.jsonData.areasOfLaw.map(_.startCase).join(", ") }}
         </p>
       {% endif %}
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
         <strong>Legal Aid</strong>: {{ "Yes" if item.jsonData.legalAid else "No" }}
       </p>
       <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Pro Bono Service</strong>: {{ "Yes" if item.jsonData.proBonoService else "No" }}
+        <strong>Pro Bono Service</strong>: {{ "Yes" if item.jsonData.proBono else "No" }}
       </p>
     </div>
-  </details>      
+  </details>
 {% endmacro %}

@@ -20,6 +20,7 @@ import {
   togglerListItemIsApproved,
   togglerListItemIsPublished,
   getListItemContactInformation,
+  deleteListItem,
 } from "server/models/listItem";
 import { findFeedbackByType } from "server/models/feedback";
 import { UserRoles, ServiceType, List } from "server/models/types";
@@ -483,6 +484,57 @@ export async function listItemsPublishController(
     }
 
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });
+  }
+}
+
+// TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
+export async function listItemsDeleteController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    if (req.user === undefined) {
+      res.redirect(authRoutes.logout);
+
+      return;
+    }
+
+    const userId = req.user.userData.id;
+    const { listId, listItemId } = req.params;
+    const list = await findListById(listId);
+
+    if (list === undefined) {
+      res.status(404).send({
+        error: {
+          message: `Could not find list ${listId}`,
+        },
+      });
+
+      return;
+    }
+
+    const isPublisher = userIsListPublisher(req, list);
+
+    if (!isPublisher) {
+      res.status(403).send({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
+
+      return;
+    }
+
+    const { id } = await findListItemById(listItemId);
+
+    await deleteListItem(id, userId);
+
+    res.json({
+      status: "OK",
+    });
+  } catch (e) {
+    next(e);
   }
 }
 

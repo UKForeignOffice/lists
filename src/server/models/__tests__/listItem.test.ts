@@ -17,10 +17,12 @@ import {
   findPublishedCovidTestSupplierPerCountry,
   createCovidTestSupplierListItem,
   getListItemContactInformation,
+  deleteListItem,
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
 import * as helpers from "../helpers";
+import { logger } from "server/services/logger";
 
 jest.mock("../db/prisma-client");
 
@@ -112,6 +114,14 @@ describe("ListItem Model:", () => {
     returnValue = sampleListItem
   ): jest.SpyInstance => {
     return prisma.listItem.create.mockResolvedValueOnce(
+      returnValue ?? sampleListItem
+    );
+  };
+
+  const spyListItemDelete = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.delete.mockResolvedValueOnce(
       returnValue ?? sampleListItem
     );
   };
@@ -1047,6 +1057,53 @@ describe("ListItem Model:", () => {
         contactPhoneNumber: "123",
         contactEmailAddress: "123",
       });
+    });
+  });
+
+  describe("deleteListItem", () => {
+    it("should throw an error if user id is not set", async () => {
+      await expect(
+        deleteListItem(0, undefined as unknown as number)
+      ).rejects.toThrow("deleteListItem Error: userId is undefined");
+    });
+
+    it("should run the correct transaction", async () => {
+      const spyDelete = spyListItemDelete();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
+      await deleteListItem(1, 2);
+
+      expect(spyTransaction).toHaveBeenCalledWith([
+        Promise.resolve(), // prisma.listItem.delete
+        Promise.resolve(), // recordListItemEvent
+      ]);
+      expect(spyDelete).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        },
+      });
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "delete",
+        itemId: 1,
+        userId: 2,
+      });
+    });
+
+    it("should throw the correct error if the transaction fails and log the error", async () => {
+      const spyTransaction = spyPrismaTransaction();
+
+      spyTransaction.mockRejectedValueOnce(
+        new Error("Something has gone wrong")
+      );
+
+      await expect(deleteListItem(1, 2)).rejects.toThrow(
+        "Failed to delete item"
+      );
+
+      expect(logger.error).toHaveBeenCalledWith(
+        "deleteListItem Error Something has gone wrong"
+      );
     });
   });
 });

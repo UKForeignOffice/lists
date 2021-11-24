@@ -342,6 +342,36 @@ export async function togglerListItemIsPublished({
   }
 }
 
+export async function deleteListItem(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("deleteListItem Error: userId is undefined");
+  }
+
+  try {
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.delete({
+        where: {
+          id,
+        },
+      }),
+      recordListItemEvent({
+        eventName: "delete",
+        itemId: id,
+        userId,
+      }),
+    ]);
+
+    return listItem;
+  } catch (e) {
+    logger.error(`deleteListItem Error ${e.message}`);
+
+    throw new Error("Failed to delete item");
+  }
+}
+
 interface SetEmailIsVerified {
   type?: ServiceType;
 }
