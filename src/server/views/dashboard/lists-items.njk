@@ -26,12 +26,14 @@
       {% for listItem in listItems %}
         <li id="item-{{ listItem.id }}">
           {% if list.type === 'covidTestProviders' %}
-            {{  covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
+            {{ covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
+            {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
           {% endif %}
           {% if list.type === 'lawyers' %}
-            {{  lawyersMacros.lawyersListItem(listItem) }}
+            {{ lawyersMacros.lawyersListManagementItem(listItem) }}
+            {# TODO: Re-enable publish when we're ready to go live #}
+            {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, false) }}
           {% endif %}
-          {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) }}
           <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         </li>
       {% endfor %}

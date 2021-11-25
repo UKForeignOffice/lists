@@ -58,4 +58,8 @@ main.govuk-main-wrapper {
     text-align: right;
     width: 50%;
   }
+
+  &__multi-line-text {
+    white-space: pre-line;
+  }
 }
