@@ -1,4 +1,5 @@
 {% from "button/macro.njk" import govukButton %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 
 {% macro navMenu(title, path, req) %}
   <li>
@@ -43,50 +44,59 @@
     <div class="govuk-form-group govuk-!-margin-bottom-0">
       <div class="dashboard__item-options">
         <div class="dashboard__item-publish">
-          <fieldset class="govuk-fieldset">
-            <div class="govuk-checkboxes govuk-checkboxes--small">
-              <div class="govuk-checkboxes__item">
-                <input
-                  class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler"
-                  id="approve-{{listItem.id}}"
-                  name="approve"
-                  type="checkbox"
-                  value="approve"
-                  data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
-                  data-id="{{listItem.id}}"
-                  {{-" checked" if listItem.isApproved }}
-                  {{-" disabled" if not canApprove }}
-                >
-                <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-                  <span class="govuk-visually-hidden">
-                    Confirm that {{ _.startCase(listItem.jsonData.organisationName) }}
-                  </span> Details have been checked
-                </label>
-              </div>
+          {% if (listItem.lat == 0) and (listItem.long == 0) %}
+            {{ govukWarningText({
+              classes: "govuk-!-margin-bottom-2",
+              iconFallbackText: "Warning",
+              text: "We were unable to locate the address"
+            }) }}
+          {% else %}
+            <fieldset class="govuk-fieldset">
+              <div class="govuk-checkboxes govuk-checkboxes--small">
                 <div class="govuk-checkboxes__item">
                   <input
-                    class="govuk-checkboxes__input"
-                    id="publish-{{ listItem.id }}"
-                    name="publish"
+                    class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler"
+                    id="approve-{{listItem.id}}"
+                    name="approve"
                     type="checkbox"
-                    value="publish"
+                    value="approve"
                     data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
-                    data-id="{{ listItem.id }}"
-                    aria-describedby="publish-{{ listItem.id }}-hint"
-                    {{-" checked" if listItem.isPublished }}
-                    {{-" disabled" if not canPublish or not listItem.isApproved }}
+                    data-id="{{listItem.id}}"
+                    {{-" checked" if listItem.isApproved }}
+                    {{-" disabled" if not canApprove }}
                   >
-                  <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                    Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                  <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
+                    Confirm
+                    <span class="govuk-visually-hidden">
+                      that {{ _.startCase(listItem.jsonData.organisationName) }}
+                    </span> details have been checked
                   </label>
                 </div>
-            </div>
-          </fieldset>
+                  <div class="govuk-checkboxes__item">
+                    <input
+                      class="govuk-checkboxes__input"
+                      id="publish-{{ listItem.id }}"
+                      name="publish"
+                      type="checkbox"
+                      value="publish"
+                      data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                      data-id="{{ listItem.id }}"
+                      aria-describedby="publish-{{ listItem.id }}-hint"
+                      {{-" checked" if listItem.isPublished }}
+                      {{-" disabled" if not canPublish or not listItem.isApproved }}
+                    >
+                    <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
+                      Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                    </label>
+                  </div>
+              </div>
+            </fieldset>
+          {% endif %}
         </div>
 
         <div class="dashboard__item-delete">
           {{ govukButton({
-            text: "Delete list item",
+            text: "Delete application",
             classes: "govuk-button--warning govuk-!-margin-bottom-2",
             attributes: {
               id: ["delete-", listItem.id] | join,

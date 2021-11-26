@@ -723,41 +723,56 @@ describe("ListItem Model:", () => {
   });
 
   describe("findListItemsForList", () => {
-    test("findMany command is correct", async () => {
-      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+    beforeEach(() => {
+      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+    });
 
+    test("findMany command is correct", async () => {
       await findListItemsForList({
         type: "lawyers",
         countryId: 1,
       } as any);
 
-      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
-        where: {
-          type: "lawyers",
-          address: { countryId: 1 },
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
-        },
-        include: {
-          address: {
-            select: {
-              id: true,
-              firstLine: true,
-              secondLine: true,
-              city: true,
-              postCode: true,
-              country: { select: { id: true, name: true } },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(`SELECT
+        "ListItem".*,
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine",
+              "Address"."secondLine",
+              "Address"."city",
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                  SELECT name
+                  FROM "Country"
+                  WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+              FROM "Address"
+              WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+
+        ST_X("GeoLocation"."location"::geometry) AS lat,
+        ST_Y("GeoLocation"."location"::geometry) AS long
+
+      FROM "ListItem"
+
+      INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+      INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+      INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+
+      WHERE "ListItem"."type" = 'lawyers'
+      AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
+      AND "Country".id = 1
+
+      ORDER BY "ListItem"."createdAt" DESC`);
     });
 
     test("findMany result is correct", async () => {
-      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
-
       const result = await findListItemsForList({
         type: "lawyers",
         countryId: 1,
@@ -767,7 +782,7 @@ describe("ListItem Model:", () => {
     });
 
     test("it rejects when findMany command fails", async () => {
-      prisma.listItem.findMany.mockRejectedValue({
+      prisma.$queryRaw.mockRejectedValueOnce({
         message: "findMany error message",
       });
 

@@ -199,40 +199,43 @@ export async function checkListItemExists({
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
-    const where = {
-      type: list.type,
-      address: {
-        countryId: list.countryId,
-      },
-      jsonData: {
-        path: ["metadata", "emailVerified"],
-        equals: true,
-      },
-    };
+    return await prisma.$queryRaw(`SELECT
+        "ListItem".*,
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine",
+              "Address"."secondLine",
+              "Address"."city",
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                  SELECT name
+                  FROM "Country"
+                  WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+              FROM "Address"
+              WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
 
-    return await prisma.listItem.findMany({
-      where,
-      include: {
-        address: {
-          select: {
-            id: true,
-            firstLine: true,
-            secondLine: true,
-            city: true,
-            postCode: true,
-            country: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        ST_X("GeoLocation"."location"::geometry) AS lat,
+        ST_Y("GeoLocation"."location"::geometry) AS long
+
+      FROM "ListItem"
+
+      INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+      INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+      INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+
+      ${pgescape(`WHERE "ListItem"."type" = %L`, list.type)}
+      AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
+      AND "Country".id = ${list.countryId}
+
+      ORDER BY "ListItem"."createdAt" DESC`);
   } catch (error) {
     logger.error(`approveLawyer Error ${error.message}`);
     throw new Error("Failed to approve lawyer");

@@ -184,7 +184,7 @@
           text: 'Email - public'
         },
         value: {
-          html: emailAddress(item.jsonData.publicEmailAddress, item.jsonData.publicEmailAddress) if publicEmailAddress else emailAddress(item.jsonData.emailAddress, item.jsonData.emailAddress)
+          html: emailAddress(item.jsonData.publicEmailAddress, item.jsonData.publicEmailAddress) if item.jsonData.publicEmailAddress else emailAddress(item.jsonData.emailAddress, item.jsonData.emailAddress)
         }
       },
       {
