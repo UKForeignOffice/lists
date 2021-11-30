@@ -50,6 +50,7 @@ export function configureHelmet(server: Express): void {
     helmet.contentSecurityPolicy({
       useDefaults: true,
       directives: {
+        connectSrc: [TRUSTED[0], GOOGLE_ANALYTICS_DOMAINS[0]],
         defaultSrc: [...TRUSTED, ...GOVUK_DOMAINS, ...GOOGLE_ANALYTICS_DOMAINS],
         scriptSrc: [
           generateCspNonce,
@@ -69,6 +70,7 @@ export function configureHelmet(server: Express): void {
           ...DATA,
           ...GOOGLE_STATIC_DOMAINS,
           GOOGLE_ANALYTICS_DOMAINS[3],
+          GOOGLE_ANALYTICS_DOMAINS[0],
         ],
         fontSrc: [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
         frameSrc: [...TRUSTED, ...DATA, GOOGLE_ANALYTICS_DOMAINS[3]],

@@ -29,7 +29,7 @@ export function cookiesPOSTController(req: Request, res: Response): void {
       secure: !isLocalHost,
       // disable encode as it breaks form-runner
       encode: (v) => v,
-      httpOnly: true,
+      httpOnly: false, // Set this to false so that Google tag manager can read cookie preferences
     }
   );
 
