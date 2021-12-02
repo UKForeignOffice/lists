@@ -5,7 +5,7 @@
 {% endmacro %}
 
 {% macro externalLink(href, label) %}
-  <a class="govuk-link" href="{{href}}" target="_blank">{{label}}</a>
+  <a class="govuk-link" href="{{href}}" target="_blank" rel="noopener noreferrer">{{label}}</a>
 {% endmacro %}
 
 {% macro phoneNumber(number, label) %}
