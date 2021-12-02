@@ -86,7 +86,7 @@
                       {{-" disabled" if not canPublish or not listItem.isApproved }}
                     >
                     <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                      Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
                     </label>
                   </div>
               </div>
@@ -134,7 +134,7 @@
           return response.json();
         }).then(function (result) {
           if (result.error !== undefined) {
-            alert("Oops, something went wrong, Error: " + error.message);
+            alert("Something went wrong, Error: " + error.message);
           } else {
             event.target.checked = result.isApproved;
 
@@ -157,7 +157,7 @@
           }
         })
         .catch(function () {
-          alert("Oops, something went wrong, please try again");
+          alert("Something went wrong, please try again");
         });
       }
     }
@@ -201,7 +201,7 @@
           });
         })
         .catch(function () {
-          alert("Oops, something went wrong, please try again");
+          alert("Something went wrong, please try again");
         });
       }
     }
@@ -232,7 +232,7 @@
           });
         })
         .catch(function () {
-          alert("Oops, something went wrong, please try again");
+          alert("Something went wrong, please try again");
         });
       }
     }

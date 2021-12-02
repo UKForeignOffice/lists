@@ -579,7 +579,7 @@ export async function findPublishedLawyersPerCountry(props: {
   const andWhere: string[] = [];
   const jsonQuery: {
     legalAid?: boolean;
-    proBonoService?: boolean;
+    proBono?: boolean;
   } = {};
 
   if (props.legalAid === "yes") {
@@ -587,7 +587,7 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   if (props.proBono === "yes") {
-    jsonQuery.proBonoService = true;
+    jsonQuery.proBono = true;
   }
 
   if (Object.keys(jsonQuery).length > 0) {

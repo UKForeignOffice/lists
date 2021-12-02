@@ -346,7 +346,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyers'
         AND "Country".name = 'France'
-        AND "ListItem"."jsonData" @> '{"legalAid":true,"proBonoService":true}'
+        AND "ListItem"."jsonData" @> '{"legalAid":true,"proBono":true}'
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
@@ -408,7 +408,7 @@ describe("ListItem Model:", () => {
 
       expect(spyLocation).toHaveBeenCalledWith("paris, France");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
-        expectedQuery.replace(',"proBonoService":true', "")
+        expectedQuery.replace(',"proBono":true', "")
       );
     });
 
