@@ -1,7 +1,7 @@
 import { authRoutes } from "server/components/auth";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem";
-import { List, UserRoles } from "server/models/types";
+import { List, ListItem, UserRoles } from "server/models/types";
 import * as userModel from "server/models/user";
 import {
   startRouteController,
@@ -10,13 +10,16 @@ import {
   listsController,
   listsItemsController,
   listsEditController,
+  listItemsDeleteController,
 } from "../controllers";
+import * as helpers from "../helpers";
 
 describe("Dashboard Controllers", () => {
   let mockReq: any;
   let mockRes: any;
   let mockNext: any;
   let list: List;
+  let listItem: ListItem;
   let spyFindListById: jest.SpyInstance;
   let spyUpdateList: jest.SpyInstance;
   let spyCreateList: jest.SpyInstance;
@@ -38,6 +41,7 @@ describe("Dashboard Controllers", () => {
     };
 
     mockRes = {
+      json: jest.fn(),
       render: jest.fn(),
       redirect: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -63,6 +67,19 @@ describe("Dashboard Controllers", () => {
         administrators: [mockReq.user.userData.email],
       },
       countryId: 1,
+    };
+
+    listItem = {
+      addressId: 11,
+      id: 2,
+      isApproved: true,
+      isBlocked: false,
+      isPublished: true,
+      reference: "TEST-UUID",
+      type: "lawyers",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      jsonData: {},
     };
   });
 
@@ -661,6 +678,101 @@ describe("Dashboard Controllers", () => {
         expect(spyFindListById).toHaveBeenCalledWith(list.id);
         expect(spyUpdateList).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("listItemsDeleteController", () => {
+    let userIsListPublisher: jest.SpyInstance;
+    let deleteListItem: jest.SpyInstance;
+
+    beforeEach(() => {
+      mockReq.params = {
+        listId: "1",
+        listItemId: "2",
+      };
+      mockReq.user.userData.id = 3;
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
+
+      jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
+        ...listItem,
+        address: {
+          firstLine: "Line 1",
+          postCode: "ABC 123",
+          city: "Test",
+          country: {
+            id: 99,
+            name: "Germany",
+          },
+        },
+      });
+
+      deleteListItem = jest
+        .spyOn(listItemModel, "deleteListItem")
+        .mockResolvedValue(listItem);
+    });
+
+    it("should redirect if user is undefined", async () => {
+      mockReq.user = undefined;
+
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
+    });
+
+    it("should return a 404 if list is not found", async () => {
+      spyFindListById.mockResolvedValueOnce(undefined);
+
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "Could not find list 1",
+        },
+      });
+    });
+
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
+      userIsListPublisher.mockReturnValueOnce(false);
+
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(403);
+
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
+    });
+
+    it("should call deleteListItem with the correct params", async () => {
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(deleteListItem).toHaveBeenCalledWith(2, 3);
+    });
+
+    it("should return a success response", async () => {
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        status: "OK",
+      });
+    });
+
+    it("should call next if an error is thrown", async () => {
+      const error = new Error("Something has gone wrong");
+
+      deleteListItem.mockRejectedValueOnce(error);
+
+      await listItemsDeleteController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
 });

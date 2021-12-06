@@ -2,7 +2,6 @@ import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
 import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
-import { successPageContent } from "./helpers";
 
 /**
  * Proxy middleware for the form runner
@@ -23,24 +22,12 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
 
         let data: string = proxyResData.toString("utf8");
 
-        // TODO: Find a better way to do this.
-        if (userReq.baseUrl.includes("/status")) {
-          if (
-            data.search("Sorry, there is a problem with the service") === -1
-          ) {
-            if (userReq.baseUrl.startsWith("/application/feedback")) {
-              // replace content of status page for feedback form
-              data = data.replace(
-                /(<main .*>)((.|\n)*?)(<\/main>)/im,
-                `$1${getFeedbackSuccessContent()}$4`
-              );
-            } else {
-              data = data.replace(
-                /(<main .*>)((.|\n)*?)(<\/main>)/im,
-                `$1${successPageContent}$4`
-              );
-            }
-          }
+        if (userReq.baseUrl.includes("/feedback/status")) {
+          // replace content of status page for feedback form
+          data = data.replace(
+            /(<main .*>)((.|\n)*?)(<\/main>)/im,
+            `$1${getFeedbackSuccessContent()}$4`
+          );
         }
 
         return data

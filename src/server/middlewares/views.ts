@@ -2,6 +2,7 @@ import path from "path";
 import { Buffer } from "buffer";
 import _, { get, capitalize } from "lodash";
 import nunjucks from "nunjucks";
+import nunjucksDate from "nunjucks-date";
 import { Express } from "express";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
@@ -33,6 +34,10 @@ export const configureViews = (server: Express): void => {
     .addGlobal("enforceHttps", enforceHttps)
     .addGlobal("parseDate", parseDate)
     .addGlobal("_", _);
+
+  // Date filter
+  nunjucksDate.setDefaultFormat("DD MMM YYYY");
+  nunjucksDate.install(engine);
 
   // dynamic globals
   server.use((req, res, next) => {

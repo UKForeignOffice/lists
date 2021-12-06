@@ -1,5 +1,5 @@
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
-@import "../../../node_modules/govuk-frontend/govuk/all";
+@import "~govuk-frontend/govuk/all";
 
 .answers-box {
   background-color: govuk-colour("light-grey");
@@ -42,5 +42,24 @@ main.govuk-main-wrapper {
     :checked + label {
       color: govuk-colour("green");
     }
+  }
+
+  &__item-options {
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__item-publish {
+    width: 60%;
+  }
+
+  &__item-delete {
+    text-align: right;
+    width: 40%;
+  }
+
+  &__multi-line-text {
+    white-space: pre-line;
   }
 }

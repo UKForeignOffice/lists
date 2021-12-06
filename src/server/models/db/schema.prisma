@@ -18,7 +18,7 @@ model List {
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
   countryId   Int
-  
+
   jsonData            Json
 
   @@index([type, countryId])
@@ -54,9 +54,9 @@ model Address {
   postCode    String   @db.VarChar(255)
   country     Country  @relation(fields: [countryId], references: [id])
   countryId   Int
-  
+
   ListItem    ListItem[]
-  
+
   geoLocation    GeoLocation?  @relation(fields: [geoLocationId], references: [id])
   geoLocationId   Int?
 }
@@ -83,7 +83,7 @@ model User {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  
+
   email     String    @unique
   jsonData  Json
 }

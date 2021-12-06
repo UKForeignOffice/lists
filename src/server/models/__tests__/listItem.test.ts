@@ -17,10 +17,12 @@ import {
   findPublishedCovidTestSupplierPerCountry,
   createCovidTestSupplierListItem,
   getListItemContactInformation,
+  deleteListItem,
 } from "../listItem";
 import * as audit from "../audit";
 import { ServiceType } from "../types";
 import * as helpers from "../helpers";
+import { logger } from "server/services/logger";
 
 jest.mock("../db/prisma-client");
 
@@ -112,6 +114,14 @@ describe("ListItem Model:", () => {
     returnValue = sampleListItem
   ): jest.SpyInstance => {
     return prisma.listItem.create.mockResolvedValueOnce(
+      returnValue ?? sampleListItem
+    );
+  };
+
+  const spyListItemDelete = (
+    returnValue = sampleListItem
+  ): jest.SpyInstance => {
+    return prisma.listItem.delete.mockResolvedValueOnce(
       returnValue ?? sampleListItem
     );
   };
@@ -336,7 +346,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyers'
         AND "Country".name = 'France'
-        AND "ListItem"."jsonData" @> '{"legalAid":true,"proBonoService":true}'
+        AND "ListItem"."jsonData" @> '{"legalAid":true,"proBono":true}'
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
@@ -398,7 +408,7 @@ describe("ListItem Model:", () => {
 
       expect(spyLocation).toHaveBeenCalledWith("paris, France");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
-        expectedQuery.replace(',"proBonoService":true', "")
+        expectedQuery.replace(',"proBono":true', "")
       );
     });
 
@@ -713,41 +723,56 @@ describe("ListItem Model:", () => {
   });
 
   describe("findListItemsForList", () => {
-    test("findMany command is correct", async () => {
-      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
+    beforeEach(() => {
+      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+    });
 
+    test("findMany command is correct", async () => {
       await findListItemsForList({
         type: "lawyers",
         countryId: 1,
       } as any);
 
-      expect(prisma.listItem.findMany).toHaveBeenCalledWith({
-        where: {
-          type: "lawyers",
-          address: { countryId: 1 },
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
-        },
-        include: {
-          address: {
-            select: {
-              id: true,
-              firstLine: true,
-              secondLine: true,
-              city: true,
-              postCode: true,
-              country: { select: { id: true, name: true } },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(`SELECT
+        "ListItem".*,
+        (
+          SELECT ROW_TO_JSON(a)
+          FROM (
+            SELECT
+              "Address"."firstLine",
+              "Address"."secondLine",
+              "Address"."city",
+              "Address"."postCode",
+              (
+                SELECT ROW_TO_JSON(c)
+                FROM (
+                  SELECT name
+                  FROM "Country"
+                  WHERE "Address"."countryId" = "Country"."id"
+                ) as c
+              ) as country
+              FROM "Address"
+              WHERE "Address".id = "ListItem"."addressId"
+          ) as a
+        ) as address,
+
+        ST_X("GeoLocation"."location"::geometry) AS lat,
+        ST_Y("GeoLocation"."location"::geometry) AS long
+
+      FROM "ListItem"
+
+      INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+      INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+      INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+
+      WHERE "ListItem"."type" = 'lawyers'
+      AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
+      AND "Country".id = 1
+
+      ORDER BY "ListItem"."createdAt" DESC`);
     });
 
     test("findMany result is correct", async () => {
-      prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
-
       const result = await findListItemsForList({
         type: "lawyers",
         countryId: 1,
@@ -757,7 +782,7 @@ describe("ListItem Model:", () => {
     });
 
     test("it rejects when findMany command fails", async () => {
-      prisma.listItem.findMany.mockRejectedValue({
+      prisma.$queryRaw.mockRejectedValueOnce({
         message: "findMany error message",
       });
 
@@ -1047,6 +1072,53 @@ describe("ListItem Model:", () => {
         contactPhoneNumber: "123",
         contactEmailAddress: "123",
       });
+    });
+  });
+
+  describe("deleteListItem", () => {
+    it("should throw an error if user id is not set", async () => {
+      await expect(
+        deleteListItem(0, undefined as unknown as number)
+      ).rejects.toThrow("deleteListItem Error: userId is undefined");
+    });
+
+    it("should run the correct transaction", async () => {
+      const spyDelete = spyListItemDelete();
+      const spyTransaction = spyPrismaTransaction();
+      const spyAudit = spyAuditRecordListItemEvent();
+
+      await deleteListItem(1, 2);
+
+      expect(spyTransaction).toHaveBeenCalledWith([
+        Promise.resolve(), // prisma.listItem.delete
+        Promise.resolve(), // recordListItemEvent
+      ]);
+      expect(spyDelete).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        },
+      });
+      expect(spyAudit).toHaveBeenCalledWith({
+        eventName: "delete",
+        itemId: 1,
+        userId: 2,
+      });
+    });
+
+    it("should throw the correct error if the transaction fails and log the error", async () => {
+      const spyTransaction = spyPrismaTransaction();
+
+      spyTransaction.mockRejectedValueOnce(
+        new Error("Something has gone wrong")
+      );
+
+      await expect(deleteListItem(1, 2)).rejects.toThrow(
+        "Failed to delete item"
+      );
+
+      expect(logger.error).toHaveBeenCalledWith(
+        "deleteListItem Error Something has gone wrong"
+      );
     });
   });
 });

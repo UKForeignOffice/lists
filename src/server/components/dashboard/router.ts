@@ -14,6 +14,7 @@ import {
   listsItemsController,
   listItemsApproveController,
   listItemsPublishController,
+  listItemsDeleteController,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 
@@ -47,6 +48,10 @@ dashboardRouter.put(
 dashboardRouter.put(
   dashboardRoutes.listsItemsPublish,
   listItemsPublishController
+);
+dashboardRouter.delete(
+  dashboardRoutes.listsItemsDelete,
+  listItemsDeleteController
 );
 
 // feedback

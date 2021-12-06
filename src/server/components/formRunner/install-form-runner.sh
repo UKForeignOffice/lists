@@ -33,7 +33,7 @@ cd $root_folder
 rm $form_runner_env_file
 touch $form_runner_env_file
 echo "PORT=3001" >> $form_runner_env_file
-echo "PRIVACY_POLICY_URL=https://www.gov.uk/help/privacy-notice" >> $form_runner_env_file
+echo "PRIVACY_POLICY_URL=https://www.gov.uk/government/publications/fcdo-privacy-notice-consular-services-in-the-uk-and-at-british-embassies-high-commissions-and-consulates-overseas/foreign-commonwealth-development-office-privacy-notice-consular-services-in-the-uk-and-missions-overseas" >> $form_runner_env_file
 echo "FEEDBACK_LINK=mailto:digitalservicesfeedback@fco.gov.uk" >> $form_runner_env_file
 echo "LOG_LEVEL=error" >> $form_runner_env_file
 if [ "$NODE_ENV" == "production" ]; then

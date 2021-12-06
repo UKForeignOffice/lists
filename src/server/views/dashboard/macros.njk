@@ -1,3 +1,6 @@
+{% from "button/macro.njk" import govukButton %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
 {% macro navMenu(title, path, req) %}
   <li>
     <a class="govuk-link {{ "govuk-link--no-underline" if req.path !== path }}" href="{{ path }}">
@@ -39,45 +42,70 @@
 {% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
   <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
     <div class="govuk-form-group govuk-!-margin-bottom-0">
-      <fieldset class="govuk-fieldset">
-        <div class="govuk-checkboxes govuk-checkboxes--small">          
-          <div class="govuk-checkboxes__item">
-            <input 
-              class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler" 
-              id="approve-{{listItem.id}}" 
-              name="approve" 
-              type="checkbox" 
-              value="approve" 
-              data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
-              data-id="{{listItem.id}}"
-              {{-" checked" if listItem.isApproved }}
-              {{-" disabled" if not canApprove }}
-            >
-            <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-              <span class="govuk-visually-hidden">
-                Confirm that {{ _.startCase(listItem.jsonData.organisationName) }}
-              </span> Details have been checked
-            </label>
-          </div>
-            <div class="govuk-checkboxes__item">
-              <input 
-                class="govuk-checkboxes__input" 
-                id="publish-{{ listItem.id }}" 
-                name="publish" 
-                type="checkbox" 
-                value="publish" 
-                data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
-                data-id="{{ listItem.id }}"
-                aria-describedby="publish-{{ listItem.id }}-hint"
-                {{-" checked" if listItem.isPublished }}
-                {{-" disabled" if not canPublish or not listItem.isApproved }}
-              >
-              <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                Publish <span aria-hidden="true">these</span><span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
-              </label>
-            </div>
+      <div class="dashboard__item-options">
+        <div class="dashboard__item-publish">
+          {% if (listItem.lat == 0) and (listItem.long == 0) %}
+            {{ govukWarningText({
+              classes: "govuk-!-margin-bottom-2",
+              iconFallbackText: "Warning",
+              text: "We were unable to locate the address"
+            }) }}
+          {% else %}
+            <fieldset class="govuk-fieldset">
+              <div class="govuk-checkboxes govuk-checkboxes--small">
+                <div class="govuk-checkboxes__item">
+                  <input
+                    class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler"
+                    id="approve-{{listItem.id}}"
+                    name="approve"
+                    type="checkbox"
+                    value="approve"
+                    data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                    data-id="{{listItem.id}}"
+                    {{-" checked" if listItem.isApproved }}
+                    {{-" disabled" if not canApprove }}
+                  >
+                  <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
+                    Confirm
+                    <span class="govuk-visually-hidden">
+                      that {{ _.startCase(listItem.jsonData.organisationName) }}
+                    </span> details have been checked
+                  </label>
+                </div>
+                  <div class="govuk-checkboxes__item">
+                    <input
+                      class="govuk-checkboxes__input"
+                      id="publish-{{ listItem.id }}"
+                      name="publish"
+                      type="checkbox"
+                      value="publish"
+                      data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                      data-id="{{ listItem.id }}"
+                      aria-describedby="publish-{{ listItem.id }}-hint"
+                      {{-" checked" if listItem.isPublished }}
+                      {{-" disabled" if not canPublish or not listItem.isApproved }}
+                    >
+                    <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
+                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                    </label>
+                  </div>
+              </div>
+            </fieldset>
+          {% endif %}
         </div>
-      </fieldset>
+
+        <div class="dashboard__item-delete">
+          {{ govukButton({
+            text: "Delete application",
+            classes: "govuk-button--warning govuk-!-margin-bottom-2",
+            attributes: {
+              id: ["delete-", listItem.id] | join,
+              "data-title": _.startCase(listItem.jsonData.organisationName),
+              "data-id": listItem.id
+            }
+          }) }}
+        </div>
+      </div>
     </div>
   </div>
   <script nonce="{{cspNonce}}">
@@ -89,14 +117,14 @@
       const id = event.target.getAttribute("data-id");
       const title = event.target.getAttribute("data-title");
       const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
-      
+
       const action = isConfirming ? "confirm" : "unconfirm";
       let confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
-      
+
       if (isConfirming) {
         confirmMessage += '\n\nBy ticking "Details have been checked" you confirm that the provider’s details meet the requirements to be added to the list.'
       }
-      
+
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
@@ -106,10 +134,10 @@
           return response.json();
         }).then(function (result) {
           if (result.error !== undefined) {
-            alert("Oops, something went wrong, Error: " + error.message);
+            alert("Something went wrong, Error: " + error.message);
           } else {
             event.target.checked = result.isApproved;
-          
+
             if (result.isApproved) {
               if(`{{canPublish}}` === 'true') {
                 publishCheckbox.disabled = false;
@@ -129,7 +157,7 @@
           }
         })
         .catch(function () {
-          alert("Oops, something went wrong, please try again");
+          alert("Something went wrong, please try again");
         });
       }
     }
@@ -149,7 +177,7 @@
       } else {
         confirmMessage  += "\n\nThis will automatically remove the provider’s details from GOV.UK. You can republish the provider details by reticking the 'Publish these details' checkbox"
       }
-      
+
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
@@ -173,7 +201,38 @@
           });
         })
         .catch(function () {
-          alert("Oops, something went wrong, please try again");
+          alert("Something went wrong, please try again");
+        });
+      }
+    }
+
+    document.getElementById("delete-{{ listItem.id }}").onclick = function deleteListItem(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const title = event.target.getAttribute("data-title");
+      const id = event.target.getAttribute("data-id");
+      const message = `Are you sure you want to delete "${title}"? This will permanently delete this item from the list`;
+
+      if (confirm(message)) {
+        fetch("{{ dashboardRoutes.listsItemsDelete.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        }).then(function (response) {
+          return response.json();
+        }).then(function (result) {
+          if (result.error !== undefined) {
+            alert(result.error.message);
+          } else {
+              document.getElementById("item-{{ listItem.id }}").remove();
+          }
+
+          setTimeout(function () {
+            alert(`"${title}" has been deleted.`);
+          });
+        })
+        .catch(function () {
+          alert("Something went wrong, please try again");
         });
       }
     }
