@@ -13,6 +13,6 @@ export const dashboardRoutes = {
   listsEdit: "/dashboard/lists/:listId",
   listsItems: "/dashboard/lists/:listId/items",
   listsItemsApprove: "/dashboard/lists/:listId/items/:listItemId/approve",
-  listsItemsDelete: "/dashboard/lists/:listId/items/:listItemId/delete",
+  listsItemsDelete: "/dashboard/lists/:listId/items/:listItemId",
   listsItemsPublish: "/dashboard/lists/:listId/items/:listItemId/publish",
 };
