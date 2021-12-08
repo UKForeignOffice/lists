@@ -509,6 +509,13 @@ describe("ListItem Model:", () => {
       expect(spyUpdate).toHaveBeenCalledWith({
         where: { id: 123 },
         data: { isPublished: true },
+        include: {
+          address: {
+            include: {
+              country: true,
+            },
+          },
+        },
       });
       expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
       expect(spyAudit).toHaveBeenCalledWith({
@@ -533,6 +540,13 @@ describe("ListItem Model:", () => {
       expect(spyUpdate).toHaveBeenCalledWith({
         where: { id: 123 },
         data: { isPublished: false },
+        include: {
+          address: {
+            include: {
+              country: true,
+            },
+          },
+        },
       });
       expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
       expect(spyAudit).toHaveBeenCalledWith({

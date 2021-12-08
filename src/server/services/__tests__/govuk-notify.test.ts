@@ -214,20 +214,33 @@ describe("GOVUK Notify service:", () => {
 
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
+      const type = "COVID-19 test providers";
+      const country = "Germany";
       const searchLink =
         "http://localhost:3000/find?serviceType=covidTestProviders";
 
       const result = await sendDataPublishedEmail(
         contactName,
         emailAddress,
+        type,
+        country,
         searchLink
       );
 
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
-        emailAddress,
-        { personalisation: { searchLink, contactName } }
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            contactName: "Ada Lovelace",
+            country: "Germany",
+            searchLink:
+              "http://localhost:3000/find?serviceType=covidTestProviders",
+            type: "COVID-19 test provider",
+            typePlural: "COVID-19 test providers",
+          },
+        }
       );
     });
 
@@ -239,12 +252,15 @@ describe("GOVUK Notify service:", () => {
 
       const contactName = "Ada Lovelace";
       const emailAddress = "testemail@gov.uk";
-      const searchLink =
-        "http://localhost:3000/find?serviceType=covidTestProviders";
+      const type = "lawyers";
+      const country = "Germany";
+      const searchLink = "http://localhost:3000/find?serviceType=lawyers";
 
       const result = await sendDataPublishedEmail(
         contactName,
         emailAddress,
+        type,
+        country,
         searchLink
       );
 
