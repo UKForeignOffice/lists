@@ -1,4 +1,5 @@
 import { NotifyClient } from "notifications-node-client";
+import pluralize from "pluralize";
 import * as config from "server/config";
 import { logger } from "./logger";
 import {
@@ -83,16 +84,22 @@ export async function sendApplicationConfirmationEmail(
 export async function sendDataPublishedEmail(
   contactName: string,
   emailAddress: string,
+  typePlural: string,
+  country: string,
   searchLink: string
 ): Promise<boolean> {
   try {
+    const type = pluralize.singular(typePlural);
     const { statusText } = await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim(),
       emailAddress,
       {
         personalisation: {
+          country,
           contactName,
           searchLink,
+          type,
+          typePlural,
         },
       }
     );

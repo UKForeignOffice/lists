@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim, pick, compact, noop, get } from "lodash";
+import { startCase, toLower, trim, pick, compact, get } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -41,6 +41,7 @@ import {
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
+import serviceName from "server/utils/service-name";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -476,11 +477,15 @@ export async function listItemsPublishController(
       const searchLink = createListSearchBaseLink(updatedListItem.type);
       const { contactName, contactEmailAddress } =
         getListItemContactInformation(updatedListItem);
-      sendDataPublishedEmail(
+      const typeName = serviceName(updatedListItem.type);
+
+      await sendDataPublishedEmail(
         contactName,
         contactEmailAddress,
+        typeName,
+        updatedListItem.address.country.name,
         searchLink
-      ).catch(noop);
+      );
     }
 
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });

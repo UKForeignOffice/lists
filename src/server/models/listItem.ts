@@ -321,7 +321,7 @@ export async function togglerListItemIsPublished({
   id: number;
   isPublished: boolean;
   userId: User["id"];
-}): Promise<ListItem> {
+}): Promise<ListItemWithAddressCountry> {
   if (userId === undefined) {
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
@@ -331,6 +331,13 @@ export async function togglerListItemIsPublished({
       prisma.listItem.update({
         where: { id },
         data: { isPublished },
+        include: {
+          address: {
+            include: {
+              country: true,
+            },
+          },
+        },
       }),
       recordListItemEvent({
         eventName: isPublished ? "publish" : "unpublish",
@@ -338,9 +345,11 @@ export async function togglerListItemIsPublished({
         userId,
       }),
     ]);
+
     return listItem;
   } catch (error) {
     logger.error(`publishLawyer Error ${error.message}`);
+
     throw new Error("Failed to publish lawyer");
   }
 }

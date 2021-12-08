@@ -28,6 +28,7 @@ import {
   CovidTestSupplierFormWebhookData,
 } from "server/components/formRunner";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
+import serviceName from "server/utils/service-name";
 
 export async function listsPostController(
   req: Request,
@@ -183,9 +184,7 @@ export async function listsDataIngestionController(
   try {
     const item = await listItem.createListItem(serviceType, data);
     const { address, reference, type } = item;
-    const typeName = [ServiceType.covidTestProviders, ServiceType.lawyers].find(
-      (name) => name === type
-    );
+    const typeName = serviceName(type);
 
     if (typeName !== undefined) {
       const { country } = address;
