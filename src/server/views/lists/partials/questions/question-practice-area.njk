@@ -22,14 +22,14 @@
             id="practice-area-{{practiceArea.toLowerCase()}}"
             name="practiceArea"
             type="checkbox"
-            value="{{ practiceArea.toLowerCase() }}"
+            value="{{ practiceArea }}"
           />
           <label
             class="govuk-label govuk-checkboxes__label"
             for="practice-area-{{ practiceArea.toLowerCase() }}"
           >
             {{ practiceArea }}
-          </label>  
+          </label>
         </div>
         {% endfor %}
         <div class="govuk-checkboxes__item">
@@ -45,7 +45,7 @@
             for="practice-area-other"
           >
             Other
-          </label>  
+          </label>
         </div>
         <input
           aria-hidden="true"
