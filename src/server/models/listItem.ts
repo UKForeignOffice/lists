@@ -605,6 +605,14 @@ export async function findPublishedLawyersPerCountry(props: {
     );
   }
 
+  if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
+    andWhere.push(
+      `AND ARRAY(select jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw')) && ARRAY ${JSON.stringify(
+        props.practiceArea
+      ).replace(/"/g, "'")}`
+    );
+  }
+
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,
