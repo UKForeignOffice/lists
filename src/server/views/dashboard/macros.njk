@@ -39,7 +39,7 @@
   </div>
 {% endmacro %}
 
-{% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
+{% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish, titleProperty) %}
   <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
     <div class="govuk-form-group govuk-!-margin-bottom-0">
       <div class="dashboard__item-options">
@@ -60,7 +60,7 @@
                     name="approve"
                     type="checkbox"
                     value="approve"
-                    data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                    data-title="{{ _.startCase(titleProperty) }}"
                     data-id="{{listItem.id}}"
                     {{-" checked" if listItem.isApproved }}
                     {{-" disabled" if not canApprove }}
@@ -68,7 +68,7 @@
                   <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
                     Confirm
                     <span class="govuk-visually-hidden">
-                      that {{ _.startCase(listItem.jsonData.organisationName) }}
+                      that {{ _.startCase(titleProperty) }}
                     </span> details have been checked
                   </label>
                 </div>
@@ -79,14 +79,14 @@
                       name="publish"
                       type="checkbox"
                       value="publish"
-                      data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                      data-title="{{ _.startCase(titleProperty) }}"
                       data-id="{{ listItem.id }}"
                       aria-describedby="publish-{{ listItem.id }}-hint"
                       {{-" checked" if listItem.isPublished }}
                       {{-" disabled" if not canPublish or not listItem.isApproved }}
                     >
                     <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(titleProperty) }}</span> details
                     </label>
                   </div>
               </div>
@@ -100,7 +100,7 @@
             classes: "govuk-button--warning govuk-!-margin-bottom-2",
             attributes: {
               id: ["delete-", listItem.id] | join,
-              "data-title": _.startCase(listItem.jsonData.organisationName),
+              "data-title": _.startCase(titleProperty),
               "data-id": listItem.id
             }
           }) }}
