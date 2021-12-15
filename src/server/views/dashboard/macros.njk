@@ -39,7 +39,7 @@
   </div>
 {% endmacro %}
 
-{% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish) %}
+{% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish, titleProperty) %}
   <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
     <div class="govuk-form-group govuk-!-margin-bottom-0">
       <div class="dashboard__item-options">
@@ -60,7 +60,7 @@
                     name="approve"
                     type="checkbox"
                     value="approve"
-                    data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                    data-title="{{ _.startCase(titleProperty) }}"
                     data-id="{{listItem.id}}"
                     {{-" checked" if listItem.isApproved }}
                     {{-" disabled" if not canApprove }}
@@ -68,7 +68,7 @@
                   <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
                     Confirm
                     <span class="govuk-visually-hidden">
-                      that {{ _.startCase(listItem.jsonData.organisationName) }}
+                      that {{ _.startCase(titleProperty) }}
                     </span> details have been checked
                   </label>
                 </div>
@@ -79,14 +79,14 @@
                       name="publish"
                       type="checkbox"
                       value="publish"
-                      data-title="{{ _.startCase(listItem.jsonData.organisationName) }}"
+                      data-title="{{ _.startCase(titleProperty) }}"
                       data-id="{{ listItem.id }}"
                       aria-describedby="publish-{{ listItem.id }}-hint"
                       {{-" checked" if listItem.isPublished }}
                       {{-" disabled" if not canPublish or not listItem.isApproved }}
                     >
                     <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(listItem.jsonData.organisationName) }}</span> details
+                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(titleProperty) }}</span> details
                     </label>
                   </div>
               </div>
@@ -100,7 +100,7 @@
             classes: "govuk-button--warning govuk-!-margin-bottom-2",
             attributes: {
               id: ["delete-", listItem.id] | join,
-              "data-title": _.startCase(listItem.jsonData.organisationName),
+              "data-title": _.startCase(titleProperty),
               "data-id": listItem.id
             }
           }) }}
@@ -114,16 +114,10 @@
       event.stopPropagation();
 
       const isConfirming = event.target.checked;
-      const id = event.target.getAttribute("data-id");
       const title = event.target.getAttribute("data-title");
       const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
 
-      const action = isConfirming ? "confirm" : "unconfirm";
-      let confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?';
-
-      if (isConfirming) {
-        confirmMessage += '\n\nBy ticking "Details have been checked" you confirm that the provider’s details meet the requirements to be added to the list.'
-      }
+      const confirmMessage = isConfirming ? `Do you confirm you have checked the details of ${title} and that they meet the requirements?` : `Do you want to unconfirm ${title}?`;
 
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
@@ -134,7 +128,7 @@
           return response.json();
         }).then(function (result) {
           if (result.error !== undefined) {
-            alert("Something went wrong, Error: " + error.message);
+            alert("Something went wrong. Please try again.");
           } else {
             event.target.checked = result.isApproved;
 
@@ -149,15 +143,15 @@
 
             setTimeout(function () {
               if (isConfirming) {
-                alert("You have successfully confirmed " + title + "’s details meet the requirements to be added to the list.");
+                alert(`You have confirmed ${title} meets the requirements to be added to the list.`);
               } else {
-                alert(title + " details have been unconfirmed");
+                alert(`You have unconfirmed the details of ${title}.`);
               }
             });
           }
         })
         .catch(function () {
-          alert("Something went wrong, please try again");
+          alert("Something went wrong. Please try again.");
         });
       }
     }
@@ -167,16 +161,8 @@
       event.stopPropagation();
 
       const title = event.target.getAttribute("data-title");
-      const id = event.target.getAttribute("data-id");
       const isPublishing = event.target.checked;
-      const action = event.target.checked ? "publish" : "unpublish";
-      let confirmMessage = 'Do you really want to ' + action + ' "' + title + '"?'
-
-      if (isPublishing) {
-        confirmMessage += "\n\nThis will automatically upload the provider’s details on GOV.UK. You can unpublish or remove the provider details by unticking the 'Publish these details' checkbox"
-      } else {
-        confirmMessage  += "\n\nThis will automatically remove the provider’s details from GOV.UK. You can republish the provider details by reticking the 'Publish these details' checkbox"
-      }
+      const confirmMessage = isPublishing ? `Do you want to publish the details of ${title}?\n\nTheir details will be published immediately on GOV.UK.` : `Do you want to unpublish the details of ${title}?\n\nTheir details will be removed immediately from GOV.UK. `
 
       if (confirm(confirmMessage)) {
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
@@ -187,21 +173,21 @@
           return response.json();
         }).then(function (result) {
           if (result.error !== undefined) {
-            alert(result.error.message);
+            alert("Something went wrong. Please try again.");
           } else {
             event.target.checked = result.isPublished;
-          }
 
-          setTimeout(function () {
-            if(isPublishing) {
-              alert(title + " has been successfully published on GOV.UK Find a Professional Service Abroad");
-            } else {
-              alert(title + " has been successfully removed from GOV.UK Find a Professional Service Abroad");
-            }
-          });
+            setTimeout(function () {
+              if(isPublishing) {
+                alert(`The details of ${title} have been published on GOV.UK.\n\nIf you need to unpublish the details, untick the 'Publish these details' checkbox.`);
+              } else {
+                alert(`The details of ${title} have been removed from GOV.UK.\n\nIf you need to republish the details, tick the 'Publish these details' checkbox again.`);
+              }
+            });
+          }
         })
         .catch(function () {
-          alert("Something went wrong, please try again");
+          alert("Something went wrong. Please try again.");
         });
       }
     }
@@ -211,8 +197,7 @@
       event.stopPropagation();
 
       const title = event.target.getAttribute("data-title");
-      const id = event.target.getAttribute("data-id");
-      const message = `Are you sure you want to delete "${title}"? This will permanently delete this item from the list`;
+      const message = `Are you sure you want to permanently delete the application of ${title}?`;
 
       if (confirm(message)) {
         fetch("{{ dashboardRoutes.listsItemsDelete.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
@@ -222,17 +207,17 @@
           return response.json();
         }).then(function (result) {
           if (result.error !== undefined) {
-            alert(result.error.message);
+            alert("Something went wrong. Please try again.");
           } else {
-              document.getElementById("item-{{ listItem.id }}").remove();
-          }
+            document.getElementById("item-{{ listItem.id }}").remove();
 
-          setTimeout(function () {
-            alert(`"${title}" has been deleted.`);
-          });
+            setTimeout(function () {
+              alert(`The application of ${title} has been deleted.`);
+            });
+          }
         })
         .catch(function () {
-          alert("Something went wrong, please try again");
+          alert("Something went wrong. Please try again.");
         });
       }
     }
