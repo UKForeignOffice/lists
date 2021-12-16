@@ -25,10 +25,7 @@
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
-    "form-runner:start": "cd ./lib/form-runner && yarn runner start",
-    "version:patch": "npm --no-git-tag-version version patch",
-    "version:minor": "npm --no-git-tag-version version minor",
-    "version:major": "npm --no-git-tag-version version major"
+    "form-runner:start": "cd ./lib/form-runner && yarn runner start"
   },
   "dependencies": {
     "@prisma/client": "^2.29.1",
