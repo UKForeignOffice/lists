@@ -817,6 +817,8 @@ describe("ListItem Model:", () => {
 
       expect(prisma.listItem.findMany).toHaveBeenCalledWith({
         where: {
+          isApproved: true,
+          isPublished: true,
           type: ServiceType.covidTestProviders,
           address: {
             country: {
