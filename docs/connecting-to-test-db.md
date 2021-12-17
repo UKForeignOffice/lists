@@ -1,6 +1,6 @@
 # Connecting to test environment database
 
-In order to connect to the test environment database you will need to be connected to the VPN. You will also need to source the `aws_helper_cyb.sh` script from the `configuarable-forms-infrastructure` repo and have `Kubernetes` and `Kubectl` installed.
+In order to connect to the test environment database you will need to be connected to the VPN. You will also need to source the `aws_helper_cyb.sh` script from the [UKForeignOffice/configurable-forms-infrastructure](https://github.com/UKForeignOffice/configurable-forms-infrastructure) repo and have `Kubernetes` and `Kubectl` installed.
 
 Please make sure you have your username and password set up and to hand, without these you will not be able to access the server.
 

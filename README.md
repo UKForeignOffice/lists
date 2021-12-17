@@ -88,24 +88,9 @@ Form runner variables:
 | ------- | :-----: | :------: | :-------------------------------------------------------------------------------------- |
 | sandbox | boolean |  false   | Configure form-runner to work locally with a single redis instance instead of a cluster |
 
-### Starting Lists service
+### Getting started
 
-```
-npm run dev
-```
-
-To above command will start the service in watch mode and whenever you change any file the application will be recompiled and restarted.
-
-### Preparing the database
-
-```bash
-npm run prisma:reset
-```
-
-The above npm script will invoke `prisma migrate` and this is what is going to happen:
-
-- Database will reset and **all data will be removed**
-- All prisma migrations will be applied
+Follow the instructions [here](docs/getting-started.md) to get started.
 
 ### Codebase
 

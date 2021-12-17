@@ -4,6 +4,8 @@ You will need to be running the version of NodeJS set in the `.nvmrc` file in th
 
 You can quickly install Yarn by running `npm i -g yarn`. If you are running multiple versions of Node on your machine you will need to make sure you install Yarn on the specific version Node you are using as the installation will not jump between different versions of NodeJS.
 
+Whilst the List application uses `npm` as its package manager, the Form Runner application uses `Yarn`, which is why you need to have it installed.
+
 ## Installation
 
 Once you have cloned the repo, run `npm ci` to install the required dependencies.
