@@ -451,6 +451,8 @@ export async function some(
   try {
     const result = await prisma.listItem.findMany({
       where: {
+        isApproved: true,
+        isPublished: true,
         type: serviceType,
         address: {
           country: {
