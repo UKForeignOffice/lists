@@ -1,0 +1,4 @@
+{
+  "chromeWebSecurity": false,
+  "testFiles": ["cypress/**/*.feature"]
+}
