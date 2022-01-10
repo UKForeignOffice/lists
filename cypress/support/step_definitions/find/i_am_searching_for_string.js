@@ -8,9 +8,10 @@ Given(
   "I am searching for {string} in {string} in {string}",
   (profession, country, city) => {
     cy.visit(urls[profession]);
-    cy.findByRole("button", { name: "Accept additional cookies" }).click();
+    cy.findByRole("button", { name: "Reject analytics cookies" }).click();
     cy.findByRole("button", { name: "Continue" }).click();
-    cy.findByRole("input").type(`${country}{enter}`);
-    cy.findByRole("input").type(`${city}{enter}`);
+    cy.findByRole("combobox").type(`${country}`);
+    cy.findByRole("button", { name: "Continue" }).click();
+    cy.findByRole("textbox").type(`${city}{enter}`);
   }
 );
