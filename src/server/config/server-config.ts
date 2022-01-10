@@ -1,11 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config({
-  path:
-    process.env.NODE_ENV === "development"
-      ? "keybase://team/cautionyourblast.fcdo/config/dev/lists/.env"
-      : "",
-});
+dotenv.config();
 
 // Server config
 export const PORT = process.env.PORT ?? 3000;
