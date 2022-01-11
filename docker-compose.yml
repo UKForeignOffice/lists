@@ -1,14 +1,16 @@
 version: "3.9"
 services:
   postgres:
-    platform: linux/amd64
-    image: "postgis/postgis"
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: ./docker/db/Dockerfile
     # if you are on Mac M1 please use the image below
     # see https://github.com/docker/for-mac/issues/5122
     # image: "gangstead/postgis:13-3.1-arm"
     environment:
-      - POSTGRES_DB=service-finder-db
-      - POSTGRES_USER=postgresuser
+      - POSTGRES_DB=lists
+      - POSTGRES_USER=master
       - POSTGRES_PASSWORD=postgrespass
     ports:
       - "5432:5432"
