@@ -1,5 +1,22 @@
 {% import "./macros.njk" as macros %}
 
+<h2 class="govuk-heading-l govuk-!-margin-bottom-4">Lawyers in {{ _.upperFirst(country) }}</h2>
+
+<p class="govuk-body">Where lawyers work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
+  system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted</p>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    You should do your own research before deciding which provider to use.
+  </strong>
+</div>
+
+<p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
+  arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
+  should not be treated as such.</p>
+
 <ul class="govuk-list">
   {% if searchResults.length === 0 %}
     <li>
@@ -13,3 +30,41 @@
     </li>
   {% endfor %}
 </ul>
+
+<div class="fcdo-pagination">
+  <ul class="fcdo-pagination__list-items">
+    {% if pagination.previous.href !== "" %}
+      <li class="fcdo-pagination__item" id="prevButton">
+        <a class="fcdo-pagination__link fcdo-pagination__item--prev" href="{{ pagination.previous.href }}">
+          Previous
+        </a>
+      </li>
+    {% endif %}
+    {% for item in pagination.items %}
+      {% set itemNumber = item.text | int  %}
+      <li class="fcdo-pagination__item">
+        {% if itemNumber === pagination.results.currentPage %}
+          <span class="fcdo-pagination__current-page">
+        {{ item.text }}
+      </span>
+        {% else %}
+          <a class="fcdo-pagination__link" href="{{ item.href }}">
+            {{ item.text }}
+          </a>
+        {% endif %}
+      </li>
+    {%  endfor %}
+    {% if pagination.next.href !== "" %}
+      <li class="fcdo-pagination__item" id="nextButton">
+        <a class="fcdo-pagination__link fcdo-pagination__item--next fcdo-pagination__link--last" href="{{ pagination.next.href }}">
+          Next
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+  <p class="fcdo-pagination__results">
+    Showing <span class="fcdo-pagination__results-num">{{ pagination.results.from }}</span>
+    to <span class="fcdo-pagination__results-num">{{ pagination.results.to }}</span>
+    of <span class="fcdo-pagination__results-num">{{ pagination.results.count }}</span> results
+  </p>
+</div>

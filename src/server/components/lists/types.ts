@@ -36,4 +36,5 @@ export interface ListsRequestParams {
   readNotice?: string;
   readDisclaimer?: string;
   resultsTurnaround?: string;
+  page?: number;
 }

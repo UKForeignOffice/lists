@@ -93,8 +93,10 @@ function fetchPublishedListItemQuery(props: {
   countryName: string;
   fromGeoPoint?: Point;
   andWhere?: string;
+  limit: number;
+  offset: number;
 }): string {
-  const { type, countryName, fromGeoPoint, andWhere } = props;
+  const { type, countryName, fromGeoPoint, andWhere, limit, offset } = props;
   const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
   const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
 
@@ -109,6 +111,10 @@ function fetchPublishedListItemQuery(props: {
     `;
 
     orderBy = "ORDER BY distanceInMeters ASC";
+  }
+  let limitOffset = "";
+  if (limit >= 0 && offset >= 0) {
+    limitOffset = `LIMIT ${limit} OFFSET ${offset}`;
   }
 
   return `
@@ -150,7 +156,7 @@ function fetchPublishedListItemQuery(props: {
     AND "ListItem"."isPublished" = true
     AND "ListItem"."isBlocked" = false
     ${orderBy}
-    LIMIT 20
+    ${limitOffset}
   `;
 }
 
@@ -581,11 +587,14 @@ export async function findPublishedLawyersPerCountry(props: {
   legalAid?: "yes" | "no" | "";
   proBono?: "yes" | "no" | "";
   practiceArea?: string[];
+  limit?: number;
+  offset?: number;
 }): Promise<LawyerListItemGetObject[]> {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
-
+  const limit = (props.limit ?? 0);
+  const offset = (props.offset ?? 0);
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
   const jsonQuery: {
@@ -626,6 +635,8 @@ export async function findPublishedLawyersPerCountry(props: {
       countryName,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
+      limit,
+      offset
     });
 
     return await prisma.$queryRaw(query);
@@ -772,6 +783,9 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
+  // @todo page parameter needs to be retrieved from the request.  Refactor once lawyers has been implemented.
+  const limit = 1;
+  const offset = 20;
 
   try {
     let andWhere: string = "";
@@ -795,6 +809,8 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       countryName,
       fromGeoPoint,
       andWhere,
+      limit,
+      offset
     });
 
     return await prisma.$queryRaw(query);

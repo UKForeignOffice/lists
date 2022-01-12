@@ -36,6 +36,7 @@ export async function listsPostController(
   next: NextFunction
 ): Promise<void> {
   const params = getAllRequestParams(req);
+  params.page = 1;
   const queryString = queryStringFromParams(params);
 
   const { country, serviceType } = params;
@@ -71,6 +72,9 @@ export async function listsPostController(
 
 export function listsGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
+  if (params.page === undefined || params.page <= 0) {
+    params.page = 1;
+  }
   const queryString = queryStringFromParams(params);
   const { serviceType } = params;
 
