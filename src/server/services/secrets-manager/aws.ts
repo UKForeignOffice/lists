@@ -82,9 +82,3 @@ export async function getSecretValue(secretName: string): Promise<string> {
     }
   }
 }
-
-export default {
-  getSecretValue,
-  rotateSecret,
-  createSecret,
-};

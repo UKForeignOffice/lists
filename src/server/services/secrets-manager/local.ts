@@ -115,9 +115,3 @@ export async function getSecretValue(secretName: string): Promise<string> {
     return await getSecretValue(secretName);
   }
 }
-
-export default {
-  getSecretValue,
-  rotateSecret,
-  createSecret,
-};
