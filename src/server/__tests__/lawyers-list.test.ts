@@ -104,7 +104,7 @@ describe("Lawyers List:", () => {
         .send({ region: "madrid" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&region=madrid`);
+      expect(header.location).toBe(`${pageLink}&region=madrid&page=1`);
     });
 
     test("accessibility", async () => {
@@ -306,27 +306,27 @@ describe("Lawyers List:", () => {
       `);
 
       expect(answers.eq(1).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok&page=1%2C1"
       );
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-        Area
+        Regions covered
         Madrid
         Change
       `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&legalAid=no&readDisclaimer=ok&page=1%2C1"
       );
 
       // legal practice areas
       expect(answers.eq(3).text()).toEqual(`
-        Fields of law
+        Areas of law
         Maritime, Real Estate
         Change
       `);
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&legalAid=no&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&legalAid=no&readDisclaimer=ok&page=1%2C1"
       );
 
       // legal aid
@@ -336,14 +336,14 @@ describe("Lawyers List:", () => {
         Change
       `);
       expect(answers.eq(4).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok&page=1%2C1"
       );
     });
 
     test("accessibility", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok&page=1"
         )
         .type("text/html");
 
