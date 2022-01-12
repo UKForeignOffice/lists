@@ -80,7 +80,8 @@ async function getPaginationValues(  props: {
   page?: number;
   params?: ListsRequestParams;
 }) {
-  const {country, region, legalAid, proBono, practiceArea, page, params} = props;
+  const {country, region, legalAid, proBono, practiceArea} = props;
+  let {page, params} = props;
   const allRows = await listItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
@@ -92,6 +93,7 @@ async function getPaginationValues(  props: {
   });
 
   const count = allRows.length;
+  if (params === undefined) params = {}
   let from = 0;
   let to = 0;
   let allPages = 0;
