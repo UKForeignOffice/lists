@@ -7,12 +7,16 @@ interface SecretsManager {
   rotateSecret: (secretName: string) => Promise<boolean>;
   getSecretValue: (secretName: string) => Promise<string>;
 }
-async function getSecretsService(): Promise<SecretsManager> {
+
+/**
+ * Depending on the runtime environment, load the LocalSecretsManager or (AWS) SecretsManager.
+ */
+async function getSecretsManager(): Promise<SecretsManager> {
   return await (shouldUseLocalSecretsManager
     ? import("./local")
     : import("./aws"));
 }
 const { createSecret, rotateSecret, getSecretValue } =
-  await getSecretsService();
+  await getSecretsManager();
 
 export { createSecret, rotateSecret, getSecretValue };
