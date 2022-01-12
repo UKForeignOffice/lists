@@ -44,7 +44,7 @@ describe("Lawyers List:", () => {
         .send({ readNotice: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readNotice=ok`);
+      expect(header.location).toBe(`${pageLink}&readNotice=ok&page=1`);
     });
   });
 
@@ -71,7 +71,7 @@ describe("Lawyers List:", () => {
         .send({ country: "spain" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&country=spain`);
+      expect(header.location).toBe(`${pageLink}&country=spain&page=1`);
     });
 
     test("accessibility", async () => {
@@ -116,7 +116,7 @@ describe("Lawyers List:", () => {
 
   describe("Lawyer's legal areas question page", () => {
     const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid";
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&page=1";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -152,7 +152,7 @@ describe("Lawyers List:", () => {
 
   describe("Lawyer's legal aid question page", () => {
     const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate";
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&page=1";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -202,7 +202,7 @@ describe("Lawyers List:", () => {
 
   describe("Lawyer's pro bono question page", () => {
     const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no";
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&page=1";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -236,7 +236,7 @@ describe("Lawyers List:", () => {
 
   describe("Lawyer's disclaimer question page", () => {
     const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no";
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no&page=1";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -274,13 +274,13 @@ describe("Lawyers List:", () => {
     // here the controller will check all parameters are correct and if so the user will be redirected to /results with the same query parameters
     const { status, header } = await request(server)
       .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no&readDisclaimer=ok&page=1"
       )
       .type("text/html");
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no&readDisclaimer=ok"
+      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&proBono=no&readDisclaimer=ok&page=1"
     );
   });
 
@@ -288,7 +288,7 @@ describe("Lawyers List:", () => {
     test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok&page=1&page=1"
         )
         .type("text/html");
 

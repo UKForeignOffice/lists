@@ -351,7 +351,7 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
-        LIMIT 20
+        LIMIT 20 OFFSET 0
     `.replace(/\s\s+/g, " ");
 
     test("query is correct", async () => {
@@ -364,6 +364,8 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "yes",
         practiceArea: [],
+        limit: 20,
+        offset: 0
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
