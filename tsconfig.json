@@ -3,8 +3,8 @@
     "skipLibCheck": true,
     "strict": true,
     "baseUrl": "src",
-    "module": "commonjs",
-    "target": "es5",
+    "module": "esnext",
+    "target": "es2017",
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
@@ -12,6 +12,7 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
+    "moduleResolution": "Node",
     "paths": {
       "client/*": ["client/*"],
       "server/*": ["server/*"]

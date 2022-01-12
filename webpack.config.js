@@ -156,6 +156,9 @@ const server = {
       modulesDir: "node_modules",
     }),
   ],
+  experiments: {
+    topLevelAwait: true,
+  },
 };
 
 module.exports = [client, server];
