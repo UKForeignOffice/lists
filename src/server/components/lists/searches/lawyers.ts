@@ -8,7 +8,7 @@ import {
   queryStringFromParams,
   parseListValues,
 } from "../helpers";
-import { ListsRequestParams, QuestionName } from "../types";
+import { ListsRequestParams, PaginationItem, PaginationResults, QuestionName } from "../types";
 import { listsRoutes } from "server/components/lists";
 
 export const lawyersQuestionsSequence = [
@@ -71,7 +71,7 @@ export async function searchLawyers(
   });
 }
 
-async function getPaginationValues(  props: {
+export async function getPaginationValues(  props: {
   country?: string;
   region?: string;
   legalAid?: "yes" | "no" | "";
@@ -79,7 +79,7 @@ async function getPaginationValues(  props: {
   practiceArea?: string[];
   page?: number;
   params?: ListsRequestParams;
-}) {
+}): Promise<PaginationResults> {
   const {country, region, legalAid, proBono, practiceArea} = props;
   let {page, params} = props;
   const allRows = await listItem.findPublishedLawyersPerCountry({
@@ -98,7 +98,7 @@ async function getPaginationValues(  props: {
   let to = 0;
   let allPages = 0;
   const limit = 20;
-  const pageItems: Array<{ text: string, href: string }> = [];
+  const pageItems: PaginationItem[] = [];
   if (count > 0 && limit !== undefined && limit > 0) {
     allPages = Math.ceil(count / limit);
   }
