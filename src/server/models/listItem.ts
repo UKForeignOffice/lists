@@ -784,8 +784,8 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     throw new Error("Country name is missing");
   }
   // @todo page parameter needs to be retrieved from the request.  Refactor once lawyers has been implemented.
-  const limit = 1;
-  const offset = 20;
+  const limit = 20;
+  const offset = 0;
 
   try {
     let andWhere: string = "";

@@ -46,7 +46,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ readNotice: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readNotice=ok`);
+      expect(header.location).toBe(`${pageLink}&readNotice=ok&page=1`);
     });
   });
 
@@ -73,7 +73,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ country: "spain" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&country=spain`);
+      expect(header.location).toBe(`${pageLink}&country=spain&page=1`);
     });
 
     test("accessibility", async () => {
@@ -107,7 +107,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ region: "madrid" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&region=madrid`);
+      expect(header.location).toBe(`${pageLink}&region=madrid&page=1`);
     });
 
     test("accessibility", async () => {
@@ -142,7 +142,7 @@ describe.only("Covid Test Providers List:", () => {
 
       expect(status).toBe(302);
       expect(header.location).toBe(
-        `${pageLink}&practiceArea=maritime,real%20estate`
+        `${pageLink}&practiceArea=maritime,real%20estate&page=1`
       );
     });
 
@@ -175,7 +175,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ readDisclaimer: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readDisclaimer=ok`);
+      expect(header.location).toBe(`${pageLink}&readDisclaimer=ok&page=1`);
     });
 
     test("accessibility", async () => {
@@ -195,7 +195,7 @@ describe.only("Covid Test Providers List:", () => {
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
+      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok&page=1"
     );
   });
 
@@ -226,7 +226,7 @@ describe.only("Covid Test Providers List:", () => {
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-        Area
+        Regions covered
         Madrid
         Change
       `);
