@@ -38,3 +38,39 @@ export interface ListsRequestParams {
   resultsTurnaround?: string;
   page?: number;
 }
+
+export interface PaginationResults {
+  serviceType?: ServiceType;
+  country?: CountryName | "";
+  region?: string;
+  practiceArea?: string | string[];
+  legalAid?: "yes" | "no" | "";
+  proBono?: "yes" | "no" | "";
+  readNotice?: string;
+  readDisclaimer?: string;
+  resultsTurnaround?: string;
+  page?: number;
+
+  pagination: {
+    results: {
+      from: number;
+      to: number;
+      count: number;
+      currentPage: number;
+    },
+    previous: {
+      text: string;
+      href: string;
+    },
+    next: {
+      text: string;
+      href: string;
+    },
+    items: PaginationItem[];
+  }
+}
+
+export interface PaginationItem {
+  text: string;
+  href: string;
+}
