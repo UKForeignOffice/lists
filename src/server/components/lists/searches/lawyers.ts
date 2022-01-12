@@ -104,7 +104,7 @@ export async function getPaginationValues(  props: {
   }
 
   // set prev and next page links
-  let currentPage = page === undefined ? 1 : page;
+  let currentPage = page === undefined ? 1 : Number(page);
   let queryString = queryStringFromParams(params);
   queryString = queryString.replace("&page=" + currentPage.toString(), "")
   let queryStringPrevious = "";
