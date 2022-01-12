@@ -1,6 +1,9 @@
 import { isLocalHost, isTest } from "server/config";
+import * as local from "./local";
+import * as aws from "./aws";
 
-const shouldUseLocalSecretsManager = isLocalHost || isTest;
+const shouldUseLocalSecretsManager =
+  isLocalHost || isTest || process.env.SECRETS_MANAGER === "local";
 
 interface SecretsManager {
   createSecret: (secretName: string) => Promise<boolean>;
@@ -9,14 +12,17 @@ interface SecretsManager {
 }
 
 /**
- * Depending on the runtime environment, load the LocalSecretsManager or (AWS) SecretsManager.
+ * Depending on the NODE_ENV or SECRETS_MANAGER,
+ * load the LocalSecretsManager or (AWS) SecretsManager.
  */
-async function getSecretsManager(): Promise<SecretsManager> {
-  return await (shouldUseLocalSecretsManager
-    ? import("./local")
-    : import("./aws"));
+function getSecretsManager(): SecretsManager {
+  if (shouldUseLocalSecretsManager) {
+    return local;
+  }
+
+  return aws;
 }
-const { createSecret, rotateSecret, getSecretValue } =
-  await getSecretsManager();
+
+const { createSecret, rotateSecret, getSecretValue } = getSecretsManager();
 
 export { createSecret, rotateSecret, getSecretValue };

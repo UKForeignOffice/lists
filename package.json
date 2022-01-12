@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
+    "build:ci": "npm run prisma:generate && NODE_ENV=test webpack",
+    "start:ci": "NODE_ENV=test node ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
@@ -25,7 +27,8 @@
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
-    "form-runner:start": "cd ./lib/form-runner && yarn runner start"
+    "form-runner:start": "cd ./lib/form-runner && yarn runner start",
+    "smoke-tests": "npx cypress run"
   },
   "dependencies": {
     "@prisma/client": "^2.29.1",

@@ -1,5 +1,9 @@
 import crypto from "crypto";
-import { createSecret, rotateSecret, getSecretValue } from "../secrets-manager";
+import {
+  createSecret,
+  rotateSecret,
+  getSecretValue,
+} from "../secrets-manager/aws";
 import { SecretsManager } from "aws-sdk";
 import { subDays } from "date-fns";
 import { logger } from "server/services/logger";

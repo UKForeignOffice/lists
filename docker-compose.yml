@@ -3,8 +3,8 @@ services:
   postgres:
     platform: linux/arm64
     build:
-      context: .
-      dockerfile: ./docker/db/Dockerfile
+      context: ./docker/db
+      dockerfile: Dockerfile
     # if you are on Mac M1 please use the image below
     # see https://github.com/docker/for-mac/issues/5122
     # image: "gangstead/postgis:13-3.1-arm"

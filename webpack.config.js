@@ -12,15 +12,49 @@ dotenv.config();
 
 const devMode = process.env.NODE_ENV !== "production";
 const prodMode = process.env.NODE_ENV === "production";
+const testMode = process.env.NODE_ENV === "test";
 const environment = prodMode ? "production" : "development";
 const isDockerCompose = process.env.DOCKER_COMPOSE === "true";
+const nodeEnv = process.env.NODE_ENV;
 
-console.log("Webpack Starting", { devMode, prodMode, isDockerCompose });
+console.log("Webpack Starting", {
+  devMode,
+  prodMode,
+  isDockerCompose,
+  testMode,
+  nodeEnv,
+});
+
+const environmentOptions = {
+  test: {
+    mode: "production",
+    watch: false,
+    plugins: [],
+  },
+  production: {
+    mode: "production",
+    watch: false,
+    plugins: [],
+  },
+  development: {
+    mode: "development",
+    watch: true,
+    plugins: [
+      new NodemonPlugin({
+        verbose: true,
+        watch: path.resolve("./dist"),
+        ext: "js,html,json",
+        legacyWatch: isDockerCompose,
+        nodeArgs: [`--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`],
+      }),
+    ],
+  },
+};
 
 const client = {
   target: ["web", "es5"],
-  mode: environment,
-  watch: devMode,
+  mode: environmentOptions[nodeEnv].mode,
+  watch: environmentOptions[nodeEnv].watch,
   watchOptions: {
     poll: 300,
     ignored: /node_modules/,
@@ -102,8 +136,8 @@ const client = {
 
 const server = {
   target: "node",
-  mode: environment,
-  watch: devMode,
+  mode: environmentOptions[nodeEnv].mode,
+  watch: environmentOptions[nodeEnv].watch,
   entry: path.resolve(__dirname, "src", "server", "index.ts"),
   devtool: "cheap-module-source-map",
   output: {
@@ -128,19 +162,7 @@ const server = {
     ],
   },
   plugins: [
-    ...(devMode
-      ? [
-          new NodemonPlugin({
-            verbose: true,
-            watch: path.resolve("./dist"),
-            ext: "js,html,json",
-            legacyWatch: isDockerCompose,
-            nodeArgs: [
-              `--inspect${isDockerCompose ? "=0.0.0.0 --nolazy" : ""}`,
-            ],
-          }),
-        ]
-      : []),
+    ...environmentOptions[nodeEnv].plugins,
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         diagnosticOptions: {
@@ -156,9 +178,6 @@ const server = {
       modulesDir: "node_modules",
     }),
   ],
-  experiments: {
-    topLevelAwait: true,
-  },
 };
 
 module.exports = [client, server];
