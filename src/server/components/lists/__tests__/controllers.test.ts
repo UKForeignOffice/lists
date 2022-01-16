@@ -129,8 +129,9 @@ describe("Lists Controllers", () => {
   }
 
   describe("listsGetController", () => {
-    test.skip("it renders question page when serviceType is undefined", () => {
+    test("it renders question page when serviceType is undefined", () => {
       listsGetController(req, res);
+      req.params.page = "";
 
       expect(res.render).toHaveBeenCalledWith("lists/question-page", {
         ...DEFAULT_VIEW_PROPS,

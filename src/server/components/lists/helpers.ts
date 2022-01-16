@@ -11,12 +11,13 @@ import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
+import { URLSearchParams } from "url";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
 }
 
-export function queryStringFromParams(params: { [name: string]: any }): string {
+export function queryStringFromParams(params: { [name: string]: any}, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .map((key) => {
       let value: string = params[key];
@@ -29,8 +30,13 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
         value = value.substring(1);
       }
 
+      if (removeEmptyValues === true && value === "") {
+        return "";
+      }
+
       return `${key}=${value}`;
     })
+    .filter(Boolean)
     .join("&");
 }
 
@@ -70,6 +76,14 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
     ...req.body,
     ...req.params,
   };
+}
+
+export function getParameterValue(
+  parameterName: string,
+  queryString: string
+): string {
+  const searchParams = new URLSearchParams(queryString)
+  return searchParams.get(parameterName) ?? "";
 }
 
 export function removeQueryParameter(

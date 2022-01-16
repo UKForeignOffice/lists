@@ -3,7 +3,7 @@
     <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="practiceArea">
-          In which field of law do you need legal help?
+          In what areas of law do you need legal help?
         </label>
       </h1>
       <div id="practice-area-hint" class="govuk-hint">
@@ -23,6 +23,7 @@
             name="practiceArea"
             type="checkbox"
             value="{{ practiceArea }}"
+            {{ 'checked' if error.checkboxValues and practiceArea in error.checkboxValues }}
           />
           <label
             class="govuk-label govuk-checkboxes__label"
@@ -32,19 +33,23 @@
           </label>
         </div>
         {% endfor %}
+        <div class="govuk-checkboxes__divider">
+          Or
+        </div>
         <div class="govuk-checkboxes__item">
           <input
             class="govuk-checkboxes__input"
-            id="practice-area-other"
+            id="practice-area-select-all"
             name="practiceArea"
             type="checkbox"
-            value="other"
+            value="All"
+            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
           />
           <label
             class="govuk-label govuk-checkboxes__label"
-            for="practice-area-other"
+            for="practice-area-select-all"
           >
-            Other
+            Select all
           </label>
         </div>
         <input

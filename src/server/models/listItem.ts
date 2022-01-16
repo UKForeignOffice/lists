@@ -23,6 +23,9 @@ import {
 } from "./types";
 import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
+import { ListsRequestParams, listsRoutes, PaginationItem, PaginationResults } from "server/components/lists";
+import { queryStringFromParams } from "server/components/lists/helpers";
+import { legalPracticeAreasList } from "server/services/metadata";
 
 interface ListItemWithAddressCountry extends ListItem {
   address: Address & {
@@ -199,6 +202,143 @@ export async function checkListItemExists({
   });
 
   return total > 0;
+}
+
+export async function getPaginationValues(  props: {
+  count: number;
+  page: number;
+  params: ListsRequestParams;
+}): Promise<PaginationResults> {
+  const { count, page, params } = props;
+  const limit = 20;
+  let allPages = 0;
+  if (count > 0 && limit > 0) {
+    allPages = Math.ceil(count / limit);
+  }
+
+  const nextPrevious = await getNextPrevious({page, allPages, params});
+  const { queryString, currentPage } = nextPrevious;
+
+  const pageItems: PaginationItem[] = await getPageItems({allPages, currentPage, queryString});
+
+  const from = await getFromCount({count, limit, currentPage});
+  const to = await getToCount({currentPage, allPages, count, limit});
+
+  return {
+    pagination: {
+      results: {
+        from,
+        to,
+        count,
+        currentPage
+      },
+      previous: {
+        text: nextPrevious.previous.page.toString(),
+        href: nextPrevious.previous.queryString
+      },
+      next: {
+        text: nextPrevious.next.page.toString(),
+        href: nextPrevious.next.queryString
+      },
+      items: pageItems
+    }
+  }
+}
+
+ async function getNextPrevious(props: {page: number; allPages: number; params: ListsRequestParams }): Promise<{
+  queryString: string;
+  currentPage: number;
+  previous: {
+    page: number;
+    queryString: string;
+  };
+  next: {
+     page: number;
+     queryString: string;
+   };
+ }> {
+  const {page, allPages, params} = props;
+  let currentPage = page === undefined ? 1 : Number(page);
+  let queryStringPrevious = "";
+  let queryStringNext = "";
+  let previousPage = -1;
+  let nextPage = -1;
+
+  let queryString = await queryStringFromParams(params, true);
+  queryString = queryString.replace("&page=" + currentPage.toString(), "");
+
+  if (currentPage > allPages) {
+    currentPage = allPages;
+  }
+
+  if (currentPage > 1) {
+    previousPage = currentPage - 1;
+    queryStringPrevious = `${listsRoutes.results}?${queryString}&page=${previousPage}`;
+  }
+  if (currentPage < allPages) {
+    nextPage = currentPage + 1;
+    queryStringNext = `${listsRoutes.results}?${queryString}&page=${nextPage}`;
+  }
+  return {
+    queryString,
+    currentPage,
+    previous: {
+      page: previousPage,
+      queryString: queryStringPrevious
+    },
+    next: {
+      page: nextPage,
+      queryString: queryStringNext
+    }
+  }
+}
+
+async function getPageItems(props: {allPages: number; currentPage: number; queryString: string;}): Promise<PaginationItem[]> {
+  const { allPages, currentPage, queryString } = props;
+  const pageItems: PaginationItem[] = [];
+
+  for (let i = 1; i <= allPages; i++) {
+    let href = "";
+    if (i >= currentPage-2 && i <= currentPage+2) {
+
+      if (i !== currentPage) {
+        href = `${listsRoutes.results}?${queryString}&page=${i}`
+      }
+      pageItems.push({
+        text: (i).toString(),
+        href
+      });
+    }
+  }
+  return pageItems;
+}
+
+async function getFromCount(props: {count: number; limit: number; currentPage: number}): Promise<number> {
+  const { count, limit, currentPage } = props;
+  let from = 0;
+
+  if (count === 0) {
+    from = 0;
+
+  } else if (count < limit) {
+    from = (limit * currentPage) - (count - 1);
+
+  } else {
+    from = (limit * currentPage) - (limit - 1);
+  }
+  return from;
+}
+
+async function getToCount(props: {currentPage: number; allPages: number; count: number; limit: number}): Promise<number> {
+  const { currentPage, allPages, count, limit } = props;
+  let to = 0;
+  if (currentPage === allPages) {
+    to = count;
+
+  } else {
+    to = limit * currentPage;
+  }
+  return to;
 }
 
 // Model API
@@ -617,9 +757,13 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
+    let legalPracticeAreas = props.practiceArea;
+    if (legalPracticeAreas.some(item => item === "all")) {
+      legalPracticeAreas = legalPracticeAreasList.map(area => area.toLowerCase());
+    }
     andWhere.push(
       `AND ARRAY(select jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw')) && ARRAY ${JSON.stringify(
-        props.practiceArea
+        legalPracticeAreas
       ).replace(/"/g, "'")}`
     );
   }

@@ -2,7 +2,7 @@
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
     <h1 class="govuk-label-wrapper">
       <label class="govuk-label govuk-label--l" for="country-autocomplete">
-        Which country do you need {{ serviceLabel }} in?
+        In which country do you need {{ serviceLabel }}?
       </label>
     </h1>
     {% if error.field === 'country' %}
@@ -10,7 +10,7 @@
         <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
       </span>
     {% endif %}
-    
+
     <select id="country-autocomplete" name="country" className="govuk-input--error">
       <option value=""></option>
       {% for country in countriesList %}

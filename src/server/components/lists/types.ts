@@ -6,8 +6,6 @@ export enum QuestionName {
   "country" = "country",
   "region" = "region",
   "practiceArea" = "practiceArea",
-  "proBono" = "proBono",
-  "legalAid" = "legalAid",
   "readDisclaimer" = "readDisclaimer",
   "resultsTurnaround" = "resultsTurnaround",
   "readCovidDisclaimer" = "readCovidDisclaimer",
@@ -36,7 +34,7 @@ export interface ListsRequestParams {
   readNotice?: string;
   readDisclaimer?: string;
   resultsTurnaround?: string;
-  page?: number;
+  page?: string;
 }
 
 export interface PaginationResults {
