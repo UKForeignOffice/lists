@@ -1,35 +1,34 @@
 {% import "./macros.njk" as macros %}
 
-<h2 class="govuk-heading-l govuk-!-margin-bottom-4">Lawyers in {{ _.upperFirst(country) }}</h2>
+{% if searchResults.length === 0 %}
+  <p class="govuk-body">We couldn't find any results for this search, please <a class="govuk-link" href="{{listsRoutes.finder}}?serviceType={{ ServiceType.lawyers }}">try again</a></p>
+{% else %}
+  <h2 class="govuk-heading-l govuk-!-margin-bottom-4">Lawyers in {{ _.upperFirst(country) }}</h2>
 
-<p class="govuk-body">Where lawyers work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
-  system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted</p>
+  <p class="govuk-body">Where lawyers work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
+    system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted</p>
 
-<div class="govuk-warning-text">
-  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-  <strong class="govuk-warning-text__text">
-    <span class="govuk-warning-text__assistive">Warning</span>
-    You should do your own research before deciding which provider to use.
-  </strong>
-</div>
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      You should do your own research before deciding which provider to use.
+    </strong>
+  </div>
 
-<p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
-  arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
-  should not be treated as such.</p>
+  <p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
+    arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
+    should not be treated as such.</p>
 
-<ul class="govuk-list">
-  {% if searchResults.length === 0 %}
-    <li>
-      <p>We couldn't find any results for this search, please <a href="{{listsRoutes.finder}}?serviceType={{ ServiceType.lawyers }}">try again</a>
-    </li>
-  {% endif %}
-  {% for item in searchResults %}
-    <li>
-      {{ macros.lawyersListItem(item) }}
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-    </li>
-  {% endfor %}
-</ul>
+  <ul class="govuk-list">
+    {% for item in searchResults %}
+      <li>
+        {{ macros.lawyersListItem(item) }}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+      </li>
+    {% endfor %}
+  </ul>
 
-{{ macros.paginationSection(pagination) }}
+  {{ macros.paginationSection(pagination) }}
+{% endif %}
 
