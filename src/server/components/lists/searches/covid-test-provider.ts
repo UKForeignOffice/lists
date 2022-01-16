@@ -5,6 +5,7 @@ import {
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
+  getParameterValue,
   queryStringFromParams,
 } from "../helpers";
 import { QuestionName } from "../types";
@@ -37,6 +38,7 @@ export async function searchCovidTestProvider(
     ...params,
     searchResults: searchResults,
     removeQueryParameter,
+    getParameterValue,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
   });

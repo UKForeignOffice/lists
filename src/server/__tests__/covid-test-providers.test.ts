@@ -46,7 +46,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ readNotice: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readNotice=ok&page=1`);
+      expect(header.location).toBe(`${pageLink}&readNotice=ok`);
     });
   });
 
@@ -62,7 +62,7 @@ describe.only("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Which country do you need a COVID-19 test provider in?"
+        "In which country do you need a COVID-19 test provider?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -73,7 +73,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ country: "spain" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&country=spain&page=1`);
+      expect(header.location).toBe(`${pageLink}&country=spain`);
     });
 
     test("accessibility", async () => {
@@ -96,7 +96,7 @@ describe.only("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Where in Spain do you need to find a COVID-19 test provider?"
+        "Where in Spain do you want to find a COVID-19 test provider?"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -107,7 +107,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ region: "madrid" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&region=madrid&page=1`);
+      expect(header.location).toBe(`${pageLink}&region=madrid`);
     });
 
     test("accessibility", async () => {
@@ -142,7 +142,7 @@ describe.only("Covid Test Providers List:", () => {
 
       expect(status).toBe(302);
       expect(header.location).toBe(
-        `${pageLink}&practiceArea=maritime,real%20estate&page=1`
+        `${pageLink}&practiceArea=maritime,real%20estate`
       );
     });
 
@@ -175,7 +175,7 @@ describe.only("Covid Test Providers List:", () => {
         .send({ readDisclaimer: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readDisclaimer=ok&page=1`);
+      expect(header.location).toBe(`${pageLink}&readDisclaimer=ok`);
     });
 
     test("accessibility", async () => {
@@ -195,7 +195,7 @@ describe.only("Covid Test Providers List:", () => {
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok&page=1"
+      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok&page="
     );
   });
 
@@ -215,10 +215,10 @@ describe.only("Covid Test Providers List:", () => {
 
       // country answer
       expect(answers.eq(1).text()).toEqual(`
-        Country
-        Spain
-        Change
-      `);
+      Country
+      Spain
+      Change
+    `);
 
       expect(answers.eq(1).find("a").attr("href")).toEqual(
         "/find?serviceType=covidTestProviders&readNotice=ok&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
@@ -226,10 +226,10 @@ describe.only("Covid Test Providers List:", () => {
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-        Regions covered
-        Madrid
-        Change
-      `);
+      Regions covered
+      Madrid
+      Change
+    `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
         "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&resultsTurnaround=12&readDisclaimer=ok"
       );

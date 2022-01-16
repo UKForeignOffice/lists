@@ -1,86 +1,81 @@
 <div class="answers-box">
-    <p class="govuk-body">Your answers:</p>
-    {% if not country %}
-      <p class="govuk-body">Your answers will appear here</p>
+  <p class="govuk-body">Your answers:</p>
+  {% if not country %}
+    <p class="govuk-body">Your answers will appear here</p>
+  {% endif %}
+  {% if serviceType %}
+    {# until other services are integrated we can hide this #}
+    {# <p class="govuk-body">
+      What are you looking for?<br />
+      <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
+      <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
+    </p> #}
+  {% endif %}
+  {% if country %}
+    <p class="govuk-body">
+      Country<br />
+      <strong>{{ _.upperFirst(country) }}</strong>
+      <a
+        class="govuk-link"
+        href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}"
+        aria-label="Change country answer"
+      >Change</a>
+    </p>
+  {% endif %}
+  {% if region %}
+    <p class="govuk-body">
+      Regions covered<br />
+      <strong>{{ _.upperFirst(region) }}</strong>
+      <a
+        class="govuk-link"
+        href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}"
+        aria-label="Change country's area answer"
+      >Change</a>
+    </p>
+  {% endif %}
+  {% if practiceArea %}
+    <p class="govuk-body">
+      Areas of law<br />
+      <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
+      <a
+        class="govuk-link"
+        href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}"
+        aria-label="Change field of law answer"
+      >Change</a>
+    </p>
+  {% endif %}
+  {% if resultsTurnaround %}
+    <p class="govuk-body">
+      Results speed<br />
+      <strong>
+        {% if resultsTurnaround == "other" %}
+          No preference
+        {% else %}
+          {{ resultsTurnaround }} hour{{ "s" if resultsTurnaround > 1 else ""}}
+        {% endif %}
+      </strong>
+      <a
+        class="govuk-link"
+        href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
+        aria-label="Change results turnaround time answer"
+      >Change</a>
+    </p>
+  {% endif %}
+  {% set startAgainUrl %}
+    {{ listsRoutes.finder }}?serviceType={{ serviceType }}
+  {% endset %}
+  {% set readNotice %}
+    {% if getParameterValue("readNotice", queryString) === "ok" %}
+      {% set startAgainUrl %}
+        {{ listsRoutes.finder }}?serviceType={{ serviceType }}&readNotice=ok
+      {% endset %}
     {% endif %}
-    {% if serviceType %}
-      {# until other services are integrated we can hide this #}
-      {# <p class="govuk-body">
-        What are you looking for?<br />
-        <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
-        <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
-      </p> #}
-    {% endif %}
-    {% if country %}
-      <p class="govuk-body">
-        Country<br />
-        <strong>{{ _.upperFirst(country) }}</strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}"
-          aria-label="Change country answer"
-        >Change</a>
-      </p>
-    {% endif %}
-    {% if region %}
-      <p class="govuk-body">
-        Regions covered<br />
-        <strong>{{ _.upperFirst(region) }}</strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}"
-          aria-label="Change country's area answer"
-        >Change</a>
-      </p>
-    {% endif %}
-    {% if practiceArea %}
-      <p class="govuk-body">
-        Areas of law<br />
-        <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}"
-          aria-label="Change field of law answer"
-        >Change</a>
-      </p>
-    {% endif %}
-    {% if legalAid %}
-      <p class="govuk-body">
-        Legal aid<br />
-        <strong>{{ _.startCase(legalAid) }}</strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'legalAid') }}"
-          aria-label="Change legal aid answer"
-        >Change</a>
-      </p>
-    {% endif %}
-    {% if proBono %}
-      <p class="govuk-body">
-        Pro bono<br />
-        <strong>{{ _.startCase(proBono) }}</strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'proBono') }}"
-          aria-label="Change pro bono answer"
-        >Change</a>
-      </p>
-    {% endif %}
-    {% if resultsTurnaround %}
-      <p class="govuk-body">
-        Results speed<br />
-        <strong>
-          {% if resultsTurnaround == "other" %}
-            No preference
-          {% else %}
-            {{ resultsTurnaround }} hour{{ "s" if resultsTurnaround > 1 else ""}}
-          {% endif %}
-        </strong>
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
-          aria-label="Change results turnaround time answer"
-        >Change</a>
-      </p>
-    {% endif %}
-  </div>
+  {%  endset %}
+  <p class="govuk-body">
+    <a
+      class="govuk-link"
+      href="{{ startAgainUrl }}"
+      aria-label="Start again"
+    >Start again</a>
+  </p>
+</div>
