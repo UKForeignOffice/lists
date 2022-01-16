@@ -31,40 +31,5 @@
   {% endfor %}
 </ul>
 
-<div class="fcdo-pagination">
-  <ul class="fcdo-pagination__list-items">
-    {% if pagination.previous.href !== "" %}
-      <li class="fcdo-pagination__item" id="prevButton">
-        <a class="fcdo-pagination__link fcdo-pagination__item--prev" href="{{ pagination.previous.href }}">
-          Previous
-        </a>
-      </li>
-    {% endif %}
-    {% for item in pagination.items %}
-      {% set itemNumber = item.text | int  %}
-      <li class="fcdo-pagination__item">
-        {% if itemNumber === pagination.results.currentPage %}
-          <span class="fcdo-pagination__current-page">
-        {{ item.text }}
-      </span>
-        {% else %}
-          <a class="fcdo-pagination__link" href="{{ item.href }}">
-            {{ item.text }}
-          </a>
-        {% endif %}
-      </li>
-    {%  endfor %}
-    {% if pagination.next.href !== "" %}
-      <li class="fcdo-pagination__item" id="nextButton">
-        <a class="fcdo-pagination__link fcdo-pagination__item--next fcdo-pagination__link--last" href="{{ pagination.next.href }}">
-          Next
-        </a>
-      </li>
-    {% endif %}
-  </ul>
-  <p class="fcdo-pagination__results">
-    Showing <span class="fcdo-pagination__results-num">{{ pagination.results.from }}</span>
-    to <span class="fcdo-pagination__results-num">{{ pagination.results.to }}</span>
-    of <span class="fcdo-pagination__results-num">{{ pagination.results.count }}</span> results
-  </p>
-</div>
+{{ macros.paginationSection(pagination) }}
+
