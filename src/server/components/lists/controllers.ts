@@ -10,6 +10,7 @@ import {
   removeQueryParameter,
   getParameterValue,
   queryStringFromParams,
+  preProcessParams,
   createConfirmationLink,
   getCountryLawyerRedirectLink,
 } from "./helpers";
@@ -36,7 +37,10 @@ export async function listsPostController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
+
+  // clean parameters
+  params = preProcessParams(params);
   const queryString = queryStringFromParams(params);
 
   const { country, serviceType } = params;

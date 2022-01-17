@@ -17,6 +17,24 @@ export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
 }
 
+/**
+ * To support the select all option for checkbox fields, this function detects if the value "All" is provided and will
+ * remove all other options in the event "Select All" and any additional checkboxes were selected by the user.  Currently
+ * this is only required for lawyers.practiceArea (Areas of law field).
+ * @param params
+ */
+export function preProcessParams(params: { [name: string]: any}): { [name: string]: any} {
+  const paramsCopy = JSON.parse(JSON.stringify(params));
+
+  if (paramsCopy.practiceArea !== undefined) {
+    const areasOfLaw = paramsCopy.practiceArea;
+    if (Array.isArray(areasOfLaw) && areasOfLaw.some(item => item === "All")) {
+      paramsCopy.practiceArea = ["All"];
+    }
+  }
+  return paramsCopy;
+}
+
 export function queryStringFromParams(params: { [name: string]: any}, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .map((key) => {

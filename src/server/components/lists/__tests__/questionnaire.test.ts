@@ -184,20 +184,6 @@ describe("Questionnaire", () => {
         href: "#practice-area-bankruptcy",
       });
     });
-
-    test("validates returns error when practiceArea is selected along with select all", () => {
-      req.params.practiceArea = "Intellectual property,All";
-      const result = practiceArea.validate(req);
-      expect(result).toEqual({
-        "checkboxValues": [
-          "Intellectual property",
-          "All"
-        ],
-        "field": "practice-area",
-        "href": "#practice-area-bankruptcy",
-        "text": "All other checkboxes must be unchecked if you want to select all"
-      });
-    });
   });
 
   describe("readDisclaimer", () => {
