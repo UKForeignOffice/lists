@@ -101,22 +101,13 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const params = getAllRequestParams(req);
       const practiceArea = parseListValues("practiceArea", params);
-      const error = (practiceArea === undefined
-        || (practiceArea.some(item => item === "All" && practiceArea.length > 1)));
+      const error = (practiceArea === undefined);
       return error || practiceArea?.length === 0 || practiceArea === undefined;
     },
     validate(req: Request) {
       const params = getAllRequestParams(req);
       const practiceArea = parseListValues("practiceArea", params);
 
-      if ((practiceArea?.some(item => item === "All" && practiceArea.length > 1)) === true) {
-        return {
-          field: "practice-area",
-          text: "All other checkboxes must be unchecked if you want to select all",
-          href: "#practice-area-bankruptcy",
-          checkboxValues: practiceArea
-        };
-      }
       if (practiceArea?.join("") === "") {
         return {
           field: "practice-area",
