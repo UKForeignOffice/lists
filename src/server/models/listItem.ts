@@ -221,21 +221,21 @@ export async function getPaginationValues(props: {
     pageCount = Math.ceil(count / limit);
   }
 
-  const nextPrevious = await getNextPrevious({
+  const nextPrevious = getNextPrevious({
     page,
     pageCount,
     listRequestParams,
   });
   const { queryString, currentPage } = nextPrevious;
 
-  const pageItems: PaginationItem[] = await getPageItems({
+  const pageItems: PaginationItem[] = getPageItems({
     pageCount,
     currentPage,
     queryString,
   });
 
-  const from = await getFromCount({ count, limit, currentPage });
-  const to = await getToCount({
+  const from = getFromCount({ count, limit, currentPage });
+  const to = getToCount({
     currentPage,
     pageCount,
     count,
@@ -263,17 +263,17 @@ export async function getPaginationValues(props: {
   };
 }
 
-type getPaginationParams = {
+interface getPaginationParams {
   pageCount: number;
   page: number;
   listRequestParams: ListsRequestParams;
-};
+}
 
-async function getNextPrevious({
+function getNextPrevious({
   page = 1,
   pageCount,
   listRequestParams,
-}: getPaginationParams): Promise<{
+}: getPaginationParams): {
   queryString: string;
   currentPage: number;
   previous: {
@@ -284,7 +284,7 @@ async function getNextPrevious({
     page: number;
     queryString: string;
   };
-}> {
+} {
   let currentPage = page;
   let queryStringPrevious = "";
   let queryStringNext = "";
@@ -320,11 +320,11 @@ async function getNextPrevious({
   };
 }
 
-async function getPageItems(props: {
+function getPageItems(props: {
   pageCount: number;
   currentPage: number;
   queryString: string;
-}): Promise<PaginationItem[]> {
+}): PaginationItem[] {
   const { pageCount, currentPage, queryString } = props;
   const pageItems: PaginationItem[] = [];
 
@@ -343,11 +343,11 @@ async function getPageItems(props: {
   return pageItems;
 }
 
-async function getFromCount(props: {
+function getFromCount(props: {
   count: number;
   limit: number;
   currentPage: number;
-}): Promise<number> {
+}): number {
   const { count, limit, currentPage } = props;
   let from;
 
@@ -361,12 +361,12 @@ async function getFromCount(props: {
   return from;
 }
 
-async function getToCount(props: {
+function getToCount(props: {
   currentPage: number;
   pageCount: number;
   count: number;
   limit: number;
-}): Promise<number> {
+}): number {
   const { currentPage, pageCount, count, limit } = props;
   let to = 0;
   if (currentPage === pageCount) {
