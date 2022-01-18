@@ -109,9 +109,9 @@
           {% set itemNumber = item.text | int  %}
           <li class="fcdo-pagination__item">
             {% if itemNumber === pagination.results.currentPage %}
-              <span class="fcdo-pagination__current-page">
-          {{ item.text }}
-        </span>
+              <span class="fcdo-pagination__item-current-page">
+                {{ item.text }}
+              </span>
             {% else %}
               <a class="fcdo-pagination__link" href="{{ item.href }}">
                 {{ item.text }}
