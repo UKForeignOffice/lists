@@ -29,7 +29,7 @@ export function preProcessParams(params: { [name: string]: any }): {
   const paramsCopy = { ...params };
   const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
 
-  return hasSelectedAll ? { ...paramsCopy, practiceArea: "All" } : params;
+  return hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
 }
 
 export function queryStringFromParams(
