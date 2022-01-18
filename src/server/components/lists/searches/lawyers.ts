@@ -24,18 +24,14 @@ export async function searchLawyers(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region, page } = params;
+  const { serviceType, country, region } = params;
+  let { page = "1" } = params;
+  page = page !== "" ? page : "1";
   let practiceArea = parseListValues("practiceArea", params);
   if (practiceArea != null) {
-    practiceArea = practiceArea.map(area => area.toLowerCase());
+    practiceArea = practiceArea.map((area) => area.toLowerCase());
   }
-  let pageNum;
-  if (page === undefined || page === null || page === "") {
-    pageNum = 1;
-
-  } else {
-    pageNum = parseInt(page);
-  }
+  const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
   const allRows = await listItem.findPublishedLawyersPerCountry({
@@ -43,25 +39,25 @@ export async function searchLawyers(
     region,
     practiceArea,
     limit: -1,
-    offset: -1
+    offset: -1,
   });
   const count = allRows.length;
 
   const { pagination } = await listItem.getPaginationValues({
     count,
     page: pageNum,
-    params
-  })
+    listRequestParams: params,
+  });
 
   const limit = 20;
-  const offset = (limit * pagination.results.currentPage) - limit;
+  const offset = limit * pagination.results.currentPage - limit;
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
     practiceArea,
     limit,
-    offset
+    offset,
   });
 
   res.render("lists/results-page", {
@@ -74,6 +70,6 @@ export async function searchLawyers(
     serviceLabel: getServiceLabel(serviceType),
     limit,
     offset,
-    pagination
+    pagination,
   });
 }

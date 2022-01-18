@@ -23,7 +23,12 @@ import {
 } from "./types";
 import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
-import { ListsRequestParams, listsRoutes, PaginationItem, PaginationResults } from "server/components/lists";
+import {
+  ListsRequestParams,
+  listsRoutes,
+  PaginationItem,
+  PaginationResults,
+} from "server/components/lists";
 import { queryStringFromParams } from "server/components/lists/helpers";
 import { legalPracticeAreasList } from "server/services/metadata";
 
@@ -204,25 +209,38 @@ export async function checkListItemExists({
   return total > 0;
 }
 
-export async function getPaginationValues(  props: {
+export async function getPaginationValues(props: {
   count: number;
   page: number;
-  params: ListsRequestParams;
+  listRequestParams: ListsRequestParams;
 }): Promise<PaginationResults> {
-  const { count, page, params } = props;
+  const { count, page, listRequestParams } = props;
   const limit = 20;
-  let allPages = 0;
+  let pageCount = 0;
   if (count > 0 && limit > 0) {
-    allPages = Math.ceil(count / limit);
+    pageCount = Math.ceil(count / limit);
   }
 
-  const nextPrevious = await getNextPrevious({page, allPages, params});
+  const nextPrevious = await getNextPrevious({
+    page,
+    pageCount,
+    listRequestParams,
+  });
   const { queryString, currentPage } = nextPrevious;
 
-  const pageItems: PaginationItem[] = await getPageItems({allPages, currentPage, queryString});
+  const pageItems: PaginationItem[] = await getPageItems({
+    pageCount,
+    currentPage,
+    queryString,
+  });
 
-  const from = await getFromCount({count, limit, currentPage});
-  const to = await getToCount({currentPage, allPages, count, limit});
+  const from = await getFromCount({ count, limit, currentPage });
+  const to = await getToCount({
+    currentPage,
+    pageCount,
+    count,
+    limit,
+  });
 
   return {
     pagination: {
@@ -230,22 +248,32 @@ export async function getPaginationValues(  props: {
         from,
         to,
         count,
-        currentPage
+        currentPage,
       },
       previous: {
         text: nextPrevious.previous.page.toString(),
-        href: nextPrevious.previous.queryString
+        href: nextPrevious.previous.queryString,
       },
       next: {
         text: nextPrevious.next.page.toString(),
-        href: nextPrevious.next.queryString
+        href: nextPrevious.next.queryString,
       },
-      items: pageItems
-    }
-  }
+      items: pageItems,
+    },
+  };
 }
 
- async function getNextPrevious(props: {page: number; allPages: number; params: ListsRequestParams }): Promise<{
+type getPaginationParams = {
+  pageCount: number;
+  page: number;
+  listRequestParams: ListsRequestParams;
+};
+
+async function getNextPrevious({
+  page = 1,
+  pageCount,
+  listRequestParams,
+}: getPaginationParams): Promise<{
   queryString: string;
   currentPage: number;
   previous: {
@@ -253,29 +281,28 @@ export async function getPaginationValues(  props: {
     queryString: string;
   };
   next: {
-     page: number;
-     queryString: string;
-   };
- }> {
-  const {page, allPages, params} = props;
-  let currentPage = page === undefined ? 1 : Number(page);
+    page: number;
+    queryString: string;
+  };
+}> {
+  let currentPage = page;
   let queryStringPrevious = "";
   let queryStringNext = "";
   let previousPage = -1;
   let nextPage = -1;
 
-  let queryString = await queryStringFromParams(params, true);
+  let queryString = queryStringFromParams(listRequestParams, true);
   queryString = queryString.replace("&page=" + currentPage.toString(), "");
 
-  if (currentPage > allPages) {
-    currentPage = allPages;
+  if (currentPage > pageCount) {
+    currentPage = pageCount;
   }
 
   if (currentPage > 1) {
     previousPage = currentPage - 1;
     queryStringPrevious = `${listsRoutes.results}?${queryString}&page=${previousPage}`;
   }
-  if (currentPage < allPages) {
+  if (currentPage < pageCount) {
     nextPage = currentPage + 1;
     queryStringNext = `${listsRoutes.results}?${queryString}&page=${nextPage}`;
   }
@@ -284,57 +311,66 @@ export async function getPaginationValues(  props: {
     currentPage,
     previous: {
       page: previousPage,
-      queryString: queryStringPrevious
+      queryString: queryStringPrevious,
     },
     next: {
       page: nextPage,
-      queryString: queryStringNext
-    }
-  }
+      queryString: queryStringNext,
+    },
+  };
 }
 
-async function getPageItems(props: {allPages: number; currentPage: number; queryString: string;}): Promise<PaginationItem[]> {
-  const { allPages, currentPage, queryString } = props;
+async function getPageItems(props: {
+  pageCount: number;
+  currentPage: number;
+  queryString: string;
+}): Promise<PaginationItem[]> {
+  const { pageCount, currentPage, queryString } = props;
   const pageItems: PaginationItem[] = [];
 
-  for (let i = 1; i <= allPages; i++) {
+  for (let i = 1; i <= pageCount; i++) {
     let href = "";
-    if (i >= currentPage-2 && i <= currentPage+2) {
-
+    if (i >= currentPage - 2 && i <= currentPage + 2) {
       if (i !== currentPage) {
-        href = `${listsRoutes.results}?${queryString}&page=${i}`
+        href = `${listsRoutes.results}?${queryString}&page=${i}`;
       }
       pageItems.push({
-        text: (i).toString(),
-        href
+        text: i.toString(),
+        href,
       });
     }
   }
   return pageItems;
 }
 
-async function getFromCount(props: {count: number; limit: number; currentPage: number}): Promise<number> {
+async function getFromCount(props: {
+  count: number;
+  limit: number;
+  currentPage: number;
+}): Promise<number> {
   const { count, limit, currentPage } = props;
-  let from = 0;
+  let from;
 
   if (count === 0) {
     from = 0;
-
   } else if (count < limit) {
-    from = (limit * currentPage) - (count - 1);
-
+    from = limit * currentPage - (count - 1);
   } else {
-    from = (limit * currentPage) - (limit - 1);
+    from = limit * currentPage - (limit - 1);
   }
   return from;
 }
 
-async function getToCount(props: {currentPage: number; allPages: number; count: number; limit: number}): Promise<number> {
-  const { currentPage, allPages, count, limit } = props;
+async function getToCount(props: {
+  currentPage: number;
+  pageCount: number;
+  count: number;
+  limit: number;
+}): Promise<number> {
+  const { currentPage, pageCount, count, limit } = props;
   let to = 0;
-  if (currentPage === allPages) {
+  if (currentPage === pageCount) {
     to = count;
-
   } else {
     to = limit * currentPage;
   }
@@ -733,8 +769,8 @@ export async function findPublishedLawyersPerCountry(props: {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
-  const limit = (props.limit ?? 0);
-  const offset = (props.offset ?? 0);
+  const limit = props.limit ?? 0;
+  const offset = props.offset ?? 0;
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
   const jsonQuery: {
@@ -758,8 +794,10 @@ export async function findPublishedLawyersPerCountry(props: {
 
   if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
     let legalPracticeAreas = props.practiceArea;
-    if (legalPracticeAreas.some(item => item === "all")) {
-      legalPracticeAreas = legalPracticeAreasList.map(area => area.toLowerCase());
+    if (legalPracticeAreas.some((item) => item === "all")) {
+      legalPracticeAreas = legalPracticeAreasList.map((area) =>
+        area.toLowerCase()
+      );
     }
     andWhere.push(
       `AND ARRAY(select jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw')) && ARRAY ${JSON.stringify(
@@ -780,7 +818,7 @@ export async function findPublishedLawyersPerCountry(props: {
       fromGeoPoint,
       andWhere: andWhere.join(" "),
       limit,
-      offset
+      offset,
     });
 
     return await prisma.$queryRaw(query);
@@ -954,7 +992,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       fromGeoPoint,
       andWhere,
       limit,
-      offset
+      offset,
     });
 
     return await prisma.$queryRaw(query);

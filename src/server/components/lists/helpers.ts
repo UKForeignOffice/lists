@@ -23,19 +23,19 @@ export async function initLists(server: Express): Promise<void> {
  * this is only required for lawyers.practiceArea (Areas of law field).
  * @param params
  */
-export function preProcessParams(params: { [name: string]: any}): { [name: string]: any} {
-  const paramsCopy = JSON.parse(JSON.stringify(params));
+export function preProcessParams(params: { [name: string]: any }): {
+  [name: string]: any;
+} {
+  const paramsCopy = { ...params };
+  const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
 
-  if (paramsCopy.practiceArea !== undefined) {
-    const areasOfLaw = paramsCopy.practiceArea;
-    if (Array.isArray(areasOfLaw) && areasOfLaw.some(item => item === "All")) {
-      paramsCopy.practiceArea = ["All"];
-    }
-  }
-  return paramsCopy;
+  return hasSelectedAll ? { ...paramsCopy, practiceArea: "All" } : params;
 }
 
-export function queryStringFromParams(params: { [name: string]: any}, removeEmptyValues?: boolean): string {
+export function queryStringFromParams(
+  params: { [name: string]: any },
+  removeEmptyValues?: boolean
+): string {
   return Object.keys(params)
     .map((key) => {
       let value: string = params[key];
@@ -100,7 +100,7 @@ export function getParameterValue(
   parameterName: string,
   queryString: string
 ): string {
-  const searchParams = new URLSearchParams(queryString)
+  const searchParams = new URLSearchParams(queryString);
   return searchParams.get(parameterName) ?? "";
 }
 
