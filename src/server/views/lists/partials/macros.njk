@@ -1,0 +1,13 @@
+{% macro startAgainUrl(finderRoute, serviceType, readNotice) %}
+{% set startAgainUrl %}
+  {{ finderRoute }}?serviceType={{ serviceType }}
+{% endset %}
+  {% set readNotice %}
+    {% if readNotice === "ok" %}
+      {% set startAgainUrl %}
+        {{ finderRoute }}?serviceType={{ serviceType }}&readNotice=ok
+      {% endset %}
+    {% endif %}
+  {%  endset %}
+  {{ startAgainUrl }}
+{% endmacro %}

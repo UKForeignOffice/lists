@@ -1,3 +1,4 @@
+{% import "./macros.njk" as macros %}
 <div class="answers-box">
   <p class="govuk-body">Your answers:</p>
   {% if not country %}
@@ -61,20 +62,10 @@
       >Change</a>
     </p>
   {% endif %}
-  {% set startAgainUrl %}
-    {{ listsRoutes.finder }}?serviceType={{ serviceType }}
-  {% endset %}
-  {% set readNotice %}
-    {% if getParameterValue("readNotice", queryString) === "ok" %}
-      {% set startAgainUrl %}
-        {{ listsRoutes.finder }}?serviceType={{ serviceType }}&readNotice=ok
-      {% endset %}
-    {% endif %}
-  {%  endset %}
   <p class="govuk-body">
     <a
       class="govuk-link"
-      href="{{ startAgainUrl }}"
+      href="{{ macros.startAgainUrl(listsRoutes.finder, serviceType, getParameterValue("readNotice", queryString)) }}"
       aria-label="Start again"
     >Start again</a>
   </p>

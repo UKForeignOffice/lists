@@ -1,7 +1,8 @@
 {% import "./macros.njk" as macros %}
+{% import "../macros.njk" as partialsMacros %}
 
 {% if searchResults.length === 0 %}
-  <p class="govuk-body">We couldn't find any results for this search, please <a class="govuk-link" href="{{listsRoutes.finder}}?serviceType={{ ServiceType.lawyers }}">try again</a></p>
+  <p class="govuk-body">We couldn't find any results for this search, please <a class="govuk-link" href="{{ partialsMacros.startAgainUrl(listsRoutes.finder, serviceType, getParameterValue("readNotice", queryString)) }}">try again</a></p>
 {% else %}
   <h2 class="govuk-heading-l govuk-!-margin-bottom-4">Lawyers in {{ _.upperFirst(country) }}</h2>
 
