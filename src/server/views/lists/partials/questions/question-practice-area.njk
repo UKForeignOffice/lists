@@ -15,6 +15,22 @@
         </span>
       {% endif %}
       <div class="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="practice-area-select-all"
+            name="practiceArea"
+            type="checkbox"
+            value="All"
+            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="practice-area-select-all"
+          >
+            Select all
+          </label>
+        </div>
         {% for practiceArea in legalPracticeAreasList %}
         <div class="govuk-checkboxes__item">
           <input
@@ -33,25 +49,6 @@
           </label>
         </div>
         {% endfor %}
-        <div class="govuk-checkboxes__divider">
-          Or
-        </div>
-        <div class="govuk-checkboxes__item">
-          <input
-            class="govuk-checkboxes__input"
-            id="practice-area-select-all"
-            name="practiceArea"
-            type="checkbox"
-            value="All"
-            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
-          />
-          <label
-            class="govuk-label govuk-checkboxes__label"
-            for="practice-area-select-all"
-          >
-            Select all
-          </label>
-        </div>
         <input
           aria-hidden="true"
           class="govuk-radios__input"
