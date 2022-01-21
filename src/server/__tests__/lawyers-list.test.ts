@@ -93,7 +93,7 @@ describe("Lawyers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Where in Spain do you want to find a lawyer?"
+        "Where in Spain do you want to find a lawyer? (Optional)"
       );
       expect(continueButton.text()).toBe("Continue");
     });

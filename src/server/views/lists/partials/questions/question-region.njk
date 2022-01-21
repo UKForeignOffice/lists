@@ -3,11 +3,11 @@
     <fieldset class="govuk-fieldset">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="area">
-          Where in {{_.startCase(country) }} do you want to find {{ serviceLabel }}?
+          Where in {{_.startCase(country) }} do you want to find {{ serviceLabel }}? (Optional)
         </label>
       </h1>
       <div id="area-hint" class="govuk-hint">
-        Give the city or area (such as postcode) where you want to find {{ serviceLabel }}
+        Provide a city, area or postcode to order the results with the nearest first.  Leave blank to show all results.
       </div>
       {% if error.field === 'region' %}
         <span class="govuk-error-message">

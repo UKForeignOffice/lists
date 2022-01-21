@@ -96,23 +96,31 @@ async function createAddressGeoLocation(
   return await rawInsertGeoLocation(point);
 }
 
+/**
+ * Constructs SQL for querying published list items.  If the region is not populated
+ * or is set to "Not set" then it will be ordered by company name otherwise by distance
+ * from the geo point.
+ * @param props
+ */
 function fetchPublishedListItemQuery(props: {
   type: string;
   countryName: string;
+  region?: string;
   fromGeoPoint?: Point;
   andWhere?: string;
   limit: number;
   offset: number;
 }): string {
-  const { type, countryName, fromGeoPoint, andWhere, limit, offset } = props;
+  const { type, countryName, region, fromGeoPoint, andWhere, limit, offset } = props;
   const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
   const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
 
   let withDistance = "";
-  let orderBy = 'ORDER BY "ListItem"."jsonData"->>"organisationName" ASC';
+  let orderBy = `ORDER BY "ListItem"."jsonData"->>'organisationName' ASC`;
 
-  if (geoPointIsValid(fromGeoPoint)) {
-    withDistance = `ST_Distance(
+  if (geoPointIsValid(fromGeoPoint) && (region !== undefined && region !== "" && region !== "Not set")) {
+    withDistance = `,
+    ST_Distance(
         "GeoLocation".location,
         ST_GeographyFromText('Point(${fromGeoPoint?.join(" ")})')
       ) AS distanceInMeters
@@ -150,8 +158,7 @@ function fetchPublishedListItemQuery(props: {
  	          FROM "Address"
 			      WHERE "Address".id = "ListItem"."addressId"
  		    ) as a
- 	    ) as address,
-      ${withDistance}
+ 	    ) as address${withDistance}
 
     FROM "ListItem"
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
@@ -759,7 +766,7 @@ export async function createLawyerListItem(
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
-  region?: string;
+  region?: string | "";
   legalAid?: "yes" | "no" | "";
   proBono?: "yes" | "no" | "";
   practiceArea?: string[];
@@ -815,6 +822,7 @@ export async function findPublishedLawyersPerCountry(props: {
     const query = fetchPublishedListItemQuery({
       type: ServiceType.lawyers,
       countryName,
+      region: props.region,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
       limit,
@@ -989,6 +997,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     const query = fetchPublishedListItemQuery({
       type: ServiceType.covidTestProviders,
       countryName,
+      region: props.region,
       fromGeoPoint,
       andWhere,
       limit,
