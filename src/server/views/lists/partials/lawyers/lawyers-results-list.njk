@@ -1,6 +1,13 @@
 {% import "./macros.njk" as macros %}
 {% import "../macros.njk" as partialsMacros %}
 
+{% set regionIsSet %}
+  {% if region and region !== "Not set" %}
+    yes
+  {% else %}
+    no
+  {% endif %}
+{% endset %}
 {% if searchResults.length === 0 %}
   <p class="govuk-body">We couldn't find any results for this search, please <a class="govuk-link" href="{{ partialsMacros.startAgainUrl(listsRoutes.finder, serviceType, getParameterValue("readNotice", queryString)) }}">try again</a></p>
 {% else %}
@@ -21,6 +28,9 @@
     arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
     should not be treated as such.</p>
 
+
+  <p class="govuk-body">Results are ordered by {{ "nearest to " if region and region !== "Not set" }}{{ _.upperFirst(region) if region and region !== "Not set" else "Company name" }}</p>
+
   <ul class="govuk-list">
     {% for item in searchResults %}
       <li>
@@ -30,6 +40,8 @@
     {% endfor %}
   </ul>
 
-  {{ macros.paginationSection(pagination) }}
+  {% if not (print === "yes") %}
+    {{ macros.paginationSection(pagination) }}
+  {% endif %}
 {% endif %}
 

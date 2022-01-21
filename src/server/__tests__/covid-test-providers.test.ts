@@ -96,7 +96,7 @@ describe.only("Covid Test Providers List:", () => {
       const continueButton = $main.find("button");
 
       expect(pageHeader.text().trim()).toBe(
-        "Where in Spain do you want to find a COVID-19 test provider?"
+        "Where in Spain do you want to find a COVID-19 test provider? (Optional)"
       );
       expect(continueButton.text()).toBe("Continue");
     });

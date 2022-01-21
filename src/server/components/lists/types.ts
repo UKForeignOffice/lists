@@ -35,6 +35,7 @@ export interface ListsRequestParams {
   readDisclaimer?: string;
   resultsTurnaround?: string;
   page?: string;
+  print?: "yes" | "no" | "";
 }
 
 export interface PaginationResults {

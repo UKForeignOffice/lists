@@ -26,10 +26,12 @@ export async function initLists(server: Express): Promise<void> {
 export function preProcessParams(params: { [name: string]: any }): {
   [name: string]: any;
 } {
-  const paramsCopy = { ...params };
+  let paramsCopy = { ...params };
   const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
+  paramsCopy = hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
+  paramsCopy = paramsCopy?.region === "" ? { ...paramsCopy, region: "Not set"} : paramsCopy;
 
-  return hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
+  return paramsCopy;
 }
 
 export function queryStringFromParams(

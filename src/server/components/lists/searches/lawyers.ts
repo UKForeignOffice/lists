@@ -24,7 +24,7 @@ export async function searchLawyers(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region } = params;
+  const { serviceType, country, region, print = "no"} = params;
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
   let practiceArea = parseListValues("practiceArea", params);
@@ -60,10 +60,12 @@ export async function searchLawyers(
     offset,
   });
 
+  const results = (print === "yes") ? allRows : searchResults;
+
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
-    searchResults: searchResults,
+    searchResults: results,
     removeQueryParameter,
     getParameterValue,
     queryString: queryStringFromParams(params),
@@ -71,5 +73,7 @@ export async function searchLawyers(
     limit,
     offset,
     pagination,
+    print
   });
+
 }

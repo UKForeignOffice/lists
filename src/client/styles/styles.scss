@@ -137,3 +137,17 @@ main.govuk-main-wrapper {
     white-space: pre-line;
   }
 }
+
+@media print {
+  .govuk-header {
+    display: none;
+  }
+
+  .govuk-footer {
+    display: none;
+  }
+
+  .noprint {
+    display: none;
+  }
+}
