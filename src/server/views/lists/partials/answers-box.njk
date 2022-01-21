@@ -52,7 +52,7 @@
       {% endif %}
     </p>
   {% endif %}
-  {% if print !== "yes" %}
+  {% if print !== "yes" and country %}
     <p class="govuk-body noprint">
         <a
           class="govuk-link"
@@ -60,15 +60,16 @@
           aria-label="Start again"
         >Start again</a>
     </p>
-
-    <p class="govuk-body noprint">
-      <a
-        class="govuk-link"
-        href="{{ listsRoutes.results }}?{{ queryString }}&print=yes"
-        aria-label="Print all results (opens in new tab)"
-        rel="noreferrer noopener"
-        target="_blank"
-      >Print all results  (opens in new tab)</a>
-    </p>
+    {% if searchResults.length > 0 %}
+      <p class="govuk-body noprint">
+        <a
+          class="govuk-link"
+          href="{{ listsRoutes.results }}?{{ queryString }}&print=yes"
+          aria-label="Print all results (opens in new tab)"
+          rel="noreferrer noopener"
+          target="_blank"
+        >Print all results  (opens in new tab)</a>
+      </p>
+    {% endif %}
   {% endif %}
 </div>
