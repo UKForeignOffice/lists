@@ -7,3 +7,4 @@ export { configureViews } from "./views";
 export { configureStaticServer } from "./static";
 export { configureErrorHandlers } from "./error-handlers";
 export { configureCookieParser } from "./cookie-parser";
+export { configureRateLimit } from "./rate-limit";

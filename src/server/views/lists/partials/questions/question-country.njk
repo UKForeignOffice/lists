@@ -1,4 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
     <h1 class="govuk-label-wrapper">
       <label class="govuk-label govuk-label--l" for="country-autocomplete">

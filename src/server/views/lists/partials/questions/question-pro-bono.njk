@@ -1,4 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'pro-bono' }}">
     <fieldset class="govuk-fieldset" aria-describedby="pro-bono-hint">
       <h1 class="govuk-label-wrapper">
@@ -7,8 +8,8 @@
         </label>
       </h1>
       <div id="pro-bono-hint" class="govuk-hint">
-        Lawyers in some countries may provide services on a pro bono basis. 
-        Pro bono work is done for free or at a much reduced cost for people unable to afford full legal fees. 
+        Lawyers in some countries may provide services on a pro bono basis.
+        Pro bono work is done for free or at a much reduced cost for people unable to afford full legal fees.
         This is decided on a case by case basis.
       </div>
       {% if error.field === 'pro-bono' %}

@@ -21,8 +21,9 @@
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
-  
+
   <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
       <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -38,11 +39,11 @@
         <div class="govuk-radios">
           {% for prop, serviceType in ServiceType %}
             <div class="govuk-radios__item">
-              <input 
-                class="govuk-radios__input" 
-                id="serviceType-{{ serviceType }}" 
-                name="serviceType" 
-                type="radio" 
+              <input
+                class="govuk-radios__input"
+                id="serviceType-{{ serviceType }}"
+                name="serviceType"
+                type="radio"
                 value="{{ serviceType }}"
                 {{-" checked" if list.type === serviceType }}
                 {{-" disabled" if listId !== 'new' }}
@@ -55,8 +56,8 @@
         </div>
       </fieldset>
     </div>
-    
-    
+
+
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
       <h3 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--m" for="country-autocomplete">
@@ -68,7 +69,7 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
-      
+
       {% if listId !== 'new' %}
         <input class="govuk-input" name="country" type="text" value="{{list.country.name}}" disabled>
       {% else %}
@@ -96,18 +97,18 @@
         <div id="administrators-hint-2" class="govuk-hint">
           Enter the user’s email address, please separate multiple addresses with commas
         </div>
-        <input 
-          class="govuk-input" 
-          id="administrators" 
-          name="administrators" 
-          type="text" 
-          aria-describedby="administrators-hint administrators-hint-2" 
+        <input
+          class="govuk-input"
+          id="administrators"
+          name="administrators"
+          type="text"
+          aria-describedby="administrators-hint administrators-hint-2"
           value="{{list.jsonData.administrators or req.user.userData.email}}"
         >
       </fieldset>
     </div>
-    
-    
+
+
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'validators' }}">
       <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
@@ -152,7 +153,7 @@
       {% else %}
         Save
       {% endif %}
-      
+
     </button>
   </form>
   <script nonce="{{cspNonce}}">

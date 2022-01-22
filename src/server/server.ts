@@ -9,6 +9,7 @@ import {
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
+  configureRateLimit,
 } from "./middlewares";
 import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
@@ -20,6 +21,7 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { isProd } from "server/config";
+import { initCSRF } from "server/components/auth/helpers";
 
 const server = express();
 
@@ -40,9 +42,11 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
+  configureRateLimit(server);
 
   // initialize components
   await initAuth(server);
+  await initCSRF(server);
   await initLists(server);
   await initCookies(server);
   await initSitemap(server);

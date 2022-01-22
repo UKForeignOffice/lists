@@ -1,4 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'practice-area' }}">
     <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
       <h1 class="govuk-label-wrapper">
