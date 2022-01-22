@@ -2,7 +2,7 @@
   Find a COVID-19 test provider {{ "in " + _.startCase(country) if country else "abroad"}}
 </h1>
 <p class="govuk-body">
-  British nationals can contact providers on the list to book a COVID-19 test before returning to the UK. 
+  British nationals can contact providers on the list to book a COVID-19 test before returning to the UK.
 </p>
 <p class="govuk-body">
   You can search for COVID-19 test providers by:
@@ -38,11 +38,12 @@
   If you have feedback specifically about this digital service, the FCDO welcomes your views.
 </p>
 <p class="govuk-body">
-  Email: <a class="govuk-link" href="mailto:digitalservicesfeedback@fco.gov.uk">digitalservicesfeedback@fco.gov.uk</a> 
+  Email: <a class="govuk-link" href="mailto:digitalservicesfeedback@fco.gov.uk">digitalservicesfeedback@fco.gov.uk</a>
 </p>
 
 
 <form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
   <input name="readNotice" type="hidden" value="ok" />
   <button class="govuk-button" data-module="govuk-button">Start now</button>
 </form>

@@ -1,13 +1,14 @@
 <form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'results-turnaround' }}">
     <fieldset class="govuk-fieldset" aria-describedby="results-turnaround-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="resultsTurnaround">
-          How fast do you need your result from when you take the test? 
+          How fast do you need your result from when you take the test?
         </label>
       </h1>
       <div id="results-turnaround-hint" class="govuk-hint">
-        You must take the test in the 3 days before the day on which you will arrive in England. 
+        You must take the test in the 3 days before the day on which you will arrive in England.
         For example, if you travel directly to England on a Friday, you must take the test on or after Tuesday and need to have the negative result before boarding on Friday.
       </div>
       {% if error.field === 'results-turnaround' %}
@@ -33,7 +34,7 @@
             for="results-turnaround-{{ turnAround }}"
           >
             {{ turnAround }} hour{{ "s" if turnAround > 1 else ""}}
-          </label>  
+          </label>
         </div>
         {% endfor %}
         <div class="govuk-radios__item">
@@ -49,7 +50,7 @@
             for="results-turnaround-other"
           >
             No preference
-          </label>  
+          </label>
         </div>
         <input
           aria-hidden="true"
