@@ -25,7 +25,7 @@ describe("Error handlers middleware", () => {
 
   test("it configures error handler", () => {
     configureErrorHandlers(server);
-    expect(server.use).toHaveBeenCalledTimes(2);
+    expect(server.use).toHaveBeenCalledTimes(3);
   });
 
   describe("404 error handler", () => {
@@ -98,6 +98,44 @@ describe("Error handlers middleware", () => {
       handle500(error, req, res);
       expect(res.send).toHaveBeenCalledWith(
         "Sorry, there is a problem with the service"
+      );
+    });
+  });
+
+  describe("403 error handler", () => {
+    let handle403: any;
+    let error: any;
+
+    beforeEach(() => {
+      configureErrorHandlers(server);
+      handle403 = server.use.mock.calls[2][0];
+      error = { status: 403, code: "EBADCSRFTOKEN" };
+    });
+
+    test("response status is 403", () => {
+      handle403(error, req, res);
+      expect(res.status).toHaveBeenCalledWith(403);
+    });
+
+    test("it renders errors/403.njk when request expects HTML", () => {
+      req.accepts.mockReturnValue("html");
+      handle403(error, req, res);
+      expect(res.render).toHaveBeenCalledWith("errors/403");
+    });
+
+    test("it responds with json when request expects JSON", () => {
+      req.accepts.mockReturnValue("json");
+      handle403(error, req, res);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "This request could not be processed.  Please try again.",
+      });
+    });
+
+    test("it responds with text when request does not accepts either HTMl nor JSON", () => {
+      req.accepts.mockReturnValue("something else");
+      handle403(error, req, res);
+      expect(res.send).toHaveBeenCalledWith(
+        "This request could not be processed.  Please try again."
       );
     });
   });
