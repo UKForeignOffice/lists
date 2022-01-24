@@ -21,7 +21,7 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { isProd } from "server/config";
-import { initCSRF } from "server/components/auth/helpers";
+import { initCSRF } from "server/components/cookies/helpers";
 
 const server = express();
 
