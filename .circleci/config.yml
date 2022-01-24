@@ -283,44 +283,35 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - test:
-          filters:
-            tags:
-              only: /.*/
+#      - test:
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      - smoke
 
-      - smoke
-
-      - publish:
-          name: publish-lists
-          app: lists
-          filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
-            branches:
-              only:
-                - deploy-test
-          context:
-            - VPN
-            - AWS
-          requires:
-            - test
-            - smoke
+#      - publish:
+#          name: publish-lists
+#          app: lists
+#          filters:
+#            tags:
+#              only: /v[0-9]+(\.[0-9]+)*/
+#            branches:
+#              only:
+#                - deploy-test
+#          context:
+#            - VPN
+#            - AWS
+#          requires:
+#            - test
+#            - smoke
 
       - publish:
           name: publish-lists-postgres
           app: lists-postgres
-          filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
-            branches:
-              only:
-                - deploy-test
           context:
             - VPN
             - AWS
-          requires:
-            - test
-            - smoke
 
       - deploy:
           name: deploy-test
