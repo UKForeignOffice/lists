@@ -196,8 +196,8 @@ jobs:
       namespace:
         type: string
 
-    docker:
-      - image: cimg/node:14.17.0-browsers
+    machine:
+      image: ubuntu-1604:202004-01
 
     steps:
       - attach_workspace:
