@@ -226,7 +226,7 @@ jobs:
           name: Install OpenVPN
           command: |
             sudo apt-get update
-            sudo apt-get install openvpn net-tools -y --force-yes
+            sudo apt-get install openvpn -y --force-yes
 
       - run:
           name: Check IP before VPN connection
@@ -312,18 +312,18 @@ workflows:
           context:
             - VPN
             - AWS
-#
-#      - deploy:
-#          name: deploy-test
-#          namespace: test-lists
-#          context:
-#            - VPN
-#            - AWS
-#          requires:
+
+      - deploy:
+          name: deploy-test
+          namespace: test-lists
+          context:
+            - VPN
+            - AWS
+          requires:
 #            - publish-lists
-#            - publish-lists-postgres
-#          filters:
-#            branches:
-#              only:
-#                - deploy-test
+            - publish-lists-postgres
+          filters:
+            branches:
+              only:
+                - deploy-test
 
