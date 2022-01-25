@@ -807,7 +807,7 @@ export async function findPublishedLawyersPerCountry(props: {
       );
     }
     andWhere.push(
-      `AND ARRAY(select jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw')) && ARRAY ${JSON.stringify(
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
         legalPracticeAreas
       ).replace(/"/g, "'")}`
     );
