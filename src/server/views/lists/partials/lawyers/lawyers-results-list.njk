@@ -14,7 +14,7 @@
   <h2 class="govuk-heading-l govuk-!-margin-bottom-4">Lawyers in {{ _.upperFirst(country) }}</h2>
 
   <p class="govuk-body">Where lawyers work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
-    system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted</p>
+    system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted.</p>
 
   <div class="govuk-warning-text">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -28,7 +28,14 @@
     arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
     should not be treated as such.</p>
 
-  <p class="govuk-body">Results are ordered by {{ "nearest to " if region and region !== "Not set" }}{{ _.upperFirst(region) if region and region !== "Not set" else "Company name" }}</p>
+  <p class="govuk-body">
+    Results are ordered by
+    {% if region and region !== "Not set" %}
+      nearest to <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>
+    {% else %}
+      Company name
+    {% endif %}
+  </p>
 
   <ul class="govuk-list">
     {% for item in searchResults %}
