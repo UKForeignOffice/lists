@@ -21,7 +21,7 @@
   {% endif %}
   {% if region %}
     <p class="govuk-body">
-      Regions covered<br />
+      Location<br />
       <strong>{{ _.upperFirst(region) }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">Change</a>{% endif %}
     </p>
