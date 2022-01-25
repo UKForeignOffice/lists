@@ -196,8 +196,8 @@ jobs:
       namespace:
         type: string
 
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/node:14.17.0-browsers
 
     steps:
       - attach_workspace:
@@ -268,14 +268,14 @@ jobs:
           aws-region: eu-west-2
           install-kubectl: true
 
-      - kubernetes/update-container-image:
-          namespace: << parameters.namespace >>
-          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
-          resource-name: deployment/lists
+#      - kubernetes/update-container-image:
+#          namespace: << parameters.namespace >>
+#          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
+#          resource-name: deployment/lists
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
           resource-name: deployment/lists-postgres
 
 
@@ -312,16 +312,16 @@ workflows:
           context:
             - VPN
             - AWS
-
-      - deploy:
-          name: deploy-test
-          namespace: test-lists
-          context:
-            - VPN
-            - AWS
-          requires:
+#
+#      - deploy:
+#          name: deploy-test
+#          namespace: test-lists
+#          context:
+#            - VPN
+#            - AWS
+#          requires:
 #            - publish-lists
-            - publish-lists-postgres
+#            - publish-lists-postgres
 #          filters:
 #            branches:
 #              only:
