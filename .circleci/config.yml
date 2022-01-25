@@ -197,7 +197,7 @@ jobs:
         type: string
 
     machine:
-      image: cimg/node:14.17-browsers
+      image: ubuntu-2004:202111-02
 
     steps:
       - attach_workspace:
