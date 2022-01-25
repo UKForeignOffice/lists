@@ -322,8 +322,8 @@ workflows:
           requires:
 #            - publish-lists
             - publish-lists-postgres
-          filters:
-            branches:
-              only:
-                - deploy-test
+#          filters:
+#            branches:
+#              only:
+#                - deploy-test
 
