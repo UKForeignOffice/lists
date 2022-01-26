@@ -19,6 +19,6 @@ Feature:
 
     Examples:
       | profession | country | city | aid | probono | filters               | found              |
-     | lawyers     | Italy   | Rome |     |         | [Bankruptcy,Criminal] | Francesco Chianini |
-      | lawyers    | Italy   | Rome | No  | No      | [Bankruptcy,Criminal] | Francesco Chianini |
+      | lawyers    | Italy   | Rome |     |         | [Bankruptcy,Criminal] | Davide Cupertino   |
+      | lawyers    | Italy   | Rome | No  | No      | [Bankruptcy,Criminal] | Davide Cupertino   |
 
