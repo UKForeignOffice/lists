@@ -38,7 +38,6 @@ export async function searchLawyers(
     countryName: country,
     region,
     practiceArea,
-    limit: -1,
     offset: -1,
   });
   const count = allRows.length;
@@ -49,14 +48,12 @@ export async function searchLawyers(
     listRequestParams: params,
   });
 
-  const limit = 20;
-  const offset = limit * pagination.results.currentPage - limit;
+  const offset = listItem.ROWS_PER_PAGE * pagination.results.currentPage - listItem.ROWS_PER_PAGE;
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
     practiceArea,
-    limit,
     offset,
   });
 
@@ -70,7 +67,7 @@ export async function searchLawyers(
     getParameterValue,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
-    limit,
+    limit: listItem.ROWS_PER_PAGE,
     offset,
     pagination,
     print

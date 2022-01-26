@@ -226,7 +226,7 @@ describe.only("Covid Test Providers List:", () => {
 
       // region answer
       expect(answers.eq(2).text()).toEqual(`
-      Regions covered
+      Location
       Madrid
       Change
     `);
