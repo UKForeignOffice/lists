@@ -268,10 +268,10 @@ jobs:
           aws-region: eu-west-2
           install-kubectl: true
 
-#      - kubernetes/update-container-image:
-#          namespace: << parameters.namespace >>
-#          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
-#          resource-name: deployment/lists
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
+          resource-name: deployment/lists
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
@@ -283,28 +283,28 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-#      - test:
-#          filters:
-#            tags:
-#              only: /.*/
-#
-#      - smoke
+      - test:
+          filters:
+            tags:
+              only: /.*/
 
-#      - publish:
-#          name: publish-lists
-#          app: lists
-#          filters:
-#            tags:
-#              only: /v[0-9]+(\.[0-9]+)*/
-#            branches:
-#              only:
-#                - deploy-test
-#          context:
-#            - VPN
-#            - AWS
-#          requires:
-#            - test
-#            - smoke
+      - smoke
+
+      - publish:
+          name: publish-lists
+          app: lists
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - deploy-test
+          context:
+            - VPN
+            - AWS
+          requires:
+            - test
+            - smoke
 
       - publish:
           name: publish-lists-postgres
@@ -320,10 +320,10 @@ workflows:
             - VPN
             - AWS
           requires:
-#            - publish-lists
+            - publish-lists
             - publish-lists-postgres
-#          filters:
-#            branches:
-#              only:
-#                - deploy-test
+          filters:
+            branches:
+              only:
+                - deploy-test
 
