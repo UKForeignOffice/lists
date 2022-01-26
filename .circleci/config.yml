@@ -309,6 +309,12 @@ workflows:
       - publish:
           name: publish-lists-postgres
           app: lists-postgres
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - deploy-test
           context:
             - VPN
             - AWS
