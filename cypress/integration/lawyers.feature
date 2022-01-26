@@ -18,7 +18,7 @@ Feature:
 
 
     Examples:
-      | profession | country | city | aid | probono | filters               | found         |
-     | lawyers     | Italy   | Rome |     |         | [Bankruptcy,Criminal] | Motech Italia |
-      | lawyers    | Italy   | Rome | No  | No      | [Bankruptcy,Criminal] | Motech Italia |
+      | profession | country | city | aid | probono | filters               | found              |
+     | lawyers     | Italy   | Rome |     |         | [Bankruptcy,Criminal] | Francesco Chianini |
+      | lawyers    | Italy   | Rome | No  | No      | [Bankruptcy,Criminal] | Francesco Chianini |
 
