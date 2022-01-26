@@ -3,12 +3,13 @@ version: 2.1
 orbs:
   aws-eks: circleci/aws-eks@1.1.0
   kubernetes: circleci/kubernetes@1.0.0
+  node: circleci/node@5.0.0
 
 defaults: &defaults
   working_directory: ~/repo
 
 jobs:
-  build:
+  test:
     <<: *defaults
 
     docker:
@@ -59,18 +60,96 @@ jobs:
           paths:
             - node_modules
 
-  publish:
-    <<: *defaults
 
-    docker:
-      - image: circleci/python:2.7-jessie
+
+  smoke:
+    <<: *defaults
+    machine:
+      image: ubuntu-2004:202111-02
 
     steps:
       - checkout
+      - node/install:
+          install-yarn: true
+          node-version: '14'
+      - restore_cache:
+          keys:
+            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
+            - form-runner-1-
 
-      - setup_remote_docker:
-          version: 19.03.13
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-
 
+      - run: npm ci
+
+      - run:
+          name: Prisma generate
+          command: npm run prisma:generate
+
+      - run:
+          name: build postgres
+          command: |
+            docker-compose -f docker-compose.ci.yml build \
+            --build-arg PGP_PUB=$PGP_PUB \
+            --build-arg PGP_SECRET=$PGP_SECRET \
+            --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+      - run:
+          name: Start docker-compose and verify service(s)
+          command: |
+            docker-compose -f docker-compose.ci.yml up -d
+            docker ps
+
+      - run:
+          name: run build
+          command: npm run build:ci
+
+      - run:
+          name: run start
+          background: true
+          command: npm run start:ci
+
+      - run: sleep 30
+
+      - run:
+          name: Check server is running
+          command: |
+            curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
+      - run:
+          name: Run smoke tests
+          command: npm run smoke-tests
+
+      - save_cache:
+          key: form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
+          paths:
+            - ./lib/form-runner
+
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - store_artifacts:
+          path: cypress/videos
+          destination: cypress
+
+
+
+  publish:
+    <<: *defaults
+
+    parameters:
+      app:
+        description: The app to build and publish. Pick from lists or lists-postgres.
+        default: "lists"
+        type: string
+
+    machine:
+      image: ubuntu-2004:202111-02
+
+    steps:
+      - checkout
       - run:
           name: Install awscli
           command: sudo pip install awscli
@@ -81,12 +160,34 @@ jobs:
             | # set $DOCKER_TAG as either the git tag that triggered the build, or the git sha (for deploy-test branch)
             if [ "<<pipeline.git.tag>>" == "" ]; then echo 'export DOCKER_TAG="<<pipeline.git.revision>>"' >> $BASH_ENV; else echo 'export DOCKER_TAG="<<pipeline.git.tag>>"' >> $BASH_ENV; fi
 
-      - run:
-          name: Publish docker image
-          command: |
-            eval $(aws ecr get-login --no-include-email --region eu-west-2)
-            docker build --build-arg NODE_ENV=production --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
-            docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists
+
+      - when:
+          condition:
+            equal: [lists, <<parameters.app>>]
+          steps:
+            - run:
+                name: Publish docker image - lists
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker build --build-arg NODE_ENV=production --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG
+      - when:
+          condition:
+            equal: [lists-postgres, <<parameters.app>>]
+          steps:
+          - run:
+              name: build postgres
+              command: |
+                docker-compose -f docker-compose.ci.yml build \
+                --build-arg PGP_PUB=$PGP_PUB \
+                --build-arg PGP_SECRET=$PGP_SECRET \
+                --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+          - run:
+              name: Publish docker image - lists-postgres
+              command: |
+                eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+                docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
 
   deploy:
     <<: *defaults
@@ -151,7 +252,7 @@ jobs:
 
       - run:
           name: Wait for VPN connection to be established
-          command: sleep 30
+          command: sleep 60
 
       - run:
           name: Check IP after VPN connection
@@ -172,27 +273,51 @@ jobs:
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+          resource-name: deployment/lists-postgres
+
+
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build:
+      - test:
           filters:
             tags:
               only: /.*/
 
+      - smoke
+
       - publish:
-          context:
-            - VPN
-            - AWS
-          requires:
-            - build
+          name: publish-lists
+          app: lists
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
                 - deploy-test
+          context:
+            - VPN
+            - AWS
+          requires:
+            - test
+            - smoke
+
+      - publish:
+          name: publish-lists-postgres
+          app: lists-postgres
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - deploy-test
+          context:
+            - VPN
+            - AWS
 
       - deploy:
           name: deploy-test
@@ -201,8 +326,10 @@ workflows:
             - VPN
             - AWS
           requires:
-            - publish
+            - publish-lists
+            - publish-lists-postgres
           filters:
             branches:
               only:
                 - deploy-test
+

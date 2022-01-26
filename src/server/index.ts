@@ -1,5 +1,5 @@
-import { getServer } from "./server";
 import { PORT, NODE_ENV } from "./config";
+import { getServer } from "./server";
 import { logger } from "./services/logger";
 import { startFormRunner } from "server/components/formRunner";
 
@@ -15,7 +15,7 @@ async function initApp(): Promise<void> {
     logger.info(`Server Stopped`);
   });
 }
-
 initApp().catch((error) => {
   logger.error("Server initialization error", error);
+  process.exit(1);
 });

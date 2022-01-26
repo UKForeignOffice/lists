@@ -1,22 +1,16 @@
-import crypto from "crypto";
 import { SecretsManager } from "aws-sdk";
 import { AWS_REGION } from "server/config";
 import { differenceInDays } from "date-fns";
-import { logger } from "./logger";
+import { logger } from "./../logger";
+import { generateRandomSecret } from "./helpers";
 
 let secretsManager: SecretsManager;
 
-function generateRandomSecret(): string {
-  return crypto.randomBytes(128).toString("hex");
-}
-
 export function getAWSSecretsManager(): SecretsManager {
-  if (secretsManager === undefined) {
-    secretsManager = new SecretsManager({
-      apiVersion: "2017-10-17",
-      region: AWS_REGION,
-    });
-  }
+  secretsManager ??= new SecretsManager({
+    apiVersion: "2017-10-17",
+    region: AWS_REGION,
+  });
 
   return secretsManager;
 }

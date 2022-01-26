@@ -10,7 +10,7 @@ jest.mock("connect-redis", () => jest.fn());
 describe("Express Session", () => {
   let server: any;
   let spySession: jest.SpyInstance;
-  
+
   let mockRedisStore: any;
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe("Express Session", () => {
 
     mockRedisStore = jest.fn();
     spySession = jest.spyOn(session, "default");
-    
+
     jest.spyOn(connectRedis, "default").mockReturnValue(mockRedisStore);
   });
 
@@ -28,7 +28,7 @@ describe("Express Session", () => {
     await configureExpressSession(server);
 
     expect(spySession.mock.calls[0][0]).toMatchObject({
-      secret: "123ABC",
+      secret: "12345678",
       saveUninitialized: true,
       resave: false,
       proxy: !isLocalHost,

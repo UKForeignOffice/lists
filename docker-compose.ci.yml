@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    platform: linux/amd64
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    # if you are on Mac M1 please use the image below
+    # see https://github.com/docker/for-mac/issues/5122
+    # image: "gangstead/postgis:13-3.1-arm"
+    ports:
+      - "5432:5432"
+  redis:
+    image: "redis:alpine"
+    command: redis-server --requirepass redispassword
+    ports:
+      - 6379:6379
