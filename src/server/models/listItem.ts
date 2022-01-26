@@ -32,6 +32,8 @@ import {
 import { queryStringFromParams } from "server/components/lists/helpers";
 import { legalPracticeAreasList } from "server/services/metadata";
 
+export const ROWS_PER_PAGE: number = 10;
+
 interface ListItemWithAddressCountry extends ListItem {
   address: Address & {
     country: Country;
@@ -108,10 +110,9 @@ function fetchPublishedListItemQuery(props: {
   region?: string;
   fromGeoPoint?: Point;
   andWhere?: string;
-  limit: number;
   offset: number;
 }): string {
-  const { type, countryName, region, fromGeoPoint, andWhere, limit, offset } = props;
+  const { type, countryName, region, fromGeoPoint, andWhere, offset } = props;
   const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
   const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
 
@@ -129,8 +130,8 @@ function fetchPublishedListItemQuery(props: {
     orderBy = "ORDER BY distanceInMeters ASC";
   }
   let limitOffset = "";
-  if (limit >= 0 && offset >= 0) {
-    limitOffset = `LIMIT ${limit} OFFSET ${offset}`;
+  if (ROWS_PER_PAGE >= 0 && offset >= 0) {
+    limitOffset = `LIMIT ${ROWS_PER_PAGE} OFFSET ${offset}`;
   }
 
   return `
@@ -222,10 +223,9 @@ export async function getPaginationValues(props: {
   listRequestParams: ListsRequestParams;
 }): Promise<PaginationResults> {
   const { count, page, listRequestParams } = props;
-  const limit = 20;
   let pageCount = 0;
-  if (count > 0 && limit > 0) {
-    pageCount = Math.ceil(count / limit);
+  if (count > 0 && ROWS_PER_PAGE > 0) {
+    pageCount = Math.ceil(count / ROWS_PER_PAGE);
   }
 
   const nextPrevious = getNextPrevious({
@@ -241,12 +241,11 @@ export async function getPaginationValues(props: {
     queryString,
   });
 
-  const from = getFromCount({ count, limit, currentPage });
+  const from = getFromCount({ count, currentPage });
   const to = getToCount({
     currentPage,
     pageCount,
     count,
-    limit,
   });
 
   return {
@@ -352,18 +351,17 @@ function getPageItems(props: {
 
 function getFromCount(props: {
   count: number;
-  limit: number;
   currentPage: number;
 }): number {
-  const { count, limit, currentPage } = props;
+  const { count, currentPage } = props;
   let from;
 
   if (count === 0) {
     from = 0;
-  } else if (count < limit) {
-    from = limit * currentPage - (count - 1);
+  } else if (count < ROWS_PER_PAGE) {
+    from = ROWS_PER_PAGE * currentPage - (count - 1);
   } else {
-    from = limit * currentPage - (limit - 1);
+    from = ROWS_PER_PAGE * currentPage - (ROWS_PER_PAGE - 1);
   }
   return from;
 }
@@ -372,14 +370,13 @@ function getToCount(props: {
   currentPage: number;
   pageCount: number;
   count: number;
-  limit: number;
 }): number {
-  const { currentPage, pageCount, count, limit } = props;
+  const { currentPage, pageCount, count } = props;
   let to = 0;
   if (currentPage === pageCount) {
     to = count;
   } else {
-    to = limit * currentPage;
+    to = ROWS_PER_PAGE * currentPage;
   }
   return to;
 }
@@ -770,13 +767,11 @@ export async function findPublishedLawyersPerCountry(props: {
   legalAid?: "yes" | "no" | "";
   proBono?: "yes" | "no" | "";
   practiceArea?: string[];
-  limit?: number;
   offset?: number;
 }): Promise<LawyerListItemGetObject[]> {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
-  const limit = props.limit ?? 0;
   const offset = props.offset ?? 0;
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
@@ -825,7 +820,6 @@ export async function findPublishedLawyersPerCountry(props: {
       region: props.region,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
-      limit,
       offset,
     });
 
@@ -974,7 +968,6 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     throw new Error("Country name is missing");
   }
   // @todo page parameter needs to be retrieved from the request.  Refactor once lawyers has been implemented.
-  const limit = 20;
   const offset = 0;
 
   try {
@@ -1000,7 +993,6 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       region: props.region,
       fromGeoPoint,
       andWhere,
-      limit,
       offset,
     });
 

@@ -351,7 +351,7 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
-        LIMIT 20 OFFSET 0
+        LIMIT 10 OFFSET 0
     `.replace(/\s\s+/g, " ");
 
     test("query is correct", async () => {
@@ -364,7 +364,6 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "yes",
         practiceArea: [],
-        limit: 20,
         offset: 0,
       });
 
@@ -384,7 +383,6 @@ describe("ListItem Model:", () => {
         legalAid: "no",
         proBono: "yes",
         practiceArea: [],
-        limit: 20,
         offset: 0,
       });
 
@@ -406,7 +404,6 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "no",
         practiceArea: [],
-        limit: 20,
         offset: 0
       });
 
@@ -428,7 +425,6 @@ describe("ListItem Model:", () => {
         legalAid: "no",
         proBono: "no",
         practiceArea: [],
-        limit: 20,
         offset: 0
       });
 
@@ -934,7 +930,7 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
-        LIMIT 20 OFFSET 0
+        LIMIT 10 OFFSET 0
     `.replace(/\s\s+/g, " ");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });
