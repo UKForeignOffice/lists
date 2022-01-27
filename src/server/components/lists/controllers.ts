@@ -31,6 +31,7 @@ import {
 } from "server/components/formRunner";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 export async function listsPostController(
   req: Request,
@@ -93,6 +94,7 @@ export function listsGetController(req: Request, res: Response): void {
       ...params,
       partialToRender: "question-service-type.njk",
       getServiceLabel,
+      csrfToken: getCSRFToken(req),
     });
     return;
   }
@@ -133,6 +135,7 @@ export function listsGetController(req: Request, res: Response): void {
       getParameterValue,
       legalPracticeAreasList,
       serviceLabel: getServiceLabel(params.serviceType),
+      csrfToken: getCSRFToken(req),
     });
 
     return;

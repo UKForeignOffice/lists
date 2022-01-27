@@ -10,6 +10,7 @@ import {
   parseListValues,
 } from "../helpers";
 import { QuestionName } from "../types";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -70,7 +71,8 @@ export async function searchLawyers(
     limit: listItem.ROWS_PER_PAGE,
     offset,
     pagination,
-    print
+    print,
+    csrfToken: getCSRFToken(req),
   });
 
 }

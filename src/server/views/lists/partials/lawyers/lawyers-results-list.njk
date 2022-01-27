@@ -24,10 +24,11 @@
     </strong>
   </div>
 
-  <p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
+{% if (print === "yes") %}
+  <p class="govuk-body noprint">The FCDO does not accept any liability to any person or company for any financial loss or damage
     arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
     should not be treated as such.</p>
-
+{% endif %}
   <p class="govuk-body">
     Results are ordered by
     {% if region and region !== "Not set" %}

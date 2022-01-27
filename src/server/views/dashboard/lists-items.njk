@@ -22,7 +22,7 @@
   {% if listItems.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
-    <input type="hidden" name="_csrf" id="_csrf" value="{{ _csrf }}" />
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in listItems %}
         <li id="item-{{ listItem.id }}">
