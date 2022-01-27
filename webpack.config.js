@@ -15,7 +15,7 @@ const prodMode = process.env.NODE_ENV === "production";
 const testMode = process.env.NODE_ENV === "test";
 const environment = prodMode ? "production" : "development";
 const isDockerCompose = process.env.DOCKER_COMPOSE === "true";
-const nodeEnv = process.env.NODE_ENV;
+const nodeEnv = process.env.NODE_ENV ?? environment;
 
 console.log("Webpack Starting", {
   devMode,

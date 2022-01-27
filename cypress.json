@@ -1,4 +1,7 @@
 {
   "chromeWebSecurity": false,
-  "testFiles": ["**/*.feature"]
+  "testFiles": ["**/*.feature"],
+  "env": {
+    "TAGS": "not @wip"
+  }
 }
