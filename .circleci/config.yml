@@ -116,9 +116,9 @@ jobs:
           name: Check server is running
           command: |
             curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
-#      - run:
-#          name: Run smoke tests
-#          command: npm run smoke-tests
+      - run:
+          name: Run smoke tests
+          command: npm run smoke-tests
 
       - save_cache:
           key: form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
@@ -290,7 +290,7 @@ workflows:
             tags:
               only: /.*/
 
-#      - smoke
+      - smoke
 
       - publish:
           name: publish-lists
@@ -306,7 +306,7 @@ workflows:
             - AWS
           requires:
             - test
-#            - smoke
+            - smoke
 
       - publish:
           name: publish-lists-postgres
