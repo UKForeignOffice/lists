@@ -2,7 +2,7 @@ Feature:
   I want to apply to be added to the ‘Find a lawyer abroad’ service
 
   Background:
-
+  @wip
   Scenario Outline:
     Given I want to apply to be added as a "<profession>"
     When I select the option "<country>"
