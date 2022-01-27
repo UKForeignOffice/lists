@@ -42,6 +42,7 @@ import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -89,6 +90,7 @@ export async function usersListController(
       ...DEFAULT_VIEW_PROPS,
       users,
       req,
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -141,6 +143,7 @@ export async function usersEditController(
       userSaved,
       user,
       req,
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -163,6 +166,7 @@ export async function listsController(
       ...DEFAULT_VIEW_PROPS,
       req,
       lists,
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -330,6 +334,7 @@ export async function listsEditController(
       error,
       list,
       req,
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -358,6 +363,7 @@ export async function listsItemsController(
       listItems,
       canApprove: userIsListValidator(req, list),
       canPublish: userIsListPublisher(req, list),
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -555,6 +561,7 @@ export async function feedbackController(
       ...DEFAULT_VIEW_PROPS,
       feedbacksList,
       req,
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

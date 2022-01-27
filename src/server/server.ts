@@ -21,7 +21,6 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { isProd } from "server/config";
-import { initCSRF } from "server/components/cookies/helpers";
 
 const server = express();
 
@@ -46,7 +45,6 @@ export async function getServer(): Promise<Express> {
 
   // initialize components
   await initAuth(server);
-  await initCSRF(server);
   await initLists(server);
   await initCookies(server);
   await initSitemap(server);

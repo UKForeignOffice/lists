@@ -137,6 +137,7 @@ describe("Lists Controllers", () => {
         ...DEFAULT_VIEW_PROPS,
         ...{ ...req.params, ...req.query, ...req.body },
         partialToRender: "question-service-type.njk",
+        "csrfToken": "",
         getServiceLabel,
       });
     });

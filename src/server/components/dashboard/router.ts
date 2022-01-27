@@ -17,6 +17,7 @@ import {
   listItemsDeleteController,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
+import { csrfRequestHandler } from "server/components/cookies/helpers";
 
 export const dashboardRouter = express.Router();
 
@@ -26,27 +27,31 @@ dashboardRouter.get(dashboardRoutes.start, startRouteController);
 // Users
 dashboardRouter.get(
   dashboardRoutes.usersList,
+  csrfRequestHandler,
   ensureUserIsSuperAdmin,
   usersListController
 );
 dashboardRouter.all(
   dashboardRoutes.usersEdit,
+  csrfRequestHandler,
   ensureUserIsSuperAdmin,
   usersEditController
 );
 
 // lists
-dashboardRouter.get(dashboardRoutes.lists, listsController);
-dashboardRouter.all(dashboardRoutes.listsEdit, listsEditController);
-dashboardRouter.get(dashboardRoutes.listsItems, listsItemsController);
+dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
+dashboardRouter.all(dashboardRoutes.listsEdit, csrfRequestHandler, listsEditController);
+dashboardRouter.get(dashboardRoutes.listsItems, csrfRequestHandler, listsItemsController);
 
 // list items
 dashboardRouter.put(
   dashboardRoutes.listsItemsApprove,
+  csrfRequestHandler,
   listItemsApproveController
 );
 dashboardRouter.put(
   dashboardRoutes.listsItemsPublish,
+  csrfRequestHandler,
   listItemsPublishController
 );
 dashboardRouter.delete(
@@ -57,6 +62,7 @@ dashboardRouter.delete(
 // feedback
 dashboardRouter.get(
   dashboardRoutes.feedback,
+  csrfRequestHandler,
   ensureUserIsSuperAdmin,
   feedbackController
 );

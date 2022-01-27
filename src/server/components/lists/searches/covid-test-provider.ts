@@ -9,6 +9,7 @@ import {
   queryStringFromParams,
 } from "../helpers";
 import { QuestionName } from "../types";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
@@ -41,5 +42,6 @@ export async function searchCovidTestProvider(
     getParameterValue,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
+    csrfToken: getCSRFToken(req),
   });
 }

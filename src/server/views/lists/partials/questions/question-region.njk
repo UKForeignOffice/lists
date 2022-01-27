@@ -1,5 +1,5 @@
 <form class="form" action="{{ nextRoute }}" method="post">
-  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'region' }}">
     <fieldset class="govuk-fieldset">
       <h1 class="govuk-label-wrapper">

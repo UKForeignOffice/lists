@@ -23,7 +23,7 @@
   </strong>
 </div>
 <form class="form" action="{{ nextRoute }}" method="post">
-  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <input name="readNotice" type="hidden" value="ok" />
   <button class="govuk-button" data-module="govuk-button">Start</button>
 </form>

@@ -205,7 +205,6 @@
         fetch("{{ dashboardRoutes.listsItemsDelete.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: { _csrf : csrfToken }
         }).then(function (response) {
           return response.json();
         }).then(function (result) {

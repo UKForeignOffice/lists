@@ -9,12 +9,13 @@ import {
   listsConfirmApplicationController,
 } from "./controllers";
 import { listsRoutes } from "./routes";
+import { csrfRequestHandler } from "server/components/cookies/helpers";
 
 export const listsRouter = express.Router();
 
-listsRouter.get(listsRoutes.finder, listsGetController);
-listsRouter.post(listsRoutes.finder, listsPostController);
-listsRouter.get(listsRoutes.results, listsResultsController);
+listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
+listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
+listsRouter.get(listsRoutes.results, csrfRequestHandler, listsResultsController);
 listsRouter.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
 listsRouter.get(listsRoutes.confirmApplication, listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, listsGetPrivateBetaPage);
