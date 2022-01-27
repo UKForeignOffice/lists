@@ -242,8 +242,8 @@ jobs:
           background: true
           command: |
             #phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
-            #phone_home=$(ifconfig | awk '/net / { x = $2 } END { print x }')
-            phone_home=$(ifconfig eth0 | grep -w inet | awk '{ print $2}')
+            phone_home=$(ifconfig | awk '/net / { x = $2 } END { print x }')
+            #phone_home=$(ifconfig eth0 | grep -w inet | awk '{ print $2}')
             echo $phone_home
 
             echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
