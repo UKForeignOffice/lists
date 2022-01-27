@@ -359,7 +359,7 @@ function getFromCount(props: {
   if (count === 0) {
     from = 0;
   } else if (count < ROWS_PER_PAGE) {
-    from = ROWS_PER_PAGE * currentPage - (count - 1);
+    from = count - (count - 1);
   } else {
     from = ROWS_PER_PAGE * currentPage - (ROWS_PER_PAGE - 1);
   }

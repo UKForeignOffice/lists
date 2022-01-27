@@ -105,20 +105,22 @@
             </a>
           </li>
         {% endif %}
-        {% for item in pagination.items %}
-          {% set itemNumber = item.text | int  %}
-          <li class="fcdo-pagination__item">
-            {% if itemNumber === pagination.results.currentPage %}
-              <span class="fcdo-pagination__item-current-page">
-                {{ item.text }}
-              </span>
-            {% else %}
-              <a class="fcdo-pagination__link" href="{{ item.href }}">
-                {{ item.text }}
-              </a>
-            {% endif %}
-          </li>
-        {%  endfor %}
+        {% if pagination.items.length > 1 %}
+          {% for item in pagination.items %}
+            {% set itemNumber = item.text | int  %}
+            <li class="fcdo-pagination__item">
+              {% if itemNumber === pagination.results.currentPage %}
+                <span class="fcdo-pagination__item-current-page">
+                  {{ item.text }}
+                </span>
+              {% else %}
+                <a class="fcdo-pagination__link" href="{{ item.href }}">
+                  {{ item.text }}
+                </a>
+              {% endif %}
+            </li>
+          {%  endfor %}
+        {% endif %}
         {% if pagination.next.href !== "" %}
           <li class="fcdo-pagination__item" id="nextButton">
             <a class="fcdo-pagination__link fcdo-pagination__item--next fcdo-pagination__link--last" href="{{ pagination.next.href }}">
