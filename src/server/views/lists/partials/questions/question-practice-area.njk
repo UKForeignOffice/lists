@@ -1,9 +1,10 @@
 <form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'practice-area' }}">
     <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="practiceArea">
-          In which field of law do you need legal help?
+          In what areas of law do you need legal help?
         </label>
       </h1>
       <div id="practice-area-hint" class="govuk-hint">
@@ -15,6 +16,22 @@
         </span>
       {% endif %}
       <div class="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="practice-area-select-all"
+            name="practiceArea"
+            type="checkbox"
+            value="All"
+            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="practice-area-select-all"
+          >
+            Select all
+          </label>
+        </div>
         {% for practiceArea in legalPracticeAreasList %}
         <div class="govuk-checkboxes__item">
           <input
@@ -23,6 +40,7 @@
             name="practiceArea"
             type="checkbox"
             value="{{ practiceArea }}"
+            {{ 'checked' if error.checkboxValues and practiceArea in error.checkboxValues }}
           />
           <label
             class="govuk-label govuk-checkboxes__label"
@@ -32,21 +50,6 @@
           </label>
         </div>
         {% endfor %}
-        <div class="govuk-checkboxes__item">
-          <input
-            class="govuk-checkboxes__input"
-            id="practice-area-other"
-            name="practiceArea"
-            type="checkbox"
-            value="other"
-          />
-          <label
-            class="govuk-label govuk-checkboxes__label"
-            for="practice-area-other"
-          >
-            Other
-          </label>
-        </div>
         <input
           aria-hidden="true"
           class="govuk-radios__input"

@@ -131,11 +131,13 @@ describe("Lists Controllers", () => {
   describe("listsGetController", () => {
     test("it renders question page when serviceType is undefined", () => {
       listsGetController(req, res);
+      req.params.page = "";
 
       expect(res.render).toHaveBeenCalledWith("lists/question-page", {
         ...DEFAULT_VIEW_PROPS,
         ...{ ...req.params, ...req.query, ...req.body },
         partialToRender: "question-service-type.njk",
+        "csrfToken": "",
         getServiceLabel,
       });
     });

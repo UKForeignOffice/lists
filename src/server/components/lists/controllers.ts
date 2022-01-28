@@ -8,7 +8,9 @@ import {
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
+  getParameterValue,
   queryStringFromParams,
+  preProcessParams,
   createConfirmationLink,
   getCountryLawyerRedirectLink,
 } from "./helpers";
@@ -29,13 +31,17 @@ import {
 } from "server/components/formRunner";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 export async function listsPostController(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
+
+  // clean parameters
+  params = preProcessParams(params);
   const queryString = queryStringFromParams(params);
 
   const { country, serviceType } = params;
@@ -71,6 +77,9 @@ export async function listsPostController(
 
 export function listsGetController(req: Request, res: Response): void {
   const params = getAllRequestParams(req);
+  if (params.page === undefined || params.page !== "") {
+    params.page = "";
+  }
   const queryString = queryStringFromParams(params);
   const { serviceType } = params;
 
@@ -85,6 +94,7 @@ export function listsGetController(req: Request, res: Response): void {
       ...params,
       partialToRender: "question-service-type.njk",
       getServiceLabel,
+      csrfToken: getCSRFToken(req),
     });
     return;
   }
@@ -122,8 +132,10 @@ export function listsGetController(req: Request, res: Response): void {
       partialToRender,
       partialPageTitle,
       removeQueryParameter,
+      getParameterValue,
       legalPracticeAreasList,
       serviceLabel: getServiceLabel(params.serviceType),
+      csrfToken: getCSRFToken(req),
     });
 
     return;

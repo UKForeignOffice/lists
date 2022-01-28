@@ -39,6 +39,7 @@
         {% endif %}
         {% if not success %}
           <form class="form" method="post">
+            <input type="hidden" name="_csrf" value="{{ _csrf }}" />
             <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
               <h1 class="govuk-heading-l">
                 <span class="govuk-caption-l">Consular Staff List Management System</span>

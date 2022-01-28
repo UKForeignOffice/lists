@@ -23,6 +23,16 @@ import {
 } from "./types";
 import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
+import {
+  ListsRequestParams,
+  listsRoutes,
+  PaginationItem,
+  PaginationResults,
+} from "server/components/lists";
+import { queryStringFromParams } from "server/components/lists/helpers";
+import { legalPracticeAreasList } from "server/services/metadata";
+
+export const ROWS_PER_PAGE: number = 10;
 
 interface ListItemWithAddressCountry extends ListItem {
   address: Address & {
@@ -88,27 +98,40 @@ async function createAddressGeoLocation(
   return await rawInsertGeoLocation(point);
 }
 
+/**
+ * Constructs SQL for querying published list items.  If the region is not populated
+ * or is set to "Not set" then it will be ordered by company name otherwise by distance
+ * from the geo point.
+ * @param props
+ */
 function fetchPublishedListItemQuery(props: {
   type: string;
   countryName: string;
+  region?: string;
   fromGeoPoint?: Point;
   andWhere?: string;
+  offset: number;
 }): string {
-  const { type, countryName, fromGeoPoint, andWhere } = props;
+  const { type, countryName, region, fromGeoPoint, andWhere, offset } = props;
   const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
   const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
 
   let withDistance = "";
-  let orderBy = 'ORDER BY "ListItem"."jsonData"->>"organisationName" ASC';
+  let orderBy = `ORDER BY "ListItem"."jsonData"->>'organisationName' ASC`;
 
-  if (geoPointIsValid(fromGeoPoint)) {
-    withDistance = `ST_Distance(
+  if (geoPointIsValid(fromGeoPoint) && (region !== undefined && region !== "" && region !== "Not set")) {
+    withDistance = `,
+    ST_Distance(
         "GeoLocation".location,
         ST_GeographyFromText('Point(${fromGeoPoint?.join(" ")})')
       ) AS distanceInMeters
     `;
 
     orderBy = "ORDER BY distanceInMeters ASC";
+  }
+  let limitOffset = "";
+  if (ROWS_PER_PAGE >= 0 && offset >= 0) {
+    limitOffset = `LIMIT ${ROWS_PER_PAGE} OFFSET ${offset}`;
   }
 
   return `
@@ -136,8 +159,7 @@ function fetchPublishedListItemQuery(props: {
  	          FROM "Address"
 			      WHERE "Address".id = "ListItem"."addressId"
  		    ) as a
- 	    ) as address,
-      ${withDistance}
+ 	    ) as address${withDistance}
 
     FROM "ListItem"
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
@@ -150,7 +172,7 @@ function fetchPublishedListItemQuery(props: {
     AND "ListItem"."isPublished" = true
     AND "ListItem"."isBlocked" = false
     ${orderBy}
-    LIMIT 20
+    ${limitOffset}
   `;
 }
 
@@ -193,6 +215,170 @@ export async function checkListItemExists({
   });
 
   return total > 0;
+}
+
+export async function getPaginationValues(props: {
+  count: number;
+  page: number;
+  listRequestParams: ListsRequestParams;
+}): Promise<PaginationResults> {
+  const { count, page, listRequestParams } = props;
+  let pageCount = 0;
+  if (count > 0 && ROWS_PER_PAGE > 0) {
+    pageCount = Math.ceil(count / ROWS_PER_PAGE);
+  }
+
+  const nextPrevious = getNextPrevious({
+    page,
+    pageCount,
+    listRequestParams,
+  });
+  const { queryString, currentPage } = nextPrevious;
+
+  const pageItems: PaginationItem[] = getPageItems({
+    pageCount,
+    currentPage,
+    queryString,
+  });
+
+  const from = getFromCount({ count, currentPage });
+  const to = getToCount({
+    currentPage,
+    pageCount,
+    count,
+  });
+
+  return {
+    pagination: {
+      results: {
+        from,
+        to,
+        count,
+        currentPage,
+      },
+      previous: {
+        text: nextPrevious.previous.page.toString(),
+        href: nextPrevious.previous.queryString,
+      },
+      next: {
+        text: nextPrevious.next.page.toString(),
+        href: nextPrevious.next.queryString,
+      },
+      items: pageItems,
+    },
+  };
+}
+
+interface getPaginationParams {
+  pageCount: number;
+  page: number;
+  listRequestParams: ListsRequestParams;
+}
+
+function getNextPrevious({
+  page = 1,
+  pageCount,
+  listRequestParams,
+}: getPaginationParams): {
+  queryString: string;
+  currentPage: number;
+  previous: {
+    page: number;
+    queryString: string;
+  };
+  next: {
+    page: number;
+    queryString: string;
+  };
+} {
+  let currentPage = page;
+  let queryStringPrevious = "";
+  let queryStringNext = "";
+  let previousPage = -1;
+  let nextPage = -1;
+
+  let queryString = queryStringFromParams(listRequestParams, true);
+  queryString = queryString.replace("&page=" + currentPage.toString(), "");
+
+  if (currentPage > pageCount) {
+    currentPage = pageCount;
+  }
+
+  if (currentPage > 1) {
+    previousPage = currentPage - 1;
+    queryStringPrevious = `${listsRoutes.results}?${queryString}&page=${previousPage}`;
+  }
+  if (currentPage < pageCount) {
+    nextPage = currentPage + 1;
+    queryStringNext = `${listsRoutes.results}?${queryString}&page=${nextPage}`;
+  }
+  return {
+    queryString,
+    currentPage,
+    previous: {
+      page: previousPage,
+      queryString: queryStringPrevious,
+    },
+    next: {
+      page: nextPage,
+      queryString: queryStringNext,
+    },
+  };
+}
+
+function getPageItems(props: {
+  pageCount: number;
+  currentPage: number;
+  queryString: string;
+}): PaginationItem[] {
+  const { pageCount, currentPage, queryString } = props;
+  const pageItems: PaginationItem[] = [];
+
+  for (let i = 1; i <= pageCount; i++) {
+    let href = "";
+    if (i >= currentPage - 2 && i <= currentPage + 2) {
+      if (i !== currentPage) {
+        href = `${listsRoutes.results}?${queryString}&page=${i}`;
+      }
+      pageItems.push({
+        text: i.toString(),
+        href,
+      });
+    }
+  }
+  return pageItems;
+}
+
+function getFromCount(props: {
+  count: number;
+  currentPage: number;
+}): number {
+  const { count, currentPage } = props;
+  let from;
+
+  if (count === 0) {
+    from = 0;
+  } else if (count < ROWS_PER_PAGE) {
+    from = count - (count - 1);
+  } else {
+    from = ROWS_PER_PAGE * currentPage - (ROWS_PER_PAGE - 1);
+  }
+  return from;
+}
+
+function getToCount(props: {
+  currentPage: number;
+  pageCount: number;
+  count: number;
+}): number {
+  const { currentPage, pageCount, count } = props;
+  let to = 0;
+  if (currentPage === pageCount) {
+    to = count;
+  } else {
+    to = ROWS_PER_PAGE * currentPage;
+  }
+  return to;
 }
 
 // Model API
@@ -577,15 +763,16 @@ export async function createLawyerListItem(
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
-  region?: string;
+  region?: string | "";
   legalAid?: "yes" | "no" | "";
   proBono?: "yes" | "no" | "";
   practiceArea?: string[];
+  offset?: number;
 }): Promise<LawyerListItemGetObject[]> {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
-
+  const offset = props.offset ?? 0;
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
   const jsonQuery: {
@@ -608,9 +795,15 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
+    let legalPracticeAreas = props.practiceArea;
+    if (legalPracticeAreas.some((item) => item === "all")) {
+      legalPracticeAreas = legalPracticeAreasList.map((area) =>
+        area.toLowerCase()
+      );
+    }
     andWhere.push(
-      `AND ARRAY(select jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw')) && ARRAY ${JSON.stringify(
-        props.practiceArea
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
+        legalPracticeAreas
       ).replace(/"/g, "'")}`
     );
   }
@@ -624,8 +817,10 @@ export async function findPublishedLawyersPerCountry(props: {
     const query = fetchPublishedListItemQuery({
       type: ServiceType.lawyers,
       countryName,
+      region: props.region,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
+      offset,
     });
 
     return await prisma.$queryRaw(query);
@@ -772,6 +967,8 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
+  // @todo page parameter needs to be retrieved from the request.  Refactor once lawyers has been implemented.
+  const offset = 0;
 
   try {
     let andWhere: string = "";
@@ -793,8 +990,10 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     const query = fetchPublishedListItemQuery({
       type: ServiceType.covidTestProviders,
       countryName,
+      region: props.region,
       fromGeoPoint,
       andWhere,
+      offset,
     });
 
     return await prisma.$queryRaw(query);

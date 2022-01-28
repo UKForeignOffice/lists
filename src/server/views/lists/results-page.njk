@@ -8,14 +8,23 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if serviceType === ServiceType.lawyers %}
-        {% include "lists/partials/lawyers/lawyers-results-list.njk" %}   
+        {% include "lists/partials/lawyers/lawyers-results-list.njk" %}
       {% endif %}
       {% if serviceType === ServiceType.covidTestProviders %}
-        {% include "lists/partials/covid-test-providers/covid-test-providers-results-list.njk" %}   
+        {% include "lists/partials/covid-test-providers/covid-test-providers-results-list.njk" %}
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
       {% include "lists/partials/answers-box.njk" %}
     </div>
   </div>
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    {% if print === "yes" %}
+      window.onload = function() {
+      window.print();
+    }
+    {% endif %}
+  </script>
+
 {% endblock %}
+

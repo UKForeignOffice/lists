@@ -11,12 +11,33 @@ import {
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
+import { URLSearchParams } from "url";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
 }
 
-export function queryStringFromParams(params: { [name: string]: any }): string {
+/**
+ * To support the select all option for checkbox fields, this function detects if the value "All" is provided and will
+ * remove all other options in the event "Select All" and any additional checkboxes were selected by the user.  Currently
+ * this is only required for lawyers.practiceArea (Areas of law field).
+ * @param params
+ */
+export function preProcessParams(params: { [name: string]: any }): {
+  [name: string]: any;
+} {
+  let paramsCopy = { ...params };
+  const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
+  paramsCopy = hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
+  paramsCopy = paramsCopy?.region === "" ? { ...paramsCopy, region: "Not set"} : paramsCopy;
+
+  return paramsCopy;
+}
+
+export function queryStringFromParams(
+  params: { [name: string]: any },
+  removeEmptyValues?: boolean
+): string {
   return Object.keys(params)
     .map((key) => {
       let value: string = params[key];
@@ -29,8 +50,13 @@ export function queryStringFromParams(params: { [name: string]: any }): string {
         value = value.substring(1);
       }
 
+      if (removeEmptyValues === true && value === "") {
+        return "";
+      }
+
       return `${key}=${value}`;
     })
+    .filter(Boolean)
     .join("&");
 }
 
@@ -70,6 +96,14 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
     ...req.body,
     ...req.params,
   };
+}
+
+export function getParameterValue(
+  parameterName: string,
+  queryString: string
+): string {
+  const searchParams = new URLSearchParams(queryString);
+  return searchParams.get(parameterName) ?? "";
 }
 
 export function removeQueryParameter(

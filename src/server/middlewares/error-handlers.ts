@@ -1,16 +1,17 @@
 import { Express, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
-interface HttpException extends Error {
+export interface HttpException extends Error {
   status: number;
+  code?: string;
   message: string;
 }
 
-const acceptsHTML = (req: Request): boolean => {
+export const acceptsHTML = (req: Request): boolean => {
   return req.accepts("html") === "html";
 };
 
-const acceptsJSON = (req: Request): boolean => {
+export const acceptsJSON = (req: Request): boolean => {
   return req.accepts("json") === "json";
 };
 
@@ -49,4 +50,40 @@ export const configureErrorHandlers = (server: Express): void => {
       res.type("txt").send("Sorry, there is a problem with the service");
     }
   });
+
+  server.use(function (err: HttpException, req: Request, res: Response, next: Function) {
+    if (err.code !== 'EBADCSRFTOKEN') return next(err)
+
+    logger.warn("403 Forbidden. Bad CSRF token.", { path: req.path });
+
+    // handle CSRF token errors here
+    res.status(403)
+
+    if (acceptsHTML(req)) {
+      res.render("errors/403");
+    } else if (acceptsJSON(req)) {
+      res.json({
+        error: "This request could not be processed.  Please try again.",
+      });
+    } else {
+      res.type("txt").send("This request could not be processed.  Please try again.");
+    }
+  });
 };
+
+export function rateLimitExceededErrorHandler (req: Request, res: Response, next: Function): void {
+  logger.warn("429 Too many requests", { path: req.path });
+  res.status(429);
+
+  if (acceptsHTML(req)) {
+    res.render("errors/429");
+  } else if (acceptsJSON(req)) {
+    res.json({
+      error: "You have exceeded the maximum rate of page requests",
+    });
+  } else {
+    res
+      .type("txt")
+      .send("You have exceeded the maximum rate of page requests");
+  }
+}

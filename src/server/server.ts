@@ -9,6 +9,7 @@ import {
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
+  configureRateLimit,
 } from "./middlewares";
 import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
@@ -40,6 +41,7 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
+  configureRateLimit(server);
 
   // initialize components
   await initAuth(server);

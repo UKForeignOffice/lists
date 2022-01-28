@@ -4,7 +4,6 @@ import { ServiceType } from "server/models/types";
 import {
   parseListValues,
   getServiceLabel,
-  countryHasLegalAid,
   getAllRequestParams,
 } from "./helpers";
 import { QuestionName, Question } from "./types";
@@ -40,7 +39,7 @@ export const questions: Questions = {
     pageTitle(req: Request) {
       const { serviceType } = getAllRequestParams(req);
       const serviceLabel = getServiceLabel(serviceType)?.toLowerCase();
-      return `Which country do you need a ${serviceLabel} in?`;
+      return `In which country do you need a ${serviceLabel}?`;
     },
     needsToAnswer(req: Request) {
       const { country } = getAllRequestParams(req);
@@ -68,8 +67,8 @@ export const questions: Questions = {
       const { country, serviceType } = getAllRequestParams(req);
       const formattedCountry = startCase(country);
       const titles = {
-        [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you need to find a COVID-19 test provider?`,
-        [ServiceType.lawyers]: `Which area in ${formattedCountry} do you need a lawyer from?`,
+        [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you want to find a COVID-19 test provider?`,
+        [ServiceType.lawyers]: `Where in ${formattedCountry} do you want to find a lawyer?`,
       };
 
       return serviceType !== undefined ? titles[serviceType] : "";
@@ -97,12 +96,13 @@ export const questions: Questions = {
       return "questions/question-practice-area.njk";
     },
     pageTitle() {
-      return "In which field of law do you need legal help?";
+      return "In what areas of law do you need legal help?";
     },
     needsToAnswer(req: Request) {
       const params = getAllRequestParams(req);
       const practiceArea = parseListValues("practiceArea", params);
-      return practiceArea?.length === 0 || practiceArea === undefined;
+      const error = (practiceArea === undefined);
+      return error || practiceArea?.length === 0 || practiceArea === undefined;
     },
     validate(req: Request) {
       const params = getAllRequestParams(req);
@@ -111,64 +111,10 @@ export const questions: Questions = {
       if (practiceArea?.join("") === "") {
         return {
           field: "practice-area",
-          text: "Practice area is not allowed to be empty",
+          text: "Areas of law is not allowed to be empty",
           href: "#practice-area-bankruptcy",
         };
       }
-
-      return false;
-    },
-  },
-  legalAid: {
-    getViewPartialName() {
-      return "questions/question-legal-aid.njk";
-    },
-    pageTitle() {
-      return "Are you interested in legal aid?";
-    },
-    needsToAnswer(req: Request) {
-      const { legalAid, country } = getAllRequestParams(req);
-      return (
-        (countryHasLegalAid(country) && legalAid === undefined) ||
-        legalAid === ""
-      );
-    },
-    validate(req: Request) {
-      const { legalAid } = getAllRequestParams(req);
-
-      if (legalAid === "") {
-        return {
-          field: "legal-aid",
-          text: "Legal aid is not allowed to be empty",
-          href: "#legal-aid-yes",
-        };
-      }
-
-      return false;
-    },
-  },
-  proBono: {
-    getViewPartialName() {
-      return "questions/question-pro-bono.njk";
-    },
-    pageTitle() {
-      return "Are you interested in pro bono services?";
-    },
-    needsToAnswer(req: Request) {
-      const { proBono } = getAllRequestParams(req);
-      return proBono === undefined || proBono === "";
-    },
-    validate(req: Request) {
-      const { proBono } = getAllRequestParams(req);
-
-      if (proBono === "") {
-        return {
-          field: "pro-bono",
-          text: "Pro bono is not allowed to be empty",
-          href: "#pro-bono-yes",
-        };
-      }
-
       return false;
     },
   },

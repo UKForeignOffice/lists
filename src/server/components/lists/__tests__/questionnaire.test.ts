@@ -63,7 +63,7 @@ describe("Questionnaire", () => {
 
     test("pageTitle is correct", () => {
       const pageTitle = country.pageTitle(req);
-      expect(pageTitle).toBe("Which country do you need a xxx in?");
+      expect(pageTitle).toBe("In which country do you need a xxx?");
     });
 
     test("needs to answer returns false when country is defined", () => {
@@ -105,7 +105,7 @@ describe("Questionnaire", () => {
       const pageTitle = region.pageTitle(req);
 
       expect(pageTitle).toBe(
-        "Where in Ghana do you need to find a COVID-19 test provider?"
+        "Where in Ghana do you want to find a COVID-19 test provider?"
       );
     });
 
@@ -114,7 +114,7 @@ describe("Questionnaire", () => {
 
       const pageTitle = region.pageTitle(req);
 
-      expect(pageTitle).toBe("Which area in Ghana do you need a lawyer from?");
+      expect(pageTitle).toBe("Where in Ghana do you want to find a lawyer?");
     });
 
     test("needs to answer returns false when region is undefined", () => {
@@ -155,7 +155,7 @@ describe("Questionnaire", () => {
 
     test("pageTitle is correct", () => {
       const pageTitle = practiceArea.pageTitle(req);
-      expect(pageTitle).toBe("In which field of law do you need legal help?");
+      expect(pageTitle).toBe("In what areas of law do you need legal help?");
     });
 
     test("needs to answer returns true when practiceArea is undefined", () => {
@@ -180,97 +180,8 @@ describe("Questionnaire", () => {
       const result = practiceArea.validate(req);
       expect(result).toEqual({
         field: "practice-area",
-        text: "Practice area is not allowed to be empty",
+        text: "Areas of law is not allowed to be empty",
         href: "#practice-area-bankruptcy",
-      });
-    });
-  });
-
-  describe("legalAid", () => {
-    const legalAid = questions.legalAid;
-
-    test("getViewPartialName is correct", () => {
-      const partialName = legalAid.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-legal-aid.njk");
-    });
-
-    test("pageTitle is correct", () => {
-      const pageTitle = legalAid.pageTitle(req);
-      expect(pageTitle).toBe("Are you interested in legal aid?");
-    });
-
-    test("needs to answer returns true when legalAid is undefined and country has legal aid", () => {
-      jest.spyOn(helpers, "countryHasLegalAid").mockReturnValue(true);
-      const result = legalAid.needsToAnswer(req);
-      expect(result).toBe(true);
-    });
-
-    test("needs to answer returns false when legalAid is undefined and country does not have legal aid", () => {
-      jest.spyOn(helpers, "countryHasLegalAid").mockReturnValue(false);
-      const result = legalAid.needsToAnswer(req);
-      expect(result).toBe(false);
-    });
-
-    test("needs to answer returns true when legalAid is undefined and country has legal aid", () => {
-      jest.spyOn(helpers, "countryHasLegalAid").mockReturnValue(true);
-      const result = legalAid.needsToAnswer(req);
-      expect(result).toBe(true);
-    });
-
-    test("validates returns false when legalAid is set", () => {
-      req.params.legalAid = true;
-      const result = legalAid.validate(req);
-      expect(result).toBe(false);
-    });
-
-    test("validates returns error when legalAid is falsy", () => {
-      req.params.legalAid = "";
-      const result = legalAid.validate(req);
-      expect(result).toEqual({
-        field: "legal-aid",
-        text: "Legal aid is not allowed to be empty",
-        href: "#legal-aid-yes",
-      });
-    });
-  });
-
-  describe("proBono", () => {
-    const proBono = questions.proBono;
-
-    test("getViewPartialName is correct", () => {
-      const partialName = proBono.getViewPartialName(req);
-      expect(partialName).toBe("questions/question-pro-bono.njk");
-    });
-
-    test("pageTitle is correct", () => {
-      const pageTitle = proBono.pageTitle(req);
-      expect(pageTitle).toBe("Are you interested in pro bono services?");
-    });
-
-    test("needs to answer returns true when proBono is undefined", () => {
-      const result = proBono.needsToAnswer(req);
-      expect(result).toBe(true);
-    });
-
-    test("needs to answer returns false when proBono is defined", () => {
-      req.params.proBono = true;
-      const result = proBono.needsToAnswer(req);
-      expect(result).toBe(false);
-    });
-
-    test("validates returns false when proBono is set", () => {
-      req.params.proBono = true;
-      const result = proBono.validate(req);
-      expect(result).toBe(false);
-    });
-
-    test("validates returns error when proBono is falsy", () => {
-      req.params.proBono = "";
-      const result = proBono.validate(req);
-      expect(result).toEqual({
-        field: "pro-bono",
-        text: "Pro bono is not allowed to be empty",
-        href: "#pro-bono-yes",
       });
     });
   });

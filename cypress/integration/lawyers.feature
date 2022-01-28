@@ -8,8 +8,6 @@ Feature:
     Given I am searching for "<profession>" in "<country>" in "<city>"
     When I select <filters>
     And I continue
-    And I am <aid> interested in legal aid
-    And I am <probono> interested in pro bono
     And I have read the disclaimer
     Then I see "<found>"
 
@@ -18,7 +16,7 @@ Feature:
 
 
     Examples:
-      | profession | country | city | aid | probono | filters               | found              |
-      | lawyers    | Italy   | Rome |     |         | [Bankruptcy,Criminal] | Davide Cupertino   |
-      | lawyers    | Italy   | Rome | No  | No      | [Bankruptcy,Criminal] | Davide Cupertino   |
+      | profession | country | city | filters               | found              |
+      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Davide Cupertino   |
+      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Davide Cupertino   |
 

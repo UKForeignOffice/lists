@@ -16,21 +16,55 @@
   <div class="dashboard__multi-line-text">{{ content }}</div>
 {% endmacro %}
 
+{% macro additionalDetails(item) %}
+  {% set additionalDetails %}
+    {{ 'Legal aid' if item.jsonData.legalAid }}{{ ', ' if item.jsonData.legalAid and (item.jsonData.proBono or item.jsonData.representedBritishNationals) }}
+    {{ 'Pro bono' if item.jsonData.proBono }}{{ ', ' if item.jsonData.proBono and item.jsonData.representedBritishNationals }}
+    {{ 'has represented British nationals' if item.jsonData.representedBritishNationals }}
+  {% endset %}
+  {{ additionalDetails }}
+{% endmacro %}
 
 {% macro lawyersListItem(item) %}
-  <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
-    {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName else item.jsonData.contactName)) }}
-  </h2>
   {% if item.distanceinmeters >= 0 %}
+    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
+    </span>
+  {% endif %}
+  {% if item.jsonData.contactName %}
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-4">
+      {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
+    </h2>
+  {% endif %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
+    {% if item.jsonData.websiteAddress !== "" %}
+      <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
+    {% else %}
+      {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}
+    {% endif %}
+    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">({{ _.startCase(_.toLower(item.jsonData.size if item.jsonData.size)) }})</span>
+  </h3>
+
+  {% if item.jsonData.areasOfLaw %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Distance</strong>:  {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
+      <strong>Legal expertise</strong>: {{ item.jsonData.areasOfLaw.map(_.startCase).join(", ") }}
     </p>
   {% endif %}
-  {% if (item.jsonData.contactName) and (item.jsonData.contactName !== item.jsonData.organisationName)  %}
-          <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Contact Person:</strong>: {{ item.jsonData.contactName }}
+  {% if item.jsonData.regions %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Regions</strong>: {{ item.jsonData.regions }}
     </p>
   {% endif %}
+  {% if additionalDetails(item) %}
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Additional details</strong>:
+    {{ additionalDetails(item) }}
+  </p>
+  {% endif %}
+
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
+    Contact details
+  </h3>
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>:
       {{ item.address.firstLine }}
@@ -43,43 +77,65 @@
       <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.emailAddress }}">{{ item.jsonData.emailAddress }}</a>
     </p>
   {% endif %}
+  {% if item.jsonData.phoneNumber %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Telephone</strong>: <a class="govuk-link" href="tel:{{ item.jsonData.phoneNumber }}">{{ item.jsonData.phoneNumber }}</a>
+    </p>
+  {% endif %}
+  {% if item.jsonData.emergencyPhoneNumber %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Out of hours</strong>: <a class="govuk-link" href="tel:{{ item.jsonData.emergencyPhoneNumber }}">{{ item.jsonData.emergencyPhoneNumber }}</a>
+    </p>
+  {% endif %}
   {% if item.jsonData.websiteAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Website</strong>: <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.websiteAddress }}</a>
     </p>
   {% endif %}
+{% endmacro %}
 
-  {% if (not item.jsonData.emailAddress) or (not item.jsonData.websiteAddress) %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Telephone</strong>: <a href="tel:{{ item.jsonData.phoneNumber }}">{{ item.jsonData.phoneNumber }}</a>
-    </p>
-  {% endif %}
-
-  <details class="govuk-details" data-module="govuk-details">
-    <summary class="govuk-details__summary">
-      <span class="govuk-details__summary-text">
-        Details
-      </span>
-    </summary>
-    <div class="govuk-details__text">
-      {% if (item.jsonData.emailAddress) and (item.jsonData.websiteAddress) %}
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Telephone</strong>: {{ item.jsonData.phoneNumber }}
-      </p>
-      {% endif %}
-      {% if item.jsonData.areasOfLaw %}
-        <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-          <strong>Legal Practice Areas</strong>: {{ item.jsonData.areasOfLaw.map(_.startCase).join(", ") }}
-        </p>
-      {% endif %}
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Legal Aid</strong>: {{ "Yes" if item.jsonData.legalAid else "No" }}
-      </p>
-      <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-        <strong>Pro Bono Service</strong>: {{ "Yes" if item.jsonData.proBono else "No" }}
+{% macro paginationSection(pagination) %}
+  {% if pagination.results.count > 0 %}
+    <div class="fcdo-pagination">
+      <ul class="fcdo-pagination__list-items">
+        {% if pagination.previous.href !== "" %}
+          <li class="fcdo-pagination__item" id="prevButton">
+            <a class="fcdo-pagination__link fcdo-pagination__item--prev" href="{{ pagination.previous.href }}">
+              Previous
+            </a>
+          </li>
+        {% endif %}
+        {% if pagination.items.length > 1 %}
+          {% for item in pagination.items %}
+            {% set itemNumber = item.text | int  %}
+            <li class="fcdo-pagination__item">
+              {% if itemNumber === pagination.results.currentPage %}
+                <span class="fcdo-pagination__item-current-page">
+                  {{ item.text }}
+                </span>
+              {% else %}
+                <a class="fcdo-pagination__link" href="{{ item.href }}">
+                  {{ item.text }}
+                </a>
+              {% endif %}
+            </li>
+          {%  endfor %}
+        {% endif %}
+        {% if pagination.next.href !== "" %}
+          <li class="fcdo-pagination__item" id="nextButton">
+            <a class="fcdo-pagination__link fcdo-pagination__item--next fcdo-pagination__link--last" href="{{ pagination.next.href }}">
+              Next
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+      <p class="fcdo-pagination__results">
+        Showing <span class="fcdo-pagination__results-num">{{ pagination.results.from }}</span>
+        to <span class="fcdo-pagination__results-num">{{ pagination.results.to }}</span>
+        of <span class="fcdo-pagination__results-num">{{ pagination.results.count }}</span> results
       </p>
     </div>
-  </details>
+  {% endif %}
 {% endmacro %}
 
 {% macro lawyersListManagementItem(item) %}

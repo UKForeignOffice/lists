@@ -5,18 +5,18 @@ import {
   getServiceLabel,
   getAllRequestParams,
   removeQueryParameter,
+  getParameterValue,
   queryStringFromParams,
   parseListValues,
 } from "../helpers";
 import { QuestionName } from "../types";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
   QuestionName.country,
   QuestionName.region,
   QuestionName.practiceArea,
-  QuestionName.legalAid,
-  QuestionName.proBono,
   QuestionName.readDisclaimer,
 ];
 
@@ -25,23 +25,54 @@ export async function searchLawyers(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, legalAid, region, proBono } = params;
-  const practiceArea = parseListValues("practiceArea", params);
+  const { serviceType, country, region, print = "no"} = params;
+  let { page = "1" } = params;
+  page = page !== "" ? page : "1";
+  let practiceArea = parseListValues("practiceArea", params);
+  if (practiceArea != null) {
+    practiceArea = practiceArea.map((area) => area.toLowerCase());
+  }
+  const pageNum = parseInt(page);
+  params.page = pageNum.toString();
+
+  const allRows = await listItem.findPublishedLawyersPerCountry({
+    countryName: country,
+    region,
+    practiceArea,
+    offset: -1,
+  });
+  const count = allRows.length;
+
+  const { pagination } = await listItem.getPaginationValues({
+    count,
+    page: pageNum,
+    listRequestParams: params,
+  });
+
+  const offset = listItem.ROWS_PER_PAGE * pagination.results.currentPage - listItem.ROWS_PER_PAGE;
 
   const searchResults = await listItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
-    legalAid,
-    proBono,
     practiceArea,
+    offset,
   });
+
+  const results = (print === "yes") ? allRows : searchResults;
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
-    searchResults: searchResults,
+    searchResults: results,
     removeQueryParameter,
+    getParameterValue,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
+    limit: listItem.ROWS_PER_PAGE,
+    offset,
+    pagination,
+    print,
+    csrfToken: getCSRFToken(req),
   });
+
 }

@@ -6,8 +6,6 @@ export enum QuestionName {
   "country" = "country",
   "region" = "region",
   "practiceArea" = "practiceArea",
-  "proBono" = "proBono",
-  "legalAid" = "legalAid",
   "readDisclaimer" = "readDisclaimer",
   "resultsTurnaround" = "resultsTurnaround",
   "readCovidDisclaimer" = "readCovidDisclaimer",
@@ -36,4 +34,31 @@ export interface ListsRequestParams {
   readNotice?: string;
   readDisclaimer?: string;
   resultsTurnaround?: string;
+  page?: string;
+  print?: "yes" | "no" | "";
+}
+
+export interface PaginationResults {
+  pagination: {
+    results: {
+      from: number;
+      to: number;
+      count: number;
+      currentPage: number;
+    };
+    previous: {
+      text: string;
+      href: string;
+    };
+    next: {
+      text: string;
+      href: string;
+    };
+    items: PaginationItem[];
+  };
+}
+
+export interface PaginationItem {
+  text: string;
+  href: string;
 }

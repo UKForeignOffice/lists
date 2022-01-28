@@ -1,14 +1,14 @@
-{% extends "layout.njk" %} 
+{% extends "layout.njk" %}
 
-{% block pageTitle %} 
-  Cookies 
-{% endblock %} 
+{% block pageTitle %}
+  Cookies
+{% endblock %}
 
 {% block content %}
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        
+
         {% if cookiesSettingsSaved %}
           <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
             <div class="govuk-notification-banner__header">
@@ -22,9 +22,9 @@
               </h3>
               <p class="govuk-body">Government services may set additional cookies and, if so, will have their own cookie policy and banner.</p>
             </div>
-          </div>  
-        {% endif %} 
-        
+          </div>
+        {% endif %}
+
         <h1 class="govuk-heading-xl">Cookies</h1>
           <p class="govuk-body">
             Cookies are files saved on your phone, tablet or computer when you
@@ -40,6 +40,7 @@
           </p>
 
           <form data-module="cookie-settings" method="post">
+            <input type="hidden" name="_csrf" value="{{ _csrf }}" />
             <input name="referrer" type="hidden" value="{{ currentLocation }}" />
 
             <fieldset class="govuk-fieldset" aria-describedby="hint-analytics">
@@ -67,7 +68,7 @@
                   <li>what you click on while you are visiting the site</li>
                 </ul>
               </div>
-              
+
               <div class="govuk-form-group">
                 <div class="govuk-radios">
                   <div class="govuk-radios__item">

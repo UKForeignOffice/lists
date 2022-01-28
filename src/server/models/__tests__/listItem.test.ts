@@ -351,7 +351,7 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
-        LIMIT 20
+        LIMIT 10 OFFSET 0
     `.replace(/\s\s+/g, " ");
 
     test("query is correct", async () => {
@@ -364,6 +364,7 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "yes",
         practiceArea: [],
+        offset: 0,
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -382,6 +383,7 @@ describe("ListItem Model:", () => {
         legalAid: "no",
         proBono: "yes",
         practiceArea: [],
+        offset: 0,
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -402,6 +404,7 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "no",
         practiceArea: [],
+        offset: 0
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -422,6 +425,7 @@ describe("ListItem Model:", () => {
         legalAid: "no",
         proBono: "no",
         practiceArea: [],
+        offset: 0
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -881,7 +885,7 @@ describe("ListItem Model:", () => {
       await findPublishedCovidTestSupplierPerCountry({
         countryName: "ghana",
         region: "Accra",
-        turnaroundTime: 1,
+        turnaroundTime: 1
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -926,7 +930,7 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isPublished" = true
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
-        LIMIT 20
+        LIMIT 10 OFFSET 0
     `.replace(/\s\s+/g, " ");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });

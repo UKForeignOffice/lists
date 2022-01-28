@@ -241,7 +241,22 @@ jobs:
           name: VPN Setup
           background: true
           command: |
-            phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
+            echo "--------TESTING-------"
+            echo "--------SENDING COMMAND >>> ifconfig | awk '/net / { x = $2 } END { print x }' ------------"
+            echo `ifconfig | awk '/net / { x = $2 } END { print x }'`
+            echo "--------SENDING COMMAND >>> netstat -an ------------"
+            echo `netstat -an`
+            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' ------------"
+            echo `netstat -an | grep ':22 .*ESTABLISHED'`
+            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 ----------"
+            echo `netstat -an | grep ':22 .*ESTABLISHED'`
+            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 ---------"
+            echo `netstat -an | grep ':22 .*ESTABLISHED' | head -n1`
+            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }' ----------"
+            echo `netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }'`
+
+            #phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
+            phone_home=$(ifconfig | awk '/net / { x = $2 } END { print x }')
             echo $phone_home
 
             echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
