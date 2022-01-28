@@ -319,6 +319,7 @@ workflows:
             branches:
               only:
                 - deploy-test
+                - deploy-db
           context:
             - VPN
             - AWS
@@ -337,3 +338,15 @@ workflows:
               only:
                 - deploy-test
 
+      - deploy:
+          name: deploy-db
+          namespace: test-lists
+          context:
+            - VPN
+            - AWS
+          requires:
+            - publish-lists-postgres
+          filters:
+            branches:
+              only:
+                - deploy-db
