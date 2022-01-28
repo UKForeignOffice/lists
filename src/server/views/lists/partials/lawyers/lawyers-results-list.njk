@@ -25,7 +25,7 @@
   </div>
 
 {% if (print !== "yes") %}
-  <p class="govuk-body">Give <a class="govuk-link" href="/application/feedback">feedback</a> on individual lawyers or this service.</p>
+  <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}">feedback</a> on individual lawyers or this service.</p>
 {% endif %}
 {% if (print === "yes") %}
   <p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
