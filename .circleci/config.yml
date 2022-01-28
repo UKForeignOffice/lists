@@ -241,33 +241,33 @@ jobs:
           name: VPN Setup
           background: true
           command: |
-            echo "--------TESTING-------"
-            echo "--------SENDING COMMAND >>> ifconfig | awk '/net / { x = $2 } END { print x }' ------------"
-            echo `ifconfig | awk '/net / { x = $2 } END { print x }'`
-            echo "--------SENDING COMMAND >>> netstat -an ------------"
-            echo `netstat -an`
-            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' ------------"
-            echo `netstat -an | grep ':22 .*ESTABLISHED'`
-            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 ----------"
-            echo `netstat -an | grep ':22 .*ESTABLISHED'`
-            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 ---------"
-            echo `netstat -an | grep ':22 .*ESTABLISHED' | head -n1`
-            echo "--------SENDING COMMAND >>> netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }' ----------"
-            echo `netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }'`
-
-            #phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
+            #IMPORTANT: Include the following line and the `--route` options
+            #           to exclude the connection from CircleCI and the
+            #           link-local range.
+            echo "3.1 Same as code comment."
             phone_home=$(ifconfig | awk '/net / { x = $2 } END { print x }')
             echo $phone_home
 
-            echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
-            printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
+            echo "3.2. Remove 'addr:' prefix from 'phone_home' var"
+            phone_home=${phone_home:5}
+            echo $phone_home
+            touch /tmp/openvpn.log
+
+            echo "4. Connect to the VPN."
             sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
-              --route $phone_home 255.255.255.255 net_gateway \
-              --route 169.254.0.0 255.255.0.0 net_gateway
+            --route $phone_home 255.255.255.255 net_gateway \
+            --route 169.254.0.0 255.255.0.0 net_gateway
+            #> /tmp/openvpn.log
 
       - run:
           name: Wait for VPN connection to be established
-          command: sleep 60
+          command: |
+            sleep 60
+            #while [ $(cat /tmp/openvpn.log|grep -c "Initialization Sequence Completed") == 0 ]; do
+            #  echo "Attempting to connect..."
+            #  sleep 5;
+            #done
+            echo "VPN Connected"
 
       - run:
           name: Check IP after VPN connection
@@ -298,13 +298,13 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - test:
-          filters:
-            tags:
-              only: /.*/
-
-      - smoke
-
+#      - test:
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      - smoke
+#
       - publish:
           name: publish-lists
           app: lists
