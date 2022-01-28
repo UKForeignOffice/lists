@@ -203,6 +203,7 @@ export async function listsDataIngestionController(
       const contactName = get(item.jsonData, "contactName");
       const email =
         get(item.jsonData, "contactEmailAddress") ??
+        get(item.jsonData, "publicEmailAddress") ??
         get(item.jsonData, "email") ??
         get(item.jsonData, "emailAddress");
 
