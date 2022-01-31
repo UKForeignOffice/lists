@@ -109,8 +109,6 @@
     </div>
   </div>
   <script nonce="{{cspNonce}}">
-    const csrfToken = document.getElementById("_csrf").value;
-
     document.getElementById("approve-{{listItem.id}}").onclick = function toggleListItemApproveStatus(event) {
       event.preventDefault();
       event.stopPropagation();
@@ -125,7 +123,7 @@
         fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isApproved: isConfirming, _csrf : csrfToken })
+          body: JSON.stringify({ isApproved: isConfirming, _csrf : document.getElementById("_csrf").value })
         }).then(function (response) {
           return response.json();
         }).then(function (result) {
@@ -170,7 +168,7 @@
         fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isPublished: isPublishing, _csrf : csrfToken })
+          body: JSON.stringify({ isPublished: isPublishing, _csrf : document.getElementById("_csrf").value })
         }).then(function (response) {
           return response.json();
         }).then(function (result) {
