@@ -253,6 +253,12 @@ jobs:
             echo $phone_home
             touch /tmp/openvpn.log
 
+            echo "3.3. write VPN config"
+            echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
+
+            echo "3.4. write login config"
+            printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
+
             echo "4. Connect to the VPN."
             sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
             --route $phone_home 255.255.255.255 net_gateway \
