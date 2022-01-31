@@ -304,13 +304,13 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-#      - test:
-#          filters:
-#            tags:
-#              only: /.*/
-#
-#      - smoke
-#
+      - test:
+          filters:
+            tags:
+              only: /.*/
+
+      - smoke
+
       - publish:
           name: publish-lists
           app: lists
@@ -323,9 +323,9 @@ workflows:
           context:
             - VPN
             - AWS
-#          requires:
-#            - test
-#            - smoke
+          requires:
+            - test
+            - smoke
 
       - publish:
           name: publish-lists-postgres
