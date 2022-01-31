@@ -317,9 +317,9 @@ workflows:
           context:
             - VPN
             - AWS
-          requires:
-            - test
-            - smoke
+#          requires:
+#            - test
+#            - smoke
 
       - publish:
           name: publish-lists-postgres
