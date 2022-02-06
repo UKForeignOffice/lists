@@ -13,7 +13,7 @@
   Complaints about any organisations on the list should be directed to the nearest consulate, embassy or high commission.
 </p>
 <form class="form" action="{{ nextRoute }}" method="post">
-  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'read-disclaimer' }}">
     {% if error.field === 'read-disclaimer' %}
       <span class="govuk-error-message">
