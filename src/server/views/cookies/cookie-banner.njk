@@ -12,7 +12,7 @@
 
 <div id="global-cookie-message">
   <form id="global-cookie-message-form" method="post" action="/help/cookies">
-    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <input name="referrer" type="hidden" value="{{ currentLocation }}" />
 
     {{ govukCookieBanner({
