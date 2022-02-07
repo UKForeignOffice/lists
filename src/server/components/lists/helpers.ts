@@ -34,7 +34,7 @@ export function preProcessParams(params: { [name: string]: any }): {
   paramsCopy = hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
   paramsCopy = paramsCopy?.region === "" ? { ...paramsCopy, region: "Not set"} : paramsCopy;
   if (paramsCopy._csrf !== undefined) {
-    delete params._csrf;
+    delete paramsCopy._csrf;
   }
 
   return paramsCopy;
