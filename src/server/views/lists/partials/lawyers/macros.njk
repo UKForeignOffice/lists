@@ -37,14 +37,12 @@
     </h2>
   {% endif %}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
-    {% if item.jsonData.websiteAddress !== "" %}
-    {{if item.jsonData.websiteAddress}}
-      { _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}
+    {% if item.jsonData.websiteAddress %}
+        <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
     {% else %}
-      <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
-
+        {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}
     {% endif %}
-    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">({{ _.startCase(_.toLower(item.jsonData.size if item.jsonData.size)) }})</span>
+    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">{{ item.jsonData.size if item.jsonData.size }}</span>
   </h3>
 
   {% if item.jsonData.areasOfLaw %}
