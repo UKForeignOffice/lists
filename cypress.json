@@ -1,7 +1,7 @@
 {
   "chromeWebSecurity": false,
   "testFiles": ["**/*.feature"],
-  "videoUploadOnPasses": false,
+  "video": false,
   "env": {
     "TAGS": "not @wip"
   }
