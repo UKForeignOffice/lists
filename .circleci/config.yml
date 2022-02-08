@@ -18,10 +18,6 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-            - form-runner-1-
 
       - restore_cache:
           keys:
