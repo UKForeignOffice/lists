@@ -75,6 +75,11 @@ jobs:
 
       - restore_cache:
           keys:
+            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
+            - form-runner-1-
+            
+      - restore_cache:
+          keys:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
 
