@@ -98,6 +98,10 @@ jobs:
             docker ps
 
       - run:
+          name: Install Form Runner
+          command: npm run form-runner:install
+
+      - run:
           name: run build
           command: npm run build:ci
 
