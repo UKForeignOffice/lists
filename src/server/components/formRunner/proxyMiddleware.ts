@@ -1,7 +1,6 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
-import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
 
 /**
  * Proxy middleware for the form runner
