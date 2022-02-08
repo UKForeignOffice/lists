@@ -11,6 +11,7 @@ import {
   configureCookieParser,
   configureRateLimit,
 } from "./middlewares";
+import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
 import { initCookies } from "./components/cookies";
@@ -37,6 +38,7 @@ export async function getServer(): Promise<Express> {
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
+  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);

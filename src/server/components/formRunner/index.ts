@@ -1,7 +1,4 @@
 export * from "./types";
 export { formRunnerPostRequestSchema } from "./schemas";
-export {
-  startFormRunner,
-  isFormRunnerReady,
-  parseFormRunnerWebhookObject,
-} from "./helpers";
+export { configureFormRunnerProxyMiddleware } from "./proxyMiddleware";
+export { startFormRunner, isFormRunnerReady, parseFormRunnerWebhookObject } from "./helpers";
