@@ -105,6 +105,7 @@ describe("FormRunner middleware", () => {
 
       expect(result).toMatchSnapshot();
     });
+  });
 
   describe("userResHeaderDecorator", () => {
     let headers: any;
