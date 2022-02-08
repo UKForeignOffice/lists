@@ -9,6 +9,6 @@ Feature:
 
     Examples:
       | link                    | found                                 |
-      | Privacy                 | Privacy Notice                        |
+      | Privacy                 | Introduction                          |
       | Cookies                 | Cookies are files saved on your phone |
       | Terms and Conditions    | By using this digital service you     |
