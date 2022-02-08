@@ -74,7 +74,7 @@ describe("Form Runner Service:", () => {
 
       expect(result).toBe(true);
       expect(child_process.spawn).toHaveBeenCalledWith(
-        "PRIVACY_POLICY_URL='' npm run form-runner:start,
+        "PRIVACY_POLICY_URL='' npm run form-runner:start",
         { shell: true }
       );
     });
