@@ -19,7 +19,6 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
-import { initStaticRoutes } from "server/components/static";
 
 import { isProd } from "server/config";
 
@@ -52,7 +51,6 @@ export async function getServer(): Promise<Express> {
   await initDashboard(server);
   await initDevelopment(server);
   await initHealthCheck(server);
-  await initStaticRoutes(server);
 
   // error handlers
   configureErrorHandlers(server);
