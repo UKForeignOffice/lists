@@ -257,13 +257,7 @@ jobs:
 
       - run:
           name: Wait for VPN connection to be established
-          command: |
-            sleep 60
-            #while [ $(cat /tmp/openvpn.log|grep -c "Initialization Sequence Completed") == 0 ]; do
-            #  echo "Attempting to connect..."
-            #  sleep 5;
-            #done
-            echo "VPN Connected"
+          command: sleep 30
 
       - run:
           name: Check IP after VPN connection

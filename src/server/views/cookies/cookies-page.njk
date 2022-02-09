@@ -40,7 +40,7 @@
           </p>
 
           <form data-module="cookie-settings" method="post">
-            <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <input name="referrer" type="hidden" value="{{ currentLocation }}" />
 
             <fieldset class="govuk-fieldset" aria-describedby="hint-analytics">
