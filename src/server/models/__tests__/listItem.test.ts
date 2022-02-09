@@ -239,6 +239,7 @@ describe("ListItem Model:", () => {
             create: {
               firstLine: "123 Calle",
               postCode: "S3V1LLA",
+              secondLine: undefined,
               city: "Seville",
               country: {
                 connect: {
@@ -285,6 +286,7 @@ describe("ListItem Model:", () => {
             representedBritishNationals: true,
             declaration: ["confirm"],
           },
+          listId: -1,
         },
         include: {
           address: {
@@ -342,7 +344,8 @@ describe("ListItem Model:", () => {
         ) AS distanceInMeters
         FROM "ListItem"
         INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
-        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "List" ON "ListItem"."listId" = "List".id
+        INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyers'
         AND "Country".name = 'France'
@@ -780,7 +783,8 @@ describe("ListItem Model:", () => {
       FROM "ListItem"
 
       INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
-      INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+      INNER JOIN "List" ON "ListItem"."listId" = "List".id
+      INNER JOIN "Country" ON "List"."countryId" = "Country".id
       INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
 
       WHERE "ListItem"."type" = 'lawyers'
@@ -921,7 +925,8 @@ describe("ListItem Model:", () => {
         ) AS distanceInMeters
         FROM "ListItem"
         INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
-        INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+        INNER JOIN "List" ON "ListItem"."listId" = "List".id
+        INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'covidTestProviders'
         AND "Country".name = 'Ghana'
@@ -986,6 +991,7 @@ describe("ListItem Model:", () => {
       expect(spy).toHaveBeenCalledWith({
         data: {
           type: "covidTestProviders",
+          listId: -1,
           isApproved: false,
           isPublished: false,
           jsonData: {
@@ -1001,6 +1007,8 @@ describe("ListItem Model:", () => {
             resultsFormat: ["Email", "SMS"],
             bookingOptions: ["website", "in person"],
             fastestTurnaround: 1,
+            additionalEmail: undefined,
+            additionalTelephone: undefined,
             providedTests: [
               {
                 turnaroundTime: 1,
