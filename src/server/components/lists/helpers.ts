@@ -29,13 +29,16 @@ export async function initLists(server: Express): Promise<void> {
 export function preProcessParams(params: { [name: string]: any }): {
   [name: string]: any;
 } {
-  let paramsCopy = { ...params };
-  const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
-  paramsCopy = hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
-  paramsCopy = paramsCopy?.region === "" ? { ...paramsCopy, region: "Not set"} : paramsCopy;
-  delete paramsCopy._csrf;
+  const { _csrf, ...paramsCopy } = params;
+  const hasSelectedAll: boolean =
+    paramsCopy?.practiceArea?.includes("All") ?? false;
+  const noRegionSelected = paramsCopy?.region === "";
 
-  return paramsCopy;
+  return {
+    ...paramsCopy,
+    ...(hasSelectedAll && { practiceArea: "All" }),
+    ...(noRegionSelected && { region: "Not set" }),
+  };
 }
 
 export function queryStringFromParams(
@@ -47,7 +50,7 @@ export function queryStringFromParams(
       let value: string = params[key];
 
       if (isArray(value)) {
-        value = value.toString();
+        value = value.filter(Boolean).toString();
       }
 
       if (value[0] === ",") {
