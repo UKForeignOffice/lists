@@ -77,7 +77,7 @@ jobs:
           keys:
             - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
             - form-runner-1-
-            
+
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
@@ -246,29 +246,14 @@ jobs:
           name: VPN Setup
           background: true
           command: |
-            #IMPORTANT: Include the following line and the `--route` options
-            #           to exclude the connection from CircleCI and the
-            #           link-local range.
-            echo "3.1 Same as code comment."
-            phone_home=$(ifconfig | awk '/net / { x = $2 } END { print x }')
+            phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
             echo $phone_home
 
-            echo "3.2. Remove 'addr:' prefix from 'phone_home' var"
-            phone_home=${phone_home:5}
-            echo $phone_home
-            touch /tmp/openvpn.log
-
-            echo "3.3. write VPN config"
             echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
-
-            echo "3.4. write login config"
             printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
-
-            echo "4. Connect to the VPN."
             sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
             --route $phone_home 255.255.255.255 net_gateway \
             --route 169.254.0.0 255.255.0.0 net_gateway
-            #> /tmp/openvpn.log
 
       - run:
           name: Wait for VPN connection to be established
