@@ -25,7 +25,11 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
             /(href|src|value)=('|")\/([^'"]+)/g,
             `$1=$2${FORM_RUNNER_BASE_ROUTE}/$3`
           )
-          .replace(/\/application\/help\/cookies/g, "/help/cookies");
+          .replace(/\/application\/help\/cookies/g, "/help/cookies")
+          .replace(
+            /\/application\/help\/accessibility-statement/g,
+            "/help/accessibility-statement"
+          );
       },
       userResHeaderDecorator(headers, _userReq, userRes) {
         if (userRes.statusCode === 302) {
