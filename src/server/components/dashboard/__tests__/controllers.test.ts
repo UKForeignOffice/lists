@@ -80,6 +80,7 @@ describe("Dashboard Controllers", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       jsonData: {},
+      listId: 2,
     };
   });
 

@@ -40,6 +40,8 @@ model ListItem {
   isPublished         Boolean @default(false)
   isBlocked           Boolean @default(false)
 
+  listId              Int
+
   @@index([type, reference, isApproved, isPublished, isBlocked])
 }
 
