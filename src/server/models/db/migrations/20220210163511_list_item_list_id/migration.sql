@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ListItem" ADD COLUMN     "listId" INTEGER NOT NULL DEFAULT -1;
