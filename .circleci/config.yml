@@ -72,6 +72,7 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: '14'
+
       - restore_cache:
           keys:
             - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
@@ -100,6 +101,10 @@ jobs:
           command: |
             docker-compose -f docker-compose.ci.yml up -d
             docker ps
+
+      - run:
+          name: Install Form Runner
+          command: npm run form-runner:install
 
       - run:
           name: run build
@@ -247,8 +252,8 @@ jobs:
             echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
             printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
             sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
-              --route $phone_home 255.255.255.255 net_gateway \
-              --route 169.254.0.0 255.255.0.0 net_gateway
+            --route $phone_home 255.255.255.255 net_gateway \
+            --route 169.254.0.0 255.255.0.0 net_gateway
 
       - run:
           name: Wait for VPN connection to be established

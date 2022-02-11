@@ -7,4 +7,5 @@ export const listsRoutes = {
   privateBeta: "/private-beta",
   formRunnerWebhook: "/ingest/:serviceType",
   confirmApplication: "/confirm/:reference",
+  accessibility: "/help/accessibility-statement",
 };

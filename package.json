@@ -108,7 +108,6 @@
     "commitizen": "^4.2.4",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.2.0",
-    "cypress": "^9.2.0",
     "cypress-cucumber-preprocessor": "^4.3.0",
     "cypress-file-upload": "^5.0.7",
     "cz-conventional-changelog": "^3.3.0",

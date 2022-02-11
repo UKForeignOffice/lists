@@ -33,11 +33,11 @@
     should not be treated as such.</p>
 {% endif %}
   <p class="govuk-body">
-    Results are ordered by
+    Results are ordered
     {% if region and region !== "Not set" %}
-      nearest to <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>
+      by nearest to <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>.
     {% else %}
-      Company name
+      alphabetically.
     {% endif %}
   </p>
 

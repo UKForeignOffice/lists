@@ -15,7 +15,17 @@ export const listsRouter = express.Router();
 
 listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
-listsRouter.get(listsRoutes.results, csrfRequestHandler, listsResultsController);
+listsRouter.get(
+  listsRoutes.results,
+  csrfRequestHandler,
+  listsResultsController
+);
 listsRouter.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
-listsRouter.get(listsRoutes.confirmApplication, listsConfirmApplicationController);
+listsRouter.get(
+  listsRoutes.confirmApplication,
+  listsConfirmApplicationController
+);
 listsRouter.get(listsRoutes.privateBeta, listsGetPrivateBetaPage);
+listsRouter.get(listsRoutes.accessibility, (req, res) => {
+  res.render("accessibility/accessibility-statement");
+});

@@ -20,6 +20,7 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
+
 import { isProd } from "server/config";
 
 const server = express();

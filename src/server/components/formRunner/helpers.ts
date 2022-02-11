@@ -24,9 +24,12 @@ export async function startFormRunner(): Promise<boolean> {
 
     isStarting = true;
 
-    const formRunner = spawn(`npm run form-runner:start`, {
-      shell: true,
-    });
+    const formRunner = spawn(
+      `PRIVACY_POLICY_URL='' npm run form-runner:start`,
+      {
+        shell: true,
+      }
+    );
 
     formRunner.stderr.on("data", (data) => {
       logger.error(`Form Runner Error: ${data.toString()}`);
