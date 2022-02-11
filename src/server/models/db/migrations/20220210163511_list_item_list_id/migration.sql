@@ -8,7 +8,6 @@ FROM "ListItem" li
 WHERE li."type" = 'covidTestProviders'
   and l."type" = 'covidTestProviders'
   and listSource."type" = 'covidTestProviders'
-  and li."id" = listSource."id"
   and li."id" = listSource."id";
 
 UPDATE "ListItem" listSource SET "listId" = l."id"
@@ -18,5 +17,4 @@ FROM "ListItem" li
 WHERE li."type" = 'lawyers'
   and l."type" = 'lawyers'
   and listSource."type" = 'lawyers'
-  and li."id" = listSource."id"
   and li."id" = listSource."id";
