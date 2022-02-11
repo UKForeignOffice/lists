@@ -34,9 +34,12 @@ describe("Lawyers List:", () => {
         propA: "a",
         propB: 1,
         propC: "c",
+        propD: ["fried", "poached", "scrambled", ""],
       };
 
-      expect(queryStringFromParams(params)).toEqual("propA=a&propB=1&propC=c");
+      expect(queryStringFromParams(params)).toEqual(
+        "propA=a&propB=1&propC=c&propD=fried,poached,scrambled"
+      );
     });
 
     test("query string is built correctly when value is preceded comma", () => {
@@ -124,7 +127,9 @@ describe("Lawyers List:", () => {
     });
 
     test("Covid test provider label is returned correctly", () => {
-      expect(getServiceLabel("covidTestProviders")).toEqual("a COVID-19 test provider");
+      expect(getServiceLabel("covidTestProviders")).toEqual(
+        "a COVID-19 test provider"
+      );
     });
 
     test("undefined is returned when service name is unknown", () => {
