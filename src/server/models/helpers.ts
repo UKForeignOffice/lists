@@ -1,6 +1,6 @@
 import { isNumber, isArray } from "lodash";
 import { getDbPool } from "./db/database";
-import { ServiceType } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 import { findListByCountryAndType } from "server/models/list";
 
 export const rawInsertGeoLocation = async (
@@ -27,7 +27,7 @@ export function geoPointIsValid(geoPoint: any): boolean {
 }
 
 export async function getListIdForCountryAndType(
-  country: string,
+  country: CountryName,
   serviceType: ServiceType
 ): Promise<number> {
   const existingLists = await findListByCountryAndType(
@@ -35,10 +35,6 @@ export async function getListIdForCountryAndType(
     serviceType
   );
 
-  if (existingLists !== undefined && existingLists?.length > 0) {
-    const list = existingLists[0];
-    return list.id;
-  }
-  return -1;
+  return existingLists?.[0]?.id ?? -1;
 }
 

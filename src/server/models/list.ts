@@ -62,7 +62,7 @@ export async function findListById(
 }
 
 export async function findListByCountryAndType(
-  country: CountryName | string,
+  country: CountryName,
   type: ServiceType
 ): Promise<List[] | undefined> {
   try {
