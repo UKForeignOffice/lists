@@ -699,7 +699,7 @@ async function createLawyerListItemObject(
     const geoLocationId = await createAddressGeoLocation(lawyer);
 
     const listId = await getListIdForCountryAndType(
-      lawyer.country,
+      lawyer.country as CountryName,
       ServiceType.lawyers
     );
 
@@ -848,7 +848,7 @@ async function createCovidTestSupplierListItemObject(
     const geoLocationId = await createAddressGeoLocation(formData);
 
     const listId = await getListIdForCountryAndType(
-      formData.organisationDetails.country,
+      formData.organisationDetails.country as CountryName,
       ServiceType.covidTestProviders
     );
 
