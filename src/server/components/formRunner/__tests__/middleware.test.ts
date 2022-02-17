@@ -105,28 +105,6 @@ describe("FormRunner middleware", () => {
 
       expect(result).toMatchSnapshot();
     });
-
-    test("feedback success page content is correct", () => {
-      const { userResDecorator } = (proxy as any).mock.calls[0][1];
-
-      userReq.baseUrl = "/application/feedback/status";
-
-      proxyResData.toString.mockReturnValueOnce(`
-        <link rel="shortcut href="/assets/images/favicon.ico">
-        <img src='/assets/img/logo.png' />
-        <link rel="shortcut href="/assets/js/main.js">
-        <script src="/assets/js/main.js"></script>
-        <body>
-          <div>...</div>
-          <main class="123" id="123"></main>
-          <div>...</div>
-        </body>
-      `);
-
-      const result = userResDecorator(proxyRes, proxyResData, userReq);
-
-      expect(result).toMatchSnapshot();
-    });
   });
 
   describe("userResHeaderDecorator", () => {

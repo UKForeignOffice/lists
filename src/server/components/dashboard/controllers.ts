@@ -23,7 +23,7 @@ import {
   deleteListItem,
 } from "server/models/listItem";
 import { findFeedbackByType } from "server/models/feedback";
-import { UserRoles, ServiceType, List } from "server/models/types";
+import { UserRoles, ServiceType, List, CountryName } from "server/models/types";
 import {
   filterSuperAdminRole,
   userIsListPublisher,
@@ -252,7 +252,7 @@ export async function listsEditController(
           };
         } else {
           const existingLists = await findListByCountryAndType(
-            req.body.country,
+            req.body.country as CountryName,
             req.body.serviceType
           );
 
@@ -400,7 +400,7 @@ export async function listItemsApproveController(
     });
   } else if (
     list.type !== listItem?.type ||
-    list.countryId !== listItem.address.country.id
+    list.id !== listItem.listId
   ) {
     res.status(403).send({
       error: {
@@ -453,7 +453,7 @@ export async function listItemsPublishController(
     });
   } else if (
     list.type !== listItem?.type ||
-    list.countryId !== listItem.address.country.id
+    list.id !== listItem.listId
   ) {
     res.status(400).send({
       error: {

@@ -1,7 +1,6 @@
 import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_BASE_ROUTE, FORM_RUNNER_URL } from "./constants";
-import { getFeedbackSuccessContent } from "server/components/feedback/helpers";
 
 /**
  * Proxy middleware for the form runner
@@ -20,22 +19,17 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           return proxyResData;
         }
 
-        let data: string = proxyResData.toString("utf8");
-
-        if (userReq.baseUrl.includes("/feedback/status")) {
-          // replace content of status page for feedback form
-          data = data.replace(
-            /(<main .*>)((.|\n)*?)(<\/main>)/im,
-            `$1${getFeedbackSuccessContent()}$4`
-          );
-        }
-
-        return data
+        return proxyResData
+          .toString("utf8")
           .replace(
             /(href|src|value)=('|")\/([^'"]+)/g,
             `$1=$2${FORM_RUNNER_BASE_ROUTE}/$3`
           )
-          .replace(/\/application\/help\/cookies/g, "/help/cookies");
+          .replace(/\/application\/help\/cookies/g, "/help/cookies")
+          .replace(
+            /\/application\/help\/accessibility-statement/g,
+            "/help/accessibility-statement"
+          );
       },
       userResHeaderDecorator(headers, _userReq, userRes) {
         if (userRes.statusCode === 302) {

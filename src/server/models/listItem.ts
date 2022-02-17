@@ -21,7 +21,7 @@ import {
   CovidTestSupplierListItemCreateInput,
   Address,
 } from "./types";
-import { geoPointIsValid, rawInsertGeoLocation } from "./helpers";
+import { geoPointIsValid, getListIdForCountryAndType, rawInsertGeoLocation } from "./helpers";
 import { recordListItemEvent } from "./audit";
 import {
   ListsRequestParams,
@@ -163,7 +163,8 @@ function fetchPublishedListItemQuery(props: {
 
     FROM "ListItem"
  	  INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
-	  INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+ 	  INNER JOIN "List" ON "ListItem"."listId" = "List".id
+	  INNER JOIN "Country" ON "List"."countryId" = "Country".id
     INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
     ${whereType}
     ${whereCountryName}
@@ -372,7 +373,7 @@ function getToCount(props: {
   count: number;
 }): number {
   const { currentPage, pageCount, count } = props;
-  let to = 0;
+  let to;
   if (currentPage === pageCount) {
     to = count;
   } else {
@@ -414,7 +415,8 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
       FROM "ListItem"
 
       INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
-      INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+      INNER JOIN "List" ON "ListItem"."listId" = "List".id
+      INNER JOIN "Country" ON "List"."countryId" = "Country".id
       INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
 
       ${pgescape(`WHERE "ListItem"."type" = %L`, list.type)}
@@ -696,10 +698,16 @@ async function createLawyerListItemObject(
     const country = await createCountry(addressCountry);
     const geoLocationId = await createAddressGeoLocation(lawyer);
 
+    const listId = await getListIdForCountryAndType(
+      lawyer.country as CountryName,
+      ServiceType.lawyers
+    );
+
     return {
       type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
+      listId,
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
@@ -839,6 +847,11 @@ async function createCovidTestSupplierListItemObject(
     const country = await createCountry(formData.organisationDetails.country);
     const geoLocationId = await createAddressGeoLocation(formData);
 
+    const listId = await getListIdForCountryAndType(
+      formData.organisationDetails.country as CountryName,
+      ServiceType.covidTestProviders
+    );
+
     const providedTests = compact(
       formData.providedTests
         .split(", ")
@@ -870,6 +883,7 @@ async function createCovidTestSupplierListItemObject(
       type: ServiceType.covidTestProviders,
       isApproved: false,
       isPublished: false,
+      listId,
       jsonData: {
         organisationName: formData.organisationDetails.organisationName
           .toLowerCase()

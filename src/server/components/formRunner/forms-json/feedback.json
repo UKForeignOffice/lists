@@ -273,5 +273,23 @@
         ]
       }
     }
-  ]
+  ],
+  "specialPages": {
+    "confirmationPage": {
+      "customText": {
+        "title": "Thank you",
+        "paymentSkipped": false,
+        "nextSteps": false
+      },
+      "components": [
+        {
+          "name": "WLskhZ",
+          "options": {},
+          "type": "Para",
+          "content": "Your feedback will help us to improve this service.",
+          "schema": {}
+        }
+      ]
+    }
+  }
 }

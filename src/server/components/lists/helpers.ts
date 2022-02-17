@@ -18,20 +18,27 @@ export async function initLists(server: Express): Promise<void> {
 }
 
 /**
- * To support the select all option for checkbox fields, this function detects if the value "All" is provided and will
- * remove all other options in the event "Select All" and any additional checkboxes were selected by the user.  Currently
- * this is only required for lawyers.practiceArea (Areas of law field).
+ * To support the select all option for checkbox fields, this function does the following:
+ *   - detects if the value "All" is provided and will remove all other options in the event "Select All" and any
+ *     additional checkboxes were selected by the user.  Currently this is only required for lawyers.practiceArea
+ *     (Areas of law field).
+ *   - detects if the region field is empty and sets to the value "Not set" to enable searching for by the entire country.
+ *   - detects the presence of the _csrf property and deletes it.
  * @param params
  */
 export function preProcessParams(params: { [name: string]: any }): {
   [name: string]: any;
 } {
-  let paramsCopy = { ...params };
-  const hasSelectedAll = paramsCopy?.practiceArea?.includes("All") ?? false;
-  paramsCopy = hasSelectedAll === true ? { ...paramsCopy, practiceArea: "All" } : params;
-  paramsCopy = paramsCopy?.region === "" ? { ...paramsCopy, region: "Not set"} : paramsCopy;
+  const { _csrf, ...paramsCopy } = params;
+  const hasSelectedAll: boolean =
+    paramsCopy?.practiceArea?.includes("All") ?? false;
+  const noRegionSelected = paramsCopy?.region === "";
 
-  return paramsCopy;
+  return {
+    ...paramsCopy,
+    ...(hasSelectedAll && { practiceArea: "All" }),
+    ...(noRegionSelected && { region: "Not set" }),
+  };
 }
 
 export function queryStringFromParams(
@@ -43,7 +50,7 @@ export function queryStringFromParams(
       let value: string = params[key];
 
       if (isArray(value)) {
-        value = value.toString();
+        value = value.filter(Boolean).toString();
       }
 
       if (value[0] === ",") {
