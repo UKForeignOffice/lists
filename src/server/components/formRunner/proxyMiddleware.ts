@@ -29,6 +29,10 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           .replace(
             /\/application\/help\/accessibility-statement/g,
             "/help/accessibility-statement"
+          )
+          .replace(
+            /\/application\/help\/terms-and-conditions/g,
+            "/help/terms-and-conditions"
           );
       },
       userResHeaderDecorator(headers, _userReq, userRes) {
