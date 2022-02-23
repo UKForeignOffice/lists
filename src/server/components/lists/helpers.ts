@@ -12,6 +12,11 @@ import {
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
+import {
+  FORM_RUNNER_BASE_ROUTE,
+  FORM_RUNNER_RETURNING_USER_ROUTE,
+  FORM_RUNNER_URL
+} from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
@@ -159,4 +164,25 @@ export function createListSearchBaseLink(serviceType: string): string {
 
   const protocol = isLocalHost ? "http" : "https";
   return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${serviceType}`;
+}
+
+export function createFormRunnerReturningUserLink(serviceType: string): string {
+  if (serviceType === undefined) {
+    throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
+  }
+
+  const protocol = isLocalHost ? "http" : "https";
+  return `${protocol}://${FORM_RUNNER_URL}${FORM_RUNNER_BASE_ROUTE}${FORM_RUNNER_RETURNING_USER_ROUTE}?serviceType=${serviceType}`;
+}
+
+export function createFormRunnerEditListItemLink(serviceType: string, token: string): string {
+  if (serviceType === undefined) {
+    throw new Error("createFormRunnerEditListItemLink serviceType is undefined");
+  }
+  if (token === undefined) {
+    throw new Error("createFormRunnerEditListItemLink token is undefined");
+  }
+
+  const protocol = isLocalHost ? "http" : "https";
+  return `${protocol}://${FORM_RUNNER_URL}${FORM_RUNNER_BASE_ROUTE}${FORM_RUNNER_RETURNING_USER_ROUTE}?serviceType=${serviceType}`;
 }
