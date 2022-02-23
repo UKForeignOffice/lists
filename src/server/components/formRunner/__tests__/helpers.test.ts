@@ -3,8 +3,14 @@ import * as child_process from "child_process";
 import {
   startFormRunner,
   isFormRunnerReady,
-  parseFormRunnerWebhookObject,
+  parseFormRunnerWebhookObject, generateFormRunnerWebhookData, getNewSessionWebhookData
 } from "../helpers";
+import { Country, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
+import {
+  FormRunnerNewSessionWebhookData, FormRunnerNewSessionWebhookDataOptions,
+  Question
+} from "../../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+import { Field } from "../../../../../lib/form-runner/model/dist/module/conditions/inline-condition-model";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -324,6 +330,326 @@ describe("Form Runner Service:", () => {
         bookingOptions: "Online, Phone, In Person",
         declarationConfirm: "confirm",
       });
+    });
+  });
+
+  describe("generateFormRunnerWebhookObject", () => {
+
+    const listJson:LawyerListItemJsonData = {
+      "size": "Medium (16-350 legal professionals)",
+      "country": "Italy",
+      "proBono": false,
+      "regions": "Milan, Rome, Florence, Genoa, Verona, Livorno",
+      "legalAid": true,
+      "metadata": {
+        "emailVerified": true
+      },
+      "areasOfLaw": [
+        "Bankruptcy",
+        "Corporate",
+        "Criminal",
+        "Employment",
+        "Family",
+        "Health",
+        "Immigration",
+        "Intellectual property",
+        "International",
+        "Maritime",
+        "Personal injury",
+        "Real estate"
+      ],
+      "regulators": "Ordine Avvocati di Milano",
+      "contactName": "Cristiano Cominotto",
+      "declaration": [
+        "confirm"
+      ],
+      "phoneNumber": "+393355928732",
+      "emailAddress": "ignoremyemail@noemail-ignoreme.uk",
+      "publishEmail": "Yes",
+      "speakEnglish": true,
+      "websiteAddress": "https://www.alassistenzalegale.it/?lang=en",
+      "organisationName": "AL Assistenza Legale",
+      "representedBritishNationals": true
+    };
+
+    const getObject:ListItemGetObject = {
+      address: { city: "Milan", country: { id: 1, name: "Italy" }, firstLine: "1 Plaza De Centro", postCode: "999999" },
+      id: 1,
+      reference: "test",
+      createdAt: new Date("19-Feb-2022 12:00:00"),
+      updatedAt: new Date("19-Feb-2022 12:00:00"),
+      type: "lawyers",
+      jsonData: listJson,
+      addressId: 1,
+      isApproved: true,
+      isPublished: false,
+      isBlocked: false,
+      listId: 1
+    };
+
+    const listCountry:Country = {
+      id: 1,
+      name: "Italy",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const expectedListOutput: Array<Partial<Question>> = [
+      {
+        fields: [
+          {
+            answer: "true",
+            key: "speakEnglish",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Can you provide legal services and support to customers in English?"
+      },
+      {
+        fields: [
+          {
+            answer: "Cristiano Cominotto",
+            key: "firstAndMiddleNames",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "",
+            key: "familyName",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Your name "
+      },
+      {
+        fields: [
+          {
+            answer: "AL Assistenza Legale",
+            key: "organisationName",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "1 Plaza De Centro",
+            key: "addressLine1",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "",
+            key: "addressLine2",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "Milan",
+            key: "city",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "999999",
+            key: "postcode"
+,
+            title: "",
+            type: "",
+          },
+          {
+            answer: "Italy",
+            key: "addressCountry",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Company name and address"
+      },
+      {
+        fields: [
+          {
+            answer: "https://www.alassistenzalegale.it/?lang=en",
+            key: "websiteAddress",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Full website address (Optional)"
+      },
+      {
+        fields: [
+          {
+            answer: "ignoremyemail@noemail-ignoreme.uk",
+            key: "emailAddress",
+            title: "",
+            type: "",
+          },
+          {
+            answer: "Yes",
+            key: "publishEmail",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Email address"
+      },
+      {
+        fields: [
+          {
+            answer: "Bankruptcy, Corporate, Criminal, Employment, Family, Health, Immigration, Intellectual property, International, Maritime, Personal injury, Real estate",
+            key: "areasOfLaw",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "In what areas of law are you qualified to practise? "
+      },
+      {
+        fields: [
+          {
+            answer: "true",
+            key: "legalAid",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Can you provide legal aid to British nationals?"
+      },
+      {
+        fields: [
+          {
+            answer: "false",
+            key: "proBono",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Can you offer pro bono service to British nationals?"
+      },
+      {
+        fields: [
+          {
+            answer: "true",
+            key: "representedBritishNationals",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Have you represented British nationals before?"
+      },
+      {
+        fields: [
+          {
+            answer: "+393355928732",
+            key: "phoneNumber",
+            title: "",
+            type: "",
+          },
+          {
+            key: "emergencyPhoneNumber",
+            answer: "",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Phone number"
+      },
+      {
+        fields: [
+          {
+            answer: "Ordine Avvocati di Milano",
+            key: "regulators",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Which legal regulator or local bar associations are you registered with?"
+      },
+      {
+        fields: [
+          {
+            answer: "confirm",
+            key: "declaration",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Declaration"
+      },
+      {
+        fields: [
+          {
+            answer: "Italy",
+            key : "country",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Which list of lawyers do you want to be added to?"
+      },
+      {
+        fields: [
+          {
+            answer: "Milan, Rome, Florence, Genoa, Verona, Livorno",
+            key: "regions",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Which regions do you serve?"
+      },
+      {
+        fields: [
+          {
+            answer: "Medium (16-350 legal professionals)",
+            key: "size",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "What size is your company or firm?"
+      },
+      {
+        fields: [
+          {
+            answer: "",
+            key: "publicEmailAddress",
+            title: "",
+            type: "",
+          }
+        ],
+        question: "Email address for GOV.UK"
+      }
+    ];
+
+    const options: FormRunnerNewSessionWebhookDataOptions = {
+      message: "Change the text",
+      callbackUrl: "",
+      redirectPath: "",
+    }
+    const expectedNewSessionWebhookData: FormRunnerNewSessionWebhookData = {
+      options,
+      name: "test",
+      questions: expectedListOutput,
+    }
+
+    test("generated form runner webhook data is correct", async() => {
+
+      const result = await generateFormRunnerWebhookData(getObject, listCountry);
+
+      expect(result).toMatchObject(
+        expectedListOutput
+      );
+    });
+    test("generated object is correct", async() => {
+
+      const result = await generateFormRunnerWebhookData(getObject, listCountry);
+
+      const newSessionWebhookData: FormRunnerNewSessionWebhookData = getNewSessionWebhookData(result, "Change the text");
+
+      expect(newSessionWebhookData).toMatchObject(
+        expectedNewSessionWebhookData
+      );
     });
   });
 });

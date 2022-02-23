@@ -73,3 +73,39 @@ export interface CovidTestSupplierFormWebhookData {
   bookingOptions: string;
   declarationConfirm: string;
 }
+
+export interface FormRunnerComponent {
+  name: string,
+  title: string,
+  options: {},
+  type: string,
+  content: string,
+  schema: {}
+}
+
+export enum FormRunnerFields {
+  "speakEnglish" = "speakEnglish",
+  "firstAndMiddleNames" = "firstAndMiddleNames",
+  "familyName" = "familyName",
+  "organisationName" = "organisationName",
+  "addressLine1" = "addressLine1",
+  "addressLine2" = "addressLine2",
+  "city" = "city",
+  "postcode" = "postcode",
+  "addressCountry" = "addressCountry",
+  "websiteAddress" = "websiteAddress",
+  "emailAddress" = "emailAddress",
+  "publishEmail" = "publishEmail",
+  "areasOfLaw" = "areasOfLaw",
+  "legalAid" = "legalAid",
+  "proBono" = "proBono",
+  "representedBritishNationals" = "representedBritishNationals",
+  "phoneNumber" = "phoneNumber",
+  "emergencyPhoneNumber" = "emergencyPhoneNumber",
+  "regulators" = "regulators",
+  "declaration" = "declaration",
+  "country" = "country",
+  "regions" = "regions",
+  "size" = "size",
+  "publicEmailAddress" = "publicEmailAddress",
+}

@@ -36,13 +36,17 @@ import {
 } from "server/utils/validation";
 import {
   createListSearchBaseLink,
-  QuestionError,
+  QuestionError
 } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
-import { sendDataPublishedEmail } from "server/services/govuk-notify";
+import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
+import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
+import axios from "axios";
+import { logger } from "server/services/logger";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -546,6 +550,89 @@ export async function listItemsDeleteController(
     });
   } catch (e) {
     next(e);
+  }
+}
+
+export async function listItemsEditController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { listId, listItemId } = req.params;
+  const { changes } = req.body;
+  const userId = req.user?.userData.id;
+
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+  if (list === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list ${listId}`,
+      },
+    });
+  } else if (listItem === undefined) {
+    res.status(400).send({
+      error: {
+        message: `Could not find list item ${listItemId}`,
+      },
+    });
+  } else if (list.type !== listItem?.type) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`
+      }
+    });
+  } else if (list.id !== listItem.listId) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`
+      }
+    });
+  } else if (!userIsListPublisher(req, list)) {
+    res.status(403).send({
+      error: {
+        message: "User doesn't have publishing right on this list"
+      }
+    });
+  } else {
+
+    const questions = await generateFormRunnerWebhookData(listItem, list.country);
+
+    const formRunnerWebhookData = getNewSessionWebhookData(questions, changes);
+
+    const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
+
+    // get token from Form Runner - POST formRunnerWebhookData to formRunnerNewSessionUrl to get token
+    let token = "FAKETOKEN";
+    token = await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        logger.info(error);
+      });
+
+    // Create edit link to Form Runner
+    const formRunnerEditUserUrl = createFormRunnerEditListItemLink(list.type, token);
+
+    // Email applicant
+    const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
+    const listType = serviceName(list.type);
+
+    // Change to new email function
+    await sendEditDetailsEmail(
+      contactName,
+      contactEmailAddress,
+      listType,
+      changes,
+      formRunnerEditUserUrl
+    );
+
+    res.json({ status: "OK", isPublished: listItem.isPublished });
   }
 }
 
