@@ -28,9 +28,7 @@
   <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual lawyers or this service.</p>
 {% endif %}
 {% if (print === "yes") %}
-  <p class="govuk-body">The FCDO does not accept any liability to any person or company for any financial loss or damage
-    arising from the use of this information or from any failure to give information.  Our lists are not recommendations and
-    should not be treated as such.</p>
+{% include 'includes/disclaimer.njk' %}
 {% endif %}
   <p class="govuk-body">
     Results are ordered

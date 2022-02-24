@@ -8,4 +8,5 @@ export const listsRoutes = {
   formRunnerWebhook: "/ingest/:serviceType",
   confirmApplication: "/confirm/:reference",
   accessibility: "/help/accessibility-statement",
+  termsAndConditions: "/help/terms-and-conditions",
 };
