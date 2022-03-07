@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { get } from "lodash";
-import { listsRoutes } from "./routes";
+import { listsRoutes } from "./../routes";
 import { listItem } from "server/models";
-import { DEFAULT_VIEW_PROPS } from "./constants";
+import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
@@ -13,16 +13,16 @@ import {
   preProcessParams,
   createConfirmationLink,
   getCountryLawyerRedirectLink,
-} from "./helpers";
-import { questions } from "./questionnaire";
+} from "./../helpers";
+import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionError, QuestionName } from "./types";
+import { QuestionError, QuestionName } from "./../types";
 import { legalPracticeAreasList } from "server/services/metadata";
-import { searchLawyers, lawyersQuestionsSequence } from "./searches/lawyers";
+import { searchLawyers, lawyersQuestionsSequence } from "./../searches/lawyers";
 import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
-} from "./searches/covid-test-provider";
+} from "./../searches/covid-test-provider";
 import {
   LawyersFormWebhookData,
   formRunnerPostRequestSchema,
