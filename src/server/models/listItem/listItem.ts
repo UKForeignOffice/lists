@@ -1,6 +1,6 @@
 import { get, uniq, trim, merge, toLower, compact, startCase } from "lodash";
 import pgescape from "pg-escape";
-import { prisma } from "./db/prisma-client";
+import { prisma } from "./../db/prisma-client";
 import { logger } from "server/services/logger";
 import { geoLocatePlaceByText } from "server/services/location";
 import {
@@ -20,9 +20,13 @@ import {
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
   Address,
-} from "./types";
-import { geoPointIsValid, getListIdForCountryAndType, rawInsertGeoLocation } from "./helpers";
-import { recordListItemEvent } from "./audit";
+} from "./../types";
+import {
+  geoPointIsValid,
+  getListIdForCountryAndType,
+  rawInsertGeoLocation,
+} from "./../helpers";
+import { recordListItemEvent } from "./../audit";
 import {
   ListsRequestParams,
   listsRoutes,
