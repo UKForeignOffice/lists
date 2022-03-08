@@ -5,7 +5,6 @@ import {
   listsPostController,
   listsResultsController,
   listsGetPrivateBetaPage,
-  listsDataIngestionPostController,
   listsConfirmApplicationController,
 } from "./controllers";
 import { listsRoutes } from "./routes";
@@ -20,10 +19,7 @@ listsRouter.get(
   csrfRequestHandler,
   listsResultsController
 );
-listsRouter.post(
-  listsRoutes.formRunnerWebhook,
-  listsDataIngestionPostController
-);
+
 listsRouter.get(
   listsRoutes.confirmApplication,
   listsConfirmApplicationController
