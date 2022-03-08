@@ -24,8 +24,6 @@ import {
 } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
 
-export { listsDataIngestionPostController } from "./ingest";
-
 export async function listsPostController(
   req: Request,
   res: Response,

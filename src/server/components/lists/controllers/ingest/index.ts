@@ -1,1 +1,1 @@
-export { ingestPostController as listsDataIngestionPostController } from "./ingestPostController";
+export { ingestPostController } from "./ingestPostController";
