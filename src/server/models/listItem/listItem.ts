@@ -20,9 +20,13 @@ import {
   LawyerListItemCreateInput,
   CovidTestSupplierListItemCreateInput,
   Address,
-} from "./types";
-import { geoPointIsValid, getListIdForCountryAndType, rawInsertGeoLocation } from "./helpers";
-import { recordListItemEvent } from "./audit";
+} from "./../types";
+import {
+  geoPointIsValid,
+  getListIdForCountryAndType,
+  rawInsertGeoLocation,
+} from "./../helpers";
+import { recordListItemEvent } from "./../audit";
 import {
   ListsRequestParams,
   listsRoutes,
