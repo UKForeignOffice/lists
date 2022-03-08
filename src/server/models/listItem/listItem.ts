@@ -26,14 +26,8 @@ import {
   Address,
 } from "./../types";
 import { geoPointIsValid, getListIdForCountryAndType } from "./../helpers";
+import { ROWS_PER_PAGE } from "./pagination";
 import { recordListItemEvent } from "./../audit";
-import {
-  ListsRequestParams,
-  listsRoutes,
-  PaginationItem,
-  PaginationResults,
-} from "server/components/lists";
-import { queryStringFromParams } from "server/components/lists/helpers";
 import { legalPracticeAreasList } from "server/services/metadata";
 
 interface ListItemWithAddressCountry extends ListItem {
