@@ -1,6 +1,6 @@
 import { get, uniq, trim, merge, toLower, compact, startCase } from "lodash";
 import pgescape from "pg-escape";
-import { prisma } from "./db/prisma-client";
+import { prisma } from "./../db/prisma-client";
 import { logger } from "server/services/logger";
 import { geoLocatePlaceByText } from "server/services/location";
 import {
