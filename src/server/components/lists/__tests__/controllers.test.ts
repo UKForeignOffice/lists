@@ -3,8 +3,8 @@ import {
   listsResultsController,
   listsGetPrivateBetaPage,
   listsConfirmApplicationController,
-  ingestPostController,
 } from "../controllers";
+import { ingestPostController as listsDataIngestionController } from "../controllers/ingest";
 import { listItem } from "server/models";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
@@ -143,12 +143,12 @@ describe("Lists Controllers", () => {
     });
   });
 
-  describe("ingestPostController", () => {
+  describe("listsDataIngestionController", () => {
     test("it responds with 500 when serviceType is unknown", async () => {
       req.params.serviceType = "other";
       req.body.questions = [{}];
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe("Lists Controllers", () => {
     test("it responds with 402 when posted data schema is incorrect", async () => {
       req.params.serviceType = "lawyers";
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(422);
       expect(res.send).toHaveBeenCalled();
@@ -170,7 +170,7 @@ describe("Lists Controllers", () => {
       req.params.serviceType = "lawyers";
       req.body.questions = webhookPayload.questions;
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(spy).toHaveBeenCalledWith("lawyers", {
         emailAddress: "test@gov.uk",
@@ -190,7 +190,7 @@ describe("Lists Controllers", () => {
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(spy).toHaveBeenCalledWith("covidTestProviders", {
         emailAddress: "test@gov.uk",
@@ -224,7 +224,7 @@ describe("Lists Controllers", () => {
       spyCreateListItem(createdListItem);
       const spy = spySendApplicationConfirmationEmail();
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(spy).toHaveBeenCalledWith(
         "Test User",
@@ -249,7 +249,7 @@ describe("Lists Controllers", () => {
 
       spyCreateListItem(createdListItem, true);
 
-      await ingestPostController(req, res);
+      await listsDataIngestionController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(422);
       expect(res.send).toHaveBeenCalledWith({
