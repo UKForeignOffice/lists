@@ -2,7 +2,11 @@ import { get, uniq, trim, merge, toLower, compact, startCase } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./../db/prisma-client";
 import { logger } from "server/services/logger";
-import { geoLocatePlaceByText } from "server/services/location";
+import {
+  createCountry,
+  getPlaceGeoPoint,
+  createAddressGeoLocation,
+} from "server/models/listItem/geoHelpers";
 import {
   LawyersFormWebhookData,
   CovidTestSupplierFormWebhookData,
@@ -21,11 +25,7 @@ import {
   CovidTestSupplierListItemCreateInput,
   Address,
 } from "./../types";
-import {
-  geoPointIsValid,
-  getListIdForCountryAndType,
-  rawInsertGeoLocation,
-} from "./../helpers";
+import { geoPointIsValid, getListIdForCountryAndType } from "./../helpers";
 import { recordListItemEvent } from "./../audit";
 import {
   ListsRequestParams,
@@ -42,64 +42,6 @@ interface ListItemWithAddressCountry extends ListItem {
   address: Address & {
     country: Country;
   };
-}
-
-// Helpers
-async function createCountry(country: string): Promise<Country> {
-  const countryName = startCase(toLower(country));
-
-  return await prisma.country.upsert({
-    where: { name: countryName },
-    create: { name: countryName },
-    update: {},
-  });
-}
-
-async function getPlaceGeoPoint(props: {
-  countryName?: string;
-  text?: string;
-}): Promise<Point> {
-  const { countryName, text } = props;
-
-  if (text === undefined || countryName === undefined) {
-    return [0.0, 0.0];
-  }
-
-  try {
-    return await geoLocatePlaceByText(`${text}, ${countryName}`);
-  } catch (error) {
-    logger.error(error.message);
-
-    return [0.0, 0.0];
-  }
-}
-
-async function createAddressGeoLocation(
-  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<number> {
-  let address: string;
-
-  if ("organisationDetails" in item) {
-    address = `
-      ${item.organisationDetails.addressLine1},
-      ${item.organisationDetails.addressLine2 ?? ""},
-      ${item.organisationDetails.city} -
-      ${item.organisationDetails.country} -
-      ${item.organisationDetails.postcode}
-    `;
-  } else {
-    address = `
-      ${item.addressLine1},
-      ${item.addressLine2 ?? ""},
-      ${item.city} -
-      ${item.addressCountry} -
-      ${item.postcode}
-    `;
-  }
-
-  const point = await geoLocatePlaceByText(address);
-
-  return await rawInsertGeoLocation(point);
 }
 
 /**
@@ -123,7 +65,12 @@ function fetchPublishedListItemQuery(props: {
   let withDistance = "";
   let orderBy = `ORDER BY "ListItem"."jsonData"->>'organisationName' ASC`;
 
-  if (geoPointIsValid(fromGeoPoint) && (region !== undefined && region !== "" && region !== "Not set")) {
+  if (
+    geoPointIsValid(fromGeoPoint) &&
+    region !== undefined &&
+    region !== "" &&
+    region !== "Not set"
+  ) {
     withDistance = `,
     ST_Distance(
         "GeoLocation".location,
@@ -354,10 +301,7 @@ function getPageItems(props: {
   return pageItems;
 }
 
-function getFromCount(props: {
-  count: number;
-  currentPage: number;
-}): number {
+function getFromCount(props: { count: number; currentPage: number }): number {
   const { count, currentPage } = props;
   let from;
 
