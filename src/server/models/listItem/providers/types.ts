@@ -5,3 +5,12 @@ export interface ListItemWithAddressCountry extends ListItem {
     country: Country;
   };
 }
+
+export enum EVENTS {
+  UPDATED_BY_USER = "User updated details",
+}
+
+export type UpdatableAddressFields = Pick<
+  Address,
+  "firstLine" | "secondLine" | "city" | "postCode"
+>;

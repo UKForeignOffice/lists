@@ -3,13 +3,13 @@ import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
-import { listItem } from "server/models";
+import * as helpers from "server/models/listItem/providers/helpers";
 
 describe("Lawyers List:", () => {
   let server: Express;
 
   function mockListItemSome(resolvedValue = true): jest.SpyInstance {
-    return jest.spyOn(listItem, "some").mockResolvedValue(resolvedValue);
+    return jest.spyOn(helpers, "some").mockResolvedValue(resolvedValue);
   }
 
   beforeAll(async () => {
@@ -256,10 +256,14 @@ describe("Lawyers List:", () => {
       const $html = $.load(text);
       const $main = $html("main");
       const $prevLink = $main.find("#prevButton > a");
-      expect($prevLink.attr("href")).toEqual(`results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=1`);
+      expect($prevLink.attr("href")).toEqual(
+        `results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=1`
+      );
 
       const $nextLink = $($main.find("#nextButton > a"));
-      expect($nextLink.attr('href')).toEqual(`results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=3`);
+      expect($nextLink.attr("href")).toEqual(
+        `results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=3`
+      );
     });
 
     test("accessibility", async () => {

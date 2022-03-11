@@ -23,6 +23,7 @@ import {
   covidTestProviderQuestionsSequence,
 } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { some } from "server/models/listItem/providers/helpers";
 
 export async function listsPostController(
   req: Request,
@@ -39,7 +40,7 @@ export async function listsPostController(
 
   if (country !== undefined && country !== "" && serviceType !== undefined) {
     try {
-      const hasItems = await listItem.some(country, serviceType);
+      const hasItems = await some(country, serviceType);
       let redirectLink: string | undefined;
 
       if (!hasItems) {

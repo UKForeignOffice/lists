@@ -8,21 +8,23 @@ import {
 import {
   togglerListItemIsApproved,
   togglerListItemIsPublished,
-  createLawyerListItem,
-  findPublishedLawyersPerCountry,
   setEmailIsVerified,
-  checkListItemExists,
   findListItemsForList,
-  some,
-  findPublishedCovidTestSupplierPerCountry,
-  createCovidTestSupplierListItem,
-  getListItemContactInformation,
   deleteListItem,
 } from "./..";
+
 import * as audit from "./../../audit";
 import { ServiceType } from "./../../types";
 import * as helpers from "./../../helpers";
 import { logger } from "server/services/logger";
+import { findPublishedLawyersPerCountry } from "../providers/Lawyers";
+import {
+  checkListItemExists,
+  getListItemContactInformation,
+  some,
+} from "server/models/listItem/providers/helpers";
+import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
+import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
 
 jest.mock("../db/prisma-client");
 
@@ -181,7 +183,7 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toThrow(
+      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toThrow(
         "Lawyer record already exists"
       );
 
@@ -211,7 +213,7 @@ describe("ListItem Model:", () => {
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
-      await createLawyerListItem(LawyerWebhookData);
+      await LawyerListItem.create(LawyerWebhookData);
 
       const expectedCountryName = startCase(toLower(LawyerWebhookData.country));
 
@@ -228,7 +230,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await createLawyerListItem(LawyerWebhookData);
+      await LawyerListItem.create(LawyerWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -305,7 +307,7 @@ describe("ListItem Model:", () => {
       const error = new Error("CREATE ERROR");
       prisma.listItem.create.mockRejectedValueOnce(error);
 
-      await expect(createLawyerListItem(LawyerWebhookData)).rejects.toEqual(
+      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toEqual(
         error
       );
     });
@@ -407,7 +409,7 @@ describe("ListItem Model:", () => {
         legalAid: "yes",
         proBono: "no",
         practiceArea: [],
-        offset: 0
+        offset: 0,
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -428,7 +430,7 @@ describe("ListItem Model:", () => {
         legalAid: "no",
         proBono: "no",
         practiceArea: [],
-        offset: 0
+        offset: 0,
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -889,7 +891,7 @@ describe("ListItem Model:", () => {
       await findPublishedCovidTestSupplierPerCountry({
         countryName: "ghana",
         region: "Accra",
-        turnaroundTime: 1
+        turnaroundTime: 1,
       });
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
@@ -967,16 +969,16 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("createCovidTestSupplierListItemObject", () => {
+  describe("CovidTestSupplierListItem.createObject", () => {
     // TODO
   });
 
-  describe("createCovidTestSupplierListItem", () => {
+  describe("CovidTestSupplierListItem.create", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
       await expect(
-        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
       ).rejects.toEqual(new Error("Covid Test Supplier Record already exists"));
     });
 
@@ -986,7 +988,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await createCovidTestSupplierListItem(CovidTestProviderWebhookData);
+      await CovidTestSupplierListItem.create(CovidTestProviderWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -1062,7 +1064,7 @@ describe("ListItem Model:", () => {
       prisma.listItem.create.mockRejectedValue(error);
 
       await expect(
-        createCovidTestSupplierListItem(CovidTestProviderWebhookData)
+        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
       ).rejects.toEqual(error);
     });
   });

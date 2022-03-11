@@ -1,10 +1,21 @@
-import { CountryName, ListItem, Point, ServiceType } from "server/models/types";
+import {
+  Address,
+  CountryName,
+  ListItem,
+  Point,
+  ServiceType,
+} from "server/models/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/components/formRunner";
+import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -175,4 +186,46 @@ export function getListItemContactInformation(listItem: ListItem): {
     get(listItem?.jsonData, "phoneNumber");
 
   return { contactName, contactEmailAddress, contactPhoneNumber };
+}
+
+export function pickWebhookAddressAsAddress(
+  webhook: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+): Partial<UpdatableAddressFields> {
+  if ("organisationDetails" in webhook) {
+    return {
+      firstLine: webhook.organisationDetails?.addressLine1,
+      secondLine: webhook.organisationDetails?.addressLine2,
+      postCode: webhook.organisationDetails?.postcode,
+      city: webhook.organisationDetails?.city,
+    };
+  }
+  return {
+    firstLine: webhook?.addressLine1,
+    secondLine: webhook?.addressLine2,
+    postCode: webhook?.postcode,
+    city: webhook?.city,
+  };
+}
+export function getChangedAddressFields(
+  webhook: Partial<LawyersFormWebhookData | CovidTestSupplierFormWebhookData>,
+  address: Partial<Address>
+): Partial<UpdatableAddressFields> {
+  const updatableAddressObject: UpdatableAddressFields = {
+    firstLine: address?.firstLine ?? "",
+    secondLine: address?.secondLine ?? null, // TODO:- fix types.. this shouldn't need `?? null`.
+    postCode: address?.postCode ?? "",
+    city: address?.city ?? "",
+  };
+
+  const webhookAddress = pickWebhookAddressAsAddress(webhook);
+  const updatableEntries = Object.entries(updatableAddressObject);
+
+  return updatableEntries.reduce((prev, entry) => {
+    const [key, value] = entry as [keyof UpdatableAddressFields, any];
+    const valueHasChanged = webhookAddress[key] !== value;
+    return {
+      ...prev,
+      ...(valueHasChanged && { [key]: value }),
+    };
+  }, {});
 }
