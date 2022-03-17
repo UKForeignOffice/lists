@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { get } from "lodash";
 import { listsRoutes } from "./../routes";
 import { listItem } from "server/models";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
