@@ -1,9 +1,11 @@
 // Lawyers
 import { LawyersFormWebhookData } from "server/components/formRunner";
 import {
+  Address,
   CountryName,
   LawyerListItemCreateInput,
   LawyerListItemGetObject,
+  ListItem,
   ServiceType,
 } from "server/models/types";
 import {
@@ -12,15 +14,17 @@ import {
   getPlaceGeoPoint,
 } from "./../geoHelpers";
 import { getListIdForCountryAndType } from "server/models/helpers";
-import { startCase, toLower, uniq } from "lodash";
+import { at, difference, startCase, toLower, uniq } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemWithAddressCountry } from "./types";
+import { Prisma } from "@prisma/client";
+import { ListItemWithAddressCountry, UpdatableAddressFields } from "./types";
 import { legalPracticeAreasList } from "server/services/metadata";
 import {
   checkListItemExists,
   fetchPublishedListItemQuery,
 } from "server/models/listItem/providers/helpers";
+import { merge, isEqual, pick } from "lodash";
 
 export async function createObject(
   lawyer: LawyersFormWebhookData

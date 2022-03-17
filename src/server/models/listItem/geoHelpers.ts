@@ -39,29 +39,31 @@ export async function getPlaceGeoPoint(props: {
   }
 }
 
-export async function createAddressGeoLocation(
+export function makeAddressGeoLocationString(
   item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): Promise<number> {
-  let address: string;
-
+): string {
   if ("organisationDetails" in item) {
-    address = `
+    return `
       ${item.organisationDetails.addressLine1},
       ${item.organisationDetails.addressLine2 ?? ""},
       ${item.organisationDetails.city} -
       ${item.organisationDetails.country} -
       ${item.organisationDetails.postcode}
     `;
-  } else {
-    address = `
+  }
+  return `
       ${item.addressLine1},
       ${item.addressLine2 ?? ""},
       ${item.city} -
       ${item.addressCountry} -
       ${item.postcode}
     `;
-  }
+}
 
+export async function createAddressGeoLocation(
+  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+): Promise<number> {
+  const address = makeAddressGeoLocationString(item);
   const point = await geoLocatePlaceByText(address);
 
   return await rawInsertGeoLocation(point);

@@ -5,6 +5,7 @@ import { logger } from "server/services/logger";
 import {
   LawyersFormWebhookData,
   CovidTestSupplierFormWebhookData,
+  WebhookData,
 } from "server/components/formRunner";
 import {
   List,
@@ -12,13 +13,22 @@ import {
   ListItem,
   ServiceType,
   ListItemGetObject,
+  Point,
 } from "./../types";
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
+import { Prisma } from "@prisma/client";
+import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
+import { getChangedAddressFields } from "./providers/helpers";
+import { geoLocatePlaceByText } from "server/services/location";
+import { rawUpdateGeoLocation } from "server/models/helpers";
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
+    /**
+     * TODO:- should this be using prisma.listItem.findMany(..)?
+     */
     return await prisma.$queryRaw(`SELECT
         "ListItem".*,
         (
@@ -253,7 +263,7 @@ export async function setEmailIsVerified({
 
 export async function createListItem(
   serviceType: ServiceType,
-  webhookData: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  webhookData: WebhookData
 ): Promise<ListItemWithAddressCountry> {
   switch (serviceType) {
     case ServiceType.lawyers:
@@ -262,5 +272,65 @@ export async function createListItem(
       return await CovidTestSupplierListItem.create(
         webhookData as CovidTestSupplierFormWebhookData
       );
+  }
+}
+
+export async function update(
+  id: ListItem["id"],
+  data: LawyersFormWebhookData
+): Promise<void> {
+  const listItemResult = await prisma.listItem.findFirst({
+    where: { id },
+    include: {
+      address: true,
+    },
+  });
+  if (!listItemResult) {
+    throw Error(`list item ${id} not found`);
+  }
+
+  const { address: currentAddress, ...listItem } = listItemResult;
+  const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
+  const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
+  const updatedJsonData = merge(listItem.jsonData, data);
+
+  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
+    where: { id },
+    data: {
+      jsonData: updatedJsonData,
+    },
+  };
+
+  let addressPrismaQuery: Prisma.AddressUpdateArgs | undefined;
+  let geoLocationParams: [number, Point] | undefined;
+  if (requiresAddressUpdate) {
+    try {
+      const address = makeAddressGeoLocationString(data);
+      const point = await geoLocatePlaceByText(address);
+
+      addressPrismaQuery = {
+        where: {
+          id: currentAddress.id,
+        },
+        data: addressUpdates,
+      };
+      geoLocationParams = [currentAddress.geoLocationId!, point];
+    } catch (e) {
+      throw Error("GeoLocation update failed");
+    }
+  }
+
+  try {
+    if (!requiresAddressUpdate) {
+      await prisma.listItem.update(listItemPrismaQuery);
+    }
+    await prisma.$transaction([
+      prisma.listItem.update(listItemPrismaQuery),
+      prisma.address.update(addressPrismaQuery!),
+      rawUpdateGeoLocation(...geoLocationParams!),
+    ]);
+  } catch (err) {
+    logger.error(`Lawyers.update Error ${err.message}`);
+    throw err;
   }
 }

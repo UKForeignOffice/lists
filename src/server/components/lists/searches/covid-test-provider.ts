@@ -10,6 +10,10 @@ import {
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import {
+  CovidTestSupplierListItem,
+  LawyerListItem,
+} from "server/models/listItem/providers";
 
 export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
@@ -26,13 +30,12 @@ export async function searchCovidTestProvider(
   const params = getAllRequestParams(req);
   const { serviceType, country, region, resultsTurnaround } = params;
 
-  const searchResults = await listItem.findPublishedCovidTestSupplierPerCountry(
-    {
+  const searchResults =
+    await CovidTestSupplierListItem.findPublishedCovidTestSupplierPerCountry({
       countryName: `${country}`,
       region: `${region}`,
       turnaroundTime: Number(resultsTurnaround),
-    }
-  );
+    });
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

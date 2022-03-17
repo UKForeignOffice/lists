@@ -73,3 +73,12 @@ export interface CovidTestSupplierFormWebhookData {
   bookingOptions: string;
   declarationConfirm: string;
 }
+
+export type WebhookData =
+  | CovidTestSupplierFormWebhookData
+  | LawyersFormWebhookData;
+
+export type WebhookDataWithServiceType<
+  T extends WebhookData,
+  U extends ServiceType
+> = T & { type: U };

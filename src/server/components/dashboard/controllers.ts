@@ -19,7 +19,6 @@ import {
   findListItemById,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
-  getListItemContactInformation,
   deleteListItem,
 } from "server/models/listItem";
 import { findFeedbackByType } from "server/models/feedback";
@@ -43,6 +42,7 @@ import { countriesList } from "server/services/metadata";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -398,10 +398,7 @@ export async function listItemsApproveController(
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (
-    list.type !== listItem?.type ||
-    list.id !== listItem.listId
-  ) {
+  } else if (list.type !== listItem?.type || list.id !== listItem.listId) {
     res.status(403).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
@@ -451,10 +448,7 @@ export async function listItemsPublishController(
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (
-    list.type !== listItem?.type ||
-    list.id !== listItem.listId
-  ) {
+  } else if (list.type !== listItem?.type || list.id !== listItem.listId) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
