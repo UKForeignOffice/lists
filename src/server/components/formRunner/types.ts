@@ -77,8 +77,3 @@ export interface CovidTestSupplierFormWebhookData {
 export type WebhookData =
   | CovidTestSupplierFormWebhookData
   | LawyersFormWebhookData;
-
-export type WebhookDataWithServiceType<
-  T extends WebhookData,
-  U extends ServiceType
-> = T & { type: U };
