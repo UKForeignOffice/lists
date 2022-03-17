@@ -1,9 +1,5 @@
 <h1 class="govuk-heading-m">Disclaimer</h1>
-<p class="govuk-body">
-  The FCDO does not accept any liability to any person or company for any financial loss or damage arising from the use
-  of this information or from any failure to give information. Our lists are not recommendations and should not be
-  treated as such. Read the <a href="https://www.gov.uk/help/terms-conditions" class="govuk-link" target="_blank">full terms and conditions</a>.
-</p>
+{% include 'includes/disclaimer.njk' %}
 <form class="form" action="{{ nextRoute }}" method="post">
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'read-disclaimer' }}">

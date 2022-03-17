@@ -9,4 +9,5 @@ export const listsRoutes = {
   formRunnerCallback: "/ingest/:serviceType/:id",
   confirmApplication: "/confirm/:reference",
   accessibility: "/help/accessibility-statement",
+  termsAndConditions: "/help/terms-and-conditions",
 } as const;
