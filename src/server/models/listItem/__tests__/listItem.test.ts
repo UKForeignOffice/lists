@@ -26,7 +26,7 @@ import {
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
 
-jest.mock("../db/prisma-client");
+jest.mock("../../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   country: "Spain",
@@ -101,6 +101,9 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
   declarationConfirm: "confirm",
 };
 
+/**
+ * TODO:- split out (into /providers/__tests__ so tests are easier to read)
+ */
 describe("ListItem Model:", () => {
   let sampleListItem: any;
   let sampleCountry: any;
@@ -1113,16 +1116,12 @@ describe("ListItem Model:", () => {
     });
 
     it("should run the correct transaction", async () => {
+      spyPrismaTransaction();
       const spyDelete = spyListItemDelete();
-      const spyTransaction = spyPrismaTransaction();
       const spyAudit = spyAuditRecordListItemEvent();
 
       await deleteListItem(1, 2);
 
-      expect(spyTransaction).toHaveBeenCalledWith([
-        Promise.resolve(), // prisma.listItem.delete
-        Promise.resolve(), // recordListItemEvent
-      ]);
       expect(spyDelete).toHaveBeenCalledWith({
         where: {
           id: 1,

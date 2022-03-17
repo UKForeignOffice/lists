@@ -1,8 +1,9 @@
 import { authRoutes } from "server/components/auth";
-import * as listModel from "server/models/list";
-import * as listItemModel from "server/models/listItem";
 import { List, ListItem, UserRoles } from "server/models/types";
 import * as userModel from "server/models/user";
+import * as listModel from "server/models/list";
+import * as listItemModel from "server/models/listItem/listItem";
+
 import {
   startRouteController,
   usersListController,

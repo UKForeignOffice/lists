@@ -1,14 +1,10 @@
 // Covid Test Suppliers
 // TODO: Test
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "server/components/formRunner";
+import { CovidTestSupplierFormWebhookData } from "server/components/formRunner";
 import {
   CountryName,
   CovidTestSupplierListItemCreateInput,
   LawyerListItemGetObject,
-  ListItem,
   ServiceType,
 } from "server/models/types";
 import {
@@ -17,13 +13,12 @@ import {
   getPlaceGeoPoint,
 } from "./../geoHelpers";
 import { getListIdForCountryAndType } from "server/models/helpers";
-import { compact, merge, startCase, toLower, trim } from "lodash";
+import { compact, startCase, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import pgescape from "pg-escape";
 import { ListItemWithAddressCountry } from "./types";
 import { checkListItemExists, fetchPublishedListItemQuery } from "./helpers";
-import { Prisma } from "@prisma/client";
 
 export async function createObject(
   formData: CovidTestSupplierFormWebhookData

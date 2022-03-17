@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 import express from "express";
 import { ingestPostController } from "./ingestPostController";
 import { ingestPutController } from "./ingestPutController";

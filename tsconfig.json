@@ -14,14 +14,17 @@
     "resolveJsonModule": true,
     "paths": {
       "client/*": ["client/*"],
-      "server/*": ["server/*"]
+      "server/*": ["server/*"],
+      "@jest/*": ["./../.jest/*"]
     }
   },
   "include": [
+    ".jest/*",
     "src",
     "src/server/**/*",
     "src/client/**/*",
-    "node_modules/jest-extended/types/**/*.d.ts"
+    "node_modules/jest-extended/types/**/*.d.ts",
   ],
   "ignore": ["dist"]
+
 }

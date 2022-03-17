@@ -275,21 +275,24 @@ export async function createListItem(
   }
 }
 
+type Nullable<T> = T | undefined | null;
+
 export async function update(
   id: ListItem["id"],
-  data: LawyersFormWebhookData
+  data: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
 ): Promise<void> {
-  const listItemResult = await prisma.listItem.findFirst({
-    where: { id },
-    include: {
-      address: true,
-    },
-  });
-  if (!listItemResult) {
-    throw Error(`list item ${id} not found`);
-  }
+  const listItemResult = await prisma.listItem
+    .findFirst({
+      where: { id },
+      include: {
+        address: true,
+      },
+    })
+    .catch((e) => {
+      throw Error(`list item ${id} not found - ${e}`);
+    });
 
-  const { address: currentAddress, ...listItem } = listItemResult;
+  const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
   const updatedJsonData = merge(listItem.jsonData, data);
@@ -301,8 +304,9 @@ export async function update(
     },
   };
 
-  let addressPrismaQuery: Prisma.AddressUpdateArgs | undefined;
-  let geoLocationParams: [number, Point] | undefined;
+  let addressPrismaQuery: Nullable<Prisma.AddressUpdateArgs>;
+  let geoLocationParams: Nullable<[number, Point]>;
+
   if (requiresAddressUpdate) {
     try {
       const address = makeAddressGeoLocationString(data);
@@ -321,16 +325,19 @@ export async function update(
   }
 
   try {
-    if (!requiresAddressUpdate) {
+    if (requiresAddressUpdate) {
+      await prisma.$transaction([
+        prisma.listItem.update(listItemPrismaQuery),
+        prisma.address.update(addressPrismaQuery!),
+        rawUpdateGeoLocation(...geoLocationParams!),
+      ]);
+    } else {
       await prisma.listItem.update(listItemPrismaQuery);
     }
-    await prisma.$transaction([
-      prisma.listItem.update(listItemPrismaQuery),
-      prisma.address.update(addressPrismaQuery!),
-      rawUpdateGeoLocation(...geoLocationParams!),
-    ]);
   } catch (err) {
-    logger.error(`Lawyers.update Error ${err.message}`);
+    logger.error(
+      `Lawyers.update transactional error - rolling back ${err.message}`
+    );
     throw err;
   }
 }

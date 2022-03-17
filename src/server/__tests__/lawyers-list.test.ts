@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";

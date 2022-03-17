@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { listItem } from "server/models";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
   getServiceLabel,
@@ -10,10 +9,7 @@ import {
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import {
-  CovidTestSupplierListItem,
-  LawyerListItem,
-} from "server/models/listItem/providers";
+import { CovidTestSupplierListItem } from "server/models/listItem/providers";
 
 export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
