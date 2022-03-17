@@ -207,7 +207,7 @@ export function pickWebhookAddressAsAddress(
   };
 }
 export function getChangedAddressFields(
-  webhook: Partial<LawyersFormWebhookData | CovidTestSupplierFormWebhookData>,
+  webhook: LawyersFormWebhookData | CovidTestSupplierFormWebhookData,
   address: Partial<Address>
 ): Partial<UpdatableAddressFields> {
   const updatableAddressObject: UpdatableAddressFields = {
