@@ -27,6 +27,9 @@ listsRouter.get(
 );
 listsRouter.get(listsRoutes.privateBeta, listsGetPrivateBetaPage);
 listsRouter.get(listsRoutes.accessibility, (req, res) => {
-  res.render("accessibility/accessibility-statement");
+  res.render("help/accessibility-statement");
+});
+listsRouter.get(listsRoutes.termsAndConditions, (req, res) => {
+  res.render("help/terms-and-conditions");
 });
 listsRouter.use(ingestRouter);
