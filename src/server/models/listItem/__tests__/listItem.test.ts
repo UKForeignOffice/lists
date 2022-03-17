@@ -26,7 +26,7 @@ import {
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
 
-jest.mock("../db/prisma-client");
+jest.mock("../../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
   country: "Spain",
