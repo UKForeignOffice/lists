@@ -1,4 +1,4 @@
-export const FORM_RUNNER_RETURNING_USER_ROUTE = "/returning-user";
+export const FORM_RUNNER_INITIALISE_SESSION_ROUTE = "/session";
 export const FORM_RUNNER_BASE_ROUTE = "/application";
 export const FORM_RUNNER_URL = "localhost:3001";
 

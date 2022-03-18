@@ -23,7 +23,7 @@ import {
   deleteListItem,
 } from "server/models/listItem";
 import { findFeedbackByType } from "server/models/feedback";
-import { UserRoles, ServiceType, List, CountryName } from "server/models/types";
+import { UserRoles, ServiceType, List, CountryName, LawyerListItemGetObject } from "server/models/types";
 import {
   filterSuperAdminRole,
   userIsListPublisher,
@@ -44,10 +44,13 @@ import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/go
 import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
-import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
+import { getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import axios from "axios";
 import { logger } from "server/services/logger";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
+import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
+import { Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+import { FormRunnerNewSessionData } from "server/components/formRunner";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -453,7 +456,10 @@ export async function listItemsPublishController(
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (list.type !== listItem?.type || list.id !== listItem.listId) {
+  } else if (
+    list.type !== listItem?.type ||
+    list.id !== listItem.listId
+  ) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
@@ -548,12 +554,11 @@ export async function listItemsDeleteController(
   }
 }
 
-export async function listItemsEditController(
+export async function listItemsEditGetController(
   req: Request,
   res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
-  const { changes } = req.body;
   const userId = req.user?.userData.id;
 
   if (userId === undefined) {
@@ -564,13 +569,13 @@ export async function listItemsEditController(
   const listItem = await findListItemById(listItemId);
 
   if (list === undefined) {
-    res.status(400).send({
+    res.status(404).send({
       error: {
         message: `Could not find list ${listId}`,
       },
     });
   } else if (listItem === undefined) {
-    res.status(400).send({
+    res.status(404).send({
       error: {
         message: `Could not find list item ${listItemId}`,
       },
@@ -578,53 +583,114 @@ export async function listItemsEditController(
   } else if (list.type !== listItem?.type) {
     res.status(400).send({
       error: {
-        message: `Trying to edit a list item which does not belong to list ${listId}`
-      }
+        message: `Trying to edit a list item which is a different service type to list ${listId}`,
+      },
     });
   } else if (list.id !== listItem.listId) {
     res.status(400).send({
       error: {
-        message: `Trying to edit a list item which does not belong to list ${listId}`
-      }
+        message: `Trying to edit a list item which does not belong to list ${listId}`,
+      },
     });
   } else if (!userIsListPublisher(req, list)) {
     res.status(403).send({
       error: {
-        message: "User doesn't have publishing right on this list"
-      }
+        message: "User doesn't have publishing right on this list",
+      },
     });
   } else {
+    res.render("dashboard/lists-item-edit", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItem,
+      csrfToken: getCSRFToken(req),
+    });
+  }
+}
 
-    const questions = await generateFormRunnerWebhookData(listItem, list.country);
+export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl: string,
+                                                        formRunnerWebhookData: FormRunnerNewSessionData): Promise<string> {
+  return await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
+    .then((response) => {
+      return response.data.token;
+    })
+    .catch((error) => {
+      logger.info(error);
+    });
+}
 
-    const formRunnerWebhookData = getNewSessionWebhookData(questions, changes);
+export async function listItemsEditPostController(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { listId, listItemId, underTest } = req.params;
+  const { message } = req.body;
+  const userId = req.user?.userData.id;
 
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+  if (list === undefined) {
+    res.status(404).send({
+      error: {
+        message: `Could not find list ${listId}`,
+      },
+    });
+  } else if (listItem === undefined) {
+    res.status(404).send({
+      error: {
+        message: `Could not find list item ${listItemId}`,
+      },
+    });
+  } else if (list.type !== listItem?.type) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which is a different service type to list ${listId}`,
+      },
+    });
+  } else if (list.id !== listItem.listId) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`,
+      },
+    });
+  } else if (!userIsListPublisher(req, list)) {
+    res.status(403).send({
+      error: {
+        message: "User doesn't have publishing right on this list",
+      },
+    });
+  } else {
+    let questions: Array<Partial<Question>> | undefined;
+    const isUnderTest = underTest === "true";
+
+    // @todo switch uesd here to support other list types in future.  Consider refactoring to factory pattern as more added
+    switch (list.type) {
+      case ServiceType.lawyers:
+        questions = await generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, list.country, isUnderTest);
+        break;
+      default:
+        questions = undefined;
+    }
+    const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItemId, questions, message);
     const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-
-    // get token from Form Runner - POST formRunnerWebhookData to formRunnerNewSessionUrl to get token
-    let token = "FAKETOKEN";
-    token = await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((error) => {
-        logger.info(error);
-      });
-
-    // Create edit link to Form Runner
-    const formRunnerEditUserUrl = createFormRunnerEditListItemLink(list.type, token);
+    const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+    const formRunnerEditUserUrl = createFormRunnerEditListItemLink(token);
 
     // Email applicant
     const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
     const listType = serviceName(list.type);
-
-    // Change to new email function
     await sendEditDetailsEmail(
       contactName,
       contactEmailAddress,
       listType,
-      changes,
-      formRunnerEditUserUrl
+      message,
+      formRunnerEditUserUrl,
     );
 
     res.json({ status: "OK", isPublished: listItem.isPublished });
@@ -635,7 +701,7 @@ export async function listItemsEditController(
 export async function feedbackController(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");
