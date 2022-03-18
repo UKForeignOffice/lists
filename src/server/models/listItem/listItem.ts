@@ -277,19 +277,20 @@ export async function createListItem(
 
 export async function update(
   id: ListItem["id"],
-  data: LawyersFormWebhookData
+  data: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
 ): Promise<void> {
-  const listItemResult = await prisma.listItem.findFirst({
-    where: { id },
-    include: {
-      address: true,
-    },
-  });
-  if (!listItemResult) {
-    throw Error(`list item ${id} not found`);
-  }
+  const listItemResult = await prisma.listItem
+    .findFirst({
+      where: { id },
+      include: {
+        address: true,
+      },
+    })
+    .catch((e) => {
+      throw Error(`list item ${id} not found - ${e}`);
+    });
 
-  const { address: currentAddress, ...listItem } = listItemResult;
+  const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
   const updatedJsonData = merge(listItem.jsonData, data);
