@@ -690,8 +690,7 @@ async function createLawyerListItemObject(
       addressLine2,
       areasOfLaw,
       city,
-      familyName,
-      firstAndMiddleNames,
+      contactName,
       postcode,
       ...rest
     } = lawyer;
@@ -711,7 +710,7 @@ async function createLawyerListItemObject(
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
-        contactName: `${firstAndMiddleNames} ${familyName}`,
+        contactName: `${contactName}`,
       },
       address: {
         create: {

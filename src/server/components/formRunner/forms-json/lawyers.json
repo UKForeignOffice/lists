@@ -74,30 +74,21 @@
     },
     {
       "path": "/your-name",
-      "title": "Your name ",
+      "title": "Your full name",
       "components": [
         {
           "name": "YBSPkn",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\"> This is how your name will appear on GOV.UK if you are added to the list. \n\n</div>",
+          "content": "<div class=\"govuk-hint\"> Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list. \n\n</div>",
           "schema": {}
         },
         {
-          "name": "firstAndMiddleNames",
-          "options": {},
-          "type": "TextField",
-          "title": "First and middle names",
-          "nameHasError": false,
-          "schema": {}
-        },
-        {
-          "name": "familyName",
+          "name": "contactName",
           "options": {
             "required": true
           },
           "type": "TextField",
-          "title": "Last name",
           "nameHasError": false,
           "schema": {}
         }
