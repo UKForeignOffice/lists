@@ -1,3 +1,5 @@
+import { Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+
 export interface FormRunnerWebhookData {
   questions: Array<{
     question: string;
@@ -17,8 +19,7 @@ export interface LawyersFormWebhookData {
   size: string;
   speakEnglish: boolean;
   regulators: string;
-  firstAndMiddleNames: string;
-  familyName: string;
+  contactName: string;
   organisationName: string;
   addressLine1: string;
   addressLine2?: string;
@@ -74,6 +75,15 @@ export interface CovidTestSupplierFormWebhookData {
   declarationConfirm: string;
 }
 
+export interface FormRunnerPage {
+  title: string;
+  path: string;
+  controller: string;
+  components?: FormRunnerComponent[];
+  section: string; // the section ID
+  next?: Array<{ path: string; condition?: string }>;
+}
+
 export interface FormRunnerComponent {
   name: string,
   title: string,
@@ -85,7 +95,7 @@ export interface FormRunnerComponent {
 
 export enum FormRunnerFields {
   "speakEnglish" = "speakEnglish",
-  "firstAndMiddleNames" = "firstAndMiddleNames",
+  "contactName" = "contactName",
   "familyName" = "familyName",
   "organisationName" = "organisationName",
   "addressLine1" = "addressLine1",
@@ -108,4 +118,14 @@ export enum FormRunnerFields {
   "regions" = "regions",
   "size" = "size",
   "publicEmailAddress" = "publicEmailAddress",
+}
+
+export interface FormRunnerNewSessionData {
+  questions: Array<Partial<Question>> | undefined;
+  options: {
+    message: string;
+    callbackUrl: string;
+    redirectPath: string;
+  };
+  name: string;
 }

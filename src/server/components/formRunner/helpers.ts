@@ -2,16 +2,12 @@ import { set } from "lodash";
 import request from "supertest";
 import { spawn } from "child_process";
 import { logger } from "server/services/logger";
-import { FormRunnerComponent, FormRunnerFields, FormRunnerWebhookData } from "./types";
+import { FormRunnerComponent, FormRunnerNewSessionData, FormRunnerPage, FormRunnerWebhookData } from "./types";
 import { FORM_RUNNER_URL } from "./constants";
-import { Country, LawyerListItemJsonData, ListItemGetObject, ServiceType } from "server/models/types";
-import {
-  Question,
-  Fields,
-  FormRunnerNewSessionWebhookData, FormRunnerNewSessionWebhookDataOptions
-} from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+import { Fields, Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
 import path from "path";
 import fs from "fs";
+import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 
 let isStarting = false;
@@ -34,9 +30,9 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
 
     const formRunner = spawn(
-      `PRIVACY_POLICY_URL='' npm run form-runner:start`,
+      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
       {
-        shell: true,
+        shell: true
       }
     );
 
@@ -93,132 +89,49 @@ export function parseFormRunnerWebhookObject<T>({
   }, {}) as T;
 }
 
-export async function generateFormRunnerWebhookData(listItem: ListItemGetObject, listCountry?: Partial<Country>): Promise<Array<Partial<Question>>> {
-  const questions = await parseLawyerJsonFormData(ServiceType.lawyers);
-
-  questions.forEach((question) => {
-    question?.fields?.forEach((field) => {
-      question.fields?.forEach((field) => {
-        const jsonData:LawyerListItemJsonData = listItem.jsonData ?? {};
-
-        switch (field.key) {
-          case FormRunnerFields.country :
-            field.answer = listCountry?.name;
-            break;
-          case FormRunnerFields.addressCountry :
-            field.answer = listItem.address.country.name;
-            break;
-          case FormRunnerFields.addressLine1 :
-            field.answer = listItem.address.firstLine;
-            break;
-          case FormRunnerFields.addressLine2 :
-            field.answer = listItem.address.secondLine ?? "";
-            break;
-          case FormRunnerFields.city :
-            field.answer = listItem.address.city;
-            break;
-          case FormRunnerFields.postcode :
-            field.answer = listItem.address.postCode;
-            break;
-          case FormRunnerFields.phoneNumber :
-            field.answer = jsonData.phoneNumber;
-            break;
-          case FormRunnerFields.emergencyPhoneNumber :
-            field.answer = jsonData.emergencyPhoneNumber ?? "";
-            break;
-          case FormRunnerFields.emailAddress :
-            field.answer = jsonData.emailAddress;
-            break;
-          case FormRunnerFields.publicEmailAddress :
-            field.answer = jsonData.publicEmailAddress ?? "";
-            break;
-          case FormRunnerFields.websiteAddress :
-            field.answer = jsonData.websiteAddress ?? "";
-            break;
-          case FormRunnerFields.firstAndMiddleNames : //@todo this needs to be combined in form runner
-            field.answer = jsonData.contactName;
-            break;
-          case FormRunnerFields.organisationName :
-            field.answer = jsonData.organisationName;
-            break;
-          case FormRunnerFields.size :
-            field.answer = jsonData.size;
-            break;
-          case FormRunnerFields.regulators :
-            field.answer = jsonData.regulators;
-            break;
-          case FormRunnerFields.regions :
-            field.answer = jsonData.regions;
-            break;
-          case FormRunnerFields.areasOfLaw :
-            field.answer = jsonData.areasOfLaw.join(", ");
-            break;
-          case FormRunnerFields.declaration :
-            field.answer = jsonData.declaration.join(", ") ?? [];
-            break;
-          case FormRunnerFields.proBono :
-            field.answer = `${jsonData.proBono}` ?? "";
-            break;
-          case FormRunnerFields.legalAid :
-            field.answer = `${jsonData.legalAid}` ?? "";
-            break;
-          case FormRunnerFields.speakEnglish :
-            field.answer = `${jsonData.speakEnglish}`;
-            break;
-          case FormRunnerFields.representedBritishNationals :
-            field.answer = `${jsonData.representedBritishNationals}`;
-            break;
-          case FormRunnerFields.publishEmail :
-            field.answer = `${jsonData.publishEmail}`;
-            break;
-        }
-      });
-    });
-  });
-  return questions;
-}
-
-export function getNewSessionWebhookData(questions: Array<Partial<Question>>, message: string): FormRunnerNewSessionWebhookData {
-  const callbackUrl = "";
-  const redirectPath = "";
-  const options: FormRunnerNewSessionWebhookDataOptions = {
+export function getNewSessionWebhookData(listType: string, listItemId: string, questions: Array<Partial<Question>> | undefined, message: string): FormRunnerNewSessionData {
+  const protocol = isLocalHost ? "http" : "https";
+  const callbackUrl = `${protocol}://${SERVICE_DOMAIN}/ingest/${listType}/${listItemId}`;
+  const redirectPath = `/summary`;
+  const options = {
     message,
     callbackUrl,
     redirectPath
   };
 
-  // Add change details to list JSON
-  const formRunnerNewSessionData: FormRunnerNewSessionWebhookData = {
+  const newSessionData: FormRunnerNewSessionData = {
     questions,
     options,
-    name: "test"
+    name: "Changes required"
   };
-  return formRunnerNewSessionData;
+  return newSessionData;
 }
 
 
-async function parseLawyerJsonFormData(listType: string): Promise<Array<Partial<Question>>> {
+export async function parseJsonFormData(listType: string, isUnderTest?: boolean): Promise<Array<Partial<Question>>> {
 
-  const fileContents = await fs.promises.readFile(path.resolve(__dirname, `forms-json/${listType}.json`), 'utf8');
+  const formsJsonFile = (isUnderTest === true) ? `/forms-json/${listType}.json` : `../src/server/components/formRunner/forms-json/${listType}.json`;
+  const fileContents = await fs.promises.readFile(path.join(__dirname, formsJsonFile), "utf8");
 
   const formJsonData = JSON.parse(fileContents);
-  const questions: Array<Partial<Question>> = formJsonData.pages.map((page) => {
-    const fields: Fields = page.components
-      .filter((component: FormRunnerComponent) => component.type !== "Html")
-      .map((component: FormRunnerComponent) => {
-        return {
-          answer: "",
-          key: component.name,
-          title: "",
-          type: "",
-        };
-      });
-    return {
-      fields: fields,
-      question: page.title
-    };
-  })
-    .filter((question) => question.fields.length > 0);
+  const questions: Array<Partial<Question>> = formJsonData.pages
+    .map((page: FormRunnerPage) => {
+      const fields: Fields | undefined = page.components
+        ?.filter((component: FormRunnerComponent) => component.type !== "Html")
+        ?.map((component: FormRunnerComponent) => {
+          return {
+            answer: "",
+            key: component.name,
+            title: "",
+            type: "",
+          };
+        });
+      return {
+        fields: fields,
+        question: page.title
+      };
+    })
+    .filter((question: Question) => question.fields.length > 0);
 
   return questions;
 }

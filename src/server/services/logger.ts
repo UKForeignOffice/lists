@@ -36,7 +36,10 @@ const transportsList = [
 
 export const logger = createLogger({
   level: LOG_LEVEL,
-  format: format.json(),
+  format: format.combine(
+    format.errors({ stack: true }),
+    format.json(),
+  ),
   defaultMeta: { service: "server" },
   transports: transportsList,
 });

@@ -31,3 +31,6 @@ export const {
   GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
 } = process.env;
+
+// Form runner
+export const FORM_RUNNER_SAFELIST = process.env.FORM_RUNNER_SAFELIST;
