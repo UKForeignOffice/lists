@@ -7,3 +7,12 @@ test("responds with 422 for any error", () => {
 test("responds with 204 when update is successful", () => {
   expect(ingestPutController().statusCode).toBe(204);
 });
+
+/**
+ * TODO:- implement when queue is implemented
+ */
+test.skip("failed update is inserted into queue", () => {
+  const queueSpy = jest.fn();
+  ingestPutController();
+  expect(queueSpy).toBe({});
+});
