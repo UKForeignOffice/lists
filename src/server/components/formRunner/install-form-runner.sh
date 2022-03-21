@@ -8,7 +8,7 @@ form_runner_env_file="$form_runner_folder/runner/.env"
 forms_json_folder="$root_folder/src/server/components/formRunner/forms-json"
 forms_views_folder="$root_folder/src/server/components/formRunner/views"
 
-# rm -rf ./lib
+# rm -rf ./lib 
 
 if [ -n "$(ls -A "$form_runner_folder/node_modules/.bin" 2>/dev/null)" ]
 then
