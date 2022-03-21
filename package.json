@@ -67,6 +67,7 @@
     "pluralize": "^8.0.0",
     "prisma": "^2.29.1",
     "promise-polyfill": "8.2.0",
+    "request": "^2.88.2",
     "url-parse": "^1.5.3",
     "whatwg-fetch": "^3.6.2",
     "winston": "^3.3.3"

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim, pick, compact, get } from "lodash";
+import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -15,29 +15,24 @@ import {
   updateList,
 } from "server/models/list";
 import {
-  findListItemsForList,
+  deleteListItem,
   findListItemById,
+  findListItemsForList,
+  getListItemContactInformation,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
-  getListItemContactInformation,
-  deleteListItem,
 } from "server/models/listItem";
 import { findFeedbackByType } from "server/models/feedback";
-import { UserRoles, ServiceType, List, CountryName, LawyerListItemGetObject } from "server/models/types";
+import { CountryName, LawyerListItemGetObject, List, ServiceType, UserRoles } from "server/models/types";
 import {
   filterSuperAdminRole,
+  getInitiateFormRunnerSessionToken,
+  userIsListAdministrator,
   userIsListPublisher,
   userIsListValidator,
-  userIsListAdministrator,
 } from "./helpers";
-import {
-  isGovUKEmailAddress,
-  isCountryNameValid,
-} from "server/utils/validation";
-import {
-  createListSearchBaseLink,
-  QuestionError,
-} from "server/components/lists";
+import { isCountryNameValid, isGovUKEmailAddress, } from "server/utils/validation";
+import { createListSearchBaseLink, QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
@@ -45,12 +40,9 @@ import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getNewSessionWebhookData } from "server/components/formRunner/helpers";
-import axios from "axios";
-import { logger } from "server/services/logger";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import { Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
-import { FormRunnerNewSessionData } from "server/components/formRunner";
+import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -607,17 +599,6 @@ export async function listItemsEditGetController(
       csrfToken: getCSRFToken(req),
     });
   }
-}
-
-export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl: string,
-                                                        formRunnerWebhookData: FormRunnerNewSessionData): Promise<string> {
-  return await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
-    .then((response) => {
-      return response.data.token;
-    })
-    .catch((error) => {
-      logger.info(error);
-    });
 }
 
 export async function listItemsEditPostController(

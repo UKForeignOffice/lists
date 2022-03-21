@@ -4,7 +4,7 @@ import { spawn } from "child_process";
 import { logger } from "server/services/logger";
 import { FormRunnerComponent, FormRunnerNewSessionData, FormRunnerPage, FormRunnerWebhookData } from "./types";
 import { FORM_RUNNER_URL } from "./constants";
-import { Fields, Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+import { Field, Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
 import path from "path";
 import fs from "fs";
 import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
@@ -116,15 +116,16 @@ export async function parseJsonFormData(listType: string, isUnderTest?: boolean)
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<Question>> = formJsonData.pages
     .map((page: FormRunnerPage) => {
-      const fields: Fields | undefined = page.components
+      const fields: Field[] | undefined = page.components
         ?.filter((component: FormRunnerComponent) => component.type !== "Html")
         ?.map((component: FormRunnerComponent) => {
-          return {
+          const field: Field = {
             answer: "",
             key: component.name,
             title: "",
-            type: "",
           };
+
+          return field;
         });
       return {
         fields: fields,
