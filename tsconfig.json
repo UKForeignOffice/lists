@@ -21,7 +21,8 @@
     "src",
     "src/server/**/*",
     "src/client/**/*",
-    "node_modules/jest-extended/types/**/*.d.ts"
+    "node_modules/jest-extended/types/**/*.d.ts".
+    ".jest/global.d.ts"
   ],
   "ignore": ["dist"]
 }

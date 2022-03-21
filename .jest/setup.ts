@@ -1,3 +1,9 @@
+import * as webhookData from "./webhookData";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "../src/server/components/formRunner";
+
 jest.mock("server/services/logger");
 jest.mock("server/services/redis");
 
@@ -13,3 +19,5 @@ jest.mock("crypto", () => {
 beforeEach(() => {
   expect.hasAssertions();
 });
+
+global.webhookData = webhookData;

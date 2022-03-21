@@ -275,6 +275,8 @@ export async function createListItem(
   }
 }
 
+type Nullable<T> = T | undefined | null;
+
 export async function update(
   id: ListItem["id"],
   data: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
@@ -302,8 +304,9 @@ export async function update(
     },
   };
 
-  let addressPrismaQuery: Prisma.AddressUpdateArgs | undefined;
-  let geoLocationParams: [number, Point] | undefined;
+  let addressPrismaQuery: Nullable<Prisma.AddressUpdateArgs>;
+  let geoLocationParams: Nullable<[number, Point]>;
+
   if (requiresAddressUpdate) {
     try {
       const address = makeAddressGeoLocationString(data);

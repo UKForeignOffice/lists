@@ -1,13 +1,9 @@
-import { update } from "./../listItem";
-import { prisma } from "server/models/db/prisma-client";
 import {
   CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,
-} from "server/components/formRunner";
+} from "../src/server/components/formRunner";
 
-jest.mock("../../db/prisma-client");
-
-const lawyerWebhookData: LawyersFormWebhookData = {
+export const lawyer: LawyersFormWebhookData = {
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
@@ -15,9 +11,9 @@ const lawyerWebhookData: LawyersFormWebhookData = {
   firstAndMiddleNames: "Lawyer In",
   familyName: "Spain",
   organisationName: "CYB Law",
-  addressLine1: "123 Calle",
-  city: "Seville",
-  postcode: "S3V1LLA",
+  addressLine1: "70 King Charles Street",
+  city: "London",
+  postcode: "SW1A 2AH",
   addressCountry: "Spain",
   emailAddress: "lawyer@example.com",
   publishEmail: "Yes",
@@ -45,7 +41,7 @@ const lawyerWebhookData: LawyersFormWebhookData = {
   representedBritishNationals: true,
   declaration: ["confirm"],
 };
-const covidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
+export const covidTestProvider: CovidTestSupplierFormWebhookData = {
   speakEnglish: true,
   isQualified: true,
   affiliatedWithRegulatoryAuthority: true,
@@ -78,35 +74,3 @@ const covidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
 };
-
-test("throws when the requested id does not exist", async () => {
-  prisma.listItem.findFirst.mockRejectedValue(Error("mocked error"));
-
-  await expect(update(40404, lawyerWebhookData)).rejects.toThrow(
-    "list item 40404 not found"
-  );
-  await expect(update(40404, covidTestProviderWebhookData)).rejects.toThrow(
-    "list item 40404 not found"
-  );
-});
-
-//TODO:- move
-test("update throws when geoLocatePlaceByText fails", () => {
-  expect(update()).toBe({});
-});
-
-test("address and geolocation tables are not queried when there are no address changes", () => {
-  expect(update()).toBe({});
-});
-
-test("address and geolocation is updated when there are address changes", () => {
-  expect(update()).toBe({});
-});
-
-test("jsonData is updated with the correct values", () => {
-  expect(update()).toBe({});
-});
-
-test("throws when any query in transaction fails", () => {
-  expect(update()).toBe({});
-});

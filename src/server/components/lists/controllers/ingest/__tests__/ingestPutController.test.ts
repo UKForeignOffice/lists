@@ -11,7 +11,7 @@ test("responds with 204 when update is successful", () => {
 /**
  * TODO:- implement when queue is implemented
  */
-test.skip("failed update is inserted into queue", () => {
+test.todo("failed update is inserted into queue", () => {
   const queueSpy = jest.fn();
   ingestPutController();
   expect(queueSpy).toBe({});
