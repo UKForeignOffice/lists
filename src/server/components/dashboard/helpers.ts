@@ -1,5 +1,8 @@
 import { Request } from "express";
-import { UserRoles, List } from "server/models/types";
+import { List, UserRoles } from "server/models/types";
+import { FormRunnerNewSessionData } from "server/components/formRunner";
+import axios from "axios";
+import { logger } from "server/services/logger";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -22,4 +25,16 @@ export function userIsListPublisher(req: Request, list: List): boolean {
 export function userIsListValidator(req: Request, list: List): boolean {
   const email = req.user?.userData.email;
   return email !== undefined ? list.jsonData.validators.includes(email) : false;
+}
+
+export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl: string,
+                                                        formRunnerWebhookData: FormRunnerNewSessionData): Promise<string> {
+  return await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
+    .then((response) => {
+      return response.data.token;
+    })
+    .catch((error) => {
+      logger.info(error);
+      return "";
+    });
 }

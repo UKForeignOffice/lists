@@ -1,4 +1,4 @@
-import { Question } from "../../../../lib/form-runner/runner/src/server/plugins/engine/models/types";
+import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
 
 export interface FormRunnerWebhookData {
   questions: Array<{
