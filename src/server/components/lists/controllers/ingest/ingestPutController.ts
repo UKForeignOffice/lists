@@ -41,5 +41,3 @@ export async function ingestPutController(
     res.status(422).send(e);
   }
 }
-
-const errors = {};
