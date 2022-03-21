@@ -20,4 +20,5 @@ beforeEach(() => {
   expect.hasAssertions();
 });
 
+// @ts-ignore
 global.webhookData = webhookData;

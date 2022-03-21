@@ -222,10 +222,11 @@ export function getChangedAddressFields(
 
   return updatableEntries.reduce((prev, entry) => {
     const [key, value] = entry as [keyof UpdatableAddressFields, any];
-    const valueHasChanged = webhookAddress[key] !== value;
+    const webhookValue = webhookAddress[key] ?? null;
+    const valueHasChanged = webhookValue !== value;
     return {
       ...prev,
-      ...(valueHasChanged && { [key]: value }),
+      ...(webhookValue && valueHasChanged && { [key]: webhookValue }),
     };
   }, {});
 }
