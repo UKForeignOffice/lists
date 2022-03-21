@@ -6,7 +6,7 @@ import {
   parseFormRunnerWebhookObject, getNewSessionWebhookData
 } from "../helpers";
 import { Country, LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
-import { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
+import type { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 
 jest.mock("supertest", () =>
