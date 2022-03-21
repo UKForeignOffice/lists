@@ -28,6 +28,10 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
 
+      - run:
+          name: Install Form Runner
+          command: npm run form-runner:install
+
       - run: npm ci
 
       - run:
@@ -41,10 +45,6 @@ jobs:
       - run:
           name: Lint
           command: npm run lint
-
-      - run:
-          name: Install Form Runner
-          command: npm run form-runner:install
 
       - run:
           name: Run tests
