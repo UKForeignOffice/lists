@@ -7,84 +7,21 @@ const databaseAddress = {
   city: "London",
 };
 
-test("getChangedAddressFields returns the correct changed fields when line 1 changed", () => {
-  const withUpdatedLineOne = {
+const organisationDetails = {
+  ...webhookData.covidTestProvider.organisationDetails,
+};
+
+test("getChangedAddressFields returns the correct changed fields when addressLine1 changed", () => {
+  const lawyerUpdate = {
     ...webhookData.lawyer,
     addressLine1: "King Charles Road",
   };
 
-  expect(
-    getChangedAddressFields(withUpdatedLineOne, databaseAddress)
-  ).toStrictEqual({
+  expect(getChangedAddressFields(lawyerUpdate, databaseAddress)).toStrictEqual({
     firstLine: "King Charles Road",
   });
-});
 
-test("getChangedAddressFields returns the correct changed fields for lawyers", () => {
-  const withUpdatedSecondLineFromNull = {
-    ...webhookData.lawyer,
-    addressLine2: "updated second line",
-  };
-
-  expect(
-    getChangedAddressFields(withUpdatedSecondLineFromNull, databaseAddress)
-  ).toEqual({
-    secondLine: "updated second line",
-  });
-
-  const withUpdatedToUndefinedOnSecondLine = {
-    ...webhookData.lawyer,
-    addressLine2: undefined,
-  };
-
-  expect(
-    getChangedAddressFields(withUpdatedToUndefinedOnSecondLine, databaseAddress)
-  ).toEqual({});
-
-  const withPostCodeChange = {
-    ...webhookData.lawyer,
-    postcode: "EC2A 4DS",
-  };
-
-  expect(getChangedAddressFields(withPostCodeChange, databaseAddress)).toEqual({
-    postCode: "EC2A 4DS",
-  });
-
-  const withCityChange = { ...webhookData.lawyer, city: "Londinium" };
-  expect(getChangedAddressFields(withCityChange, databaseAddress)).toEqual({
-    city: "Londinium",
-  });
-
-  const updatedAllKeys = {
-    ...webhookData.lawyer,
-    addressLine1: "King Charles Road",
-    addressLine2: "updated second line",
-    postcode: "EC2A 4DS",
-    city: "Londinium",
-  };
-
-  expect(getChangedAddressFields(updatedAllKeys, databaseAddress)).toEqual({
-    firstLine: "King Charles Road",
-    secondLine: "updated second line",
-    postCode: "EC2A 4DS",
-    city: "Londinium",
-  });
-
-  const withAttemptedCountryChange = {
-    ...webhookData.lawyer,
-    country: "United Kingdom",
-  };
-
-  expect(
-    getChangedAddressFields(withAttemptedCountryChange, databaseAddress)
-  ).toEqual({});
-});
-
-test("getChangedAddressFields returns the correct changed fields for covid test providers", () => {
-  const organisationDetails = {
-    ...webhookData.covidTestProvider.organisationDetails,
-  };
-  const withUpdatedLineOne = {
+  const covidUpdate = {
     ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
@@ -92,13 +29,33 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
     },
   };
 
-  expect(
-    getChangedAddressFields(withUpdatedLineOne, databaseAddress)
-  ).toStrictEqual({
+  expect(getChangedAddressFields(covidUpdate, databaseAddress)).toStrictEqual({
     firstLine: "King Charles Road",
   });
+});
 
-  const withUpdatedSecondLineFromNull = {
+test("getChangedAddressFields returns the correct changed fields when addressLine2 changed", () => {
+  const lawyerSecondLineFromNull = {
+    ...webhookData.lawyer,
+    addressLine2: "updated second line",
+  };
+
+  expect(
+    getChangedAddressFields(lawyerSecondLineFromNull, databaseAddress)
+  ).toEqual({
+    secondLine: "updated second line",
+  });
+
+  const lawyerUndefinedOnSecondLine = {
+    ...webhookData.lawyer,
+    addressLine2: undefined,
+  };
+
+  expect(
+    getChangedAddressFields(lawyerUndefinedOnSecondLine, databaseAddress)
+  ).toEqual({});
+
+  const covidSecondLineFromNull = {
     ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
@@ -107,12 +64,12 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
   };
 
   expect(
-    getChangedAddressFields(withUpdatedSecondLineFromNull, databaseAddress)
+    getChangedAddressFields(covidSecondLineFromNull, databaseAddress)
   ).toEqual({
     secondLine: "updated second line",
   });
 
-  const withUpdatedToUndefinedOnSecondLine = {
+  const covidUndefinedOnSecondLine = {
     ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
@@ -121,10 +78,23 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
   };
 
   expect(
-    getChangedAddressFields(withUpdatedToUndefinedOnSecondLine, databaseAddress)
+    getChangedAddressFields(covidUndefinedOnSecondLine, databaseAddress)
   ).toEqual({});
+});
 
-  const withPostCodeChange = {
+test("getChangedAddressFields returns the correct changed fields when postcode changed", () => {
+  const lawyerPostCodeChange = {
+    ...webhookData.lawyer,
+    postcode: "EC2A 4DS",
+  };
+
+  expect(
+    getChangedAddressFields(lawyerPostCodeChange, databaseAddress)
+  ).toEqual({
+    postCode: "EC2A 4DS",
+  });
+
+  const covidPostCodeChange = {
     ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
@@ -132,23 +102,50 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
     },
   };
 
-  expect(getChangedAddressFields(withPostCodeChange, databaseAddress)).toEqual({
-    postCode: "EC2A 4DS",
+  expect(getChangedAddressFields(covidPostCodeChange, databaseAddress)).toEqual(
+    {
+      postCode: "EC2A 4DS",
+    }
+  );
+});
+
+test("getChangedAddressFields returns the correct changed fields when city changed", () => {
+  const lawyerCityChange = { ...webhookData.lawyer, city: "Londinium" };
+  expect(getChangedAddressFields(lawyerCityChange, databaseAddress)).toEqual({
+    city: "Londinium",
   });
 
-  const withCityChange = {
+  const covidCityChange = {
     ...webhookData.covidTestProvider,
-
     organisationDetails: {
       ...organisationDetails,
       city: "Londinium",
     },
   };
-  expect(getChangedAddressFields(withCityChange, databaseAddress)).toEqual({
+  expect(getChangedAddressFields(covidCityChange, databaseAddress)).toEqual({
+    city: "Londinium",
+  });
+});
+
+test("getChangedAddressFields returns the correct changed fields when multiple fields changed", () => {
+  const lawyerUpdatedAllKeys = {
+    ...webhookData.lawyer,
+    addressLine1: "King Charles Road",
+    addressLine2: "updated second line",
+    postcode: "EC2A 4DS",
+    city: "Londinium",
+  };
+
+  expect(
+    getChangedAddressFields(lawyerUpdatedAllKeys, databaseAddress)
+  ).toEqual({
+    firstLine: "King Charles Road",
+    secondLine: "updated second line",
+    postCode: "EC2A 4DS",
     city: "Londinium",
   });
 
-  const updatedAllKeys = {
+  const covidUpdatedAllKeys = {
     ...webhookData.covidTestProvider,
 
     organisationDetails: {
@@ -160,14 +157,27 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
     },
   };
 
-  expect(getChangedAddressFields(updatedAllKeys, databaseAddress)).toEqual({
-    firstLine: "King Charles Road",
-    secondLine: "updated second line",
-    postCode: "EC2A 4DS",
-    city: "Londinium",
-  });
+  expect(getChangedAddressFields(covidUpdatedAllKeys, databaseAddress)).toEqual(
+    {
+      firstLine: "King Charles Road",
+      secondLine: "updated second line",
+      postCode: "EC2A 4DS",
+      city: "Londinium",
+    }
+  );
+});
 
-  const withAttemptedCountryChange = {
+test("getChangedAddressFields doesn't update country", () => {
+  const lawyerAttemptedCountryChange = {
+    ...webhookData.lawyer,
+    country: "United Kingdom",
+  };
+
+  expect(
+    getChangedAddressFields(lawyerAttemptedCountryChange, databaseAddress)
+  ).toEqual({});
+
+  const covidAttemptedCountryChange = {
     ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
@@ -176,6 +186,6 @@ test("getChangedAddressFields returns the correct changed fields for covid test 
   };
 
   expect(
-    getChangedAddressFields(withAttemptedCountryChange, databaseAddress)
+    getChangedAddressFields(covidAttemptedCountryChange, databaseAddress)
   ).toEqual({});
 });
