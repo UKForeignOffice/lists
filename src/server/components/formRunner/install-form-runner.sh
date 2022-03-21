@@ -8,14 +8,14 @@ form_runner_env_file="$form_runner_folder/runner/.env"
 forms_json_folder="$root_folder/src/server/components/formRunner/forms-json"
 forms_views_folder="$root_folder/src/server/components/formRunner/views"
 
-# rm -rf ./lib 
+# rm -rf ./lib
 
 if [ -n "$(ls -A "$form_runner_folder/node_modules/.bin" 2>/dev/null)" ]
 then
   echo "Form Runner Already Installed"
 else
   echo "Installing Form Runner"
-  git clone --depth 1 --branch feature/initiate-session-changes https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
+  git clone --depth 1 --branch 3.21.2-rc.843 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
   cd $form_runner_folder
   yarn install
   yarn run build:dependencies
