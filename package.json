@@ -45,7 +45,6 @@
     "cors": "2.8.5",
     "csurf": "^1.11.0",
     "date-fns": "^2.23.0",
-    "digital-form-builder-mono": "git+https:://github.com/XGovFormBuilder/digital-form-builder#feature/initiate-session-changes",
     "dotenv": "^10.0.0",
     "express": "^4.16.3",
     "express-http-proxy": "^1.6.2",
