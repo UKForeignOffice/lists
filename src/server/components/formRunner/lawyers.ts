@@ -4,13 +4,12 @@ import {
   LawyerListItemJsonData,
   ServiceType
 } from "server/models/types";
-import type { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
-import { FormRunnerFields } from "server/components/formRunner/types";
+import { FormRunnerFields, FormRunnerQuestion } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 
 export async function generateFormRunnerWebhookData(listItem: LawyerListItemGetObject,
                                                     listCountry?: Partial<Country>,
-                                                    isUnderTest?: boolean): Promise<Array<Partial<Question>>> {
+                                                    isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
   const questions = await parseJsonFormData(ServiceType.lawyers, isUnderTest);
 
   questions.forEach((question) => {

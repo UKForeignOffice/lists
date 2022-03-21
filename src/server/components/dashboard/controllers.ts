@@ -42,7 +42,7 @@ import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } f
 import { getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import type { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
+import { FormRunnerQuestion } from "server/components/formRunner";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -647,7 +647,7 @@ export async function listItemsEditPostController(
       },
     });
   } else {
-    let questions: Array<Partial<Question>> | undefined;
+    let questions: Array<Partial<FormRunnerQuestion>> | undefined;
     const isUnderTest = underTest === "true";
 
     // @todo switch uesd here to support other list types in future.  Consider refactoring to factory pattern as more added
