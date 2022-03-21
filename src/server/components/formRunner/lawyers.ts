@@ -4,7 +4,7 @@ import {
   LawyerListItemJsonData,
   ServiceType
 } from "server/models/types";
-import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
+import { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 import { FormRunnerFields } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 

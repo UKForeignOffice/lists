@@ -30,7 +30,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
+import { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
