@@ -4,7 +4,7 @@ import { spawn } from "child_process";
 import { logger } from "server/services/logger";
 import { FormRunnerComponent, FormRunnerNewSessionData, FormRunnerPage, FormRunnerWebhookData } from "./types";
 import { FORM_RUNNER_URL } from "./constants";
-import { Field, Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
+import type { Field, Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 import path from "path";
 import fs from "fs";
 import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
