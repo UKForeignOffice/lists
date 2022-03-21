@@ -1,18 +1,56 @@
 import { ingestPutController } from "../ingestPutController";
+import * as listItem from "server/models/listItem/listItem";
 
-test("responds with 422 for any error", () => {
-  expect(ingestPutController().statusCode).toBe(422);
+const response = {
+  statusCode: 0,
+  status(code: number) {
+    this.statusCode = code;
+    return this;
+  },
+  send(_error: any) {
+    return this;
+  },
+  end() {},
+};
+test("responds with 400 for schema validation error", async () => {
+  const spiedStatus = jest.spyOn(response, "status");
+  const spiedSend = jest.spyOn(response, "send");
+  jest.spyOn(listItem, "update").mockResolvedValue("woop");
+
+  const schemaErrorReq = { params: { id: 1 } };
+  // @ts-expect-error
+  await ingestPutController(schemaErrorReq, response);
+  const schemaError = spiedSend.mock.calls[0][0];
+
+  expect(spiedStatus).toBeCalledWith(400);
+  expect(schemaError.name).toBe("ValidationError");
+  expect(schemaError.isJoi).toBe(true);
 });
 
-test("responds with 204 when update is successful", () => {
-  expect(ingestPutController().statusCode).toBe(204);
+test("responds with 422 for update error", async () => {
+  const spiedStatus = jest.spyOn(response, "status");
+
+  jest.spyOn(listItem, "update").mockRejectedValue("boo");
+
+  const schemaErrorReq = { params: { id: 1 }, body: { questions: [] } };
+  // @ts-expect-error
+  await ingestPutController(schemaErrorReq, response);
+
+  expect(spiedStatus).toBeCalledWith(422);
 });
 
-/**
- * TODO:- implement when queue is implemented
- */
-test.todo("failed update is inserted into queue", () => {
-  const queueSpy = jest.fn();
-  ingestPutController();
-  expect(queueSpy).toBe({});
+test("responds with 204 when update is successful", async () => {
+  const req = {
+    params: {
+      id: 1,
+      serviceType: "lawyers",
+    },
+    body: { questions: [] },
+  };
+  jest.spyOn(listItem, "update").mockResolvedValue("woop");
+  const spiedRes = jest.spyOn(response, "status");
+  await ingestPutController(req, response);
+  expect(spiedRes).toBeCalledWith(204);
 });
+
+test.todo("failed update is inserted into queue");
