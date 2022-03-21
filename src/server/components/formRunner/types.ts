@@ -1,4 +1,3 @@
-import type { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 
 export interface FormRunnerWebhookData {
   questions: Array<{
@@ -120,8 +119,19 @@ export enum FormRunnerFields {
   "publicEmailAddress" = "publicEmailAddress",
 }
 
+export interface FormRunnerField {
+  key: string,
+  title: string,
+  answer: any,
+}
+
+export interface FormRunnerQuestion {
+  question: string,
+  fields: FormRunnerField[],
+}
+
 export interface FormRunnerNewSessionData {
-  questions: Array<Partial<Question>> | undefined;
+  questions: Array<Partial<FormRunnerQuestion>> | undefined;
   options: {
     message: string;
     callbackUrl: string;

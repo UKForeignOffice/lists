@@ -6,8 +6,8 @@ import {
   parseFormRunnerWebhookObject, getNewSessionWebhookData
 } from "../helpers";
 import { Country, LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
-import type { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
+import { FormRunnerQuestion } from "server/components/formRunner";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -391,7 +391,7 @@ describe("Form Runner Service:", () => {
       updatedAt: new Date(),
     };
 
-    const expectedListOutput: Array<Partial<Question>> = [
+    const expectedListOutput: Array<Partial<FormRunnerQuestion>> = [
       {
         fields: [
           {
