@@ -1,5 +1,5 @@
 import { authRoutes } from "server/components/auth";
-import { List, ListItem, UserRoles } from "server/models/types";
+import { List, ListItemGetObject, ServiceType, UserRoles } from "server/models/types";
 import * as userModel from "server/models/user";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
@@ -12,15 +12,18 @@ import {
   listsItemsController,
   listsEditController,
   listItemsDeleteController,
+  listItemsEditGetController
 } from "../controllers";
-import * as helpers from "../helpers";
-
+import * as dashboardControllers from "server/components/dashboard/controllers";
+import * as govukNotify from "../../../services/govuk-notify";
+import * as helpers from "server/components/dashboard/helpers";
 describe("Dashboard Controllers", () => {
   let mockReq: any;
   let mockRes: any;
   let mockNext: any;
   let list: List;
-  let listItem: ListItem;
+  let listItem: ListItemGetObject;
+  let spyFindListItemById: jest.SpyInstance;
   let spyFindListById: jest.SpyInstance;
   let spyUpdateList: jest.SpyInstance;
   let spyCreateList: jest.SpyInstance;
@@ -52,6 +55,7 @@ describe("Dashboard Controllers", () => {
     mockNext = jest.fn();
 
     spyFindListById = jest.spyOn(listModel, "findListById");
+    spyFindListItemById = jest.spyOn(listItemModel, "findListItemById");
     spyCreateList = jest.spyOn(listModel, "createList");
     spyUpdateList = jest.spyOn(listModel, "updateList");
 
@@ -72,6 +76,17 @@ describe("Dashboard Controllers", () => {
 
     listItem = {
       addressId: 11,
+      address: {
+        firstLine: "1 Street",
+        secondLine: "",
+        city: "City",
+        postCode: "PO5T CDE",
+        country: {
+          id: 1,
+          name: "Italy"
+        },
+        geoLocationId: 123
+      },
       id: 2,
       isApproved: true,
       isBlocked: false,
@@ -81,7 +96,7 @@ describe("Dashboard Controllers", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       jsonData: {},
-      listId: 2,
+      listId: 1,
     };
   });
 
@@ -775,6 +790,179 @@ describe("Dashboard Controllers", () => {
       await listItemsDeleteController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe("listItemsEditGetController", () => {
+    let userIsListPublisher: jest.SpyInstance;
+
+    beforeEach(() => {
+      process.env.LOCAL_HOST = "true";
+
+      mockReq.params = {
+        listId: "1",
+        listItemId: "2",
+        underTest: "true"
+      };
+      mockReq.body = {
+        message: "change the text"
+      }
+      mockReq.user.userData.id = 3;
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
+      listItem.type = ServiceType.lawyers;
+      list.type = ServiceType.lawyers;
+
+      jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
+        ...listItem,
+        address: {
+          firstLine: "Line 1",
+          postCode: "ABC 123",
+          city: "Test",
+          country: {
+            id: 99,
+            name: "Germany",
+          },
+        },
+      });
+    });
+
+    it("should redirect if user is undefined", async () => {
+      mockReq.user = undefined;
+
+      await listItemsEditGetController(mockReq, mockRes);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
+    });
+
+    it("should return a 404 if list is not found", async () => {
+      spyFindListById.mockResolvedValueOnce(undefined);
+
+      await listItemsEditGetController(mockReq, mockRes);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "Could not find list 1",
+        },
+      });
+    });
+
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
+      userIsListPublisher.mockReturnValueOnce(false);
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemById.mockResolvedValueOnce(listItem);
+
+      await listItemsEditGetController(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenLastCalledWith(403);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
+    });
+
+    it("should call editListItem with the correct params", async () => {
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemById.mockResolvedValueOnce(listItem);
+
+      await listItemsEditGetController(mockReq, mockRes);
+
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-item-edit");
+      expect(mockRes.render.mock.calls[0][1].listItem).toBe(listItem);
+    });
+  });
+
+  describe("listItemsEditPostController", () => {
+    let userIsListPublisher: jest.SpyInstance;
+
+    beforeEach(() => {
+      mockReq.params = {
+        listId: "1",
+        listItemId: "2",
+        underTest: "true"
+      };
+      mockReq.body = {
+        message: "change the text"
+      }
+      mockReq.user.userData.id = 3;
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
+      listItem.type = ServiceType.lawyers;
+      list.type = ServiceType.lawyers;
+
+      jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
+        ...listItem,
+        address: {
+          firstLine: "Line 1",
+          postCode: "ABC 123",
+          city: "Test",
+          country: {
+            id: 99,
+            name: "Germany",
+          },
+        },
+      });
+    });
+
+    it("should redirect if user is undefined", async () => {
+      mockReq.user = undefined;
+
+      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
+    });
+
+    it("should return a 404 if list is not found", async () => {
+      spyFindListById.mockResolvedValueOnce(undefined);
+
+      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "Could not find list 1",
+        },
+      });
+    });
+
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
+      userIsListPublisher.mockReturnValueOnce(false);
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemById.mockResolvedValueOnce(listItem);
+
+      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenLastCalledWith(403);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
+    });
+
+    it("should call editListItem with the correct params", async () => {
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemById.mockResolvedValueOnce(listItem);
+
+      const spyGetInitiateFormRunnerSessionToken = jest
+        .spyOn(helpers, "getInitiateFormRunnerSessionToken")
+        .mockResolvedValue("string");
+
+      const spySendEditDetailsEmail = jest
+        .spyOn(govukNotify, "sendEditDetailsEmail")
+        .mockResolvedValue(true)
+
+      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+
+      expect(spyGetInitiateFormRunnerSessionToken).toHaveBeenCalledTimes(1);
+      expect(spySendEditDetailsEmail).toHaveBeenCalledTimes(1);
+      expect(1).toBe(1);
     });
   });
 });
