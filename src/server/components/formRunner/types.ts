@@ -1,4 +1,4 @@
-import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
+import { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 
 export interface FormRunnerWebhookData {
   questions: Array<{

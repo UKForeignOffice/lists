@@ -42,7 +42,7 @@ import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } f
 import { getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import { Question } from "../../../../lib/form-runner/runner/src/server/schemas/types";
+import { Question } from "digital-form-builder-mono/runner/src/server/schemas/types";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
