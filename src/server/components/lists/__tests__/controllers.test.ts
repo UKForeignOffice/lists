@@ -4,7 +4,7 @@ import {
   listsGetPrivateBetaPage,
   listsConfirmApplicationController,
 } from "../controllers";
-import { ingestPostController as listsDataIngestionController } from "../controllers/ingest";
+import { ingestPostController as listsDataIngestionController } from "../controllers/ingest/ingestPostController";
 import { listItem } from "server/models";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
