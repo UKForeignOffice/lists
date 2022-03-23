@@ -1,17 +1,5 @@
 <h1 class="govuk-heading-m">Disclaimer</h1>
-<p class="govuk-body">
-  The Foreign, Commonwealth & Development Office (FCDO) provides lists
-  of service providers for information only, to assist British nationals
-  who may need support overseas. This list is not exhaustive and is subject
-  to change at any time. None of the service providers are endorsed or
-  recommended by the FCDO and the FCDO does not assume any responsibility,
-  including legal responsibility, to any person who uses these service providers
-  or this information. You should research whether a service provider will be suitable.
-  The FCDO does not accept any liability arising to any person or company for any
-  loss or damage suffered through using these service providers or this information.
-  Read our full <a href="https://www.gov.uk/help/terms-conditions" class="govuk-link" target="_blank">terms and conditions</a>.
-  Complaints about any organisations on the list should be directed to the nearest consulate, embassy or high commission.
-</p>
+{% include 'includes/disclaimer.njk' %}
 <form class="form" action="{{ nextRoute }}" method="post">
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
   <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'read-disclaimer' }}">
