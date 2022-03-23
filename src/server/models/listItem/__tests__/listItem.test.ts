@@ -25,7 +25,6 @@ import {
 } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
-import { recordListItemEvent } from "./../../audit";
 
 jest.mock("../../db/prisma-client");
 
