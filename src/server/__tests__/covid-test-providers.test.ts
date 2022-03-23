@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
@@ -5,7 +9,7 @@ import { axe } from "jest-axe";
 import { getServer } from "../server";
 import * as helpers from "server/models/listItem/providers/helpers";
 
-describe.only("Covid Test Providers List:", () => {
+describe("Covid Test Providers List:", () => {
   let server: Express;
 
   function mockListItemSome(resolvedValue = true): jest.SpyInstance {

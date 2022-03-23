@@ -74,3 +74,10 @@ export const covidTestProvider: CovidTestSupplierFormWebhookData = {
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
 };
+
+declare global {
+  var webhookData: {
+    lawyer: LawyersFormWebhookData;
+    covidTestProvider: CovidTestSupplierFormWebhookData;
+  };
+}

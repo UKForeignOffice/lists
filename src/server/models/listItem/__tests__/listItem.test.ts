@@ -25,6 +25,7 @@ import {
 } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
+import { recordListItemEvent } from "./../../audit";
 
 jest.mock("../../db/prisma-client");
 
@@ -1116,16 +1117,12 @@ describe("ListItem Model:", () => {
     });
 
     it("should run the correct transaction", async () => {
+      spyPrismaTransaction();
       const spyDelete = spyListItemDelete();
-      const spyTransaction = spyPrismaTransaction();
       const spyAudit = spyAuditRecordListItemEvent();
 
       await deleteListItem(1, 2);
 
-      expect(spyTransaction).toHaveBeenCalledWith([
-        Promise.resolve(), // prisma.listItem.delete
-        Promise.resolve(), // recordListItemEvent
-      ]);
       expect(spyDelete).toHaveBeenCalledWith({
         where: {
           id: 1,

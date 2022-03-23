@@ -1,5 +1,4 @@
 import { getChangedAddressFields } from "../helpers";
-import { covidTestProvider, lawyer } from "../../../../../../.jest/webhookData";
 
 const databaseAddress = {
   firstLine: "70 King Charles Street",
@@ -9,12 +8,12 @@ const databaseAddress = {
 };
 
 const organisationDetails = {
-  ...covidTestProvider.organisationDetails,
+  ...webhookData.covidTestProvider.organisationDetails,
 };
 
 test("getChangedAddressFields returns the correct changed fields when addressLine1 changed", () => {
   const lawyerUpdate = {
-    ...lawyer,
+    ...webhookData.lawyer,
     addressLine1: "King Charles Road",
   };
 
@@ -23,7 +22,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
   });
 
   const covidUpdate = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       addressLine1: "King Charles Road",
@@ -37,7 +36,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
 
 test("getChangedAddressFields returns the correct changed fields when addressLine2 changed", () => {
   const lawyerSecondLineFromNull = {
-    ...lawyer,
+    ...webhookData.lawyer,
     addressLine2: "updated second line",
   };
 
@@ -48,7 +47,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
   });
 
   const lawyerUndefinedOnSecondLine = {
-    ...lawyer,
+    ...webhookData.lawyer,
     addressLine2: undefined,
   };
 
@@ -57,7 +56,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
   ).toEqual({});
 
   const covidSecondLineFromNull = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       addressLine2: "updated second line",
@@ -71,7 +70,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
   });
 
   const covidUndefinedOnSecondLine = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       addressLine2: undefined,
@@ -85,7 +84,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
 
 test("getChangedAddressFields returns the correct changed fields when postcode changed", () => {
   const lawyerPostCodeChange = {
-    ...lawyer,
+    ...webhookData.lawyer,
     postcode: "EC2A 4DS",
   };
 
@@ -96,7 +95,7 @@ test("getChangedAddressFields returns the correct changed fields when postcode c
   });
 
   const covidPostCodeChange = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       postcode: "EC2A 4DS",
@@ -111,13 +110,13 @@ test("getChangedAddressFields returns the correct changed fields when postcode c
 });
 
 test("getChangedAddressFields returns the correct changed fields when city changed", () => {
-  const lawyerCityChange = { ...lawyer, city: "Londinium" };
+  const lawyerCityChange = { ...webhookData.lawyer, city: "Londinium" };
   expect(getChangedAddressFields(lawyerCityChange, databaseAddress)).toEqual({
     city: "Londinium",
   });
 
   const covidCityChange = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       city: "Londinium",
@@ -130,7 +129,7 @@ test("getChangedAddressFields returns the correct changed fields when city chang
 
 test("getChangedAddressFields returns the correct changed fields when multiple fields changed", () => {
   const lawyerUpdatedAllKeys = {
-    ...lawyer,
+    ...webhookData.lawyer,
     addressLine1: "King Charles Road",
     addressLine2: "updated second line",
     postcode: "EC2A 4DS",
@@ -147,7 +146,7 @@ test("getChangedAddressFields returns the correct changed fields when multiple f
   });
 
   const covidUpdatedAllKeys = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
 
     organisationDetails: {
       ...organisationDetails,
@@ -179,7 +178,7 @@ test("getChangedAddressFields doesn't update country", () => {
   ).toEqual({});
 
   const covidAttemptedCountryChange = {
-    ...covidTestProvider,
+    ...webhookData.covidTestProvider,
     organisationDetails: {
       ...organisationDetails,
       country: "United Kingdom",

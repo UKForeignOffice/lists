@@ -1,4 +1,9 @@
 import * as webhookData from "./webhookData";
+import { lawyer } from "./webhookData";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/components/formRunner";
 jest.mock("server/services/logger");
 jest.mock("server/services/redis");
 
@@ -10,22 +15,7 @@ jest.mock("crypto", () => {
     randomBytes: jest.fn().mockReturnValue("12345678"),
   };
 });
-global.webhookData = {
-  get lawyer() {
-    return webhookData.lawyer;
-  },
-  get covidTestProvider() {
-    return webhookData.covidTestProvider;
-  },
-};
-
-beforeEach(async () => {
-  // @ts-ignore
+// @ts-ignore
+beforeEach(() => {
   expect.hasAssertions();
-});
-
-afterEach(() => {});
-
-afterAll(() => {
-  delete global.webhookData;
 });
