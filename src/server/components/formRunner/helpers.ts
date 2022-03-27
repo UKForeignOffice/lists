@@ -14,6 +14,8 @@ import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
 import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { LawyerListItemGetObject, List, ListItemGetObject, ServiceType } from "server/models/types";
+import * as lawyers from "./lawyers"
 
 
 let isStarting = false;
@@ -95,7 +97,7 @@ export function parseFormRunnerWebhookObject<T>({
   }, {}) as T;
 }
 
-export function getNewSessionWebhookData(listType: string, listItemId: string, questions: Array<Partial<FormRunnerQuestion>> | undefined, message: string): FormRunnerNewSessionData {
+export function getNewSessionWebhookData(listType: string, listItemId: number, questions: Array<Partial<FormRunnerQuestion>> | undefined, message: string): FormRunnerNewSessionData {
   const protocol = isLocalHost ? "http" : "https";
   const callbackUrl = `${protocol}://${SERVICE_DOMAIN}/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
@@ -113,12 +115,26 @@ export function getNewSessionWebhookData(listType: string, listItemId: string, q
   return newSessionData;
 }
 
+export async function generateFormRunnerWebhookData(list: List,
+                                                    listItem: ListItemGetObject,
+                                                    isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>> | undefined> {
+  let questions: Array<Partial<FormRunnerQuestion>> | undefined;
+
+  switch (list.type) {
+    case ServiceType.lawyers:
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      break;
+    default:
+      questions = undefined;
+  }
+
+  return questions;
+}
 
 export async function parseJsonFormData(listType: string, isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
 
   const formsJsonFile = (isUnderTest === true) ? `/forms-json/${listType}.json` : `../src/server/components/formRunner/forms-json/${listType}.json`;
   const fileContents = await fs.promises.readFile(path.join(__dirname, formsJsonFile), "utf8");
-
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<FormRunnerQuestion>> = formJsonData.pages
     .map((page: FormRunnerPage) => {
@@ -128,7 +144,6 @@ export async function parseJsonFormData(listType: string, isUnderTest?: boolean)
           const field: FormRunnerField = {
             answer: "",
             key: component.name,
-            title: "",
           };
 
           return field;
