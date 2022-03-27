@@ -5,7 +5,7 @@ import {
   isFormRunnerReady,
   parseFormRunnerWebhookObject, getNewSessionWebhookData
 } from "../helpers";
-import { Country, LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
+import { LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { FormRunnerQuestion } from "server/components/formRunner";
 
@@ -384,20 +384,12 @@ describe("Form Runner Service:", () => {
       listId: 1
     };
 
-    const listCountry:Country = {
-      id: 1,
-      name: "Italy",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     const expectedListOutput: Array<Partial<FormRunnerQuestion>> = [
       {
         fields: [
           {
             answer: true,
             key: "speakEnglish",
-            title: "",
           }
         ],
         question: "Can you provide legal services and support to customers in English?"
@@ -407,7 +399,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "Cristiano Cominotto",
             key: "contactName",
-            title: "",
           }
         ],
         question: "Your full name"
@@ -417,32 +408,26 @@ describe("Form Runner Service:", () => {
           {
             answer: "AL Assistenza Legale",
             key: "organisationName",
-            title: "",
           },
           {
             answer: "1 Plaza De Centro",
             key: "addressLine1",
-            title: "",
           },
           {
-            answer: "",
+            answer: undefined,
             key: "addressLine2",
-            title: "",
           },
           {
             answer: "Milan",
             key: "city",
-            title: "",
           },
           {
             answer: "999999",
             key: "postcode",
-            title: "",
           },
           {
             answer: "Italy",
             key: "addressCountry",
-            title: "",
           }
         ],
         question: "Company name and address"
@@ -452,7 +437,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "https://www.alassistenzalegale.it/?lang=en",
             key: "websiteAddress",
-            title: "",
           }
         ],
         question: "Full website address (Optional)"
@@ -462,12 +446,10 @@ describe("Form Runner Service:", () => {
           {
             answer: "ignoremyemail@noemail-ignoreme.uk",
             key: "emailAddress",
-            title: "",
           },
           {
             answer: "Yes",
             key: "publishEmail",
-            title: "",
           }
         ],
         question: "Email address"
@@ -490,7 +472,6 @@ describe("Form Runner Service:", () => {
               "Real estate"
             ],
             key: "areasOfLaw",
-            title: "",
           }
         ],
         question: "In what areas of law are you qualified to practise? "
@@ -500,7 +481,6 @@ describe("Form Runner Service:", () => {
           {
             answer: true,
             key: "legalAid",
-            title: "",
           }
         ],
         question: "Can you provide legal aid to British nationals?"
@@ -510,7 +490,6 @@ describe("Form Runner Service:", () => {
           {
             answer: false,
             key: "proBono",
-            title: "",
           }
         ],
         question: "Can you offer pro bono service to British nationals?"
@@ -520,7 +499,6 @@ describe("Form Runner Service:", () => {
           {
             answer: true,
             key: "representedBritishNationals",
-            title: "",
           }
         ],
         question: "Have you represented British nationals before?"
@@ -530,12 +508,10 @@ describe("Form Runner Service:", () => {
           {
             answer: "+393355928732",
             key: "phoneNumber",
-            title: "",
           },
           {
             key: "emergencyPhoneNumber",
-            answer: "",
-            title: "",
+            answer: undefined,
           }
         ],
         question: "Phone number"
@@ -545,7 +521,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "Ordine Avvocati di Milano",
             key: "regulators",
-            title: "",
           }
         ],
         question: "Which legal regulator or local bar associations are you registered with?"
@@ -555,7 +530,6 @@ describe("Form Runner Service:", () => {
           {
             answer: ["confirm"],
             key: "declaration",
-            title: "",
           }
         ],
         question: "Declaration"
@@ -565,7 +539,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "Italy",
             key : "country",
-            title: "",
           }
         ],
         question: "Which list of lawyers do you want to be added to?"
@@ -575,7 +548,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "Milan, Rome, Florence, Genoa, Verona, Livorno",
             key: "regions",
-            title: "",
           }
         ],
         question: "Which regions do you serve?"
@@ -585,7 +557,6 @@ describe("Form Runner Service:", () => {
           {
             answer: "Medium (16-350 legal professionals)",
             key: "size",
-            title: "",
           }
         ],
         question: "What size is your company or firm?"
@@ -593,9 +564,8 @@ describe("Form Runner Service:", () => {
       {
         fields: [
           {
-            answer: "",
+            answer: undefined,
             key: "publicEmailAddress",
-            title: "",
           }
         ],
         question: "Email address for GOV.UK"
@@ -616,7 +586,7 @@ describe("Form Runner Service:", () => {
     test("generated form runner webhook data is correct", async() => {
 
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, listCountry, isUnderTest);
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
 
       expect(result).toMatchObject(
         expectedListOutput
@@ -624,11 +594,11 @@ describe("Form Runner Service:", () => {
     });
     test("generated object is correct", async() => {
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, listCountry, isUnderTest);
-      const newSessionWebhookData = getNewSessionWebhookData("lawyers", "111", result, "Change the text");
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
+      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text");
 
-      expect(newSessionWebhookData).toMatchObject(
-        expectedNewSessionWebhookData
+      expect(newSessionWebhookData.questions).toMatchObject(
+        expectedNewSessionWebhookData.questions
       );
     });
   });
