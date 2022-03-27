@@ -17,6 +17,7 @@ import {
   listItemsDeleteController,
   listItemsEditGetController,
   listItemsEditPostController,
+  listItemEditRequestValidation
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -60,8 +61,8 @@ dashboardRouter.delete(
   dashboardRoutes.listsItemsDelete,
   listItemsDeleteController
 );
-dashboardRouter.get(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemsEditGetController);
-dashboardRouter.post(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemsEditPostController);
+dashboardRouter.get(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemEditRequestValidation, listItemsEditGetController);
+dashboardRouter.post(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemEditRequestValidation, listItemsEditPostController);
 
 // feedback
 dashboardRouter.get(

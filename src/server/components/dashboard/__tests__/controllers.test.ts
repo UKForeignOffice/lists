@@ -12,11 +12,13 @@ import {
   listsItemsController,
   listsEditController,
   listItemsDeleteController,
-  listItemsEditGetController
+  listItemsEditGetController,
+  listItemEditRequestValidation
 } from "../controllers";
 import * as dashboardControllers from "server/components/dashboard/controllers";
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
+import { NextFunction } from "express";
 describe("Dashboard Controllers", () => {
   let mockReq: any;
   let mockRes: any;
@@ -795,6 +797,7 @@ describe("Dashboard Controllers", () => {
 
   describe("listItemsEditGetController", () => {
     let userIsListPublisher: jest.SpyInstance;
+    let next: NextFunction;
 
     beforeEach(() => {
       process.env.LOCAL_HOST = "true";
@@ -826,12 +829,13 @@ describe("Dashboard Controllers", () => {
           },
         },
       });
+      next = jest.fn();
     });
 
     it("should redirect if user is undefined", async () => {
       mockReq.user = undefined;
 
-      await listItemsEditGetController(mockReq, mockRes);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
     });
@@ -839,7 +843,7 @@ describe("Dashboard Controllers", () => {
     it("should return a 404 if list is not found", async () => {
       spyFindListById.mockResolvedValueOnce(undefined);
 
-      await listItemsEditGetController(mockReq, mockRes);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(spyFindListById).toHaveBeenCalledWith("1");
       expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -855,7 +859,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
 
-      await listItemsEditGetController(mockReq, mockRes);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(mockRes.status).toHaveBeenLastCalledWith(403);
       expect(mockRes.send).toHaveBeenCalledWith({
@@ -878,6 +882,7 @@ describe("Dashboard Controllers", () => {
 
   describe("listItemsEditPostController", () => {
     let userIsListPublisher: jest.SpyInstance;
+    let next: NextFunction;
 
     beforeEach(() => {
       mockReq.params = {
@@ -907,20 +912,22 @@ describe("Dashboard Controllers", () => {
           },
         },
       });
+
+      next = jest.fn();
     });
 
     it("should redirect if user is undefined", async () => {
       mockReq.user = undefined;
 
-      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+      await dashboardControllers.listItemEditRequestValidation(mockReq, mockRes, next);
 
-      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
+      expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
     });
 
     it("should return a 404 if list is not found", async () => {
       spyFindListById.mockResolvedValueOnce(undefined);
 
-      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+      await dashboardControllers.listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(spyFindListById).toHaveBeenCalledWith("1");
       expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -936,7 +943,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
 
-      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+      await dashboardControllers.listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(mockRes.status).toHaveBeenLastCalledWith(403);
       expect(mockRes.send).toHaveBeenCalledWith({

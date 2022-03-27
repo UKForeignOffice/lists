@@ -1,92 +1,45 @@
 import {
-  Country,
   LawyerListItemGetObject,
-  LawyerListItemJsonData,
   ServiceType
 } from "server/models/types";
-import { FormRunnerFields, FormRunnerQuestion } from "server/components/formRunner/types";
+import { FormRunnerField, FormRunnerQuestion } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
+import { get } from "lodash";
+
+const FormRunnerFields: {[key: string]: string} = {
+  speakEnglish: "jsonData.speakEnglish",
+  contactName: "jsonData.contactName",
+  organisationName: "jsonData.organisationName",
+  addressLine1: "address.firstLine",
+  addressLine2: "address.secondLine",
+  city: "address.city",
+  postcode: "address.postCode",
+  addressCountry: "address.country.name",
+  websiteAddress: "jsonData.websiteAddress",
+  emailAddress: "jsonData.emailAddress",
+  publishEmail: "jsonData.publishEmail",
+  areasOfLaw: "jsonData.areasOfLaw",
+  legalAid: "jsonData.legalAid",
+  proBono: "jsonData.proBono",
+  representedBritishNationals: "jsonData.representedBritishNationals",
+  phoneNumber: "jsonData.phoneNumber",
+  emergencyPhoneNumber: "jsonData.emergencyPhoneNumber",
+  regulators: "jsonData.regulators",
+  declaration: "jsonData.declaration",
+  country: "jsonData.country",
+  regions: "jsonData.regions",
+  size: "jsonData.size",
+  publicEmailAddress: "jsonData.publicEmailAddress",
+}
+
 
 export async function generateFormRunnerWebhookData(listItem: LawyerListItemGetObject,
-                                                    listCountry?: Partial<Country>,
                                                     isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
   const questions = await parseJsonFormData(ServiceType.lawyers, isUnderTest);
 
   questions.forEach((question) => {
-    question.fields?.forEach((field) => {
-      const jsonData: LawyerListItemJsonData = listItem.jsonData ?? {};
-
-      switch (field.key) {
-        case FormRunnerFields.country :
-          field.answer = ((listCountry?.name) != null) ? listCountry.name : "";
-          break;
-        case FormRunnerFields.addressCountry :
-          field.answer = listItem.address.country.name;
-          break;
-        case FormRunnerFields.addressLine1 :
-          field.answer = listItem.address.firstLine;
-          break;
-        case FormRunnerFields.addressLine2 :
-          field.answer = listItem.address.secondLine ?? "";
-          break;
-        case FormRunnerFields.city :
-          field.answer = listItem.address.city;
-          break;
-        case FormRunnerFields.postcode :
-          field.answer = listItem.address.postCode;
-          break;
-        case FormRunnerFields.phoneNumber :
-          field.answer = jsonData.phoneNumber;
-          break;
-        case FormRunnerFields.emergencyPhoneNumber :
-          field.answer = jsonData.emergencyPhoneNumber ?? "";
-          break;
-        case FormRunnerFields.emailAddress :
-          field.answer = jsonData.emailAddress;
-          break;
-        case FormRunnerFields.publicEmailAddress :
-          field.answer = jsonData.publicEmailAddress ?? "";
-          break;
-        case FormRunnerFields.websiteAddress :
-          field.answer = jsonData.websiteAddress ?? "";
-          break;
-        case FormRunnerFields.contactName :
-          field.answer = jsonData.contactName;
-          break;
-        case FormRunnerFields.organisationName :
-          field.answer = jsonData.organisationName;
-          break;
-        case FormRunnerFields.size :
-          field.answer = jsonData.size;
-          break;
-        case FormRunnerFields.regulators :
-          field.answer = jsonData.regulators;
-          break;
-        case FormRunnerFields.regions :
-          field.answer = jsonData.regions;
-          break;
-        case FormRunnerFields.areasOfLaw :
-          field.answer = jsonData.areasOfLaw ?? [];
-          break;
-        case FormRunnerFields.declaration :
-          field.answer = jsonData.declaration ?? [];
-          break;
-        case FormRunnerFields.proBono :
-          field.answer = `${jsonData.proBono}` === "true";
-          break;
-        case FormRunnerFields.legalAid :
-          field.answer = `${jsonData.legalAid}` === "true";
-          break;
-        case FormRunnerFields.speakEnglish :
-          field.answer = `${jsonData.speakEnglish}` === "true";
-          break;
-        case FormRunnerFields.representedBritishNationals :
-          field.answer = `${jsonData.representedBritishNationals}` === "true";
-          break;
-        case FormRunnerFields.publishEmail :
-          field.answer = `${jsonData.publishEmail}` ?? "No";
-          break;
-      }
+    question.fields?.forEach((field: FormRunnerField) => {
+      field.answer = get(listItem, FormRunnerFields[field.key]);
     });
   });
   return questions;
