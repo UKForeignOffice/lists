@@ -10,6 +10,9 @@ const response = {
   send(_error: any) {
     return this;
   },
+  json(_error: any) {
+    return this;
+  },
   end() {},
 };
 test("responds with 400 for schema validation error", async () => {
