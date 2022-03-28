@@ -17,6 +17,9 @@ export async function ingestPutController(
     req.body ?? {},
     {
       abortEarly: true,
+      errors: {
+        escapeHtml: true,
+      },
     }
   );
 
@@ -38,6 +41,6 @@ export async function ingestPutController(
      * TODO:- Queue?
      */
 
-    res.status(422).send(e);
+    res.status(422).send({ message: "List item failed to update" });
   }
 }

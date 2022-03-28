@@ -148,7 +148,7 @@ export async function create(
       },
     });
   } catch (error) {
-    logger.error(`createLawyerListItem Error: ${error.message}`);
+    logger.error(`CovidTestSupplier.create Error: ${error.message}`);
     throw error;
   }
 }
