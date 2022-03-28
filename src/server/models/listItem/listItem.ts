@@ -325,18 +325,23 @@ export async function update(
   }
 
   try {
+    let result;
     if (requiresAddressUpdate) {
-      await prisma.$transaction([
+      result = await prisma.$transaction([
         prisma.listItem.update(listItemPrismaQuery),
         prisma.address.update(addressPrismaQuery!),
         rawUpdateGeoLocation(...geoLocationParams!),
       ]);
     } else {
-      await prisma.listItem.update(listItemPrismaQuery);
+      result = await prisma.listItem.update(listItemPrismaQuery);
+    }
+
+    if (!result) {
+      throw Error("listItem.update prisma update failed");
     }
   } catch (err) {
     logger.error(
-      `Lawyers.update transactional error - rolling back ${err.message}`
+      `listItem.update transactional error - rolling back ${err.message}`
     );
     throw err;
   }

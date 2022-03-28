@@ -1,5 +1,5 @@
 import * as location from "server/services/location";
-import { update } from "./../listItem";
+import * as listItem from "./../listItem";
 import { prisma } from "server/models/db/prisma-client";
 
 jest.mock("../../db/prisma-client");
@@ -8,12 +8,12 @@ test("throws when the requested id does not exist", async () => {
   // @ts-expect-error
   prisma.listItem.findFirst.mockRejectedValue(Error("mocked error"));
 
-  await expect(update(40404, webhookData.lawyer)).rejects.toThrow(
+  await expect(listItem.update(40404, webhookData.lawyer)).rejects.toThrow(
     "list item 40404 not found"
   );
-  await expect(update(40404, webhookData.covidTestProvider)).rejects.toThrow(
-    "list item 40404 not found"
-  );
+  await expect(
+    listItem.update(40404, webhookData.covidTestProvider)
+  ).rejects.toThrow("list item 40404 not found");
 });
 
 test("update throws when geoLocatePlaceByText fails", async () => {
@@ -31,7 +31,7 @@ test("update throws when geoLocatePlaceByText fails", async () => {
     },
   });
 
-  await expect(update(1, webhookData.lawyer)).rejects.toThrowError(
+  await expect(listItem.update(1, webhookData.lawyer)).rejects.toThrowError(
     "GeoLocation update failed"
   );
 });
@@ -49,7 +49,7 @@ test("address and geolocation tables are not queried when there are no address c
     },
   });
 
-  await update(1, webhookData.lawyer);
+  await listItem.update(1, webhookData.lawyer);
   expect(prisma.listItem.update).toBeCalled();
   expect(prisma.address.update).not.toBeCalled();
   expect(prisma.$queryRaw).not.toBeCalled();
@@ -76,7 +76,7 @@ test("address and geolocation is updated when there are address changes", async 
     postcode: "SW1A 2AH",
   };
 
-  await update(1, updatedData);
+  await listItem.update(1, updatedData);
   expect(prisma.listItem.update).toHaveBeenCalledWith({
     where: {
       id: 1,
@@ -101,9 +101,6 @@ test("throws when any query in transaction fails", async () => {
   jest.spyOn(location, "geoLocatePlaceByText").mockResolvedValue([1, 2]);
 
   // @ts-expect-error
-  prisma.$transaction.mockRejectedValue(Error("something went wrong"));
-
-  // @ts-expect-error
   prisma.listItem.findFirst.mockResolvedValue({
     address: {
       id: 101,
@@ -121,5 +118,6 @@ test("throws when any query in transaction fails", async () => {
     postcode: "SW1A 2AH",
   };
 
-  await expect(update(1, updatedData)).rejects.toThrow();
+  const update = listItem.update(1, updatedData);
+  await expect(update).rejects.toThrow("listItem.update prisma update failed");
 });
