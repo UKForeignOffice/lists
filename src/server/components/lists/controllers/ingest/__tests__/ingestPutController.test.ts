@@ -17,7 +17,7 @@ const response = {
 };
 test("responds with 400 for schema validation error", async () => {
   const spiedStatus = jest.spyOn(response, "status");
-  const spiedSend = jest.spyOn(response, "send");
+  const spiedSend = jest.spyOn(response, "json");
   jest.spyOn(listItem, "update").mockResolvedValue();
 
   const schemaErrorReq = {
@@ -26,10 +26,8 @@ test("responds with 400 for schema validation error", async () => {
   // @ts-expect-error
   await ingestPutController(schemaErrorReq, response);
   const schemaError = spiedSend.mock.calls[0][0];
-
   expect(spiedStatus).toBeCalledWith(400);
-  expect(schemaError.name).toBe("ValidationError");
-  expect(schemaError.isJoi).toBe(true);
+  expect(schemaError.message).toBe(`"questions" is required`);
 });
 
 test("responds with 422 for update error", async () => {

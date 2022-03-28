@@ -48,6 +48,7 @@ test("address and geolocation tables are not queried when there are no address c
       city: "London",
     },
   });
+  jest.spyOn(prisma.listItem, "update").mockResolvedValue({});
 
   await listItem.update(1, webhookData.lawyer);
   expect(prisma.listItem.update).toBeCalled();
@@ -76,6 +77,7 @@ test("address and geolocation is updated when there are address changes", async 
     postcode: "SW1A 2AH",
   };
 
+  jest.spyOn(prisma, "$transaction").mockResolvedValue([{}]);
   await listItem.update(1, updatedData);
   expect(prisma.listItem.update).toHaveBeenCalledWith({
     where: {

@@ -21,7 +21,7 @@ export async function ingestPutController(
   );
 
   if (error) {
-    res.status(400).json({ message: error }).end();
+    res.status(400).json(error).end();
     return;
   }
   const data = parseFormRunnerWebhookObject<
