@@ -48,6 +48,7 @@ test("address and geolocation tables are not queried when there are no address c
       city: "London",
     },
   });
+  // @ts-expect-error
   jest.spyOn(prisma.listItem, "update").mockResolvedValue({});
 
   await listItem.update(1, webhookData.lawyer);
