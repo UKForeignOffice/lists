@@ -17,14 +17,11 @@ export async function ingestPutController(
     req.body ?? {},
     {
       abortEarly: true,
-      errors: {
-        escapeHtml: true,
-      },
     }
   );
 
   if (error) {
-    res.status(400).send(error).end();
+    res.status(400).json({ message: error }).end();
     return;
   }
   const data = parseFormRunnerWebhookObject<

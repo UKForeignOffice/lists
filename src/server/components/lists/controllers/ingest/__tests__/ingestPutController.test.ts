@@ -17,7 +17,9 @@ test("responds with 400 for schema validation error", async () => {
   const spiedSend = jest.spyOn(response, "send");
   jest.spyOn(listItem, "update").mockResolvedValue();
 
-  const schemaErrorReq = { params: { id: 1 } };
+  const schemaErrorReq = {
+    params: { id: 1 },
+  };
   // @ts-expect-error
   await ingestPutController(schemaErrorReq, response);
   const schemaError = spiedSend.mock.calls[0][0];
