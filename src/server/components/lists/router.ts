@@ -5,11 +5,11 @@ import {
   listsPostController,
   listsResultsController,
   listsGetPrivateBetaPage,
-  listsDataIngestionController,
   listsConfirmApplicationController,
 } from "./controllers";
 import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
+import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 
 export const listsRouter = express.Router();
 
@@ -20,7 +20,7 @@ listsRouter.get(
   csrfRequestHandler,
   listsResultsController
 );
-listsRouter.post(listsRoutes.formRunnerWebhook, listsDataIngestionController);
+
 listsRouter.get(
   listsRoutes.confirmApplication,
   listsConfirmApplicationController
@@ -32,3 +32,4 @@ listsRouter.get(listsRoutes.accessibility, (req, res) => {
 listsRouter.get(listsRoutes.termsAndConditions, (req, res) => {
   res.render("help/terms-and-conditions");
 });
+listsRouter.use(ingestRouter);

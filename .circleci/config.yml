@@ -28,7 +28,7 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
 
-      - run: npm ci
+      - run: npm i
 
       - run:
           name: Prisma generate

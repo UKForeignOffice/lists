@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { LawyerListItem } from "server/models/listItem/providers";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -25,7 +26,7 @@ export async function searchLawyers(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region, print = "no"} = params;
+  const { serviceType, country, region, print = "no" } = params;
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
   let practiceArea = parseListValues("practiceArea", params);
@@ -35,7 +36,7 @@ export async function searchLawyers(
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
-  const allRows = await listItem.findPublishedLawyersPerCountry({
+  const allRows = await LawyerListItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
     practiceArea,
@@ -49,16 +50,18 @@ export async function searchLawyers(
     listRequestParams: params,
   });
 
-  const offset = listItem.ROWS_PER_PAGE * pagination.results.currentPage - listItem.ROWS_PER_PAGE;
+  const offset =
+    listItem.ROWS_PER_PAGE * pagination.results.currentPage -
+    listItem.ROWS_PER_PAGE;
 
-  const searchResults = await listItem.findPublishedLawyersPerCountry({
+  const searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
     countryName: country,
     region,
     practiceArea,
     offset,
   });
 
-  const results = (print === "yes") ? allRows : searchResults;
+  const results = print === "yes" ? allRows : searchResults;
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
@@ -74,5 +77,4 @@ export async function searchLawyers(
     print,
     csrfToken: getCSRFToken(req),
   });
-
 }

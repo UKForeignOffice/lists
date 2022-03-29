@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { listItem } from "server/models";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
   getServiceLabel,
@@ -10,6 +9,7 @@ import {
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { CovidTestSupplierListItem } from "server/models/listItem/providers";
 
 export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
@@ -26,13 +26,12 @@ export async function searchCovidTestProvider(
   const params = getAllRequestParams(req);
   const { serviceType, country, region, resultsTurnaround } = params;
 
-  const searchResults = await listItem.findPublishedCovidTestSupplierPerCountry(
-    {
+  const searchResults =
+    await CovidTestSupplierListItem.findPublishedCovidTestSupplierPerCountry({
       countryName: `${country}`,
       region: `${region}`,
       turnaroundTime: Number(resultsTurnaround),
-    }
-  );
+    });
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

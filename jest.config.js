@@ -1,3 +1,5 @@
+const jestHelpers = require("./jest.config.globals");
+
 module.exports = {
   roots: ["src"],
   // Automatically clear mock calls and instances between every test
@@ -11,7 +13,7 @@ module.exports = {
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: ["json", "text"],
   // The test environment that will be used for testing
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   // setupFiles
   setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
   setupFilesAfterEnv: [
@@ -20,4 +22,5 @@ module.exports = {
   ],
   modulePathIgnorePatterns: ["<rootDir>/src/form-runner/form-runner-app"],
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
+  globals: jestHelpers,
 };

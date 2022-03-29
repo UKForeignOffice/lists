@@ -1,0 +1,1 @@
+export { ingestPostController } from "./ingestPostController";

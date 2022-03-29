@@ -1,15 +1,19 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
-import { listItem } from "server/models";
+import * as helpers from "server/models/listItem/providers/helpers";
 
-describe.only("Covid Test Providers List:", () => {
+describe("Covid Test Providers List:", () => {
   let server: Express;
 
   function mockListItemSome(resolvedValue = true): jest.SpyInstance {
-    return jest.spyOn(listItem, "some").mockResolvedValue(resolvedValue);
+    return jest.spyOn(helpers, "some")?.mockResolvedValue(resolvedValue);
   }
 
   beforeAll(async () => {
@@ -235,11 +239,13 @@ describe.only("Covid Test Providers List:", () => {
       );
 
       // turnaround
-      expect(answers.eq(3).text().replace(/\s\s+/g, " ")).toEqual(`
+      expect(answers.eq(3).text().replace(/\s\s+/g, " ")).toEqual(
+        `
         Results speed
         12 hours
         Change
-      `.replace(/\s\s+/g, " "));
+      `.replace(/\s\s+/g, " ")
+      );
       expect(answers.eq(3).find("a").attr("href")).toEqual(
         "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
       );

@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { get } from "lodash";
-import { listsRoutes } from "./routes";
+import { listsRoutes } from "./../routes";
 import { listItem } from "server/models";
-import { DEFAULT_VIEW_PROPS } from "./constants";
+import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "server/models/types";
 import {
   getServiceLabel,
@@ -11,27 +10,19 @@ import {
   getParameterValue,
   queryStringFromParams,
   preProcessParams,
-  createConfirmationLink,
   getCountryLawyerRedirectLink,
-} from "./helpers";
-import { questions } from "./questionnaire";
+} from "./../helpers";
+import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionError, QuestionName } from "./types";
+import { QuestionError, QuestionName } from "./../types";
 import { legalPracticeAreasList } from "server/services/metadata";
-import { searchLawyers, lawyersQuestionsSequence } from "./searches/lawyers";
+import { searchLawyers, lawyersQuestionsSequence } from "./../searches/lawyers";
 import {
   searchCovidTestProvider,
   covidTestProviderQuestionsSequence,
-} from "./searches/covid-test-provider";
-import {
-  LawyersFormWebhookData,
-  formRunnerPostRequestSchema,
-  parseFormRunnerWebhookObject,
-  CovidTestSupplierFormWebhookData,
-} from "server/components/formRunner";
-import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
-import serviceName from "server/utils/service-name";
+} from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { some } from "server/models/listItem/providers/helpers";
 
 export async function listsPostController(
   req: Request,
@@ -48,7 +39,7 @@ export async function listsPostController(
 
   if (country !== undefined && country !== "" && serviceType !== undefined) {
     try {
-      const hasItems = await listItem.some(country, serviceType);
+      const hasItems = await some(country, serviceType);
       let redirectLink: string | undefined;
 
       if (!hasItems) {
@@ -166,69 +157,6 @@ export function listsResultsController(
       break;
     default:
       next();
-  }
-}
-
-export async function listsDataIngestionController(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const serviceType = req.params.serviceType as ServiceType;
-  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
-
-  if (!(serviceType in ServiceType)) {
-    res.status(500).send({
-      error:
-        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
-    });
-    return;
-  }
-
-  if (error !== undefined) {
-    res.status(422).send({ error: error.message });
-    return;
-  }
-
-  const data = parseFormRunnerWebhookObject<
-    LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-  >(value);
-
-  try {
-    const item = await listItem.createListItem(serviceType, data);
-    const { address, reference, type } = item;
-    const typeName = serviceName(type);
-
-    if (typeName !== undefined) {
-      const { country } = address;
-      const contactName = get(item.jsonData, "contactName");
-      const email =
-        get(item.jsonData, "contactEmailAddress") ??
-        get(item.jsonData, "publicEmailAddress") ??
-        get(item.jsonData, "email") ??
-        get(item.jsonData, "emailAddress");
-
-      if (email === null) {
-        throw new Error("No email address supplied");
-      }
-
-      const confirmationLink = createConfirmationLink(req, reference);
-
-      await sendApplicationConfirmationEmail(
-        contactName,
-        email,
-        typeName,
-        country.name,
-        confirmationLink
-      );
-    }
-
-    res.json({});
-  } catch (e) {
-    logger.error(`listsDataIngestionController Error: ${e.message}`);
-
-    res.status(422).send({
-      error: "Unable to process form",
-    });
   }
 }
 
