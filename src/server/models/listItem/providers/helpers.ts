@@ -7,7 +7,7 @@ import {
 } from "server/models/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
-import { ROWS_PER_PAGE } from "server/models/listItem";
+import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";

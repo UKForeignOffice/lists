@@ -18,10 +18,9 @@ import {
   deleteListItem,
   findListItemById,
   findListItemsForList,
-  getListItemContactInformation,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
-} from "server/models/listItem";
+} from "server/models/listItem/listItem";
 import { findFeedbackByType } from "server/models/feedback";
 import {
   CountryName,
@@ -48,6 +47,7 @@ import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getNewSessionWebhookData, generateFormRunnerWebhookData } from "server/components/formRunner/helpers";
+import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -626,24 +626,28 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
         message: `Could not find list ${listId}`,
       },
     });
+
   } else if (listItem === undefined) {
     res.status(404).send({
       error: {
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (list.type !== listItem.type) {
+
+  } else if (list?.type !== listItem?.type) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which is a different service type to list ${listId}`,
       },
     });
-  } else if (list.id !== listItem.listId) {
+
+  } else if (list?.id !== listItem?.listId) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
       },
     });
+
   } else if (!userIsListPublisher(req, list)) {
     res.status(403).send({
       error: {

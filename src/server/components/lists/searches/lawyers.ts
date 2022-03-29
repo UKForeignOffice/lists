@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { listItem } from "server/models";
+import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
   getServiceLabel,
@@ -44,15 +44,15 @@ export async function searchLawyers(
   });
   const count = allRows.length;
 
-  const { pagination } = await listItem.getPaginationValues({
+  const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
     listRequestParams: params,
   });
 
   const offset =
-    listItem.ROWS_PER_PAGE * pagination.results.currentPage -
-    listItem.ROWS_PER_PAGE;
+    ROWS_PER_PAGE * pagination.results.currentPage -
+    ROWS_PER_PAGE;
 
   const searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
     countryName: country,
@@ -71,7 +71,7 @@ export async function searchLawyers(
     getParameterValue,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
-    limit: listItem.ROWS_PER_PAGE,
+    limit: ROWS_PER_PAGE,
     offset,
     pagination,
     print,

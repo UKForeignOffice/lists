@@ -6,7 +6,7 @@ import {
   LawyersFormWebhookData,
   parseFormRunnerWebhookObject,
 } from "server/components/formRunner";
-import { listItem } from "server/models";
+import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";
 import { get } from "lodash";
 import { createConfirmationLink } from "server/components/lists/helpers";
@@ -38,7 +38,7 @@ export async function ingestPostController(
   >(value);
 
   try {
-    const item = await listItem.createListItem(serviceType, data);
+    const item = await createListItem(serviceType, data);
     const { address, reference, type } = item;
     const typeName = serviceName(type);
 

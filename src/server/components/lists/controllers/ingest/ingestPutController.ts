@@ -5,7 +5,7 @@ import {
   LawyersFormWebhookData,
   parseFormRunnerWebhookObject,
 } from "server/components/formRunner";
-import { listItem } from "server/models";
+import { update } from "server/models/listItem/listItem";
 import { logger } from "server/services/logger";
 
 export async function ingestPutController(
@@ -29,7 +29,7 @@ export async function ingestPutController(
   >(value);
 
   try {
-    await listItem.update(Number(id), data);
+    await update(Number(id), data);
     res.status(204).send();
     return;
   } catch (e) {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { listsRoutes } from "./../routes";
-import { listItem } from "server/models";
+import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "server/models/types";
 import {
@@ -168,7 +168,7 @@ export async function listsConfirmApplicationController(
   const { reference } = req.params;
 
   try {
-    const { type } = await listItem.setEmailIsVerified({
+    const { type } = await setEmailIsVerified({
       reference,
     });
 
