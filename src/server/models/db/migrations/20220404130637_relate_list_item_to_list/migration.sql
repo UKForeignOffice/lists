@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "ListItem" ALTER COLUMN "listId" DROP DEFAULT;
+
+DELETE FROM "ListItem" WHERE "listId" = -1;
+
+-- AddForeignKey
+ALTER TABLE "ListItem" ADD FOREIGN KEY ("listId") REFERENCES "List"("id") ON DELETE CASCADE ON UPDATE CASCADE;

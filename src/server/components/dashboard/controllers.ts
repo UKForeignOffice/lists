@@ -18,6 +18,7 @@ import {
   deleteListItem,
   findListItemById,
   findListItemsForList,
+ findIndexListItems,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
 } from "server/models/listItem/listItem";
@@ -353,21 +354,19 @@ export async function listsItemsController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const list = await findListById(listId);
+    const { page } = req.query;
+    const list = await findIndexListItems(Number(listId), {
+      page: Number(page ?? 1),
+    });
 
     if (list === undefined) {
       return next();
     }
 
-    const listItems = await findListItemsForList(list);
-
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
-      listItems,
-      canApprove: userIsListValidator(req, list),
-      canPublish: userIsListPublisher(req, list),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {

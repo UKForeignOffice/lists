@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
-  previewFeatures = ["filterJson"]
+  previewFeatures = ["filterJson", "selectRelationCount"]
 }
 
 datasource db {
@@ -17,9 +17,11 @@ model List {
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
-  countryId   Int
+  countryId           Int
 
   jsonData            Json
+
+  items               ListItem[]
 
   @@index([type, countryId])
 }
@@ -40,7 +42,8 @@ model ListItem {
   isPublished         Boolean @default(false)
   isBlocked           Boolean @default(false)
 
-  listId              Int @default(-1)
+  list                List @relation(fields: [listId], references: [id])
+  listId              Int
 
   @@index([type, reference, isApproved, isPublished, isBlocked])
 }

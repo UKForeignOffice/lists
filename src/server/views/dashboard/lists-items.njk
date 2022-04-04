@@ -1,6 +1,7 @@
 {% extends "./dashboard.njk" %}
 {% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+{% import "./macros.njk" as dashboardMacros %}
 
 
 {% block dashboard %}
@@ -19,24 +20,17 @@
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-  {% if listItems.length === 0 %}
+  {% if list.items.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <ul class="govuk-list dashboard__content-list">
-      {% for listItem in listItems %}
-        <li id="item-{{ listItem.id }}">
-          {% if list.type === 'covidTestProviders' %}
-            {{ covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
-            {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish, listItem.jsonData.organisationName) }}
-          {% endif %}
-          {% if list.type === 'lawyers' %}
-            {{ lawyersMacros.lawyersListManagementItem(listItem) }}
-            {{ dashboardMacros.listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish, listItem.jsonData.contactName) }}
-          {% endif %}
-          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        </li>
+      {% for listItem in list.items %}
+        {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>
+    {{ pagination }}
+    {{ dashboardMacros.paginationSection(list.pagination) }}
   {% endif %}
+
 {% endblock %}

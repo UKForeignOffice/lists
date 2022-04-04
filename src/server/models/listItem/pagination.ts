@@ -10,32 +10,43 @@ export const ROWS_PER_PAGE: number = 10;
 export async function getPaginationValues(props: {
   count: number;
   page: number;
-  listRequestParams: ListsRequestParams;
+  rows?: number;
+  route?: string;
+  listRequestParams?: ListsRequestParams;
 }): Promise<PaginationResults> {
-  const { count, page, listRequestParams } = props;
+  const {
+    count,
+    page,
+    listRequestParams,
+    rows = ROWS_PER_PAGE,
+    route = listsRoutes.results,
+  } = props;
   let pageCount = 0;
-  if (count > 0 && ROWS_PER_PAGE > 0) {
-    pageCount = Math.ceil(count / ROWS_PER_PAGE);
+  if (count > 0 && rows > 0) {
+    pageCount = Math.ceil(count / rows);
   }
 
   const nextPrevious = getNextPrevious({
     page,
     pageCount,
+    route,
     listRequestParams,
   });
   const { queryString, currentPage } = nextPrevious;
 
   const pageItems: PaginationItem[] = getPageItems({
     pageCount,
+    route,
     currentPage,
     queryString,
   });
 
-  const from = getFromCount({ count, currentPage });
+  const from = getFromCount({ count, currentPage, rows });
   const to = getToCount({
     currentPage,
     pageCount,
     count,
+    rows,
   });
 
   return {
@@ -62,13 +73,15 @@ export async function getPaginationValues(props: {
 interface getPaginationParams {
   pageCount: number;
   page: number;
-  listRequestParams: ListsRequestParams;
+  route: string;
+  listRequestParams?: ListsRequestParams;
 }
 
 export function getNextPrevious({
   page = 1,
   pageCount,
-  listRequestParams,
+  route,
+  listRequestParams = {},
 }: getPaginationParams): {
   queryString: string;
   currentPage: number;
@@ -96,11 +109,11 @@ export function getNextPrevious({
 
   if (currentPage > 1) {
     previousPage = currentPage - 1;
-    queryStringPrevious = `${listsRoutes.results}?${queryString}&page=${previousPage}`;
+    queryStringPrevious = `${route}?${queryString}&page=${previousPage}`;
   }
   if (currentPage < pageCount) {
     nextPage = currentPage + 1;
-    queryStringNext = `${listsRoutes.results}?${queryString}&page=${nextPage}`;
+    queryStringNext = `${route}?${queryString}&page=${nextPage}`;
   }
   return {
     queryString,
@@ -119,16 +132,17 @@ export function getNextPrevious({
 function getPageItems(props: {
   pageCount: number;
   currentPage: number;
+  route: string;
   queryString: string;
 }): PaginationItem[] {
-  const { pageCount, currentPage, queryString } = props;
+  const { pageCount, currentPage, queryString, route } = props;
   const pageItems: PaginationItem[] = [];
 
   for (let i = 1; i <= pageCount; i++) {
     let href = "";
     if (i >= currentPage - 2 && i <= currentPage + 2) {
       if (i !== currentPage) {
-        href = `${listsRoutes.results}?${queryString}&page=${i}`;
+        href = `${route}?${queryString}&page=${i}`;
       }
       pageItems.push({
         text: i.toString(),
@@ -139,16 +153,20 @@ function getPageItems(props: {
   return pageItems;
 }
 
-function getFromCount(props: { count: number; currentPage: number }): number {
-  const { count, currentPage } = props;
+function getFromCount(props: {
+  count: number;
+  currentPage: number;
+  rows: number;
+}): number {
+  const { count, currentPage, rows = ROWS_PER_PAGE } = props;
   let from;
 
   if (count === 0) {
     from = 0;
-  } else if (count < ROWS_PER_PAGE) {
+  } else if (count < rows) {
     from = count - (count - 1);
   } else {
-    from = ROWS_PER_PAGE * currentPage - (ROWS_PER_PAGE - 1);
+    from = rows * currentPage - (rows - 1);
   }
   return from;
 }
@@ -157,13 +175,14 @@ function getToCount(props: {
   currentPage: number;
   pageCount: number;
   count: number;
+  rows: number;
 }): number {
-  const { currentPage, pageCount, count } = props;
+  const { currentPage, pageCount, count, rows = ROWS_PER_PAGE } = props;
   let to;
   if (currentPage === pageCount) {
     to = count;
   } else {
-    to = ROWS_PER_PAGE * currentPage;
+    to = rows * currentPage;
   }
   return to;
 }

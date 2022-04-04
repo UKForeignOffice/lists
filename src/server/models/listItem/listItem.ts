@@ -10,19 +10,110 @@ import {
 import {
   List,
   User,
-  ListItem,
   ServiceType,
   ListItemGetObject,
   Point,
+  LawyerListItemJsonData,
 } from "./../types";
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma } from "@prisma/client";
+import { Prisma, ListItem } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { rawUpdateGeoLocation } from "server/models/helpers";
+import { format } from "date-fns";
+import { PaginationResults } from "server/components/lists";
+import { getPaginationValues } from "server/models/listItem/pagination";
+
+type IndexListItem = Pick<
+  LawyerListItemJsonData,
+  | "organisationName"
+  | "contactName"
+  | "publishers"
+  | "validators"
+  | "administrators"
+> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+function listItemsWithIndexDetails(item: ListItem): IndexListItem {
+  const { jsonData, createdAt, updatedAt } = item;
+  const {
+    organisationName,
+    contactName,
+    publishers,
+    validators,
+    administrators,
+  } = jsonData as LawyerListItemJsonData;
+  return {
+    createdAt: format(createdAt, "dd MMMM yyyy"),
+    updatedAt: format(updatedAt, "dd MMMM yyyy"),
+    organisationName,
+    contactName,
+    publishers,
+    validators,
+    administrators,
+  };
+}
+type indexOptions = {
+  page?: number;
+};
+
+const ITEMS_PER_PAGE = 20;
+export async function findIndexListItems(
+  listId: List["id"],
+  options: indexOptions
+): Promise<
+  {
+    type: List["type"];
+    country: List["country"];
+    items: IndexListItem[];
+  } & PaginationResults
+> {
+  const currentPage = options?.page ?? 1;
+  const skipIndex = currentPage ? currentPage - 1 : currentPage;
+
+  const result = await prisma.list.findUnique({
+    where: {
+      id: listId,
+    },
+    select: {
+      type: true,
+      country: true,
+      items: {
+        skip: skipIndex * ITEMS_PER_PAGE,
+        take: ITEMS_PER_PAGE,
+      },
+      _count: {
+        select: {
+          items: true,
+        },
+      },
+    },
+  });
+
+  if (!result) {
+    logger.error(`Failed to find ${listId}`);
+    throw new Error(`Failed to find ${listId}`);
+  }
+  const { type, country, items, _count = { items: 0 } } = result;
+  const pagination = await getPaginationValues({
+    count: _count!.items,
+    rows: 20,
+    route: "",
+    page: currentPage,
+    listRequestParams: {},
+  });
+  return {
+    type,
+    country,
+    items: items.map(listItemsWithIndexDetails),
+    ...pagination,
+  };
+}
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {

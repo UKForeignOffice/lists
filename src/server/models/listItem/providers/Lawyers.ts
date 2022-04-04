@@ -48,7 +48,11 @@ export async function createObject(
       type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
-      listId,
+      list: {
+        connect: {
+          id: listId,
+        },
+      },
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
