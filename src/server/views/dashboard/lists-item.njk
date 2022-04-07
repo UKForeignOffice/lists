@@ -1,0 +1,40 @@
+{% extends "./dashboard.njk" %}
+{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
+{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+
+{% block sideNav %}
+  <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
+{% endblock %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">
+    Review {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
+    <strong class="govuk-tag">
+      STATUS
+    </strong>
+  </h1>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+  {% if not listItem %}
+    <p class="govuk-body">Details could not be found</p>
+  {% else %}
+    <form class="form" action="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+      <ul class="govuk-list dashboard__content-list">
+          <li id="item-{{ listItem.id }}">
+            {% if list.type === 'covidTestProviders' %}
+              {{ covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
+              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName) }}
+            {% endif %}
+            {% if list.type === 'lawyers' %}
+              {{ lawyersMacros.lawyersListManagementItem(listItem) }}
+              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName) }}
+            {% endif %}
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          </li>
+      </ul>
+    </form>
+  {% endif %}
+{% endblock %}

@@ -161,9 +161,9 @@
   <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-8">
     <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">Submitted: {{ item.createdAt | date }}</p>
 
-    <h2 class="govuk-heading-l">
-        {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
-      </h2>
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-4">
+      {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
+    </h2>
   </div>
 
   {{ govukSummaryList({

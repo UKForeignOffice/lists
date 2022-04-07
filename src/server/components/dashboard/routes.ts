@@ -15,5 +15,7 @@ export const dashboardRoutes = {
   listsItemsApprove: "/dashboard/lists/:listId/items/:listItemId/approve",
   listsItemsDelete: "/dashboard/lists/:listId/items/:listItemId",
   listsItemsPublish: "/dashboard/lists/:listId/items/:listItemId/publish",
-  listsItemsEdit: "/dashboard/lists/:listId/items/:listItemId/edit",
+  listsItem: "/dashboard/lists/:listId/items/:listItemId",
+  listsItemConfirm: "/dashboard/lists/:listId/items/:listItemId/confirm",
+  listsTest: "/dashboard/test",
 };

@@ -28,7 +28,7 @@ import {
   LawyerListItemJsonData,
   List,
   ListItemGetObject,
-  ServiceType,
+  ServiceType, User,
   UserRoles
 } from "server/models/types";
 import {
@@ -486,8 +486,7 @@ export async function listItemsPublishController(
 
     if (updatedListItem.isPublished) {
       const searchLink = createListSearchBaseLink(updatedListItem.type);
-      const { contactName, contactEmailAddress } =
-        getListItemContactInformation(updatedListItem);
+      const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
       const typeName = serviceName(updatedListItem.type);
 
       await sendDataPublishedEmail(
@@ -501,6 +500,33 @@ export async function listItemsPublishController(
 
     res.json({ status: "OK", isPublished: updatedListItem.isPublished });
   }
+}
+
+export async function handlePublishListItem(
+  listItemId: number,
+  isPublished: boolean,
+  userId: User["id"]
+): Promise<void> {
+    const updatedListItem = await togglerListItemIsPublished({
+      id: listItemId,
+      isPublished,
+      userId,
+    });
+
+    if (updatedListItem.isPublished) {
+      const searchLink = createListSearchBaseLink(updatedListItem.type);
+      const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
+      const typeName = serviceName(updatedListItem.type);
+
+      await sendDataPublishedEmail(
+        contactName,
+        contactEmailAddress,
+        typeName,
+        updatedListItem.address.country.name,
+        searchLink
+      );
+    }
+
 }
 
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
@@ -554,7 +580,25 @@ export async function listItemsDeleteController(
   }
 }
 
-export async function listItemsEditGetController(
+export async function handleDeleteListItem(
+  id: number,
+  userId: User["id"]
+): Promise<void> {
+  await deleteListItem(id, userId);
+}
+
+export async function listTestController(
+  req: Request,
+  res: Response
+): Promise<void> {
+
+  res.render("dashboard/test", {
+    ...DEFAULT_VIEW_PROPS,
+    req,
+  });
+}
+
+export async function listItemGetController(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -563,27 +607,16 @@ export async function listItemsEditGetController(
   const list = await findListById(listId);
   const listItem = await findListItemById(listItemId);
 
-    res.render("dashboard/lists-item-edit", {
+    res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
       listItem,
-      csrfToken: getCSRFToken(req),
+      csrfToken: getCSRFToken(req)
     });
   }
 
-export async function listItemsEditPostController(
-  req: Request,
-  res: Response,
-): Promise<void> {
-  const { listId, listItemId, underTest } = req.params;
-  const { message } = req.body;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson:LawyerListItemJsonData = listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
-  const isUnderTest = underTest === "true";
+async function handleEditListItem(list: List, listItem: LawyerListItemGetObject, isUnderTest: boolean, message: string): Promise<void> {
   const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, isUnderTest, message);
 
   // Email applicant
@@ -596,8 +629,132 @@ export async function listItemsEditPostController(
     message,
     formRunnerEditUserUrl,
   );
+}
 
-  res.json({ status: "OK" });
+export async function listItemPostController(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { listId, listItemId } = req.params;
+  const { message, action } = req.body;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const list = await findListById(listId) ?? {} as List;
+  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
+  const listJson:LawyerListItemJsonData = listItem.jsonData;
+  listJson.country = list?.country?.name ?? "";
+  const confirmationPages: {[key: string]: string} = {
+    publish: "dashboard/list-item-confirm-publish",
+    unpublish: "dashboard/list-item-confirm-unpublish",
+    requestChanges: "dashboard/list-item-confirm-changes",
+    update: "dashboard/list-item-confirm-update",
+    pin: "dashboard/list-item-confirm-pin",
+    unpin: "dashboard/list-item-confirm-pin",
+    remove: "dashboard/list-item-confirm-remove",
+  };
+
+  const confirmationPage = confirmationPages[action];
+
+  if (action === "requestChanges") {
+    req.session.changeMessage = message;
+  }
+
+  res.render(confirmationPage, {
+    ...DEFAULT_VIEW_PROPS,
+    list,
+    listItem,
+    message,
+    req,
+    csrfToken: getCSRFToken(req),
+  });
+}
+
+export async function listItemPostConfirmationController(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { listId, listItemId, underTest } = req.params;
+  const listItemIdNumber = Number(listItemId);
+  const { action } = req.body;
+  const userId = req?.user?.userData?.id;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const list = await findListById(listId) ?? {} as List;
+  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
+  const listJson:LawyerListItemJsonData = listItem.jsonData;
+  listJson.country = list?.country?.name ?? "";
+  const isUnderTest = underTest === "true";
+
+  if (userId === undefined) {
+    res.status(401).send({
+      error: {
+        message: `Unable to perform action - user could not be identified`,
+      },
+    });
+    return;
+  }
+  let resultMessage: string;
+  let resultAction: string;
+
+  try {
+    switch (action) {
+      case "publish":
+      case "unpublish":
+        await handlePublishListItem(listItemIdNumber, listItem.isPublished, userId);
+        resultAction = `${action}ed`;
+        resultMessage = `${listItem.jsonData.organisationName} has been ${resultAction}`;
+        break;
+      case "requestChanges": {
+        const changeMessage: string = req.session?.changeMessage ?? "";
+        await handleEditListItem(list, listItem, isUnderTest, changeMessage);
+        resultAction = `Requested`;
+        resultMessage = `Change request sent to ${listItem.jsonData.organisationName} ${changeMessage}`;
+        break;
+      }
+      case "update":
+        resultAction = `Updated and published`;
+        resultMessage = `${listItem.jsonData.organisationName} has been updated and published`;
+        break;
+      case "remove":
+        // await handleDeleteListItem(listItemIdNumber, userId);
+        resultAction = `Removed`;
+        resultMessage = `${listItem.jsonData.organisationName} has been removed`;
+        break;
+      case "pin":
+        resultAction = `Pinned`;
+        resultMessage = `${listItem.jsonData.organisationName} has been pinned`;
+        break;
+      default:
+        resultAction = `Invalid action`;
+        resultMessage = `${listItem.jsonData.organisationName} could not be updated - invalid action detected`;
+        break;
+    }
+
+    const listItems = await findListItemsForList(list);
+
+    res.render("dashboard/lists-items", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItems,
+      resultAction,
+      resultMessage,
+      canApprove: userIsListValidator(req, list),
+      canPublish: userIsListPublisher(req, list),
+      csrfToken: getCSRFToken(req),
+    });
+
+  } catch (error) {
+    resultMessage = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
+    res.render("dashboard/lists-item", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItem,
+      resultMessage,
+      csrfToken: getCSRFToken(req)
+    });
+  }
 }
 
 async function initialiseFormRunnerSession(list: List, listItem: ListItemGetObject, isUnderTest: boolean, message: string): Promise<string> {
@@ -611,7 +768,7 @@ async function initialiseFormRunnerSession(list: List, listItem: ListItemGetObje
 
 export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { listId, listItemId } = req.params;
-  const userId = req.user?.userData.id;
+  const userId = req.user?.userData?.id;
 
   const list = await findListById(listId);
   const listItem = await findListItemById(listItemId);

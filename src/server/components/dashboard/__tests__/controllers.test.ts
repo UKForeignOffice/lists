@@ -12,7 +12,7 @@ import {
   listsItemsController,
   listsEditController,
   listItemsDeleteController,
-  listItemsEditGetController,
+  listItemGetController,
   listItemEditRequestValidation
 } from "../controllers";
 import * as dashboardControllers from "server/components/dashboard/controllers";
@@ -873,7 +873,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
 
-      await listItemsEditGetController(mockReq, mockRes);
+      await listItemGetController(mockReq, mockRes);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-item-edit");
       expect(mockRes.render.mock.calls[0][1].listItem).toBe(listItem);
@@ -962,10 +962,9 @@ describe("Dashboard Controllers", () => {
         .mockResolvedValue("string");
 
       const spySendEditDetailsEmail = jest
-        .spyOn(govukNotify, "sendEditDetailsEmail")
-        .mockResolvedValue(true)
+        .spyOn(govukNotify, "sendEditDetailsEmail");
 
-      await dashboardControllers.listItemsEditPostController(mockReq, mockRes);
+      await dashboardControllers.listItemPostConfirmationController(mockReq, mockRes);
 
       expect(spyGetInitiateFormRunnerSessionToken).toHaveBeenCalledTimes(1);
       expect(spySendEditDetailsEmail).toHaveBeenCalledTimes(1);

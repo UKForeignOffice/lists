@@ -1,0 +1,40 @@
+{% from "button/macro.njk" import govukButton %}
+{% extends "./dashboard.njk" %}
+
+{% block sideNav %}
+{% endblock %}
+
+{% block dashboard %}
+
+  <form class="form" action="{{ dashboardRoutes.listsItemConfirm.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+    <input type="hidden" name="action" value="publish"/>
+
+    <h1 class="govuk-heading-l">
+      Publish this service provider
+    </h1>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">You are about to publish this application to the live list</h2>
+
+    <p class="govuk-body">You can still unpublish this application after it is live and ask the service provider to make changes.</p>
+
+    <div class="govuk-button-group">
+
+      {{ govukButton({
+        text: "Publish",
+        classes: "govuk-button--ok govuk-!-margin-bottom-2",
+        attributes: {
+          id: ["action-button-", listItem.id] | join,
+          "data-title": _.startCase(titleProperty),
+          "data-id": listItem.id
+        }
+      }) }}
+
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}">Cancel</a>
+    </div>
+
+  </form>
+
+{% endblock %}

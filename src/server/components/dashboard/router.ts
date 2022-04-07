@@ -15,9 +15,8 @@ import {
   listItemsApproveController,
   listItemsPublishController,
   listItemsDeleteController,
-  listItemsEditGetController,
-  listItemsEditPostController,
-  listItemEditRequestValidation
+  listItemGetController,
+  listItemEditRequestValidation, listTestController, listItemPostController, listItemPostConfirmationController
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -61,8 +60,10 @@ dashboardRouter.delete(
   dashboardRoutes.listsItemsDelete,
   listItemsDeleteController
 );
-dashboardRouter.get(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemEditRequestValidation, listItemsEditGetController);
-dashboardRouter.post(dashboardRoutes.listsItemsEdit, csrfRequestHandler, listItemEditRequestValidation, listItemsEditPostController);
+dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemGetController);
+dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemPostController);
+dashboardRouter.post(dashboardRoutes.listsItemConfirm, csrfRequestHandler, listItemEditRequestValidation, listItemPostConfirmationController);
+dashboardRouter.get(dashboardRoutes.listsTest, listTestController);
 
 // feedback
 dashboardRouter.get(

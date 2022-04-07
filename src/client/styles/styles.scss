@@ -138,6 +138,14 @@ main.govuk-main-wrapper {
   }
 }
 
+.vertical-align {
+  vertical-align: top;
+}
+
+.confirmation-focus-box {
+  background-color: govuk-colour("light-grey");
+}
+
 @media print {
   .govuk-header {
     display: none;
