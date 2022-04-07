@@ -23,38 +23,36 @@ export function getLoginController(
     return next();
   }
 
-  res.render("login", {
+  postLoginController(req, res, next);
+
+  /*res.render("login", {
     invalidToken: invalidToken === "true",
-  });
+  });*/
 }
 
-export function postLoginController(
+export async function postLoginController(
   req: Request,
   res: Response,
   next: NextFunction
-): void {
-  const emailAddress = req.body.emailAddress?.trim();
-
+): Promise<void> {
+  // const emailAddress = req.body.emailAddress?.trim();
+  const emailAddress = "jen@cautionyourblast.com";
   if (isGovUKEmailAddress(emailAddress)) {
-    createAuthenticationPath({ email: emailAddress })
-      .then((authPath) => {
-        const protocol = isLocalHost ? "http" : "https";
-        return `${protocol}://${SERVICE_DOMAIN}${authPath}`;
-      })
-      .then(async (authLink) => {
-        if (isLocalHost) {
-          logger.warn(authLink);
-        }
-        return await sendAuthenticationEmail(emailAddress, authLink);
-      })
-      .then(() => {
-        res.render("login", {
-          success: true,
-        });
-      })
-      .catch(next);
+    const authenticationPath = await createAuthenticationPath({
+      email: emailAddress,
+    });
+    const protocol = isLocalHost ? "http" : "https";
+    const authenticationLink = `${protocol}://${SERVICE_DOMAIN}${authenticationPath}`;
+    if (isLocalHost) {
+      logger.warn(authenticationLink);
+      return res.redirect(authenticationLink);
+    }
+
+    return res.render("login", {
+      success: true,
+    });
   } else {
-    res.render("login", {
+    return res.render("login", {
       error: true,
     });
   }

@@ -159,3 +159,27 @@ main.govuk-main-wrapper {
     display: none;
   }
 }
+
+.dashboard {
+  &__list-item {
+    position: relative;
+    border-bottom: 1px solid govuk-colour("dark-grey");
+    padding: govuk-spacing(3) 0;
+  }
+  &__list-item-body {
+    position: relative;
+  }
+  &__list-item-tag {
+    position: absolute;
+    top: govuk-spacing(3);
+    right: 0;
+  }
+  &__list-item-dates {
+    @include govuk-media-query(700px) {
+      position: absolute;
+    }
+    top: 0;
+    right: 0;
+  }
+
+}

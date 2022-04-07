@@ -1,0 +1,34 @@
+<li class="dashboard__list-item govuk-grid-row" id="item-{{ listItem.id }}">
+  <span class="govuk-caption-m">
+    <span class="govuk-visually-hidden">Organisation name:</span>
+    {{ listItem.organisationName }}
+  </span>
+  <h2 class="govuk-heading-m">
+    {{ listItem.contactName }}
+  </h2>
+
+  {% for tag in listItem.tags %}
+    <strong class="govuk-tag dashboard__list-item-tag">
+      {{ tag }}
+    </strong>
+  {% endfor %}
+
+
+  <div class="dashboard__list-item-body">
+    <p>
+      <span class="govuk-!-font-weight-bold">Status:</span>
+      {{ listItem.status }}
+    </p>
+    <div class="dashboard__list-item-dates">
+      <p class="govuk-body">
+        <span class="govuk-!-font-weight-bold">Created</span>
+        {{ listItem.createdAt }}
+      </p>
+      <p class="govuk-body">
+        <span class="govuk-!-font-weight-bold">Updated</span>
+        {{ listItem.updatedAt }}
+      </p>
+    </div>
+    <a class="govuk-button govuk-button--secondary" href="items/{{ listItem.id }}">Review</a>
+  </div>
+</li>

@@ -42,8 +42,16 @@ dashboardRouter.all(
 
 // lists
 dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
-dashboardRouter.all(dashboardRoutes.listsEdit, csrfRequestHandler, listsEditController);
-dashboardRouter.get(dashboardRoutes.listsItems, csrfRequestHandler, listsItemsController);
+dashboardRouter.all(
+  dashboardRoutes.listsEdit,
+  csrfRequestHandler,
+  listsEditController
+);
+dashboardRouter.get(
+  dashboardRoutes.listsItems,
+  csrfRequestHandler,
+  listsItemsController
+);
 
 // list items
 dashboardRouter.put(

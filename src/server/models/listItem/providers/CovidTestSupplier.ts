@@ -63,7 +63,11 @@ export async function createObject(
       type: ServiceType.covidTestProviders,
       isApproved: false,
       isPublished: false,
-      listId,
+      list: {
+        connect: {
+          id: listId,
+        },
+      },
       jsonData: {
         organisationName: formData.organisationDetails.organisationName
           .toLowerCase()

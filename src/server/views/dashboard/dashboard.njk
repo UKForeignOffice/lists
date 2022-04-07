@@ -7,18 +7,18 @@
   </div>
   <div class="govuk-width-container dashboard__container">
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-quarter vertical-align">
-        <nav class="govuk-!-padding-bottom-7">
+      <div class="govuk-grid-column-one-quarter">
+        {% block aside %}
+        <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
           <ul class="govuk-list">
-            {% block sideNav %}
-              {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
-              {% if req.user.isSuperAdmin() %}
-                {{ dashboardMacros.navMenu("Feedbacks", dashboardRoutes.feedback, req) }}
-                {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
-              {% endif %}
-            {% endblock %}
+            {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
+            {% if req.user.isSuperAdmin() %}
+              {{ dashboardMacros.navMenu("Feedbacks", dashboardRoutes.feedback, req) }}
+              {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
+            {% endif %}
           </ul>
         </nav>
+        {% endblock %}
       </div>
       <div class="govuk-grid-column-three-quarters">
         {% block dashboard %}
