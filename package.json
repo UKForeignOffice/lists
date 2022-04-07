@@ -142,7 +142,7 @@
     "supertest": "^6.1.6",
     "ts-standard": "^10.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
-    "typescript": "^4.3.5",
+    "typescript": "^4.6.3",
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
