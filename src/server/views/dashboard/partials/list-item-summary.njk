@@ -6,13 +6,18 @@
   <h2 class="govuk-heading-m">
     {{ listItem.contactName }}
   </h2>
-  <strong class="govuk-tag dashboard__list-item-tag">
-    to do
-  </strong>
+
+  {% for tag in listItem.tags %}
+    <strong class="govuk-tag dashboard__list-item-tag">
+      {{ tag }}
+    </strong>
+  {% endfor %}
+
+
   <div class="dashboard__list-item-body">
     <p>
       <span class="govuk-!-font-weight-bold">Status:</span>
-      New application
+      {{ listItem.status }}
     </p>
     <div class="dashboard__list-item-dates">
       <p class="govuk-body">
@@ -24,6 +29,6 @@
         {{ listItem.updatedAt }}
       </p>
     </div>
-    <button class="govuk-button govuk-button--secondary">Review</button>
+    <a class="govuk-button govuk-button--secondary" href="items/{{ listItem.id }}">Review</a>
   </div>
 </li>

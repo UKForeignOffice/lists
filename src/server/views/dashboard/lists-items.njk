@@ -3,6 +3,24 @@
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 
+{% block aside %}
+<aside>
+  <form action="">
+    <div id="checkboxes-a35ae7ee" class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Content type</legend>
+        <ul class="govuk-checkboxes">
+          <li class="govuk-checkboxes__item">
+            <input type="checkbox" name="content_purpose_supergroup[]" id="content_purpose_supergroup-services" value="services" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Content type" data-track-label="Services" data-controls="js-search-results-info" aria-controls="js-search-results-info">
+            <label for="content_purpose_supergroup-services" class="govuk-label govuk-checkboxes__label">Services</label>
+          </li>
+        </ul>
+      </fieldset>
+    </div>
+  </form>
+</aside>
+
+{% endblock %}
 
 {% block dashboard %}
   <h1 class="govuk-heading-l">

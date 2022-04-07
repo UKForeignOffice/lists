@@ -50,6 +50,8 @@ import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } f
 import { getNewSessionWebhookData, generateFormRunnerWebhookData } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 
+export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
+
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
@@ -340,33 +342,6 @@ export async function listsEditController(
       error,
       list,
       req,
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function listsItemsController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const { listId } = req.params;
-    const { page } = req.query;
-    const list = await findIndexListItems(Number(listId), {
-      page: Number(page ?? 1),
-    });
-
-    if (list === undefined) {
-      return next();
-    }
-
-    res.render("dashboard/lists-items", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {

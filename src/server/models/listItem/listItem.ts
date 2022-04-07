@@ -18,7 +18,7 @@ import {
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma, ListItem } from "@prisma/client";
+import { Prisma, ListItem, ListItemEvent } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -34,13 +34,14 @@ type IndexListItem = Pick<
   | "publishers"
   | "validators"
   | "administrators"
+  | "id"
 > & {
   createdAt: string;
   updatedAt: string;
 };
 
 function listItemsWithIndexDetails(item: ListItem): IndexListItem {
-  const { jsonData, createdAt, updatedAt } = item;
+  const { jsonData, createdAt, updatedAt, id } = item;
   const {
     organisationName,
     contactName,
@@ -56,11 +57,14 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     publishers,
     validators,
     administrators,
+    id,
   };
 }
-type indexOptions = {
+
+interface indexOptions {
   page?: number;
-};
+  tags?: ListItemEvent[];
+}
 
 const ITEMS_PER_PAGE = 20;
 export async function findIndexListItems(
@@ -99,14 +103,15 @@ export async function findIndexListItems(
     logger.error(`Failed to find ${listId}`);
     throw new Error(`Failed to find ${listId}`);
   }
-  const { type, country, items, _count = { items: 0 } } = result;
+  const { type, country, items, _count } = result;
   const pagination = await getPaginationValues({
-    count: _count!.items,
+    count: _count?.items ?? 0,
     rows: 20,
     route: "",
     page: currentPage,
     listRequestParams: {},
   });
+
   return {
     type,
     country,
