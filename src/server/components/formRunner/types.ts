@@ -1,3 +1,4 @@
+
 export interface FormRunnerWebhookData {
   questions: Array<{
     question: string;
@@ -17,8 +18,7 @@ export interface LawyersFormWebhookData {
   size: string;
   speakEnglish: boolean;
   regulators: string;
-  firstAndMiddleNames: string;
-  familyName: string;
+  contactName: string;
   organisationName: string;
   addressLine1: string;
   addressLine2?: string;
@@ -72,6 +72,44 @@ export interface CovidTestSupplierFormWebhookData {
   resultsReadyFormat: string;
   bookingOptions: string;
   declarationConfirm: string;
+}
+
+export interface FormRunnerPage {
+  title: string;
+  path: string;
+  controller: string;
+  components?: FormRunnerComponent[];
+  section: string; // the section ID
+  next?: Array<{ path: string; condition?: string }>;
+}
+
+export interface FormRunnerComponent {
+  name: string,
+  title: string,
+  options: {},
+  type: string,
+  content: string,
+  schema: {}
+}
+
+export interface FormRunnerField {
+  key: string,
+  answer: any,
+}
+
+export interface FormRunnerQuestion {
+  question: string,
+  fields: FormRunnerField[],
+}
+
+export interface FormRunnerNewSessionData {
+  questions: Array<Partial<FormRunnerQuestion>> | undefined;
+  options: {
+    message: string;
+    callbackUrl: string;
+    redirectPath: string;
+  };
+  name: string;
 }
 
 export type WebhookData =

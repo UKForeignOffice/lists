@@ -43,10 +43,6 @@ jobs:
           command: npm run lint
 
       - run:
-          name: Install Form Runner
-          command: npm run form-runner:install
-
-      - run:
           name: Run tests
           command: npm run test
 
@@ -82,6 +78,10 @@ jobs:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
+
+      - run:
+          name: Install Form Runner
+          command: npm run form-runner:install
 
       - run: npm ci
 
@@ -201,7 +201,7 @@ jobs:
         type: string
 
     machine:
-      image: ubuntu-1604:202004-01
+      image: ubuntu-2004:202201-02
 
     steps:
       - attach_workspace:
@@ -230,33 +230,70 @@ jobs:
           name: Install OpenVPN
           command: |
             sudo apt-get update
-            sudo apt-get install openvpn -y --force-yes
+            sudo apt-get install openvpn openvpn-systemd-resolved -y
 
       - run:
           name: Check IP before VPN connection
           command: |
-            ifconfig
-            route -n
-            sudo netstat -anp
-            cat /etc/resolv.conf
-            curl checkip.amazonaws.com
+            ip a
+            echo "Public IP before VPN connection is $(curl checkip.amazonaws.com)"
 
       - run:
           name: VPN Setup
           background: true
           command: |
-            phone_home=$(netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
+            echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
+
+            if grep -q auth-user-pass /tmp/config.ovpn; then
+              if [ -z "${VPN_USER:-}" ] || [ -z "${VPN_PASSWORD:-}" ]; then
+                echo "Your VPN client is configured with a user-locked profile. Make sure to set the VPN_USER and VPN_PASSWORD environment variables"
+                exit 1
+              else
+                printf "$VPN_USER\\n$VPN_PASSWORD" > /tmp/vpn.login
+              fi
+            fi
+
+            SYS_RES_DNS=$(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
+            echo $SYS_RES_DNS
+
+            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
             echo $phone_home
 
-            echo $VPN_CLIENT_CONFIG | base64 --decode > /tmp/config.ovpn
-            printf "$VPN_USER\n$VPN_PASSWORD" > /tmp/vpn.login
-            sudo openvpn --config /tmp/config.ovpn --auth-user-pass /tmp/vpn.login \
-            --route $phone_home 255.255.255.255 net_gateway \
-            --route 169.254.0.0 255.255.0.0 net_gateway
+            vpn_command=(sudo openvpn
+              --config /tmp/config.ovpn
+              --route $SYS_RES_DNS 255.255.255.255 net_gateway
+              --route 169.254.0.0 255.255.0.0 net_gateway
+              --script-security 2
+              --up /etc/openvpn/update-systemd-resolved --up-restart
+              --down /etc/openvpn/update-systemd-resolved --down-pre
+              --dhcp-option DOMAIN-ROUTE .)
+
+            if grep -q auth-user-pass /tmp/config.ovpn; then
+              vpn_command+=(--auth-user-pass /tmp/vpn.login)
+            fi
+
+            if [ -n "$phone_home" ]; then
+              vpn_command+=(--route $phone_home 255.255.255.255 net_gateway)
+            fi
+
+            for IP in $(host runner.circleci.com | awk '{ print $4; }')
+              do
+                vpn_command+=(--route $IP 255.255.255.255 net_gateway)
+                echo $IP
+            done
+
+            "${vpn_command[@]}" > /tmp/openvpn.log
 
       - run:
-          name: Wait for VPN connection to be established
-          command: sleep 30
+          name: Wait for the connection to be established and check IP
+          command: |
+            until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ]; do
+              echo "Attempting to connect to VPN server..."
+              sleep 1;
+            done
+
+            printf "\nVPN connected\n"
+            printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
 
       - run:
           name: Check IP after VPN connection
@@ -282,6 +319,11 @@ jobs:
           container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
           resource-name: deployment/lists-postgres
 
+      - run:
+          name: Disconnect from OpenVPN
+          command: |
+            sudo killall openvpn || true
+          when: always
 
 workflows:
   version: 2

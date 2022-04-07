@@ -32,8 +32,7 @@ export async function createObject(
       addressLine2,
       areasOfLaw,
       city,
-      familyName,
-      firstAndMiddleNames,
+      contactName,
       postcode,
       ...rest
     } = lawyer;
@@ -53,7 +52,7 @@ export async function createObject(
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
-        contactName: `${firstAndMiddleNames} ${familyName}`,
+        contactName,
       },
       address: {
         create: {

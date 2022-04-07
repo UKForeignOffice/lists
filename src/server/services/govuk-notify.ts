@@ -110,3 +110,33 @@ export async function sendDataPublishedEmail(
     return false;
   }
 }
+
+export async function sendEditDetailsEmail(
+  contactName: string,
+  emailAddress: string,
+  typePlural: string,
+  message: string,
+  changeLink: string
+): Promise<boolean> {
+  try {
+    const typeSingular = pluralize.singular(typePlural);
+    const { statusText } = await getNotifyClient().sendEmail(
+      config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
+      emailAddress,
+      {
+        personalisation: {
+          typeSingular,
+          typePlural,
+          contactName,
+          message,
+          changeLink,
+        },
+      }
+    );
+
+    return statusText === "Created";
+  } catch (error) {
+    logger.error(`sendEditDetailsEmail Error: ${error.message}`);
+    return false;
+  }
+}

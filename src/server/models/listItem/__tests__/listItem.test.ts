@@ -5,14 +5,6 @@ import {
   LawyersFormWebhookData,
   CovidTestSupplierFormWebhookData,
 } from "server/components/formRunner";
-import {
-  togglerListItemIsApproved,
-  togglerListItemIsPublished,
-  setEmailIsVerified,
-  findListItemsForList,
-  deleteListItem,
-} from "./..";
-
 import * as audit from "./../../audit";
 import { ServiceType } from "./../../types";
 import * as helpers from "./../../helpers";
@@ -25,6 +17,12 @@ import {
 } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
+import { togglerListItemIsApproved,
+  togglerListItemIsPublished,
+  setEmailIsVerified,
+  findListItemsForList,
+  deleteListItem,
+} from "server/models/listItem/listItem";
 
 jest.mock("../../db/prisma-client");
 
@@ -33,8 +31,7 @@ const LawyerWebhookData: LawyersFormWebhookData = {
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
   regulators: "Spanish BAR",
-  firstAndMiddleNames: "Lawyer In",
-  familyName: "Spain",
+  contactName: "Lawyer In Spain",
   organisationName: "CYB Law",
   addressLine1: "123 Calle",
   city: "Seville",

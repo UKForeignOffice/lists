@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { startCase, toLower, trim, pick, compact, get } from "lodash";
+import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import {
   findUserByEmail,
@@ -15,33 +15,38 @@ import {
   updateList,
 } from "server/models/list";
 import {
-  findListItemsForList,
+  deleteListItem,
   findListItemById,
+  findListItemsForList,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
-  deleteListItem,
-} from "server/models/listItem";
+} from "server/models/listItem/listItem";
 import { findFeedbackByType } from "server/models/feedback";
-import { UserRoles, ServiceType, List, CountryName } from "server/models/types";
+import {
+  CountryName,
+  LawyerListItemGetObject,
+  LawyerListItemJsonData,
+  List,
+  ListItemGetObject,
+  ServiceType,
+  UserRoles
+} from "server/models/types";
 import {
   filterSuperAdminRole,
+  getInitiateFormRunnerSessionToken,
+  userIsListAdministrator,
   userIsListPublisher,
   userIsListValidator,
-  userIsListAdministrator,
 } from "./helpers";
-import {
-  isGovUKEmailAddress,
-  isCountryNameValid,
-} from "server/utils/validation";
-import {
-  createListSearchBaseLink,
-  QuestionError,
-} from "server/components/lists";
+import { isCountryNameValid, isGovUKEmailAddress, } from "server/utils/validation";
+import { createListSearchBaseLink, QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
-import { sendDataPublishedEmail } from "server/services/govuk-notify";
+import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
 import serviceName from "server/utils/service-name";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
+import { getNewSessionWebhookData, generateFormRunnerWebhookData } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 
 const DEFAULT_VIEW_PROPS = {
@@ -398,7 +403,10 @@ export async function listItemsApproveController(
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (list.type !== listItem?.type || list.id !== listItem.listId) {
+  } else if (
+    list.type !== listItem?.type ||
+    list.id !== listItem.listId
+  ) {
     res.status(403).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
@@ -448,7 +456,10 @@ export async function listItemsPublishController(
         message: `Could not find list item ${listItemId}`,
       },
     });
-  } else if (list.type !== listItem?.type || list.id !== listItem.listId) {
+  } else if (
+    list.type !== listItem?.type ||
+    list.id !== listItem.listId
+  ) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
@@ -543,11 +554,115 @@ export async function listItemsDeleteController(
   }
 }
 
+export async function listItemsEditGetController(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { listId, listItemId } = req.params;
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+    res.render("dashboard/lists-item-edit", {
+      ...DEFAULT_VIEW_PROPS,
+      req,
+      list,
+      listItem,
+      csrfToken: getCSRFToken(req),
+    });
+  }
+
+export async function listItemsEditPostController(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { listId, listItemId, underTest } = req.params;
+  const { message } = req.body;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const list = await findListById(listId) ?? {} as List;
+  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
+  const listJson:LawyerListItemJsonData = listItem.jsonData;
+  listJson.country = list?.country?.name ?? "";
+  const isUnderTest = underTest === "true";
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, isUnderTest, message);
+
+  // Email applicant
+  const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
+  const listType = serviceName(list?.type ?? "");
+  await sendEditDetailsEmail(
+    contactName,
+    contactEmailAddress,
+    listType,
+    message,
+    formRunnerEditUserUrl,
+  );
+
+  res.json({ status: "OK" });
+}
+
+async function initialiseFormRunnerSession(list: List, listItem: ListItemGetObject, isUnderTest: boolean, message: string): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+  const formRunnerEditUserUrl = createFormRunnerEditListItemLink(token);
+  return formRunnerEditUserUrl;
+}
+
+export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const { listId, listItemId } = req.params;
+  const userId = req.user?.userData.id;
+
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
+
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
+  }
+
+  if (list === undefined) {
+    res.status(404).send({
+      error: {
+        message: `Could not find list ${listId}`,
+      },
+    });
+
+  } else if (listItem === undefined) {
+    res.status(404).send({
+      error: {
+        message: `Could not find list item ${listItemId}`,
+      },
+    });
+
+  } else if (list?.type !== listItem?.type) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which is a different service type to list ${listId}`,
+      },
+    });
+
+  } else if (list?.id !== listItem?.listId) {
+    res.status(400).send({
+      error: {
+        message: `Trying to edit a list item which does not belong to list ${listId}`,
+      },
+    });
+
+  } else if (!userIsListPublisher(req, list)) {
+    res.status(403).send({
+      error: {
+        message: "User doesn't have publishing right on this list",
+      },
+    });
+  }
+  return next();
+}
+
 // TODO: test
 export async function feedbackController(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");

@@ -2,8 +2,21 @@ import { set } from "lodash";
 import request from "supertest";
 import { spawn } from "child_process";
 import { logger } from "server/services/logger";
-import { FormRunnerWebhookData } from "./types";
+import {
+  FormRunnerComponent,
+  FormRunnerField,
+  FormRunnerNewSessionData,
+  FormRunnerPage,
+  FormRunnerQuestion,
+  FormRunnerWebhookData
+} from "./types";
 import { FORM_RUNNER_URL } from "./constants";
+import path from "path";
+import fs from "fs";
+import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { LawyerListItemGetObject, List, ListItemGetObject, ServiceType } from "server/models/types";
+import * as lawyers from "./lawyers"
+
 
 let isStarting = false;
 
@@ -25,9 +38,9 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
 
     const formRunner = spawn(
-      `PRIVACY_POLICY_URL='' npm run form-runner:start`,
+      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
       {
-        shell: true,
+        shell: true
       }
     );
 
@@ -82,4 +95,65 @@ export function parseFormRunnerWebhookObject<T>({
 
     return acc;
   }, {}) as T;
+}
+
+export function getNewSessionWebhookData(listType: string, listItemId: number, questions: Array<Partial<FormRunnerQuestion>> | undefined, message: string): FormRunnerNewSessionData {
+  const protocol = isLocalHost ? "http" : "https";
+  const callbackUrl = `${protocol}://${SERVICE_DOMAIN}/ingest/${listType}/${listItemId}`;
+  const redirectPath = `/summary`;
+  const options = {
+    message,
+    callbackUrl,
+    redirectPath
+  };
+
+  const newSessionData: FormRunnerNewSessionData = {
+    questions,
+    options,
+    name: "Changes required"
+  };
+  return newSessionData;
+}
+
+export async function generateFormRunnerWebhookData(list: List,
+                                                    listItem: ListItemGetObject,
+                                                    isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>> | undefined> {
+  let questions: Array<Partial<FormRunnerQuestion>> | undefined;
+
+  switch (list.type) {
+    case ServiceType.lawyers:
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      break;
+    default:
+      questions = undefined;
+  }
+
+  return questions;
+}
+
+export async function parseJsonFormData(listType: string, isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
+
+  const formsJsonFile = (isUnderTest === true) ? `/forms-json/${listType}.json` : `../src/server/components/formRunner/forms-json/${listType}.json`;
+  const fileContents = await fs.promises.readFile(path.join(__dirname, formsJsonFile), "utf8");
+  const formJsonData = JSON.parse(fileContents);
+  const questions: Array<Partial<FormRunnerQuestion>> = formJsonData.pages
+    .map((page: FormRunnerPage) => {
+      const fields: FormRunnerField[] | undefined = page.components
+        ?.filter((component: FormRunnerComponent) => component.type !== "Html")
+        ?.map((component: FormRunnerComponent) => {
+          const field: FormRunnerField = {
+            answer: "",
+            key: component.name,
+          };
+
+          return field;
+        });
+      return {
+        fields: fields,
+        question: page.title
+      };
+    })
+    .filter((question: FormRunnerQuestion) => question.fields.length > 0);
+
+  return questions;
 }
