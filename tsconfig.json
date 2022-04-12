@@ -26,8 +26,4 @@
     "node_modules/jest-extended/types/**/*.d.ts",
   ],
   "ignore": ["dist"],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ],
 }
