@@ -425,11 +425,7 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/what-size-is-your-company-or-firm",
-          "condition": "qyYhch"
+          "path": "/what-size-is-your-company-or-firm"
         }
       ]
     },
@@ -2206,134 +2202,6 @@
               "type": "Value",
               "value": "0",
               "display": "0"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "tWvFfJ",
-      "displayName": "Country list pilots",
-      "value": {
-        "name": "Country list pilots",
-        "conditions": [
-          {
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "France",
-              "display": "France"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Germany",
-              "display": "Germany"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Italy",
-              "display": "Italy"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Portugal",
-              "display": "Portugal"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "qyYhch",
-      "displayName": "Country pilots 2",
-      "value": {
-        "name": "Country pilots 2",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "France",
-              "display": "France"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Germany",
-              "display": "Germany"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Italy",
-              "display": "Italy"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Portugal",
-              "display": "Portugal"
             }
           }
         ]
