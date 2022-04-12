@@ -1,41 +1,64 @@
 import { NextFunction, Request, Response } from "express";
-import { findIndexListItems } from "server/models/listItem";
+
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
+import { findIndexListItems } from "server/models/listItem/listItem";
+import { TAGS } from "server/models/listItem/types";
+import { List } from "server/models/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
 
-enum ITEM_TAGS {
-  to_do = "to_do",
-  published = "published",
-  annual_review = "annual_review",
-  pinned = "pinned",
-  out_with_provider = "out_with_provider",
+const TagsViewModel = [
+  {
+    text: "To do",
+    value: TAGS.to_do,
+  },
+  {
+    text: "Out with provider",
+    value: TAGS.out_with_provider,
+  },
+  {
+    text: "Annual review",
+    value: TAGS.annual_review,
+  },
+  {
+    text: "Published",
+    value: TAGS.published,
+  },
+];
+
+const sortable = [
+  {
+    text: "Newest first",
+    value: "newest_first",
+  },
+];
+
+interface IndexParams {
+  listId: string;
 }
 
-/**
- * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
- */
-type INCLUSIVE_TAGS = "pinned" | "published" | "annual_review";
-
-/**
- * These are EXCLUSIVE to each other. An application must be one or the other.
- */
-type ACTIVITY_TAGS = "to_do" | "out_with_provider";
-
-type TAGS = INCLUSIVE_TAGS & ACTIVITY_TAGS;
+interface IndexQuery {
+  page: string | number;
+  tag: Array<keyof typeof TAGS> | keyof typeof TAGS;
+  sort_by: string;
+}
 
 export async function listItemsIndexController(
-  req: Request,
+  req: Request<IndexParams, {}, {}, IndexQuery>,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { page } = req.query;
-    const list = await findIndexListItems(Number(listId), {
-      page: Number(page ?? 1),
+    const { page, tag: queryTag } = req.query;
+    const list = await findIndexListItems({
+      listId: Number(listId),
+      pagination: {
+        page: Number(page ?? 1),
+      },
+      tags: queryTag,
     });
 
     if (list === undefined) {
@@ -46,7 +69,10 @@ export async function listItemsIndexController(
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
-      tags: [],
+      tags: TagsViewModel.map((tag) => ({
+        ...tag,
+        checked: queryTag?.includes(tag.value),
+      })),
     });
   } catch (error) {
     next(error);

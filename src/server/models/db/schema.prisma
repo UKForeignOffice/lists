@@ -51,8 +51,10 @@ model ListItem {
 
   status              Status @default(NEW)
 
+
   @@index([type, reference, isApproved, isPublished, isBlocked])
 }
+
 
 model Event {
   id                  Int    @id @default(autoincrement())
