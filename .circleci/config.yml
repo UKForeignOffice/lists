@@ -261,10 +261,6 @@ jobs:
       - run:
           name: Check IP after VPN connection
           command: |
-            ifconfig
-            route -n
-            sudo netstat -anp
-            cat /etc/resolv.conf
             curl checkip.amazonaws.com
 
       - aws-eks/update-kubeconfig-with-authenticator:
