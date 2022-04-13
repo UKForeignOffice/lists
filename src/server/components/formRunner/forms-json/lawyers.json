@@ -434,11 +434,7 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/what-size-is-your-company-or-firm",
-          "condition": "qyYhch"
+          "path": "/what-size-is-your-company-or-firm"
         }
       ]
     },
