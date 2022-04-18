@@ -1,14 +1,14 @@
 {% from "button/macro.njk" import govukButton %}
 {% extends "./dashboard.njk" %}
 
-{% block sideNav %}
+{% block aside %}
 {% endblock %}
 
 {% block dashboard %}
 
-  <form class="form" action="{{ dashboardRoutes.listsItemConfirm.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+  <form class="form" action="{{ dashboardRoutes.listsItemPin.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-    <input type="hidden" name="action" value="pin"/>
+    <input type="hidden" name="action" value="{{ action }}"/>
 
     <h1 class="govuk-heading-l">
       Pin this service provider
@@ -23,7 +23,7 @@
     <div class="govuk-button-group">
 
       {{ govukButton({
-        text: "Unpublish",
+        text: "Pin",
         classes: "govuk-button--ok govuk-!-margin-bottom-2",
         attributes: {
           id: ["action-button-", listItem.id] | join,

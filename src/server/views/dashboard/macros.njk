@@ -12,16 +12,16 @@
   </li>
 {% endmacro %}
 
-{% macro successBanner(title = "Saved successfully") %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+{% macro successBanner(bannerHeading = "Success", title = "Saved successfully", colourClass = ".govuk-tag--green") %}
+  <div class="govuk-notification-banner {{ colourClass }}" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
     <div class="govuk-notification-banner__header">
       <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-        Success
+        {{ bannerHeading }}
       </h2>
     </div>
     <div class="govuk-notification-banner__content">
       <h3 class="govuk-notification-banner__heading">
-          {{ title }}
+        {{ title }}
       </h3>
     </div>
   </div>
@@ -51,8 +51,7 @@
 {% endmacro %}
 
 {% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty) %}
-<div class="govuk-!-margin-top-2">
-
+<div class="govuk-!-margin-top-8">
   <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -79,13 +78,11 @@
             Request changes
           </label>
         </div>
-{#        govuk-radios__conditional--hidden#}
         <div class="govuk-radios__conditional" id="conditional-action-requestChanges">
           <div class="govuk-form-group">
             <div id="action-edit-hint" class="govuk-hint">
               Provide simple and concise instructions to the service provider on what they need to change.
             </div>
-{#            <textarea class="govuk-input govuk-!-width-one-third" id="message" name="message" spellcheck="true"></textarea>#}
             <textarea class="govuk-textarea" id="message" name="message" rows="5" aria-describedby="action-requestChanges-hint"></textarea>
           </div>
         </div>
@@ -107,8 +104,13 @@
             Pin
           </label>
         </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-pin" name="action" type="radio" value="unpin">
+          <label class="govuk-label govuk-radios__label" for="action-pin">
+            Unpin
+          </label>
+        </div>
       </div>
-
     </fieldset>
   </div>
 

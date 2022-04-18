@@ -2,16 +2,13 @@
 {% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 
-{% block sideNav %}
+{% block aside %}
   <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
 {% endblock %}
 
 {% block dashboard %}
   <h1 class="govuk-heading-l">
     Review {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
-    <strong class="govuk-tag">
-      STATUS
-    </strong>
   </h1>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -29,7 +26,7 @@
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName) }}
             {% endif %}
             {% if list.type === 'lawyers' %}
-              {{ lawyersMacros.lawyersListManagementItem(listItem) }}
+              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned) }}
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName) }}
             {% endif %}
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">

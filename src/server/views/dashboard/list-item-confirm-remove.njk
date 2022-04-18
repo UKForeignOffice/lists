@@ -1,12 +1,12 @@
 {% from "button/macro.njk" import govukButton %}
 {% extends "./dashboard.njk" %}
 
-{% block sideNav %}
+{% block aside %}
 {% endblock %}
 
 {% block dashboard %}
 
-  <form class="form" action="{{ dashboardRoutes.listsItemConfirm.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+  <form class="form" action="{{ dashboardRoutes.listsItemDelete.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <input type="hidden" name="action" value="remove"/>
 

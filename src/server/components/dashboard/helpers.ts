@@ -5,7 +5,6 @@ import { logger } from "server/services/logger";
 import {
   UserRoles,
   List,
-  LawyerListItemJsonData,
   ListJsonData,
 } from "server/models/types";
 
