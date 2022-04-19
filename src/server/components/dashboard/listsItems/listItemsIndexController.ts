@@ -18,10 +18,12 @@ const TagsViewModel = [
     text: "Out with provider",
     value: TAGS.out_with_provider,
   },
-  {
+  /**
+   * TODO:- restore when ready
+    {
     text: "Annual review",
     value: TAGS.annual_review,
-  },
+  },*/
   {
     text: "Published",
     value: TAGS.published,
