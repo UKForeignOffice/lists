@@ -20,6 +20,7 @@ import {
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
+import { Prisma, ListItem, Status } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -27,7 +28,7 @@ import { rawUpdateGeoLocation } from "server/models/helpers";
 import { format } from "date-fns";
 import { PaginationResults } from "server/components/lists";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { IndexListItem, ListIndexOptions, Tags } from "./types";
+import { IndexListItem, ListIndexOptions, TAGS, Tags } from "./types";
 import {
   calculatePagination,
   tagQueryFactory,
@@ -42,6 +43,8 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     validators,
     administrators,
   } = jsonData as LawyerListItemJsonData;
+  const isPublished = item.isPublished && TAGS.published;
+  const isNew = item.status === Status.NEW && TAGS.to_do;
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
     updatedAt: format(updatedAt, "dd MMMM yyyy"),
@@ -52,7 +55,7 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     administrators,
     id,
     status,
-    tags: [],
+    tags: [isPublished, isNew].filter(Boolean) as string[],
   };
 }
 

@@ -6,12 +6,11 @@
   <h2 class="govuk-heading-m">
     {{ listItem.contactName }}
   </h2>
-  {% for tag in listItem.tags %}
-    <strong class="govuk-tag dashboard__list-item-tag">
-      {{ tag }}
-    </strong>
-  {% endfor %}
-
+  <div class="dashboard__list-item-tag-container">
+    {% for tag in listItem.tags %}
+      {% include "./list-item-tag.njk" %}
+    {% endfor %}
+  </div>
 
   <div class="dashboard__list-item-body">
     <p>

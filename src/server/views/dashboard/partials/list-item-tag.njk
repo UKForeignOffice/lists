@@ -1,0 +1,18 @@
+{% set colours = {
+  published: 'green',
+  approved: 'turquoise',
+  'to do': 'blue'
+  }
+%}
+
+{% set dictionary = {
+  to_do: 'To do',
+  published: 'published'
+  }
+%}
+
+{% set class = 'govuk-tag--' + colours[tag] %}
+
+<strong class="govuk-tag dashboard__list-item-tag {{ class }}">
+  {{ dictionary[tag] }}
+</strong>
