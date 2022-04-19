@@ -1,5 +1,4 @@
 import { LawyerListItemJsonData, List, User } from "server/models/types";
-import { Request } from "express";
 
 /**
  * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
@@ -44,7 +43,6 @@ export type IndexListItem = Pick<
 export type TagsAsKey = Array<keyof typeof TAGS> | keyof typeof TAGS;
 
 export interface PaginationOptions {
-  shouldPaginate?: boolean;
   pagination?: {
     page?: number;
   };

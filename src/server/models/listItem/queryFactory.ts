@@ -27,11 +27,8 @@ export const tagQueryFactory: Record<
 };
 
 export function calculatePagination(
-  paginationOptions: PaginationOptions = { shouldPaginate: true }
+  paginationOptions: PaginationOptions
 ): {} | { take: number; skip: number } {
-  const { shouldPaginate } = paginationOptions;
-  if (!shouldPaginate) return {};
-
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {
