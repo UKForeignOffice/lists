@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { findIndexListItems } from "server/models/listItem";
+import { findIndexListItems } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 enum ITEM_TAGS {
   to_do = "to_do",
   published = "published",
@@ -24,6 +25,7 @@ type INCLUSIVE_TAGS = "pinned" | "published" | "annual_review";
  */
 type ACTIVITY_TAGS = "to_do" | "out_with_provider";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type TAGS = INCLUSIVE_TAGS & ACTIVITY_TAGS;
 
 export async function listItemsIndexController(
