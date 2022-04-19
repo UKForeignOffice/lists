@@ -2,12 +2,7 @@ import { Request } from "express";
 import { FormRunnerNewSessionData } from "server/components/formRunner";
 import axios from "axios";
 import { logger } from "server/services/logger";
-import {
-  UserRoles,
-  List,
-  LawyerListItemJsonData,
-  ListJsonData,
-} from "server/models/types";
+import { UserRoles, List, ListJsonData } from "server/models/types";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
