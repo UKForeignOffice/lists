@@ -1,6 +1,7 @@
 import { get, merge } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./../db/prisma-client";
+import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { logger } from "server/services/logger";
 import {
   LawyersFormWebhookData,
@@ -8,6 +9,8 @@ import {
   WebhookData,
 } from "server/components/formRunner";
 import {
+  AuditJsonData,
+  LawyerListItemJsonData,
   List,
   User,
   ServiceType,
@@ -18,7 +21,7 @@ import {
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma, ListItem } from "@prisma/client";
+import { Prisma, ListItem, ListItemEvent } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -210,6 +213,7 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
       INNER JOIN "List" ON "ListItem"."listId" = "List".id
       INNER JOIN "Country" ON "List"."countryId" = "Country".id
       INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
+      INNER JOIN "Audit" ON "ListItem"."id" = "Audit".id
 
       ${pgescape(`WHERE "ListItem"."type" = %L`, list.type)}
       AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
@@ -224,9 +228,9 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
 
 export async function findListItemById(
   id: string | number
-): Promise<ListItemGetObject> {
+): Promise<any> {
   try {
-    return (await prisma.listItem.findUnique({
+    const returnVal = (await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
         address: {
@@ -244,8 +248,12 @@ export async function findListItemById(
             },
           },
         },
+        history: true,
+        pinnedBy: true,
       },
-    })) as ListItemGetObject;
+    }));
+    return returnVal;
+
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error("Failed to approve lawyer");
@@ -281,10 +289,13 @@ export async function togglerListItemIsApproved({
         data,
       }),
       recordListItemEvent({
-        eventName: isApproved ? "approve" : "disapprove",
-        itemId: id,
-        userId,
-      }),
+          eventName: isApproved ? "approve" : "disapprove",
+          itemId: id,
+          userId,
+        },
+        id,
+        AuditEvent.UNPUBLISHED
+      )
     ]);
     return listItem;
   } catch (error) {
@@ -305,12 +316,18 @@ export async function togglerListItemIsPublished({
   if (userId === undefined) {
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
+  const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
+  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
 
   try {
     const [listItem] = await prisma.$transaction([
       prisma.listItem.update({
         where: { id },
-        data: { isPublished },
+        data: {
+          isApproved: true,
+          isPublished,
+          status
+        },
         include: {
           address: {
             include: {
@@ -320,10 +337,13 @@ export async function togglerListItemIsPublished({
         },
       }),
       recordListItemEvent({
-        eventName: isPublished ? "publish" : "unpublish",
-        itemId: id,
-        userId,
-      }),
+          eventName: isPublished ? "publish" : "unpublish",
+          itemId: id,
+          userId,
+        },
+        id,
+        auditEvent
+      ),
     ]);
 
     return listItem;
@@ -334,33 +354,56 @@ export async function togglerListItemIsPublished({
   }
 }
 
-export async function deleteListItem(
+export async function persistListItemChanges(
   id: number,
-  userId: User["id"]
+  userId: User["id"],
 ): Promise<ListItem> {
   if (userId === undefined) {
-    throw new Error("deleteListItem Error: userId is undefined");
+    throw new Error("persistListItemChanges Error: userId is undefined");
   }
+  const auditEvent = AuditEvent.PUBLISHED;
 
   try {
-    const [listItem] = await prisma.$transaction([
-      prisma.listItem.delete({
+    const listItem = await prisma.listItem.findUnique({
+      where: { id },
+      include: {
+        history: true
+      }
+    });
+
+    const auditForEdits = listItem?.history
+      .sort((a, b) => b.createdAt.getMilliseconds() - a.createdAt.getMilliseconds())
+      .filter(audit => audit.auditEvent === "EDITED")
+      .pop();
+
+    const auditJsonData: AuditJsonData = auditForEdits?.jsonData as AuditJsonData;
+
+    const [updatedListItem] = await prisma.$transaction([
+      prisma.listItem.update({
         where: {
           id,
         },
+        data: {
+          isApproved: true,
+          isPublished: true,
+          jsonData: auditJsonData?.updatedJsonData,
+        }
       }),
       recordListItemEvent({
-        eventName: "delete",
-        itemId: id,
-        userId,
-      }),
+          eventName: "publish",
+          itemId: id,
+          userId
+        },
+        id,
+        auditEvent
+      ),
     ]);
 
-    return listItem;
+    return updatedListItem;
   } catch (e) {
-    logger.error(`deleteListItem Error ${e.message}`);
+    logger.error(`persistListItemChanges Error ${e.message}`);
 
-    throw new Error("Failed to delete item");
+    throw new Error("Failed to persist updates to list item");
   }
 }
 
@@ -428,7 +471,8 @@ type Nullable<T> = T | undefined | null;
 
 export async function update(
   id: ListItem["id"],
-  data: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  userId: User["id"],
+  data: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
 ): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
@@ -450,6 +494,9 @@ export async function update(
     where: { id },
     data: {
       jsonData: updatedJsonData,
+      isApproved: true,
+      isPublished: true,
+      status: Status.PUBLISHED,
     },
   };
 
@@ -480,9 +527,30 @@ export async function update(
         prisma.listItem.update(listItemPrismaQuery),
         prisma.address.update(addressPrismaQuery!),
         rawUpdateGeoLocation(...geoLocationParams!),
+        recordListItemEvent({
+            eventName: "publish",
+            itemId: id,
+            userId,
+            updatedJsonData,
+          },
+          id,
+          AuditEvent.PUBLISHED
+        ),
       ]);
+
     } else {
-      result = await prisma.listItem.update(listItemPrismaQuery);
+      result = await prisma.$transaction([
+        prisma.listItem.update(listItemPrismaQuery),
+        recordListItemEvent({
+            eventName: "publish",
+            itemId: id,
+            userId,
+            updatedJsonData,
+          },
+          id,
+          AuditEvent.PUBLISHED
+        ),
+      ]);
     }
 
     if (!result) {
@@ -493,5 +561,39 @@ export async function update(
       `listItem.update transactional error - rolling back ${err.message}`
     );
     throw err;
+  }
+}
+
+export async function deleteListItem(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("deleteListItem Error: userId is undefined");
+  }
+  // const auditEvent = AuditEvent.DELETED;
+
+  try {
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.delete({
+        where: {
+          id,
+        },
+      }),
+      // recordListItemEvent({
+      //     eventName: "delete",
+      //     itemId: id,
+      //     userId
+      //   },
+      //   id,
+      //   auditEvent
+      // ),
+    ]);
+
+    return listItem;
+  } catch (e) {
+    logger.error(`deleteListItem Error ${e.message}`);
+
+    throw new Error("Failed to delete item");
   }
 }

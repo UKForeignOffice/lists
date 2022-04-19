@@ -226,7 +226,7 @@ export function getChangedAddressFields(
     const valueHasChanged = webhookValue !== value;
     return {
       ...prev,
-      ...(webhookValue && valueHasChanged && { [key]: webhookValue }),
+      ...(valueHasChanged && { [key]: webhookValue }),
     };
   }, {});
 }

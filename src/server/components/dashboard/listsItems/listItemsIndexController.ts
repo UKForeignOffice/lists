@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS } from "server/models/listItem/types";

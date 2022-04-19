@@ -2,7 +2,11 @@ import { Request } from "express";
 import { FormRunnerNewSessionData } from "server/components/formRunner";
 import axios from "axios";
 import { logger } from "server/services/logger";
-import { UserRoles, List, ListJsonData } from "server/models/types";
+import {
+  UserRoles,
+  List,
+  ListJsonData,
+} from "server/models/types";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -52,6 +56,6 @@ export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl:
     })
     .catch((error) => {
       logger.info(error);
-      return "";
+      throw new Error("Unable to initiate form runner session");
     });
 }

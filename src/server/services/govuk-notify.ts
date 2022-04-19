@@ -117,10 +117,10 @@ export async function sendEditDetailsEmail(
   typePlural: string,
   message: string,
   changeLink: string
-): Promise<boolean> {
+): Promise<void> {
   try {
     const typeSingular = pluralize.singular(typePlural);
-    const { statusText } = await getNotifyClient().sendEmail(
+    await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
       emailAddress,
       {
@@ -134,9 +134,7 @@ export async function sendEditDetailsEmail(
       }
     );
 
-    return statusText === "Created";
   } catch (error) {
-    logger.error(`sendEditDetailsEmail Error: ${error.message}`);
-    return false;
+    throw new Error(`Unable to send change request email: ${error.message}`);
   }
 }

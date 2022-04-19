@@ -19,6 +19,21 @@ export async function findUserByEmail(
   }
 }
 
+export async function findUserById(
+  id: number
+): Promise<User | undefined> {
+  try {
+    const user = (await prisma.user.findUnique({
+      where: { id },
+    })) as User;
+
+    return user ?? undefined;
+  } catch (error) {
+    logger.error(`findUserById Error ${error.message}`);
+    return undefined;
+  }
+}
+
 export async function createUser(
   data: UserCreateInput
 ): Promise<User | undefined> {
@@ -31,7 +46,7 @@ export async function createUser(
     return (await prisma.user.create({
       data: {
         ...data,
-        email: data.email.toLowerCase(),        
+        email: data.email.toLowerCase(),
       },
     })) as User;
   } catch (error) {

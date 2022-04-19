@@ -2,6 +2,7 @@ import {
   CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,
 } from "../src/server/components/formRunner";
+import { WebhookDataAsJsonObject } from "server/models/types";
 
 export const lawyer: LawyersFormWebhookData = {
   country: "Spain",
@@ -76,7 +77,7 @@ export const covidTestProvider: CovidTestSupplierFormWebhookData = {
 
 declare global {
   var webhookData: {
-    lawyer: LawyersFormWebhookData;
-    covidTestProvider: CovidTestSupplierFormWebhookData;
+    lawyer: WebhookDataAsJsonObject<LawyersFormWebhookData>;
+    covidTestProvider: WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
   };
 }

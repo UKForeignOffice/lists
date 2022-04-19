@@ -11,16 +11,20 @@ import {
   startRouteController,
   usersListController,
   usersEditController,
-  listsItemsController,
-  listItemsApproveController,
-  listItemsPublishController,
-  listItemsDeleteController,
-  listItemsEditGetController,
-  listItemsEditPostController,
-  listItemEditRequestValidation,
+  listsItemsController
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
+import {
+  listItemDeleteController,
+  listItemEditRequestValidation,
+  listItemGetController,
+  listItemPinController,
+  listItemPostController,
+  listItemPublishController,
+  listItemRequestChangeController,
+  listItemUpdateController
+} from "server/components/dashboard/listsItems/controllers";
 
 export const dashboardRouter = express.Router();
 
@@ -51,37 +55,18 @@ dashboardRouter.all(
 dashboardRouter.get(
   dashboardRoutes.listsItems,
   csrfRequestHandler,
-  // @ts-expect-error
   listsItemsController
 );
 
 // list items
-dashboardRouter.put(
-  dashboardRoutes.listsItemsApprove,
-  csrfRequestHandler,
-  listItemsApproveController
-);
-dashboardRouter.put(
-  dashboardRoutes.listsItemsPublish,
-  csrfRequestHandler,
-  listItemsPublishController
-);
-dashboardRouter.delete(
-  dashboardRoutes.listsItemsDelete,
-  listItemsDeleteController
-);
-dashboardRouter.get(
-  dashboardRoutes.listsItemsEdit,
-  csrfRequestHandler,
-  listItemEditRequestValidation,
-  listItemsEditGetController
-);
-dashboardRouter.post(
-  dashboardRoutes.listsItemsEdit,
-  csrfRequestHandler,
-  listItemEditRequestValidation,
-  listItemsEditPostController
-);
+dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemGetController);
+dashboardRouter.post(dashboardRoutes.listsItemDelete, csrfRequestHandler, listItemEditRequestValidation, listItemDeleteController);
+dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemPostController);
+dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listItemEditRequestValidation, listItemPublishController);
+dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, listItemRequestChangeController);
+dashboardRouter.post(dashboardRoutes.listsItemUpdate, csrfRequestHandler, listItemEditRequestValidation, listItemUpdateController);
+dashboardRouter.post(dashboardRoutes.listsItemPin, csrfRequestHandler, listItemEditRequestValidation, listItemPinController);
+dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemUpdateController);
 
 // feedback
 dashboardRouter.get(

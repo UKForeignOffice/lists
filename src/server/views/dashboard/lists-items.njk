@@ -24,6 +24,19 @@
 {% endblock %}
 
 {% block dashboard %}
+
+  {% if messages.successBannerTitle %}
+    {% set bannerHeading = _.startCase(_.toLower(messages.successBannerHeading)) %}
+    {% set title = _.startCase(_.toLower(messages.successBannerTitle)) %}
+    {% set colourClass = ".govuk-tag--blue" %}
+    {% if messages.successBannerColour === "green" %}
+      {% set colourClass = ".govuk-tag--green" %}
+    {% elseif messages.successBannerColour === "red" %}
+      {% set colourClass = ".govuk-tag--red" %}
+    {% endif %}
+    {{ dashboardMacros.successBanner(bannerHeading, title, colourClass) }}
+  {% endif %}
+
   <h1 class="govuk-heading-l">
     {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ _.startCase(list.country.name) }}
   </h1>

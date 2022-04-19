@@ -1,5 +1,8 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "input/macro.njk" import govukInput %}
+
 
 {% macro navMenu(title, path, req) %}
   <li>
@@ -9,16 +12,16 @@
   </li>
 {% endmacro %}
 
-{% macro successBanner(title = "Saved successfully") %}
-  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+{% macro successBanner(bannerHeading = "Success", title = "Saved successfully", colourClass = ".govuk-tag--green") %}
+  <div class="govuk-notification-banner {{ colourClass }}" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
     <div class="govuk-notification-banner__header">
       <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-        Success
+        {{ bannerHeading }}
       </h2>
     </div>
     <div class="govuk-notification-banner__content">
       <h3 class="govuk-notification-banner__heading">
-          {{ title }}
+        {{ title }}
       </h3>
     </div>
   </div>
@@ -40,188 +43,90 @@
 {% endmacro %}
 
 {% macro listItemActionsBart(list, listItem, dashboardRoutes, canApprove, canPublish, titleProperty) %}
-  <div class="dashboard__list-item-actions-bar govuk-!-margin-top-2">
-    <div class="govuk-form-group govuk-!-margin-bottom-0">
-      <div class="dashboard__item-options">
-        <div class="dashboard__item-publish">
-          {% if (listItem.lat == 0) and (listItem.long == 0) %}
-            {{ govukWarningText({
-              classes: "govuk-!-margin-bottom-2",
-              iconFallbackText: "Warning",
-              text: "We were unable to locate the address"
-            }) }}
-          {% else %}
-            <fieldset class="govuk-fieldset">
-              <div class="govuk-checkboxes govuk-checkboxes--small">
-                <div class="govuk-checkboxes__item">
-                  <input
-                    class="govuk-checkboxes__input dashboard__list-item-actions-bar__toggler"
-                    id="approve-{{listItem.id}}"
-                    name="approve"
-                    type="checkbox"
-                    value="approve"
-                    data-title="{{ _.startCase(titleProperty) }}"
-                    data-id="{{listItem.id}}"
-                    {{-" checked" if listItem.isApproved }}
-                    {{-" disabled" if not canApprove }}
-                  >
-                  <label class="govuk-label govuk-checkboxes__label" for="approve-{{listItem.id}}">
-                    Confirm
-                    <span class="govuk-visually-hidden">
-                      that {{ _.startCase(titleProperty) }}
-                    </span> details have been checked
-                  </label>
-                </div>
-                  <div class="govuk-checkboxes__item">
-                    <input
-                      class="govuk-checkboxes__input"
-                      id="publish-{{ listItem.id }}"
-                      name="publish"
-                      type="checkbox"
-                      value="publish"
-                      data-title="{{ _.startCase(titleProperty) }}"
-                      data-id="{{ listItem.id }}"
-                      aria-describedby="publish-{{ listItem.id }}-hint"
-                      {{-" checked" if listItem.isPublished }}
-                      {{-" disabled" if not canPublish or not listItem.isApproved }}
-                    >
-                    <label class="govuk-label govuk-checkboxes__label" for="publish-{{listItem.id}}">
-                      Publish <span aria-hidden="true">these</span> <span class="govuk-visually-hidden">{{ _.startCase(titleProperty) }}</span> details
-                    </label>
-                  </div>
-              </div>
-            </fieldset>
-          {% endif %}
-        </div>
-
-        <div class="dashboard__item-delete">
-          {{ govukButton({
-            text: "Delete application",
-            classes: "govuk-button--warning govuk-!-margin-bottom-2",
-            attributes: {
-              id: ["delete-", listItem.id] | join,
-              "data-title": _.startCase(titleProperty),
-              "data-id": listItem.id
-            }
-          }) }}
-        </div>
-      </div>
+  <div class="govuk-!-margin-top-2">
+    <div class="govuk-form-group">
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}">Review</a>
     </div>
   </div>
-  <script nonce="{{cspNonce}}">
-    document.getElementById("approve-{{listItem.id}}").onclick = function toggleListItemApproveStatus(event) {
-      event.preventDefault();
-      event.stopPropagation();
+{% endmacro %}
 
-      const isConfirming = event.target.checked;
-      const title = event.target.getAttribute("data-title");
-      const publishCheckbox = document.getElementById("publish-{{listItem.id}}");
+{% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty) %}
+<div class="govuk-!-margin-top-8">
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+        <h1 class="govuk-fieldset__heading">
+          What would you like to do with this application?
+        </h1>
+      </legend>
+      <div class="govuk-radios" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-publish" name="action" type="radio" value="publish">
+          <label class="govuk-label govuk-radios__label" for="action-publish">
+            Publish
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish">
+          <label class="govuk-label govuk-radios__label" for="action-unpublish">
+            Unpublish
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit">
+          <label class="govuk-label govuk-radios__label" for="action-edit">
+            Request changes
+          </label>
+        </div>
+        <div class="govuk-radios__conditional" id="conditional-action-requestChanges">
+          <div class="govuk-form-group">
+            <div id="action-edit-hint" class="govuk-hint">
+              Provide simple and concise instructions to the service provider on what they need to change.
+            </div>
+            <textarea class="govuk-textarea" id="message" name="message" rows="5" aria-describedby="action-requestChanges-hint"></textarea>
+          </div>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="update">
+          <label class="govuk-label govuk-radios__label" for="action-update">
+            Confirm and update
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-remove" name="action" type="radio" value="remove">
+          <label class="govuk-label govuk-radios__label" for="action-remove">
+            Remove application
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-pin" name="action" type="radio" value="pin">
+          <label class="govuk-label govuk-radios__label" for="action-pin">
+            Pin
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-pin" name="action" type="radio" value="unpin">
+          <label class="govuk-label govuk-radios__label" for="action-pin">
+            Unpin
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
 
-      const confirmMessage = isConfirming ? `Do you confirm you have checked the details of ${title} and that they meet the requirements?` : `Do you want to unconfirm ${title}?`;
-
-      if (confirm(confirmMessage)) {
-        fetch("{{ dashboardRoutes.listsItemsApprove.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isApproved: isConfirming, _csrf : document.getElementById("_csrf").value })
-        }).then(function (response) {
-          return response.json();
-        }).then(function (result) {
-          if (result.error !== undefined) {
-            alert("Something went wrong. Please try again.");
-          } else {
-            event.target.checked = result.isApproved;
-
-            if (result.isApproved) {
-              if(`{{canPublish}}` === 'true') {
-                publishCheckbox.disabled = false;
-              }
-            } else {
-              publishCheckbox.checked = false;
-              publishCheckbox.disabled = true;
-            }
-
-            setTimeout(function () {
-              if (isConfirming) {
-                alert(`You have confirmed ${title} meets the requirements to be added to the list.`);
-              } else {
-                alert(`You have unconfirmed the details of ${title}.`);
-              }
-            });
-          }
-        })
-        .catch(function () {
-          alert("Something went wrong. Please try again.");
-        });
+  <div class="govuk-button-group">
+    {{ govukButton({
+      text: "Continue",
+      classes: "govuk-button--ok govuk-!-margin-bottom-2",
+      attributes: {
+        id: ["action-button-", listItem.id] | join,
+        "data-title": _.startCase(titleProperty),
+        "data-id": listItem.id
       }
-    }
+    }) }}
+  </div>
 
-    document.getElementById("publish-{{listItem.id}}").onclick = function toggleListItemPublishStatus(event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const title = event.target.getAttribute("data-title");
-      const isPublishing = event.target.checked;
-      const confirmMessage = isPublishing ? `Do you want to publish the details of ${title}?\n\nTheir details will be published immediately on GOV.UK.` : `Do you want to unpublish the details of ${title}?\n\nTheir details will be removed immediately from GOV.UK. `
-
-      if (confirm(confirmMessage)) {
-        fetch("{{ dashboardRoutes.listsItemsPublish.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isPublished: isPublishing, _csrf : document.getElementById("_csrf").value })
-        }).then(function (response) {
-          return response.json();
-        }).then(function (result) {
-          if (result.error !== undefined) {
-            alert("Something went wrong. Please try again.");
-          } else {
-            event.target.checked = result.isPublished;
-
-            setTimeout(function () {
-              if(isPublishing) {
-                alert(`The details of ${title} have been published on GOV.UK.\n\nIf you need to unpublish the details, untick the 'Publish these details' checkbox.`);
-              } else {
-                alert(`The details of ${title} have been removed from GOV.UK.\n\nIf you need to republish the details, tick the 'Publish these details' checkbox again.`);
-              }
-            });
-          }
-        })
-        .catch(function () {
-          alert("Something went wrong. Please try again.");
-        });
-      }
-    }
-
-    document.getElementById("delete-{{ listItem.id }}").onclick = function deleteListItem(event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const title = event.target.getAttribute("data-title");
-      const message = `Are you sure you want to permanently delete the application of ${title}?`;
-
-      if (confirm(message)) {
-        fetch("{{ dashboardRoutes.listsItemsDelete.replace(':listId', list.id).replace(':listItemId', listItem.id) }}", {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-        }).then(function (response) {
-          return response.json();
-        }).then(function (result) {
-          if (result.error !== undefined) {
-            alert("Something went wrong. Please try again.");
-          } else {
-            document.getElementById("item-{{ listItem.id }}").remove();
-
-            setTimeout(function () {
-              alert(`The application of ${title} has been deleted.`);
-            });
-          }
-        })
-        .catch(function () {
-          alert("Something went wrong. Please try again.");
-        });
-      }
-    }
-  </script>
+</div>
 {% endmacro %}
 
 
