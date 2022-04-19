@@ -6,7 +6,8 @@ import { LawyerListItemJsonData, List, User } from "server/models/types";
 export enum INCLUSIVE_TAGS {
   pinned = "pinned",
   published = "published",
-  annual_review = "annual_review",
+  // TODO: enable when ready
+  // annual_review = "annual_review",
 }
 
 /**
@@ -17,8 +18,12 @@ export enum ACTIVITY_TAGS {
   out_with_provider = "out_with_provider",
 }
 
-export const TAGS = { ...ACTIVITY_TAGS, ...INCLUSIVE_TAGS };
 export type Tags = typeof TAGS;
+
+export const TAGS = {
+  ...ACTIVITY_TAGS,
+  ...INCLUSIVE_TAGS,
+};
 
 export type IndexListItem = Pick<
   LawyerListItemJsonData,
@@ -31,6 +36,8 @@ export type IndexListItem = Pick<
 > & {
   createdAt: string;
   updatedAt: string;
+  status: string;
+  tags: string[];
 };
 
 export type TagsAsKey = Array<keyof typeof TAGS> | keyof typeof TAGS;

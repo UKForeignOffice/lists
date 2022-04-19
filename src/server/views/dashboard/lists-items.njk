@@ -38,11 +38,18 @@
   </p>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% if list.pinnedItems.length !== 0 %}
+    <h2 class="govuk-heading-m">Pinned items</h2>
+    <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
+      {% for listItem in list.pinnedItems %}
+        {% include "./partials/list-item-summary.njk" %}
+      {% endfor %}
+    </ul>
 
+  {% endif %}
   {% if list.items.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
-    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in list.items %}
         {% include "./partials/list-item-summary.njk" %}

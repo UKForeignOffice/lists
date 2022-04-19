@@ -173,5 +173,10 @@ main.govuk-main-wrapper {
     top: 0;
     right: 0;
   }
+  &__content-list {
+    &--pinned {
+      margin-bottom: govuk-spacing(8);
+    }
+  }
 
 }

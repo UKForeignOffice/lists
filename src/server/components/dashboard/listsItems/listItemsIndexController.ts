@@ -28,13 +28,6 @@ const TagsViewModel = [
   },
 ];
 
-const sortable = [
-  {
-    text: "Newest first",
-    value: "newest_first",
-  },
-];
-
 interface IndexParams {
   listId: string;
 }
@@ -42,7 +35,8 @@ interface IndexParams {
 interface IndexQuery {
   page: string | number;
   tag: Array<keyof typeof TAGS> | keyof typeof TAGS;
-  sort_by: string;
+  // TODO:- sorting
+  sort_by?: string;
 }
 
 export async function listItemsIndexController(
@@ -55,6 +49,7 @@ export async function listItemsIndexController(
     const { page, tag: queryTag } = req.query;
     const list = await findIndexListItems({
       listId: Number(listId),
+      userId: req.user?.userData.id,
       pagination: {
         page: Number(page ?? 1),
       },
@@ -64,7 +59,6 @@ export async function listItemsIndexController(
     if (list === undefined) {
       return next();
     }
-
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       req,

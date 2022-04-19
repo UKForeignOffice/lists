@@ -18,7 +18,7 @@ import {
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma, ListItem, ListItemEvent } from "@prisma/client";
+import { Prisma, ListItem } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -26,15 +26,20 @@ import { rawUpdateGeoLocation } from "server/models/helpers";
 import { format } from "date-fns";
 import { PaginationResults } from "server/components/lists";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { IndexListItem, ListIndexOptions, Tags, TAGS } from "./types";
+import {
+  IndexListItem,
+  ListIndexOptions,
+  Tags,
+  TAGS,
+  TagsAsKey,
+} from "./types";
 import {
   calculatePagination,
-  indexQueryBuilder,
   tagQueryFactory,
 } from "server/models/listItem/queryFactory";
 
 function listItemsWithIndexDetails(item: ListItem): IndexListItem {
-  const { jsonData, createdAt, updatedAt, id } = item;
+  const { jsonData, createdAt, updatedAt, id, status } = item;
   const {
     organisationName,
     contactName,
@@ -51,84 +56,55 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     validators,
     administrators,
     id,
+    status,
+    tags: [],
   };
 }
 
-type IndexOptions = {
-  page?: number;
-  tags?: string | string[];
-};
-
-const newTags = {
-  history: {
-    every: {
-      type: {
-        not: ListItemEvent.NEW,
-      },
-    },
-  },
-};
-
-type pinnedItemsOptions = {
-  listId?: List["id"];
-};
-
-const prismaQuery = (listId, options) => {
-  const currentPage = options?.pagination?.true ?? 1;
-  const skipIndex = currentPage ? currentPage - 1 : currentPage;
-  const listWhere = {
-    id: listId,
-  };
-  const itemsWhere = {};
-
-  const select = {};
-  const q = {
+function findPinnedIndexListItems(options: ListIndexOptions) {
+  return prisma.user.findUnique({
     where: {
-      id: listId,
+      id: options.userId,
     },
     select: {
-      type: true,
-      country: true,
-      items: {
+      pinnedItems: {
         where: {
-          isPublished: true,
-          listItemPinnedBy: {
-            some: {
-              id: 34,
-            },
-          },
+          listId: options.listId,
         },
-        skip: skipIndex * ITEMS_PER_PAGE,
-        take: ITEMS_PER_PAGE,
       },
-      _count: true,
     },
-  };
-};
+  });
+}
 
-const ITEMS_PER_PAGE = 20;
+function getActiveQueries(
+  tags: Array<keyof Tags>,
+  options: ListIndexOptions
+): { [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput } {
+  return tags.reduce((prev, tag) => {
+    return {
+      ...prev,
+      [tag]: tagQueryFactory[tag](options),
+    };
+  }, {});
+}
+
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
     type: List["type"];
     country: List["country"];
+    pinnedItems: IndexListItem[];
     items: IndexListItem[];
   } & PaginationResults
 > {
   const { listId } = options;
   const { tags = [] } = options;
   const tagsAsArray = Array.isArray(tags) ? tags : [tags];
-  const { take, skip } = calculatePagination(options);
+  const paginationOptions: {} | { take: number; skip: number } =
+    calculatePagination(options);
 
-  const activeQueries: {
-    [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput;
-  } = tagsAsArray.reduce((prev, tag) => {
-    return {
-      ...prev,
-      [tag]: tagQueryFactory[tag](options),
-    };
-  }, {});
+  const activeQueries = getActiveQueries(tagsAsArray, options);
 
-  const c = {
+  const baseQuery = {
     where: {
       id: options.listId,
     },
@@ -136,43 +112,67 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       type: true,
       country: true,
       items: {
-        take,
-        skip,
-      },
-      _count: {
-        select: {
-          items: true,
-        },
+        where: {},
+        ...paginationOptions,
       },
     },
   };
-  if (tagsAsArray.length) {
-  }
+  let itemsWhere = {};
+
   if (activeQueries.out_with_provider) {
-    c.select.items = {
+    itemsWhere = {
       ...activeQueries.out_with_provider,
-      ...c.select.items,
     };
   }
 
-  const result = await prisma.list.findUnique();
+  if (activeQueries.published) {
+    itemsWhere = {
+      ...itemsWhere,
+      ...activeQueries.published,
+    };
+  }
 
+  if (activeQueries.to_do) {
+    itemsWhere = {
+      ...itemsWhere,
+      ...activeQueries.to_do,
+    };
+  }
+  baseQuery.select.items = {
+    where: {
+      AND: [
+        {
+          pinnedBy: {
+            none: {
+              id: options.userId!,
+            },
+          },
+        },
+        itemsWhere,
+      ],
+    },
+  };
+
+  const [pinned, result] = await prisma.$transaction([
+    findPinnedIndexListItems(options),
+    prisma.list.findUnique(baseQuery),
+  ]);
   if (!result) {
     logger.error(`Failed to find ${listId}`);
     throw new Error(`Failed to find ${listId}`);
   }
-  const { type, country, items, _count } = result;
+  const { type, country, items } = result;
   const pagination = await getPaginationValues({
-    count: _count?.items ?? 0,
+    count: result.items?.length ?? 0,
     rows: 20,
     route: "",
     page: options?.pagination?.page ?? 1,
     listRequestParams: {},
   });
-
   return {
     type,
     country,
+    pinnedItems: (pinned?.pinnedItems ?? []).map(listItemsWithIndexDetails),
     items: items.map(listItemsWithIndexDetails),
     ...pagination,
   };

@@ -1,4 +1,4 @@
-<li class="dashboard__list-item govuk-grid-row" id="item-{{ listItem.id }}">
+<li class="dashboard__list-item" id="item-{{ listItem.id }}">
   <span class="govuk-caption-m">
     <span class="govuk-visually-hidden">Organisation name:</span>
     {{ listItem.organisationName }}
@@ -6,7 +6,6 @@
   <h2 class="govuk-heading-m">
     {{ listItem.contactName }}
   </h2>
-
   {% for tag in listItem.tags %}
     <strong class="govuk-tag dashboard__list-item-tag">
       {{ tag }}

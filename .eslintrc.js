@@ -22,5 +22,7 @@ module.exports = {
     "jest.config.js",
     "webpack.config.js",
     "src/form-runner/form-runner-app/",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
   ],
 };

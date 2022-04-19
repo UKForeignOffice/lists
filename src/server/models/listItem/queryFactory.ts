@@ -1,40 +1,40 @@
-import { List, User } from "server/models/types";
 import {
   ListIndexOptions,
   PaginationOptions,
   Tags,
   TAGS,
-  TagsAsKey,
 } from "server/models/listItem/types";
-import { util } from "prettier";
-import { ListItemEvent, Prisma } from "@prisma/client";
+import { ListItemEvent, Status, Prisma } from "@prisma/client";
 
 export const tagQueryFactory: Record<
   keyof Tags,
   (options: ListIndexOptions) => Partial<Prisma.ListItemWhereInput>
 > = {
-  [TAGS.annual_review]: (options) => ({}),
-  [TAGS.out_with_provider]: (_options) => ({
+  // TODO:- enable when ready
+  // [TAGS.annual_review]: () => ({ isPublished: false }),
+  [TAGS.out_with_provider]: () => ({
     history: {
       some: {
         type: ListItemEvent.CHANGES_REQUESTED,
       },
     },
   }),
-  [TAGS.pinned]: (options) => ({
-    listItemPinnedBy: {
-      some: {
-        id: options.userId,
+  [TAGS.pinned]: (options: ListIndexOptions) => {
+    return {
+      pinnedBy: {
+        some: {
+          id: options.userId,
+        },
       },
-    },
-  }),
-  [TAGS.published]: (_options) => ({ isPublished: true }),
-  [TAGS.to_do]: (_options) => ({ isApproved: true }),
+    };
+  },
+  [TAGS.published]: () => ({ isPublished: true }),
+  [TAGS.to_do]: () => ({ status: Status.NEW }),
 };
 
 export function calculatePagination(
   paginationOptions: PaginationOptions = { shouldPaginate: true }
-) {
+): {} | { take: number; skip: number } {
   const { shouldPaginate } = paginationOptions;
   if (!shouldPaginate) return {};
 
