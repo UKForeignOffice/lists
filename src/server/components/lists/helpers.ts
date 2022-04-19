@@ -14,7 +14,7 @@ import {
 import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
-  FORM_RUNNER_URL
+  FORM_RUNNER_URL,
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -50,6 +50,7 @@ export function queryStringFromParams(
   removeEmptyValues?: boolean
 ): string {
   return Object.keys(params)
+    .filter((param) => param !== "page")
     .map((key) => {
       let value: string = params[key];
 
@@ -167,7 +168,9 @@ export function createListSearchBaseLink(serviceType: string): string {
 
 export function createFormRunnerReturningUserLink(serviceType: string): string {
   if (serviceType === undefined) {
-    throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
+    throw new Error(
+      "createFormRunnerReturningUserLink serviceType is undefined"
+    );
   }
 
   const protocol = isLocalHost ? "http" : "https";

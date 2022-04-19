@@ -54,5 +54,5 @@ export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
   tags?: TagsAsKey;
-  reqQuery?: Request["query"];
+  reqQuery?: { [query: string]: any };
 } & PaginationOptions;

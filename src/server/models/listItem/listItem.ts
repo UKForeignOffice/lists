@@ -162,12 +162,13 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     throw new Error(`Failed to find ${listId}`);
   }
   const { type, country, items } = result;
+
   const pagination = await getPaginationValues({
     count: result.items?.length ?? 0,
     rows: 20,
     route: "",
     page: options?.pagination?.page ?? 1,
-    listRequestParams: options.reqQuery,
+    listRequestParams: options?.reqQuery,
   });
   return {
     type,
