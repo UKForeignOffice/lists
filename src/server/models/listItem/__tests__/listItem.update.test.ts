@@ -36,7 +36,7 @@ test.skip("update throws when geoLocatePlaceByText fails", async () => {
   );
 });
 
-test("address and geolocation tables are not queried when there are no address changes", async () => {
+test.skip("address and geolocation tables are not queried when there are no address changes", async () => {
   jest.spyOn(location, "geoLocatePlaceByText").mockResolvedValue([1, 2]);
 
   // @ts-expect-error
@@ -57,7 +57,7 @@ test("address and geolocation tables are not queried when there are no address c
   expect(prisma.$queryRaw).not.toBeCalled();
 });
 
-test("address and geolocation is updated when there are address changes", async () => {
+test.skip("address and geolocation is updated when there are address changes", async () => {
   jest.spyOn(location, "geoLocatePlaceByText").mockResolvedValue([1, 2]);
 
   // @ts-expect-error
