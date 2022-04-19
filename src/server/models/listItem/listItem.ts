@@ -513,7 +513,7 @@ export async function deleteListItem(
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }
-  const auditEvent = AuditEvent.DELETED;
+  // const auditEvent = AuditEvent.DELETED;
 
   try {
     const [listItem] = await prisma.$transaction([
