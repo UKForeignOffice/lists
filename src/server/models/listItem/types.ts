@@ -1,4 +1,5 @@
 import { LawyerListItemJsonData, List, User } from "server/models/types";
+import { Request } from "express";
 
 /**
  * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
@@ -53,4 +54,5 @@ export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
   tags?: TagsAsKey;
+  reqQuery?: Request["query"];
 } & PaginationOptions;

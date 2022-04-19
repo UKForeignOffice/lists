@@ -33,6 +33,7 @@ import {
   calculatePagination,
   tagQueryFactory,
 } from "server/models/listItem/queryFactory";
+import { URLSearchParams } from "url";
 
 function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   const { jsonData, createdAt, updatedAt, id, status } = item;
@@ -166,7 +167,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     rows: 20,
     route: "",
     page: options?.pagination?.page ?? 1,
-    listRequestParams: {},
+    listRequestParams: options.reqQuery,
   });
   return {
     type,
