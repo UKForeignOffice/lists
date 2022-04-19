@@ -26,13 +26,7 @@ import { rawUpdateGeoLocation } from "server/models/helpers";
 import { format } from "date-fns";
 import { PaginationResults } from "server/components/lists";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import {
-  IndexListItem,
-  ListIndexOptions,
-  Tags,
-  TAGS,
-  TagsAsKey,
-} from "./types";
+import { IndexListItem, ListIndexOptions, Tags } from "./types";
 import {
   calculatePagination,
   tagQueryFactory,
@@ -61,6 +55,7 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function findPinnedIndexListItems(options: ListIndexOptions) {
   return prisma.user.findUnique({
     where: {

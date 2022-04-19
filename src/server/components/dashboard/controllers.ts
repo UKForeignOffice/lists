@@ -17,8 +17,6 @@ import {
 import {
   deleteListItem,
   findListItemById,
-  findListItemsForList,
- findIndexListItems,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
 } from "server/models/listItem/listItem";
@@ -30,7 +28,7 @@ import {
   List,
   ListItemGetObject,
   ServiceType,
-  UserRoles
+  UserRoles,
 } from "server/models/types";
 import {
   filterSuperAdminRole,

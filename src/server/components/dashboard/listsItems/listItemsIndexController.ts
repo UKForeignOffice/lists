@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS } from "server/models/listItem/types";
-import { List } from "server/models/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -23,7 +22,7 @@ const TagsViewModel = [
     {
     text: "Annual review",
     value: TAGS.annual_review,
-  },*/
+  }, */
   {
     text: "Published",
     value: TAGS.published,
