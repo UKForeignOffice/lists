@@ -17,7 +17,6 @@ import {
 import {
   deleteListItem,
   findListItemById,
-  findListItemsForList,
   togglerListItemIsApproved,
   togglerListItemIsPublished,
 } from "server/models/listItem/listItem";
@@ -29,7 +28,7 @@ import {
   List,
   ListItemGetObject,
   ServiceType,
-  UserRoles
+  UserRoles,
 } from "server/models/types";
 import {
   filterSuperAdminRole,
@@ -48,6 +47,8 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getNewSessionWebhookData, generateFormRunnerWebhookData } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
+
+export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
 const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -339,35 +340,6 @@ export async function listsEditController(
       error,
       list,
       req,
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function listsItemsController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const { listId } = req.params;
-    const list = await findListById(listId);
-
-    if (list === undefined) {
-      return next();
-    }
-
-    const listItems = await findListItemsForList(list);
-
-    res.render("dashboard/lists-items", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItems,
-      canApprove: userIsListValidator(req, list),
-      canPublish: userIsListPublisher(req, list),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
