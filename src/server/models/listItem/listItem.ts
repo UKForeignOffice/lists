@@ -1,19 +1,18 @@
 import { get, merge } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./../db/prisma-client";
-import { Prisma, AuditEvent, Status } from "@prisma/client";
+import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { logger } from "server/services/logger";
+import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData, WebhookData, } from "server/components/formRunner";
 import {
-  LawyersFormWebhookData,
-  CovidTestSupplierFormWebhookData,
-  WebhookData,
-} from "server/components/formRunner";
-import {
+  AuditJsonData,
+  LawyerListItemJsonData,
   List,
-  User,
-  ServiceType,
+  ListItem,
   Point,
-  LawyerListItemJsonData, ListItem, AuditJsonData, WebhookDataAsJsonObject,
+  ServiceType,
+  User,
+  WebhookDataAsJsonObject,
 } from "./../types";
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
@@ -504,5 +503,39 @@ export async function update(
       `listItem.update transactional error - rolling back ${err.message}`
     );
     throw err;
+  }
+}
+
+export async function deleteListItem(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("deleteListItem Error: userId is undefined");
+  }
+  const auditEvent = AuditEvent.DELETED;
+
+  try {
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.delete({
+        where: {
+          id,
+        },
+      }),
+      // recordListItemEvent({
+      //     eventName: "delete",
+      //     itemId: id,
+      //     userId
+      //   },
+      //   id,
+      //   auditEvent
+      // ),
+    ]);
+
+    return listItem;
+  } catch (e) {
+    logger.error(`deleteListItem Error ${e.message}`);
+
+    throw new Error("Failed to delete item");
   }
 }

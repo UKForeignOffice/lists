@@ -13,6 +13,7 @@ export const dashboardRoutes = {
   listsEdit: "/dashboard/lists/:listId",
   listsItems: "/dashboard/lists/:listId/items",
   listsItem: "/dashboard/lists/:listId/items/:listItemId",
+  listsItemDelete: "/dashboard/lists/:listId/items/:listItemId/delete",
   listsItemPin: "/dashboard/lists/:listId/items/:listItemId/pin",
   listsItemPublish: "/dashboard/lists/:listId/items/:listItemId/publish",
   listsItemRequestChanges: "/dashboard/lists/:listId/items/:listItemId/changes",

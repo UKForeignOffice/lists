@@ -59,8 +59,8 @@ dashboardRouter.get(
 );
 
 // list items
-dashboardRouter.delete(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemDeleteController);
 dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemGetController);
+dashboardRouter.post(dashboardRoutes.listsItemDelete, csrfRequestHandler, listItemEditRequestValidation, listItemDeleteController);
 dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemPostController);
 dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listItemEditRequestValidation, listItemPublishController);
 dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, listItemRequestChangeController);

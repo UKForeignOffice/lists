@@ -1,18 +1,26 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import { NextFunction, Request, Response } from "express";
 import { findListById } from "server/models/list";
-import { findListItemById, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
+import {
+  findListItemById,
+  deleteListItem,
+  togglerListItemIsPublished,
+  update
+} from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
 import {
-  AuditJsonData, CovidTestSupplierListItemJsonData,
+  AuditJsonData,
+  CovidTestSupplierListItemGetObject,
+  CovidTestSupplierListItemJsonData,
+  JsonObject,
+  LawyerListItemGetObject,
   LawyerListItemJsonData,
   List,
   ListItem,
   ListItemGetObject,
-  LawyerListItemGetObject,
   ServiceType,
-  User, JsonObject, CovidTestSupplierListItemGetObject
+  User
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -270,12 +278,12 @@ export async function listItemDeleteController(
     });
     return;
   }
-  let successBannerHeading = `${listItem.jsonData.organisationName} has been removed`;
-  const successBannerTitle = `Removed`;
+  let successBannerTitle = `${listItem.jsonData.organisationName} has been removed`;
+  const successBannerHeading = `Removed`;
   const successBannerColour = "red";
 
   try {
-    await handleListItemDelete(Number(listItemId), userId);
+    await deleteListItem(Number(listItemId), userId);
 
     req.flash("successBannerTitle", successBannerTitle);
     req.flash("successBannerHeading", successBannerHeading);
@@ -283,49 +291,15 @@ export async function listItemDeleteController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error) {
-    successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
+    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
       listItem,
-      resultMessage: successBannerHeading,
+      resultMessage: successBannerTitle,
       csrfToken: getCSRFToken(req)
     });
-  }
-}
-
-export async function handleListItemDelete(
-  id: number,
-  userId: User["id"]
-): Promise<ListItem> {
-  if (userId === undefined) {
-    throw new Error("deleteListItem Error: userId is undefined");
-  }
-  const auditEvent = AuditEvent.DELETED;
-
-  try {
-    const [listItem] = await prisma.$transaction([
-      prisma.listItem.delete({
-        where: {
-          id,
-        },
-      }),
-      recordListItemEvent({
-          eventName: "delete",
-          itemId: id,
-          userId
-        },
-        id,
-        auditEvent
-      ),
-    ]);
-
-    return listItem;
-  } catch (e) {
-    logger.error(`deleteListItem Error ${e.message}`);
-
-    throw new Error("Failed to delete item");
   }
 }
 
@@ -517,9 +491,9 @@ export async function listItemPublishController(
     });
     return;
   }
-  const successBannerTitle = `${action}ed`;
+  const successBannerHeading = `${action}ed`;
   const successBannerColour = "green";
-  let successBannerHeading = `${listItem.jsonData.organisationName} has been ${successBannerTitle}`;
+  let successBannerTitle = `${listItem.jsonData.organisationName} has been ${successBannerHeading}`;
 
   try {
     await handlePublishListItem(Number(listItemId), isPublished, userId);
@@ -530,13 +504,13 @@ export async function listItemPublishController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error) {
-    successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
+    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
       listItem,
-      resultMessage: successBannerHeading,
+      resultMessage: successBannerTitle,
       csrfToken: getCSRFToken(req)
     });
   }
