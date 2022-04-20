@@ -4,7 +4,7 @@ import {
   Tags,
   TAGS,
 } from "server/models/listItem/types";
-import { ListItemEvent, Status, Prisma } from "@prisma/client";
+import { Status, Prisma, AuditEvent } from "@prisma/client";
 
 export const tagQueryFactory: Record<
   keyof Tags,
@@ -15,7 +15,7 @@ export const tagQueryFactory: Record<
   [TAGS.out_with_provider]: () => ({
     history: {
       some: {
-        type: ListItemEvent.CHANGES_REQUESTED,
+        auditEvent: AuditEvent.OUT_WITH_PROVIDER,
       },
     },
   }),

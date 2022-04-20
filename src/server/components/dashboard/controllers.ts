@@ -24,7 +24,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
-const DEFAULT_VIEW_PROPS = {
+export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,

@@ -55,6 +55,7 @@ dashboardRouter.all(
 dashboardRouter.get(
   dashboardRoutes.listsItems,
   csrfRequestHandler,
+  // @ts-expect-error
   listsItemsController
 );
 

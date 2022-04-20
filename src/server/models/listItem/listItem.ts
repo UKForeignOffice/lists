@@ -1,7 +1,7 @@
 import { get, merge } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./../db/prisma-client";
-import { AuditEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, Prisma, Status, ListItem } from "@prisma/client";
 import { logger } from "server/services/logger";
 import {
   LawyersFormWebhookData,
@@ -14,14 +14,12 @@ import {
   List,
   User,
   ServiceType,
-  ListItemGetObject,
   Point,
-  LawyerListItemJsonData,
+  WebhookDataAsJsonObject,
 } from "./../types";
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma, ListItem, ListItemEvent } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";

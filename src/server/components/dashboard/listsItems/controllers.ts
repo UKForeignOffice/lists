@@ -94,6 +94,17 @@ export async function listItemGetController(
     }
   }
 
+  const actionButtons: { [key: string]: string[] } = {
+    NEW: ["publish", "request-changes", "remove"],
+    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
+    EDITED: ["update", "request-changes", "remove"],
+    // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
+    // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
+    // REVIEWED: ["update", "request-changes", "remove"],
+    PUBLISHED: ["unpublish", "remove"],
+    UNPUBLISHED: ["publish", "request-changes", "remove"],
+  }
+
   const isPinned = listItem?.pinnedBy?.some(user => userId === user.id) ?? false;
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -101,6 +112,7 @@ export async function listItemGetController(
     list,
     listItem,
     isPinned,
+    actionButtons: actionButtons[listItem.status],
     csrfToken: getCSRFToken(req)
   });
 }
@@ -167,8 +179,8 @@ export async function listItemPinController(
     });
     return;
   }
-  let successBannerHeading = `${listItem.jsonData.organisationName} has been ${isPinned ? "pinned" : "unpinned"}`;
-  const successBannerTitle = `${isPinned ? "Pinned" : "Unpinned"}`;
+  let successBannerTitle = `${listItem.jsonData.organisationName} has been ${isPinned ? "pinned" : "unpinned"}`;
+  const successBannerHeading = `${isPinned ? "Pinned" : "Unpinned"}`;
   const successBannerColour = "blue";
 
   try {
@@ -179,14 +191,14 @@ export async function listItemPinController(
     req.flash("successBannerColour", successBannerColour);
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
-  } catch (error) {
-    successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
+  } catch (error: any) {
+    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
       listItem,
-      resultMessage: successBannerHeading,
+      resultMessage: successBannerTitle,
       csrfToken: getCSRFToken(req)
     });
   }
@@ -250,7 +262,7 @@ export async function handlePinListItem(
     }
 
     return listItem;
-  } catch (e) {
+  } catch (e: any) {
     logger.error(`deleteListItem Error ${e.message}`);
 
     throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
@@ -290,7 +302,7 @@ export async function listItemDeleteController(
     req.flash("successBannerColour", successBannerColour);
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
-  } catch (error) {
+  } catch (error: any) {
     successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
@@ -325,8 +337,8 @@ export async function listItemUpdateController(
     });
     return;
   }
-  let successBannerHeading = `${listItem.jsonData.organisationName} has been updated and published`;
-  const successBannerTitle = `Updated and published`;
+  let successBannerTitle = `${listItem.jsonData.organisationName} has been updated and published`;
+  const successBannerHeading = `Updated and published`;
   const successBannerColour = "green";
 
   try {
@@ -337,14 +349,14 @@ export async function listItemUpdateController(
     req.flash("successBannerColour", successBannerColour);
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
-  } catch (error) {
-    successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
+  } catch (error: any) {
+    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
       req,
       list,
       listItem,
-      resultMessage: successBannerHeading,
+      resultMessage: successBannerTitle,
       csrfToken: getCSRFToken(req)
     });
   }
@@ -409,7 +421,7 @@ export async function listItemRequestChangeController(
     req.flash("successBannerColour", successBannerColour);
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
-  } catch (error) {
+  } catch (error: any) {
     successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,
@@ -465,7 +477,7 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
         auditEvent
       ),
     ]);
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
   }
 }
@@ -477,7 +489,7 @@ export async function listItemPublishController(
   const { listId, listItemId } = req.params;
   const { action } = req.body;
   const userId = req?.user?.userData?.id;
-  const isPublished = action === "published";
+  const isPublished = action === "publish";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const list = await findListById(listId) ?? {} as List;
@@ -503,7 +515,7 @@ export async function listItemPublishController(
     req.flash("successBannerColour", successBannerColour);
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
-  } catch (error) {
+  } catch (error: any) {
     successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
     res.render("dashboard/lists-item", {
       ...DEFAULT_VIEW_PROPS,

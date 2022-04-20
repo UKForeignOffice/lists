@@ -23,15 +23,32 @@
           <li id="item-{{ listItem.id }}">
             {% if list.type === 'covidTestProviders' %}
               {{ covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
-              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName) }}
+              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName, isPinned, actionButtons) }}
             {% endif %}
             {% if list.type === 'lawyers' %}
               {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned) }}
-              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName) }}
+              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
             {% endif %}
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
           </li>
       </ul>
     </form>
+
+    <script nonce="{{cspNonce}}">
+      document.getElementById("action-requestChanges").onchange = function toggleListItemRequestChangeTextarea(event) {
+        // event.preventDefault();
+        // event.stopPropagation();
+
+        const isRequestingChanges = event.target.checked;
+        const requestChangesTextarea = document.getElementById("conditional-action-requestChanges");
+
+        if (isRequestingChanges) {
+            requestChangesTextarea.style.display = "block";
+        } else {
+          requestChangesTextarea.style.display = "none";
+        }
+      }
+
+    </script>
   {% endif %}
 {% endblock %}

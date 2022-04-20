@@ -16,7 +16,7 @@
   <div class="dashboard__list-item-body">
     <p>
       <span class="govuk-!-font-weight-bold">Status:</span>
-      {{ listItem.status }}
+      {{ listItem.status | replace('_', ' ') }}
     </p>
     <div class="dashboard__list-item-dates">
       <p class="govuk-body">

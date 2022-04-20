@@ -157,11 +157,14 @@
       {{ item.address.city }}
     {% endif %}
   {% endset %}
+  {% set status %}
+    {{ item.status | replace('_', ' ') }}
+  {% endset %}
 
   <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
     <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
       Submitted: {{ item.createdAt | date }}
-      <strong class="govuk-tag govuk-!-margin-left-2">{{ _.toUpper(item.status.replace('_', ' ')) }}</strong>
+      <strong class="govuk-tag govuk-!-margin-left-2">{{ _.toUpper(status) }}</strong>
       {% if isPinned %}
         <strong class="govuk-tag">PINNED</strong>
       {% endif %}
