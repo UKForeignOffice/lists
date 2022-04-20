@@ -230,6 +230,7 @@ jobs:
           name: Install OpenVPN
           command: |
             sudo apt-get update
+            sudo apt-get install net-tools -y
             sudo apt-get install openvpn openvpn-systemd-resolved -y
 
       - run:
@@ -256,7 +257,7 @@ jobs:
             SYS_RES_DNS=$(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
             echo $SYS_RES_DNS
 
-            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
+            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }') || $(sudo netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
             echo $phone_home
 
             vpn_command=(sudo openvpn
@@ -289,20 +290,11 @@ jobs:
           command: |
             until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ]; do
               echo "Attempting to connect to VPN server..."
-              sleep 1;
+              sleep 3;
             done
 
             printf "\nVPN connected\n"
             printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
-
-      - run:
-          name: Check IP after VPN connection
-          command: |
-            ifconfig
-            route -n
-            sudo netstat -anp
-            cat /etc/resolv.conf
-            curl checkip.amazonaws.com
 
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: fco-forms-test
