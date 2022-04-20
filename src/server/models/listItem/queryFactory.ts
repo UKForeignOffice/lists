@@ -12,13 +12,7 @@ export const tagQueryFactory: Record<
 > = {
   // TODO:- enable when ready
   // [TAGS.annual_review]: () => ({ isPublished: false }),
-  [TAGS.out_with_provider]: () => ({
-    history: {
-      some: {
-        auditEvent: AuditEvent.OUT_WITH_PROVIDER,
-      },
-    },
-  }),
+  [TAGS.out_with_provider]: () => ({ status: Status.OUT_WITH_PROVIDER }),
   [TAGS.pinned]: (options: ListIndexOptions) => {
     return {
       pinnedBy: {
@@ -33,11 +27,8 @@ export const tagQueryFactory: Record<
 };
 
 export function calculatePagination(
-  paginationOptions: PaginationOptions = { shouldPaginate: true }
+  paginationOptions: PaginationOptions
 ): {} | { take: number; skip: number } {
-  const { shouldPaginate } = paginationOptions;
-  if (!shouldPaginate) return {};
-
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {

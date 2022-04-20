@@ -54,6 +54,7 @@ export async function listItemsIndexController(
         page: Number(page ?? 1),
       },
       tags: queryTag,
+      reqQuery: req.query,
     });
 
     if (list === undefined) {

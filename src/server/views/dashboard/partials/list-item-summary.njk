@@ -1,3 +1,14 @@
+{% set dictionary = {
+  NEW: "New",
+  OUT_WITH_PROVIDER: "Out with provider",
+  EDITED: "Edited",
+  ANNUAL_REVIEW: "Annual review",
+  REVIEW_OVERDUE: "Review overdue",
+  REVIEWED: "Reviewed",
+  PUBLISHED: "Published",
+  UNPUBLISHED: "Unpublished"
+} %}
+
 <li class="dashboard__list-item" id="item-{{ listItem.id }}">
   <span class="govuk-caption-m">
     <span class="govuk-visually-hidden">Organisation name:</span>
@@ -6,17 +17,16 @@
   <h2 class="govuk-heading-m">
     {{ listItem.contactName }}
   </h2>
-  {% for tag in listItem.tags %}
-    <strong class="govuk-tag dashboard__list-item-tag">
-      {{ tag }}
-    </strong>
-  {% endfor %}
-
+  <div class="dashboard__list-item-tag-container">
+    {% for tag in listItem.tags %}
+      {% include "./list-item-tag.njk" %}
+    {% endfor %}
+  </div>
 
   <div class="dashboard__list-item-body">
     <p>
       <span class="govuk-!-font-weight-bold">Status:</span>
-      {{ listItem.status | replace('_', ' ') }}
+      {{ dictionary[listItem.status] }}
     </p>
     <div class="dashboard__list-item-dates">
       <p class="govuk-body">

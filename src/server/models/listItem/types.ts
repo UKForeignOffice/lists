@@ -43,7 +43,6 @@ export type IndexListItem = Pick<
 export type TagsAsKey = Array<keyof typeof TAGS> | keyof typeof TAGS;
 
 export interface PaginationOptions {
-  shouldPaginate?: boolean;
   pagination?: {
     page?: number;
   };
@@ -53,4 +52,5 @@ export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
   tags?: TagsAsKey;
+  reqQuery?: { [query: string]: any };
 } & PaginationOptions;
