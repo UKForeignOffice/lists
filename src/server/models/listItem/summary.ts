@@ -27,6 +27,8 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   } = jsonData as LawyerListItemJsonData;
   const isPublished = item.isPublished && TAGS.published;
   const isNew = item.status === Status.NEW && TAGS.to_do;
+  const isOutWithProvider =
+    item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
     updatedAt: format(updatedAt, "dd MMMM yyyy"),
@@ -37,7 +39,7 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     administrators,
     id,
     status,
-    tags: [isPublished, isNew].filter(Boolean) as string[],
+    tags: [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[],
   };
 }
 
