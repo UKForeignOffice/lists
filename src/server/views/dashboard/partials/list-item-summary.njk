@@ -1,3 +1,7 @@
+{% set dictionary = {
+  NEW: "New"
+} %}
+
 <li class="dashboard__list-item" id="item-{{ listItem.id }}">
   <span class="govuk-caption-m">
     <span class="govuk-visually-hidden">Organisation name:</span>
@@ -15,7 +19,7 @@
   <div class="dashboard__list-item-body">
     <p>
       <span class="govuk-!-font-weight-bold">Status:</span>
-      {{ listItem.status | replace('_', ' ') }}
+      {{ dictionary[listItem.status] }}
     </p>
     <div class="dashboard__list-item-dates">
       <p class="govuk-body">
