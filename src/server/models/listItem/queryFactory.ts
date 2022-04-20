@@ -12,13 +12,7 @@ export const tagQueryFactory: Record<
 > = {
   // TODO:- enable when ready
   // [TAGS.annual_review]: () => ({ isPublished: false }),
-  [TAGS.out_with_provider]: () => ({
-    history: {
-      some: {
-        auditEvent: AuditEvent.OUT_WITH_PROVIDER,
-      },
-    },
-  }),
+  [TAGS.out_with_provider]: () => ({ status: Status.OUT_WITH_PROVIDER }),
   [TAGS.pinned]: (options: ListIndexOptions) => {
     return {
       pinnedBy: {
