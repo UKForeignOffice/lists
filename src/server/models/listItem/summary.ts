@@ -4,11 +4,7 @@ import {
   TAGS,
   Tags,
 } from "server/models/listItem/types";
-import {
-  CovidTestSupplierListItemJsonData,
-  LawyerListItemJsonData,
-  List,
-} from "server/models/types";
+import { LawyerListItemJsonData, List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import {
   calculatePagination,
