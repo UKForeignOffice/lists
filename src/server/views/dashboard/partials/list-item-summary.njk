@@ -7,22 +7,24 @@
   REVIEWED: "Reviewed",
   PUBLISHED: "Published",
   UNPUBLISHED: "Unpublished"
-} %}
+  }
+%}
 
 <li class="dashboard__list-item" id="item-{{ listItem.id }}">
-  <span class="govuk-caption-m">
+  <div class="dashboard__list-item-title">
+      <span class="govuk-caption-m">
     <span class="govuk-visually-hidden">Organisation name:</span>
     {{ listItem.organisationName }}
   </span>
-  <h2 class="govuk-heading-m">
-    {{ listItem.contactName }}
-  </h2>
+    <h2 class="govuk-heading-m">
+      {{ listItem.contactName }}
+    </h2>
+  </div>
   <div class="dashboard__list-item-tag-container">
     {% for tag in listItem.tags %}
       {% include "./list-item-tag.njk" %}
     {% endfor %}
   </div>
-
   <div class="dashboard__list-item-body">
     <p>
       <span class="govuk-!-font-weight-bold">Status:</span>

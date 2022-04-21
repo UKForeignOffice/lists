@@ -25,6 +25,15 @@ export const TAGS = {
   ...INCLUSIVE_TAGS,
 };
 
+export const ORDER_BY = {
+  newest_first: "newest_first",
+  last_updated: "last_updated",
+  alphabetical_company_name: "alphabetical_company_name",
+  alphabetical_contact_name: "alphabetical_contact_name",
+} as const;
+
+export type OrderBy = typeof ORDER_BY;
+
 export type IndexListItem = Pick<
   LawyerListItemJsonData,
   | "organisationName"
@@ -52,5 +61,6 @@ export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
   tags?: TagsAsKey;
+  sort?: keyof OrderBy;
   reqQuery?: { [query: string]: any };
 } & PaginationOptions;

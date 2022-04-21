@@ -17,6 +17,12 @@
       },
       items: tags
     }) }}
+
+    {% for s in sort %}
+      {% if s.selected %}
+        <input type="hidden" name="sort" value="{{ s.value }}"/>
+      {% endif %}
+    {% endfor %}
     <button class="govuk-button">Apply filters</button>
   </form>
 </aside>
@@ -49,6 +55,10 @@
       http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
     </a>
   </p>
+
+  <div class="dashboard__sort">
+    {% include "./partials/list-item-sort.njk" %}
+  </div>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% if list.pinnedItems.length !== 0 %}
