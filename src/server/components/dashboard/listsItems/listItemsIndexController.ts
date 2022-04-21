@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import { TAGS } from "server/models/listItem/types";
+import { TAGS, ORDER_BY } from "server/models/listItem/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -28,6 +28,25 @@ const TagsViewModel = [
   },
 ];
 
+const SortViewModel = [
+  {
+    text: "Newest first",
+    value: ORDER_BY.newest_first,
+  },
+  {
+    text: "Last updated",
+    value: ORDER_BY.last_updated,
+  },
+  {
+    text: "Alphabetical (company name)",
+    value: ORDER_BY.alphabetical_company_name,
+  },
+  {
+    text: "Alphabetical (contact name)",
+    value: ORDER_BY.alphabetical_contact_name,
+  },
+];
+
 interface IndexParams {
   listId: string;
 }
@@ -36,7 +55,7 @@ interface IndexQuery {
   page: string | number;
   tag: Array<keyof typeof TAGS> | keyof typeof TAGS;
   // TODO:- sorting
-  sort_by?: string;
+  sort?: string;
 }
 
 export async function listItemsIndexController(
@@ -46,7 +65,7 @@ export async function listItemsIndexController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { page, tag: queryTag } = req.query;
+    const { page, tag: queryTag, sort: querySort } = req.query;
     const list = await findIndexListItems({
       listId: Number(listId),
       userId: req.user?.userData.id,
@@ -67,6 +86,10 @@ export async function listItemsIndexController(
       tags: TagsViewModel.map((tag) => ({
         ...tag,
         checked: queryTag?.includes(tag.value),
+      })),
+      sort: SortViewModel.map((sort) => ({
+        ...sort,
+        selected: querySort?.includes(sort.value),
       })),
     });
   } catch (error) {
