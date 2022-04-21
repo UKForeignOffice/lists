@@ -10,7 +10,6 @@ import {
 } from "server/components/formRunner";
 import {
   AuditJsonData,
-  LawyerListItemJsonData,
   List,
   User,
   ServiceType,
@@ -20,7 +19,6 @@ import {
 import { recordListItemEvent } from "./../audit";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
-import { Prisma, ListItem, Status } from "@prisma/client";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { getChangedAddressFields } from "./providers/helpers";
 import { geoLocatePlaceByText } from "server/services/location";

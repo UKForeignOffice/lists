@@ -26,7 +26,7 @@
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName, isPinned, actionButtons) }}
             {% endif %}
             {% if list.type === 'lawyers' %}
-              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned) }}
+              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned, requestedChanges) }}
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
             {% endif %}
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">

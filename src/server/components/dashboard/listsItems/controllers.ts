@@ -60,6 +60,7 @@ export async function listItemGetController(
 
   const list = await findListById(listId);
   const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject = await findListItemById(listItemId);
+  let requestedChanges;
 
   if (listItem.status === Status.EDITED) {
     const auditForEdits = listItem?.history
@@ -94,6 +95,14 @@ export async function listItemGetController(
     }
   }
 
+  if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
+    const auditForRequestedEdits = listItem?.history
+      ?.filter(audit => audit.auditEvent === "OUT_WITH_PROVIDER" || audit.auditEvent === "EDITED")
+      .sort((a, b) => a.id - b.id)
+      .pop();
+
+    requestedChanges = auditForRequestedEdits?.jsonData?.requestedChanges;
+  }
   const actionButtons: { [key: string]: string[] } = {
     NEW: ["publish", "request-changes", "remove"],
     OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
@@ -106,13 +115,15 @@ export async function listItemGetController(
   }
 
   const isPinned = listItem?.pinnedBy?.some(user => userId === user.id) ?? false;
+  const actionButtonsForStatus = actionButtons[listItem.status];
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
     req,
     list,
     listItem,
     isPinned,
-    actionButtons: actionButtons[listItem.status],
+    actionButtons: actionButtonsForStatus,
+    requestedChanges,
     csrfToken: getCSRFToken(req)
   });
 }
