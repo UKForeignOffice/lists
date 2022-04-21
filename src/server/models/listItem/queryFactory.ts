@@ -4,7 +4,7 @@ import {
   Tags,
   TAGS,
 } from "server/models/listItem/types";
-import { Status, Prisma, AuditEvent } from "@prisma/client";
+import { Status, Prisma } from "@prisma/client";
 
 export const tagQueryFactory: Record<
   keyof Tags,
