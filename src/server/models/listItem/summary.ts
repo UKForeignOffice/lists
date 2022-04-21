@@ -4,11 +4,7 @@ import {
   TAGS,
   Tags,
 } from "server/models/listItem/types";
-import {
-  CovidTestSupplierListItemJsonData,
-  LawyerListItemJsonData,
-  List,
-} from "server/models/types";
+import { LawyerListItemJsonData, List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import {
   calculatePagination,
@@ -91,7 +87,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   const activeQueries = getActiveQueries(tagsAsArray, options);
 
-  const baseQuery: Prisma.ListFindUniqueArgs = {
+  const baseQuery = {
     where: {
       id: options.listId,
     },
@@ -104,7 +100,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       },
     },
   };
-  let itemsWhere = {};
+  let itemsWhere: Prisma.ListItemWhereInput = {};
 
   if (activeQueries.out_with_provider) {
     itemsWhere = {
@@ -114,7 +110,6 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   if (activeQueries.published) {
     itemsWhere = {
-      ...itemsWhere,
       ...activeQueries.published,
     };
   }
@@ -125,7 +120,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       ...activeQueries.to_do,
     };
   }
-  baseQuery.select!.items = {
+  baseQuery.select.items = {
     where: {
       AND: [
         {
@@ -149,7 +144,6 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     throw new Error(`Failed to find ${listId}`);
   }
   const { type, country, items } = result;
-
   const pagination = await getPaginationValues({
     count: result.items?.length ?? 0,
     rows: 20,
