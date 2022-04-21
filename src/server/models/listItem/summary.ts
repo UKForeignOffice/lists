@@ -4,7 +4,11 @@ import {
   TAGS,
   Tags,
 } from "server/models/listItem/types";
-import { LawyerListItemJsonData, List } from "server/models/types";
+import {
+  CovidTestSupplierListItemJsonData,
+  LawyerListItemJsonData,
+  List,
+} from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import {
   calculatePagination,
@@ -87,7 +91,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   const activeQueries = getActiveQueries(tagsAsArray, options);
 
-  const baseQuery = {
+  const baseQuery: Prisma.ListFindUniqueArgs = {
     where: {
       id: options.listId,
     },
@@ -121,7 +125,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       ...activeQueries.to_do,
     };
   }
-  baseQuery.select.items = {
+  baseQuery.select!.items = {
     where: {
       AND: [
         {
