@@ -100,8 +100,7 @@ export function getNextPrevious({
   let previousPage = -1;
   let nextPage = -1;
 
-  let queryString = queryStringFromParams(listRequestParams, true);
-  queryString = queryString.replace("&page=" + currentPage.toString(), "");
+  const queryString = queryStringFromParams(listRequestParams, true);
 
   if (currentPage > pageCount) {
     currentPage = pageCount;
