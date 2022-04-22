@@ -120,7 +120,7 @@ describe("Lawyers List:", () => {
 
   describe("Lawyer's legal areas question page", () => {
     const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&page=1";
+      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -200,7 +200,7 @@ describe("Lawyers List:", () => {
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok&page="
+      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
     );
   });
 
@@ -208,7 +208,7 @@ describe("Lawyers List:", () => {
     test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=1"
+          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
         )
         .type("text/html");
 
@@ -226,7 +226,7 @@ describe("Lawyers List:", () => {
     `);
 
       expect(answers.eq(1).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok&page=1"
+        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
       );
 
       // region answer
@@ -236,7 +236,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok&page=1"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
       );
 
       // legal practice areas
@@ -246,7 +246,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok&page=1"
+        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
       );
     });
 
