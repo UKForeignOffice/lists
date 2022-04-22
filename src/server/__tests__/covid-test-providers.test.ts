@@ -199,7 +199,7 @@ describe("Covid Test Providers List:", () => {
 
     expect(status).toBe(302);
     expect(header.location).toBe(
-      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok&page="
+      "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
     );
   });
 
