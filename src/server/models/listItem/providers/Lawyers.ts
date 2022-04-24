@@ -22,7 +22,8 @@ import {
   fetchPublishedListItemQuery,
 } from "server/models/listItem/providers/helpers";
 import { recordListItemEvent } from "server/models/audit";
-import { AuditEvent } from "@prisma/client";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { recordEvent } from "server/models/listItem/listItemEvent";
 
 export async function createObject(
   lawyer: LawyersFormWebhookData
@@ -115,8 +116,15 @@ export async function create(
         eventName: "edit",
         itemId: listItem.id,
       },
-      listItem.id,
       AuditEvent.NEW
+    );
+
+    await recordEvent({
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      listItem.id,
+      ListItemEvent.NEW
     );
 
     return listItem;

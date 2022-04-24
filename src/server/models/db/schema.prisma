@@ -47,7 +47,7 @@ model ListItem {
   list                List @relation(fields: [listId], references: [id])
   listId              Int
 
-  history             Audit[]
+  history             Event[]
 
   status              Status @default(NEW)
 
@@ -99,8 +99,6 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  listItem            ListItem? @relation(fields: [listItemId], references: [id])
-  listItemId          Int?
 
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
@@ -109,7 +107,6 @@ model Audit {
 
   @@index([type])
   @@index([jsonData])
-  @@index([listItemId])
 }
 
 model Feedback {
@@ -154,4 +151,27 @@ model GeoLocation {
   address     Address[]
 
   @@index([location])
+}
+
+model Event {
+  id                  Int    @id @default(autoincrement())
+  time                DateTime
+  listItem            ListItem @relation(fields: [listItemId], references: [id])
+  listItemId          Int
+  type                ListItemEvent
+  jsonData            Json
+}
+
+enum ListItemEvent {
+  NEW
+  OUT_WITH_PROVIDER
+  EDITED
+  ANNUAL_REVIEW
+  REVIEWED
+  UNPUBLISHED
+  PUBLISHED
+  PINNED
+  UNPINNED
+  DELETED
+  UNDEFINED
 }

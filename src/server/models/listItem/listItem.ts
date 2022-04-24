@@ -1,7 +1,7 @@
 import { get, merge } from "lodash";
 import pgescape from "pg-escape";
 import { prisma } from "./../db/prisma-client";
-import { AuditEvent, Prisma, Status, ListItem } from "@prisma/client";
+import { AuditEvent, Prisma, Status, ListItem, ListItemEvent } from "@prisma/client";
 import { logger } from "server/services/logger";
 import {
   LawyersFormWebhookData,
@@ -9,7 +9,7 @@ import {
   WebhookData,
 } from "server/components/formRunner";
 import {
-  AuditJsonData,
+  EventJsonData,
   List,
   User,
   ServiceType,
@@ -17,6 +17,7 @@ import {
   WebhookDataAsJsonObject,
 } from "./../types";
 import { recordListItemEvent } from "./../audit";
+import { recordEvent } from "./../listItem/listItemEvent";
 import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
 import { ListItemWithAddressCountry } from "./providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
@@ -142,9 +143,8 @@ export async function togglerListItemIsApproved({
           itemId: id,
           userId,
         },
-        id,
         AuditEvent.UNPUBLISHED
-      )
+      ),
     ]);
     return listItem;
   } catch (error) {
@@ -190,8 +190,16 @@ export async function togglerListItemIsPublished({
           itemId: id,
           userId,
         },
-        id,
         auditEvent
+      ),
+      recordEvent(
+        {
+          eventName: isPublished ? "publish" : "unpublish",
+          userId,
+          itemId: id,
+        },
+        id,
+        isPublished ? ListItemEvent.PUBLISHED : ListItemEvent.UNPUBLISHED,
       ),
     ]);
 
@@ -211,6 +219,7 @@ export async function persistListItemChanges(
     throw new Error("persistListItemChanges Error: userId is undefined");
   }
   const auditEvent = AuditEvent.PUBLISHED;
+  const listItemEvent = ListItemEvent.PUBLISHED;
 
   try {
     const listItem = await prisma.listItem.findUnique({
@@ -220,12 +229,12 @@ export async function persistListItemChanges(
       }
     });
 
-    const auditForEdits = listItem?.history
-      .sort((a, b) => b.createdAt.getMilliseconds() - a.createdAt.getMilliseconds())
-      .filter(audit => audit.auditEvent === "EDITED")
+    const editEvent = listItem?.history
+      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
+      .filter(audit => audit.type === "EDITED")
       .pop();
 
-    const auditJsonData: AuditJsonData = auditForEdits?.jsonData as AuditJsonData;
+    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
     const [updatedListItem] = await prisma.$transaction([
       prisma.listItem.update({
@@ -235,7 +244,7 @@ export async function persistListItemChanges(
         data: {
           isApproved: true,
           isPublished: true,
-          jsonData: auditJsonData?.updatedJsonData,
+          jsonData: eventJsonData?.updatedJsonData,
         }
       }),
       recordListItemEvent({
@@ -243,8 +252,16 @@ export async function persistListItemChanges(
           itemId: id,
           userId
         },
-        id,
         auditEvent
+      ),
+
+      recordEvent({
+          eventName: "publish",
+          itemId: id,
+          userId
+        },
+        id,
+        listItemEvent
       ),
     ]);
 
@@ -382,8 +399,15 @@ export async function update(
             userId,
             updatedJsonData,
           },
-          id,
           AuditEvent.PUBLISHED
+        ),
+        recordEvent({
+            eventName: "publish",
+            itemId: id,
+            userId
+          },
+          id,
+          ListItemEvent.PUBLISHED
         ),
       ]);
 
@@ -396,8 +420,15 @@ export async function update(
             userId,
             updatedJsonData,
           },
-          id,
           AuditEvent.PUBLISHED
+        ),
+        recordEvent({
+            eventName: "publish",
+            itemId: id,
+            userId
+          },
+          id,
+          ListItemEvent.PUBLISHED
         ),
       ]);
     }
@@ -416,30 +447,32 @@ export async function update(
 export async function deleteListItem(
   id: number,
   userId: User["id"]
-): Promise<ListItem> {
+): Promise<void> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }
   // const auditEvent = AuditEvent.DELETED;
 
   try {
-    const [listItem] = await prisma.$transaction([
+    await prisma.$transaction([
+      prisma.event.deleteMany({
+        where: {
+          listItemId: id,
+        },
+      }),
       prisma.listItem.delete({
         where: {
           id,
         },
       }),
-      // recordListItemEvent({
-      //     eventName: "delete",
-      //     itemId: id,
-      //     userId
-      //   },
-      //   id,
-      //   auditEvent
-      // ),
+      recordListItemEvent({
+          eventName: "delete",
+          itemId: id,
+          userId
+        },
+        AuditEvent.DELETED
+      ),
     ]);
-
-    return listItem;
   } catch (e) {
     logger.error(`deleteListItem Error ${e.message}`);
 

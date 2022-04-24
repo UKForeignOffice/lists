@@ -1,6 +1,7 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import { Event } from "./listItem/types";
 
 export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
@@ -49,7 +50,7 @@ export interface ListItemGetObject extends PrismaClient.ListItem {
     geoLocationId?: number;
   };
   pinnedBy?: User[];
-  history?: Audit[];
+  history?: Event[];
 }
 
 export enum UserRoles {
@@ -177,7 +178,7 @@ export type AuditListItemEventName =
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject
 
-export interface AuditJsonData extends JsonObject {
+export interface EventJsonData extends JsonObject {
   eventName: AuditListItemEventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
@@ -186,16 +187,16 @@ export interface AuditJsonData extends JsonObject {
 }
 
 export interface Audit extends PrismaClient.Audit {
-  jsonData: AuditJsonData;
+  jsonData: EventJsonData;
 }
 
 export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
   type: "user" | "list" | "listItem";
-  jsonData: AuditJsonData;
+  jsonData: EventJsonData;
 }
 
 export interface AuditUpdateInput extends PrismaClient.Prisma.AuditUpdateInput {
-  jsonData: AuditJsonData;
+  jsonData: EventJsonData;
 }
 
 // Feedback

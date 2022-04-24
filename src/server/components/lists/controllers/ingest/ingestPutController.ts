@@ -8,8 +8,9 @@ import {
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
-import { AuditEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { WebhookDataAsJsonObject } from "server/models/types";
+import { recordEvent } from "server/models/listItem/listItemEvent";
 
 export async function ingestPutController(
   req: Request,
@@ -57,10 +58,16 @@ export async function ingestPutController(
       recordListItemEvent({
           eventName: "edit",
           itemId: Number(id),
+        },
+        AuditEvent.EDITED
+      ),
+      recordEvent({
+          eventName: "edit",
+          itemId: Number(id),
           updatedJsonData: data,
         },
         Number(id),
-        AuditEvent.EDITED
+        ListItemEvent.EDITED
       ),
     ]);
 

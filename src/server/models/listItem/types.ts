@@ -1,4 +1,6 @@
-import { LawyerListItemJsonData, List, User } from "server/models/types";
+import { JsonObject, LawyerListItemJsonData, List, ListItem, User } from "server/models/types";
+import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import * as PrismaClient from "@prisma/client";
 
 /**
  * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
@@ -64,3 +66,32 @@ export type ListIndexOptions = {
   sort?: keyof OrderBy;
   reqQuery?: { [query: string]: any };
 } & PaginationOptions;
+
+export type EventName =
+  | "new"
+  | "requestChange"
+  | "edit"
+  | "delete"
+  | "pin"
+  | "unpin"
+  | "disapprove"
+  | "publish"
+  | "unpublish";
+
+export type WebhookDataAsJsonObject<T> = T & JsonObject
+
+export interface EventJsonData extends JsonObject {
+  eventName: EventName;
+  userId?: User["id"];
+  itemId: User["id"] | List["id"] | ListItem["id"];
+  updatedJsonData?: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  metadata?: PrismaClient.Prisma.JsonObject;
+}
+
+export interface Event extends PrismaClient.Event {
+  jsonData: EventJsonData;
+}
+
+export interface EventCreateInput extends PrismaClient.Prisma.EventCreateInput {
+  jsonData: EventJsonData;
+}

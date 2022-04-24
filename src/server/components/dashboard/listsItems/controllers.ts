@@ -10,7 +10,7 @@ import {
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
 import {
-  AuditJsonData,
+  EventJsonData,
   CovidTestSupplierListItemGetObject,
   CovidTestSupplierListItemJsonData,
   JsonObject,
@@ -24,7 +24,7 @@ import {
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, Status } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -40,6 +40,7 @@ import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/go
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import { recordEvent } from "server/models/listItem/listItemEvent";
 
 function mapUpdatedAuditJsonDataToListItem(listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject,
                                            updatedJsonData: (LawyersFormWebhookData & JsonObject) | (CovidTestSupplierFormWebhookData & JsonObject)
@@ -72,11 +73,11 @@ export async function listItemGetController(
 
   if (listItem.status === Status.EDITED) {
     const auditForEdits = listItem?.history
-      ?.filter(audit => audit.auditEvent === "EDITED")
+      ?.filter(event => event.type === "EDITED")
       .sort((a, b) => a.id - b.id)
       .pop();
 
-    const auditJsonData: AuditJsonData = auditForEdits?.jsonData as AuditJsonData;
+    const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
     const updatedJsonData = auditJsonData.updatedJsonData;
     if (updatedJsonData !== undefined) {
       switch(listItem.type) {
@@ -104,12 +105,12 @@ export async function listItemGetController(
   }
 
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
-    const auditForRequestedEdits = listItem?.history
-      ?.filter(audit => audit.auditEvent === "OUT_WITH_PROVIDER" || audit.auditEvent === "EDITED")
+    const eventForRequestedChanges = listItem?.history
+      ?.filter(event => event.type === "OUT_WITH_PROVIDER")
       .sort((a, b) => a.id - b.id)
       .pop();
 
-    requestedChanges = auditForRequestedEdits?.jsonData?.requestedChanges;
+    requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
   }
   const actionButtons: { [key: string]: string[] } = {
     NEW: ["publish", "request-changes", "remove"],
@@ -223,7 +224,6 @@ export async function handlePinListItem(
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }
-  const auditEvent = isPinned ? AuditEvent.PINNED : AuditEvent.UNPINNED;
 
   try {
     let listItem;
@@ -244,8 +244,15 @@ export async function handlePinListItem(
             itemId: id,
             userId
           },
+          AuditEvent.PINNED
+        ),
+        recordEvent({
+            eventName: "pin",
+            itemId: id,
+            userId
+          },
           id,
-          auditEvent
+          ListItemEvent.PINNED
         ),
       ]);
 
@@ -266,8 +273,15 @@ export async function handlePinListItem(
             itemId: id,
             userId
           },
+          AuditEvent.UNPINNED
+        ),
+        recordEvent({
+            eventName: "unpin",
+            itemId: id,
+            userId
+          },
           id,
-          auditEvent
+          ListItemEvent.UNPINNED
         ),
       ]);
     }
@@ -359,12 +373,12 @@ export async function handleListItemUpdate(
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 
-  const auditForEdits = listItem?.history
-    .filter(audit => audit.auditEvent === "EDITED")
+  const editEvent = listItem?.history
+    .filter(event => event.type === "EDITED")
     .sort((a, b) => a.id - b.id)
     .pop();
 
-  const auditJsonData: AuditJsonData = auditForEdits?.jsonData as AuditJsonData;
+  const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
   if (auditJsonData?.updatedJsonData !== undefined) {
     await update(id, userId, auditJsonData.updatedJsonData);
@@ -427,6 +441,7 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
+  const listItemEvent = ListItemEvent.OUT_WITH_PROVIDER;
 
   try {
     await prisma.$transaction([
@@ -447,8 +462,16 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
           userId,
           requestedChanges: message,
         },
-        listItem.id,
         auditEvent
+      ),
+      recordEvent({
+          eventName: "requestChange",
+          itemId: listItem.id,
+          userId,
+          requestedChanges: message,
+        },
+        listItem.id,
+        listItemEvent
       ),
     ]);
   } catch (error: any) {
