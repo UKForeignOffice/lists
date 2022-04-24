@@ -57,7 +57,15 @@ export async function listItemGetController(
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const userId = req?.user?.userData?.id;
+  let error
+  const errorMsg = req.flash("errorMsg");
 
+  // @ts-expect-error
+  if (errorMsg && errorMsg?.length > 0) {
+    error = {
+      text: errorMsg,
+    }
+  }
   const list = await findListById(listId);
   const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject = await findListItemById(listItemId);
   let requestedChanges;
@@ -124,6 +132,7 @@ export async function listItemGetController(
     isPinned,
     actionButtons: actionButtonsForStatus,
     requestedChanges,
+    error,
     csrfToken: getCSRFToken(req)
   });
 }
@@ -153,6 +162,11 @@ export async function listItemPostController(
   const confirmationPage = confirmationPages[action];
 
   if (action === "requestChanges") {
+    if (!message) {
+      req.flash("errorMsg", "You must provide a message to request a change");
+      return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    }
+
     req.session.changeMessage = message;
   }
 
@@ -183,14 +197,10 @@ export async function listItemPinController(
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    res.status(401).send({
-      error: {
-        message: `Unable to perform action - user could not be identified`,
-      },
-    });
-    return;
+    req.flash("errorMsg", "Unable to perform action - user could not be identified");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
-  let successBannerTitle = `${listItem.jsonData.organisationName} has been ${isPinned ? "pinned" : "unpinned"}`;
+  const successBannerTitle = `${listItem.jsonData.organisationName} has been ${isPinned ? "pinned" : "unpinned"}`;
   const successBannerHeading = `${isPinned ? "Pinned" : "Unpinned"}`;
   const successBannerColour = "blue";
 
@@ -203,15 +213,8 @@ export async function listItemPinController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error: any) {
-    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItem,
-      resultMessage: successBannerTitle,
-      csrfToken: getCSRFToken(req)
-    });
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 
@@ -294,14 +297,10 @@ export async function listItemDeleteController(
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    res.status(401).send({
-      error: {
-        message: `Unable to perform action - user could not be identified`,
-      },
-    });
-    return;
+    req.flash("errorMsg", "Unable to perform action - user could not be identified");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
-  let successBannerTitle = `${listItem.jsonData.organisationName} has been removed`;
+  const successBannerTitle = `${listItem.jsonData.organisationName} has been removed`;
   const successBannerHeading = `Removed`;
   const successBannerColour = "red";
 
@@ -314,15 +313,8 @@ export async function listItemDeleteController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error: any) {
-    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItem,
-      resultMessage: successBannerTitle,
-      csrfToken: getCSRFToken(req)
-    });
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 
@@ -341,14 +333,10 @@ export async function listItemUpdateController(
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    res.status(401).send({
-      error: {
-        message: `Unable to perform action - user could not be identified`,
-      },
-    });
-    return;
+    req.flash("errorMsg", "Unable to perform action - user could not be identified");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
-  let successBannerTitle = `${listItem.jsonData.organisationName} has been updated and published`;
+  const successBannerTitle = `${listItem.jsonData.organisationName} has been updated and published`;
   const successBannerHeading = `Updated and published`;
   const successBannerColour = "green";
 
@@ -361,15 +349,8 @@ export async function listItemUpdateController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error: any) {
-    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItem,
-      resultMessage: successBannerTitle,
-      csrfToken: getCSRFToken(req)
-    });
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 
@@ -413,14 +394,17 @@ export async function listItemRequestChangeController(
   const listItem = await getListItem(listItemId, list);
 
   if (userId === undefined) {
-    res.status(401).send({
-      error: {
-        message: `Unable to perform action - user could not be identified`,
-      },
-    });
+    req.flash("errorMsg", "Unable to perform action - user could not be identified");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+  }
+
+  if (!changeMessage) {
+    req.flash("errorMsg", "You must provide a message to request a change");
+    res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
     return;
   }
-  let successBannerHeading = `Requested`;
+
+  const successBannerHeading = `Requested`;
   const successBannerColour = "blue";
   const successBannerTitle = `Change request sent to ${listItem.jsonData.organisationName} ${changeMessage}`;
 
@@ -433,15 +417,8 @@ export async function listItemRequestChangeController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error: any) {
-    successBannerHeading = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItem,
-      resultMessage: successBannerHeading,
-      csrfToken: getCSRFToken(req)
-    });
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 
@@ -507,16 +484,12 @@ export async function listItemPublishController(
   const listItem = await getListItem(listItemId, list);
 
   if (userId === undefined) {
-    res.status(401).send({
-      error: {
-        message: `Unable to perform action - user could not be identified`,
-      },
-    });
-    return;
+    req.flash("errorMsg", "Unable to perform action - user could not be identified");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
   const successBannerHeading = `${action}ed`;
   const successBannerColour = "green";
-  let successBannerTitle = `${listItem.jsonData.organisationName} has been ${successBannerHeading}`;
+  const successBannerTitle = `${listItem.jsonData.organisationName} has been ${successBannerHeading}`;
 
   try {
     await handlePublishListItem(Number(listItemId), isPublished, userId);
@@ -527,15 +500,8 @@ export async function listItemPublishController(
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
 
   } catch (error: any) {
-    successBannerTitle = `${listItem.jsonData.organisationName} could not be updated. ${error.message}`;
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      req,
-      list,
-      listItem,
-      resultMessage: successBannerTitle,
-      csrfToken: getCSRFToken(req)
-    });
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 

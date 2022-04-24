@@ -67,7 +67,6 @@ dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listI
 dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, listItemRequestChangeController);
 dashboardRouter.post(dashboardRoutes.listsItemUpdate, csrfRequestHandler, listItemEditRequestValidation, listItemUpdateController);
 dashboardRouter.post(dashboardRoutes.listsItemPin, csrfRequestHandler, listItemEditRequestValidation, listItemPinController);
-dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemUpdateController);
 
 // feedback
 dashboardRouter.get(

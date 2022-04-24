@@ -1,12 +1,17 @@
 {% extends "./dashboard.njk" %}
 {% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+{% import "./macros.njk" as dashboardMacros %}
 
 {% block aside %}
   <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
 {% endblock %}
 
 {% block dashboard %}
+  {% if error and error.text %}
+  {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
+
   <h1 class="govuk-heading-l">
     Review {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
   </h1>
@@ -35,19 +40,20 @@
     </form>
 
     <script nonce="{{cspNonce}}">
-      document.getElementById("action-requestChanges").onchange = function toggleListItemRequestChangeTextarea(event) {
-        // event.preventDefault();
-        // event.stopPropagation();
 
-        const isRequestingChanges = event.target.checked;
+      const hiddenClass = "govuk-radios__conditional--hidden";
+      document.querySelector("#conditional-action-requestChanges").classList.add(hiddenClass);
+      const radios = document.querySelectorAll('input[type=radio][name="action"]');
+      radios.forEach(radio => radio.addEventListener('change', () => {
+        const isRequestingChanges = radio.value === "requestChanges" && radio.checked;
         const requestChangesTextarea = document.getElementById("conditional-action-requestChanges");
 
         if (isRequestingChanges) {
-            requestChangesTextarea.style.display = "block";
+          requestChangesTextarea.classList.remove(hiddenClass);
         } else {
-          requestChangesTextarea.style.display = "none";
+          requestChangesTextarea.classList.add(hiddenClass);
         }
-      }
+      }));
 
     </script>
   {% endif %}

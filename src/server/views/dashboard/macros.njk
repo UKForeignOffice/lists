@@ -3,7 +3,6 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 
-
 {% macro navMenu(title, path, req) %}
   <li>
     <a class="govuk-link {{ "govuk-link--no-underline" if req.path !== path }}" href="{{ path }}">
@@ -35,7 +34,11 @@
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         <li>
-          <a href="{{error.href}}">{{error.text}}</a>
+          {% if error?.href %}
+            <a href="{{ error.href }}">{{ error.text }}</a>
+          {% else %}
+            {{ error.text }}
+          {% endif %}
         </li>
       </ul>
     </div>
@@ -51,7 +54,10 @@
 {% endmacro %}
 
 {% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons) %}
-<div class="govuk-!-margin-top-8">
+
+
+
+  <div class="govuk-!-margin-top-8">
   <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
