@@ -103,6 +103,12 @@ export function getNewSessionWebhookData(listType: string, listItemId: number, q
   const redirectPath = `/summary`;
   const options = {
     message,
+    customText: {
+      title: "Application resubmitted",
+      paymentSkipped: false,
+      nextSteps: "Thank you for updating your details."
+    },
+
     callbackUrl,
     redirectPath
   };
