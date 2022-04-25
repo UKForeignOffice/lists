@@ -16,7 +16,6 @@ describe("Audit Model:", () => {
           itemId: 123,
           userId: 1,
         },
-        123,
         AuditEvent.NEW);
 
       expect(prisma.audit.create).toHaveBeenCalledWith({
@@ -35,7 +34,6 @@ describe("Audit Model:", () => {
         itemId: 123,
         userId: 1,
       },
-        123,
         AuditEvent.NEW);
 
       expect(result).toBe(sampleAuditObject);

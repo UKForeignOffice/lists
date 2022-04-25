@@ -12,7 +12,6 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "useUnknownInCatchVariables": false,
     "paths": {
       "client/*": ["client/*"],
       "server/*": ["server/*"],

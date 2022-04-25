@@ -48,6 +48,7 @@ describe("Dashboard Controllers", () => {
         isSuperAdmin: jest.fn(),
         isListsCreator: jest.fn(),
       },
+      flash: jest.fn(),
     };
 
     mockRes = {
@@ -878,7 +879,6 @@ describe("Dashboard Controllers", () => {
     it("should call editListItem with the correct params", async () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
-
       await listItemGetController(mockReq, mockRes);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-item");
