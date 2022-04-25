@@ -58,6 +58,7 @@ export async function postLoginController(
       success: true,
     });
   } catch (e) {
+    logger.error("postLoginController", e);
     next(e);
   }
 }
