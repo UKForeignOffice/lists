@@ -28,35 +28,37 @@ export function getLoginController(
   });
 }
 
-export function postLoginController(
+export async function postLoginController(
   req: Request,
   res: Response,
   next: NextFunction
-): void {
+): Promise<void> {
   const emailAddress = req.body.emailAddress?.trim();
 
-  if (isGovUKEmailAddress(emailAddress)) {
-    createAuthenticationPath({ email: emailAddress })
-      .then((authPath) => {
-        const protocol = isLocalHost ? "http" : "https";
-        return `${protocol}://${SERVICE_DOMAIN}${authPath}`;
-      })
-      .then(async (authLink) => {
-        if (isLocalHost) {
-          logger.warn(authLink);
-        }
-        return await sendAuthenticationEmail(emailAddress, authLink);
-      })
-      .then(() => {
-        res.render("login", {
-          success: true,
-        });
-      })
-      .catch(next);
-  } else {
+  try {
+    if (!isGovUKEmailAddress(emailAddress)) {
+      res.render("login", {
+        error: true,
+      });
+      return;
+    }
+
+    const protocol = isLocalHost ? "http" : "https";
+
+    const authPath = await createAuthenticationPath({ email: emailAddress });
+    const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
+
+    if (isLocalHost) {
+      res.redirect(authLink);
+      return;
+    }
+
+    await sendAuthenticationEmail(emailAddress, authLink);
     res.render("login", {
-      error: true,
+      success: true,
     });
+  } catch (e) {
+    next(e);
   }
 }
 
