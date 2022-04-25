@@ -12,7 +12,7 @@ FROM base AS dependencies
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.config.js webpack.config.js  ./
 USER 1001
-RUN mkdir lib/form-runner
+RUN mkdir -p /usr/src/app/lib/form-runner
 COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.23.1-rc.851 ./usr/src/app lib/form-runner/
 RUN npm ci
 
