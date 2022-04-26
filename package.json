@@ -13,7 +13,7 @@
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
     "commit": "cz",
-    "start:prod": "npm run prisma:deploy && NODE_ENV=production node ./dist/server.js",
+    "start:prod": "npm run prisma:deploy && NODE_ENV=production node --trace-warnings ./dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
