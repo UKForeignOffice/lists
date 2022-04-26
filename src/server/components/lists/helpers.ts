@@ -173,7 +173,7 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
-  return `http://${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
+  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {
