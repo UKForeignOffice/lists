@@ -173,8 +173,7 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
-  const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
+  return `http://${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {
