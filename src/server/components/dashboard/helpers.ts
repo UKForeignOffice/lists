@@ -1,12 +1,13 @@
 import { Request } from "express";
 import { FormRunnerNewSessionData } from "server/components/formRunner";
-import axios from "axios";
 import { logger } from "server/services/logger";
 import {
   UserRoles,
   List,
   ListJsonData,
 } from "server/models/types";
+import { FORM_RUNNER_INITIALISE_SESSION_ROUTE, FORM_RUNNER_URL } from "server/components/formRunner/constants";
+import request from "supertest";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -49,10 +50,13 @@ export function userIsListValidator(
 }
 
 export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl: string,
-                                                        formRunnerWebhookData: FormRunnerNewSessionData): Promise<string> {
-  return await axios.post(formRunnerNewSessionUrl, formRunnerWebhookData)
+                                                        formRunnerWebhookData: FormRunnerNewSessionData,
+                                                        serviceType: string ): Promise<string> {
+  return await request(FORM_RUNNER_URL)
+    .post(`${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`)
+    .send(formRunnerWebhookData)
     .then((response) => {
-      return response.data.token;
+      return response.body.token;
     })
     .catch((error) => {
       logger.info(error);
