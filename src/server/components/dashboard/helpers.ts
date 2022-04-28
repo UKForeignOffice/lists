@@ -1,13 +1,12 @@
 import { Request } from "express";
 import { FormRunnerNewSessionData } from "server/components/formRunner";
 import { logger } from "server/services/logger";
+import axios from "axios";
 import {
   UserRoles,
   List,
   ListJsonData,
 } from "server/models/types";
-import { FORM_RUNNER_INITIALISE_SESSION_ROUTE, FORM_RUNNER_URL } from "server/components/formRunner/constants";
-import request from "supertest";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -50,16 +49,24 @@ export function userIsListValidator(
 }
 
 export async function getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl: string,
-                                                        formRunnerWebhookData: FormRunnerNewSessionData,
-                                                        serviceType: string ): Promise<string> {
-  return await request(FORM_RUNNER_URL)
-    .post(`${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`)
-    .send(formRunnerWebhookData)
+                                                        formRunnerWebhookData: FormRunnerNewSessionData ): Promise<string> {
+
+  // logger.info(`initiating form runner session via URL ${FORM_RUNNER_URL}, path ${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`);
+  logger.info(`initiating form runner session via URL http://${formRunnerNewSessionUrl}`);
+  logger.info(`sending url to ${formRunnerNewSessionUrl} with data [${JSON.stringify(formRunnerWebhookData)}]`);
+
+  const token = await axios.post(`http://${formRunnerNewSessionUrl}`, formRunnerWebhookData)
     .then((response) => {
-      return response.body.token;
+      logger.info(`response received from formRunnerNewSessionUrl: data ${response?.data}`);
+      Object.entries(response).map(([key, value]) => logger.info(`formRunnerNewSessionUrl response ${key} + ":" ${value}`));
+      Object.entries(response?.data).map(([key, value]) => logger.info(`formRunnerNewSessionUrl response.data ${key} + ":" ${value}`));
+      return response?.data?.token;
     })
     .catch((error) => {
-      logger.info(error);
+      logger.info(`Error received after calling formRunnerNewSessionUrl ${error}`);
       throw new Error("Unable to initiate form runner session");
     });
+
+  logger.info(`token: ${token}`);
+  return token;
 }
