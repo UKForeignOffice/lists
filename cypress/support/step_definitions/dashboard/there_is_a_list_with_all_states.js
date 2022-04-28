@@ -8,8 +8,13 @@ Given("A lawyers list exists for Eurasia", () => {
     operation: "list.upsert",
     variables: {
       create: {
-        id: 1984,
+        type: "lawyer",
         jsonData,
+        country: {
+          connect: {
+            id: 1,
+          },
+        },
       },
       update: {
         jsonData,
@@ -49,11 +54,28 @@ Given("there are these list items", (table) => {
   const rows = table.hashes();
 
   rows.forEach((row) => {
-    const { contactName, ...rest } = row;
+    const {
+      contactName,
+      isPublished: isPublishedString,
+      isApproved: isApprovedString,
+      isBlocked: isBlockedString,
+      ...rest
+    } = row;
+
+    const isPublished = Boolean(isPublishedString);
+    const isApproved = Boolean(isApprovedString);
+    const isBlocked = Boolean(isBlockedString);
+
     const jsonData = {
       contactName,
     };
-    const item = listItem({ ...rest, jsonData });
+    const item = listItem({
+      ...rest,
+      isPublished,
+      isApproved,
+      isBlocked,
+      jsonData,
+    });
 
     cy.task("db", {
       operation: "listItem.upsert",

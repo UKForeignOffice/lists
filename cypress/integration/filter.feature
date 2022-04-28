@@ -18,6 +18,8 @@ Feature:
       | To do |
     Then I see the list items
       | Winston | Emmanuel |
+    And not the list items
+      | Julia | O'Brien | Parsons
 
 
   Scenario: Filter by to do, out with provider
@@ -26,6 +28,7 @@ Feature:
       | To do | Out with provider |
     Then I see the list items
       | Winston | Emmanuel |
+    And not the list items
 
   Scenario: Filter by to do, out with provider, published
     Given I am viewing list item index 1984
