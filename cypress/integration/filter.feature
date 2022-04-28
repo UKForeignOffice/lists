@@ -13,7 +13,7 @@ Feature:
       | Parsons     | PUBLISHED         | true        | false     | false      |
 
   Scenario: Filter by to do
-    Given I am viewing list item index 1984
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | To do |
     Then I see the list items
@@ -23,7 +23,7 @@ Feature:
 
 
   Scenario: Filter by to do, out with provider
-    Given I am viewing list item index 1984
+
     When I filter by
       | To do | Out with provider |
     Then I see the list items
@@ -31,28 +31,32 @@ Feature:
     And not the list items
 
   Scenario: Filter by to do, out with provider, published
-    Given I am viewing list item index 1984
+  Given I am viewing list item index for reference:SMOKE
+
     When I filter by
       | To do | Out with provider | Published |
     Then I see the list items
       | Winston | Emmanuel |
 
   Scenario: Filter by to do, published
-    Given I am viewing list item index 1984
+  Given I am viewing list item index for reference:SMOKE
+
     When I filter by
       | To do | Published |
     Then I see the list items
       | Winston | Emmanuel |
 
   Scenario: Filter by out with provider
-    Given I am viewing list item index 1984
+  Given I am viewing list item index for reference:SMOKE
+
     When I filter by
       | Out with provider |
     Then I see the list items
       | Winston | Emmanuel |
 
   Scenario: Filter by out with provider, published
-    Given I am viewing list item index 1984
+  Given I am viewing list item index for reference:SMOKE
+
     When I filter by
       | Out with provider | Published |
     Then I see the list items
@@ -60,7 +64,8 @@ Feature:
 
 
   Scenario: Filter by published
-    Given I am viewing list item index 1984
+  Given I am viewing list item index for reference:SMOKE
+
     When I filter by
       | Published |
 

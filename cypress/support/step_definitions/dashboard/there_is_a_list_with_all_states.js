@@ -3,45 +3,42 @@ import { rand, randCompanyName, randFullName } from "@ngneat/falso";
 Given("A lawyers list exists for Eurasia", () => {
   const jsonData = {
     administrators: ["smoke@cautionyourblast.com"],
+    publishers: ["smoke@cautionyourblast.com"],
+    validators: ["smoke@cautionyourblast.com"],
   };
+  cy.task("db", {
+    operation: "country.upsert",
+    variables: {
+      create: {
+        name: "Eurasia",
+      },
+      update: {},
+      where: {
+        name: "Eurasia",
+      },
+    },
+  });
   cy.task("db", {
     operation: "list.upsert",
     variables: {
       create: {
-        type: "lawyer",
+        type: "lawyers",
+        reference: "SMOKE",
         jsonData,
         country: {
           connect: {
-            id: 1,
+            name: "Eurasia",
           },
         },
       },
       update: {
         jsonData,
+        items: {
+          deleteMany: {},
+        },
       },
       where: {
-        id: 1984,
-      },
-    },
-  });
-});
-
-Given("a {string} list item exists", () => {
-  const jsonData = {
-    administrators: ["smoke@cautionyourblast.com"],
-  };
-  cy.task("db", {
-    operation: "list.upsert",
-    variables: {
-      create: {
-        id: 1984,
-        jsonData,
-      },
-      update: {
-        jsonData,
-      },
-      where: {
-        id: 1984,
+        reference: "SMOKE",
       },
     },
   });
@@ -53,7 +50,7 @@ Given("there are these list items", (table) => {
    */
   const rows = table.hashes();
 
-  rows.forEach((row) => {
+  const items = rows.map((row) => {
     const {
       contactName,
       isPublished: isPublishedString,
@@ -62,31 +59,34 @@ Given("there are these list items", (table) => {
       ...rest
     } = row;
 
-    const isPublished = Boolean(isPublishedString);
-    const isApproved = Boolean(isApprovedString);
-    const isBlocked = Boolean(isBlockedString);
+    const isPublished = isPublishedString === "true";
+    const isApproved = isApprovedString === "true";
+    const isBlocked = isBlockedString === "true";
 
     const jsonData = {
       contactName,
     };
-    const item = listItem({
+    return listItem({
       ...rest,
       isPublished,
       isApproved,
       isBlocked,
       jsonData,
     });
-
-    cy.task("db", {
-      operation: "listItem.upsert",
-      variables: {
-        create: item,
-        update: item,
-        where: {
-          id: 1984,
+  });
+  cy.task("db", {
+    operation: "list.update",
+    variables: {
+      data: {
+        items: {
+          createMany: { data: items, skipDuplicates: true },
         },
+        // listItems: ,
       },
-    });
+      where: {
+        reference: "SMOKE",
+      },
+    },
   });
 });
 
@@ -119,7 +119,6 @@ function listItem(options) {
     isApproved: false,
     isPublished: rand([true, false]),
     isBlocked: false,
-    listId: 1984,
     status: rand(status),
     ...rest,
   };
