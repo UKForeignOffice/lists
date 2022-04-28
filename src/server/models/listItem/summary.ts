@@ -73,6 +73,7 @@ function getActiveQueries(
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
+    id: number;
     type: List["type"];
     country: List["country"];
     pinnedItems: IndexListItem[];
@@ -152,6 +153,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     listRequestParams: options?.reqQuery,
   });
   return {
+    id: listId,
     type,
     country,
     pinnedItems: (pinned?.pinnedItems ?? []).map(listItemsWithIndexDetails),

@@ -195,6 +195,7 @@ $two-thirds: $one-third * 2;
   &__content-list {
     &--pinned {
       margin-bottom: govuk-spacing(8);
+      border-bottom: 4px solid govuk-colour("dark-grey");
     }
   }
 

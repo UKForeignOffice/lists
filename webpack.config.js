@@ -66,7 +66,7 @@ const client = {
     publicPath: "/assets/",
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".png"],
     modules: ["node_modules"],
   },
   node: {
@@ -114,6 +114,10 @@ const client = {
         {
           from: path.resolve(__dirname, "src", "server", "views"),
           to: "../views",
+        },
+        {
+          from: path.resolve(__dirname, "src", "client", "images"),
+          to: "../client/images",
         },
       ],
     }),

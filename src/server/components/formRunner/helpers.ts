@@ -13,7 +13,7 @@ import {
 import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
-import { FORM_RUNNER_SAFELIST, isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { FORM_RUNNER_SAFELIST } from "server/config";
 import { LawyerListItemGetObject, List, ListItemGetObject, ServiceType } from "server/models/types";
 import * as lawyers from "./lawyers"
 
@@ -38,7 +38,7 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
 
     const formRunner = spawn(
-      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
+      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join("\",\"")}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
       {
         shell: true
       }
@@ -98,8 +98,7 @@ export function parseFormRunnerWebhookObject<T>({
 }
 
 export function getNewSessionWebhookData(listType: string, listItemId: number, questions: Array<Partial<FormRunnerQuestion>> | undefined, message: string): FormRunnerNewSessionData {
-  const protocol = isLocalHost ? "http" : "https";
-  const callbackUrl = `${protocol}://${SERVICE_DOMAIN}/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
   const options = {
     message,

@@ -128,11 +128,11 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
-    test("initDashboard", async () => {
-      const spy = jest.spyOn(dashboard, "initDashboard");
-      const server = await getServer();
-      expect(spy).toHaveBeenCalledWith(server);
-    });
+    // test("initDashboard", async () => {
+    //   const spy = jest.spyOn(dashboard, "initDashboard");
+    //   const server = await getServer();
+    //   expect(spy).toHaveBeenCalledWith(server);
+    // });
 
     test("initDevelopment", async () => {
       const spy = jest.spyOn(development, "initDevelopment");

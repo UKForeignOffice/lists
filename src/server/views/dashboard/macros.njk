@@ -55,20 +55,18 @@
 
 {% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons) %}
 
-
-
   <div class="govuk-!-margin-top-8">
   <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
         <h1 class="govuk-fieldset__heading">
-          What would you like to do with this application?
+          Select an option
         </h1>
       </legend>
       <div class="govuk-radios" data-module="govuk-radios">
         {% if "publish" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-publish" name="action" type="radio" value="publish">
+          <input class="govuk-radios__input" id="action-publish" name="action" type="radio" value="publish" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-publish">
             Publish
           </label>
@@ -76,7 +74,7 @@
         {% endif %}
         {% if "unpublish" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish">
+          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-unpublish">
             Unpublish
           </label>
@@ -84,7 +82,7 @@
         {% endif %}
         {% if "request-changes" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit">
+          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-edit">
             Request changes
           </label>
@@ -100,7 +98,7 @@
         {% endif %}
         {% if "update" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="update">
+          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="update" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-update">
             Confirm and update
           </label>
@@ -108,26 +106,11 @@
         {% endif %}
         {% if "remove" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-remove" name="action" type="radio" value="remove">
+          <input class="govuk-radios__input" id="action-remove" name="action" type="radio" value="remove" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-remove">
-            Remove application
+            Remove
           </label>
         </div>
-        {% endif %}
-        {% if isPinned %}
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="action-pin" name="action" type="radio" value="unpin">
-            <label class="govuk-label govuk-radios__label" for="action-pin">
-              Unpin
-            </label>
-          </div>
-        {% else %}
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="action-pin" name="action" type="radio" value="pin">
-            <label class="govuk-label govuk-radios__label" for="action-pin">
-              Pin
-            </label>
-          </div>
         {% endif %}
       </div>
     </fieldset>
