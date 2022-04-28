@@ -12,10 +12,33 @@
 
 <li class="dashboard__list-item" id="item-{{ listItem.id }}">
   <div class="dashboard__list-item-title">
+    <form class="form"
+          action="{{ dashboardRoutes.listsItemPin.replace(':listId', list.id).replace(':listItemId', listItem.id) }}"
+          method="post" required>
+
+    {% if listItem in list['pinnedItems'] %}
       <span class="govuk-caption-m">
-    <span class="govuk-visually-hidden">Organisation name:</span>
-    {{ listItem.organisationName }}
-  </span>
+        <span class="govuk-visually-hidden">Organisation name:</span>
+        {{ listItem.organisationName }}
+        <span class="govuk-!-margin-right-2">
+          <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+          <input type="hidden" name="action" value="unpin" />
+          <input type="image" src="/assets/images/unpin.png" width="24px" height="24px" />
+        </span>
+      </span>
+    {% else %}
+      <span class="govuk-caption-m">
+        <span class="govuk-visually-hidden">Organisation name:</span>
+        {{ listItem.organisationName }}
+        <span class="govuk-!-margin-right-2">
+          <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+          <input type="hidden" name="action" value="pin" />
+          <input type="image" src="/assets/images/pin.png" width="24px" height="24px" />
+        </span>
+      </span>
+    {% endif %}
+    </form>
+
     <h2 class="govuk-heading-m">
       {{ listItem.contactName }}
     </h2>

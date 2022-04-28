@@ -13,15 +13,18 @@
   {% endif %}
 
   <h1 class="govuk-heading-l">
-    Review {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
+    Lawyer details
   </h1>
-
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
   {% if not listItem %}
     <p class="govuk-body">Details could not be found</p>
   {% else %}
-    <form class="form" action="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+  <form id="pinForm"
+        class="form"
+        action="{{ dashboardRoutes.listsItemPin.replace(':listId', list.id).replace(':listItemId', listItem.id) }}"
+        method="post" required>
+  </form>
+  <form id="mainForm" class="form" action="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
 
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
       <ul class="govuk-list dashboard__content-list">
@@ -31,7 +34,7 @@
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName, isPinned, actionButtons) }}
             {% endif %}
             {% if list.type === 'lawyers' %}
-              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned, requestedChanges) }}
+              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned, requestedChanges, csrfToken) }}
               {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
             {% endif %}
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">

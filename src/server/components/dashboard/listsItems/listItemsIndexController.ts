@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY } from "server/models/listItem/types";
+import { getCSRFToken } from "server/components/cookies/helpers";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -91,6 +92,8 @@ export async function listItemsIndexController(
         ...sort,
         selected: querySort?.includes(sort.value),
       })),
+      // @ts-expect-error
+      csrfToken: getCSRFToken(req as Request),
     });
   } catch (error) {
     next(error);
