@@ -162,6 +162,11 @@ export async function listItemPostController(
 
   const confirmationPage = confirmationPages[action];
 
+  if (!action) {
+    req.flash("errorMsg", "You must select an action");
+    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+  }
+
   if (action === "requestChanges") {
     if (!message) {
       req.flash("errorMsg", "You must provide a message to request a change");
