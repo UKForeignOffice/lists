@@ -105,7 +105,7 @@ export function getNewSessionWebhookData(listType: string, listItemId: number, q
     customText: {
       title: "Application resubmitted",
       paymentSkipped: false,
-      nextSteps: "Thank you for updating your details."
+      nextSteps: "The British consulate or embassy will check your application again. If your application passes these checks your information will be published to the list."
     },
 
     callbackUrl,
