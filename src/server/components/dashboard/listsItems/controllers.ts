@@ -411,7 +411,7 @@ export async function listItemRequestChangeController(
   try {
     await handleListItemRequestChanges(list, listItem, isUnderTest, changeMessage, userId);
 
-    req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName} ${changeMessage}`);
+    req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));

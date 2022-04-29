@@ -7,7 +7,7 @@
 
 {% block aside %}
 <aside>
-  <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">back</a>
+  <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">Back</a>
   <form class="govuk-!-margin-top-4">
     {{ govukCheckboxes({
       name: "tag",
@@ -27,8 +27,8 @@
 {% block dashboard %}
 
   {% if messages.successBannerTitle %}
-    {% set bannerHeading = _.startCase(_.toLower(messages.successBannerHeading)) %}
-    {% set title = _.startCase(_.toLower(messages.successBannerTitle)) %}
+    {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
+    {% set title = messages.successBannerTitle %}
     {% set colourClass = ".govuk-tag--blue" %}
     {% if messages.successBannerColour === "green" %}
       {% set colourClass = ".govuk-tag--green" %}
