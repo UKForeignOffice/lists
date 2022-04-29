@@ -26,7 +26,9 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     administrators,
   } = jsonData as LawyerListItemJsonData;
   const isPublished = item.isPublished && TAGS.published;
-  const isNew = item.status === Status.NEW && TAGS.to_do;
+  const isNew =
+    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED)
+    && TAGS.to_do;
   const isOutWithProvider =
     item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
   return {
@@ -53,6 +55,7 @@ function findPinnedIndexListItems(options: ListIndexOptions) {
       pinnedItems: {
         where: {
           listId: options.listId,
+          jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
       },
     },
@@ -130,6 +133,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
               id: options.userId!,
             },
           },
+          jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
         itemsWhere,
       ],

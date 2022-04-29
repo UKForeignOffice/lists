@@ -164,7 +164,7 @@
   <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
     <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
       Submitted: {{ item.createdAt | date }}
-      <strong class="govuk-tag govuk-!-margin-left-2">{{ _.toUpper(status) }}</strong>
+      {% include "../../../dashboard/partials/list-item-status.njk" %}
     </p>
 
       <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" form="pinForm"/>
