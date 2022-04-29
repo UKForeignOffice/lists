@@ -77,19 +77,13 @@
       "title": "Your full name",
       "components": [
         {
-          "name": "YBSPkn",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-hint\"> Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list. \n\n</div>",
-          "schema": {}
-        },
-        {
           "name": "contactName",
+          "title": "Your full name",
+          "hint": "Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list.",
           "options": {
             "required": true
           },
           "type": "TextField",
-          "nameHasError": false,
           "schema": {}
         }
       ],
