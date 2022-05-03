@@ -76,13 +76,7 @@ function getActiveQueries(
   }, {});
 }
 
-export async function findIndexListItems(options: {
-  listId: number;
-  reqQuery: string;
-  pagination: { page: number };
-  userId: any;
-  tags: Array<keyof Tags>;
-}): Promise<
+export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
     id: number;
     type: List["type"];
@@ -137,7 +131,7 @@ export async function findIndexListItems(options: {
         {
           pinnedBy: {
             none: {
-              id: options.userId!,
+              id: options.userId,
             },
           },
           jsonData: { path: ["metadata", "emailVerified"], equals: true },

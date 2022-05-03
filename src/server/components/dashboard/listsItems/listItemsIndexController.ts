@@ -32,6 +32,7 @@ const TagsViewModel = [
 ];
 
 //TODO:- for sorting
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SortViewModel = [
   {
     text: "Newest first",
@@ -106,9 +107,7 @@ export async function listItemsIndexController(
         page,
       },
       tags: queryTag,
-      reqQuery: querystring.stringify(
-        sanitisedQueryParams as unknown as Record<string, number | string>
-      ),
+      reqQuery: sanitisedQueryParams,
     });
 
     if (list === undefined) {
