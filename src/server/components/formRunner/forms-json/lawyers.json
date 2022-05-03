@@ -146,12 +146,9 @@
         {
           "name": "addressCountry",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country",
           "list": "country",
-          "values": {
-            "type": "listRef"
-          },
           "schema": {}
         }
       ],
@@ -401,14 +398,11 @@
         {
           "name": "country",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": "Select country"
         },
         {
           "name": "ZoFnKT",
@@ -803,6 +797,10 @@
           "value": "Cyprus"
         },
         {
+          "text": "northern Cyprus",
+          "value": "northern Cyprus"
+        },
+        {
           "text": "Czech Republic",
           "value": "Czech Republic"
         },
@@ -1051,8 +1049,8 @@
           "value": "Macao"
         },
         {
-          "text": "Macedonia",
-          "value": "Macedonia"
+          "text": "North Macedonia",
+          "value": "North Macedonia"
         },
         {
           "text": "Madagascar",
