@@ -23,7 +23,7 @@ export const tagQueryFactory: Record<
     };
   },
   [TAGS.published]: () => ({ isPublished: true }),
-  [TAGS.to_do]: () => ({ status: Status.NEW }),
+  [TAGS.to_do]: () => ({OR: [{status: Status.NEW },{status: Status.EDITED},{status: Status.UNPUBLISHED}]}),
 };
 
 export function calculatePagination(

@@ -107,25 +107,23 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       },
     },
   };
-  let itemsWhere: Prisma.ListItemWhereInput = {};
+  let itemsWhereAnd: Prisma.ListItemWhereInput = {};
+  let itemsWhereOr: Prisma.ListItemWhereInput = {};
 
   if (activeQueries.out_with_provider) {
-    itemsWhere = {
+    itemsWhereAnd = {
       ...activeQueries.out_with_provider,
     };
   }
 
   if (activeQueries.published) {
-    itemsWhere = {
+    itemsWhereAnd = {
       ...activeQueries.published,
     };
   }
 
   if (activeQueries.to_do) {
-    itemsWhere = {
-      ...itemsWhere,
-      ...activeQueries.to_do,
-    };
+    itemsWhereOr = activeQueries.to_do;
   }
   baseQuery.select.items = {
     where: {
@@ -138,8 +136,9 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
           },
           jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
-        itemsWhere,
+        itemsWhereAnd,
       ],
+      OR: itemsWhereOr.OR
     },
   };
 
