@@ -8,11 +8,11 @@ import { Status, Prisma } from "@prisma/client";
 
 export const tagQueryFactory: Record<
   keyof Tags,
-  (options: ListIndexOptions) => Partial<Prisma.ListItemWhereInput>
+  (options: ListIndexOptions) => Partial<Prisma.ListItemWhereInput> | Prisma.Enumerable<Prisma.ListItemWhereInput>
 > = {
   // TODO:- enable when ready
   // [TAGS.annual_review]: () => ({ isPublished: false }),
-  [TAGS.out_with_provider]: () => ({ status: Status.OUT_WITH_PROVIDER }),
+  [TAGS.out_with_provider]: () => ([{ status: Status.OUT_WITH_PROVIDER }]),
   [TAGS.pinned]: (options: ListIndexOptions) => {
     return {
       pinnedBy: {
@@ -22,8 +22,8 @@ export const tagQueryFactory: Record<
       },
     };
   },
-  [TAGS.published]: () => ({ isPublished: true }),
-  [TAGS.to_do]: () => ({ status: Status.NEW }),
+  [TAGS.published]: () => ([{ isPublished: true }]),
+  [TAGS.to_do]: () => ([{ status: Status.NEW },{ status: Status.EDITED },{ status: Status.UNPUBLISHED }]),
 };
 
 export function calculatePagination(
