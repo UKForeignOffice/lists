@@ -85,11 +85,10 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 > {
   const { listId } = options;
   const { tags = [] } = options;
-  const tagsAsArray = Array.isArray(tags) ? tags : [tags];
   const paginationOptions: {} | { take: number; skip: number } =
     calculatePagination(options);
 
-  const activeQueries = getActiveQueries(tagsAsArray, options);
+  const activeQueries = getActiveQueries(tags, options);
 
   const baseQuery = {
     where: {

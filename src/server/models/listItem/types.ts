@@ -1,5 +1,14 @@
-import { JsonObject, LawyerListItemJsonData, List, ListItem, User } from "server/models/types";
-import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import {
+  JsonObject,
+  LawyerListItemJsonData,
+  List,
+  ListItem,
+  User,
+} from "server/models/types";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/components/formRunner";
 import * as PrismaClient from "@prisma/client";
 
 /**
@@ -51,8 +60,6 @@ export type IndexListItem = Pick<
   tags: string[];
 };
 
-export type TagsAsKey = Array<keyof typeof TAGS> | keyof typeof TAGS;
-
 export interface PaginationOptions {
   pagination?: {
     page?: number;
@@ -62,7 +69,7 @@ export interface PaginationOptions {
 export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
-  tags?: TagsAsKey;
+  tags?: Array<keyof Tags>;
   sort?: keyof OrderBy;
   reqQuery?: { [query: string]: any };
 } & PaginationOptions;
@@ -78,13 +85,15 @@ export type EventName =
   | "publish"
   | "unpublish";
 
-export type WebhookDataAsJsonObject<T> = T & JsonObject
+export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
 export interface EventJsonData extends JsonObject {
   eventName: EventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
-  updatedJsonData?: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  updatedJsonData?:
+    | WebhookDataAsJsonObject<LawyersFormWebhookData>
+    | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 

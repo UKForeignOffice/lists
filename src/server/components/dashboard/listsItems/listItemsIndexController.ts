@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import { TAGS, ORDER_BY } from "server/models/listItem/types";
+import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import * as querystring from "querystring";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -54,9 +55,35 @@ interface IndexParams {
 
 interface IndexQuery {
   page: string | number;
-  tag: Array<keyof typeof TAGS> | keyof typeof TAGS;
+  tag: Array<keyof Tags> | keyof Tags;
   // TODO:- sorting
   sort?: string;
+}
+
+interface SanitisedIndexQuery extends IndexQuery {
+  tag: Array<keyof Tags>;
+}
+
+function stripUnknownTags(tags: Array<keyof Tags>): Array<keyof Tags> {
+  const acceptedTags = Object.keys(TAGS);
+  return tags.filter((tag) => acceptedTags.includes(tag));
+}
+
+function normalisePageQueryParam(pageParam: any): number {
+  if (Number.isInteger(pageParam)) {
+    return Math.abs(pageParam);
+  }
+  return 1;
+}
+
+function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
+  const { page, tag } = query;
+  const tagsAsArray = Array.isArray(tag) ? tag : [tag];
+
+  return {
+    tag: stripUnknownTags(tagsAsArray),
+    page: normalisePageQueryParam(page),
+  };
 }
 
 export async function listItemsIndexController(
@@ -66,7 +93,8 @@ export async function listItemsIndexController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { page, tag: queryTag, sort: querySort } = req.query;
+    const { tag: queryTag, page } = sanitiseListItemsQueryParams(req.query);
+
     const list = await findIndexListItems({
       listId: Number(listId),
       userId: req.user?.userData.id,
@@ -87,10 +115,6 @@ export async function listItemsIndexController(
       tags: TagsViewModel.map((tag) => ({
         ...tag,
         checked: queryTag?.includes(tag.value),
-      })),
-      sort: SortViewModel.map((sort) => ({
-        ...sort,
-        selected: querySort?.includes(sort.value),
       })),
       // @ts-expect-error
       csrfToken: getCSRFToken(req as Request),
