@@ -107,23 +107,18 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       },
     },
   };
-  let itemsWhereAnd: Prisma.ListItemWhereInput = {};
-  let itemsWhereOr: Prisma.ListItemWhereInput = {};
+  let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
 
   if (activeQueries.out_with_provider) {
-    itemsWhereAnd = {
-      ...activeQueries.out_with_provider,
-    };
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider as Prisma.ListItemWhereInput[]);
   }
 
   if (activeQueries.published) {
-    itemsWhereAnd = {
-      ...activeQueries.published,
-    };
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.published as Prisma.ListItemWhereInput[]);
   }
 
   if (activeQueries.to_do) {
-    itemsWhereOr = activeQueries.to_do;
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do as Prisma.ListItemWhereInput[]);
   }
   baseQuery.select.items = {
     where: {
@@ -136,12 +131,17 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
           },
           jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
-        itemsWhereAnd,
       ],
-      OR: itemsWhereOr.OR
     },
   };
 
+  if (itemsWhereOr.length > 0) {
+    baseQuery.select.items = {
+      where: {
+        OR: itemsWhereOr
+      }
+    };
+  }
   const [pinned, result] = await prisma.$transaction([
     findPinnedIndexListItems(options),
     prisma.list.findUnique(baseQuery),
