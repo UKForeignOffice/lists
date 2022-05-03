@@ -3,8 +3,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import * as querystring from "querystring";
-import { ParsedUrlQueryInput } from "querystring";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -31,7 +29,7 @@ const TagsViewModel = [
   },
 ];
 
-//TODO:- for sorting
+// TODO:- for sorting
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SortViewModel = [
   {
