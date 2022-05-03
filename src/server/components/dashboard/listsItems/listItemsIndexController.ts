@@ -4,6 +4,7 @@ import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import * as querystring from "querystring";
+import { ParsedUrlQueryInput } from "querystring";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -30,6 +31,7 @@ const TagsViewModel = [
   },
 ];
 
+//TODO:- for sorting
 const SortViewModel = [
   {
     text: "Newest first",
@@ -62,6 +64,7 @@ interface IndexQuery {
 
 interface SanitisedIndexQuery extends IndexQuery {
   tag: Array<keyof Tags>;
+  page: number;
 }
 
 function stripUnknownTags(tags: Array<keyof Tags>): Array<keyof Tags> {
@@ -93,16 +96,19 @@ export async function listItemsIndexController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { tag: queryTag, page } = sanitiseListItemsQueryParams(req.query);
+    const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
+    const { tag: queryTag, page } = sanitisedQueryParams;
 
     const list = await findIndexListItems({
       listId: Number(listId),
       userId: req.user?.userData.id,
       pagination: {
-        page: Number(page ?? 1),
+        page,
       },
       tags: queryTag,
-      reqQuery: req.query,
+      reqQuery: querystring.stringify(
+        sanitisedQueryParams as unknown as Record<string, number | string>
+      ),
     });
 
     if (list === undefined) {

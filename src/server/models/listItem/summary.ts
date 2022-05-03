@@ -27,8 +27,10 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   } = jsonData as LawyerListItemJsonData;
   const isPublished = item.isPublished && TAGS.published;
   const isNew =
-    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED)
-    && TAGS.to_do;
+    (item.status === Status.NEW ||
+      item.status === Status.EDITED ||
+      item.status === Status.UNPUBLISHED) &&
+    TAGS.to_do;
   const isOutWithProvider =
     item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
   return {
@@ -74,7 +76,13 @@ function getActiveQueries(
   }, {});
 }
 
-export async function findIndexListItems(options: ListIndexOptions): Promise<
+export async function findIndexListItems(options: {
+  listId: number;
+  reqQuery: string;
+  pagination: { page: number };
+  userId: any;
+  tags: Array<keyof Tags>;
+}): Promise<
   {
     id: number;
     type: List["type"];
