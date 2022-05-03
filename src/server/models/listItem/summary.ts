@@ -87,6 +87,9 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 > {
   const { listId } = options;
   const { tags = [] } = options;
+
+  // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } =
     calculatePagination(options);
 
@@ -101,7 +104,6 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       country: true,
       items: {
         where: {},
-        ...paginationOptions,
       },
     },
   };
