@@ -136,7 +136,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   };
 
   if (itemsWhereOr.length > 0) {
-    // @ts-ignore
+    // @ts-expect-error
     const { AND } = baseQuery.select.items.where;
 
     baseQuery.select.items.where = {
