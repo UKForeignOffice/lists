@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@1.3.0
+  kubernetes: circleci/kubernetes@1.0.0
   node: circleci/node@5.0.0
 
 defaults: &defaults
@@ -179,19 +179,19 @@ jobs:
           condition:
             equal: [lists-postgres, <<parameters.app>>]
           steps:
-          - run:
-              name: build postgres
-              command: |
-                docker-compose -f docker-compose.ci.yml build \
-                --build-arg PGP_PUB=$PGP_PUB \
-                --build-arg PGP_SECRET=$PGP_SECRET \
-                --build-arg PGP_OTRUST=$PGP_OTRUST postgres
-          - run:
-              name: Publish docker image - lists-postgres
-              command: |
-                eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
-                docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+            - run:
+                name: build postgres
+                command: |
+                  docker-compose -f docker-compose.ci.yml build \
+                  --build-arg PGP_PUB=$PGP_PUB \
+                  --build-arg PGP_SECRET=$PGP_SECRET \
+                  --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+            - run:
+                name: Publish docker image - lists-postgres
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
 
   deploy:
     <<: *defaults
