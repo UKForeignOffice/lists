@@ -136,10 +136,12 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   };
 
   if (itemsWhereOr.length > 0) {
-    baseQuery.select.items = {
-      where: {
-        OR: itemsWhereOr
-      }
+    // @ts-ignore
+    const { AND } = baseQuery.select.items.where;
+
+    baseQuery.select.items.where = {
+      AND,
+      OR: itemsWhereOr,
     };
   }
   const [pinned, result] = await prisma.$transaction([
