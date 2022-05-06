@@ -103,22 +103,30 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       type: true,
       country: true,
       items: {
-        where: {},
+        where: {
+          AND: {},
+        },
       },
     },
   };
   let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
 
   if (activeQueries.out_with_provider) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider as Prisma.ListItemWhereInput[]);
+    itemsWhereOr = itemsWhereOr.concat(
+      activeQueries.out_with_provider as Prisma.ListItemWhereInput[]
+    );
   }
 
   if (activeQueries.published) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.published as Prisma.ListItemWhereInput[]);
+    itemsWhereOr = itemsWhereOr.concat(
+      activeQueries.published as Prisma.ListItemWhereInput[]
+    );
   }
 
   if (activeQueries.to_do) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do as Prisma.ListItemWhereInput[]);
+    itemsWhereOr = itemsWhereOr.concat(
+      activeQueries.to_do as Prisma.ListItemWhereInput[]
+    );
   }
   baseQuery.select.items = {
     where: {
