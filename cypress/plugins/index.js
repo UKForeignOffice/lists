@@ -12,7 +12,10 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+const { PrismaClient } = require("@prisma/client");
+
 const cucumber = require("cypress-cucumber-preprocessor").default;
+const db = new PrismaClient();
 
 /**
  * @type {Cypress.PluginConfig}
@@ -22,4 +25,11 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
+
+  on("task", {
+    db: ({ operation, variables }) => {
+      const [model, action] = operation.split(".");
+      return db[model][action](variables);
+    },
+  });
 };

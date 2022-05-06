@@ -8,6 +8,7 @@ import {
 import { LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { FormRunnerQuestion } from "server/components/formRunner";
+import { Status } from "@prisma/client";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -381,7 +382,8 @@ describe("Form Runner Service:", () => {
       isApproved: true,
       isPublished: false,
       isBlocked: false,
-      listId: 1
+      listId: 1,
+      status: Status.NEW
     };
 
     const expectedListOutput: Array<Partial<FormRunnerQuestion>> = [

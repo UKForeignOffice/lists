@@ -1,0 +1,21 @@
+{% set colours = {
+  published: 'green',
+  approved: 'turquoise',
+  'to_do': 'blue',
+  'out_with_provider': 'yellow'
+  }
+%}
+
+{% set dictionary = {
+  to_do: 'To do',
+  published: 'Published',
+  'out_with_provider': "Out with provider",
+  'annual_review': "Annual review"
+  }
+%}
+
+{% set class = 'govuk-tag--' + colours[tag] %}
+
+<strong class="govuk-tag dashboard__list-item-tag {{ class }}">
+  {{ dictionary[tag] }}
+</strong>

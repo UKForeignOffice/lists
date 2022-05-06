@@ -8,17 +8,21 @@ RUN mkdir -p /usr/src/app && \
     apk upgrade && \
     apk add --no-cache bash git curl
 
+
 FROM base AS dependencies
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.config.js webpack.config.js  ./
 USER 1001
-RUN npm ci
+RUN mkdir -p /usr/src/app/lib/form-runner
+COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.24.2-rc.854 ./usr/src/app lib/form-runner/
+RUN npm i
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY --chown=appuser:appuser ./src ./src/
 USER 1001
-RUN npm run prisma:generate && npm run build:prod
+RUN npm run prisma:generate
+RUN npm run build:prod
 
 
 FROM build AS runner

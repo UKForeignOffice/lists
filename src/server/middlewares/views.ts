@@ -7,6 +7,7 @@ import { Express } from "express";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
 import { parseDate } from "server/utils/date";
+import flash from "express-flash";
 
 const ROOT = process.cwd();
 
@@ -38,6 +39,8 @@ export const configureViews = (server: Express): void => {
   // Date filter
   nunjucksDate.setDefaultFormat("DD MMM YYYY");
   nunjucksDate.install(engine);
+
+  server.use(flash())
 
   // dynamic globals
   server.use((req, res, next) => {

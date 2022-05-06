@@ -83,6 +83,7 @@ export const countriesList = [
   { text: "Cuba", value: "Cuba" },
   { text: "Curaçao", value: "Curaçao" },
   { text: "Cyprus", value: "Cyprus" },
+  { text: "northern Cyprus", value: "northern Cyprus" },
   { text: "Czech Republic", value: "Czech Republic" },
   { text: "Denmark", value: "Denmark" },
   { text: "Djibouti", value: "Djibouti" },
@@ -145,7 +146,6 @@ export const countriesList = [
   { text: "Lithuania", value: "Lithuania" },
   { text: "Luxembourg", value: "Luxembourg" },
   { text: "Macao", value: "Macao" },
-  { text: "Macedonia", value: "Macedonia" },
   { text: "Madagascar", value: "Madagascar" },
   { text: "Malawi", value: "Malawi" },
   { text: "Malaysia", value: "Malaysia" },
@@ -177,6 +177,7 @@ export const countriesList = [
   { text: "Nigeria", value: "Nigeria" },
   { text: "Niue", value: "Niue" },
   { text: "North Korea", value: "North Korea" },
+  { text: "North Macedonia", value: "North Macedonia" },
   { text: "Norway", value: "Norway" },
   { text: "Oman", value: "Oman" },
   { text: "Pakistan", value: "Pakistan" },
@@ -336,6 +337,7 @@ export const fcdoLawyersPagesByCountry = {
   Croatia: "https://www.gov.uk/government/publications/croatia-list-of-lawyers",
   Cuba: "https://www.gov.uk/government/publications/cuba-list-of-lawyers--2",
   Cyprus: "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
+  "northern Cyprus": "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
   "Czech Republic":
     "https://www.gov.uk/government/publications/czech-republic-list-of-lawyers",
   "Democratic Republic of Congo":
@@ -437,7 +439,7 @@ export const fcdoLawyersPagesByCountry = {
   Nicaragua:
     "https://www.gov.uk/government/publications/nicaragua-list-of-lawyers",
   Nigeria: "https://www.gov.uk/government/publications/nigeria-list-of-lawyers",
-  Macedonia:
+  "North Macedonia":
     "https://www.gov.uk/government/publications/north-macedonia-lawyers",
   Norway: "https://www.gov.uk/government/publications/norway-list-of-lawyers",
   "The Occupied Palestinian Territories":
@@ -539,6 +541,7 @@ export const listOfCountriesWithLegalAid = [
   "Bosnia and Herzegovina",
   "Bulgaria",
   "Cyprus",
+  "northern Cyprus",
   "Czech Republic",
   "Denmark",
   "Estonia",

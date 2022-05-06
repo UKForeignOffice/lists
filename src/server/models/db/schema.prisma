@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
-  previewFeatures = ["filterJson"]
+  previewFeatures = ["filterJson", "selectRelationCount"]
 }
 
 datasource db {
@@ -17,9 +17,11 @@ model List {
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
-  countryId   Int
+  countryId           Int
 
   jsonData            Json
+
+  items               ListItem[]
 
   @@index([type, countryId])
 }
@@ -40,7 +42,14 @@ model ListItem {
   isPublished         Boolean @default(false)
   isBlocked           Boolean @default(false)
 
-  listId              Int @default(-1)
+  pinnedBy            User[]
+
+  list                List @relation(fields: [listId], references: [id])
+  listId              Int
+
+  history             Event[]
+
+  status              Status @default(NEW)
 
   @@index([type, reference, isApproved, isPublished, isBlocked])
 }
@@ -63,14 +72,6 @@ model Address {
   geoLocationId   Int?
 }
 
-model GeoLocation {
-  id          Int @id @default(autoincrement())
-  location    Unsupported("geography(POINT)")
-  address     Address[]
-
-  @@index([location])
-}
-
 model Country {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
@@ -88,7 +89,11 @@ model User {
 
   email     String    @unique
   jsonData  Json
+
+  pinnedItems ListItem[]
 }
+
+
 
 model Audit {
   id                  Int      @id @default(autoincrement())
@@ -96,6 +101,8 @@ model Audit {
   updatedAt           DateTime @updatedAt
 
   type                String?
+  auditEvent          AuditEvent @default(UNDEFINED)
+
   jsonData            Json
 
   @@index([type])
@@ -111,4 +118,60 @@ model Feedback {
   jsonData            Json
 
   @@index([type])
+}
+
+enum AuditEvent {
+  NEW
+  OUT_WITH_PROVIDER
+  EDITED
+  ANNUAL_REVIEW
+  REVIEWED
+  UNPUBLISHED
+  PUBLISHED
+  PINNED
+  UNPINNED
+  DELETED
+  UNDEFINED
+}
+
+enum Status {
+  NEW
+  OUT_WITH_PROVIDER
+  EDITED
+  ANNUAL_REVIEW
+  REVIEW_OVERDUE
+  REVIEWED
+  PUBLISHED
+  UNPUBLISHED
+}
+
+model GeoLocation {
+  id          Int @id @default(autoincrement())
+  location    Unsupported("geography(POINT)")
+  address     Address[]
+
+  @@index([location])
+}
+
+model Event {
+  id                  Int    @id @default(autoincrement())
+  time                DateTime
+  listItem            ListItem @relation(fields: [listItemId], references: [id])
+  listItemId          Int
+  type                ListItemEvent
+  jsonData            Json
+}
+
+enum ListItemEvent {
+  NEW
+  OUT_WITH_PROVIDER
+  EDITED
+  ANNUAL_REVIEW
+  REVIEWED
+  UNPUBLISHED
+  PUBLISHED
+  PINNED
+  UNPINNED
+  DELETED
+  UNDEFINED
 }

@@ -166,11 +166,7 @@ describe("Auth Module", () => {
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(logger.warn).toHaveBeenCalledWith(
-          "http://test-domain/login?token=123Token"
-        );
-        expect(res.render).toHaveBeenCalledWith("login", { success: true });
-
+        expect(res.redirect).toHaveBeenCalled();
         assign(serverConfig, { isLocalHost: false });
         jest.resetModules();
         done();

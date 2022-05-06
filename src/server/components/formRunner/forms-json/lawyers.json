@@ -77,19 +77,13 @@
       "title": "Your full name",
       "components": [
         {
-          "name": "YBSPkn",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-hint\"> Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list. \n\n</div>",
-          "schema": {}
-        },
-        {
           "name": "contactName",
+          "title": "Your full name",
+          "hint": "Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list.",
           "options": {
             "required": true
           },
           "type": "TextField",
-          "nameHasError": false,
           "schema": {}
         }
       ],
@@ -152,12 +146,9 @@
         {
           "name": "addressCountry",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country",
           "list": "country",
-          "values": {
-            "type": "listRef"
-          },
           "schema": {}
         }
       ],
@@ -407,14 +398,11 @@
         {
           "name": "country",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": "Select country"
         },
         {
           "name": "ZoFnKT",
@@ -809,6 +797,10 @@
           "value": "Cyprus"
         },
         {
+          "text": "northern Cyprus",
+          "value": "northern Cyprus"
+        },
+        {
           "text": "Czech Republic",
           "value": "Czech Republic"
         },
@@ -1057,8 +1049,8 @@
           "value": "Macao"
         },
         {
-          "text": "Macedonia",
-          "value": "Macedonia"
+          "text": "North Macedonia",
+          "value": "North Macedonia"
         },
         {
           "text": "Madagascar",

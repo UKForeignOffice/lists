@@ -34,9 +34,9 @@ jobs:
           name: Prisma generate
           command: npm run prisma:generate
 
-      - run:
-          name: Type check
-          command: npm run type-check
+#      - run:
+#          name: Type check
+#          command: npm run type-check
 
       - run:
           name: Lint
@@ -179,19 +179,19 @@ jobs:
           condition:
             equal: [lists-postgres, <<parameters.app>>]
           steps:
-          - run:
-              name: build postgres
-              command: |
-                docker-compose -f docker-compose.ci.yml build \
-                --build-arg PGP_PUB=$PGP_PUB \
-                --build-arg PGP_SECRET=$PGP_SECRET \
-                --build-arg PGP_OTRUST=$PGP_OTRUST postgres
-          - run:
-              name: Publish docker image - lists-postgres
-              command: |
-                eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
-                docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+            - run:
+                name: build postgres
+                command: |
+                  docker-compose -f docker-compose.ci.yml build \
+                  --build-arg PGP_PUB=$PGP_PUB \
+                  --build-arg PGP_SECRET=$PGP_SECRET \
+                  --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+            - run:
+                name: Publish docker image - lists-postgres
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
 
   deploy:
     <<: *defaults
@@ -230,6 +230,7 @@ jobs:
           name: Install OpenVPN
           command: |
             sudo apt-get update
+            sudo apt-get install net-tools -y
             sudo apt-get install openvpn openvpn-systemd-resolved -y
 
       - run:
@@ -256,7 +257,7 @@ jobs:
             SYS_RES_DNS=$(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
             echo $SYS_RES_DNS
 
-            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
+            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }') || $(sudo netstat -an | grep ':22 .*ESTABLISHED' | head -n1 | awk '{ split($5, a, ":"); print a[1] }')
             echo $phone_home
 
             vpn_command=(sudo openvpn
@@ -289,20 +290,11 @@ jobs:
           command: |
             until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ]; do
               echo "Attempting to connect to VPN server..."
-              sleep 1;
+              sleep 3;
             done
 
             printf "\nVPN connected\n"
             printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
-
-      - run:
-          name: Check IP after VPN connection
-          command: |
-            ifconfig
-            route -n
-            sudo netstat -anp
-            cat /etc/resolv.conf
-            curl checkip.amazonaws.com
 
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: fco-forms-test
@@ -314,10 +306,10 @@ jobs:
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
-      - kubernetes/update-container-image:
-          namespace: << parameters.namespace >>
-          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
-          resource-name: deployment/lists-postgres
+#      - kubernetes/update-container-image:
+#          namespace: << parameters.namespace >>
+#          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+#          resource-name: deployment/lists-postgres
 
       - run:
           name: Disconnect from OpenVPN

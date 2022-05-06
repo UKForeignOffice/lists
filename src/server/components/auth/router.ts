@@ -10,5 +10,6 @@ import { authRoutes } from "./routes";
 export const authRouter = express.Router();
 
 authRouter.get(authRoutes.login, getLoginController, authController);
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 authRouter.post(authRoutes.login, postLoginController);
 authRouter.get(authRoutes.logout, getLogoutController);

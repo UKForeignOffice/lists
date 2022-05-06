@@ -1,3 +1,4 @@
+@use "sass:math";
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
 
@@ -138,6 +139,14 @@ main.govuk-main-wrapper {
   }
 }
 
+.vertical-align {
+  vertical-align: top;
+}
+
+.confirmation-focus-box {
+  background-color: govuk-colour("light-grey");
+}
+
 @media print {
   .govuk-header {
     display: none;
@@ -150,4 +159,45 @@ main.govuk-main-wrapper {
   .noprint {
     display: none;
   }
+}
+
+
+$one-third: math.div(1, 3) * 100%;
+$two-thirds: $one-third * 2;
+
+.dashboard {
+  &__list-item-title {
+    width: $two-thirds;
+  }
+
+  &__list-item {
+    position: relative;
+    border-bottom: 1px solid govuk-colour("dark-grey");
+    padding: govuk-spacing(3) 0;
+  }
+  &__list-item-body {
+    position: relative;
+  }
+  &__list-item-tag-container {
+    position: absolute;
+    top: govuk-spacing(3);
+    right: 0;
+    width: $one-third;
+    text-align: right;
+  }
+  &__list-item-dates {
+    @include govuk-media-query(700px) {
+      position: absolute;
+    }
+    top: 0;
+    right: 0;
+  }
+  &__content-list {
+    &--pinned {
+      margin-bottom: govuk-spacing(8);
+      border-bottom: 4px solid govuk-colour("dark-grey");
+    }
+  }
+
+
 }

@@ -13,8 +13,9 @@ import {
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
+  FORM_RUNNER_BASE_ROUTE,
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
-  FORM_RUNNER_URL
+  FORM_RUNNER_URL,
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -50,6 +51,7 @@ export function queryStringFromParams(
   removeEmptyValues?: boolean
 ): string {
   return Object.keys(params)
+    .filter((param) => param !== "page")
     .map((key) => {
       let value: string = params[key];
 
@@ -167,11 +169,12 @@ export function createListSearchBaseLink(serviceType: string): string {
 
 export function createFormRunnerReturningUserLink(serviceType: string): string {
   if (serviceType === undefined) {
-    throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
+    throw new Error(
+      "createFormRunnerReturningUserLink serviceType is undefined"
+    );
   }
 
-  const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
+  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {
@@ -180,5 +183,5 @@ export function createFormRunnerEditListItemLink(token: string): string {
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+  return `${protocol}://${SERVICE_DOMAIN}${FORM_RUNNER_BASE_ROUTE}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }

@@ -17,14 +17,6 @@ else
   echo "Installing Form Runner"
   git clone --depth 1 --branch 3.21.2-rc.843 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
   cd $form_runner_folder
-  yarn install
-  yarn run build:dependencies
-  yarn runner build
-
-  # cleanup
-  rm -rf ./designer
-  rm -rf ./docs
-  rm -rf ./smoke-tests
   rm ./runner/dist/server/forms/*
   echo "Form Runner Installed Successfully"
 fi
@@ -39,6 +31,8 @@ echo "PRIVACY_POLICY_URL=''" >> $form_runner_env_file
 echo "FEEDBACK_LINK=mailto:digitalservicesfeedback@fco.gov.uk" >> $form_runner_env_file
 echo "LOG_LEVEL=error" >> $form_runner_env_file
 echo "SERVICE_URL=localhost:3001" >> $form_runner_env_file
+
+
 if [ "$NODE_ENV" == "production" ]; then
   echo "GTM_ID_1=GTM-N5V9Z7G" >> $form_runner_env_file
   echo "GTM_ID_2=GTM-KM3NZSZ" >> $form_runner_env_file

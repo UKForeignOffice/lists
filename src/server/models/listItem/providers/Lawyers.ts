@@ -21,6 +21,9 @@ import {
   checkListItemExists,
   fetchPublishedListItemQuery,
 } from "server/models/listItem/providers/helpers";
+import { recordListItemEvent } from "server/models/audit";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { recordEvent } from "server/models/listItem/listItemEvent";
 
 export async function createObject(
   lawyer: LawyersFormWebhookData
@@ -48,7 +51,11 @@ export async function createObject(
       type: ServiceType.lawyers,
       isApproved: false,
       isPublished: false,
-      listId,
+      list: {
+        connect: {
+          id: listId,
+        },
+      },
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
@@ -94,7 +101,7 @@ export async function create(
   try {
     const data = await createObject(webhookData);
 
-    return await prisma.listItem.create({
+    const listItem = await prisma.listItem.create({
       data,
       include: {
         address: {
@@ -104,6 +111,24 @@ export async function create(
         },
       },
     });
+
+    await recordListItemEvent({
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      AuditEvent.NEW
+    );
+
+    await recordEvent({
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      listItem.id,
+      ListItemEvent.NEW
+    );
+
+    return listItem;
+
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;

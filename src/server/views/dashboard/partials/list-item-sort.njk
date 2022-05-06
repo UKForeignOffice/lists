@@ -1,0 +1,19 @@
+{% from "select/macro.njk" import govukSelect %}
+<form>
+  {{ govukSelect({
+    name: "sort",
+    fieldset: {
+      legend: {
+        text: "Filter"
+      }
+    },
+    items: sort
+  }) }}
+
+  {% for tag in tags %}
+    {% if tag.checked %}
+    <input type="hidden" name="tag" value="{{ tag.value }}"/>
+    {% endif %}
+  {% endfor %}
+  <button class="govuk-button">Sort</button>
+</form>

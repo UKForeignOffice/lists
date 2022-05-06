@@ -30,7 +30,7 @@ test("responds with 400 for schema validation error", async () => {
   expect(schemaError.message).toBe(`"questions" is required`);
 });
 
-test("responds with 422 for update error", async () => {
+test.skip("responds with 422 for update error", async () => {
   const spiedStatus = jest.spyOn(response, "status");
 
   jest.spyOn(listItem, "update").mockRejectedValue("boo");
@@ -42,7 +42,7 @@ test("responds with 422 for update error", async () => {
   expect(spiedStatus).toBeCalledWith(422);
 });
 
-test("responds with 204 when update is successful", async () => {
+test.skip("responds with 204 when update is successful", async () => {
   const req = {
     params: {
       id: 1,

@@ -138,7 +138,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro lawyersListManagementItem(item) %}
+{% macro lawyersListManagementItem(item, isPinned, requestedChanges, csrfToken) %}
   {% set address%}
     {{ item.address.firstLine }}
 
@@ -157,13 +157,34 @@
       {{ item.address.city }}
     {% endif %}
   {% endset %}
+  {% set status %}
+    {{ item.status | replace('_', ' ') }}
+  {% endset %}
 
-  <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-8">
-    <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">Submitted: {{ item.createdAt | date }}</p>
+  <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
+    <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
+      Submitted: {{ item.createdAt | date }}
+      {% include "../../../dashboard/partials/list-item-status.njk" %}
+    </p>
 
-    <h2 class="govuk-heading-l">
-        {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
-      </h2>
+      <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" form="pinForm"/>
+
+      {% if isPinned %}
+        <input type="hidden" name="action" value="unpin" form="pinForm"/>
+
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
+          {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
+          <input type="image" src="/assets/images/unpin.png" width="24px" height="24px" form="pinForm"/>
+        </h2>
+      {% else %}
+        <input type="hidden" name="action" value="pin" form="pinForm"/>
+
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
+          {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
+          <input type="image" src="/assets/images/pin.png" width="24px" height="24px" form="pinForm"/>
+        </h2>
+
+      {% endif %}
   </div>
 
   {{ govukSummaryList({
@@ -304,4 +325,12 @@
       }
     ]
   }) }}
+
+  {% if requestedChanges %}
+    <h3 class="govuk-heading-m govuk-!-margin-bottom-4">Changes requested to provider</h3>
+    <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
+      <p class=govuk-body">{{ requestedChanges }}</p>
+    </div>
+  {% endif %}
+
 {% endmacro %}

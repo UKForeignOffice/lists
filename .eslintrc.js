@@ -12,6 +12,8 @@ module.exports = {
     "@typescript-eslint/restrict-template-expressions": 0,
     "@typescript-eslint/strict-boolean-expressions": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/ban-ts-ignore": 0,
+    "@typescript-eslint/prefer-ts-expect-error": 0,
   },
   ignorePatterns: [
     "playground/",
