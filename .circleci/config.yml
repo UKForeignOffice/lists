@@ -34,9 +34,9 @@ jobs:
           name: Prisma generate
           command: npm run prisma:generate
 
-      - run:
-          name: Type check
-          command: npm run type-check
+#      - run:
+#          name: Type check
+#          command: npm run type-check
 
       - run:
           name: Lint
