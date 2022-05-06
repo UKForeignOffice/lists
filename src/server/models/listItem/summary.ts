@@ -104,7 +104,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       country: true,
       items: {
         where: {
-          AND: {},
+          AND: [],
         },
       },
     },
@@ -134,9 +134,11 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
         {
           pinnedBy: {
             none: {
+              // @ts-ignore
               id: options.userId,
             },
           },
+          // @ts-ignore
           jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
       ],
@@ -144,11 +146,11 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   };
 
   if (itemsWhereOr.length > 0) {
-    // @typescript-eslint/prefer-ts-expect-error
     const { AND } = baseQuery.select.items.where;
-
+    // @ts-ignore
     baseQuery.select.items.where = {
       AND,
+      // @ts-ignore
       OR: itemsWhereOr,
     };
   }
