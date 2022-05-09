@@ -86,7 +86,6 @@ Given("there are these list items", (table) => {
         items: {
           createMany: { data: items, skipDuplicates: true },
         },
-        // listItems: ,
       },
       where: {
         reference: "SMOKE",
@@ -141,7 +140,3 @@ const status = [
   "PUBLISHED",
   "UNPUBLISHED",
 ];
-
-function listItems(numberOfItems) {
-  return new Array(numberOfItems).map(() => listItem());
-}
