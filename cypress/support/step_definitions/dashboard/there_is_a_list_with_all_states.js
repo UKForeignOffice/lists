@@ -46,7 +46,7 @@ Given("A lawyers list exists for Eurasia", () => {
 
 Given("there are these list items", (table) => {
   /**
-   * | contactName | status | isPublished | isBlocked | isApproved
+   * | contactName | status | isPublished | isBlocked | isApproved | emailVerified
    */
   const rows = table.hashes();
 
@@ -56,6 +56,7 @@ Given("there are these list items", (table) => {
       isPublished: isPublishedString,
       isApproved: isApprovedString,
       isBlocked: isBlockedString,
+      emailVerified,
       ...rest
     } = row;
 
@@ -65,7 +66,11 @@ Given("there are these list items", (table) => {
 
     const jsonData = {
       contactName,
+      metadata: {
+        emailVerified: emailVerified === "true",
+      },
     };
+
     return listItem({
       ...rest,
       isPublished,
@@ -100,7 +105,9 @@ function listItem(options) {
       proBono: true,
       regions: "France and UK",
       legalAid: true,
-      metadata: [],
+      metadata: {
+        emailVerified: jsonData.metadata.emailVerified,
+      },
       areasOfLaw: [],
       regulators: "Miniluv",
       contactName: jsonData.contactName ?? randFullName(),
