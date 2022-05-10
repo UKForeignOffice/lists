@@ -5,6 +5,7 @@
 
 */
 -- CreateEnum
+DROP TYPE IF EXISTS "AuditEvent" CASCADE;
 CREATE TYPE "AuditEvent" AS ENUM ('NEW', 'OUT_WITH_PROVIDER', 'EDITED', 'ANNUAL_REVIEW', 'REVIEWED', 'UNPUBLISHED', 'PUBLISHED', 'PINNED', 'UNPINNED', 'DELETED', 'UNDEFINED');
 
 -- AlterEnum
@@ -13,7 +14,6 @@ CREATE TYPE "AuditEvent" AS ENUM ('NEW', 'OUT_WITH_PROVIDER', 'EDITED', 'ANNUAL_
 -- in a single migration. This can be worked around by creating
 -- multiple migrations, each migration adding only one value to
 -- the enum.
-
 
 ALTER TYPE "Status" ADD VALUE 'OUT_WITH_PROVIDER';
 ALTER TYPE "Status" ADD VALUE 'EDITED';
@@ -27,8 +27,8 @@ ALTER TYPE "Status" ADD VALUE 'UNPUBLISHED';
 ALTER TABLE "Event" DROP CONSTRAINT "Event_listItemId_fkey";
 
 -- AlterTable
-ALTER TABLE "Audit" ADD COLUMN     "auditEvent" "AuditEvent" NOT NULL DEFAULT E'UNDEFINED',
-ADD COLUMN     "listItemId" INTEGER;
+ALTER TABLE "Audit" ADD COLUMN     "auditEvent" "AuditEvent" NOT NULL DEFAULT E'UNDEFINED';
+ALTER TABLE "Audit" ADD COLUMN     "listItemId" INTEGER;
 
 -- DropTable
 DROP TABLE "Event";
