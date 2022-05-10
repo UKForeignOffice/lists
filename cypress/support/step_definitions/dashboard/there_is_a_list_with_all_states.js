@@ -18,6 +18,20 @@ Given("A lawyers list exists for Eurasia", () => {
       },
     },
   });
+
+  cy.task("db", {
+    operation: "event.deleteMany",
+    variables: {
+      where: {
+        listItem: {
+          list: {
+            reference: "SMOKE",
+          },
+        },
+      },
+    },
+  });
+
   cy.task("db", {
     operation: "list.upsert",
     variables: {
@@ -46,7 +60,7 @@ Given("A lawyers list exists for Eurasia", () => {
 
 Given("there are these list items", (table) => {
   /**
-   * | contactName | status | isPublished | isBlocked | isApproved | emailVerified
+   * | contactName | status | isPublished | isBlocked | isApproved | emailVerified | isPinned
    */
   const rows = table.hashes();
 
@@ -56,6 +70,7 @@ Given("there are these list items", (table) => {
       isPublished: isPublishedString,
       isApproved: isApprovedString,
       isBlocked: isBlockedString,
+      isPinned,
       emailVerified,
       ...rest
     } = row;
@@ -68,6 +83,9 @@ Given("there are these list items", (table) => {
       contactName,
       metadata: {
         emailVerified: emailVerified === "true",
+      },
+      __smoke: {
+        isPinned: isPinned === "true",
       },
     };
 
@@ -90,12 +108,35 @@ Given("there are these list items", (table) => {
       where: {
         reference: "SMOKE",
       },
+      select: {
+        items: true,
+      },
     },
+  }).then((updatedList) => {
+    const shouldPin = updatedList.items
+      .filter((item) => item.jsonData.__smoke.isPinned === true)
+      .map((item) => ({
+        id: item.id,
+      }));
+    cy.task("db", {
+      operation: "user.update",
+      variables: {
+        data: {
+          pinnedItems: {
+            set: shouldPin,
+          },
+        },
+        where: {
+          email: "smoke@cautionyourblast.com",
+        },
+      },
+    });
   });
 });
 
 function listItem(options) {
-  const { jsonData, ...rest } = options;
+  const { jsonData, isPinned, ...rest } = options;
+
   return {
     type: "lawyers",
     jsonData: {
