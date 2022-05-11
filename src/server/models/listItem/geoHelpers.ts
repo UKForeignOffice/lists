@@ -42,20 +42,11 @@ export async function getPlaceGeoPoint(props: {
 export function makeAddressGeoLocationString(
   item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
 ): string {
-  if ("organisationDetails" in item) {
-    return `
-      ${item.organisationDetails.addressLine1},
-      ${item.organisationDetails.addressLine2 ?? ""},
-      ${item.organisationDetails.city} -
-      ${item.organisationDetails.country} -
-      ${item.organisationDetails.postcode}
-    `;
-  }
   return `
-      ${item.addressLine1},
-      ${item.addressLine2 ?? ""},
+      ${item.firstLine},
+      ${item.secondLine ?? ""},
       ${item.city} -
-      ${item.addressCountry} -
+      ${item.addressCountry ?? item.country} -
       ${item.postcode}
     `;
 }

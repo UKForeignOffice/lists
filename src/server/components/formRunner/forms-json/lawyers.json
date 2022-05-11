@@ -117,11 +117,11 @@
           "options": {
             "hideTitle": false
           },
-          "name": "addressLine1",
+          "name": "firstLine",
           "schema": {}
         },
         {
-          "name": "addressLine2",
+          "name": "secondLine",
           "options": {
             "required": false
           },
@@ -137,7 +137,7 @@
           "schema": {}
         },
         {
-          "name": "postcode",
+          "name": "postCode",
           "options": {},
           "type": "TextField",
           "title": "Post code / area code",
@@ -1605,7 +1605,9 @@
     }
   ],
   "phaseBanner": {},
-  "metadata": {},
+  "metadata": {
+    "type": "lawyers"
+  },
   "fees": [],
   "outputs": [
     {

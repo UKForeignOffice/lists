@@ -1,3 +1,4 @@
+import { ServiceType } from "server/models/types";
 
 export interface FormRunnerWebhookData {
   questions: Array<{
@@ -13,15 +14,15 @@ export interface FormRunnerWebhookData {
   }>;
 }
 
-export interface LawyersFormWebhookData {
+export interface BaseWebhookData {
   country: string;
   size: string;
   speakEnglish: boolean;
   regulators: string;
   contactName: string;
   organisationName: string;
-  addressLine1: string;
-  addressLine2?: string;
+  firstLine: string;
+  secondLine?: string;
   city: string;
   postcode: string;
   addressCountry: string;
@@ -31,39 +32,28 @@ export interface LawyersFormWebhookData {
   phoneNumber: string;
   emergencyPhoneNumber?: string;
   websiteAddress?: string;
+  representedBritishNationals: boolean;
+  declaration: string[];
+  metadata: {
+    type: ServiceType;
+  };
+}
+
+export interface LawyersFormWebhookData extends BaseWebhookData {
   regions: string;
   areasOfLaw: string[];
   legalAid?: boolean;
   proBono?: boolean;
-  representedBritishNationals: boolean;
-  declaration: string[];
 }
 
-export interface CovidTestSupplierFormWebhookData {
-  speakEnglish: boolean;
+export interface CovidTestSupplierFormWebhookData extends BaseWebhookData {
   isQualified: boolean;
   affiliatedWithRegulatoryAuthority: boolean;
   regulatoryAuthority: string;
   meetUKstandards: boolean;
   provideResultsInEnglishFrenchSpanish: boolean;
   provideTestResultsIn72Hours: boolean;
-  organisationDetails: {
-    organisationName: string;
-    locationName: string;
-    contactName: string;
-    contactEmailAddress: string;
-    contactPhoneNumber: string;
-    websiteAddress: string;
-    emailAddress: string;
-    additionalEmailAddress?: string;
-    phoneNumber: string;
-    additionalPhoneNumber?: string;
-    addressLine1: string;
-    addressLine2: string | undefined;
-    city: string;
-    postcode: string;
-    country: string;
-  };
+  locationName: string;
   providedTests: string;
   turnaroundTimeAntigen: string;
   turnaroundTimeLamp: string;
@@ -84,22 +74,22 @@ export interface FormRunnerPage {
 }
 
 export interface FormRunnerComponent {
-  name: string,
-  title: string,
-  options: {},
-  type: string,
-  content: string,
-  schema: {}
+  name: string;
+  title: string;
+  options: {};
+  type: string;
+  content: string;
+  schema: {};
 }
 
 export interface FormRunnerField {
-  key: string,
-  answer: any,
+  key: string;
+  answer: any;
 }
 
 export interface FormRunnerQuestion {
-  question: string,
-  fields: FormRunnerField[],
+  question: string;
+  fields: FormRunnerField[];
 }
 
 export interface FormRunnerNewSessionData {
@@ -111,7 +101,3 @@ export interface FormRunnerNewSessionData {
   };
   name: string;
 }
-
-export type WebhookData =
-  | CovidTestSupplierFormWebhookData
-  | LawyersFormWebhookData;

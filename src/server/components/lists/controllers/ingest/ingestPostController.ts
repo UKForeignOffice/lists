@@ -8,7 +8,6 @@ import {
 } from "server/components/formRunner";
 import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";
-import { get } from "lodash";
 import { createConfirmationLink } from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
@@ -41,32 +40,29 @@ export async function ingestPostController(
     const item = await createListItem(serviceType, data);
     const { address, reference, type } = item;
     const typeName = serviceName(type);
-
-    if (typeName !== undefined) {
-      const { country } = address;
-      const contactName = get(item.jsonData, "contactName");
-      const email =
-        get(item.jsonData, "contactEmailAddress") ??
-        get(item.jsonData, "publicEmailAddress") ??
-        get(item.jsonData, "email") ??
-        get(item.jsonData, "emailAddress");
-
-      if (email === null) {
-        throw new Error("No email address supplied");
-      }
-
-      const confirmationLink = createConfirmationLink(req, reference);
-
-      await sendApplicationConfirmationEmail(
-        contactName,
-        email,
-        typeName,
-        country.name,
-        confirmationLink
-      );
+    if (!typeName) {
+      res.json({});
+      return;
     }
 
-    res.json({});
+    const { country } = address;
+    const { jsonData } = item;
+    const { contactName } = jsonData;
+    const email = jsonData?.publicEmailAddress ?? jsonData?.emailAddress;
+
+    if (email === null) {
+      throw new Error("No email address supplied");
+    }
+
+    const confirmationLink = createConfirmationLink(req, reference);
+
+    await sendApplicationConfirmationEmail(
+      contactName,
+      email,
+      typeName,
+      country.name,
+      confirmationLink
+    );
   } catch (e) {
     logger.error(`listsDataIngestionController Error: ${e.message}`);
 

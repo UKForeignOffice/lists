@@ -17,18 +17,34 @@ import { compact, startCase, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import pgescape from "pg-escape";
-import { ListItemWithAddressCountry } from "./types";
-import { checkListItemExists, fetchPublishedListItemQuery } from "./helpers";
+import { fetchPublishedListItemQuery } from "./helpers";
+
+enum TestType {
+  Antigen = "Antigen",
+  LAMP = "Loop-mediated Isothermal Amplification (LAMP)",
+  PCR = "Polymerase Chain Reaction (PCR)",
+}
+
+type TurnaroundTimeProperties = keyof Pick<
+  CovidTestSupplierFormWebhookData,
+  "turnaroundTimeAntigen" | "turnaroundTimeLamp" | "turnaroundTimePCR"
+>;
+
+const turnaroundTimeProperties: Record<TestType, TurnaroundTimeProperties> = {
+  [TestType.Antigen]: "turnaroundTimeAntigen",
+  [TestType.LAMP]: "turnaroundTimeLamp",
+  [TestType.PCR]: "turnaroundTimePCR",
+};
 
 export async function createObject(
   formData: CovidTestSupplierFormWebhookData
 ): Promise<CovidTestSupplierListItemCreateInput> {
   try {
-    const country = await createCountry(formData.organisationDetails.country);
+    const country = await createCountry(formData.country);
     const geoLocationId = await createAddressGeoLocation(formData);
 
     const listId = await getListIdForCountryAndType(
-      formData.organisationDetails.country as CountryName,
+      formData.country as CountryName,
       ServiceType.covidTestProviders
     );
 
@@ -37,25 +53,14 @@ export async function createObject(
         .split(", ")
         .map(trim)
         .map((testName) => {
-          switch (testName) {
-            case "Antigen":
-              return {
-                type: testName,
-                turnaroundTime: parseInt(formData.turnaroundTimeAntigen, 10),
-              };
-            case "Loop-mediated Isothermal Amplification (LAMP)":
-              return {
-                type: testName,
-                turnaroundTime: parseInt(formData.turnaroundTimeLamp, 10),
-              };
-            case "Polymerase Chain Reaction (PCR)":
-              return {
-                type: testName,
-                turnaroundTime: parseInt(formData.turnaroundTimePCR, 10),
-              };
-            default:
-              return undefined;
+          const type = testName as TestType;
+          if (!type) {
+            return undefined;
           }
+          return {
+            type,
+            turnaroundTime: parseInt(turnaroundTimeProperties[type]),
+          };
         })
     );
 
@@ -69,23 +74,19 @@ export async function createObject(
         },
       },
       jsonData: {
-        organisationName: formData.organisationDetails.organisationName
-          .toLowerCase()
-          .trim(),
-        contactName: formData.organisationDetails.contactName.trim(),
-        contactEmailAddress: formData.organisationDetails.contactEmailAddress
+        organisationName: formData.organisationName.toLowerCase().trim(),
+        contactName: formData.contactName.trim(),
+        contactEmailAddress: formData.contactEmailAddress
           .toLocaleLowerCase()
           .trim(),
-        contactPhoneNumber: formData.organisationDetails.contactPhoneNumber
+        contactPhoneNumber: formData.contactPhoneNumber
           .toLocaleLowerCase()
           .trim(),
-        telephone: formData.organisationDetails.phoneNumber,
-        additionalTelephone: formData.organisationDetails.additionalPhoneNumber,
-        email: formData.organisationDetails.emailAddress.toLowerCase().trim(),
-        additionalEmail: formData.organisationDetails.additionalEmailAddress,
-        website: formData.organisationDetails.websiteAddress
-          .toLowerCase()
-          .trim(),
+        telephone: formData.phoneNumber,
+        additionalTelephone: formData.additionalPhoneNumber,
+        email: formData.emailAddress.toLowerCase().trim(),
+        additionalEmail: formData.additionalEmailAddress,
+        website: formData.websiteAddress.toLowerCase().trim(),
         regulatoryAuthority: formData.regulatoryAuthority,
         resultsFormat: formData.resultsFormat.split(",").map(trim),
         resultsReadyFormat: formData.resultsReadyFormat.split(",").map(trim),
@@ -100,10 +101,10 @@ export async function createObject(
       },
       address: {
         create: {
-          firstLine: formData.organisationDetails.addressLine1,
-          secondLine: formData.organisationDetails.addressLine2,
-          postCode: formData.organisationDetails.postcode,
-          city: formData.organisationDetails.city,
+          firstLine: formData.firstLine,
+          secondLine: formData.secondLine,
+          postCode: formData.postCode,
+          city: formData.city,
           country: {
             connect: { id: country.id },
           },
@@ -121,38 +122,6 @@ export async function createObject(
     };
   } catch (error) {
     logger.error(error);
-    throw error;
-  }
-}
-
-export async function create(
-  webhookData: CovidTestSupplierFormWebhookData
-): Promise<ListItemWithAddressCountry> {
-  const exists = await checkListItemExists({
-    organisationName: webhookData.organisationDetails.organisationName,
-    locationName: webhookData.organisationDetails.locationName,
-    countryName: webhookData.organisationDetails.country,
-  });
-
-  if (exists) {
-    throw new Error("Covid Test Supplier Record already exists");
-  }
-
-  try {
-    const data = await createObject(webhookData);
-
-    return await prisma.listItem.create({
-      data,
-      include: {
-        address: {
-          include: {
-            country: true,
-          },
-        },
-      },
-    });
-  } catch (error) {
-    logger.error(`CovidTestSupplier.create Error: ${error.message}`);
     throw error;
   }
 }
