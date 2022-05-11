@@ -4,7 +4,6 @@ import {
   LawyersFormWebhookData,
 } from "server/components/formRunner";
 import {
-  Country,
   CountryName,
   LawyerListItemCreateInput,
   LawyerListItemGetObject,
@@ -26,10 +25,12 @@ import {
   fetchPublishedListItemQuery,
 } from "server/models/listItem/providers/helpers";
 import { recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma } from "@prisma/client";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 
-export async function createAddressObject(webhookData: BaseWebhookData) {
+export async function createAddressObject(
+  webhookData: BaseWebhookData
+): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput> {
   const {
     "address.firstLine": firstLine,
     "address.secondLine": secondLine,
@@ -42,19 +43,20 @@ export async function createAddressObject(webhookData: BaseWebhookData) {
   const dbCountry = await createCountry(addressCountry ?? country);
 
   return {
-    firstLine,
-    secondLine,
-    postCode,
-    city,
-    country: {
-      connectOrCreate: {
-        where: {},
-        country: dbCountry.id,
+    create: {
+      firstLine,
+      secondLine,
+      postCode,
+      city,
+      country: {
+        connect: {
+          id: dbCountry.id,
+        },
       },
-    },
-    geoLocation: {
-      connect: {
-        id: geoLocationId,
+      geoLocation: {
+        connect: {
+          id: geoLocationId,
+        },
       },
     },
   };
@@ -85,7 +87,7 @@ export async function createObject(
         areasOfLaw: uniq(areasOfLaw ?? []),
       },
       address: {
-        create: await createAddressObject(lawyer),
+        ...(await createAddressObject(lawyer)),
       },
     };
   } catch (error) {
