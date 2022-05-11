@@ -277,7 +277,7 @@
           "schema": {}
         },
         {
-          "name": "firstLine",
+          "name": "address.firstLine",
           "options": {},
           "type": "TextField",
           "title": "Address line 1",
@@ -285,7 +285,7 @@
           "hint": ""
         },
         {
-          "name": "secondLine",
+          "name": "address.secondLine",
           "options": {
             "required": false
           },

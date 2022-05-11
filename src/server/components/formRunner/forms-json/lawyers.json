@@ -117,11 +117,11 @@
           "options": {
             "hideTitle": false
           },
-          "name": "firstLine",
+          "name": "address.firstLine",
           "schema": {}
         },
         {
-          "name": "secondLine",
+          "name": "address.secondLine",
           "options": {
             "required": false
           },

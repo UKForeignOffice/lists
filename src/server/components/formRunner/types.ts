@@ -21,10 +21,10 @@ export interface BaseWebhookData {
   regulators: string;
   contactName: string;
   organisationName: string;
-  firstLine: string;
-  secondLine?: string;
+  "address.firstLine": string;
+  "address.secondLine"?: string;
   city: string;
-  postcode: string;
+  postCode: string;
   addressCountry: string;
   emailAddress: string;
   publishEmail: string;

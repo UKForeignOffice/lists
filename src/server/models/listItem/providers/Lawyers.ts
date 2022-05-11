@@ -1,6 +1,10 @@
 // Lawyers
-import { LawyersFormWebhookData } from "server/components/formRunner";
 import {
+  BaseWebhookData,
+  LawyersFormWebhookData,
+} from "server/components/formRunner";
+import {
+  Country,
   CountryName,
   LawyerListItemCreateInput,
   LawyerListItemGetObject,
@@ -25,22 +29,42 @@ import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 
+export async function createAddressObject(webhookData: BaseWebhookData) {
+  const {
+    "address.firstLine": firstLine,
+    "address.secondLine": secondLine,
+    postCode,
+    city,
+    addressCountry,
+    country,
+  } = webhookData;
+  const geoLocationId = await createAddressGeoLocation(webhookData);
+  const dbCountry = await createCountry(addressCountry ?? country);
+
+  return {
+    firstLine,
+    secondLine,
+    postCode,
+    city,
+    country: {
+      connectOrCreate: {
+        where: {},
+        country: dbCountry.id,
+      },
+    },
+    geoLocation: {
+      connect: {
+        id: geoLocationId,
+      },
+    },
+  };
+}
+
 export async function createObject(
   lawyer: LawyersFormWebhookData
 ): Promise<LawyerListItemCreateInput> {
   try {
-    const {
-      addressCountry,
-      addressLine1,
-      addressLine2,
-      areasOfLaw,
-      city,
-      contactName,
-      postcode,
-      ...rest
-    } = lawyer;
-    const country = await createCountry(addressCountry);
-    const geoLocationId = await createAddressGeoLocation(lawyer);
+    const { areasOfLaw, ...rest } = lawyer;
 
     const listId = await getListIdForCountryAndType(
       lawyer.country as CountryName,
@@ -59,25 +83,9 @@ export async function createObject(
       jsonData: {
         ...rest,
         areasOfLaw: uniq(areasOfLaw ?? []),
-        contactName,
       },
       address: {
-        create: {
-          firstLine: addressLine1,
-          secondLine: addressLine2,
-          postCode: postcode,
-          city,
-          country: {
-            connect: {
-              id: country.id,
-            },
-          },
-          geoLocation: {
-            connect: {
-              id: typeof geoLocationId === "number" ? geoLocationId : undefined,
-            },
-          },
-        },
+        create: await createAddressObject(lawyer),
       },
     };
   } catch (error) {
@@ -112,14 +120,16 @@ export async function create(
       },
     });
 
-    await recordListItemEvent({
+    await recordListItemEvent(
+      {
         eventName: "edit",
         itemId: listItem.id,
       },
       AuditEvent.NEW
     );
 
-    await recordEvent({
+    await recordEvent(
+      {
         eventName: "edit",
         itemId: listItem.id,
       },
@@ -128,7 +138,6 @@ export async function create(
     );
 
     return listItem;
-
   } catch (error) {
     logger.error(`createLawyerListItem Error: ${error.message}`);
     throw error;
