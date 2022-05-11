@@ -1,23 +1,18 @@
 // Covid Test Suppliers
 // TODO: Test
-import { CovidTestSupplierFormWebhookData } from "server/components/formRunner";
-import {
-  CountryName,
-  CovidTestSupplierListItemCreateInput,
-  LawyerListItemGetObject,
-  ServiceType,
-} from "server/models/types";
-import {
-  createAddressGeoLocation,
-  createCountry,
-  getPlaceGeoPoint,
-} from "./../geoHelpers";
-import { getListIdForCountryAndType } from "server/models/helpers";
-import { compact, startCase, toLower, trim } from "lodash";
+import { LawyerListItemGetObject, ServiceType } from "server/models/types";
+import { getPlaceGeoPoint } from "./../geoHelpers";
+import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import pgescape from "pg-escape";
-import { fetchPublishedListItemQuery } from "./helpers";
+import { checkboxCSVToArray, fetchPublishedListItemQuery } from "./helpers";
+import {
+  TestType,
+  turnaroundTimeProperties,
+  WebhookDeserialiser,
+} from "server/models/listItem/providers/types";
+import { CovidTestSupplierFormWebhookData } from "server/components/formRunner";
 
 export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;
@@ -62,3 +57,35 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     return [];
   }
 }
+
+export const covidTestProviderDeserialiser: WebhookDeserialiser<CovidTestSupplierFormWebhookData> =
+  (webhookData) => {
+    const {
+      providedTests: providedTestsString,
+      resultsFormat,
+      resultsReadyFormat,
+      bookingOptions,
+      ...rest
+    } = webhookData;
+
+    const providedTests = checkboxCSVToArray(providedTestsString).map(
+      (testName) => {
+        const type = testName as TestType;
+        return {
+          type,
+          turnaroundTime: parseInt(turnaroundTimeProperties[type]),
+        };
+      }
+    );
+
+    return {
+      ...rest,
+      providedTests,
+      resultsFormat: checkboxCSVToArray(resultsFormat),
+      resultsReadyFormat: checkboxCSVToArray(resultsReadyFormat),
+      bookingOptions: checkboxCSVToArray(bookingOptions),
+      fastestTurnaround: Math.min(
+        ...providedTests.map((test) => test.turnaroundTime)
+      ),
+    };
+  };

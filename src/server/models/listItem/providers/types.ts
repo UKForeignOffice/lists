@@ -1,4 +1,8 @@
 import { Address, Country, ListItem } from "server/models/types";
+import {
+  BaseWebhookData,
+  CovidTestSupplierFormWebhookData,
+} from "server/components/formRunner";
 
 export interface ListItemWithAddressCountry extends ListItem {
   address: Address & {
@@ -14,3 +18,29 @@ export type UpdatableAddressFields = Pick<
   Address,
   "firstLine" | "secondLine" | "city" | "postCode"
 >;
+
+export enum TestType {
+  Antigen = "Antigen",
+  LAMP = "Loop-mediated Isothermal Amplification (LAMP)",
+  PCR = "Polymerase Chain Reaction (PCR)",
+}
+
+export type TurnaroundTimeProperties = keyof Pick<
+  CovidTestSupplierFormWebhookData,
+  "turnaroundTimeAntigen" | "turnaroundTimeLamp" | "turnaroundTimePCR"
+>;
+
+export const turnaroundTimeProperties: Record<
+  TestType,
+  TurnaroundTimeProperties
+> = {
+  [TestType.Antigen]: "turnaroundTimeAntigen",
+  [TestType.LAMP]: "turnaroundTimeLamp",
+  [TestType.PCR]: "turnaroundTimePCR",
+};
+
+export type WebhookDeserialiser<T extends BaseWebhookData> = (
+  webhookData: T
+) => {
+  [k: string]: any;
+};

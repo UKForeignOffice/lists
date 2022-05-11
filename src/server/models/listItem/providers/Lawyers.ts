@@ -18,7 +18,7 @@ import { getListIdForCountryAndType } from "server/models/helpers";
 import { startCase, toLower, uniq } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemWithAddressCountry } from "./types";
+import { ListItemWithAddressCountry, WebhookDeserialiser } from "./types";
 import { legalPracticeAreasList } from "server/services/metadata";
 import {
   checkListItemExists,
@@ -130,3 +130,12 @@ export async function findPublishedLawyersPerCountry(props: {
     return [];
   }
 }
+
+export const lawyerDeserialiser: WebhookDeserialiser<LawyersFormWebhookData> = (
+  webhookData
+) => {
+  const { areasOfLaw = [] } = webhookData;
+  return {
+    areasOfLaw: areasOfLaw.filter(Boolean),
+  };
+};
