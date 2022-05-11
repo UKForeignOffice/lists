@@ -24,11 +24,7 @@ export async function getPlaceGeoPoint(props: {
   countryName?: string;
   text?: string;
 }): Promise<Point> {
-  const { countryName, text } = props;
-
-  if (text === undefined || countryName === undefined) {
-    return [0.0, 0.0];
-  }
+  const { countryName = 0.0, text = 0.0 } = props;
 
   try {
     return await geoLocatePlaceByText(`${text}, ${countryName}`);
