@@ -8,27 +8,20 @@
 DROP TYPE IF EXISTS "AuditEvent" CASCADE;
 CREATE TYPE "AuditEvent" AS ENUM ('NEW', 'OUT_WITH_PROVIDER', 'EDITED', 'ANNUAL_REVIEW', 'REVIEWED', 'UNPUBLISHED', 'PUBLISHED', 'PINNED', 'UNPINNED', 'DELETED', 'UNDEFINED');
 
--- AlterEnum
--- This migration adds more than one value to an enum.
--- With PostgreSQL versions 11 and earlier, this is not possible
--- in a single migration. This can be worked around by creating
--- multiple migrations, each migration adding only one value to
--- the enum.
+-- CreateEnum - this type is dropped and re-created as you cannot call ALTER TYPE....ADD in postgres 11 or below.  Although using
+-- Postgres 13, the initial migration failed in prod, hence, trying another strategy.
+DROP TYPE "Status" CASCADE;
+CREATE TYPE "Status" AS ENUM ('NEW','OUT_WITH_PROVIDER','EDITED','ANNUAL_REVIEW','REVIEW_OVERDUE','REVIEWED','PUBLISHED','UNPUBLISHED');
 
-ALTER TYPE "Status" ADD VALUE 'OUT_WITH_PROVIDER';
-ALTER TYPE "Status" ADD VALUE 'EDITED';
-ALTER TYPE "Status" ADD VALUE 'ANNUAL_REVIEW';
-ALTER TYPE "Status" ADD VALUE 'REVIEW_OVERDUE';
-ALTER TYPE "Status" ADD VALUE 'REVIEWED';
-ALTER TYPE "Status" ADD VALUE 'PUBLISHED';
-ALTER TYPE "Status" ADD VALUE 'UNPUBLISHED';
+-- AlterTable
+ALTER TABLE "ListItem" ADD COLUMN     "status" "Status" NOT NULL DEFAULT E'NEW';
 
 -- DropForeignKey
 ALTER TABLE "Event" DROP CONSTRAINT "Event_listItemId_fkey";
 
 -- AlterTable
-ALTER TABLE "Audit" ADD COLUMN     "auditEvent" "AuditEvent" NOT NULL DEFAULT E'UNDEFINED';
-ALTER TABLE "Audit" ADD COLUMN     "listItemId" INTEGER;
+ALTER TABLE "Audit" ADD COLUMN     "auditEvent" "AuditEvent" NOT NULL DEFAULT E'UNDEFINED',
+ADD COLUMN     "listItemId" INTEGER;
 
 -- DropTable
 DROP TABLE "Event";
