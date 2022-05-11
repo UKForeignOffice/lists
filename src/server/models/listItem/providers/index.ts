@@ -146,7 +146,7 @@ export async function create(
   const { type } = webhookData.metadata;
 
   if (exists) {
-    throw new Error(`${type} record already exists at id: ${exists.id}`);
+    throw new Error(`${type} record already exists`);
   }
 
   try {
