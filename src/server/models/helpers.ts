@@ -53,8 +53,8 @@ export function geoPointIsValid(geoPoint: any): boolean {
 export async function getListIdForCountryAndType(
   country: CountryName,
   serviceType: ServiceType
-): Promise<number> {
+): Promise<number | undefined> {
   const existingLists = await findListByCountryAndType(country, serviceType);
 
-  return existingLists?.[0]?.id ?? -1;
+  return existingLists?.[0]?.id;
 }

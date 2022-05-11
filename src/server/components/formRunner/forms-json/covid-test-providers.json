@@ -140,14 +140,14 @@
         {
           "path": "/main-point-of-contact"
         }
-      ],
+      ]
     },
     {
       "path": "/website-address",
       "title": "Website address",
       "components": [
         {
-          "name": "websiteAddress",
+          "name": "website",
           "options": {},
           "type": "TextField",
           "title": "Website address",
@@ -252,7 +252,7 @@
       "title": "Telephone number",
       "components": [
         {
-          "name": "phoneNumber",
+          "name": "telephone",
           "options": {},
           "type": "TextField",
           "title": "Phone number",
@@ -1636,23 +1636,23 @@
       "items": [
         {
           "text": "Email",
-          "value": "Email"
+          "value": "email"
         },
         {
           "text": "In person",
-          "value": "In person"
+          "value": "in person"
         },
         {
           "text": "Phone",
-          "value": "Phone"
+          "value": "phone"
         },
         {
           "text": "SMS",
-          "value": "SMS"
+          "value": "sms"
         },
         {
           "text": "Website",
-          "value": "Website"
+          "value": "website"
         }
       ]
     },

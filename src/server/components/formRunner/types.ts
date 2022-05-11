@@ -64,6 +64,10 @@ export interface CovidTestSupplierFormWebhookData extends BaseWebhookData {
   declarationConfirm: string;
 }
 
+export type WebhookData =
+  | LawyersFormWebhookData
+  | CovidTestSupplierFormWebhookData;
+
 export interface FormRunnerPage {
   title: string;
   path: string;
