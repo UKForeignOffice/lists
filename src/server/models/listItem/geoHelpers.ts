@@ -4,11 +4,9 @@ import { startCase, toLower } from "lodash";
 import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "server/components/formRunner";
+import { WebhookData } from "server/components/formRunner";
 import { rawInsertGeoLocation } from "server/models/helpers";
+import { Prisma } from "@prisma/client";
 
 export async function createCountry(country: string): Promise<Country> {
   const countryName = startCase(toLower(country));
@@ -35,23 +33,56 @@ export async function getPlaceGeoPoint(props: {
   }
 }
 
-export function makeAddressGeoLocationString(
-  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-): string {
+export function makeAddressGeoLocationString(webhookData: WebhookData): string {
   return `
-      ${item.firstLine},
-      ${item.secondLine ?? ""},
-      ${item.city} -
-      ${item.addressCountry ?? item.country} -
-      ${item.postcode}
+      ${webhookData["address.firstLine"] ?? ""},
+      ${webhookData["address.secondLine"] ?? ""},
+      ${webhookData.city} -
+      ${webhookData.addressCountry ?? webhookData.country} -
+      ${webhookData.postCode}
     `;
 }
 
 export async function createAddressGeoLocation(
-  item: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  item: WebhookData
 ): Promise<number> {
   const address = makeAddressGeoLocationString(item);
   const point = await geoLocatePlaceByText(address);
 
   return await rawInsertGeoLocation(point);
+}
+
+export async function createAddressObject(
+  webhookData: WebhookData
+): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput> {
+  const {
+    "address.firstLine": firstLine,
+    "address.secondLine": secondLine,
+    postCode,
+    city,
+    addressCountry,
+    country,
+  } = webhookData;
+
+  const geoLocationId = await createAddressGeoLocation(webhookData);
+  const dbCountry = await createCountry(addressCountry ?? country);
+
+  return {
+    create: {
+      firstLine,
+      secondLine,
+      postCode,
+      city,
+      country: {
+        connect: {
+          id: dbCountry.id,
+        },
+      },
+      geoLocation: {
+        connect: {
+          id: geoLocationId,
+        },
+      },
+    },
+  };
 }

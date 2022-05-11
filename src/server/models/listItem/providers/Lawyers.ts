@@ -3,18 +3,12 @@ import {
   BaseWebhookData,
   LawyersFormWebhookData,
 } from "server/components/formRunner";
-import {
-  CountryName,
-  LawyerListItemCreateInput,
-  LawyerListItemGetObject,
-  ServiceType,
-} from "server/models/types";
+import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import {
   createAddressGeoLocation,
   createCountry,
   getPlaceGeoPoint,
 } from "./../geoHelpers";
-import { getListIdForCountryAndType } from "server/models/helpers";
 import { startCase, toLower, uniq } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
@@ -24,43 +18,6 @@ import {
   checkListItemExists,
   fetchPublishedListItemQuery,
 } from "server/models/listItem/providers/helpers";
-import { recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent, Prisma } from "@prisma/client";
-import { recordEvent } from "server/models/listItem/listItemEvent";
-
-export async function createAddressObject(
-  webhookData: BaseWebhookData
-): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput> {
-  const {
-    "address.firstLine": firstLine,
-    "address.secondLine": secondLine,
-    postCode,
-    city,
-    addressCountry,
-    country,
-  } = webhookData;
-  const geoLocationId = await createAddressGeoLocation(webhookData);
-  const dbCountry = await createCountry(addressCountry ?? country);
-
-  return {
-    create: {
-      firstLine,
-      secondLine,
-      postCode,
-      city,
-      country: {
-        connect: {
-          id: dbCountry.id,
-        },
-      },
-      geoLocation: {
-        connect: {
-          id: geoLocationId,
-        },
-      },
-    },
-  };
-}
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;

@@ -1,13 +1,13 @@
-import { BaseWebhookData } from "server/components/formRunner";
 import { Prisma } from "@prisma/client";
 import { getListIdForCountryAndType } from "server/models/helpers";
 import { CountryName } from "server/models/types";
 import { logger } from "server/services/logger";
-import { createAddressObject } from "server/models/listItem/providers/Lawyers";
 import { deserialisers } from "./deserialisers";
+import { createAddressObject } from "../geoHelpers";
+import { WebhookData } from "server/components/formRunner";
 
 export async function listItemCreateInputFromWebhook(
-  webhook: BaseWebhookData
+  webhook: WebhookData
 ): Promise<Prisma.ListItemCreateInput> {
   const { metadata, ...rest } = webhook;
   const { type } = metadata;
