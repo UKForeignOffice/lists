@@ -21,7 +21,6 @@ export const lawyerDeserialiser: WebhookDeserialiser<LawyersFormWebhookData> = (
 ) => {
   const { areasOfLaw = [], metadata, ...rest } = webhookData;
   return {
-    metadata,
     areasOfLaw: areasOfLaw.filter(Boolean),
     ...rest,
   };
@@ -84,7 +83,8 @@ export async function listItemCreateInputFromWebhook(
   }
 
   const deserialiser = DESERIALISER[type];
-  const deserialised = deserialiser(webhook);
+  // just return the webhook object if no deserialiser can be found
+  const deserialised = deserialiser?.(webhook) ?? webhook;
 
   return {
     type,

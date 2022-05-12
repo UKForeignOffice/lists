@@ -25,7 +25,6 @@ export interface BaseWebhookData {
   "address.secondLine"?: string;
   city: string;
   postCode: string;
-
   emailAddress: string;
   publishEmail: string;
   publicEmailAddress?: string;

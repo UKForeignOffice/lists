@@ -69,6 +69,9 @@ const LawyerWebhookData: LawyersFormWebhookData = {
 };
 
 const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
+  declaration: [],
+  regulators: "",
+  size: "",
   metadata: {
     type: ServiceType.covidTestProviders,
   },
