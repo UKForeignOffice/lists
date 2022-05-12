@@ -25,14 +25,13 @@ export interface BaseWebhookData {
   "address.secondLine"?: string;
   city: string;
   postCode: string;
-  addressCountry: string;
+
   emailAddress: string;
   publishEmail: string;
   publicEmailAddress?: string;
   phoneNumber: string;
   emergencyPhoneNumber?: string;
   websiteAddress?: string;
-  representedBritishNationals: boolean;
   declaration: string[];
   metadata: {
     type: ServiceType;
@@ -40,13 +39,21 @@ export interface BaseWebhookData {
 }
 
 export interface LawyersFormWebhookData extends BaseWebhookData {
+  metadata: {
+    type: ServiceType.lawyers;
+  };
   regions: string;
   areasOfLaw: string[];
   legalAid?: boolean;
   proBono?: boolean;
+  addressCountry: string;
+  representedBritishNationals: boolean;
 }
 
 export interface CovidTestSupplierFormWebhookData extends BaseWebhookData {
+  metadata: {
+    type: ServiceType.covidTestProviders;
+  };
   isQualified: boolean;
   affiliatedWithRegulatoryAuthority: boolean;
   regulatoryAuthority: string;

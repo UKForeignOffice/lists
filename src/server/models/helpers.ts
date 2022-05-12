@@ -56,5 +56,5 @@ export async function getListIdForCountryAndType(
 ): Promise<number | undefined> {
   const existingLists = await findListByCountryAndType(country, serviceType);
 
-  return existingLists?.[0]?.id;
+  return existingLists?.[0]?.id ?? -1;
 }

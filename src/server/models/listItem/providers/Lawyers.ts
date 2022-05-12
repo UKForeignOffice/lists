@@ -1,23 +1,12 @@
-// Lawyers
-import {
-  BaseWebhookData,
-  LawyersFormWebhookData,
-} from "server/components/formRunner";
+import { LawyersFormWebhookData } from "server/components/formRunner";
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
-import {
-  createAddressGeoLocation,
-  createCountry,
-  getPlaceGeoPoint,
-} from "./../geoHelpers";
-import { startCase, toLower, uniq } from "lodash";
+import { getPlaceGeoPoint } from "./../geoHelpers";
+import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemWithAddressCountry, WebhookDeserialiser } from "./types";
+import { WebhookDeserialiser } from "./types";
 import { legalPracticeAreasList } from "server/services/metadata";
-import {
-  checkListItemExists,
-  fetchPublishedListItemQuery,
-} from "server/models/listItem/providers/helpers";
+import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
@@ -87,12 +76,3 @@ export async function findPublishedLawyersPerCountry(props: {
     return [];
   }
 }
-
-export const lawyerDeserialiser: WebhookDeserialiser<LawyersFormWebhookData> = (
-  webhookData
-) => {
-  const { areasOfLaw = [] } = webhookData;
-  return {
-    areasOfLaw: areasOfLaw.filter(Boolean),
-  };
-};

@@ -1,19 +1,19 @@
+import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import {
-  LawyerListItemGetObject,
-  ServiceType
-} from "server/models/types";
-import { FormRunnerField, FormRunnerQuestion } from "server/components/formRunner/types";
+  FormRunnerField,
+  FormRunnerQuestion,
+} from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 import { get } from "lodash";
 
-const FormRunnerFields: {[key: string]: string} = {
+const FormRunnerFields: { [key: string]: string } = {
   speakEnglish: "jsonData.speakEnglish",
   contactName: "jsonData.contactName",
   organisationName: "jsonData.organisationName",
-  addressLine1: "address.firstLine",
-  addressLine2: "address.secondLine",
+  "address.firstLine": "address.firstLine",
+  "address.secondLine": "address.secondLine",
   city: "address.city",
-  postcode: "address.postCode",
+  postCode: "address.postCode",
   addressCountry: "address.country.name",
   websiteAddress: "jsonData.websiteAddress",
   emailAddress: "jsonData.emailAddress",
@@ -30,13 +30,14 @@ const FormRunnerFields: {[key: string]: string} = {
   regions: "jsonData.regions",
   size: "jsonData.size",
   publicEmailAddress: "jsonData.publicEmailAddress",
-}
+};
 
-
-export async function generateFormRunnerWebhookData(listItem: LawyerListItemGetObject,
-                                                    isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
+export async function generateFormRunnerWebhookData(
+  listItem: LawyerListItemGetObject,
+  isUnderTest?: boolean
+): Promise<Array<Partial<FormRunnerQuestion>>> {
   const questions = await parseJsonFormData(ServiceType.lawyers, isUnderTest);
-
+  console.log("Qs", listItem);
   questions.forEach((question) => {
     question.fields?.forEach((field: FormRunnerField) => {
       field.answer = get(listItem, FormRunnerFields[field.key]);

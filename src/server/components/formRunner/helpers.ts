@@ -8,15 +8,19 @@ import {
   FormRunnerNewSessionData,
   FormRunnerPage,
   FormRunnerQuestion,
-  FormRunnerWebhookData
+  FormRunnerWebhookData,
 } from "./types";
 import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
 import { FORM_RUNNER_SAFELIST } from "server/config";
-import { LawyerListItemGetObject, List, ListItemGetObject, ServiceType } from "server/models/types";
-import * as lawyers from "./lawyers"
-
+import {
+  LawyerListItemGetObject,
+  List,
+  ListItemGetObject,
+  ServiceType,
+} from "server/models/types";
+import * as lawyers from "./lawyers";
 
 let isStarting = false;
 
@@ -38,9 +42,11 @@ export async function startFormRunner(): Promise<boolean> {
     isStarting = true;
 
     const formRunner = spawn(
-      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join("\",\"")}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
+      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
+        '","'
+      )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
       {
-        shell: true
+        shell: true,
       }
     );
 
@@ -97,7 +103,12 @@ export function parseFormRunnerWebhookObject<T>({
   }, {}) as T;
 }
 
-export function getNewSessionWebhookData(listType: string, listItemId: number, questions: Array<Partial<FormRunnerQuestion>> | undefined, message: string): FormRunnerNewSessionData {
+export function getNewSessionWebhookData(
+  listType: string,
+  listItemId: number,
+  questions: Array<Partial<FormRunnerQuestion>> | undefined,
+  message: string
+): FormRunnerNewSessionData {
   const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
   const options = {
@@ -105,29 +116,35 @@ export function getNewSessionWebhookData(listType: string, listItemId: number, q
     customText: {
       title: "Application resubmitted",
       paymentSkipped: false,
-      nextSteps: "The British consulate or embassy will check your application again. If your application passes these checks your information will be published to the list.",
+      nextSteps:
+        "The British consulate or embassy will check your application again. If your application passes these checks your information will be published to the list.",
     },
     components: [],
     callbackUrl,
-    redirectPath
+    redirectPath,
   };
 
   const newSessionData: FormRunnerNewSessionData = {
     questions,
     options,
-    name: "Changes required"
+    name: "Changes required",
   };
   return newSessionData;
 }
 
-export async function generateFormRunnerWebhookData(list: List,
-                                                    listItem: ListItemGetObject,
-                                                    isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>> | undefined> {
+export async function generateFormRunnerWebhookData(
+  list: List,
+  listItem: ListItemGetObject,
+  isUnderTest?: boolean
+): Promise<Array<Partial<FormRunnerQuestion>> | undefined> {
   let questions: Array<Partial<FormRunnerQuestion>> | undefined;
 
   switch (list.type) {
     case ServiceType.lawyers:
-      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      questions = await lawyers.generateFormRunnerWebhookData(
+        listItem as LawyerListItemGetObject,
+        isUnderTest
+      );
       break;
     default:
       questions = undefined;
@@ -136,10 +153,18 @@ export async function generateFormRunnerWebhookData(list: List,
   return questions;
 }
 
-export async function parseJsonFormData(listType: string, isUnderTest?: boolean): Promise<Array<Partial<FormRunnerQuestion>>> {
-
-  const formsJsonFile = (isUnderTest === true) ? `/forms-json/${listType}.json` : `../src/server/components/formRunner/forms-json/${listType}.json`;
-  const fileContents = await fs.promises.readFile(path.join(__dirname, formsJsonFile), "utf8");
+export async function parseJsonFormData(
+  listType: string,
+  isUnderTest?: boolean
+): Promise<Array<Partial<FormRunnerQuestion>>> {
+  const formsJsonFile =
+    isUnderTest === true
+      ? `/forms-json/${listType}.json`
+      : `../src/server/components/formRunner/forms-json/${listType}.json`;
+  const fileContents = await fs.promises.readFile(
+    path.join(__dirname, formsJsonFile),
+    "utf8"
+  );
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<FormRunnerQuestion>> = formJsonData.pages
     .map((page: FormRunnerPage) => {
@@ -155,7 +180,7 @@ export async function parseJsonFormData(listType: string, isUnderTest?: boolean)
         });
       return {
         fields: fields,
-        question: page.title
+        question: page.title,
       };
     })
     .filter((question: FormRunnerQuestion) => question.fields.length > 0);

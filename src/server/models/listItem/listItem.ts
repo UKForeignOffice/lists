@@ -1,40 +1,33 @@
-import { get, merge } from "lodash";
-import pgescape from "pg-escape";
-import { prisma } from "./../db/prisma-client";
 import {
-  AuditEvent,
-  Prisma,
-  Status,
-  ListItem,
-  ListItemEvent,
-} from "@prisma/client";
-import { logger } from "server/services/logger";
-import {
-  LawyersFormWebhookData,
   CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
   WebhookData,
 } from "server/components/formRunner";
 import {
   EventJsonData,
   List,
-  User,
-  ServiceType,
+  ListItem,
   Point,
+  ServiceType,
+  User,
   WebhookDataAsJsonObject,
-} from "./../types";
-import { recordListItemEvent } from "./../audit";
-import { recordEvent } from "./../listItem/listItemEvent";
-import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
-import { ListItemWithAddressCountry } from "./providers/types";
+} from "server/models/types";
+import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
+import { rawUpdateGeoLocation } from "server/models/helpers";
+import { geoLocatePlaceByText } from "server/services/location";
+import { recordListItemEvent } from "server/models/audit";
 import {
   checkListItemExists,
   getChangedAddressFields,
-} from "./providers/helpers";
-import { geoLocatePlaceByText } from "server/services/location";
-import { rawUpdateGeoLocation } from "server/models/helpers";
-import { listItemCreateInputFromWebhook } from "server/models/listItem/providers/listItemCreateInputFromWebhook";
-export { findIndexListItems } from "./summary";
+} from "server/models/listItem/providers/helpers";
+import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
+import pgescape from "pg-escape";
+import { prisma } from "../db/prisma-client";
+import { logger } from "server/services/logger";
+import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
+import { recordEvent } from "./listItemEvent";
+import { merge } from "lodash";
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
@@ -305,22 +298,24 @@ export async function setEmailIsVerified({
     }
 
     // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
-    const { type } = item;
+    const { type, jsonData } = item;
+    const { metadata } = jsonData;
     const serviceType = type as ServiceType;
 
-    if (get(item, "jsonData.metadata.emailVerified") === true) {
+    if (metadata?.emailVerified === true) {
       return {
         type: serviceType,
       };
     }
 
-    const jsonData = merge(item.jsonData, {
-      metadata: { emailVerified: true },
-    });
+    const updatedJsonData = {
+      ...jsonData,
+      metadata: { ...metadata, emailVerified: true },
+    };
 
     await prisma.listItem.update({
       where: { reference },
-      data: { jsonData },
+      data: { jsonData: updatedJsonData },
     });
 
     return {

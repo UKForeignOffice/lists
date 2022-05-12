@@ -16,26 +16,30 @@ import {
   some,
 } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
-import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
-import { togglerListItemIsApproved,
+import {
+  togglerListItemIsApproved,
   togglerListItemIsPublished,
   setEmailIsVerified,
   findListItemsForList,
   deleteListItem,
+  createListItem,
 } from "server/models/listItem/listItem";
 
 jest.mock("../../db/prisma-client");
 
 const LawyerWebhookData: LawyersFormWebhookData = {
+  metadata: {
+    type: ServiceType.lawyers,
+  },
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
   regulators: "Spanish BAR",
   contactName: "Lawyer In Spain",
   organisationName: "CYB Law",
-  addressLine1: "123 Calle",
+  "address.firstLine": "123 Calle",
   city: "Seville",
-  postcode: "S3V1LLA",
+  postCode: "S3V1LLA",
   addressCountry: "Spain",
   emailAddress: "lawyer@example.com",
   publishEmail: "Yes",
@@ -65,6 +69,9 @@ const LawyerWebhookData: LawyersFormWebhookData = {
 };
 
 const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
+  metadata: {
+    type: ServiceType.covidTestProviders,
+  },
   speakEnglish: true,
   isQualified: true,
   affiliatedWithRegulatoryAuthority: true,
@@ -77,21 +84,18 @@ const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
   turnaroundTimeAntigen: "1",
   turnaroundTimeLamp: "48",
   turnaroundTimePCR: "24",
-  organisationDetails: {
-    organisationName: "Covid Test Provider Name",
-    locationName: "London",
-    contactName: "Contact Name",
-    contactEmailAddress: "aa@aa.com",
-    contactPhoneNumber: "777654321",
-    websiteAddress: "www.website.com",
-    emailAddress: "contact@email.com",
-    phoneNumber: "777654321",
-    addressLine1: "Cogito, Ergo Sum",
-    addressLine2: "Street",
-    city: "Touraine",
-    postcode: "123456",
-    country: "france",
-  },
+  organisationName: "Covid Test Provider Name",
+  locationName: "London",
+  contactName: "Contact Name",
+  publicEmailAddress: "aa@aa.com",
+  phoneNumber: "777654321",
+  websiteAddress: "www.website.com",
+  emailAddress: "contact@email.com",
+  "address.firstLine": "Cogito, Ergo Sum",
+  "address.secondLine": "Street",
+  city: "Touraine",
+  postCode: "123456",
+  country: "france",
   resultsReadyFormat: "Email,SMS",
   resultsFormat: "Email,SMS",
   bookingOptions: "Website,In Person",
@@ -183,8 +187,8 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toThrow(
-        "Lawyer record already exists"
+      await expect(createListItem(LawyerWebhookData)).rejects.toThrow(
+        "lawyers record already exists"
       );
 
       expect(spyCount.mock.calls[0][0]).toEqual({
@@ -213,7 +217,7 @@ describe("ListItem Model:", () => {
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
-      await LawyerListItem.create(LawyerWebhookData);
+      await createListItem(LawyerWebhookData);
 
       const expectedCountryName = startCase(toLower(LawyerWebhookData.country));
 
@@ -230,7 +234,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await LawyerListItem.create(LawyerWebhookData);
+      await createListItem(LawyerWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -256,6 +260,12 @@ describe("ListItem Model:", () => {
             },
           },
           jsonData: {
+            metadata: {
+              type: "lawyers",
+            },
+            "address.firstLine": "123 Calle",
+            addressCountry: "Spain",
+            postCode: "S3V1LLA",
             country: "Spain",
             size: "Independent lawyer / sole practitioner",
             contactName: "Lawyer In Spain",
@@ -283,6 +293,7 @@ describe("ListItem Model:", () => {
               "Real estate",
               "Tax",
             ],
+            city: "Seville",
             legalAid: false,
             proBono: false,
             representedBritishNationals: true,
@@ -291,7 +302,7 @@ describe("ListItem Model:", () => {
           list: {
             connect: {
               id: -1,
-            }
+            },
           },
         },
         include: {
@@ -311,9 +322,7 @@ describe("ListItem Model:", () => {
       const error = new Error("CREATE ERROR");
       prisma.listItem.create.mockRejectedValueOnce(error);
 
-      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toEqual(
-        error
-      );
+      await expect(createListItem(LawyerWebhookData)).rejects.toEqual(error);
     });
   });
 
@@ -973,17 +982,17 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("CovidTestSupplierListItem.createObject", () => {
+  describe("createListItemObject", () => {
     // TODO
   });
 
-  describe("CovidTestSupplierListItem.create", () => {
+  describe("createListItem", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
       await expect(
-        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
-      ).rejects.toEqual(new Error("Covid Test Supplier Record already exists"));
+        createListItem(CovidTestProviderWebhookData)
+      ).rejects.toEqual(new Error("covidTestProviders record already exists"));
     });
 
     test.skip("listItem create command is correct", async () => {
@@ -992,7 +1001,7 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await CovidTestSupplierListItem.create(CovidTestProviderWebhookData);
+      await createListItem(CovidTestProviderWebhookData);
 
       expect(spy).toHaveBeenCalledWith({
         data: {
@@ -1068,7 +1077,7 @@ describe("ListItem Model:", () => {
       prisma.listItem.create.mockRejectedValue(error);
 
       await expect(
-        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
+        createListItem(CovidTestProviderWebhookData)
       ).rejects.toEqual(error);
     });
   });
