@@ -16,6 +16,9 @@ CREATE TYPE "Status" AS ENUM ('NEW','OUT_WITH_PROVIDER','EDITED','ANNUAL_REVIEW'
 -- AlterTable
 ALTER TABLE "ListItem" ADD COLUMN     "status" "Status" NOT NULL DEFAULT E'NEW';
 
+-- Update ListItem statuses
+UPDATE "ListItem" SET "status" = 'PUBLISHED' where "isPublished" = true;
+
 -- DropForeignKey
 ALTER TABLE "Event" DROP CONSTRAINT "Event_listItemId_fkey";
 
