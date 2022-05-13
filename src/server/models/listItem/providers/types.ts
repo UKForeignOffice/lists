@@ -1,4 +1,4 @@
-import { Address, Country, ListItem } from "server/models/types";
+import { Address, Country, ListItem, ServiceType } from "server/models/types";
 import {
   BaseDeserialisedWebhookData,
   CovidTestSupplierFormWebhookData,
@@ -40,7 +40,7 @@ export const turnaroundTimeProperties: Record<
   [TestType.PCR]: "turnaroundTimePCR",
 };
 
-export type WebhookDeserialiser<T extends DeserialisedWebhookData> = (
+export type WebhookDeserialiser<T extends BaseDeserialisedWebhookData> = (
   webhookData: T
 ) => {
   [Properties in keyof T]: T[Properties];

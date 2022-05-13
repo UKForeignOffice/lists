@@ -22,7 +22,7 @@ import { checkboxCSVToArray } from "server/models/listItem/providers/helpers";
 export const lawyerDeserialiser: WebhookDeserialiser<LawyersFormWebhookData> = (
   webhookData
 ) => {
-  const { areasOfLaw = [], metadata, ...rest } = webhookData;
+  const { areasOfLaw = [], ...rest } = webhookData;
   return {
     areasOfLaw: areasOfLaw.filter(Boolean),
     ...rest,
@@ -36,7 +36,6 @@ export const covidTestProviderDeserialiser: WebhookDeserialiser<CovidTestSupplie
       resultsFormat,
       resultsReadyFormat,
       bookingOptions,
-      metadata,
       ...rest
     } = webhookData;
 
@@ -77,7 +76,8 @@ export function baseDeserialiser(
   /**
    * Deserialises to {@link #BaseDeserialisedWebhookData}
    */
-  const { questions } = webhookData;
+  const { questions, metadata } = webhookData;
+  const { type } = metadata;
 
   const parsed = questions.reduce((acc, question) => {
     const { fields, category } = question;
@@ -90,12 +90,12 @@ export function baseDeserialiser(
         [keyName]: trimAnswer(answer),
       };
     });
-  }, {});
+  }, {}) as BaseDeserialisedWebhookData;
 
-  return parsed as DeserialisedWebhookData;
+  return { ...parsed, type };
 }
 
-export const DESERIALISER: Record<ServiceType, WebhookDeserialiser> = {
+export const DESERIALISER: Record<ServiceType, WebhookDeserialiser<any>> = {
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.covidTestProviders]: covidTestProviderDeserialiser,
 };
@@ -103,8 +103,7 @@ export const DESERIALISER: Record<ServiceType, WebhookDeserialiser> = {
 export async function listItemCreateInputFromWebhook(
   webhook: DeserialisedWebhookData
 ): Promise<Prisma.ListItemCreateInput> {
-  const { metadata } = webhook;
-  const { type } = metadata;
+  const { type } = webhook;
 
   const listId = await getListIdForCountryAndType(
     webhook.country as CountryName,

@@ -1,20 +1,55 @@
 import { ServiceType } from "server/models/types";
 
+
+export interface FormRunnerComponent {
+  name: string;
+  title: string;
+  options: {};
+  type: string;
+  content: string;
+  schema: {};
+}
+
+export interface FormRunnerField {
+  key: string;
+  answer: any;
+  index: number;
+}
+
+export interface FormRunnerQuestion {
+  question: string;
+  fields: FormRunnerField[];
+}
+
+export interface FormRunnerNewSessionData {
+  questions: Array<Partial<FormRunnerQuestion>> | undefined;
+  options: {
+    message: string;
+    callbackUrl: string;
+    redirectPath: string;
+  };
+  name: string;
+}
+
+
+
 export interface FormRunnerWebhookData {
-  questions: Array<{
-    question: string;
-    category?: string;
-    fields: Array<{
-      key: string;
-      title: string;
-      type: string;
-      answer: boolean | string | number | undefined;
-    }>;
-    index: number;
-  }>;
+  questions: FormRunnerQuestion[]
+
+  /**
+   * FormRunner JSON should include in the metadata { type: ServiceType }
+   * for easy identification of webhook type at ingest point. Other properties may be used for similar reasons (hence additionalProps)
+   */
+  metadata: {
+    type: ServiceType;
+    [additionalProps: string]: any;
+  };
 }
 
 export interface BaseDeserialisedWebhookData {
+  /**
+   * address fields are also stored in `ListItem.jsonData`
+   */
   country: string;
   "address.firstLine": string;
   "address.secondLine"?: string;
@@ -34,15 +69,15 @@ export interface BaseDeserialisedWebhookData {
   phoneNumber: string;
   emergencyPhoneNumber?: string;
   declaration: string[];
-  metadata: {
-    type: ServiceType;
-  };
+  type: ServiceType;
 }
 
+type Serialised<T> =
+// type Serialised<T>
+
 export interface LawyersFormWebhookData extends BaseDeserialisedWebhookData {
-  metadata: {
-    type: ServiceType.lawyers;
-  };
+  type: ServiceType.lawyers;
+
   regions: string;
   areasOfLaw: string[];
   legalAid?: boolean;
@@ -53,9 +88,8 @@ export interface LawyersFormWebhookData extends BaseDeserialisedWebhookData {
 
 export interface CovidTestSupplierFormWebhookData
   extends BaseDeserialisedWebhookData {
-  metadata: {
-    type: ServiceType.covidTestProviders;
-  };
+  type: ServiceType.covidTestProviders;
+
   isQualified: boolean;
   affiliatedWithRegulatoryAuthority: boolean;
   regulatoryAuthority: string;
@@ -85,31 +119,3 @@ export interface FormRunnerPage {
   next?: Array<{ path: string; condition?: string }>;
 }
 
-export interface FormRunnerComponent {
-  name: string;
-  title: string;
-  options: {};
-  type: string;
-  content: string;
-  schema: {};
-}
-
-export interface FormRunnerField {
-  key: string;
-  answer: any;
-}
-
-export interface FormRunnerQuestion {
-  question: string;
-  fields: FormRunnerField[];
-}
-
-export interface FormRunnerNewSessionData {
-  questions: Array<Partial<FormRunnerQuestion>> | undefined;
-  options: {
-    message: string;
-    callbackUrl: string;
-    redirectPath: string;
-  };
-  name: string;
-}
