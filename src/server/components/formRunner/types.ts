@@ -14,30 +14,32 @@ export interface FormRunnerWebhookData {
   }>;
 }
 
-export interface BaseWebhookData {
+export interface BaseDeserialisedWebhookData {
   country: string;
-  size: string;
-  speakEnglish: boolean;
-  regulators: string;
-  contactName: string;
-  organisationName: string;
   "address.firstLine": string;
   "address.secondLine"?: string;
   city: string;
   postCode: string;
+
+  size: string;
+  speakEnglish: boolean;
+  regulators: string;
+  organisationName: string;
+  websiteAddress?: string;
+
+  contactName: string;
   emailAddress: string;
   publishEmail: string;
   publicEmailAddress?: string;
   phoneNumber: string;
   emergencyPhoneNumber?: string;
-  websiteAddress?: string;
   declaration: string[];
   metadata: {
     type: ServiceType;
   };
 }
 
-export interface LawyersFormWebhookData extends BaseWebhookData {
+export interface LawyersFormWebhookData extends BaseDeserialisedWebhookData {
   metadata: {
     type: ServiceType.lawyers;
   };
@@ -49,7 +51,8 @@ export interface LawyersFormWebhookData extends BaseWebhookData {
   representedBritishNationals: boolean;
 }
 
-export interface CovidTestSupplierFormWebhookData extends BaseWebhookData {
+export interface CovidTestSupplierFormWebhookData
+  extends BaseDeserialisedWebhookData {
   metadata: {
     type: ServiceType.covidTestProviders;
   };
@@ -67,10 +70,9 @@ export interface CovidTestSupplierFormWebhookData extends BaseWebhookData {
   resultsFormat: string;
   resultsReadyFormat: string;
   bookingOptions: string;
-  declarationConfirm: string;
 }
 
-export type WebhookData =
+export type DeserialisedWebhookData =
   | LawyersFormWebhookData
   | CovidTestSupplierFormWebhookData;
 

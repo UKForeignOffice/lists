@@ -4,9 +4,12 @@ import { CountryName, ServiceType } from "server/models/types";
 import { logger } from "server/services/logger";
 import { createAddressObject } from "./geoHelpers";
 import {
+  BaseDeserialisedWebhookData,
   CovidTestSupplierFormWebhookData,
+  DeserialisedWebhookData,
+  FormRunnerField,
+  FormRunnerWebhookData,
   LawyersFormWebhookData,
-  WebhookData,
 } from "server/components/formRunner";
 import {
   TestType,
@@ -59,13 +62,46 @@ export const covidTestProviderDeserialiser: WebhookDeserialiser<CovidTestSupplie
     };
   };
 
-export const DESERIALISER: Record<ServiceType, WebhookDeserialiser<any>> = {
+function trimAnswer(
+  answer: FormRunnerField["answer"]
+): FormRunnerField["answer"] {
+  if (typeof answer === "string") {
+    return answer.trim();
+  }
+  return answer;
+}
+
+export function baseDeserialiser(
+  webhookData: FormRunnerWebhookData
+): BaseDeserialisedWebhookData {
+  /**
+   * Deserialises to {@link #BaseDeserialisedWebhookData}
+   */
+  const { questions } = webhookData;
+
+  const parsed = questions.reduce((acc, question) => {
+    const { fields, category } = question;
+
+    return fields.map((field) => {
+      const { key, answer } = field;
+      const keyName = category ? `${category}.${key}` : key;
+      return {
+        ...acc,
+        [keyName]: trimAnswer(answer),
+      };
+    });
+  }, {});
+
+  return parsed as DeserialisedWebhookData;
+}
+
+export const DESERIALISER: Record<ServiceType, WebhookDeserialiser> = {
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.covidTestProviders]: covidTestProviderDeserialiser,
 };
 
 export async function listItemCreateInputFromWebhook(
-  webhook: WebhookData
+  webhook: DeserialisedWebhookData
 ): Promise<Prisma.ListItemCreateInput> {
   const { metadata } = webhook;
   const { type } = metadata;

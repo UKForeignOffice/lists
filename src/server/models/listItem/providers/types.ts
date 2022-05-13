@@ -1,7 +1,8 @@
 import { Address, Country, ListItem } from "server/models/types";
 import {
-  BaseWebhookData,
+  BaseDeserialisedWebhookData,
   CovidTestSupplierFormWebhookData,
+  DeserialisedWebhookData,
 } from "server/components/formRunner";
 
 export interface ListItemWithAddressCountry extends ListItem {
@@ -39,8 +40,8 @@ export const turnaroundTimeProperties: Record<
   [TestType.PCR]: "turnaroundTimePCR",
 };
 
-export type WebhookDeserialiser<T extends BaseWebhookData> = (
+export type WebhookDeserialiser<T extends DeserialisedWebhookData> = (
   webhookData: T
 ) => {
-  [k: string]: any;
+  [Properties in keyof T]: T[Properties];
 };

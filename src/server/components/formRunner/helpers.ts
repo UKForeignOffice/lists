@@ -84,25 +84,6 @@ export async function startFormRunner(): Promise<boolean> {
   }
 }
 
-export function parseFormRunnerWebhookObject<T>({
-  questions,
-}: FormRunnerWebhookData): T {
-  return questions.reduce((acc, question) => {
-    const { fields, category } = question;
-
-    fields.forEach((field) => {
-      const { key, answer } = field;
-      set(
-        acc,
-        `${category !== undefined ? `${category}.` : ""}${key}`,
-        typeof answer === "string" ? answer.trim() : answer
-      );
-    });
-
-    return acc;
-  }, {}) as T;
-}
-
 export function getNewSessionWebhookData(
   listType: string,
   listItemId: number,

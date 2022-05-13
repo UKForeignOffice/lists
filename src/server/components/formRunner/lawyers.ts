@@ -37,7 +37,6 @@ export async function generateFormRunnerWebhookData(
   isUnderTest?: boolean
 ): Promise<Array<Partial<FormRunnerQuestion>>> {
   const questions = await parseJsonFormData(ServiceType.lawyers, isUnderTest);
-  console.log("Qs", listItem);
   questions.forEach((question) => {
     question.fields?.forEach((field: FormRunnerField) => {
       field.answer = get(listItem, FormRunnerFields[field.key]);
