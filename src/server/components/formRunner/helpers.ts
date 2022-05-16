@@ -2,14 +2,7 @@ import { set } from "lodash";
 import request from "supertest";
 import { spawn } from "child_process";
 import { logger } from "server/services/logger";
-import {
-  FormRunnerComponent,
-  FormRunnerField,
-  FormRunnerNewSessionData,
-  FormRunnerPage,
-  FormRunnerQuestion,
-  FormRunnerWebhookData,
-} from "./types";
+import * as FormRunner from "./types";
 import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
@@ -87,9 +80,9 @@ export async function startFormRunner(): Promise<boolean> {
 export function getNewSessionWebhookData(
   listType: string,
   listItemId: number,
-  questions: Array<Partial<FormRunnerQuestion>> | undefined,
+  questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string
-): FormRunnerNewSessionData {
+): FormRunner.NewSessionData {
   const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
   const options = {
@@ -105,7 +98,7 @@ export function getNewSessionWebhookData(
     redirectPath,
   };
 
-  const newSessionData: FormRunnerNewSessionData = {
+  const newSessionData: FormRunner.NewSessionData = {
     questions,
     options,
     name: "Changes required",
@@ -117,8 +110,8 @@ export async function generateFormRunnerWebhookData(
   list: List,
   listItem: ListItemGetObject,
   isUnderTest?: boolean
-): Promise<Array<Partial<FormRunnerQuestion>> | undefined> {
-  let questions: Array<Partial<FormRunnerQuestion>> | undefined;
+): Promise<Array<Partial<FormRunner.Question>> | undefined> {
+  let questions: Array<Partial<FormRunner.Question>> | undefined;
 
   switch (list.type) {
     case ServiceType.lawyers:
@@ -137,7 +130,7 @@ export async function generateFormRunnerWebhookData(
 export async function parseJsonFormData(
   listType: string,
   isUnderTest?: boolean
-): Promise<Array<Partial<FormRunnerQuestion>>> {
+): Promise<Array<Partial<FormRunner.Question>>> {
   const formsJsonFile =
     isUnderTest === true
       ? `/forms-json/${listType}.json`
@@ -147,12 +140,12 @@ export async function parseJsonFormData(
     "utf8"
   );
   const formJsonData = JSON.parse(fileContents);
-  const questions: Array<Partial<FormRunnerQuestion>> = formJsonData.pages
-    .map((page: FormRunnerPage) => {
-      const fields: FormRunnerField[] | undefined = page.components
-        ?.filter((component: FormRunnerComponent) => component.type !== "Html")
-        ?.map((component: FormRunnerComponent) => {
-          const field: FormRunnerField = {
+  const questions: Array<Partial<FormRunner.Question>> = formJsonData.pages
+    .map((page: FormRunner.Page) => {
+      const fields: FormRunner.Field[] | undefined = page.components
+        ?.filter((component: FormRunner.Component) => component.type !== "Html")
+        ?.map((component: FormRunner.Component) => {
+          const field: FormRunner.Field = {
             answer: "",
             key: component.name,
           };
@@ -164,7 +157,7 @@ export async function parseJsonFormData(
         question: page.title,
       };
     })
-    .filter((question: FormRunnerQuestion) => question.fields.length > 0);
+    .filter((question: FormRunner.Question) => question.fields.length > 0);
 
   return questions;
 }

@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import {
-  CovidTestSupplierFormWebhookData,
   formRunnerPostRequestSchema,
-  LawyersFormWebhookData,
   parseFormRunnerWebhookObject,
 } from "server/components/formRunner";
 import { logger } from "server/services/logger";
@@ -29,7 +27,8 @@ export async function ingestPutController(
     return;
   }
   const data = parseFormRunnerWebhookObject<
-    WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
+    | WebhookDataAsJsonObject<LawyersFormWebhookData>
+    | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
   >(value);
 
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
@@ -43,8 +42,8 @@ export async function ingestPutController(
     const listItem = await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
-        history: true
-      }
+        history: true,
+      },
     });
     if (listItem === undefined) {
       res.status(404).send({
@@ -55,13 +54,15 @@ export async function ingestPutController(
     }
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: "edit",
           itemId: Number(id),
         },
         AuditEvent.EDITED
       ),
-      recordEvent({
+      recordEvent(
+        {
           eventName: "edit",
           itemId: Number(id),
           updatedJsonData: data,

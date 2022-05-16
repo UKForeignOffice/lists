@@ -6,13 +6,7 @@ import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import pgescape from "pg-escape";
-import { checkboxCSVToArray, fetchPublishedListItemQuery } from "./helpers";
-import {
-  TestType,
-  turnaroundTimeProperties,
-  WebhookDeserialiser,
-} from "server/models/listItem/providers/types";
-import { CovidTestSupplierFormWebhookData } from "server/components/formRunner";
+import { fetchPublishedListItemQuery } from "./helpers";
 
 export async function findPublishedCovidTestSupplierPerCountry(props: {
   countryName: string;

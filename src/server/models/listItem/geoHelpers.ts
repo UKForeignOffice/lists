@@ -4,7 +4,7 @@ import { startCase, toLower } from "lodash";
 import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
-import { WebhookData } from "server/components/formRunner";
+import { DeserialisedWebhookData } from "server/components/formRunner";
 import { rawInsertGeoLocation } from "server/models/helpers";
 import { Prisma } from "@prisma/client";
 
@@ -33,7 +33,9 @@ export async function getPlaceGeoPoint(props: {
   }
 }
 
-export function makeAddressGeoLocationString(webhookData: WebhookData): string {
+export function makeAddressGeoLocationString(
+  webhookData: DeserialisedWebhookData
+): string {
   return `
       ${webhookData["address.firstLine"] ?? ""},
       ${webhookData["address.secondLine"] ?? ""},
@@ -44,7 +46,7 @@ export function makeAddressGeoLocationString(webhookData: WebhookData): string {
 }
 
 export async function createAddressGeoLocation(
-  item: WebhookData
+  item: DeserialisedWebhookData
 ): Promise<number> {
   const address = makeAddressGeoLocationString(item);
   const point = await geoLocatePlaceByText(address);
@@ -53,7 +55,7 @@ export async function createAddressGeoLocation(
 }
 
 export async function createAddressObject(
-  webhookData: WebhookData
+  webhookData: DeserialisedWebhookData
 ): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput> {
   const {
     "address.firstLine": firstLine,

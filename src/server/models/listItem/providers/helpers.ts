@@ -9,14 +9,10 @@ import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
-import { get, startCase, toLower, trim } from "lodash";
+import { get, startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-  WebhookData,
-} from "server/components/formRunner";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -190,7 +186,7 @@ export function getListItemContactInformation(listItem: ListItem): {
 }
 
 export function pickWebhookAddressAsAddress(
-  webhook: WebhookData
+  webhook: DeserialisedWebhookData
 ): Partial<UpdatableAddressFields> {
   return {
     firstLine: webhook["address.firstLine"],
@@ -200,7 +196,7 @@ export function pickWebhookAddressAsAddress(
   };
 }
 export function getChangedAddressFields(
-  webhook: LawyersFormWebhookData | CovidTestSupplierFormWebhookData,
+  webhook: DeserialisedWebhookData,
   address: Partial<Address>
 ): Partial<UpdatableAddressFields> {
   const updatableAddressObject: UpdatableAddressFields = {
@@ -222,7 +218,4 @@ export function getChangedAddressFields(
       ...(valueHasChanged && { [key]: webhookValue }),
     };
   }, {});
-}
-export function checkboxCSVToArray(checkboxValue: string): string[] {
-  return checkboxValue.split(",").map(trim).filter(Boolean);
 }

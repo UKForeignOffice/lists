@@ -1,7 +1,6 @@
 import { ServiceType } from "server/models/types";
 
-
-export interface FormRunnerComponent {
+export interface Component {
   name: string;
   title: string;
   options: {};
@@ -10,19 +9,20 @@ export interface FormRunnerComponent {
   schema: {};
 }
 
-export interface FormRunnerField {
+export interface Field {
   key: string;
   answer: any;
-  index: number;
+  index?: number;
 }
 
-export interface FormRunnerQuestion {
+export interface Question {
+  category?: string;
   question: string;
-  fields: FormRunnerField[];
+  fields: Field[];
 }
 
-export interface FormRunnerNewSessionData {
-  questions: Array<Partial<FormRunnerQuestion>> | undefined;
+export interface NewSessionData {
+  questions: Array<Partial<Question>> | undefined;
   options: {
     message: string;
     callbackUrl: string;
@@ -31,10 +31,8 @@ export interface FormRunnerNewSessionData {
   name: string;
 }
 
-
-
-export interface FormRunnerWebhookData {
-  questions: FormRunnerQuestion[]
+export interface WebhookData {
+  questions: Question[];
 
   /**
    * FormRunner JSON should include in the metadata { type: ServiceType }
@@ -46,76 +44,11 @@ export interface FormRunnerWebhookData {
   };
 }
 
-export interface BaseDeserialisedWebhookData {
-  /**
-   * address fields are also stored in `ListItem.jsonData`
-   */
-  country: string;
-  "address.firstLine": string;
-  "address.secondLine"?: string;
-  city: string;
-  postCode: string;
-
-  size: string;
-  speakEnglish: boolean;
-  regulators: string;
-  organisationName: string;
-  websiteAddress?: string;
-
-  contactName: string;
-  emailAddress: string;
-  publishEmail: string;
-  publicEmailAddress?: string;
-  phoneNumber: string;
-  emergencyPhoneNumber?: string;
-  declaration: string[];
-  type: ServiceType;
-}
-
-type Serialised<T> =
-// type Serialised<T>
-
-export interface LawyersFormWebhookData extends BaseDeserialisedWebhookData {
-  type: ServiceType.lawyers;
-
-  regions: string;
-  areasOfLaw: string[];
-  legalAid?: boolean;
-  proBono?: boolean;
-  addressCountry: string;
-  representedBritishNationals: boolean;
-}
-
-export interface CovidTestSupplierFormWebhookData
-  extends BaseDeserialisedWebhookData {
-  type: ServiceType.covidTestProviders;
-
-  isQualified: boolean;
-  affiliatedWithRegulatoryAuthority: boolean;
-  regulatoryAuthority: string;
-  meetUKstandards: boolean;
-  provideResultsInEnglishFrenchSpanish: boolean;
-  provideTestResultsIn72Hours: boolean;
-  locationName: string;
-  providedTests: string;
-  turnaroundTimeAntigen: string;
-  turnaroundTimeLamp: string;
-  turnaroundTimePCR: string;
-  resultsFormat: string;
-  resultsReadyFormat: string;
-  bookingOptions: string;
-}
-
-export type DeserialisedWebhookData =
-  | LawyersFormWebhookData
-  | CovidTestSupplierFormWebhookData;
-
-export interface FormRunnerPage {
+export interface Page {
   title: string;
   path: string;
   controller: string;
-  components?: FormRunnerComponent[];
+  components?: Component[];
   section: string; // the section ID
   next?: Array<{ path: string; condition?: string }>;
 }
-
