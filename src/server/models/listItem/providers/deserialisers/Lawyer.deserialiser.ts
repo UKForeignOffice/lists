@@ -1,6 +1,7 @@
-import { LawyersFormWebhookData, WebhookDeserialiser } from "./types";
+import { WebhookDeserialisers } from "./types";
+import { ServiceType } from "server/models/types";
 
-export const lawyerDeserialiser: WebhookDeserialiser<LawyersFormWebhookData> = (
+export const lawyerDeserialiser: WebhookDeserialisers[ServiceType.lawyers] = (
   webhookData
 ) => {
   const { areasOfLaw = [], ...rest } = webhookData;

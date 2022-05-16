@@ -1,4 +1,3 @@
-import { set } from "lodash";
 import request from "supertest";
 import { spawn } from "child_process";
 import { logger } from "server/services/logger";

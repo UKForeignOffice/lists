@@ -1,19 +1,34 @@
 import { ServiceType } from "server/models/types";
 
 /**
- * Type describing a function that converts {@link BaseDeserialisedWebhookData}  to {}
+ * Type describing a function that converts {@link BaseDeserialisedWebhookData} to {@link ListItemJsonData}
  * @example
  * ```
- *  const lawyersDeserialiser: WebhookDeserialiser<DeserialisedLawyerWebhookData> = {}
- *  // same as
- *  function lawyersDeserialiser<T extends BaseDeserialisedWebhookData>(webhook: T): LawyersFormWebhookData {}
+   const lawyersDeserialiser: WebhookDeserialiser<DeserialisedLawyerWebhookData, LawyerJsonData> = {...}
+   // same as
+   function lawyersDeserialiser(webhook: DeserialisedLawyerWebhookData): LawyerJsonData
  * ```
  */
-export type WebhookDeserialiser<T extends DeserialisedWebhookData = any> = (
-  webhookData: T
-) => {
-  [Properties in keyof T]: T[Properties];
+export type WebhookDeserialiser<
+  Input extends DeserialisedWebhookData,
+  Output extends ListItemJsonData
+> = (webhookData: Input) => {
+  [Properties in keyof Output]: Output[Properties];
 };
+
+/**
+ * Convenience type which maps ServiceType to the relevant WebhookDeserialiser<Input, Output>
+ */
+export interface WebhookDeserialisers {
+  [ServiceType.lawyers]: WebhookDeserialiser<
+    LawyersFormWebhookData,
+    LawyerJsonData
+  >;
+  [ServiceType.covidTestProviders]: WebhookDeserialiser<
+    CovidTestSupplierFormWebhookData,
+    CovidTestSupplierJsonData
+  >;
+}
 
 export interface BaseDeserialisedWebhookData {
   /**
@@ -83,7 +98,21 @@ export type DeserialisedWebhookData =
   | LawyersFormWebhookData
   | CovidTestSupplierFormWebhookData;
 
-export type LawyerJsonData = LawyersFormWebhookData;
+/**
+ * Describes the {@link DESERIALISER} const. Since it is a Record type,
+ * the resulting object MUST implement all members of {@link ServiceType}.
+ * i.e. whenever a new {@link ServiceType} is added, and {@link DESERIALISER} has not been added, typescript should complain!
+ *
+ * @example
+ * ```
+   const DESERIALISER = {
+     [ServiceType]: WebhookDeserialiser<Input, Output>
+   }
+ * ```
+ */
+export type Deserialiser = Readonly<
+  Record<ServiceType, WebhookDeserialiser<any, any>>
+>;
 
 export enum TestType {
   Antigen = "Antigen",
@@ -96,13 +125,6 @@ export type TurnaroundTimeProperties = keyof Pick<
   "turnaroundTimeAntigen" | "turnaroundTimeLamp" | "turnaroundTimePCR"
 >;
 
-export type ProvidedTests = {
-  [property in TurnaroundTimeProperties]: {
-    type: property;
-    turnaroundTime: number;
-  };
-};
-
 export const turnaroundTimeProperties: Record<
   TestType,
   TurnaroundTimeProperties
@@ -112,17 +134,34 @@ export const turnaroundTimeProperties: Record<
   [TestType.PCR]: "turnaroundTimePCR",
 };
 
+export interface ProvidedTest {
+  type: TestType;
+  turnaroundTime: number;
+}
+
 export type CovidTestSupplierJsonData = Omit<
   CovidTestSupplierFormWebhookData,
   TurnaroundTimeProperties
 > & {
-  providedTests: ProvidedTests;
+  providedTests: ProvidedTest[];
   fastestTurnaround: number;
+  resultsFormat: string[];
+  resultsReadyFormat: string[];
+  bookingOptions: string[];
 };
 
-export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData;
+export type LawyerJsonData = LawyersFormWebhookData;
 
-export type Deserialiser = Readonly<Record<ServiceType, WebhookDeserialiser>>;
+/**
+ * when serviceTypeJsonData does not match serviceTypeWebhookData, you must ensure that:
+ * - your deserialiser (turns formRunner data to listItem.jsonData, i.e. at ingestion points) correctly returns a value that matches serviceTypeJsonData
+ * - your serialiser (turns listItem.jsonData to formRunner data, i.e. for requesting a change) correctly returns a value that matches serviceTypeWebhookData
+ *
+ * It is also important to note that in the case that a serviceTypeJsonData and serviceTypeWebhookData do not match, it will be a source of code complexity.
+ * It will mean that your code can not be handled in a "generic" way, and you will have to write a deserialiser and serialiser.
+ * The deserialised and serialised types should match as closely as possible.
+ */
+export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData;
 
 /**
  * converts {@link DeserialisedWebhookData} to {@link Questions[]}

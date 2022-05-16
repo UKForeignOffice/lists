@@ -5,7 +5,9 @@ function trim(string: string): string {
   return string.trim();
 }
 
-export function checkboxCSVToArray(checkboxValue: string): string[] {
+export function checkboxCSVToArray<T extends string = string>(
+  checkboxValue: T
+): string[] {
   return uniq(checkboxValue.split(",").map(trim));
 }
 

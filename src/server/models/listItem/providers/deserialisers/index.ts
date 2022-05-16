@@ -1,9 +1,5 @@
 import * as FormRunner from "server/components/formRunner";
-import {
-  BaseDeserialisedWebhookData,
-  Deserialiser,
-  WebhookDeserialiser,
-} from "./types";
+import { BaseDeserialisedWebhookData, WebhookDeserialiser } from "./types";
 import { ServiceType } from "server/models/types";
 import { lawyerDeserialiser } from "server/models/listItem/providers/deserialisers/Lawyer.deserialiser";
 import { covidTestProviderDeserialiser } from "server/models/listItem/providers/deserialisers/covidTestSupplier.deserialiser";
@@ -34,7 +30,10 @@ export function baseDeserialiser(
   return { ...parsed, type };
 }
 
-export const DESERIALISER: Deserialiser = {
+export const DESERIALISER: Record<
+  ServiceType,
+  WebhookDeserialiser<any, any>
+> = {
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.covidTestProviders]: covidTestProviderDeserialiser,
 };

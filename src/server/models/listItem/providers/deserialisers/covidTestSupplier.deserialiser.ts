@@ -1,7 +1,12 @@
 import { checkboxCSVToArray } from "./helpers";
-import { CovidTestSupplierFormWebhookData, WebhookDeserialiser } from "./types";
+import {
+  WebhookDeserialisers,
+  TestType,
+  turnaroundTimeProperties,
+} from "./types";
+import { ServiceType } from "server/models/types";
 
-export const covidTestProviderDeserialiser: WebhookDeserialiser<CovidTestSupplierFormWebhookData> =
+export const covidTestProviderDeserialiser: WebhookDeserialisers[ServiceType.covidTestProviders] =
   (webhookData) => {
     const {
       providedTests: providedTestsString,
