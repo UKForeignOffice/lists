@@ -21,12 +21,12 @@ Feature:
       | Publish | Request changes | Remove |
     And I do not see radio buttons
       | Unpublish | Confirm and update |
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
 
   Scenario: Request changes for list item in NEW status
 
     When I am viewing the list item details for "Winston"
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
     And I enter a message in the textarea
     And I click the "Continue" button
     Then I should see the provider details "Winston", "Winston Law" and "ali@cautionyourblast.com"
@@ -36,14 +36,16 @@ Feature:
   Scenario: Publish list item in NEW status
 
     When I am viewing the list item details for "Winston"
-    And I click the "Publish" button
+    And I click the "Publish" radio button
+    And I click the "Continue" button
     And I click the "Publish" button
     Then I see the notification text "Winston Law has been published"
 
   Scenario: Remove list item in NEW status
 
     When I am viewing the list item details for "Winston"
-    And I click the "Remove" button
+    And I click the "Remove" radio button
+    And I click the "Continue" button
     Then I should see the provider details "Winston", "Winston Law" and "ali@cautionyourblast.com"
     And I click the "Remove" button
     Then I see the notification text "Winston Law has been removed"
@@ -57,12 +59,12 @@ Feature:
       | Publish | Request changes | Remove |
     And I do not see radio buttons
       | Unpublish | Confirm and update |
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
 
   Scenario: Request changes for list item in OUT_WITH_PROVIDER status
 
     When I am viewing the list item details for "Julia"
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
     And I enter a message in the textarea
     And I click the "Continue" button
     Then I should see the provider details "Julia", "Julia Law" and "ali@cautionyourblast.com"
@@ -72,14 +74,16 @@ Feature:
   Scenario: Publish list item in OUT_WITH_PROVIDER status
 
     When I am viewing the list item details for "Julia"
-    And I click the "Publish" button
+    And I click the "Publish" radio button
+    And I click the "Continue" button
     And I click the "Publish" button
     Then I see the notification text "Julia Law has been published"
 
   Scenario: Remove list item in OUT_WITH_PROVIDER status
 
     When I am viewing the list item details for "Julia"
-    And I click the "Remove" button
+    And I click the "Remove" radio button
+    And I click the "Continue" button
     Then I should see the provider details "Julia", "Julia Law" and "ali@cautionyourblast.com"
     And I click the "Remove" button
     Then I see the notification text "Julia Law has been removed"
@@ -93,13 +97,12 @@ Feature:
       | Request changes | Confirm and update | Remove |
     And I do not see radio buttons
       | Publish | Unpublish |
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
 
-  # validate updated details are displayed
   Scenario: Request changes for list item in EDITED status
 
     When I am viewing the list item details for "Emmanuel"
-    And The textarea should show if I select the Request changes radio button
+    And The textarea should show if I click the Request changes radio button
     And I enter a message in the textarea
     And I click the "Continue" button
     Then I should see the provider details "Emmanuel", "Emmanuel Law" and "ali@cautionyourblast.com"
@@ -109,14 +112,16 @@ Feature:
   Scenario: Confirm and update list item in EDITED status
 
     When I am viewing the list item details for "Emmanuel"
-    And I click the "Confirm and update" button
+    And I click the "Confirm and update" radio button
+    And I click the "Continue" button
     And I click the "Update" button
-    Then I see the notification text "Emmanuel Law has been published"
+    Then I see the notification text "Emmanuel Law has been updated and published"
 
   Scenario: Remove list item in EDITED status
 
     When I am viewing the list item details for "Emmanuel"
-    And I click the "Remove" button
+    And I click the "Remove" radio button
+    And I click the "Continue" button
     Then I should see the provider details "Emmanuel", "Emmanuel Law" and "ali@cautionyourblast.com"
     And I click the "Remove" button
     Then I see the notification text "Emmanuel Law has been removed"
@@ -134,14 +139,16 @@ Feature:
   Scenario: Unpublish list item in PUBLISHED status
 
     When I am viewing the list item details for "Parsons"
+    And I click the "Unpublish" radio button
+    And I click the "Continue" button
     And I click the "Unpublish" button
-    And I click the "Unpublish" button
-    Then I see the notification text "Parsons Law has been published"
+    Then I see the notification text "Parsons Law has been unpublished"
 
   Scenario: Remove list item in PUBLISHED status
 
     When I am viewing the list item details for "Parsons"
-    And I click the "Remove" button
+    And I click the "Remove" radio button
+    And I click the "Continue" button
     Then I should see the provider details "Parsons", "Parsons Law" and "ali@cautionyourblast.com"
     And I click the "Remove" button
     Then I see the notification text "Parsons Law has been removed"

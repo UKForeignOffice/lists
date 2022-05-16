@@ -143,7 +143,7 @@ Given("there are these list items", (table) => {
 });
 
 function listItem(options) {
-  const { jsonData, isPinned, ...rest } = options;
+  const { jsonData, status, isPinned, ...rest } = options;
 
   return {
     type: "lawyers",
@@ -174,7 +174,7 @@ function listItem(options) {
     isApproved: false,
     isPublished: rand([true, false]),
     isBlocked: false,
-    status: rand(status),
+    status: status ?? rand(status),
     ...rest,
   };
 }
