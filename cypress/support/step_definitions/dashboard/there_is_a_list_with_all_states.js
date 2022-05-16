@@ -60,17 +60,21 @@ Given("A lawyers list exists for Eurasia", () => {
 
 Given("there are these list items", (table) => {
   /**
-   * | contactName | status | isPublished | isBlocked | isApproved | emailVerified | isPinned
+   * | contactName | companyName | status | isPublished | isBlocked | isApproved | emailVerified | isPinned | displayedRadioButtons | hiddenRadioButtons
    */
   const rows = table.hashes();
 
   const items = rows.map((row) => {
     const {
       contactName,
+      organisationName,
+      emailAddress,
       isPublished: isPublishedString,
       isApproved: isApprovedString,
       isBlocked: isBlockedString,
       isPinned,
+      displayedRadioButtons,
+      hiddenRadioButtons,
       emailVerified,
       ...rest
     } = row;
@@ -81,11 +85,15 @@ Given("there are these list items", (table) => {
 
     const jsonData = {
       contactName,
+      organisationName,
+      emailAddress,
       metadata: {
         emailVerified: emailVerified === "true",
       },
       __smoke: {
         isPinned: isPinned === "true",
+        displayedRadioButtons: displayedRadioButtons | "",
+        hiddenRadioButtons: hiddenRadioButtons | ""
       },
     };
 
@@ -153,11 +161,11 @@ function listItem(options) {
       contactName: jsonData.contactName ?? randFullName(),
       declaration: [],
       phoneNumber: "",
-      emailAddress: "ignoremyemail@noemail-ignoreme.uk",
+      emailAddress: jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
       publishEmail: "Yes",
       speakEnglish: true,
       websiteAddress: null,
-      organisationName: randCompanyName(),
+      organisationName: jsonData.organisationName ?? randCompanyName(),
       emergencyPhoneNumber: null,
       representedBritishNationals: true,
       ...jsonData,
