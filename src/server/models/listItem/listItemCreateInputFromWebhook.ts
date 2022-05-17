@@ -1,24 +1,35 @@
 import { Prisma } from "@prisma/client";
 import { getListIdForCountryAndType } from "server/models/helpers";
-import { CountryName } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 import { logger } from "server/services/logger";
 import { createAddressObject } from "./geoHelpers";
-import { DESERIALISER } from "server/models/listItem/providers/deserialisers";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import {
+  baseDeserialiser,
+  DESERIALISER,
+} from "server/models/listItem/providers/deserialisers";
+import { WebhookData } from "server/components/formRunner";
+import { checkListItemExists } from "server/models/listItem/providers/helpers";
 
 export async function listItemCreateInputFromWebhook(
-  webhook: DeserialisedWebhookData
+  webhook: WebhookData
 ): Promise<Prisma.ListItemCreateInput> {
-  const { type } = webhook;
+  const baseDeserialised = baseDeserialiser(webhook);
+  const { type, country } = baseDeserialised;
 
-  const listId = await getListIdForCountryAndType(
-    webhook.country as CountryName,
-    type
-  );
+  const exists = await checkListItemExists({
+    organisationName: baseDeserialised.organisationName,
+    countryName: baseDeserialised.country,
+  });
+
+  if (exists) {
+    throw new Error(`${type} record already exists`);
+  }
+
+  const listId = await getListIdForCountryAndType(country as CountryName, type);
 
   if (!listId) {
     logger.error(
-      `list for ${webhook.country} and ${type} could not be found`,
+      `list for ${country} and ${type} could not be found`,
       "createListItem"
     );
   }

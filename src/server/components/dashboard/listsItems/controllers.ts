@@ -5,22 +5,24 @@ import {
   findListItemById,
   deleteListItem,
   togglerListItemIsPublished,
-  update
+  update,
 } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
-import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
+import {
+  getInitiateFormRunnerSessionToken,
+  userIsListPublisher,
+} from "server/components/dashboard/helpers";
 import {
   EventJsonData,
   CovidTestSupplierListItemGetObject,
   CovidTestSupplierListItemJsonData,
-  JsonObject,
   LawyerListItemGetObject,
   LawyerListItemJsonData,
   List,
   ListItem,
   ListItemGetObject,
   ServiceType,
-  User
+  User,
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -28,27 +30,40 @@ import { AuditEvent, ListItemEvent, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
-import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
+import {
+  generateFormRunnerWebhookData,
+  getNewSessionWebhookData,
+} from "server/components/formRunner/helpers";
 import {
   createFormRunnerEditListItemLink,
   createFormRunnerReturningUserLink,
-  createListSearchBaseLink
+  createListSearchBaseLink,
 } from "server/components/lists/helpers";
-import { getChangedAddressFields, getListItemContactInformation } from "server/models/listItem/providers/helpers";
+import {
+  getChangedAddressFields,
+  getListItemContactInformation,
+} from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
-import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
+import {
+  sendDataPublishedEmail,
+  sendEditDetailsEmail,
+} from "server/services/govuk-notify";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
-import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
-import { recordEvent } from "server/models/listItem/listItemEvent";
 
-function mapUpdatedAuditJsonDataToListItem(listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject,
-                                           updatedJsonData: (LawyersFormWebhookData & JsonObject) | (CovidTestSupplierFormWebhookData & JsonObject)
+import { recordEvent } from "server/models/listItem/listItemEvent";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+
+function mapUpdatedAuditJsonDataToListItem(
+  listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject,
+  updatedJsonData: ListItemJsonData
 ): LawyerListItemJsonData | CovidTestSupplierListItemJsonData {
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys(listItem.jsonData).map(k => k in updatedJsonData && { [k]: updatedJsonData[k] })
+    ...Object.keys(listItem.jsonData).map(
+      (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
+    )
   );
 }
 
@@ -58,37 +73,46 @@ export async function listItemGetController(
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const userId = req?.user?.userData?.id;
-  let error
+  let error;
   const errorMsg = req.flash("errorMsg");
 
   // @ts-expect-error
   if (errorMsg && errorMsg?.length > 0) {
     error = {
       text: errorMsg,
-    }
+    };
   }
   const list = await findListById(listId);
-  const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject = await findListItemById(listItemId);
+  const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
+    await findListItemById(listItemId);
   let requestedChanges;
 
   if (listItem.status === Status.EDITED) {
     const auditForEdits = listItem?.history
-      ?.filter(event => event.type === "EDITED")
+      ?.filter((event) => event.type === "EDITED")
       .sort((a, b) => a.id - b.id)
       .pop();
 
-    const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
+    const auditJsonData: EventJsonData =
+      auditForEdits?.jsonData as EventJsonData;
     const updatedJsonData = auditJsonData.updatedJsonData;
     if (updatedJsonData !== undefined) {
-      switch(listItem.type) {
-        case ServiceType.lawyers :
-          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData) as LawyerListItemJsonData;
+      switch (listItem.type) {
+        case ServiceType.lawyers:
+          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
+            listItem,
+            updatedJsonData
+          ) as LawyerListItemJsonData;
           break;
-        case ServiceType.covidTestProviders :
-          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData) as CovidTestSupplierListItemJsonData;
+        case ServiceType.covidTestProviders:
+          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
+            listItem,
+            updatedJsonData
+          ) as CovidTestSupplierListItemJsonData;
           break;
       }
-      const updatedAddressFields: Partial<UpdatableAddressFields> = getChangedAddressFields(updatedJsonData, listItem.address);
+      const updatedAddressFields: Partial<UpdatableAddressFields> =
+        getChangedAddressFields(updatedJsonData, listItem.address);
       if (updatedAddressFields.firstLine) {
         listItem.address.firstLine = updatedAddressFields.firstLine;
       }
@@ -106,7 +130,7 @@ export async function listItemGetController(
 
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
     const eventForRequestedChanges = listItem?.history
-      ?.filter(event => event.type === "OUT_WITH_PROVIDER")
+      ?.filter((event) => event.type === "OUT_WITH_PROVIDER")
       .sort((a, b) => a.id - b.id)
       .pop();
 
@@ -121,9 +145,10 @@ export async function listItemGetController(
     // REVIEWED: ["update", "request-changes", "remove"],
     PUBLISHED: ["unpublish", "remove"],
     UNPUBLISHED: ["publish", "request-changes", "remove"],
-  }
+  };
 
-  const isPinned = listItem?.pinnedBy?.some(user => userId === user.id) ?? false;
+  const isPinned =
+    listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -134,21 +159,24 @@ export async function listItemGetController(
     actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
-    csrfToken: getCSRFToken(req)
+    csrfToken: getCSRFToken(req),
   });
 }
 
 export async function listItemPostController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const { message, action } = req.body;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData = listItem.jsonData;
+  const list = (await findListById(listId)) ?? ({} as List);
+  const listItem: LawyerListItemGetObject = (await findListItemById(
+    listItemId
+  )) as LawyerListItemGetObject;
+  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
+    listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
   const confirmationPages: { [key: string]: string } = {
     publish: "dashboard/list-item-confirm-publish",
@@ -164,13 +192,21 @@ export async function listItemPostController(
 
   if (!action) {
     req.flash("errorMsg", "You must select an action");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   if (action === "requestChanges") {
     if (!message) {
       req.flash("errorMsg", "You must provide a message to request a change");
-      return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+      return res.redirect(
+        dashboardRoutes.listsItem
+          .replace(":listId", listId)
+          .replace(":listItemId", listItemId)
+      );
     }
 
     req.session.changeMessage = message;
@@ -189,7 +225,7 @@ export async function listItemPostController(
 
 export async function listItemPinController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const { action } = req.body;
@@ -197,27 +233,48 @@ export async function listItemPinController(
   const isPinned = action === "pin";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData = listItem.jsonData;
+  const list = (await findListById(listId)) ?? ({} as List);
+  const listItem: LawyerListItemGetObject = (await findListItemById(
+    listItemId
+  )) as LawyerListItemGetObject;
+  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
+    listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      "Unable to perform action - user could not be identified"
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   try {
     await handlePinListItem(Number(listItemId), userId, isPinned);
 
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${isPinned ? "pinned" : "unpinned"}`);
+    req.flash(
+      "successBannerTitle",
+      `${listItem.jsonData.organisationName} has been ${
+        isPinned ? "pinned" : "unpinned"
+      }`
+    );
     req.flash("successBannerHeading", `${isPinned ? "Pinned" : "Unpinned"}`);
     req.flash("successBannerColour", "blue");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 }
 
@@ -241,26 +298,27 @@ export async function handlePinListItem(
           data: {
             pinnedBy: {
               connect: [{ id: userId }],
-            }
-          }
+            },
+          },
         }),
-        recordListItemEvent({
+        recordListItemEvent(
+          {
             eventName: "pin",
             itemId: id,
-            userId
+            userId,
           },
           AuditEvent.PINNED
         ),
-        recordEvent({
+        recordEvent(
+          {
             eventName: "pin",
             itemId: id,
-            userId
+            userId,
           },
           id,
           ListItemEvent.PINNED
         ),
       ]);
-
     } else {
       [listItem] = await prisma.$transaction([
         prisma.listItem.update({
@@ -270,20 +328,22 @@ export async function handlePinListItem(
           data: {
             pinnedBy: {
               disconnect: [{ id: userId }],
-            }
-          }
+            },
+          },
         }),
-        recordListItemEvent({
+        recordListItemEvent(
+          {
             eventName: "unpin",
             itemId: id,
-            userId
+            userId,
           },
           AuditEvent.UNPINNED
         ),
-        recordEvent({
+        recordEvent(
+          {
             eventName: "unpin",
             itemId: id,
-            userId
+            userId,
           },
           id,
           ListItemEvent.UNPINNED
@@ -301,66 +361,104 @@ export async function handlePinListItem(
 
 export async function listItemDeleteController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const userId = req?.user?.userData?.id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData = listItem.jsonData;
+  const list = (await findListById(listId)) ?? ({} as List);
+  const listItem: LawyerListItemGetObject = (await findListItemById(
+    listItemId
+  )) as LawyerListItemGetObject;
+  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
+    listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      "Unable to perform action - user could not be identified"
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   try {
     await deleteListItem(Number(listItemId), userId);
 
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
+    req.flash(
+      "successBannerTitle",
+      `${listItem.jsonData.organisationName} has been removed`
+    );
     req.flash("successBannerHeading", "Removed");
     req.flash("successBannerColour", "red");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 }
 
 export async function listItemUpdateController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const listItemIdNumber = Number(listItemId);
   const userId = req?.user?.userData?.id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData = listItem.jsonData;
+  const list = (await findListById(listId)) ?? ({} as List);
+  const listItem: LawyerListItemGetObject = (await findListItemById(
+    listItemId
+  )) as LawyerListItemGetObject;
+  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
+    listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
 
   if (userId === undefined) {
-    req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      "Unable to perform action - user could not be identified"
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   try {
     await handleListItemUpdate(listItemIdNumber, userId);
 
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been updated and published`);
+    req.flash(
+      "successBannerTitle",
+      `${listItem.jsonData.organisationName} has been updated and published`
+    );
     req.flash("successBannerHeading", "Updated and published");
     req.flash("successBannerColour", "green");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 }
 
@@ -371,15 +469,15 @@ export async function handleListItemUpdate(
   const listItem = await prisma.listItem.findUnique({
     where: { id },
     include: {
-      history: true
-    }
+      history: true,
+    },
   });
   if (listItem === undefined) {
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 
   const editEvent = listItem?.history
-    .filter(event => event.type === "EDITED")
+    .filter((event) => event.type === "EDITED")
     .sort((a, b) => a.id - b.id)
     .pop();
 
@@ -392,7 +490,7 @@ export async function handleListItemUpdate(
 
 export async function listItemRequestChangeController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId, underTest } = req.params;
   const userId = req?.user?.userData?.id;
@@ -400,48 +498,86 @@ export async function listItemRequestChangeController(
   const isUnderTest = underTest === "true";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
+  const list = (await findListById(listId)) ?? ({} as List);
   const listItem = await getListItem(listItemId, list);
 
   if (userId === undefined) {
-    req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      "Unable to perform action - user could not be identified"
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   if (!changeMessage) {
     req.flash("errorMsg", "You must provide a message to request a change");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   try {
-    await handleListItemRequestChanges(list, listItem, isUnderTest, changeMessage, userId);
+    await handleListItemRequestChanges(
+      list,
+      listItem,
+      isUnderTest,
+      changeMessage,
+      userId
+    );
 
-    req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
+    req.flash(
+      "successBannerTitle",
+      `Change request sent to ${listItem.jsonData.organisationName}`
+    );
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 }
 
-async function handleListItemRequestChanges(list: List, listItem: LawyerListItemGetObject, isUnderTest: boolean, message: string, userId: User["id"]): Promise<void> {
+async function handleListItemRequestChanges(
+  list: List,
+  listItem: LawyerListItemGetObject,
+  isUnderTest: boolean,
+  message: string,
+  userId: User["id"]
+): Promise<void> {
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
-  const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, isUnderTest, message);
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession(
+    list,
+    listItem,
+    isUnderTest,
+    message
+  );
 
   // Email applicant
-  const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
+  const { contactName, contactEmailAddress } =
+    getListItemContactInformation(listItem);
   const listType = serviceName(list?.type ?? "");
   await sendEditDetailsEmail(
     contactName,
     contactEmailAddress,
     listType,
     message,
-    formRunnerEditUserUrl,
+    formRunnerEditUserUrl
   );
 
   const status = Status.OUT_WITH_PROVIDER;
@@ -461,7 +597,8 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
           },
         },
       }),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: "requestChange",
           itemId: listItem.id,
           userId,
@@ -469,7 +606,8 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
         },
         auditEvent
       ),
-      recordEvent({
+      recordEvent(
+        {
           eventName: "requestChange",
           itemId: listItem.id,
           userId,
@@ -480,13 +618,15 @@ async function handleListItemRequestChanges(list: List, listItem: LawyerListItem
       ),
     ]);
   } catch (error: any) {
-    throw new Error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
+    throw new Error(
+      `handleListItemRequestChanges error: could not update listItem: ${error.message}`
+    );
   }
 }
 
 export async function listItemPublishController(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
   const { listId, listItemId } = req.params;
   const { action } = req.body;
@@ -494,26 +634,42 @@ export async function listItemPublishController(
   const isPublished = action === "publish";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = await findListById(listId) ?? {} as List;
+  const list = (await findListById(listId)) ?? ({} as List);
   const listItem = await getListItem(listItemId, list);
 
   if (userId === undefined) {
-    req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      "Unable to perform action - user could not be identified"
+    );
+    return res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 
   try {
     await handlePublishListItem(Number(listItemId), isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
+    req.flash(
+      "successBannerTitle",
+      `${listItem.jsonData.organisationName} has been ${successBannerHeading}`
+    );
     req.flash("successBannerHeading", successBannerHeading);
     req.flash("successBannerColour", "green");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
+    res.redirect(
+      dashboardRoutes.listsItem
+        .replace(":listId", listId)
+        .replace(":listItemId", listItemId)
+    );
   }
 }
 
@@ -530,7 +686,8 @@ export async function handlePublishListItem(
 
   if (updatedListItem.isPublished) {
     const searchLink = createListSearchBaseLink(updatedListItem.type);
-    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
+    const { contactName, contactEmailAddress } =
+      getListItemContactInformation(updatedListItem);
     const typeName = serviceName(updatedListItem.type);
 
     await sendDataPublishedEmail(
@@ -543,22 +700,49 @@ export async function handlePublishListItem(
   }
 }
 
-async function getListItem(listItemId: string, list: List): Promise<LawyerListItemGetObject> {
-  const listItem: LawyerListItemGetObject = await findListItemById(listItemId) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData = listItem.jsonData;
+async function getListItem(
+  listItemId: string,
+  list: List
+): Promise<LawyerListItemGetObject> {
+  const listItem: LawyerListItemGetObject = (await findListItemById(
+    listItemId
+  )) as LawyerListItemGetObject;
+  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
+    listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
   return listItem;
 }
 
-async function initialiseFormRunnerSession(list: List, listItem: ListItemGetObject, isUnderTest: boolean, message: string): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
+async function initialiseFormRunnerSession(
+  list: List,
+  listItem: ListItemGetObject,
+  isUnderTest: boolean,
+  message: string
+): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(
+    list,
+    listItem,
+    isUnderTest
+  );
+  const formRunnerWebhookData = getNewSessionWebhookData(
+    list.type,
+    listItem.id,
+    questions,
+    message
+  );
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+  const token = await getInitiateFormRunnerSessionToken(
+    formRunnerNewSessionUrl,
+    formRunnerWebhookData
+  );
   return createFormRunnerEditListItemLink(token);
 }
 
-export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listItemEditRequestValidation(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   const { listId, listItemId } = req.params;
   const userId = req.user?.userData?.id;
 
@@ -575,28 +759,24 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
         message: `Could not find list ${listId}`,
       },
     });
-
   } else if (listItem === undefined) {
     res.status(404).send({
       error: {
         message: `Could not find list item ${listItemId}`,
       },
     });
-
   } else if (list?.type !== listItem?.type) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which is a different service type to list ${listId}`,
       },
     });
-
   } else if (list?.id !== listItem?.listId) {
     res.status(400).send({
       error: {
         message: `Trying to edit a list item which does not belong to list ${listId}`,
       },
     });
-
   } else if (!userIsListPublisher(req, list)) {
     res.status(403).send({
       error: {

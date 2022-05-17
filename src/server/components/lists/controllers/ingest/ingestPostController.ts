@@ -6,6 +6,7 @@ import serviceName from "server/utils/service-name";
 import { createConfirmationLink } from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function ingestPostController(
   req: Request,
@@ -27,12 +28,8 @@ export async function ingestPostController(
     return;
   }
 
-  const data = parseFormRunnerWebhookObject<
-    LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-  >(value);
-
   try {
-    const item = await createListItem(serviceType, data);
+    const item = await createListItem(value);
     const { address, reference, type } = item;
     const typeName = serviceName(type);
     if (!typeName) {
@@ -41,7 +38,7 @@ export async function ingestPostController(
     }
 
     const { country } = address;
-    const { jsonData } = item;
+    const jsonData = item.jsonData as ListItemJsonData;
     const { contactName } = jsonData;
     const email = jsonData?.publicEmailAddress ?? jsonData?.emailAddress;
 

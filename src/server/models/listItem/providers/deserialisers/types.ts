@@ -35,7 +35,7 @@ export interface BaseDeserialisedWebhookData {
    * address fields are also stored in `ListItem.jsonData`
    */
   country: string;
-  addressCountry: string; // TODO:- remove
+  addressCountry?: string; // TODO:- remove
   "address.firstLine": string;
   "address.secondLine"?: string;
   city: string;

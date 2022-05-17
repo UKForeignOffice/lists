@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import {
-  formRunnerPostRequestSchema,
-  parseFormRunnerWebhookObject,
-} from "server/components/formRunner";
+import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { WebhookDataAsJsonObject } from "server/models/types";
 import { recordEvent } from "server/models/listItem/listItemEvent";
+import {
+  baseDeserialiser,
+  DESERIALISER,
+} from "server/models/listItem/providers/deserialisers";
 
 export async function ingestPutController(
   req: Request,
@@ -26,10 +26,10 @@ export async function ingestPutController(
     res.status(400).json(error).end();
     return;
   }
-  const data = parseFormRunnerWebhookObject<
-    | WebhookDataAsJsonObject<LawyersFormWebhookData>
-    | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
-  >(value);
+  const baseDeserialised = baseDeserialiser(value);
+  const { type } = baseDeserialised;
+  const deserialiser = DESERIALISER[type];
+  const data = deserialiser?.(value) ?? value;
 
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id: Number(id) },

@@ -1,6 +1,6 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
-import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import { ListItemJsonData } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
 
 export enum ServiceType {
@@ -176,13 +176,13 @@ export type AuditListItemEventName =
   | "publish"
   | "unpublish";
 
-export type WebhookDataAsJsonObject<T> = T & JsonObject
+export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
 export interface EventJsonData extends JsonObject {
   eventName: AuditListItemEventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
-  updatedJsonData?: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  updatedJsonData?: ListItemJsonData;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 

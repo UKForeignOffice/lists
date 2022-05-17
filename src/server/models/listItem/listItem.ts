@@ -1,33 +1,37 @@
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-  WebhookData,
-} from "server/components/formRunner";
+import { WebhookData } from "server/components/formRunner";
 import {
   EventJsonData,
   List,
-  ListItem,
   Point,
   ServiceType,
   User,
-  WebhookDataAsJsonObject,
+  ListItem,
 } from "server/models/types";
-import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
+import {
+  ListItemWithAddressCountry,
+  ListItemWithJsonData,
+} from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
-import {
-  checkListItemExists,
-  getChangedAddressFields,
-} from "server/models/listItem/providers/helpers";
+import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
+import {
+  AuditEvent,
+  ListItemEvent,
+  Prisma,
+  Status,
+  ListItem as PrismaListItem,
+} from "@prisma/client";
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
+import { DeserialisedWebhookData } from "./providers/deserialisers/types";
+
+export const createFromWebhook = listItemCreateInputFromWebhook;
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
@@ -298,12 +302,13 @@ export async function setEmailIsVerified({
     }
 
     // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
-    const { type, jsonData } = item;
+    const { type, jsonData } = item as ListItemWithJsonData;
     const { metadata } = jsonData;
     const serviceType = type as ServiceType;
 
     if (metadata?.emailVerified === true) {
       return {
+        ...metadata,
         type: serviceType,
       };
     }
@@ -313,9 +318,10 @@ export async function setEmailIsVerified({
       metadata: { ...metadata, emailVerified: true },
     };
 
+    // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
-      data: { jsonData: updatedJsonData },
+      data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 
     return {
@@ -330,17 +336,6 @@ export async function setEmailIsVerified({
 export async function createListItem(
   webhookData: WebhookData
 ): Promise<ListItemWithAddressCountry> {
-  const exists = await checkListItemExists({
-    organisationName: webhookData.organisationName,
-    countryName: webhookData.country,
-  });
-
-  const { type } = webhookData.metadata;
-
-  if (exists) {
-    throw new Error(`${type} record already exists`);
-  }
-
   try {
     const data = await listItemCreateInputFromWebhook(webhookData);
 
@@ -381,12 +376,11 @@ export async function createListItem(
 
 type Nullable<T> = T | undefined | null;
 
+// TODO:- check with Ali
 export async function update(
   id: ListItem["id"],
   userId: User["id"],
-  data:
-    | WebhookDataAsJsonObject<LawyersFormWebhookData>
-    | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
+  data: DeserialisedWebhookData
 ): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
