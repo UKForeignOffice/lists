@@ -180,7 +180,7 @@
         {
           "path": "/telephone-number"
         }
-      ],
+      ]
     },
     {
       "path": "/how-can-people-book-a-covid-19-test-with-your-organisation",
@@ -263,7 +263,7 @@
         {
           "path": "/address"
         }
-      ],
+      ]
     },
     {
       "path": "/address",
@@ -324,7 +324,7 @@
         {
           "path": "/how-does-your-organisation-communicate-that-a-covid-19-test-result-is-ready"
         }
-      ],
+      ]
     },
     {
       "path": "/declaration",
