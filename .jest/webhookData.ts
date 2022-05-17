@@ -1,10 +1,6 @@
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "../src/server/components/formRunner";
 import { ServiceType, WebhookDataAsJsonObject } from "server/models/types";
 
-export const lawyer: LawyersFormWebhookData = {
+export const lawyer = {
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
@@ -44,7 +40,7 @@ export const lawyer: LawyersFormWebhookData = {
     type: ServiceType.lawyers,
   },
 };
-export const covidTestProvider: CovidTestSupplierFormWebhookData = {
+export const covidTestProvider = {
   declaration: ["confirm"],
   publishEmail: "",
   regulators: "",

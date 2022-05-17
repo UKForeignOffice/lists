@@ -1,14 +1,13 @@
-const lawyer = {
+export const lawyer = {
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
   regulators: "Spanish BAR",
-  firstAndMiddleNames: "Lawyer In",
-  familyName: "Spain",
+  contactName: "Lawyer In Spain",
   organisationName: "CYB Law",
-  addressLine1: "70 King Charles Street",
+  "address.firstLine": "70 King Charles Street",
   city: "London",
-  postcode: "SW1A 2AH",
+  postCode: "SW1A 2AH",
   addressCountry: "Spain",
   emailAddress: "lawyer@example.com",
   publishEmail: "Yes",
@@ -35,8 +34,15 @@ const lawyer = {
   proBono: false,
   representedBritishNationals: true,
   declaration: ["confirm"],
+  metadata: {
+    type: "lawyers",
+  },
 };
-const covidTestProvider = {
+export const covidTestProvider: CovidTestSupplierFormWebhookData = {
+  declaration: ["confirm"],
+  publishEmail: "",
+  regulators: "",
+  size: "",
   speakEnglish: true,
   isQualified: true,
   affiliatedWithRegulatoryAuthority: true,
@@ -49,30 +55,22 @@ const covidTestProvider = {
   turnaroundTimeAntigen: "1",
   turnaroundTimeLamp: "48",
   turnaroundTimePCR: "24",
-  organisationDetails: {
-    organisationName: "Covid Test Provider Name",
-    locationName: "London",
-    contactName: "Contact Name",
-    contactEmailAddress: "aa@aa.com",
-    contactPhoneNumber: "777654321",
-    websiteAddress: "www.website.com",
-    emailAddress: "contact@email.com",
-    phoneNumber: "777654321",
-    addressLine1: "70 King Charles Street",
-    addressLine2: undefined,
-    city: "London",
-    postcode: "SW1A 2AH",
-    country: "france",
-  },
+  organisationName: "Covid Test Provider Name",
+  locationName: "London",
+  contactName: "Contact Name",
+  emailAddress: "aa@aa.com",
+  phoneNumber: "777654321",
+  websiteAddress: "www.website.com",
+  publicEmailAddress: "contact@email.com",
+  "address.firstLine": "70 King Charles Street",
+  city: "London",
+  postCode: "SW1A 2AH",
+  country: "france",
   resultsReadyFormat: "Email,SMS",
   resultsFormat: "Email,SMS",
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
-};
-
-module.exports = {
-  webhookData: {
-    lawyer,
-    covidTestProvider,
+  metadata: {
+    type: "covidTestProviders",
   },
 };
