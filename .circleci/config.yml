@@ -80,6 +80,10 @@ jobs:
             - v1-deps-
 
       - run:
+          name: Install Chrome browser
+          command: sudo apt-get update && apt-get install chromium-browser
+
+      - run:
           name: Install Form Runner
           command: npm run form-runner:install
 
