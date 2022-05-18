@@ -71,12 +71,7 @@ jobs:
           node-version: '14'
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
-      - run:
-        command: |
-          google-chrome --version
-          chromedriver --version
-        name: Check install
-
+      
       - restore_cache:
           keys:
             - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
@@ -86,11 +81,13 @@ jobs:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
-
+            
       - run:
-          name: Install Chrome browser
-          command: sudo apt-get update && apt-get install chromium-browser
-
+          name: Check install
+          command: |
+            google-chrome --version
+            chromedriver --version
+      
       - run:
           name: Install Form Runner
           command: npm run form-runner:install
