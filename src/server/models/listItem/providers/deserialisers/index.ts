@@ -14,18 +14,20 @@ export function baseDeserialiser(
   const { questions, metadata } = webhookData;
   const { type } = metadata;
 
-  const parsed = questions.reduce((acc, question) => {
-    const { fields, category } = question;
-
-    return fields.map((field) => {
-      const { key, answer } = field;
-      const keyName = category ? `${category}.${key}` : key;
-      return {
-        ...acc,
-        [keyName]: trimAnswer(answer),
-      };
-    });
-  }, {}) as BaseDeserialisedWebhookData;
+  const parsed = questions
+    .flatMap((question) => {
+      const { fields, category } = question;
+      return fields.map((field) => {
+        const { key, answer } = field;
+        const keyName = category ? `${category}.${key}` : key;
+        return {
+          [keyName]: trimAnswer(answer),
+        };
+      });
+    })
+    .reduce((acc, entry) => {
+      return { ...acc, ...entry };
+    }) as BaseDeserialisedWebhookData;
 
   return { ...parsed, type };
 }

@@ -9,7 +9,7 @@ import { ServiceType } from "server/models/types";
 export const covidTestProviderDeserialiser: WebhookDeserialisers[ServiceType.covidTestProviders] =
   (webhookData) => {
     const {
-      providedTests: providedTestsString,
+      providedTests: providedTestsString = "",
       resultsFormat,
       resultsReadyFormat,
       bookingOptions,

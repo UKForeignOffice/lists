@@ -8,7 +8,7 @@ function trim(string: string): string {
 export function checkboxCSVToArray<T extends string = string>(
   checkboxValue: T
 ): string[] {
-  return uniq(checkboxValue.split(",").map(trim));
+  return uniq((checkboxValue ?? "").split(",").map(trim));
 }
 
 export function trimAnswer(

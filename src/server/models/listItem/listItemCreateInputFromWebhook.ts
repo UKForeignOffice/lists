@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { getListIdForCountryAndType } from "server/models/helpers";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName } from "server/models/types";
 import { logger } from "server/services/logger";
 import { createAddressObject } from "./geoHelpers";
 import {
@@ -9,9 +9,21 @@ import {
 } from "server/models/listItem/providers/deserialisers";
 import { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+
+export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
+  const baseDeserialised = baseDeserialiser(webhook);
+  const { type } = baseDeserialised;
+  const deserialiser = DESERIALISER[type];
+  // just return the webhook object if no deserialiser can be found
+  const deserialised = (deserialiser?.(baseDeserialised) ??
+    webhook) as DeserialisedWebhookData;
+  return deserialised;
+}
 
 export async function listItemCreateInputFromWebhook(
-  webhook: WebhookData
+  webhook: WebhookData,
+  skipAddressCreation: Boolean = false
 ): Promise<Prisma.ListItemCreateInput> {
   const baseDeserialised = baseDeserialiser(webhook);
   const { type, country } = baseDeserialised;
@@ -36,7 +48,13 @@ export async function listItemCreateInputFromWebhook(
 
   const deserialiser = DESERIALISER[type];
   // just return the webhook object if no deserialiser can be found
-  const deserialised = deserialiser?.(webhook) ?? webhook;
+  const deserialised = deserialiser?.(baseDeserialised) ?? baseDeserialised;
+
+  let address = {};
+
+  if (!skipAddressCreation) {
+    address = await createAddressObject(webhook);
+  }
 
   return {
     type,
@@ -50,8 +68,6 @@ export async function listItemCreateInputFromWebhook(
     jsonData: {
       ...deserialised,
     },
-    address: {
-      ...(await createAddressObject(webhook)),
-    },
+    address,
   };
 }

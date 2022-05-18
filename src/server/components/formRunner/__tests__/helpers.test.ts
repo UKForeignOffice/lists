@@ -3,7 +3,6 @@ import * as child_process from "child_process";
 import {
   startFormRunner,
   isFormRunnerReady,
-  parseFormRunnerWebhookObject,
   getNewSessionWebhookData,
 } from "../helpers";
 import {
@@ -12,8 +11,10 @@ import {
   ListItemGetObject,
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import { FormRunnerQuestion } from "server/components/formRunner";
 import { Status } from "@prisma/client";
+import { createFromWebhook } from "../../../models/listItem";
+import * as FormRunner from "./../types";
+import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -90,9 +91,11 @@ describe("Form Runner Service:", () => {
   });
 
   describe("parseFormRunnerWebhookObject", () => {
-    test("parsed object is correct", () => {
+    test("parsed object is correct", async () => {
       const webHookData: any = {
-        metadata: {},
+        metadata: {
+          type: "covidTestProviders",
+        },
         name: "Find a Professional Service Abroad covid-test-provider",
         questions: [
           {
@@ -151,17 +154,10 @@ describe("Form Runner Service:", () => {
             question: "Full name",
             fields: [
               {
-                key: "firstName",
-                title: "First name",
+                key: "contactName",
+                title: "contactName",
                 type: "text",
-                answer: "Rene",
-              },
-              { key: "middleName", title: "Middle name", type: "text" },
-              {
-                key: "surname",
-                title: "Surname",
-                type: "text",
-                answer: "Descartes",
+                answer: "Winston Smith",
               },
             ],
             index: 0,
@@ -312,16 +308,15 @@ describe("Form Runner Service:", () => {
         ],
       };
 
-      const result = parseFormRunnerWebhookObject(webHookData);
+      const result = await deserialise(webHookData);
 
       expect(result).toMatchObject({
+        type: "covidTestProviders",
         speakEnglish: true,
         isQualified: true,
         memberOfRegulatoryAuthority: true,
         regulatoryAuthority: "Some Authority",
-        firstName: "Rene",
-        middleName: undefined,
-        surname: "Descartes",
+        contactName: "Winston Smith",
         organisationName: "{{organisationName}}",
         websiteAddress: "www.covidtest1.com",
         emailAddress: "email@domain.com",
@@ -331,7 +326,7 @@ describe("Form Runner Service:", () => {
         testTypes: "Polymerase chain reaction (PCR)",
         turnaroundTimes: "24 hours",
         providesCertificateTranslation: true,
-        bookingOptions: "Online, Phone, In Person",
+        bookingOptions: ["Online", "Phone", "In Person"],
         declarationConfirm: "confirm",
       });
     });
@@ -394,7 +389,7 @@ describe("Form Runner Service:", () => {
       status: Status.NEW,
     };
 
-    const expectedListOutput: Array<Partial<FormRunnerQuestion>> = [
+    const expectedListOutput: Array<Partial<FormRunner.Question>> = [
       {
         fields: [
           {
