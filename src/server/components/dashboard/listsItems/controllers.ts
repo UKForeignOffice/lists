@@ -78,7 +78,7 @@ export async function listItemGetController(
       .pop();
 
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
-    const updatedJsonData = auditJsonData.updatedJsonData;
+    const updatedJsonData = auditJsonData?.updatedJsonData;
     if (updatedJsonData !== undefined) {
       switch(listItem.type) {
         case ServiceType.lawyers :
