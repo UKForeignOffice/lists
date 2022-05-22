@@ -13,6 +13,7 @@
 // the project's config changing)
 
 const { PrismaClient } = require("@prisma/client");
+const { logger } = require("webpack-cli/lib/utils");
 
 const cucumber = require("cypress-cucumber-preprocessor").default;
 const db = new PrismaClient();
@@ -31,5 +32,9 @@ module.exports = (on, config) => {
       const [model, action] = operation.split(".");
       return db[model][action](variables);
     },
+    log: (message) => {
+      logger.log(message);
+      return null;
+    }
   });
 };
