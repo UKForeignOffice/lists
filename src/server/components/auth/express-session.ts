@@ -6,6 +6,7 @@ import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
+import flash from "express-flash";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -51,4 +52,6 @@ export async function configureExpressSession(server: Express): Promise<void> {
   }
 
   server.use(session(options));
+
+  server.use(flash())
 }
