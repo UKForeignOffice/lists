@@ -49,7 +49,7 @@ export async function postLoginController(
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
 
     if (isLocalHost || isCybDev) {
-      logger.info(`Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}], redirecting to auth link`);
+      logger.info(`Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}], redirecting to auth link [${authLink}]`);
       res.redirect(authLink);
       return;
     }

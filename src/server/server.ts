@@ -58,7 +58,7 @@ export async function getServer(): Promise<Express> {
   // error handlers
   configureErrorHandlers(server);
 
-  logger.info(`Server startup: Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}], redirecting to auth link`);
+  logger.info(`Server startup: Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}]`);
 
   return server;
 }
