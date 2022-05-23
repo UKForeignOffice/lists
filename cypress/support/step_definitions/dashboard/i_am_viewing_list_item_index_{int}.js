@@ -7,7 +7,9 @@ Given("I am viewing list item index for reference:SMOKE", async () => {
       },
     },
   }).then((result) => {
+    cy.task("log", `RETRIEVED list: ${result}.....`);
     cy.log(result);
     cy.visit(`http://localhost:3000/dashboard/lists/${result.id}/items`);
+    cy.task("log", `VISITED list ${result.id}`);
   });
 });
