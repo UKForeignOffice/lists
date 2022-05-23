@@ -1,7 +1,6 @@
 Then(
   "I see the notification text {string}",
   (notificationText) => {
-    cy.get(".govuk-notification-banner__heading")
-      cy.findByText(notificationText);
+    cy.findByText(notificationText).should("exist");
   }
 );
