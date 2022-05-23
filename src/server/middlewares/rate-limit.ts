@@ -7,7 +7,7 @@ import {
 
 const limiter = rateLimit({
   windowMs: 1*60*1000, // 1 minute
-  max: (isTest ? 240 : 120),
+  max: (isTest ? 0 : 120),
   message: "This request could not be processed.  Please try again.",
   handler: rateLimitExceededErrorHandler,
 });
