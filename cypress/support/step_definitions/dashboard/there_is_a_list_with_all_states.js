@@ -2,9 +2,9 @@ import { rand, randCompanyName, randFullName } from "@ngneat/falso";
 
 Given("A lawyers list exists for Eurasia", () => {
   const jsonData = {
-    administrators: ["smoke@cautionyourblast.com"],
-    publishers: ["smoke@cautionyourblast.com"],
-    validators: ["smoke@cautionyourblast.com"],
+    administrators: ["ali+test@cautionyourblast.com"],
+    publishers: ["ali+test@cautionyourblast.com"],
+    validators: ["ali+test@cautionyourblast.com"],
   };
   cy.task("db", {
     operation: "country.upsert",
@@ -135,7 +135,7 @@ Given("there are these list items", (table) => {
           },
         },
         where: {
-          email: "smoke@cautionyourblast.com",
+          email: "ali+test@cautionyourblast.com",
         },
       },
     });
