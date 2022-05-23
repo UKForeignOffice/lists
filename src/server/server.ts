@@ -21,7 +21,8 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 
-import { isProd } from "server/config";
+import { isCybDev, isLocalHost, isProd } from "server/config";
+import { logger } from "server/services/logger";
 
 const server = express();
 
@@ -56,6 +57,8 @@ export async function getServer(): Promise<Express> {
 
   // error handlers
   configureErrorHandlers(server);
+
+  logger.info(`Server startup: Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}], redirecting to auth link`);
 
   return server;
 }
