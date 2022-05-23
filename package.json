@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
-    "build:ci": "npm run prisma:generate && CYB_DEV=true NODE_ENV=test webpack",
-    "start:ci": "npm run prisma:deploy && CYB_DEV=true NODE_ENV=test node ./dist/server.js",
+    "build:ci": "npm run prisma:generate && CYB_DEV=true NODE_ENV=development webpack",
+    "start:ci": "npm run prisma:deploy && CYB_DEV=true NODE_ENV=development node ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
