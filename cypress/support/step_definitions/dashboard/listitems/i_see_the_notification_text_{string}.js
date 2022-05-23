@@ -8,6 +8,7 @@ Then(
         cy.task("log", `PAGE HTML for list items with notification: ${doc}`);
       });
 
-    cy.findByText(notificationText).should("exist");
+    cy.get(".govuk-notification-banner__heading")
+      .contains(notificationText);
   }
 );
