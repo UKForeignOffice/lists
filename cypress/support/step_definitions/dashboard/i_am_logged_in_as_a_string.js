@@ -16,5 +16,5 @@ Given("I am logged in as a {string}", (role) => {
   });
 
   cy.visit("localhost:3000/login");
-  cy.findByRole("textbox").type("ali+test@cautionyourblast.com{enter}");
+  cy.get("#email-address").type("ali+test@cautionyourblast.com{enter}");
 });
