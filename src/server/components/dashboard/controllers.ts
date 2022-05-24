@@ -21,7 +21,6 @@ import { QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { logger } from "server/services/logger";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -137,14 +136,11 @@ export async function listsController(
   next: NextFunction
 ): Promise<void> {
   try {
-    logger.info(`user email from request [${req.user?.userData?.email}]`);
     if (req.user?.userData.email === undefined) {
-      logger.info(`user email from request not found.  Redirecting to  [${authRoutes.logout}]`);
       return res.redirect(authRoutes.logout);
     }
 
     const lists = (await findUserLists(req.user?.userData.email)) ?? [];
-    logger.info(`Got ${lists?.length} lists for user ${req.user?.userData.email}`);
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,

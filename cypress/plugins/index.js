@@ -27,6 +27,16 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
 
+
+  /**
+   * To aide debugging, you can output the page HTML using the following technique:
+   *     cy.get('html:root')
+   *       .eq(0)
+   *       .invoke('prop', 'outerHTML')
+   *       .then(doc => {
+   *         cy.task("log", `PAGE HTML for list items with notification: ${doc}`);
+   *       });
+   */
   on("task", {
     db: ({ operation, variables }) => {
       const [model, action] = operation.split(".");

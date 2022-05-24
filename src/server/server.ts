@@ -21,8 +21,7 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 
-import { isCybDev, isLocalHost, isProd } from "server/config";
-import { logger } from "server/services/logger";
+import { isProd } from "server/config";
 
 const server = express();
 
@@ -57,8 +56,6 @@ export async function getServer(): Promise<Express> {
 
   // error handlers
   configureErrorHandlers(server);
-
-  logger.info(`Server startup: Environment isLocalHost [${isLocalHost}], isCybDev [${isCybDev}]`);
 
   return server;
 }
