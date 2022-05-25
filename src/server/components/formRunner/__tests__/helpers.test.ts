@@ -515,7 +515,7 @@ describe("Form Runner Service:", () => {
             key: "phoneNumber",
           },
           {
-            key: "emergencyPhoneNumber",
+            key: "contactPhoneNumber",
             answer: undefined,
           },
         ],
