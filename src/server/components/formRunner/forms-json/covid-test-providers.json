@@ -252,7 +252,7 @@
       "title": "Telephone number",
       "components": [
         {
-          "name": "telephone",
+          "name": "phoneNumber",
           "options": {},
           "type": "TextField",
           "title": "Phone number",
