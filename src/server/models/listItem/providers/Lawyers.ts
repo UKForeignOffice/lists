@@ -1,10 +1,8 @@
-import { LawyersFormWebhookData } from "server/components/formRunner";
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { WebhookDeserialiser } from "./types";
 import { legalPracticeAreasList } from "server/services/metadata";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
