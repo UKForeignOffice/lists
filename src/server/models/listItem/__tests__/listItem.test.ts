@@ -718,6 +718,7 @@ describe("ListItem Model:", () => {
 
       expect(result).toEqual({
         type: "lawyers",
+        emailVerified: true,
       });
       expect(spy).toHaveBeenCalledWith({
         where: { reference },
@@ -741,6 +742,7 @@ describe("ListItem Model:", () => {
 
       expect(result).toEqual({
         type: "lawyers",
+        emailVerified: true,
       });
       expect(spyFindUnique).toHaveBeenCalled();
       expect(spyUpdate).not.toHaveBeenCalled();
@@ -1093,15 +1095,11 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("listItemCreateInputFromWebhookObject", () => {
-    // TODO
-  });
-
   describe("listItemCreateInputFromWebhook", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
-      await expect(
+      expect(
         listItemCreateInputFromWebhook(covidTestProviderWebhookData)
       ).rejects.toEqual(new Error("covidTestProviders record already exists"));
     });
@@ -1188,7 +1186,7 @@ describe("ListItem Model:", () => {
       prisma.listItem.create.mockRejectedValue(error);
 
       await expect(
-        listItemCreateInputFromWebhook(covidTestProviderWebhookData)
+        createListItem(covidTestProviderWebhookData)
       ).rejects.toEqual(error);
     });
   });
