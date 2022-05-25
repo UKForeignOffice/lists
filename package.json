@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
-    "build:ci": "LOCAL_HOST=true SERVICE_DOMAIN=localhost:3000 NODE_ENV=test CI_SMOKE_TEST=true npm run prisma:generate && webpack",
-    "start:ci": "LOCAL_HOST=true SERVICE_DOMAIN=localhost:3000 NODE_ENV=test CI_SMOKE_TEST=true npm run prisma:deploy && node ./dist/server.js",
+    "build:ci": "npm run prisma:generate && NODE_ENV=test webpack",
+    "start:ci": "npm run prisma:deploy && NODE_ENV=test node ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
@@ -28,8 +28,8 @@
     "prisma:studio": "npx prisma studio --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
     "release": "semantic-release",
-    "form-runner:install": "NODE_ENV=development ./src/server/components/formRunner/install-form-runner.sh",
-    "form-runner:start": "cd ./lib/form-runner && NODE_ENV=development yarn runner start",
+    "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
+    "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "smoke-tests": "npx cypress run --browser chrome"
   },
   "dependencies": {
