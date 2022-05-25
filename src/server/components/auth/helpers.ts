@@ -3,14 +3,14 @@ import { configurePassport } from "./passport";
 import { authRoutes } from "./routes";
 import { authRouter } from "./router";
 import { configureExpressSession } from "./express-session";
-import { isCybDev } from "server/config";
+import { isCISmokeTest } from "server/config";
 
 export function ensureAuthenticated(
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
-  if (req.isAuthenticated() || isCybDev) {
+  if (req.isAuthenticated() || isCISmokeTest) {
     next();
   } else {
     req.session.returnTo = req.originalUrl;

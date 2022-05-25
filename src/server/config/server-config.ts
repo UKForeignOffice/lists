@@ -16,6 +16,7 @@ export const isDev = NODE_ENV === "development";
 export const isTest = NODE_ENV === "test";
 export const isLocalHost = process.env.LOCAL_HOST === "true";
 export const isCybDev = process.env.CYB_DEV === "true" || isDev;
+export const isCISmokeTest = process.env.CI_SMOKE_TEST === "true";
 
 // AWS
 export const AWS_REGION = "eu-west-1";
