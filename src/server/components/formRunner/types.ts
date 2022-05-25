@@ -12,6 +12,7 @@ export interface Component {
 export interface Field {
   key: string;
   answer: any;
+  title?: string;
   index?: number;
 }
 

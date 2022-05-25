@@ -27,7 +27,7 @@ export async function feedbackIngest(
         const { fields } = question;
 
         fields.forEach((field) => {
-          const { title, answer } = field;
+          const { title = field.key, answer } = field;
           acc.push({ question: title, answer });
         });
 

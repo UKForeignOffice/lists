@@ -440,6 +440,7 @@ export async function update(
             eventName: "publish",
             itemId: id,
             userId,
+            // @ts-ignore
             updatedJsonData,
           },
           AuditEvent.PUBLISHED
@@ -462,6 +463,7 @@ export async function update(
             eventName: "publish",
             itemId: id,
             userId,
+            // @ts-ignore
             updatedJsonData,
           },
           AuditEvent.PUBLISHED

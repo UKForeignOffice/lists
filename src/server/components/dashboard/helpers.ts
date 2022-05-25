@@ -2,6 +2,7 @@ import { Request } from "express";
 import { logger } from "server/services/logger";
 import axios from "axios";
 import { UserRoles, List, ListJsonData } from "server/models/types";
+import { NewSessionData } from "../formRunner/types";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -45,7 +46,7 @@ export function userIsListValidator(
 
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,
-  formRunnerWebhookData: FormRunnerNewSessionData
+  formRunnerWebhookData: NewSessionData
 ): Promise<string> {
   // logger.info(`initiating form runner session via URL ${FORM_RUNNER_URL}, path ${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`);
   logger.info(

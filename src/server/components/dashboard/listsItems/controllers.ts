@@ -477,6 +477,7 @@ export async function handleListItemUpdate(
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
   if (auditJsonData?.updatedJsonData !== undefined) {
+    // @ts-ignore
     await update(id, userId, auditJsonData.updatedJsonData);
   }
 }
