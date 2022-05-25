@@ -42,7 +42,6 @@
           "options": {},
           "type": "YesNoField",
           "title": "English language service",
-          "nameHasError": false,
           "schema": {},
           "hint": ""
         }
