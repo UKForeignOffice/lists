@@ -83,7 +83,7 @@ export async function listItemGetController(
     };
   }
   const list = await findListById(listId);
-  let listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
+  const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
     await findListItemById(listItemId);
   let requestedChanges;
 

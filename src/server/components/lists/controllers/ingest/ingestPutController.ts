@@ -9,6 +9,7 @@ import {
   baseDeserialiser,
   DESERIALISER,
 } from "server/models/listItem/providers/deserialisers";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function ingestPutController(
   req: Request,
@@ -65,7 +66,7 @@ export async function ingestPutController(
         {
           eventName: "edit",
           itemId: Number(id),
-          updatedJsonData: data,
+          updatedJsonData: data as DeserialisedWebhookData,
         },
         Number(id),
         ListItemEvent.EDITED

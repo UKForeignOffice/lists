@@ -12,7 +12,10 @@ import { prisma } from "server/models/db/prisma-client";
 import { get, startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import {
+  DeserialisedWebhookData,
+  ListItemJsonData,
+} from "server/models/listItem/providers/deserialisers/types";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -175,9 +178,8 @@ export function getListItemContactInformation(listItem: ListItem): {
 } {
   const contactName = get(listItem?.jsonData, "contactName");
   const contactEmailAddress =
-    get(listItem?.jsonData, "contactEmailAddress") ??
-    get(listItem?.jsonData, "emailAddress") ??
-    get(listItem?.jsonData, "email");
+    get(listItem?.jsonData, "publicEmailAddress") ??
+    get(listItem?.jsonData, "emailAddress");
   const contactPhoneNumber =
     get(listItem?.jsonData, "contactPhoneNumber") ??
     get(listItem?.jsonData, "phoneNumber");
@@ -186,7 +188,7 @@ export function getListItemContactInformation(listItem: ListItem): {
 }
 
 export function pickWebhookAddressAsAddress(
-  webhook: DeserialisedWebhookData
+  webhook: DeserialisedWebhookData | ListItemJsonData
 ): Partial<UpdatableAddressFields> {
   return {
     firstLine: webhook["address.firstLine"],
@@ -196,7 +198,7 @@ export function pickWebhookAddressAsAddress(
   };
 }
 export function getChangedAddressFields(
-  webhook: DeserialisedWebhookData,
+  webhook: DeserialisedWebhookData | ListItemJsonData,
   address: Partial<Address>
 ): Partial<UpdatableAddressFields> {
   const updatableAddressObject: UpdatableAddressFields = {

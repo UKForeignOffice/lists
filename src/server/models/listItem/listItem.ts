@@ -30,7 +30,7 @@ import {
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
-
+export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
