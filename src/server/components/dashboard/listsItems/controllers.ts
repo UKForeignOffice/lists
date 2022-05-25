@@ -83,7 +83,7 @@ export async function listItemGetController(
     };
   }
   const list = await findListById(listId);
-  const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
+  let listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
     await findListItemById(listItemId);
   let requestedChanges;
 
@@ -111,20 +111,13 @@ export async function listItemGetController(
           ) as CovidTestSupplierListItemJsonData;
           break;
       }
-      const updatedAddressFields: Partial<UpdatableAddressFields> =
+      const updatedAddressFields: UpdatableAddressFields =
         getChangedAddressFields(updatedJsonData, listItem.address);
-      if (updatedAddressFields.firstLine) {
-        listItem.address.firstLine = updatedAddressFields.firstLine;
-      }
-      if (updatedAddressFields.secondLine) {
-        listItem.address.secondLine = updatedAddressFields.secondLine;
-      }
-      if (updatedAddressFields.city) {
-        listItem.address.city = updatedAddressFields.city;
-      }
-      if (updatedAddressFields.postCode) {
-        listItem.address.postCode = updatedAddressFields.postCode;
-      }
+      // @ts-ignore
+      listItem.address = {
+        ...listItem.address,
+        ...updatedAddressFields,
+      };
     }
   }
 

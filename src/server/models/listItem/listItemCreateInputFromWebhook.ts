@@ -49,7 +49,7 @@ export async function listItemCreateInputFromWebhook(
   let address = {};
 
   if (!skipAddressCreation) {
-    address = await createAddressObject(webhook);
+    address = await createAddressObject(deserialised);
   }
 
   return {

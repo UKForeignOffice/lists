@@ -4,9 +4,9 @@ import { startCase, toLower } from "lodash";
 import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
-import { DeserialisedWebhookData } from "server/components/formRunner";
 import { rawInsertGeoLocation } from "server/models/helpers";
 import { Prisma } from "@prisma/client";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function createCountry(country: string): Promise<Country> {
   const countryName = startCase(toLower(country));
