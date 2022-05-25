@@ -1198,9 +1198,10 @@ describe("ListItem Model:", () => {
     test("contact information is correct when email and phoneNumber are set", () => {
       const listItem: any = {
         jsonData: {
+          extra: "extra field",
           contactName: "ABC",
+          emailAddress: "123@a.bc",
           phoneNumber: "123",
-          email: "123",
         },
       };
 
@@ -1208,7 +1209,7 @@ describe("ListItem Model:", () => {
       expect(contactInfo).toEqual({
         contactName: "ABC",
         contactPhoneNumber: "123",
-        contactEmailAddress: "123",
+        contactEmailAddress: "123@a.bc",
       });
     });
 
@@ -1217,7 +1218,7 @@ describe("ListItem Model:", () => {
         jsonData: {
           contactName: "ABC",
           contactPhoneNumber: "123",
-          contactEmailAddress: "123",
+          publicEmailAddress: "123",
         },
       };
 

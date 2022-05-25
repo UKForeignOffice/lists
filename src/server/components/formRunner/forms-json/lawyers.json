@@ -324,7 +324,7 @@
           "hint": "Include the country code, for example +49(0)74749561660"
         },
         {
-          "name": "emergencyPhoneNumber",
+          "name": "contactPhoneNumber",
           "options": {
             "required": false
           },
