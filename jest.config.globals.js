@@ -1,4 +1,4 @@
-export const lawyer = {
+const lawyer = {
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
@@ -38,7 +38,8 @@ export const lawyer = {
     type: "lawyers",
   },
 };
-export const covidTestProvider: CovidTestSupplierFormWebhookData = {
+
+const covidTestProvider = {
   declaration: ["confirm"],
   publishEmail: "",
   regulators: "",
@@ -72,5 +73,12 @@ export const covidTestProvider: CovidTestSupplierFormWebhookData = {
   declarationConfirm: "confirm",
   metadata: {
     type: "covidTestProviders",
+  },
+};
+
+module.exports = {
+  webhookData: {
+    lawyer,
+    covidTestProvider,
   },
 };

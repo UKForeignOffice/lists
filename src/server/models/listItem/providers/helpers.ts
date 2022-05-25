@@ -200,10 +200,10 @@ export function getChangedAddressFields(
   address: Partial<Address>
 ): Partial<UpdatableAddressFields> {
   const updatableAddressObject: UpdatableAddressFields = {
-    firstLine: address?.firstLine ?? "",
-    secondLine: address?.secondLine ?? null, // TODO:- fix types.. this shouldn't need `?? null`.
-    postCode: address?.postCode ?? "",
-    city: address?.city ?? "",
+    firstLine: address?.firstLine,
+    secondLine: address?.secondLine ?? undefined, // Casting to undefined when address?.secondLine nullish (i.e. null OR undefined) so a strict comparison `===` can be made.
+    postCode: address?.postCode,
+    city: address?.city,
   };
 
   const webhookAddress = pickWebhookAddressAsAddress(webhook);
@@ -211,7 +211,7 @@ export function getChangedAddressFields(
 
   return updatableEntries.reduce((prev, entry) => {
     const [key, value] = entry as [keyof UpdatableAddressFields, any];
-    const webhookValue = webhookAddress[key] ?? null;
+    const webhookValue = webhookAddress[key];
     const valueHasChanged = webhookValue !== value;
     return {
       ...prev,

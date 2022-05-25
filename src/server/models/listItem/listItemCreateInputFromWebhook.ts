@@ -25,12 +25,12 @@ export async function listItemCreateInputFromWebhook(
   webhook: WebhookData,
   skipAddressCreation: Boolean = false
 ): Promise<Prisma.ListItemCreateInput> {
-  const baseDeserialised = baseDeserialiser(webhook);
-  const { type, country } = baseDeserialised;
+  const deserialised = deserialise(webhook);
+  const { type, country } = deserialised;
 
   const exists = await checkListItemExists({
-    organisationName: baseDeserialised.organisationName,
-    countryName: baseDeserialised.country,
+    organisationName: deserialised.organisationName,
+    countryName: deserialised.country,
   });
 
   if (exists) {
@@ -45,10 +45,6 @@ export async function listItemCreateInputFromWebhook(
       "createListItem"
     );
   }
-
-  const deserialiser = DESERIALISER[type];
-  // just return the webhook object if no deserialiser can be found
-  const deserialised = deserialiser?.(baseDeserialised) ?? baseDeserialised;
 
   let address = {};
 
