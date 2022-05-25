@@ -12,7 +12,6 @@ import {
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
-import { createFromWebhook } from "../../../models/listItem";
 import * as FormRunner from "./../types";
 import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
 

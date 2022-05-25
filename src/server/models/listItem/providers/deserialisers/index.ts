@@ -2,7 +2,7 @@ import * as FormRunner from "server/components/formRunner";
 import { BaseDeserialisedWebhookData, WebhookDeserialiser } from "./types";
 import { ServiceType } from "server/models/types";
 import { lawyerDeserialiser } from "server/models/listItem/providers/deserialisers/Lawyer.deserialiser";
-import { covidTestProviderDeserialiser } from "server/models/listItem/providers/deserialisers/covidTestSupplier.deserialiser";
+import { covidTestProviderDeserialiser } from "server/models/listItem/providers/deserialisers/covidTestProvider.deserialiser";
 import { trimAnswer } from "./helpers";
 
 export function baseDeserialiser(
@@ -11,12 +11,12 @@ export function baseDeserialiser(
   /**
    * Deserialises to {@link #BaseDeserialisedWebhookData}
    */
-  const { questions, metadata } = webhookData;
+  const { questions = [], metadata } = webhookData;
   const { type } = metadata;
 
   const parsed = questions
     .flatMap((question) => {
-      const { fields, category } = question;
+      const { fields = [], category } = question;
       return fields.map((field) => {
         const { key, answer } = field;
         const keyName = category ? `${category}.${key}` : key;
@@ -27,7 +27,7 @@ export function baseDeserialiser(
     })
     .reduce((acc, entry) => {
       return { ...acc, ...entry };
-    }) as BaseDeserialisedWebhookData;
+    }, {}) as BaseDeserialisedWebhookData;
 
   return { ...parsed, type };
 }
