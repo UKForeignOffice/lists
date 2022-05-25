@@ -4,7 +4,7 @@ import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
 import { authRoutes } from "./routes";
 import passport from "./passport";
-import { isCybDev, isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
@@ -48,7 +48,7 @@ export async function postLoginController(
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
 
-    if (isLocalHost || isCybDev) {
+    if (isLocalHost) {
       res.redirect(authLink);
       return;
     }
