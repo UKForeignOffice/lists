@@ -1,4 +1,8 @@
-import { ServiceType, WebhookDataAsJsonObject } from "server/models/types";
+import { ServiceType } from "server/models/types";
+import {
+  CovidTestSupplierFormWebhookData,
+  LawyersFormWebhookData,
+} from "server/models/listItem/providers/deserialisers/types";
 
 export const lawyer = {
   country: "Spain",
@@ -79,7 +83,7 @@ export const covidTestProvider = {
 
 declare global {
   var webhookData: {
-    lawyer: WebhookDataAsJsonObject<LawyersFormWebhookData>;
-    covidTestProvider: WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+    lawyer: LawyersFormWebhookData;
+    covidTestProvider: CovidTestSupplierFormWebhookData;
   };
 }
