@@ -20,7 +20,7 @@ import {
   LawyerListItemJsonData,
   List,
   ListItem,
-  ListItemGetObject,
+  BaseListItemGetObject,
   ServiceType,
   User,
 } from "server/models/types";
@@ -57,7 +57,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 function mapUpdatedAuditJsonDataToListItem(
   listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject,
   updatedJsonData: ListItemJsonData
-): LawyerListItemJsonData | CovidTestSupplierListItemJsonData {
+): ListItemJsonData {
   return Object.assign(
     {},
     listItem.jsonData,
@@ -77,7 +77,7 @@ export async function listItemGetController(
   const errorMsg = req.flash("errorMsg");
 
   // @ts-expect-error
-  if (errorMsg && errorMsg?.length > 0) {
+  if (errorMsg?.length > 0) {
     error = {
       text: errorMsg,
     };
@@ -97,20 +97,10 @@ export async function listItemGetController(
       auditForEdits?.jsonData as EventJsonData;
     const updatedJsonData = auditJsonData.updatedJsonData;
     if (updatedJsonData !== undefined) {
-      switch (listItem.type) {
-        case ServiceType.lawyers:
-          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
-            listItem,
-            updatedJsonData
-          ) as LawyerListItemJsonData;
-          break;
-        case ServiceType.covidTestProviders:
-          listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
-            listItem,
-            updatedJsonData
-          ) as CovidTestSupplierListItemJsonData;
-          break;
-      }
+      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
+        listItem,
+        updatedJsonData
+      );
       const updatedAddressFields: UpdatableAddressFields =
         getChangedAddressFields(updatedJsonData, listItem.address);
       // @ts-ignore
@@ -709,7 +699,7 @@ async function getListItem(
 
 async function initialiseFormRunnerSession(
   list: List,
-  listItem: ListItemGetObject,
+  listItem: BaseListItemGetObject,
   isUnderTest: boolean,
   message: string
 ): Promise<string> {

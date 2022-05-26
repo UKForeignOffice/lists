@@ -9,7 +9,7 @@ import { FORM_RUNNER_SAFELIST } from "server/config";
 import {
   LawyerListItemGetObject,
   List,
-  ListItemGetObject,
+  BaseListItemGetObject,
   ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
@@ -107,7 +107,7 @@ export function getNewSessionWebhookData(
 
 export async function generateFormRunnerWebhookData(
   list: List,
-  listItem: ListItemGetObject,
+  listItem: BaseListItemGetObject,
   isUnderTest?: boolean
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;

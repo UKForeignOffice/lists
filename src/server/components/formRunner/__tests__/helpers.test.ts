@@ -8,7 +8,7 @@ import {
 import {
   LawyerListItemGetObject,
   LawyerListItemJsonData,
-  ListItemGetObject,
+  BaseListItemGetObject,
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
@@ -367,7 +367,7 @@ describe("Form Runner Service:", () => {
       representedBritishNationals: true,
     };
 
-    const getObject: ListItemGetObject = {
+    const getObject: BaseListItemGetObject = {
       address: {
         city: "Milan",
         country: { id: 1, name: "Italy" },

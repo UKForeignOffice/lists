@@ -19,4 +19,4 @@ export const dashboardRoutes = {
   listsItemRequestChanges: "/dashboard/lists/:listId/items/:listItemId/changes",
   listsItemUpdate: "/dashboard/lists/:listId/items/:listItemId/update",
   listsTest: "/dashboard/test",
-};
+} as const;

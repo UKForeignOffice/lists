@@ -1,12 +1,9 @@
-import {
-  JsonObject,
-  LawyerListItemJsonData,
-  List,
-  ListItem,
-  User,
-} from "server/models/types";
+import { JsonObject, List, ListItem, User } from "server/models/types";
 import * as PrismaClient from "@prisma/client";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import {
+  DeserialisedWebhookData,
+  ListItemJsonData,
+} from "server/models/listItem/providers/deserialisers/types";
 
 /**
  * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
@@ -43,7 +40,7 @@ export const ORDER_BY = {
 export type OrderBy = typeof ORDER_BY;
 
 export type IndexListItem = Pick<
-  LawyerListItemJsonData,
+  ListItemJsonData,
   | "organisationName"
   | "contactName"
   | "publishers"

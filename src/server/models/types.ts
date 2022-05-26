@@ -1,6 +1,10 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
-import { ListItemJsonData } from "./listItem/providers/deserialisers/types";
+import {
+  ListItemJsonData,
+  LawyerJsonData,
+  CovidTestSupplierJsonData,
+} from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
 
 export enum ServiceType {
@@ -37,7 +41,7 @@ export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
 // ListItem
 export type ListItem = PrismaClient.ListItem;
 
-export interface ListItemGetObject extends PrismaClient.ListItem {
+export interface BaseListItemGetObject extends PrismaClient.ListItem {
   address: {
     firstLine: string;
     secondLine?: string;
@@ -59,77 +63,34 @@ export enum UserRoles {
   ListsCreator = "ListsCreator",
 }
 
-// Lawyer ListItem
-export interface LawyerListItemJsonData extends JsonObject {
-  country: string;
-  size: string;
-  speakEnglish: boolean;
-  regulators: string;
-  contactName: string;
-  organisationName: string;
-  emailAddress: string;
-  publishEmail: string;
-  publicEmailAddress?: string;
-  phoneNumber: string;
-  emergencyPhoneNumber?: string;
-  websiteAddress?: string;
-  regions: string;
-  areasOfLaw: string[];
-  legalAid?: boolean;
-  proBono?: boolean;
-  representedBritishNationals: boolean;
-  declaration: string[];
-  metadata?: {
-    emailVerified?: boolean;
-  };
-}
+type AsJsonObject<T> = T & JsonObject;
 
 export interface LawyerListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.lawyers;
-  jsonData: LawyerListItemJsonData;
+  jsonData: AsJsonObject<LawyerJsonData>;
 }
 
-export interface LawyerListItemGetObject extends ListItemGetObject {
+export interface LawyerListItemGetObject extends BaseListItemGetObject {
   type: ServiceType.lawyers;
-  jsonData: LawyerListItemJsonData;
-}
-
-// Covid 19 Test Supplier ListItem
-export interface CovidTestSupplierListItemJsonData extends JsonObject {
-  organisationName: string;
-  contactName: string;
-  contactPhoneNumber: string;
-  contactEmailAddress: string;
-  telephone: string;
-  additionalTelephone?: string;
-  email: string;
-  additionalEmail?: string;
-  website: string;
-  regulatoryAuthority: string;
-  resultsReadyFormat: string[];
-  resultsFormat: string[];
-  bookingOptions: string[];
-  providedTests: Array<{
-    type: string;
-    turnaroundTime: number;
-  }>;
-  fastestTurnaround: number;
-  metadata?: {
-    emailVerified?: boolean;
-  };
+  jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface CovidTestSupplierListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.covidTestProviders;
-  jsonData: CovidTestSupplierListItemJsonData;
+  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
-export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
+export interface CovidTestSupplierListItemGetObject
+  extends BaseListItemGetObject {
   type: ServiceType.covidTestProviders;
-  jsonData: CovidTestSupplierListItemJsonData;
+  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
+
+export type ListItemGetObject =
+  | CovidTestSupplierListItemGetObject
+  | LawyerListItemGetObject;
 
 export type LegalAreas =
   | "bankruptcy"
