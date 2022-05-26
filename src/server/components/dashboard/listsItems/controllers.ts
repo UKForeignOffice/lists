@@ -14,7 +14,6 @@ import {
 } from "server/components/dashboard/helpers";
 import {
   EventJsonData,
-  CovidTestSupplierListItemGetObject,
   ListItemGetObject,
   List,
   ListItem,
@@ -50,6 +49,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { getViewModel } from "./getViewModel";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject,
@@ -80,8 +80,7 @@ export async function listItemGetController(
     };
   }
   const list = await findListById(listId);
-  const listItem: ListItemGetObject | CovidTestSupplierListItemGetObject =
-    await findListItemById(listItemId);
+  const listItem: ListItemGetObject = await findListItemById(listItemId);
   let requestedChanges;
 
   if (listItem.status === Status.EDITED) {
@@ -139,6 +138,8 @@ export async function listItemGetController(
     actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
+    vm: getViewModel(listItem),
+
     csrfToken: getCSRFToken(req),
   });
 }
