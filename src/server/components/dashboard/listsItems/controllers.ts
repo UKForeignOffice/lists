@@ -15,13 +15,10 @@ import {
 import {
   EventJsonData,
   CovidTestSupplierListItemGetObject,
-  CovidTestSupplierListItemJsonData,
-  LawyerListItemGetObject,
-  LawyerListItemJsonData,
+  ListItemGetObject,
   List,
   ListItem,
   BaseListItemGetObject,
-  ServiceType,
   User,
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
@@ -55,7 +52,7 @@ import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 function mapUpdatedAuditJsonDataToListItem(
-  listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject,
+  listItem: ListItemGetObject,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
   return Object.assign(
@@ -83,7 +80,7 @@ export async function listItemGetController(
     };
   }
   const list = await findListById(listId);
-  const listItem: LawyerListItemGetObject | CovidTestSupplierListItemGetObject =
+  const listItem: ListItemGetObject | CovidTestSupplierListItemGetObject =
     await findListItemById(listItemId);
   let requestedChanges;
 
@@ -155,11 +152,8 @@ export async function listItemPostController(
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: LawyerListItemGetObject = (await findListItemById(
-    listItemId
-  )) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
-    listItem.jsonData;
+  const listItem: ListItemGetObject = await findListItemById(listItemId);
+  const listJson: ListItemJsonData = listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
   const confirmationPages: { [key: string]: string } = {
     publish: "dashboard/list-item-confirm-publish",
@@ -216,13 +210,9 @@ export async function listItemPinController(
   const isPinned = action === "pin";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: LawyerListItemGetObject = (await findListItemById(
+  const listItem: ListItemGetObject = (await findListItemById(
     listItemId
-  )) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
-    listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
+  )) as ListItemGetObject;
 
   if (userId === undefined) {
     req.flash(
@@ -350,13 +340,9 @@ export async function listItemDeleteController(
   const userId = req?.user?.userData?.id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: LawyerListItemGetObject = (await findListItemById(
+  const listItem: ListItemGetObject = (await findListItemById(
     listItemId
-  )) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
-    listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
+  )) as ListItemGetObject;
 
   if (userId === undefined) {
     req.flash(
@@ -402,13 +388,7 @@ export async function listItemUpdateController(
   const userId = req?.user?.userData?.id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: LawyerListItemGetObject = (await findListItemById(
-    listItemId
-  )) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
-    listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
+  const listItem: ListItemGetObject = await findListItemById(listItemId);
 
   if (userId === undefined) {
     req.flash(
@@ -537,7 +517,7 @@ export async function listItemRequestChangeController(
 
 async function handleListItemRequestChanges(
   list: List,
-  listItem: LawyerListItemGetObject,
+  listItem: ListItemGetObject,
   isUnderTest: boolean,
   message: string,
   userId: User["id"]
@@ -687,12 +667,9 @@ export async function handlePublishListItem(
 async function getListItem(
   listItemId: string,
   list: List
-): Promise<LawyerListItemGetObject> {
-  const listItem: LawyerListItemGetObject = (await findListItemById(
-    listItemId
-  )) as LawyerListItemGetObject;
-  const listJson: LawyerListItemJsonData | CovidTestSupplierListItemJsonData =
-    listItem.jsonData;
+): Promise<ListItemGetObject> {
+  const listItem: ListItemGetObject = await findListItemById(listItemId);
+  const listJson = listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
   return listItem;
 }
