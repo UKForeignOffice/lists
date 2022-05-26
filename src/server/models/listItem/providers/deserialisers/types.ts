@@ -32,7 +32,7 @@ export interface WebhookDeserialisers {
 
 export interface BaseDeserialisedWebhookData {
   /**
-   * address fields are also stored in `ListItem.jsonData`
+   * address fields are also stored in `ListItem.jsonData` and `Address`
    */
   country: string;
   addressCountry?: string; // TODO:- remove

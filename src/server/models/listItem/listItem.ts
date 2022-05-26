@@ -376,7 +376,6 @@ export async function createListItem(
 
 type Nullable<T> = T | undefined | null;
 
-// TODO:- check with Ali
 export async function update(
   id: ListItem["id"],
   userId: User["id"],
