@@ -80,11 +80,11 @@ function parseValue<T extends KeyOfJsonData>(
   jsonData: ListItemJsonData
 ): ListItemJsonData[T] {
   if (field === "address") {
-    return `
-      ${jsonData["address.firstLine"]}
-      ${jsonData["address.secondLine"]}
-      ${jsonData.postCode}
-    `;
+    return [
+      jsonData["address.firstLine"] ?? "",
+      jsonData["address.secondLine"] ?? "",
+      jsonData.postCode ?? "",
+    ].join(`\n`);
   }
   return jsonData?.[field];
 }
@@ -130,6 +130,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
     "email",
     "emergencyPhoneNumber",
     "websiteAddress",
+    "address",
   ];
 
   return jsonDataAsRows(contactFields, listItem.jsonData);
