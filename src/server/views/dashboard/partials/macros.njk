@@ -1,24 +1,28 @@
-{% macro emailAddress(address, label) %}
-  <a class="govuk-link" href="mailto:{{address}}">{{ label }}</a>
-{% endmacro %}
+{%- macro emailAddress(value, labe) -%}
+  <a class="govuk-link" href="mailto:{{value}}">{{ label if label else value }}</a>
+{%- endmacro -%}
 
-{% macro externalLink(href, label) %}
-  <a class="govuk-link" href="{{href}}" target="_blank" rel="noopener noreferrer">{{label}}</a>
-{% endmacro %}
+{%- macro link(value, label) -%}
+  <a class="govuk-link" href="{{value}}" target="_blank" rel="noopener noreferrer">{{ label if label else value }}</a>
+{%- endmacro -%}
 
-{% macro phoneNumber(number, label) %}
-  <a class="govuk-link" href="tel:{{number}}">{{ label }}</a>
-{% endmacro %}
+{%- macro phoneNumber(value, label) -%}
+  <a class="govuk-link" href="tel:{{value}}">{{ label if label else value }}</a>
+{%- endmacro -%}
 
-{% macro multiLineText(content) %}
+{%- macro multiLineText(content) -%}
   <div class="dashboard__multi-line-text">{{ content }}</div>
-{% endmacro %}
+{%- endmacro -%}
 
-{% macro value(rows) %}
-  {% for row in rows %}
-    {% set valueMacro = row.value.type %}
+{%- macro boolean(value) -%}
+    {{ "Yes" if value else "No" }}
+{%- endmacro -%}
 
+{%- macro array(value) -%}
+    {{ value | join(", ") }}
+{%- endmacro -%}
 
-  {% endfor %}
+{%- macro string(value) -%}
+  {{ value }}
+{%- endmacro -%}
 
-{% endmacro %}

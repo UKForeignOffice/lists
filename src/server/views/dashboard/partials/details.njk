@@ -32,22 +32,21 @@
   {% endif %}
 </div>
 
-
-
-{% for detail, item in vm.details %}
+{% import "./macros.njk" as rowMacros %}
+{% for detail, item in details %}
   {% if item.title %}
-  <h3 class="govuk-heading-m govuk-!-margin-bottom-4">{{ item.title }}</h3>
+    <h3 class="govuk-heading-m govuk-!-margin-bottom-4">{{ item.title }}</h3>
   {% endif %}
-
+  {% set rows = item.rows | renderRowValues(rowMacros, item.rows) %}
   {{ govukSummaryList({
-    rows: item.rows
+    rows: rows
   }) }}
 {% endfor %}
 
 
-  {% if requestedChanges %}
-    <h3 class="govuk-heading-m govuk-!-margin-bottom-4">Changes requested to provider</h3>
-    <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
-      <p class=govuk-body">{{ requestedChanges }}</p>
-    </div>
-  {% endif %}
+{% if requestedChanges %}
+  <h3 class="govuk-heading-m govuk-!-margin-bottom-4">Changes requested to provider</h3>
+  <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
+    <p class=govuk-body">{{ requestedChanges }}</p>
+  </div>
+{% endif %}
