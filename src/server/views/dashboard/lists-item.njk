@@ -1,6 +1,4 @@
 {% extends "./dashboard.njk" %}
-{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
-{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 
 {% block aside %}
@@ -13,7 +11,7 @@
   {% endif %}
 
   <h1 class="govuk-heading-l">
-    Lawyer details
+    {{ title }} details
   </h1>
 
   {% if not listItem %}
