@@ -2,13 +2,13 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 
-type DetailsViewModel = Partial<ListItemGetObject> & {
+interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
   adminUseOnly: Types.govukSummaryList;
 
   [key: string]: Types.govukSummaryList;
-};
+}
 
 /**
  * TODO: implement i18n
@@ -36,19 +36,21 @@ const fieldTitles: { [prop: string]: string } = {
 
 type KeyOfJsonData = keyof ListItemJsonData;
 
+const fieldCategory: Record<Types.NonPrimitiveMacros, KeyOfJsonData[]> = {
+  multiLineText: ["regulators", "address"],
+  emailAddress: ["publicEmailAddress", "emailAddress"],
+  link: ["websiteAddress"],
+  phoneNumber: ["phoneNumber", "emergencyPhoneNumber"],
+};
+
 function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   /**
    * Used to get the right macro, in case the row needs to be displayed slightly differently
    */
-  const fieldCategory: Record<Types.NonPrimitiveMacros, KeyOfJsonData[]> = {
-    multiLineText: ["regulators", "address"],
-    emailAddress: ["publicEmailAddress", "emailAddress"],
-    link: ["websiteAddress"],
-    phoneNumber: ["phoneNumber", "emergencyPhoneNumber"],
-  };
 
   if (fieldCategory.multiLineText.includes(field)) {
-    return "emailAddress";
+    console.log("value", value, field);
+    return "multiLineText";
   }
 
   if (fieldCategory.emailAddress.includes(field)) {
@@ -74,11 +76,25 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   return "string";
 }
 
+function parseValue<T extends KeyOfJsonData>(
+  field: T,
+  jsonData: ListItemJsonData
+): ListItemJsonData[T] {
+  if (field === "address") {
+    return `
+      ${jsonData["address.firstLine"]}
+      ${jsonData["address.secondLine"]}
+      ${jsonData.postCode}
+    `;
+  }
+  return jsonData?.[field];
+}
+
 function rowFromField(
   field: KeyOfJsonData,
   listItem: ListItemJsonData
 ): Types.govukRow {
-  const value = listItem?.[field];
+  const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
@@ -94,7 +110,7 @@ function rowFromField(
 }
 
 function removeEmpty(row: Types.govukRow): string | boolean {
-  return row.value.text ?? false;
+  return row.value.text ?? row.value.html ?? false;
 }
 
 function jsonDataAsRows(
@@ -146,6 +162,8 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
     "speakEnglish",
     "emergencyPhoneNumber",
   ];
+  console.log("adminR", baseFields, listItem.jsonData);
+  console.log(jsonDataAsRows(baseFields, listItem.jsonData));
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
@@ -156,13 +174,13 @@ export function getDetailsViewModel(
     organisation: {
       rows: getOrganisationRows(listItem),
     },
-    adminUseOnly: {
-      title: "Admin use only",
-      rows: getAdminRows(listItem),
-    },
     contact: {
       title: "Contact details",
       rows: getContactRows(listItem),
+    },
+    adminUseOnly: {
+      title: "Admin use only",
+      rows: getAdminRows(listItem),
     },
   };
 }

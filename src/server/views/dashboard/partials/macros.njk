@@ -10,8 +10,8 @@
   <a class="govuk-link" href="tel:{{value}}">{{ label if label else value }}</a>
 {%- endmacro -%}
 
-{%- macro multiLineText(content) -%}
-  <div class="dashboard__multi-line-text">{{ content }}</div>
+{%- macro multiLineText(value) -%}
+  <div class="dashboard__multi-line-text">{{ value }}</div>
 {%- endmacro -%}
 
 {%- macro boolean(value) -%}

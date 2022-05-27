@@ -139,7 +139,6 @@ export async function listItemGetController(
     requestedChanges,
     error,
     details: getDetailsViewModel(listItem),
-
     csrfToken: getCSRFToken(req),
   });
 }
