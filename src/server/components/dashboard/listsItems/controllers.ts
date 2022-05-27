@@ -19,6 +19,7 @@ import {
   ListItem,
   BaseListItemGetObject,
   User,
+  ServiceType,
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -151,6 +152,7 @@ export async function listItemGetController(
     actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
+    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
