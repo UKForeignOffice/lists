@@ -4,6 +4,9 @@ import { ServiceType } from "server/models/types";
 import { lawyerDeserialiser } from "server/models/listItem/providers/deserialisers/Lawyer.deserialiser";
 import { covidTestProviderDeserialiser } from "server/models/listItem/providers/deserialisers/covidTestProvider.deserialiser";
 import { trimAnswer } from "./helpers";
+import {
+  funeralDirectorDeserialiser
+} from "server/models/listItem/providers/deserialisers/FuneralDirector.deserialiser";
 
 export function baseDeserialiser(
   webhookData: FormRunner.WebhookData
@@ -38,4 +41,5 @@ export const DESERIALISER: Record<
 > = {
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.covidTestProviders]: covidTestProviderDeserialiser,
+  [ServiceType.funeralDirectors]: funeralDirectorDeserialiser,
 };

@@ -6,6 +6,8 @@ const serviceName = (name: string): string => {
       return "COVID-19 test providers";
     case ServiceType.lawyers:
       return "lawyers";
+    case ServiceType.funeralDirectors:
+      return "funeral directors";
     default:
       throw new Error("Service name not found");
   }

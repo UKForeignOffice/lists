@@ -41,7 +41,7 @@ export function makeAddressGeoLocationString(
       ${webhookData["address.secondLine"] ?? ""},
       ${webhookData.city} -
       ${webhookData.addressCountry ?? webhookData.country} -
-      ${webhookData.postCode}
+      ${webhookData.postCode} ?? ""
     `;
 }
 

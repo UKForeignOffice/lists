@@ -24,6 +24,10 @@ export interface WebhookDeserialisers {
     LawyersFormWebhookData,
     LawyerJsonData
   >;
+  [ServiceType.funeralDirectors]: WebhookDeserialiser<
+    FuneralDirectorFormWebhookData,
+    FuneralDirectorJsonData
+    >;
   [ServiceType.covidTestProviders]: WebhookDeserialiser<
     CovidTestSupplierFormWebhookData,
     CovidTestSupplierJsonData
@@ -39,7 +43,7 @@ export interface BaseDeserialisedWebhookData {
   "address.firstLine": string;
   "address.secondLine"?: string;
   city: string;
-  postCode: string;
+  postCode?: string;
 
   size: string;
   speakEnglish: boolean;
@@ -94,9 +98,23 @@ export interface CovidTestSupplierFormWebhookData
   bookingOptions: string;
 }
 
+export interface FuneralDirectorFormWebhookData
+  extends BaseDeserialisedWebhookData {
+  type: ServiceType.funeralDirectors;
+
+  regions: string;
+  addressCountry: string;
+  representedBritishNationals: boolean;
+  repatriation: boolean;
+  repatriationServicesProvided: string[];
+  religiousCulturalServicesProvided: string[];
+  languagesSpoken: string;
+}
+
 export type DeserialisedWebhookData =
   | LawyersFormWebhookData
-  | CovidTestSupplierFormWebhookData;
+  | CovidTestSupplierFormWebhookData
+  | FuneralDirectorFormWebhookData;
 
 /**
  * Describes the {@link DESERIALISER} const. Since it is a Record type,
@@ -150,6 +168,8 @@ export type CovidTestSupplierJsonData = Omit<
   bookingOptions: string[];
 };
 
+export type FuneralDirectorJsonData = FuneralDirectorFormWebhookData;
+
 export type LawyerJsonData = LawyersFormWebhookData;
 
 /**
@@ -161,7 +181,7 @@ export type LawyerJsonData = LawyersFormWebhookData;
  * It will mean that your code can not be handled in a "generic" way, and you will have to write a deserialiser and serialiser.
  * The deserialised and serialised types should match as closely as possible.
  */
-export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData;
+export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData | FuneralDirectorJsonData;
 
 /**
  * converts {@link DeserialisedWebhookData} to {@link Questions[]}

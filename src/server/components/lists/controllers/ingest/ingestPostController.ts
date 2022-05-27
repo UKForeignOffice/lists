@@ -7,12 +7,13 @@ import { createConfirmationLink } from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import _ from "lodash";
 
 export async function ingestPostController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const serviceType = req.params.serviceType as ServiceType;
+  const serviceType = _.camelCase(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!(serviceType in ServiceType)) {

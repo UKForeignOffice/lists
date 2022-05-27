@@ -62,7 +62,7 @@ model Address {
   firstLine    String   @db.VarChar(255)
   secondLine  String?  @db.VarChar(255)
   city        String?  @db.VarChar(255)
-  postCode    String   @db.VarChar(255)
+  postCode    String?   @db.VarChar(255)
   country     Country  @relation(fields: [countryId], references: [id])
   countryId   Int
 
