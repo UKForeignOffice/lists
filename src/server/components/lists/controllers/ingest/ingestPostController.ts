@@ -55,6 +55,8 @@ export async function ingestPostController(
       country.name,
       confirmationLink
     );
+
+    res.send({});
   } catch (e) {
     logger.error(`listsDataIngestionController Error: ${e.message}`);
 

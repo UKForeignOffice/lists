@@ -20,5 +20,10 @@ const formRunnerQuestionSchema = Joi.object({
 });
 
 export const formRunnerPostRequestSchema = Joi.object({
+  name: Joi.string(),
   questions: Joi.array().items(formRunnerQuestionSchema).required(),
+  metadata: Joi.object({
+    type: Joi.string(),
+    paymentSkipped: Joi.boolean()
+  })
 }).options({ stripUnknown: true });

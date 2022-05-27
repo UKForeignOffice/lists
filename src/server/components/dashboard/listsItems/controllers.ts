@@ -49,6 +49,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { Question } from "server/components/formRunner";
 import { getDetailsViewModel } from "./getViewModel";
 
 function mapUpdatedAuditJsonDataToListItem(
@@ -59,7 +60,19 @@ function mapUpdatedAuditJsonDataToListItem(
     {},
     listItem.jsonData,
     ...Object.keys(listItem.jsonData).map(
-      (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
+      (k) => {
+        let matchingField = "";
+        updatedJsonData?.questions?.filter((question: Question) => {
+          return question?.fields.filter((field) => {
+            if (field.key === k) {
+              matchingField = field.answer;
+              return true;
+            }
+            return false;
+          });
+        });
+        return { [k]: matchingField }
+      }
     )
   );
 }
