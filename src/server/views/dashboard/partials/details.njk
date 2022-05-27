@@ -1,31 +1,15 @@
-{{  vm | dump }}
+{% from "summary-list/macro.njk" import govukSummaryList %}
 
-{% set address%}
-  {{ listItem.address.firstLine }}
-
-  {% if listItem.address.secondLine %}
-    <br />
-    {{ listItem.address.secondLine }}
-  {% endif %}
-
-  {% if listItem.address.postCode %}
-    <br />
-    {{ listItem.address.postCode }}
-  {% endif %}
-
-  {% if listItem.address.city %}
-    <br />
-    {{ listItem.address.city }}
-  {% endif %}
+{% set status %}
+  {{ listItem.status | replace('_', ' ') }}
 {% endset %}
-  {% set status %}
-    {{ listItem.status | replace('_', ' ') }}
-  {% endset %}
+
+
 
 <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
   <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
     Submitted: {{ listItem.createdAt | date }}
-    {% include "../../../dashboard/partials/list-item-status.njk" %}
+    {% include "./list-item-status.njk" %}
   </p>
 
   <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" form="pinForm"/>
@@ -49,8 +33,15 @@
 </div>
 
 
-{% for detail in vm.details %}
- hello <li>{{ detail }}</li>
+
+{% for detail, item in vm.details %}
+  {% if item.title %}
+  <h3 class="govuk-heading-m govuk-!-margin-bottom-4">{{ item.title }}</h3>
+  {% endif %}
+
+  {{ govukSummaryList({
+    rows: item.rows
+  }) }}
 {% endfor %}
 
 
