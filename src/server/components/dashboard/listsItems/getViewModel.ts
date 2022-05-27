@@ -45,7 +45,8 @@ const fieldCategory: Record<Types.NonPrimitiveMacros, KeyOfJsonData[]> = {
 
 function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   /**
-   * Used to get the right macro, in case the row needs to be displayed slightly differently
+   * Used to get the right macro, in case the row needs to be displayed differently,
+   * e.g. as an `<a>` tag.
    */
 
   if (fieldCategory.multiLineText.includes(field)) {
@@ -79,6 +80,10 @@ function parseValue<T extends KeyOfJsonData>(
   field: T,
   jsonData: ListItemJsonData
 ): ListItemJsonData[T] {
+  /**
+   * if a field needs to be parsed differently, add a statement here.
+   * TODO: if there are a lot of cases, refactor into an object!
+   */
   if (field === "address") {
     return [
       jsonData["address.firstLine"] ?? "",
@@ -148,6 +153,7 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
       "representedBritishNationals",
     ],
     [ServiceType.covidTestProviders]: [...baseFields],
+    [ServiceType.funeralDirectors]: [...baseFields],
   };
 
   const fieldsForType = fields[type] ?? baseFields;

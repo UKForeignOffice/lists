@@ -78,6 +78,12 @@ function mapUpdatedAuditJsonDataToListItem(
   );
 }
 
+const serviceTypeDetailsHeading: Record<ServiceType, string> = {
+  covidTestProviders: "Covid test provider",
+  funeralDirectors: "Funeral director",
+  lawyers: "Lawyer",
+};
+
 export async function listItemGetController(
   req: Request,
   res: Response
