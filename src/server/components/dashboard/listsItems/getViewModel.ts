@@ -49,7 +49,6 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
    */
 
   if (fieldCategory.multiLineText.includes(field)) {
-    console.log("value", value, field);
     return "multiLineText";
   }
 
@@ -162,8 +161,6 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
     "speakEnglish",
     "emergencyPhoneNumber",
   ];
-  console.log("adminR", baseFields, listItem.jsonData);
-  console.log(jsonDataAsRows(baseFields, listItem.jsonData));
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
