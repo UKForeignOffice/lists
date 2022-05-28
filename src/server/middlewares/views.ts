@@ -46,7 +46,7 @@ export const configureViews = (server: Express): void => {
       const macro = macroSet[row.type];
 
       const value = row.value;
-      if (value.text) {
+      if (value.text !== undefined) {
         value.text = macro(value.text);
       }
       if (value.html) {

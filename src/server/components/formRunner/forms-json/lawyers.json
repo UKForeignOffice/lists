@@ -229,7 +229,7 @@
       "title": "In what areas of law are you qualified to practise? ",
       "components": [
         {
-          "name": "localServicesProvided",
+          "name": "areasOfLaw",
           "options": {},
           "type": "CheckboxesField",
           "title": "Areas of law practised",

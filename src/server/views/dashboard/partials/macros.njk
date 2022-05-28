@@ -15,7 +15,7 @@
 {%- endmacro -%}
 
 {%- macro boolean(value) -%}
-    {{ "Yes" if value else "No" }}
+    {{ "Yes" if (value === "Yes" or (value !== "No" and value)) else "No" }}
 {%- endmacro -%}
 
 {%- macro array(value) -%}

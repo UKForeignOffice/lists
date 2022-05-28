@@ -86,13 +86,14 @@ function parseValue<T extends KeyOfJsonData>(
    */
   if (field === "address") {
     return [
-      jsonData["address.firstLine"] ?? "",
-      jsonData["address.secondLine"] ?? "",
-      jsonData.postCode ?? "",
-    ].join(`\n`);
+      jsonData["address.firstLine"]?.trim() ?? "",
+      jsonData["address.secondLine"]?.trim() ?? "",
+      jsonData.postCode?.trim() ?? "",
+    ].filter((line) => line)
+      .join(`\n`);
   }
   return jsonData?.[field];
-}
+  }
 
 function rowFromField(
   field: KeyOfJsonData,
@@ -114,6 +115,7 @@ function rowFromField(
 }
 
 function removeEmpty(row: Types.govukRow): string | boolean {
+  if (row.type === "boolean") return true;
   return row.value.text ?? row.value.html ?? false;
 }
 
