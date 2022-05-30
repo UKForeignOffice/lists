@@ -26,7 +26,7 @@ describe("SiteMap", () => {
     sitemapController(mockReq, mockRes);
 
     expect(mockRes.render.mock.calls[0][0]).toBe("sitemap");
-    expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(2);
+    expect(mockRes.render.mock.calls[0][1].sections).toBeArrayOfSize(1);
   });
 
   test("section titles are correct", () => {
