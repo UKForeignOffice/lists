@@ -32,6 +32,10 @@ const fieldTitles: { [prop: string]: string } = {
   size: "Company size",
   speakEnglish: "English language service",
   websiteAddress: "Website",
+  repatriation: "Repatriation",
+  localServicesProvided: "Local services",
+  repatriationServicesProvided: "Repatriation services",
+  religiousCulturalServicesProvided: "Religious and cultural services",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
@@ -155,7 +159,14 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
       "representedBritishNationals",
     ],
     [ServiceType.covidTestProviders]: [...baseFields],
-    [ServiceType.funeralDirectors]: [...baseFields],
+    [ServiceType.funeralDirectors]: [
+      ...baseFields,
+      "repatriation",
+      "localServicesProvided",
+      "representedBritishNationals",
+      "repatriationServicesProvided",
+      "religiousCulturalServicesProvided",
+    ],
   };
 
   const fieldsForType = fields[type] ?? baseFields;

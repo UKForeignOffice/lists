@@ -5,32 +5,32 @@ import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { recordEvent } from "server/models/listItem/listItemEvent";
-import {
-  baseDeserialiser,
-  DESERIALISER,
-} from "server/models/listItem/providers/deserialisers";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import _ from "lodash";
+import { ServiceType } from "server/models/types";
+import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 
 export async function ingestPutController(
   req: Request,
   res: Response
 ): Promise<void> {
   const id = req.params.id;
-  const { value, error } = formRunnerPostRequestSchema.validate(
-    req.body ?? {},
-    {
-      abortEarly: true,
-    }
-  );
+  const serviceType = _.camelCase(req.params.serviceType) as ServiceType;
+  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  if (error) {
-    res.status(400).json(error).end();
+  if (!(serviceType in ServiceType)) {
+    res.status(500).send({
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+    });
     return;
   }
-  const baseDeserialised = baseDeserialiser(value);
-  const { type } = baseDeserialised;
-  const deserialiser = DESERIALISER[type];
-  const data = deserialiser?.(value) ?? value;
+
+  if (error !== undefined) {
+    res.status(422).send({ error: error.message });
+    return;
+  }
+  const data: DeserialisedWebhookData = deserialise(value);
 
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id: Number(id) },
@@ -66,7 +66,7 @@ export async function ingestPutController(
         {
           eventName: "edit",
           itemId: Number(id),
-          updatedJsonData: data as DeserialisedWebhookData,
+          updatedJsonData: data,
         },
         Number(id),
         ListItemEvent.EDITED

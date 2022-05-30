@@ -395,8 +395,13 @@ export async function update(
   const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
+  const areasOfLaw = data?.areasOfLaw;
   const updatedJsonData = merge(listItem.jsonData, data);
 
+  // @todo this will need restructuring to accommodate array field types for other providers
+  if (areasOfLaw) {
+    updatedJsonData.areasOfLaw = areasOfLaw;
+  }
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id },
     data: {
