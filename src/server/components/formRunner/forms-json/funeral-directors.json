@@ -43,7 +43,6 @@
           "options": {},
           "type": "YesNoField",
           "title": "English language service",
-          "nameHasError": false,
           "schema": {},
           "hint": ""
         }
@@ -87,12 +86,11 @@
         {
           "name": "contactName",
           "options": {
-            "required": false,
+            "required": true,
             "hideTitle": true
           },
           "type": "TextField",
           "title": "Contact's full name",
-          "nameHasError": false,
           "schema": {}
         }
       ],
@@ -157,12 +155,9 @@
         {
           "name": "addressCountry",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country",
           "list": "country",
-          "values": {
-            "type": "listRef"
-          },
           "schema": {}
         }
       ],
@@ -227,10 +222,7 @@
           "title": "Can we publish this email address on GOV.UK?",
           "hint": "We need an email address to publish on GOV.UK so that British nationals can contact you.",
           "list": "zBHphP",
-          "schema": {},
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -256,8 +248,7 @@
           "title": "Local services provided",
           "list": "iqn9pP",
           "schema": {},
-          "hint": "Select all services that you provide",
-          "nameHasError": false
+          "hint": "Select all services that you provide"
         },
         {
           "name": "RuScuW",
@@ -282,11 +273,7 @@
           "options": {},
           "type": "YesNoField",
           "title": "Have you provided services to British nationals before?",
-          "schema": {},
-          "nameHasError": false,
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -388,14 +375,11 @@
         {
           "name": "country",
           "options": {},
-          "type": "SelectField",
+          "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": "Select country"
         },
         {
           "name": "ZoFnKT",
@@ -407,11 +391,7 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
-          "condition": "qyYhch"
+          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english"
         }
       ]
     },
@@ -479,9 +459,6 @@
           "type": "YesNoField",
           "hint": "Repatriation is the process of returning the deceased to their own country.",
           "title": "Do you provide repatriation services?",
-          "values": {
-            "type": "listRef"
-          },
           "schema": {}
         }
       ],
@@ -491,8 +468,7 @@
           "condition": "GnVOrG"
         },
         {
-          "path": "/which-local-services-do-you-provide",
-          "condition": "RtQEfs"
+          "path": "/which-local-services-do-you-provide"
         }
       ]
     },
@@ -1710,7 +1686,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://localhost:3000/ingest/lawyers"
+        "url": "http://localhost:3000/ingest/funeralDirectors"
       }
     }
   ],
@@ -1959,322 +1935,6 @@
       }
     },
     {
-      "name": "tZJmuK",
-      "displayName": "outOfHoursAddressIsDifferent",
-      "value": {
-        "name": "outOfHoursAddressIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "address",
-              "display": "address"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "SONTUr",
-      "displayName": "outOfHoursEmailIsDifferent",
-      "value": {
-        "name": "outOfHoursEmailIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "email",
-              "display": "email"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "JUJTOB",
-      "displayName": "outOfHoursPhoneNumberAndAddressAreDifferent",
-      "value": {
-        "name": "outOfHoursPhoneNumberAndAddressAreDifferent",
-        "conditions": [
-          {
-            "conditionName": "uwhxHa",
-            "conditionDisplayName": "outOfHoursPhoneNumberIsDifferent"
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "tZJmuK",
-            "conditionDisplayName": "outOfHoursAddressIsDifferent"
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "email",
-              "display": "email"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "FlcbhJ",
-      "displayName": "outOfHoursPhoneNumberAndAddressAndEmailAreDifferent",
-      "value": {
-        "name": "outOfHoursPhoneNumberAndAddressAndEmailAreDifferent",
-        "conditions": [
-          {
-            "conditionName": "uwhxHa",
-            "conditionDisplayName": "outOfHoursPhoneNumberIsDifferent"
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "tZJmuK",
-            "conditionDisplayName": "outOfHoursAddressIsDifferent"
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "SONTUr",
-            "conditionDisplayName": "outOfHoursEmailIsDifferent"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Ddafcu",
-      "displayName": "outOfHoursAddressIsSameAndEmailIsDifferent",
-      "value": {
-        "name": "outOfHoursAddressIsSameAndEmailIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "address",
-              "display": "address"
-            }
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "SONTUr",
-            "conditionDisplayName": "outOfHoursEmailIsDifferent"
-          }
-        ]
-      }
-    },
-    {
-      "name": "GqOvZW",
-      "displayName": "outOfHoursEmailIsSame",
-      "value": {
-        "name": "outOfHoursEmailIsSame",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "email",
-              "display": "email"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "bybXmC",
-      "displayName": "outOfHoursAddressAndEmailAreSame",
-      "value": {
-        "name": "outOfHoursAddressAndEmailAreSame",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "address",
-              "display": "address"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "email",
-              "display": "email"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "NzzQrT",
-      "displayName": "outOfHoursPhoneNumberIsSameAndAddressIsDifferent",
-      "value": {
-        "name": "outOfHoursPhoneNumberIsSameAndAddressIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "phoneNumber",
-              "display": "phoneNumber"
-            }
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "tZJmuK",
-            "conditionDisplayName": "outOfHoursAddressIsDifferent"
-          }
-        ]
-      }
-    },
-    {
-      "name": "XAARcX",
-      "displayName": "outOfHoursPhoneAndAddressAreSameAndEmailIsDifferent",
-      "value": {
-        "name": "outOfHoursPhoneAndAddressAreSameAndEmailIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "phoneNumber",
-              "display": "phoneNumber"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "address",
-              "display": "address"
-            }
-          },
-          {
-            "coordinator": "and",
-            "conditionName": "SONTUr",
-            "conditionDisplayName": "outOfHoursEmailIsDifferent"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DWLEtI",
-      "displayName": "outOfHoursContactDetailsAreAllSame",
-      "value": {
-        "name": "outOfHoursContactDetailsAreAllSame",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "phoneNumber",
-              "display": "phoneNumber"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "address",
-              "display": "address"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "does not contain",
-            "value": {
-              "type": "Value",
-              "value": "email",
-              "display": "email"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "none",
-              "display": "none"
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "HqfgkP",
       "displayName": "Regbodynone",
       "value": {
@@ -2291,134 +1951,6 @@
               "type": "Value",
               "value": "0",
               "display": "0"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "tWvFfJ",
-      "displayName": "Country list pilots",
-      "value": {
-        "name": "Country list pilots",
-        "conditions": [
-          {
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "France",
-              "display": "France"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Germany",
-              "display": "Germany"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Italy",
-              "display": "Italy"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "XIKxtK",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Portugal",
-              "display": "Portugal"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "qyYhch",
-      "displayName": "Country pilots 2",
-      "value": {
-        "name": "Country pilots 2",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "France",
-              "display": "France"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Germany",
-              "display": "Germany"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Italy",
-              "display": "Italy"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Portugal",
-              "display": "Portugal"
             }
           }
         ]
@@ -2485,28 +2017,6 @@
               "type": "Value",
               "value": "Yes",
               "display": "Yes"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "LegalaidNo",
-      "name": "rCuWxL",
-      "value": {
-        "name": "LegalaidNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "SelectField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Portugal",
-              "display": "Portugal"
             }
           }
         ]
