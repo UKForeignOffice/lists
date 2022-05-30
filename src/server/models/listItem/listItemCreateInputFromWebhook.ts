@@ -10,6 +10,7 @@ import {
 import { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import { createList } from "server/models/list";
 
 export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
   const baseDeserialised = baseDeserialiser(webhook);
@@ -37,14 +38,32 @@ export async function listItemCreateInputFromWebhook(
     throw new Error(`${type} record already exists`);
   }
 
-  const listId = await getListIdForCountryAndType(country as CountryName, type);
+  let listId = await getListIdForCountryAndType(country as CountryName, type);
 
   if (!listId) {
     logger.error(
       `list for ${country} and ${type} could not be found`,
       "createListItem"
     );
+    /**
+     *   country: CountryName;
+     serviceType: ServiceType;
+     validators: string[];
+     publishers: string[];
+     administrators: string[];
+     createdBy: string;
+     */
+    await createList({
+      country: country as CountryName,
+      serviceType: type,
+      validators: [],
+      publishers: [],
+      administrators: [],
+      createdBy: "jen@cautionyourblast.com",
+    });
   }
+
+  listId = await getListIdForCountryAndType(country as CountryName, type);
 
   let address = {};
 
