@@ -19,7 +19,7 @@ export async function ingestPutController(
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!(serviceType in ServiceType)) {
-    res.status(500).send({
+    res.status(500).json({
       error:
         "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
@@ -27,10 +27,23 @@ export async function ingestPutController(
   }
 
   if (error !== undefined) {
-    res.status(422).send({ error: error.message });
+    res.status(422).json({ error: error.message });
     return;
   }
-  const data: DeserialisedWebhookData = deserialise(value);
+  if (value === undefined) {
+    res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
+    return;
+  }
+
+  let data: DeserialisedWebhookData;
+
+  try {
+    data = deserialise(value);
+
+  } catch (e) {
+    res.status(422).json({ error: "questions could not be deserialised" });
+    return;
+  }
 
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id: Number(id) },

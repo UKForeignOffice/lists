@@ -20,7 +20,7 @@ const fieldTitles: { [prop: string]: string } = {
   address: "Address",
   areasOfLaw: "Legal expertise",
   emailAddress: "Email - private",
-  emergencyPhoneNumber: "Emergency number",
+  contactPhoneNumber: "Emergency number",
   legalAid: "Legal aid",
   organisationName: "Company",
   phoneNumber: "Telephone",
@@ -44,7 +44,7 @@ const fieldCategory: Record<Types.NonPrimitiveMacros, KeyOfJsonData[]> = {
   multiLineText: ["regulators", "address"],
   emailAddress: ["publicEmailAddress", "emailAddress"],
   link: ["websiteAddress"],
-  phoneNumber: ["phoneNumber", "emergencyPhoneNumber"],
+  phoneNumber: ["phoneNumber", "contactPhoneNumber"],
 };
 
 function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
@@ -93,6 +93,7 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.firstLine"]?.trim() ?? "",
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
+      jsonData.city?.trim() ?? "",
     ].filter((line) => line)
       .join(`\n`);
   }
@@ -137,11 +138,11 @@ function jsonDataAsRows(
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   const contactFields: KeyOfJsonData[] = [
-    "phoneNumber",
-    "email",
-    "emergencyPhoneNumber",
-    "websiteAddress",
     "address",
+    "email",
+    "phoneNumber",
+    "contactPhoneNumber",
+    "websiteAddress",
   ];
 
   return jsonDataAsRows(contactFields, listItem.jsonData);
@@ -179,7 +180,6 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
     "emailAddress",
     "regulators",
     "speakEnglish",
-    "emergencyPhoneNumber",
   ];
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
