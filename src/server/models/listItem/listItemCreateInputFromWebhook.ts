@@ -10,7 +10,6 @@ import {
 import { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { createList } from "server/models/list";
 
 export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
   const baseDeserialised = baseDeserialiser(webhook);
