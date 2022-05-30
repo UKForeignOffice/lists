@@ -66,7 +66,7 @@
           "name": "WlXNxl",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\nYou can only be added to the 'Find a funeral director abroad' service if you can provide support to English-speaking British nationals.\n\n</div>",
+          "content": "<div class=\"govuk-hint\">\nYou can only be added to the 'Find an English-speaking funeral director abroad' service if you can provide services to British nationals in English\n\n</div>",
           "schema": {}
         }
       ],
@@ -90,7 +90,7 @@
             "hideTitle": true
           },
           "type": "TextField",
-          "title": "Contact's full name",
+          "title": "Contact's name",
           "schema": {}
         }
       ],
@@ -329,8 +329,8 @@
             "required": false
           },
           "type": "TextField",
-          "hint": "<p class=\"govuk-body\">Include any independent national or international associations, unions or regulatory bodies. The details you give may be checked by FCDO but will not be published on GOV.UK.</p>",
-          "title": "Include an independent national or international associations, unions or regulatory bodies.",
+          "hint": "Include any independent national or international associations, unions or regulatory bodies. The details you give may be checked by FCDO but will not be published on GOV.UK.",
+          "title": "Associations, unions or regulatory bodies",
           "schema": {}
         }
       ],
@@ -348,7 +348,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to provide funeral services, or are currently registered with the local authorities to provide funeral services (if applicable in your country)\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on an annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a funeral director abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n</ul>\n\n\n",
+          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li> currently qualified to provide funeral services, or are currently registered with the local authorities to\n    provide funeral services (if applicable in your country)\n  </li>\n  <li> reliable and willing to help on a regular basis</li>\n  <li> able to respond within a reasonable timeframe to client requests</li>\n  <li> willing to update or re-confirm your details on an annual basis on request</li>\n  <li> aware that inclusion on the 'Find an English-speaking funeral director abroad' service is not an endorsement by the FCDO and you\n    are not affiliated to the FCDO in any way\n  </li>\n</ul>\n",
           "schema": {}
         },
         {
@@ -391,7 +391,11 @@
       ],
       "next": [
         {
-          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english"
+          "path": "/you-cannot-be-added-to-the-list-at-this-time"
+        },
+        {
+          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
+          "condition": "isFDCountryPilot"
         }
       ]
     },
@@ -1384,8 +1388,8 @@
           "value": "Suriname"
         },
         {
-          "text": "Swaziland",
-          "value": "Swaziland"
+          "text": "Eswatini",
+          "value": "Eswatini"
         },
         {
           "text": "Sweden",
@@ -1957,6 +1961,70 @@
       }
     },
     {
+      "name": "isFDCountryPilot",
+      "displayName": "Country pilots FD",
+      "value": {
+        "name": "isFDCountryPilot",
+        "conditions": [
+          {
+            "field": {
+              "name": "country",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "India",
+              "display": "India"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Croatia",
+              "display": "Croatia"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Nigeria",
+              "display": "Nigeria"
+            }
+          },
+          {
+            "coordinator": "or",
+            "field": {
+              "name": "country",
+              "type": "AutocompleteField",
+              "display": "Country list"
+            },
+            "operator": "is",
+            "value": {
+              "type": "Value",
+              "value": "Colombia",
+              "display": "Colombia"
+            }
+          }
+        ]
+      }
+    },
+    {
       "displayName": "hasDifferentEmail",
       "name": "wXwbTl",
       "value": {
@@ -2067,5 +2135,23 @@
       }
     }
   ],
+  "specialPages": {
+    "confirmationPage": {
+      "customText": {
+        "title": "Check your email",
+        "paymentSkipped": false,
+        "nextSteps": "We have sent you an email containing a link. You must use the link so that we can verify your email address."
+      },
+      "components": [
+        {
+          "name": "WLskhZ",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    We cannot process your application unless you use the link.\n  </strong>\n</div>\n",
+          "schema": {}
+        }
+      ]
+    }
+  },
   "skipSummary": false
 }

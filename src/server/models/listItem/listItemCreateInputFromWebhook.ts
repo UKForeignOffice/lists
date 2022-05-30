@@ -38,32 +38,14 @@ export async function listItemCreateInputFromWebhook(
     throw new Error(`${type} record already exists`);
   }
 
-  let listId = await getListIdForCountryAndType(country as CountryName, type);
+  const listId = await getListIdForCountryAndType(country as CountryName, type);
 
   if (!listId) {
     logger.error(
       `list for ${country} and ${type} could not be found`,
       "createListItem"
     );
-    /**
-     *   country: CountryName;
-     serviceType: ServiceType;
-     validators: string[];
-     publishers: string[];
-     administrators: string[];
-     createdBy: string;
-     */
-    await createList({
-      country: country as CountryName,
-      serviceType: type,
-      validators: [],
-      publishers: [],
-      administrators: [],
-      createdBy: "jen@cautionyourblast.com",
-    });
   }
-
-  listId = await getListIdForCountryAndType(country as CountryName, type);
 
   let address = {};
 
