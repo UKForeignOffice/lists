@@ -78,6 +78,10 @@ export const countriesList = [
   },
   { text: "Cook Islands", value: "Cook Islands" },
   { text: "Costa Rica", value: "Costa Rica" },
+  {
+    text: "Côte d'Ivoire",
+    value: "Côte d'Ivoire",
+  },
   { text: "Croatia", value: "Croatia" },
   { text: "Cuba", value: "Cuba" },
   { text: "Curaçao", value: "Curaçao" },
