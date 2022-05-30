@@ -60,7 +60,7 @@ export async function createAddressObject(
   const {
     "address.firstLine": firstLine,
     "address.secondLine": secondLine,
-    postCode,
+    postCode = "",
     city,
     addressCountry,
     country,
