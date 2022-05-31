@@ -508,8 +508,8 @@
             "required": false
           },
           "type": "TextField",
-          "title": "text",
-          "hint": "Provide details of any religious or cultural services you provide, for example Islamic, Christian or Hindu funerals\n",
+          "title": "Religious and ceremonial services",
+          "hint": "Provide details of any religious or cultural services you provide, for example Islamic, Christian or Hindu funerals",
           "schema": {}
         }
       ],
