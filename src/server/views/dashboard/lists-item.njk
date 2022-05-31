@@ -1,6 +1,4 @@
 {% extends "./dashboard.njk" %}
-{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
-{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 
 {% block aside %}
@@ -13,7 +11,7 @@
   {% endif %}
 
   <h1 class="govuk-heading-l">
-    Lawyer details
+    {{ title }} details
   </h1>
 
   {% if not listItem %}
@@ -27,18 +25,12 @@
   <form id="mainForm" class="form" action="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
 
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-      <ul class="govuk-list dashboard__content-list">
-          <li id="item-{{ listItem.id }}">
-            {% if list.type === 'covidTestProviders' %}
-              {{ covidTestProvidersMacros.covidTestProvidersListItem(listItem, true) }}
-              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.organisationName, isPinned, actionButtons) }}
-            {% endif %}
-            {% if list.type === 'lawyers' %}
-              {{ lawyersMacros.lawyersListManagementItem(listItem, isPinned, requestedChanges, csrfToken) }}
-              {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
-            {% endif %}
-          </li>
-      </ul>
+      <div class="govuk-list dashboard__content-list">
+          <div id="item-{{ listItem.id }}">
+            {% include "./partials/details.njk" %}
+            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
+          </div>
+      </div>
     </form>
 
     <script nonce="{{cspNonce}}">

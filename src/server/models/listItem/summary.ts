@@ -4,7 +4,7 @@ import {
   TAGS,
   Tags,
 } from "server/models/listItem/types";
-import { LawyerListItemJsonData, List } from "server/models/types";
+import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import {
   calculatePagination,
@@ -15,6 +15,7 @@ import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
 import { ListItem, Prisma, Status } from "@prisma/client";
 import { format } from "date-fns";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   const { jsonData, createdAt, updatedAt, id, status } = item;
@@ -24,7 +25,7 @@ function listItemsWithIndexDetails(item: ListItem): IndexListItem {
     publishers,
     validators,
     administrators,
-  } = jsonData as LawyerListItemJsonData;
+  } = jsonData as ListItemJsonData;
   const isPublished = item.isPublished && TAGS.published;
   const isNew =
     (item.status === Status.NEW ||

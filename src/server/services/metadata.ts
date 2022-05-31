@@ -14,7 +14,6 @@ export const legalPracticeAreasList = [
   "Tax",
 ];
 
-
 export const countriesList = [
   { text: "Afghanistan", value: "Afghanistan" },
   { text: "Albania", value: "Albania" },
@@ -79,6 +78,10 @@ export const countriesList = [
   },
   { text: "Cook Islands", value: "Cook Islands" },
   { text: "Costa Rica", value: "Costa Rica" },
+  {
+    text: "Côte d'Ivoire",
+    value: "Côte d'Ivoire",
+  },
   { text: "Croatia", value: "Croatia" },
   { text: "Cuba", value: "Cuba" },
   { text: "Curaçao", value: "Curaçao" },
@@ -236,7 +239,7 @@ export const countriesList = [
   },
   { text: "Sudan", value: "Sudan" },
   { text: "Suriname", value: "Suriname" },
-  { text: "Swaziland", value: "Swaziland" },
+  { text: "Eswatini", value: "Eswatini" },
   { text: "Sweden", value: "Sweden" },
   { text: "Switzerland", value: "Switzerland" },
   { text: "Syria", value: "Syria" },
@@ -337,7 +340,8 @@ export const fcdoLawyersPagesByCountry = {
   Croatia: "https://www.gov.uk/government/publications/croatia-list-of-lawyers",
   Cuba: "https://www.gov.uk/government/publications/cuba-list-of-lawyers--2",
   Cyprus: "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
-  "northern Cyprus": "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
+  "northern Cyprus":
+    "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
   "Czech Republic":
     "https://www.gov.uk/government/publications/czech-republic-list-of-lawyers",
   "Democratic Republic of Congo":

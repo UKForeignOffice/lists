@@ -1,11 +1,16 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
-import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import {
+  ListItemJsonData,
+  LawyerJsonData,
+  CovidTestSupplierJsonData, FuneralDirectorJsonData,
+} from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
 
 export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
   "lawyers" = "lawyers",
+  "funeralDirectors" = "funeralDirectors",
 }
 
 export type JsonObject = PrismaClient.Prisma.JsonObject;
@@ -37,11 +42,11 @@ export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
 // ListItem
 export type ListItem = PrismaClient.ListItem;
 
-export interface ListItemGetObject extends PrismaClient.ListItem {
+export interface BaseListItemGetObject extends PrismaClient.ListItem {
   address: {
     firstLine: string;
     secondLine?: string;
-    postCode: string;
+    postCode?: string;
     city: string;
     country: {
       id: number;
@@ -59,77 +64,46 @@ export enum UserRoles {
   ListsCreator = "ListsCreator",
 }
 
-// Lawyer ListItem
-export interface LawyerListItemJsonData extends JsonObject {
-  country: string;
-  size: string;
-  speakEnglish: boolean;
-  regulators: string;
-  contactName: string;
-  organisationName: string;
-  emailAddress: string;
-  publishEmail: string;
-  publicEmailAddress?: string;
-  phoneNumber: string;
-  emergencyPhoneNumber?: string;
-  websiteAddress?: string;
-  regions: string;
-  areasOfLaw: string[];
-  legalAid?: boolean;
-  proBono?: boolean;
-  representedBritishNationals: boolean;
-  declaration: string[];
-  metadata?: {
-    emailVerified?: boolean;
-  };
-}
+type AsJsonObject<T> = T & JsonObject;
 
 export interface LawyerListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.lawyers;
-  jsonData: LawyerListItemJsonData;
+  jsonData: AsJsonObject<LawyerJsonData>;
 }
 
-export interface LawyerListItemGetObject extends ListItemGetObject {
+export interface LawyerListItemGetObject extends BaseListItemGetObject {
   type: ServiceType.lawyers;
-  jsonData: LawyerListItemJsonData;
+  jsonData: AsJsonObject<LawyerJsonData>;
 }
 
-// Covid 19 Test Supplier ListItem
-export interface CovidTestSupplierListItemJsonData extends JsonObject {
-  organisationName: string;
-  contactName: string;
-  contactPhoneNumber: string;
-  contactEmailAddress: string;
-  telephone: string;
-  additionalTelephone?: string;
-  email: string;
-  additionalEmail?: string;
-  website: string;
-  regulatoryAuthority: string;
-  resultsReadyFormat: string[];
-  resultsFormat: string[];
-  bookingOptions: string[];
-  providedTests: Array<{
-    type: string;
-    turnaroundTime: number;
-  }>;
-  fastestTurnaround: number;
-  metadata?: {
-    emailVerified?: boolean;
-  };
+export interface FuneralDirectorListItemCreateInput
+  extends PrismaClient.Prisma.ListItemCreateInput {
+  type: ServiceType.funeralDirectors;
+  jsonData: AsJsonObject<FuneralDirectorJsonData>;
+}
+
+export interface FuneralDirectorListItemGetObject extends BaseListItemGetObject {
+  type: ServiceType.funeralDirectors;
+  jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface CovidTestSupplierListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
   type: ServiceType.covidTestProviders;
-  jsonData: CovidTestSupplierListItemJsonData;
+  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
-export interface CovidTestSupplierListItemGetObject extends ListItemGetObject {
+export interface CovidTestSupplierListItemGetObject
+  extends BaseListItemGetObject {
   type: ServiceType.covidTestProviders;
-  jsonData: CovidTestSupplierListItemJsonData;
+  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
+
+export type ListItemGetObject =
+  | CovidTestSupplierListItemGetObject
+  | LawyerListItemGetObject
+  | FuneralDirectorListItemGetObject;
 
 export type LegalAreas =
   | "bankruptcy"
@@ -176,13 +150,13 @@ export type AuditListItemEventName =
   | "publish"
   | "unpublish";
 
-export type WebhookDataAsJsonObject<T> = T & JsonObject
+export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
 export interface EventJsonData extends JsonObject {
   eventName: AuditListItemEventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
-  updatedJsonData?: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  updatedJsonData?: ListItemJsonData;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 

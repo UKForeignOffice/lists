@@ -69,6 +69,7 @@ export const questions: Questions = {
       const titles = {
         [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you want to find a COVID-19 test provider?`,
         [ServiceType.lawyers]: `Where in ${formattedCountry} do you want to find a lawyer?`,
+        [ServiceType.funeralDirectors]: `Where in ${formattedCountry} do you want to find a funeral director?`,
       };
 
       return serviceType !== undefined ? titles[serviceType] : "";

@@ -35,12 +35,8 @@
           "options": {},
           "type": "YesNoField",
           "title": "Can your organisation communicate with customers in English?",
-          "nameHasError": false,
           "schema": {},
-          "hint": "If a British national needs to communicate in English you will need to have someone in your organisation who can provide support. ",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": "If a British national needs to communicate in English you will need to have someone in your organisation who can provide support. "
         }
       ],
       "next": [
@@ -64,11 +60,7 @@
           "type": "YesNoField",
           "title": "Is your organisation authorised to provide COVID-19 tests in your country?",
           "hint": "",
-          "nameHasError": false,
-          "schema": {},
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -98,34 +90,30 @@
           "options": {},
           "type": "TextField",
           "title": "Contact full name",
-          "nameHasError": false,
           "schema": {},
           "hint": ""
         },
         {
-          "name": "contactEmailAddress",
+          "name": "emailAddress",
           "options": {
             "hideTitle": false
           },
           "type": "EmailAddressField",
           "title": "Email address",
-          "schema": {},
-          "nameHasError": false
+          "schema": {}
         },
         {
           "name": "contactPhoneNumber",
           "options": {},
           "type": "TextField",
-          "title": "Telephone number",
-          "nameHasError": false
+          "title": "Telephone number"
         }
       ],
       "next": [
         {
           "path": "/website-address"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/organisation-name",
@@ -136,7 +124,6 @@
           "options": {},
           "type": "TextField",
           "title": "Organisation name",
-          "nameHasError": false,
           "schema": {}
         },
         {
@@ -146,7 +133,6 @@
           },
           "type": "TextField",
           "title": "Test site location name",
-          "nameHasError": false,
           "hint": "Give the specific name of the branch, building, street or temporary location of your testing site. For example, London Oxford Street, or Peckham Leisure Centre.</br>\nIf you have more than 1 test site you will need to fill in a separate registration form for each site.\n"
         }
       ],
@@ -154,19 +140,17 @@
         {
           "path": "/main-point-of-contact"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/website-address",
       "title": "Website address",
       "components": [
         {
-          "name": "websiteAddress",
+          "name": "website",
           "options": {},
           "type": "TextField",
           "title": "Website address",
-          "nameHasError": false,
           "schema": {},
           "hint": "This will be published on GOV.UK "
         }
@@ -175,21 +159,19 @@
         {
           "path": "/email-address"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/email-address",
       "title": "Email address",
       "components": [
         {
-          "name": "emailAddress",
+          "name": "publicEmailAddress",
           "options": {
             "hideTitle": true
           },
           "type": "EmailAddressField",
           "title": "Email address",
-          "nameHasError": false,
           "schema": {},
           "hint": "This will be published on GOV.UK. British nationals will use this email address to contact your organisation about COVID-19 tests."
         }
@@ -198,8 +180,7 @@
         {
           "path": "/telephone-number"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/how-can-people-book-a-covid-19-test-with-your-organisation",
@@ -210,7 +191,6 @@
           "options": {},
           "type": "CheckboxesField",
           "title": "Booking options",
-          "nameHasError": false,
           "list": "IuQXnr",
           "schema": {},
           "hint": "Choose as many options as relevant "
@@ -240,11 +220,7 @@
           },
           "type": "YesNoField",
           "title": "Can your organisation provide test results in English or French or Spanish?",
-          "schema": {},
-          "nameHasError": false,
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -280,16 +256,14 @@
           "options": {},
           "type": "TextField",
           "title": "Phone number",
-          "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK.",
-          "nameHasError": false
+          "hint": "This is the phone number your company or facility wishes to be contacted on by British nationals. This will be published on GOV.UK."
         }
       ],
       "next": [
         {
           "path": "/address"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/address",
@@ -303,22 +277,20 @@
           "schema": {}
         },
         {
-          "name": "addressLine1",
+          "name": "address.firstLine",
           "options": {},
           "type": "TextField",
           "title": "Address line 1",
-          "nameHasError": false,
           "schema": {},
           "hint": ""
         },
         {
-          "name": "addressLine2",
+          "name": "address.secondLine",
           "options": {
             "required": false
           },
           "type": "TextField",
           "title": "Address line 2",
-          "nameHasError": false,
           "schema": {}
         },
         {
@@ -326,18 +298,16 @@
           "options": {},
           "type": "TextField",
           "title": "Town or city",
-          "nameHasError": false,
           "schema": {}
         },
         {
-          "name": "postcode",
+          "name": "postCode",
           "options": {
             "required": false,
             "optionalText": false
           },
           "type": "TextField",
           "title": "Postcode or area code",
-          "nameHasError": false,
           "schema": {}
         },
         {
@@ -345,21 +315,16 @@
           "options": {},
           "type": "AutocompleteField",
           "title": "Country",
-          "nameHasError": false,
           "list": "country",
           "schema": {},
-          "hint": "Please write the country in English",
-          "values": {
-            "type": "listRef"
-          }
+          "hint": "Please write the country in English"
         }
       ],
       "next": [
         {
           "path": "/how-does-your-organisation-communicate-that-a-covid-19-test-result-is-ready"
         }
-      ],
-      "section": "organisationDetails"
+      ]
     },
     {
       "path": "/declaration",
@@ -379,7 +344,6 @@
           },
           "type": "CheckboxesField",
           "title": "Declaration confirmation",
-          "nameHasError": false,
           "list": "mpjiNq",
           "schema": {}
         }
@@ -429,8 +393,7 @@
           "title": "How does your organisation provide proof of a COVID-19 test result?",
           "list": "iLIaYP",
           "schema": {},
-          "hint": "This is the format that confirms the result of a COVID-19 test, which can then be used as proof before travelling. Choose as many options as relevant. You must provide confirmation in at least one of these formats to meet the requirements.",
-          "nameHasError": false
+          "hint": "This is the format that confirms the result of a COVID-19 test, which can then be used as proof before travelling. Choose as many options as relevant. You must provide confirmation in at least one of these formats to meet the requirements."
         }
       ],
       "next": [
@@ -457,8 +420,7 @@
           },
           "type": "YesNoField",
           "title": "Can your organisation provide COVID-19 tests that meet UK standards?",
-          "schema": {},
-          "nameHasError": false
+          "schema": {}
         }
       ],
       "next": [
@@ -497,7 +459,6 @@
           "type": "TextField",
           "title": "Which body has authorised your organisation to provide COVID-19 tests?",
           "schema": {},
-          "nameHasError": false,
           "hint": "For example the government, a medical association or other relevant authority"
         }
       ],
@@ -517,11 +478,7 @@
           "type": "YesNoField",
           "title": "Can your organisation provide COVID-19 test results within 72 hours?",
           "hint": "This is the time it takes from a person taking a test to receiving a result. British nationals require that they receive the result of the COVID-19 test  within 72 hours before returning to the UK",
-          "schema": {},
-          "nameHasError": false,
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -567,7 +524,6 @@
           },
           "type": "CheckboxesField",
           "title": "Which COVID-19 tests does your organisation provide?",
-          "nameHasError": false,
           "list": "qeBVvX",
           "schema": {}
         }
@@ -596,12 +552,8 @@
           "options": {},
           "type": "RadiosField",
           "title": "How fast can your organisation provide an Antigen test result?",
-          "nameHasError": false,
           "list": "QsQEVS",
-          "schema": {},
-          "values": {
-            "type": "listRef"
-          }
+          "schema": {}
         }
       ],
       "next": [
@@ -629,13 +581,9 @@
             "required": true
           },
           "type": "RadiosField",
-          "nameHasError": false,
           "list": "QsQEVS",
           "title": "How fast can your organisation provide a LAMP test result?",
           "schema": {},
-          "values": {
-            "type": "listRef"
-          },
           "hint": "Loop-mediated Isothermal Amplification (LAMP)"
         }
       ],
@@ -658,13 +606,9 @@
           "name": "turnaroundTimePCR",
           "options": {},
           "type": "RadiosField",
-          "nameHasError": false,
           "title": "How fast can your organisation provide a PCR test result?",
           "list": "QsQEVS",
           "schema": {},
-          "values": {
-            "type": "listRef"
-          },
           "hint": "Polymerase Chain Reaction (PCR)"
         }
       ],
@@ -684,7 +628,6 @@
           "type": "CheckboxesField",
           "title": "How does your organisation communicate that a COVID-19 test result is ready?",
           "list": "sSINuN",
-          "nameHasError": false,
           "hint": "This is how you let someone know that their test result is ready to access. Choose as many options as relevant."
         }
       ],
@@ -1500,8 +1443,8 @@
           "value": "Suriname"
         },
         {
-          "text": "Swaziland",
-          "value": "Swaziland"
+          "text": "Eswatini",
+          "value": "Eswatini"
         },
         {
           "text": "Sweden",
@@ -1693,23 +1636,23 @@
       "items": [
         {
           "text": "Email",
-          "value": "Email"
+          "value": "email"
         },
         {
           "text": "In person",
-          "value": "In person"
+          "value": "in person"
         },
         {
           "text": "Phone",
-          "value": "Phone"
+          "value": "phone"
         },
         {
           "text": "SMS",
-          "value": "SMS"
+          "value": "sms"
         },
         {
           "text": "Website",
-          "value": "Website"
+          "value": "website"
         }
       ]
     },

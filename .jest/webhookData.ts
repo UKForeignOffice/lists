@@ -1,19 +1,19 @@
+import { ServiceType } from "server/models/types";
 import {
   CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,
-} from "../src/server/components/formRunner";
-import { WebhookDataAsJsonObject } from "server/models/types";
+} from "server/models/listItem/providers/deserialisers/types";
 
-export const lawyer: LawyersFormWebhookData = {
+export const lawyer = {
   country: "Spain",
   size: "Independent lawyer / sole practitioner",
   speakEnglish: true,
   regulators: "Spanish BAR",
   contactName: "Lawyer In Spain",
   organisationName: "CYB Law",
-  addressLine1: "70 King Charles Street",
+  "address.firstLine": "70 King Charles Street",
   city: "London",
-  postcode: "SW1A 2AH",
+  postCode: "SW1A 2AH",
   addressCountry: "Spain",
   emailAddress: "lawyer@example.com",
   publishEmail: "Yes",
@@ -40,8 +40,15 @@ export const lawyer: LawyersFormWebhookData = {
   proBono: false,
   representedBritishNationals: true,
   declaration: ["confirm"],
+  metadata: {
+    type: ServiceType.lawyers,
+  },
 };
-export const covidTestProvider: CovidTestSupplierFormWebhookData = {
+export const covidTestProvider = {
+  declaration: ["confirm"],
+  publishEmail: "",
+  regulators: "",
+  size: "",
   speakEnglish: true,
   isQualified: true,
   affiliatedWithRegulatoryAuthority: true,
@@ -54,30 +61,29 @@ export const covidTestProvider: CovidTestSupplierFormWebhookData = {
   turnaroundTimeAntigen: "1",
   turnaroundTimeLamp: "48",
   turnaroundTimePCR: "24",
-  organisationDetails: {
-    organisationName: "Covid Test Provider Name",
-    locationName: "London",
-    contactName: "Contact Name",
-    contactEmailAddress: "aa@aa.com",
-    contactPhoneNumber: "777654321",
-    websiteAddress: "www.website.com",
-    emailAddress: "contact@email.com",
-    phoneNumber: "777654321",
-    addressLine1: "70 King Charles Street",
-    addressLine2: undefined,
-    city: "London",
-    postcode: "SW1A 2AH",
-    country: "france",
-  },
+  organisationName: "Covid Test Provider Name",
+  locationName: "London",
+  contactName: "Contact Name",
+  emailAddress: "aa@aa.com",
+  phoneNumber: "777654321",
+  websiteAddress: "www.website.com",
+  publicEmailAddress: "contact@email.com",
+  "address.firstLine": "70 King Charles Street",
+  city: "London",
+  postCode: "SW1A 2AH",
+  country: "france",
   resultsReadyFormat: "Email,SMS",
   resultsFormat: "Email,SMS",
   bookingOptions: "Website,In Person",
   declarationConfirm: "confirm",
+  metadata: {
+    type: ServiceType.covidTestProviders,
+  },
 };
 
 declare global {
   var webhookData: {
-    lawyer: WebhookDataAsJsonObject<LawyersFormWebhookData>;
-    covidTestProvider: WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+    lawyer: LawyersFormWebhookData;
+    covidTestProvider: CovidTestSupplierFormWebhookData;
   };
 }

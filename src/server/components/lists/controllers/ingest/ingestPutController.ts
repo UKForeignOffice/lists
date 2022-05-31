@@ -1,36 +1,49 @@
 import { Request, Response } from "express";
-import {
-  CovidTestSupplierFormWebhookData,
-  formRunnerPostRequestSchema,
-  LawyersFormWebhookData,
-  parseFormRunnerWebhookObject,
-} from "server/components/formRunner";
+import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { WebhookDataAsJsonObject } from "server/models/types";
 import { recordEvent } from "server/models/listItem/listItemEvent";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import _ from "lodash";
+import { ServiceType } from "server/models/types";
+import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 
 export async function ingestPutController(
   req: Request,
   res: Response
 ): Promise<void> {
   const id = req.params.id;
-  const { value, error } = formRunnerPostRequestSchema.validate(
-    req.body ?? {},
-    {
-      abortEarly: true,
-    }
-  );
+  const serviceType = _.camelCase(req.params.serviceType) as ServiceType;
+  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  if (error) {
-    res.status(400).json(error).end();
+  if (!(serviceType in ServiceType)) {
+    res.status(500).json({
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+    });
     return;
   }
-  const data = parseFormRunnerWebhookObject<
-    WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
-  >(value);
+
+  if (error !== undefined) {
+    res.status(422).json({ error: error.message });
+    return;
+  }
+  if (value === undefined) {
+    res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
+    return;
+  }
+
+  let data: DeserialisedWebhookData;
+
+  try {
+    data = deserialise(value);
+
+  } catch (e) {
+    res.status(422).json({ error: "questions could not be deserialised" });
+    return;
+  }
 
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id: Number(id) },
@@ -43,8 +56,8 @@ export async function ingestPutController(
     const listItem = await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
-        history: true
-      }
+        history: true,
+      },
     });
     if (listItem === undefined) {
       res.status(404).send({
@@ -55,13 +68,15 @@ export async function ingestPutController(
     }
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: "edit",
           itemId: Number(id),
         },
         AuditEvent.EDITED
       ),
-      recordEvent({
+      recordEvent(
+        {
           eventName: "edit",
           itemId: Number(id),
           updatedJsonData: data,

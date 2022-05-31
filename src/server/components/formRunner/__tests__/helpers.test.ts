@@ -3,12 +3,17 @@ import * as child_process from "child_process";
 import {
   startFormRunner,
   isFormRunnerReady,
-  parseFormRunnerWebhookObject, getNewSessionWebhookData
+  getNewSessionWebhookData,
 } from "../helpers";
-import { LawyerListItemGetObject, LawyerListItemJsonData, ListItemGetObject } from "server/models/types";
+import {
+  LawyerListItemGetObject,
+  LawyerListItemJsonData,
+  BaseListItemGetObject,
+} from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
-import { FormRunnerQuestion } from "server/components/formRunner";
 import { Status } from "@prisma/client";
+import * as FormRunner from "./../types";
+import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -85,9 +90,11 @@ describe("Form Runner Service:", () => {
   });
 
   describe("parseFormRunnerWebhookObject", () => {
-    test("parsed object is correct", () => {
+    test("parsed object is correct", async () => {
       const webHookData: any = {
-        metadata: {},
+        metadata: {
+          type: "covidTestProviders",
+        },
         name: "Find a Professional Service Abroad covid-test-provider",
         questions: [
           {
@@ -146,17 +153,10 @@ describe("Form Runner Service:", () => {
             question: "Full name",
             fields: [
               {
-                key: "firstName",
-                title: "First name",
+                key: "contactName",
+                title: "contactName",
                 type: "text",
-                answer: "Rene",
-              },
-              { key: "middleName", title: "Middle name", type: "text" },
-              {
-                key: "surname",
-                title: "Surname",
-                type: "text",
-                answer: "Descartes",
+                answer: "Winston Smith",
               },
             ],
             index: 0,
@@ -213,12 +213,16 @@ describe("Form Runner Service:", () => {
             question: "Company Address",
             fields: [
               {
-                key: "addressLine1",
+                key: "address.firstLine",
                 title: "Address line 1",
                 type: "text",
                 answer: "Cogito, Ergo Sum Street",
               },
-              { key: "addressLine2", title: "Address line 2", type: "text" },
+              {
+                key: "address.secondLine",
+                title: "Address line 2",
+                type: "text",
+              },
               {
                 key: "city",
                 title: "Town or city",
@@ -226,7 +230,7 @@ describe("Form Runner Service:", () => {
                 answer: "Touraine",
               },
               {
-                key: "postcode",
+                key: "postCode",
                 title: "Postcode",
                 type: "text",
                 answer: "123456",
@@ -303,46 +307,41 @@ describe("Form Runner Service:", () => {
         ],
       };
 
-      const result = parseFormRunnerWebhookObject(webHookData);
+      const result = await deserialise(webHookData);
 
       expect(result).toMatchObject({
+        type: "covidTestProviders",
         speakEnglish: true,
         isQualified: true,
         memberOfRegulatoryAuthority: true,
         regulatoryAuthority: "Some Authority",
-        firstName: "Rene",
-        middleName: undefined,
-        surname: "Descartes",
+        contactName: "Winston Smith",
         organisationName: "{{organisationName}}",
         websiteAddress: "www.covidtest1.com",
         emailAddress: "email@domain.com",
         phoneNumber: "777766665555",
-        addressLine1: "Cogito, Ergo Sum Street",
-        addressLine2: undefined,
         city: "Touraine",
-        postcode: "123456",
         country: "France",
         testTypes: "Polymerase chain reaction (PCR)",
         turnaroundTimes: "24 hours",
         providesCertificateTranslation: true,
-        bookingOptions: "Online, Phone, In Person",
+        bookingOptions: ["Online", "Phone", "In Person"],
         declarationConfirm: "confirm",
       });
     });
   });
 
   describe("generateFormRunnerWebhookObject", () => {
-
-    const listJson:LawyerListItemJsonData = {
-      "size": "Medium (16-350 legal professionals)",
-      "country": "Italy",
-      "proBono": false,
-      "regions": "Milan, Rome, Florence, Genoa, Verona, Livorno",
-      "legalAid": true,
-      "metadata": {
-        "emailVerified": true
+    const listJson: LawyerListItemJsonData = {
+      size: "Medium (16-350 legal professionals)",
+      country: "Italy",
+      proBono: false,
+      regions: "Milan, Rome, Florence, Genoa, Verona, Livorno",
+      legalAid: true,
+      metadata: {
+        emailVerified: true,
       },
-      "areasOfLaw": [
+      areasOfLaw: [
         "Bankruptcy",
         "Corporate",
         "Criminal",
@@ -354,24 +353,27 @@ describe("Form Runner Service:", () => {
         "International",
         "Maritime",
         "Personal injury",
-        "Real estate"
+        "Real estate",
       ],
-      "regulators": "Ordine Avvocati di Milano",
-      "contactName": "Cristiano Cominotto",
-      "declaration": [
-        "confirm"
-      ],
-      "phoneNumber": "+393355928732",
-      "emailAddress": "ignoremyemail@noemail-ignoreme.uk",
-      "publishEmail": "Yes",
-      "speakEnglish": true,
-      "websiteAddress": "https://www.alassistenzalegale.it/?lang=en",
-      "organisationName": "AL Assistenza Legale",
-      "representedBritishNationals": true
+      regulators: "Ordine Avvocati di Milano",
+      contactName: "Cristiano Cominotto",
+      declaration: ["confirm"],
+      phoneNumber: "+393355928732",
+      emailAddress: "ignoremyemail@noemail-ignoreme.uk",
+      publishEmail: "Yes",
+      speakEnglish: true,
+      websiteAddress: "https://www.alassistenzalegale.it/?lang=en",
+      organisationName: "AL Assistenza Legale",
+      representedBritishNationals: true,
     };
 
-    const getObject:ListItemGetObject = {
-      address: { city: "Milan", country: { id: 1, name: "Italy" }, firstLine: "1 Plaza De Centro", postCode: "999999" },
+    const getObject: BaseListItemGetObject = {
+      address: {
+        city: "Milan",
+        country: { id: 1, name: "Italy" },
+        firstLine: "1 Plaza De Centro",
+        postCode: "999999",
+      },
       id: 1,
       reference: "test",
       createdAt: new Date("19-Feb-2022 12:00:00"),
@@ -383,27 +385,28 @@ describe("Form Runner Service:", () => {
       isPublished: false,
       isBlocked: false,
       listId: 1,
-      status: Status.NEW
+      status: Status.NEW,
     };
 
-    const expectedListOutput: Array<Partial<FormRunnerQuestion>> = [
+    const expectedListOutput: Array<Partial<FormRunner.Question>> = [
       {
         fields: [
           {
             answer: true,
             key: "speakEnglish",
-          }
+          },
         ],
-        question: "Can you provide legal services and support to customers in English?"
+        question:
+          "Can you provide legal services and support to customers in English?",
       },
       {
         fields: [
           {
             answer: "Cristiano Cominotto",
             key: "contactName",
-          }
+          },
         ],
-        question: "Your full name"
+        question: "Your full name",
       },
       {
         fields: [
@@ -413,11 +416,11 @@ describe("Form Runner Service:", () => {
           },
           {
             answer: "1 Plaza De Centro",
-            key: "addressLine1",
+            key: "address.firstLine",
           },
           {
             answer: undefined,
-            key: "addressLine2",
+            key: "address.secondLine",
           },
           {
             answer: "Milan",
@@ -425,23 +428,23 @@ describe("Form Runner Service:", () => {
           },
           {
             answer: "999999",
-            key: "postcode",
+            key: "postCode",
           },
           {
             answer: "Italy",
             key: "addressCountry",
-          }
+          },
         ],
-        question: "Company name and address"
+        question: "Company name and address",
       },
       {
         fields: [
           {
             answer: "https://www.alassistenzalegale.it/?lang=en",
             key: "websiteAddress",
-          }
+          },
         ],
-        question: "Full website address (Optional)"
+        question: "Full website address (Optional)",
       },
       {
         fields: [
@@ -452,9 +455,9 @@ describe("Form Runner Service:", () => {
           {
             answer: "Yes",
             key: "publishEmail",
-          }
+          },
         ],
-        question: "Email address"
+        question: "Email address",
       },
       {
         fields: [
@@ -471,39 +474,39 @@ describe("Form Runner Service:", () => {
               "International",
               "Maritime",
               "Personal injury",
-              "Real estate"
+              "Real estate",
             ],
             key: "areasOfLaw",
-          }
+          },
         ],
-        question: "In what areas of law are you qualified to practise? "
+        question: "In what areas of law are you qualified to practise? ",
       },
       {
         fields: [
           {
             answer: true,
             key: "legalAid",
-          }
+          },
         ],
-        question: "Can you provide legal aid to British nationals?"
+        question: "Can you provide legal aid to British nationals?",
       },
       {
         fields: [
           {
             answer: false,
             key: "proBono",
-          }
+          },
         ],
-        question: "Can you offer pro bono service to British nationals?"
+        question: "Can you offer pro bono service to British nationals?",
       },
       {
         fields: [
           {
             answer: true,
             key: "representedBritishNationals",
-          }
+          },
         ],
-        question: "Have you represented British nationals before?"
+        question: "Have you represented British nationals before?",
       },
       {
         fields: [
@@ -512,92 +515,101 @@ describe("Form Runner Service:", () => {
             key: "phoneNumber",
           },
           {
-            key: "emergencyPhoneNumber",
+            key: "contactPhoneNumber",
             answer: undefined,
-          }
+          },
         ],
-        question: "Phone number"
+        question: "Phone number",
       },
       {
         fields: [
           {
             answer: "Ordine Avvocati di Milano",
             key: "regulators",
-          }
+          },
         ],
-        question: "Which legal regulator or local bar associations are you registered with?"
+        question:
+          "Which legal regulator or local bar associations are you registered with?",
       },
       {
         fields: [
           {
             answer: ["confirm"],
             key: "declaration",
-          }
+          },
         ],
-        question: "Declaration"
+        question: "Declaration",
       },
       {
         fields: [
           {
             answer: "Italy",
-            key : "country",
-          }
+            key: "country",
+          },
         ],
-        question: "Which list of lawyers do you want to be added to?"
+        question: "Which list of lawyers do you want to be added to?",
       },
       {
         fields: [
           {
             answer: "Milan, Rome, Florence, Genoa, Verona, Livorno",
             key: "regions",
-          }
+          },
         ],
-        question: "Which regions do you serve?"
+        question: "Which regions do you serve?",
       },
       {
         fields: [
           {
             answer: "Medium (16-350 legal professionals)",
             key: "size",
-          }
+          },
         ],
-        question: "What size is your company or firm?"
+        question: "What size is your company or firm?",
       },
       {
         fields: [
           {
             answer: undefined,
             key: "publicEmailAddress",
-          }
+          },
         ],
-        question: "Email address for GOV.UK"
-      }
+        question: "Email address for GOV.UK",
+      },
     ];
 
     const options = {
       message: "Change the text",
       callbackUrl: "https://test-domain/ingest/lawyers/111",
       redirectPath: "/summary",
-    }
+    };
     const expectedNewSessionWebhookData = {
       options,
       name: "Changes required",
       questions: expectedListOutput,
-    }
+    };
 
-    test("generated form runner webhook data is correct", async() => {
-
+    test("generated form runner webhook data is correct", async () => {
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
-
-      expect(result).toMatchObject(
-        expectedListOutput
+      const result = await generateFormRunnerWebhookData(
+        getObject as LawyerListItemGetObject,
+        isUnderTest
       );
+
+      expect(result).toMatchObject(expectedListOutput);
     });
-    test("generated object is correct", async() => {
+    test("generated object is correct", async () => {
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
-      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text");
+      const result = await generateFormRunnerWebhookData(
+        getObject as LawyerListItemGetObject,
+        isUnderTest
+      );
+      const newSessionWebhookData = getNewSessionWebhookData(
+        "lawyers",
+        111,
+        result,
+        "Change the text"
+      );
 
       expect(newSessionWebhookData.questions).toMatchObject(
         expectedNewSessionWebhookData.questions

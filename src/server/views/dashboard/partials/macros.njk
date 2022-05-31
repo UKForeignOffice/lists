@@ -1,0 +1,28 @@
+{%- macro emailAddress(value, labe) -%}
+  <a class="govuk-link" href="mailto:{{value}}">{{ label if label else value }}</a>
+{%- endmacro -%}
+
+{%- macro link(value, label) -%}
+  <a class="govuk-link" href="{{value}}" target="_blank" rel="noopener noreferrer">{{ label if label else value }}</a>
+{%- endmacro -%}
+
+{%- macro phoneNumber(value, label) -%}
+  <a class="govuk-link" href="tel:{{value}}">{{ label if label else value }}</a>
+{%- endmacro -%}
+
+{%- macro multiLineText(value) -%}
+  <div class="dashboard__multi-line-text">{{ value }}</div>
+{%- endmacro -%}
+
+{%- macro boolean(value) -%}
+    {{ "Yes" if (value === "Yes" or (value !== "No" and value)) else "No" }}
+{%- endmacro -%}
+
+{%- macro array(value) -%}
+    {{ value | join(", ") }}
+{%- endmacro -%}
+
+{%- macro string(value) -%}
+  {{ value }}
+{%- endmacro -%}
+
