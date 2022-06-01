@@ -6,7 +6,7 @@ dotenv.config();
 export const PORT = process.env.PORT ?? 3000;
 export const DEBUG = process.env.DEBUG === "true";
 export const SERVICE_NAME = process.env.SERVICE_NAME;
-export const SERVICE_DOMAIN = process.env.SERVICE_DOMAIN;
+export const SERVICE_DOMAIN = process.env.SERVICE_DOMAIN ?? "localhost:3000";
 export const LOG_LEVEL = process.env.LOG_LEVEL ?? "error";
 export const NODE_ENV = process.env.NODE_ENV ?? "development";
 
@@ -15,7 +15,7 @@ export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";
 export const isTest = NODE_ENV === "test";
 export const isLocalHost = process.env.LOCAL_HOST === "true";
-export const isCybDev = process.env.CYB_DEV === "true" || isDev;
+export const isCybDev = process.env.CYB_DEV === "true" || isDev || isTest;
 export const isCISmokeTest = process.env.CI_SMOKE_TEST === "true";
 
 // AWS
