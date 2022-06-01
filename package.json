@@ -30,7 +30,7 @@
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
-    "smoke-tests": "npx cypress run --browser chrome"
+    "smoke-tests": "npx cypress run --browser chrome --record --key 25c07c62-df3a-455b-8189-7e4a1c97ff9c"
   },
   "dependencies": {
     "@prisma/client": "^2.29.1",
