@@ -2,9 +2,9 @@ import { rand, randCompanyName, randFullName } from "@ngneat/falso";
 
 Given("A lawyers list exists for Eurasia", () => {
   const jsonData = {
-    administrators: ["ali+test@cautionyourblast.com"],
-    publishers: ["ali+test@cautionyourblast.com"],
-    validators: ["ali+test@cautionyourblast.com"],
+    administrators: ["smoke@cautionyourblast.com"],
+    publishers: ["smoke@cautionyourblast.com"],
+    validators: ["smoke@cautionyourblast.com"],
   };
   cy.task("db", {
     operation: "country.upsert",
@@ -93,7 +93,7 @@ Given("there are these list items", (table) => {
       __smoke: {
         isPinned: isPinned === "true",
         displayedRadioButtons: displayedRadioButtons | "",
-        hiddenRadioButtons: hiddenRadioButtons | ""
+        hiddenRadioButtons: hiddenRadioButtons | "",
       },
     };
 
@@ -135,7 +135,7 @@ Given("there are these list items", (table) => {
           },
         },
         where: {
-          email: "ali+test@cautionyourblast.com",
+          email: "smoke@cautionyourblast.com",
         },
       },
     });
@@ -161,7 +161,8 @@ function listItem(options) {
       contactName: jsonData.contactName ?? randFullName(),
       declaration: [],
       phoneNumber: "",
-      emailAddress: jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
+      emailAddress:
+        jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
       publishEmail: "Yes",
       speakEnglish: true,
       websiteAddress: null,
