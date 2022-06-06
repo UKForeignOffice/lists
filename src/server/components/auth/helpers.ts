@@ -3,14 +3,14 @@ import { configurePassport } from "./passport";
 import { authRoutes } from "./routes";
 import { authRouter } from "./router";
 import { configureExpressSession } from "./express-session";
-import { isCISmokeTest } from "server/config";
+import { isSmokeTest } from "server/config";
 
 export function ensureAuthenticated(
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
-  if (req.isAuthenticated() || isCISmokeTest) {
+  if (req.isAuthenticated() || isSmokeTest) {
     next();
   } else {
     req.session.returnTo = req.originalUrl;

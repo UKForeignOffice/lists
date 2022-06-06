@@ -120,6 +120,8 @@ jobs:
           command: npm run build:ci
 
       - run:
+          environment:
+            CI_SMOKE_TEST: "true"
           name: run start
           background: true
           command: npm run start:ci
@@ -131,6 +133,8 @@ jobs:
           command: |
             curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
       - run:
+          environment:
+            CI_SMOKE_TEST: "true"
           name: Run smoke tests
           command: npm run smoke-tests
 
