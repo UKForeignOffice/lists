@@ -19,6 +19,12 @@ export function getNotifyClient(): any {
     ];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
+    if (config.isSmokeTest) {
+      return import("./__mocks__/notifications-node-client").then(
+        (mocks) => mocks.NotifyClient
+      );
+    }
+
     notifyClient = new NotifyClient(config.GOVUK_NOTIFY_API_KEY?.trim());
   }
 
@@ -133,7 +139,6 @@ export async function sendEditDetailsEmail(
         },
       }
     );
-
   } catch (error) {
     throw new Error(`Unable to send change request email: ${error.message}`);
   }
