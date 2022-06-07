@@ -23,7 +23,6 @@ Feature:
       | Unpublish | Confirm and update |
     And The textarea should show if I click the Request changes radio button
 
-  @wip
   Scenario: Request changes for list item in NEW status
 
     When I am viewing the list item details for "Winston"
@@ -62,7 +61,6 @@ Feature:
       | Unpublish | Confirm and update |
     And The textarea should show if I click the Request changes radio button
 
-  @wip
   Scenario: Request changes for list item in OUT_WITH_PROVIDER status
 
     When I am viewing the list item details for "Julia"
