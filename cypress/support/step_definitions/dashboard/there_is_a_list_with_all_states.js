@@ -76,6 +76,8 @@ Given("there are these list items", (table) => {
       displayedRadioButtons,
       hiddenRadioButtons,
       emailVerified,
+      city,
+      areasOfLaw,
       ...rest
     } = row;
 
@@ -87,6 +89,7 @@ Given("there are these list items", (table) => {
       contactName,
       organisationName,
       emailAddress,
+      areasOfLaw,
       metadata: {
         emailVerified: emailVerified === "true",
       },

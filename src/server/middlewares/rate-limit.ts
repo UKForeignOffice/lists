@@ -1,6 +1,6 @@
 import rateLimit from 'express-rate-limit';
 import { Express } from "express";
-import { isTest } from "server/config";
+import { isLocalHost, isTest } from "server/config";
 import {
   rateLimitExceededErrorHandler
 } from "server/middlewares/error-handlers";
@@ -13,7 +13,7 @@ const limiter = rateLimit({
 });
 
 export const configureRateLimit = (server: Express): void => {
-  if (!isTest) {
+  if (!isLocalHost) {
     server.use(limiter);
   }
 };
