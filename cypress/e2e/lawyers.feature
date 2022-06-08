@@ -3,12 +3,6 @@ Feature:
   I want to search for lawyers
 
   Background:
-    Given A lawyers list exists for Eurasia
-    And there are these list items
-      | contactName | status            | isPublished | isBlocked | isApproved | emailVerified | city   | areasOfLaw    |
-      | Parsons     | PUBLISHED         | true        | false     | false      | true          | Zurich | Maritime      |
-      | Emmanuel    | PUBLISHED         | true        | false     | false      | true          | Geneva | International |
-      | Julia       | PUBLISHED         | true        | false     | false      | true          | Basel  | Maritime      |
 
   Scenario Outline:
     Given I am searching for "<profession>" in "<country>" in "<city>"
@@ -18,7 +12,7 @@ Feature:
     Then I see "<found>"
 
     Examples:
-      | profession | country       | city  | filters                  | found  |
-      | lawyers    | Switzerland   | Basel | [Maritime,International] | Julia  |
-      | lawyers    | Switzerland   | Basel | [Maritime,International] | Julia  |
+      | profession | country | city | filters               | found              |
+      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Davide Cupertino   |
+      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Davide Cupertino   |
 
