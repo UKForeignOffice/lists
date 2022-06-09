@@ -1,23 +1,19 @@
 import { Request, Response } from "express";
 import { ServiceType } from "server/models/types";
-import {
-  CovidTestSupplierFormWebhookData,
-  formRunnerPostRequestSchema,
-  LawyersFormWebhookData,
-  parseFormRunnerWebhookObject,
-} from "server/components/formRunner";
+import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";
-import { get } from "lodash";
 import { createConfirmationLink } from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import _ from "lodash";
 
 export async function ingestPostController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const serviceType = req.params.serviceType as ServiceType;
+  const serviceType = _.camelCase(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!(serviceType in ServiceType)) {
@@ -33,40 +29,35 @@ export async function ingestPostController(
     return;
   }
 
-  const data = parseFormRunnerWebhookObject<
-    LawyersFormWebhookData | CovidTestSupplierFormWebhookData
-  >(value);
-
   try {
-    const item = await createListItem(serviceType, data);
+    const item = await createListItem(value);
     const { address, reference, type } = item;
     const typeName = serviceName(type);
-
-    if (typeName !== undefined) {
-      const { country } = address;
-      const contactName = get(item.jsonData, "contactName");
-      const email =
-        get(item.jsonData, "contactEmailAddress") ??
-        get(item.jsonData, "publicEmailAddress") ??
-        get(item.jsonData, "email") ??
-        get(item.jsonData, "emailAddress");
-
-      if (email === null) {
-        throw new Error("No email address supplied");
-      }
-
-      const confirmationLink = createConfirmationLink(req, reference);
-
-      await sendApplicationConfirmationEmail(
-        contactName,
-        email,
-        typeName,
-        country.name,
-        confirmationLink
-      );
+    if (!typeName) {
+      res.json({});
+      return;
     }
 
-    res.json({});
+    const { country } = address;
+    const jsonData = item.jsonData as ListItemJsonData;
+    const { contactName } = jsonData;
+    const email = jsonData?.publicEmailAddress ?? jsonData?.emailAddress;
+
+    if (email === null) {
+      throw new Error("No email address supplied");
+    }
+
+    const confirmationLink = createConfirmationLink(req, reference);
+
+    await sendApplicationConfirmationEmail(
+      contactName,
+      email,
+      typeName,
+      country.name,
+      confirmationLink
+    );
+
+    res.send({});
   } catch (e) {
     logger.error(`listsDataIngestionController Error: ${e.message}`);
 

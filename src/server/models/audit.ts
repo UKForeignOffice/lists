@@ -6,16 +6,16 @@ import {
   AuditListItemEventName,
   AuditCreateInput,
   ListItem,
-  User, WebhookDataAsJsonObject,
+  User,
 } from "./types";
-import { CovidTestSupplierFormWebhookData, LawyersFormWebhookData } from "server/components/formRunner";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 interface ListItemEventData {
   userId?: User["id"];
   itemId: ListItem["id"];
   eventName: AuditListItemEventName;
   requestedChanges?: string;
-  updatedJsonData?: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  updatedJsonData?: ListItemJsonData;
 }
 
 export function recordListItemEvent(

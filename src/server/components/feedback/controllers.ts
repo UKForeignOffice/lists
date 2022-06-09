@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createFeedback } from "server/models/feedback";
 import { FeedbackJsonData } from "server/models/types";
 import {
-  FormRunnerWebhookData,
+  WebhookData,
   formRunnerPostRequestSchema,
 } from "server/components/formRunner";
 
@@ -22,12 +22,12 @@ export async function feedbackIngest(
     value.questions.reduce(
       (
         acc: FeedbackJsonData["questionsAndAnswers"],
-        question: FormRunnerWebhookData["questions"][0]
+        question: WebhookData["questions"][0]
       ) => {
         const { fields } = question;
 
         fields.forEach((field) => {
-          const { title, answer } = field;
+          const { title = field.key, answer } = field;
           acc.push({ question: title, answer });
         });
 

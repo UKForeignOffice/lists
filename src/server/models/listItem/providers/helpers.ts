@@ -11,11 +11,11 @@ import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "server/components/formRunner";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
+import {
+  DeserialisedWebhookData,
+  ListItemJsonData,
+} from "server/models/listItem/providers/deserialisers/types";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -178,43 +178,33 @@ export function getListItemContactInformation(listItem: ListItem): {
 } {
   const contactName = get(listItem?.jsonData, "contactName");
   const contactEmailAddress =
-    get(listItem?.jsonData, "contactEmailAddress") ??
-    get(listItem?.jsonData, "emailAddress") ??
-    get(listItem?.jsonData, "email");
+    get(listItem?.jsonData, "publicEmailAddress") ??
+    get(listItem?.jsonData, "emailAddress");
   const contactPhoneNumber =
     get(listItem?.jsonData, "contactPhoneNumber") ??
     get(listItem?.jsonData, "phoneNumber");
-
   return { contactName, contactEmailAddress, contactPhoneNumber };
 }
 
 export function pickWebhookAddressAsAddress(
-  webhook: LawyersFormWebhookData | CovidTestSupplierFormWebhookData
+  webhook: DeserialisedWebhookData | ListItemJsonData
 ): Partial<UpdatableAddressFields> {
-  if ("organisationDetails" in webhook) {
-    return {
-      firstLine: webhook.organisationDetails?.addressLine1,
-      secondLine: webhook.organisationDetails?.addressLine2,
-      postCode: webhook.organisationDetails?.postcode,
-      city: webhook.organisationDetails?.city,
-    };
-  }
   return {
-    firstLine: webhook?.addressLine1,
-    secondLine: webhook?.addressLine2,
-    postCode: webhook?.postcode,
-    city: webhook?.city,
+    firstLine: webhook["address.firstLine"],
+    secondLine: webhook["address.secondLine"],
+    postCode: webhook.postCode,
+    city: webhook.city,
   };
 }
 export function getChangedAddressFields(
-  webhook: LawyersFormWebhookData | CovidTestSupplierFormWebhookData,
+  webhook: DeserialisedWebhookData | ListItemJsonData,
   address: Partial<Address>
 ): Partial<UpdatableAddressFields> {
   const updatableAddressObject: UpdatableAddressFields = {
-    firstLine: address?.firstLine ?? "",
-    secondLine: address?.secondLine ?? null, // TODO:- fix types.. this shouldn't need `?? null`.
-    postCode: address?.postCode ?? "",
-    city: address?.city ?? "",
+    firstLine: address?.firstLine,
+    secondLine: address?.secondLine ?? undefined, // Casting to undefined when address?.secondLine nullish (i.e. null OR undefined) so a strict comparison `===` can be made.
+    postCode: address?.postCode,
+    city: address?.city,
   };
 
   const webhookAddress = pickWebhookAddressAsAddress(webhook);
@@ -222,7 +212,7 @@ export function getChangedAddressFields(
 
   return updatableEntries.reduce((prev, entry) => {
     const [key, value] = entry as [keyof UpdatableAddressFields, any];
-    const webhookValue = webhookAddress[key] ?? null;
+    const webhookValue = webhookAddress[key];
     const valueHasChanged = webhookValue !== value;
     return {
       ...prev,

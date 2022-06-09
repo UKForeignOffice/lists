@@ -1,16 +1,28 @@
-import { Address, Country, ListItem } from "server/models/types";
+import { Address, Country } from "server/models/types";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { Prisma } from "@prisma/client";
 
-export interface ListItemWithAddressCountry extends ListItem {
+export type ListItemWithAddressCountry = Prisma.ListItemGetPayload<{
+  include: {
+    address: {
+      include: {
+        country: true;
+      };
+    };
+  };
+}>;
+
+export interface ListItemWithJsonData extends ListItemWithAddressCountry {
   address: Address & {
     country: Country;
   };
+  jsonData: ListItemJsonData;
 }
 
 export enum EVENTS {
   UPDATED_BY_USER = "User updated details",
 }
 
-export type UpdatableAddressFields = Pick<
-  Address,
-  "firstLine" | "secondLine" | "city" | "postCode"
+export type UpdatableAddressFields = Partial<
+  Pick<Address, "firstLine" | "secondLine" | "city" | "postCode">
 >;

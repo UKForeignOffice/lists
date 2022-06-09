@@ -1,5 +1,10 @@
 import { authRoutes } from "server/components/auth";
-import { List, ListItemGetObject, ServiceType, UserRoles } from "server/models/types";
+import {
+  List,
+  BaseListItemGetObject,
+  ServiceType,
+  UserRoles,
+} from "server/models/types";
 import * as userModel from "server/models/user";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
@@ -10,7 +15,7 @@ import {
   listsItemsController,
   startRouteController,
   usersEditController,
-  usersListController
+  usersListController,
 } from "../controllers";
 // import * as dashboardControllers from "server/components/dashboard/controllers";
 import * as govukNotify from "../../../services/govuk-notify";
@@ -19,7 +24,8 @@ import { NextFunction } from "express";
 import {
   listItemDeleteController,
   listItemEditRequestValidation as listItemEditRequestValidation1,
-  listItemEditRequestValidation, listItemGetController
+  listItemEditRequestValidation,
+  listItemGetController,
 } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
 
@@ -28,7 +34,7 @@ describe("Dashboard Controllers", () => {
   let mockRes: any;
   let mockNext: any;
   let list: List;
-  let listItem: ListItemGetObject;
+  let listItem: BaseListItemGetObject;
   let spyFindListItemById: jest.SpyInstance;
   let spyFindListById: jest.SpyInstance;
   let spyUpdateList: jest.SpyInstance;
@@ -90,9 +96,9 @@ describe("Dashboard Controllers", () => {
         postCode: "PO5T CDE",
         country: {
           id: 1,
-          name: "Italy"
+          name: "Italy",
         },
-        geoLocationId: 123
+        geoLocationId: 123,
       },
       id: 2,
       isApproved: true,
@@ -104,7 +110,7 @@ describe("Dashboard Controllers", () => {
       updatedAt: new Date(),
       jsonData: {},
       listId: 1,
-      status: Status.NEW
+      status: Status.NEW,
     };
   });
 
@@ -812,11 +818,11 @@ describe("Dashboard Controllers", () => {
       mockReq.params = {
         listId: "1",
         listItemId: "2",
-        underTest: "true"
+        underTest: "true",
       };
       mockReq.body = {
-        message: "change the text"
-      }
+        message: "change the text",
+      };
       mockReq.user.userData.id = 3;
       userIsListPublisher = jest
         .spyOn(helpers, "userIsListPublisher")
@@ -894,11 +900,11 @@ describe("Dashboard Controllers", () => {
       mockReq.params = {
         listId: "1",
         listItemId: "2",
-        underTest: "true"
+        underTest: "true",
       };
       mockReq.body = {
-        message: "change the text"
-      }
+        message: "change the text",
+      };
       mockReq.user.userData.id = 3;
       userIsListPublisher = jest
         .spyOn(helpers, "userIsListPublisher")
@@ -967,8 +973,10 @@ describe("Dashboard Controllers", () => {
         .spyOn(helpers, "getInitiateFormRunnerSessionToken")
         .mockResolvedValue("string");
 
-      const spySendEditDetailsEmail = jest
-        .spyOn(govukNotify, "sendEditDetailsEmail");
+      const spySendEditDetailsEmail = jest.spyOn(
+        govukNotify,
+        "sendEditDetailsEmail"
+      );
 
       // await dashboardControllers.listItemPostConfirmationController(mockReq, mockRes);
 

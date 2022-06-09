@@ -7,6 +7,8 @@ import { Express } from "express";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
 import { parseDate } from "server/utils/date";
+import flash from "express-flash";
+import { govukRow } from "server/components/dashboard/listsItems/types";
 
 const ROOT = process.cwd();
 
@@ -37,7 +39,30 @@ export const configureViews = (server: Express): void => {
 
   // Date filter
   nunjucksDate.setDefaultFormat("DD MMM YYYY");
+
+  engine.addFilter("renderRowValues", function (rows: govukRow[], macroSet) {
+    return (rows ?? []).map((row) => {
+      // @ts-ignore
+      const macro = macroSet[row.type];
+
+      const value = row.value;
+      if (value.text !== undefined) {
+        value.text = macro(value.text);
+      }
+      if (value.html) {
+        value.html = macro(value.html);
+      }
+      return {
+        ...row,
+        value,
+      };
+    });
+    // @ts-ignore
+  });
+
   nunjucksDate.install(engine);
+
+  server.use(flash());
 
   // dynamic globals
   server.use((req, res, next) => {

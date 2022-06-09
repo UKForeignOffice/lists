@@ -1,15 +1,9 @@
-import {
-  JsonObject,
-  LawyerListItemJsonData,
-  List,
-  ListItem,
-  User,
-} from "server/models/types";
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "server/components/formRunner";
+import { JsonObject, List, ListItem, User } from "server/models/types";
 import * as PrismaClient from "@prisma/client";
+import {
+  DeserialisedWebhookData,
+  ListItemJsonData,
+} from "server/models/listItem/providers/deserialisers/types";
 
 /**
  * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
@@ -46,7 +40,7 @@ export const ORDER_BY = {
 export type OrderBy = typeof ORDER_BY;
 
 export type IndexListItem = Pick<
-  LawyerListItemJsonData,
+  ListItemJsonData,
   | "organisationName"
   | "contactName"
   | "publishers"
@@ -91,9 +85,8 @@ export interface EventJsonData extends JsonObject {
   eventName: EventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
-  updatedJsonData?:
-    | WebhookDataAsJsonObject<LawyersFormWebhookData>
-    | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>;
+  updatedJsonData?: DeserialisedWebhookData;
+
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 

@@ -1,109 +1,29 @@
+import { ServiceType } from "server/models/types";
 
-export interface FormRunnerWebhookData {
-  questions: Array<{
-    question: string;
-    category?: string;
-    fields: Array<{
-      key: string;
-      title: string;
-      type: string;
-      answer: boolean | string | number | undefined;
-    }>;
-    index: number;
-  }>;
-}
-
-export interface LawyersFormWebhookData {
-  country: string;
-  size: string;
-  speakEnglish: boolean;
-  regulators: string;
-  contactName: string;
-  organisationName: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  postcode: string;
-  addressCountry: string;
-  emailAddress: string;
-  publishEmail: string;
-  publicEmailAddress?: string;
-  phoneNumber: string;
-  emergencyPhoneNumber?: string;
-  websiteAddress?: string;
-  regions: string;
-  areasOfLaw: string[];
-  legalAid?: boolean;
-  proBono?: boolean;
-  representedBritishNationals: boolean;
-  declaration: string[];
-}
-
-export interface CovidTestSupplierFormWebhookData {
-  speakEnglish: boolean;
-  isQualified: boolean;
-  affiliatedWithRegulatoryAuthority: boolean;
-  regulatoryAuthority: string;
-  meetUKstandards: boolean;
-  provideResultsInEnglishFrenchSpanish: boolean;
-  provideTestResultsIn72Hours: boolean;
-  organisationDetails: {
-    organisationName: string;
-    locationName: string;
-    contactName: string;
-    contactEmailAddress: string;
-    contactPhoneNumber: string;
-    websiteAddress: string;
-    emailAddress: string;
-    additionalEmailAddress?: string;
-    phoneNumber: string;
-    additionalPhoneNumber?: string;
-    addressLine1: string;
-    addressLine2: string | undefined;
-    city: string;
-    postcode: string;
-    country: string;
-  };
-  providedTests: string;
-  turnaroundTimeAntigen: string;
-  turnaroundTimeLamp: string;
-  turnaroundTimePCR: string;
-  resultsFormat: string;
-  resultsReadyFormat: string;
-  bookingOptions: string;
-  declarationConfirm: string;
-}
-
-export interface FormRunnerPage {
+export interface Component {
+  name: string;
   title: string;
-  path: string;
-  controller: string;
-  components?: FormRunnerComponent[];
-  section: string; // the section ID
-  next?: Array<{ path: string; condition?: string }>;
+  options: {};
+  type: string;
+  content: string;
+  schema: {};
 }
 
-export interface FormRunnerComponent {
-  name: string,
-  title: string,
-  options: {},
-  type: string,
-  content: string,
-  schema: {}
+export interface Field {
+  key: string;
+  answer: any;
+  title?: string;
+  index?: number;
 }
 
-export interface FormRunnerField {
-  key: string,
-  answer: any,
+export interface Question {
+  category?: string;
+  question: string;
+  fields: Field[];
 }
 
-export interface FormRunnerQuestion {
-  question: string,
-  fields: FormRunnerField[],
-}
-
-export interface FormRunnerNewSessionData {
-  questions: Array<Partial<FormRunnerQuestion>> | undefined;
+export interface NewSessionData {
+  questions: Array<Partial<Question>> | undefined;
   options: {
     message: string;
     callbackUrl: string;
@@ -112,6 +32,24 @@ export interface FormRunnerNewSessionData {
   name: string;
 }
 
-export type WebhookData =
-  | CovidTestSupplierFormWebhookData
-  | LawyersFormWebhookData;
+export interface WebhookData {
+  questions: Question[];
+
+  /**
+   * FormRunner JSON should include in the metadata { type: ServiceType }
+   * for easy identification of webhook type at ingest point. Other properties may be used for similar reasons (hence additionalProps)
+   */
+  metadata: {
+    type: ServiceType;
+    [additionalProps: string]: any;
+  };
+}
+
+export interface Page {
+  title: string;
+  path: string;
+  controller: string;
+  components?: Component[];
+  section: string; // the section ID
+  next?: Array<{ path: string; condition?: string }>;
+}

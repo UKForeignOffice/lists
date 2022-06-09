@@ -1,10 +1,7 @@
 import { toLower, startCase } from "lodash";
 import { prisma } from "./../../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
-import {
-  LawyersFormWebhookData,
-  CovidTestSupplierFormWebhookData,
-} from "server/components/formRunner";
+
 import * as audit from "./../../audit";
 import { ServiceType } from "./../../types";
 import * as helpers from "./../../helpers";
@@ -16,86 +13,298 @@ import {
   some,
 } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
-import { CovidTestSupplierListItem, LawyerListItem } from "../providers";
-import { togglerListItemIsApproved,
+import {
+  togglerListItemIsApproved,
   togglerListItemIsPublished,
   setEmailIsVerified,
   findListItemsForList,
   deleteListItem,
+  createListItem,
 } from "server/models/listItem/listItem";
+
+import { listItemCreateInputFromWebhook } from "../listItemCreateInputFromWebhook";
 
 jest.mock("../../db/prisma-client");
 
-const LawyerWebhookData: LawyersFormWebhookData = {
-  country: "Spain",
-  size: "Independent lawyer / sole practitioner",
-  speakEnglish: true,
-  regulators: "Spanish BAR",
-  contactName: "Lawyer In Spain",
-  organisationName: "CYB Law",
-  addressLine1: "123 Calle",
-  city: "Seville",
-  postcode: "S3V1LLA",
-  addressCountry: "Spain",
-  emailAddress: "lawyer@example.com",
-  publishEmail: "Yes",
-  phoneNumber: "+34123456789",
-  emergencyPhoneNumber: "+34123456789",
-  websiteAddress: "https://www.cyb-law.com",
-  regions: "Seville, Malaga, Granada, Cadiz",
-  areasOfLaw: [
-    "Bankruptcy",
-    "Corporate",
-    "Criminal",
-    "Employment",
-    "Family",
-    "Health",
-    "Immigration",
-    "Intellectual property",
-    "International",
-    "Maritime",
-    "Personal injury",
-    "Real estate",
-    "Tax",
+const lawyerWebhookData = {
+  questions: [
+    {
+      question: "Do you speak fluent English?",
+      fields: [
+        {
+          key: "speakEnglish",
+          title: "Do you speak English?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Full name",
+      fields: [
+        {
+          key: "contactName",
+          answer: "Winston Smith",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Company name",
+      fields: [
+        {
+          key: "organisationName",
+          title: "Organisation name",
+          type: "text",
+          answer: "Cartesian Systems",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Website address",
+      fields: [
+        {
+          key: "website",
+          title: "Website address",
+          type: "text",
+          answer: "www.com",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Email address",
+      fields: [
+        {
+          key: "emailAddress",
+          title: "Email address",
+          type: "text",
+          answer: "test@gov.uk",
+        },
+      ],
+      index: 0,
+    },
   ],
-  legalAid: false,
-  proBono: false,
-  representedBritishNationals: true,
-  declaration: ["confirm"],
-};
-
-const CovidTestProviderWebhookData: CovidTestSupplierFormWebhookData = {
-  speakEnglish: true,
-  isQualified: true,
-  affiliatedWithRegulatoryAuthority: true,
-  regulatoryAuthority: "Health Authority",
-  meetUKstandards: true,
-  provideResultsInEnglishFrenchSpanish: true,
-  provideTestResultsIn72Hours: true,
-  providedTests:
-    "Antigen, Loop-mediated Isothermal Amplification (LAMP), Polymerase Chain Reaction (PCR)",
-  turnaroundTimeAntigen: "1",
-  turnaroundTimeLamp: "48",
-  turnaroundTimePCR: "24",
-  organisationDetails: {
-    organisationName: "Covid Test Provider Name",
-    locationName: "London",
-    contactName: "Contact Name",
-    contactEmailAddress: "aa@aa.com",
-    contactPhoneNumber: "777654321",
-    websiteAddress: "www.website.com",
-    emailAddress: "contact@email.com",
-    phoneNumber: "777654321",
-    addressLine1: "Cogito, Ergo Sum",
-    addressLine2: "Street",
-    city: "Touraine",
-    postcode: "123456",
-    country: "france",
+  metadata: {
+    type: "lawyers",
   },
-  resultsReadyFormat: "Email,SMS",
-  resultsFormat: "Email,SMS",
-  bookingOptions: "Website,In Person",
-  declarationConfirm: "confirm",
+};
+const covidTestProviderWebhookData = {
+  metadata: {
+    type: "covidTestProviders",
+  },
+  name: "Find a Professional Service Abroad covid-test-provider",
+  questions: [
+    {
+      question: "Do you speak fluent English?",
+      fields: [
+        {
+          key: "speakEnglish",
+          title: "Do you speak English?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Are you qualified to provide  Covid-19 tests in your country?",
+      fields: [
+        {
+          key: "isQualified",
+          title:
+            "Are you qualified to provide  Covid-19 tests in your country?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Are you a member of a local regulatory authority or body?",
+      fields: [
+        {
+          key: "memberOfRegulatoryAuthority",
+          title:
+            "Are you a member of a local bar association or other regulatory authority/body?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "What is the name of the local regulatory authority?",
+      fields: [
+        {
+          key: "regulatoryAuthority",
+          title: "regulatoryAuthority",
+          type: "text",
+          answer: "Some Authority",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Full name",
+      fields: [
+        {
+          key: "contactName",
+          answer: "Winston Smith",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Company name",
+      fields: [
+        {
+          key: "organisationName",
+          title: "Organisation name",
+          type: "text",
+          answer: "{{organisationName}}",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Website address",
+      fields: [
+        {
+          key: "websiteAddress",
+          title: "Website address",
+          type: "text",
+          answer: "www.covidtest1.com",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Email address",
+      fields: [
+        {
+          key: "emailAddress",
+          title: "Email address",
+          type: "text",
+          answer: "email@domain.com",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Phone number",
+      fields: [
+        {
+          key: "phoneNumber",
+          title: "Phone number",
+          type: "text",
+          answer: "777766665555",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Company Address",
+      fields: [
+        {
+          key: "address.firstLine",
+          title: "Address line 1",
+          type: "text",
+          answer: "Cogito, Ergo Sum Street",
+        },
+        {
+          key: "address.secondLine",
+          title: "Address line 2",
+          type: "text",
+        },
+        {
+          key: "city",
+          title: "Town or city",
+          type: "text",
+          answer: "Touraine",
+        },
+        {
+          key: "postCode",
+          title: "Postcode",
+          type: "text",
+          answer: "123456",
+        },
+        {
+          key: "country",
+          title: "Country",
+          type: "text",
+          answer: "France",
+        },
+        {
+          key: "addressCountry",
+          answer: "France",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "What types of Covid-19 tests do you offer?",
+      fields: [
+        {
+          key: "testTypes",
+          title: "What types of Covid-19 tests do you offer?",
+          type: "text",
+          answer: "Polymerase chain reaction (PCR)",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Turnaround time?",
+      fields: [
+        {
+          key: "turnaroundTimes",
+          title: "Turnaround times",
+          type: "text",
+          answer: "24 hours",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Do you provide english certificate translation?",
+      fields: [
+        {
+          key: "providesCertificateTranslation",
+          title: "Do you provide english certificate translation?",
+          type: "text",
+          answer: true,
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "What booking options do you offer?",
+      fields: [
+        {
+          key: "bookingOptions",
+          title: "Booking Options?",
+          type: "text",
+          answer: "Online, Phone, In Person",
+        },
+      ],
+      index: 0,
+    },
+    {
+      question: "Declaration",
+      fields: [
+        {
+          key: "declarationConfirm",
+          title: "Confirm",
+          type: "text",
+          answer: "confirm",
+        },
+      ],
+      index: 0,
+    },
+  ],
 };
 
 /**
@@ -183,27 +392,9 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toThrow(
-        "Lawyer record already exists"
+      await expect(createListItem(lawyerWebhookData)).rejects.toThrow(
+        "lawyers record already exists"
       );
-
-      expect(spyCount.mock.calls[0][0]).toEqual({
-        where: {
-          AND: [
-            {
-              jsonData: {
-                equals: LawyerWebhookData.organisationName.toLowerCase(),
-                path: ["organisationName"],
-              },
-            },
-          ],
-          address: {
-            country: {
-              name: LawyerWebhookData.country,
-            },
-          },
-        },
-      });
       expect(spyCountry).not.toHaveBeenCalled();
     });
 
@@ -213,9 +404,9 @@ describe("ListItem Model:", () => {
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
 
-      await LawyerListItem.create(LawyerWebhookData);
+      await listItemCreateInputFromWebhook(lawyerWebhookData);
 
-      const expectedCountryName = startCase(toLower(LawyerWebhookData.country));
+      const expectedCountryName = startCase(toLower(lawyerWebhookData.country));
 
       expect(spyCountry).toHaveBeenCalledWith({
         where: { name: expectedCountryName },
@@ -230,78 +421,9 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await LawyerListItem.create(LawyerWebhookData);
+      await createListItem(lawyerWebhookData);
 
-      expect(spy).toHaveBeenCalledWith({
-        data: {
-          type: "lawyers",
-          isApproved: false,
-          isPublished: false,
-          address: {
-            create: {
-              firstLine: "123 Calle",
-              postCode: "S3V1LLA",
-              secondLine: undefined,
-              city: "Seville",
-              country: {
-                connect: {
-                  id: "123TEST",
-                },
-              },
-              geoLocation: {
-                connect: {
-                  id: 1,
-                },
-              },
-            },
-          },
-          jsonData: {
-            country: "Spain",
-            size: "Independent lawyer / sole practitioner",
-            contactName: "Lawyer In Spain",
-            speakEnglish: true,
-            regulators: "Spanish BAR",
-            organisationName: "CYB Law",
-            emailAddress: "lawyer@example.com",
-            publishEmail: "Yes",
-            phoneNumber: "+34123456789",
-            emergencyPhoneNumber: "+34123456789",
-            websiteAddress: "https://www.cyb-law.com",
-            regions: "Seville, Malaga, Granada, Cadiz",
-            areasOfLaw: [
-              "Bankruptcy",
-              "Corporate",
-              "Criminal",
-              "Employment",
-              "Family",
-              "Health",
-              "Immigration",
-              "Intellectual property",
-              "International",
-              "Maritime",
-              "Personal injury",
-              "Real estate",
-              "Tax",
-            ],
-            legalAid: false,
-            proBono: false,
-            representedBritishNationals: true,
-            declaration: ["confirm"],
-          },
-          list: {
-            connect: {
-              id: -1,
-            }
-          },
-        },
-        include: {
-          address: {
-            include: {
-              country: true,
-            },
-          },
-        },
-      });
+      expect(spy).toHaveBeenCalled();
     });
 
     test("createLawyer throws listItem.create error", async () => {
@@ -311,9 +433,7 @@ describe("ListItem Model:", () => {
       const error = new Error("CREATE ERROR");
       prisma.listItem.create.mockRejectedValueOnce(error);
 
-      await expect(LawyerListItem.create(LawyerWebhookData)).rejects.toEqual(
-        error
-      );
+      await expect(createListItem(lawyerWebhookData)).rejects.toEqual(error);
     });
   });
 
@@ -598,6 +718,7 @@ describe("ListItem Model:", () => {
 
       expect(result).toEqual({
         type: "lawyers",
+        emailVerified: true,
       });
       expect(spy).toHaveBeenCalledWith({
         where: { reference },
@@ -621,6 +742,7 @@ describe("ListItem Model:", () => {
 
       expect(result).toEqual({
         type: "lawyers",
+        emailVerified: true,
       });
       expect(spyFindUnique).toHaveBeenCalled();
       expect(spyUpdate).not.toHaveBeenCalled();
@@ -973,17 +1095,13 @@ describe("ListItem Model:", () => {
     });
   });
 
-  describe("CovidTestSupplierListItem.createObject", () => {
-    // TODO
-  });
-
-  describe("CovidTestSupplierListItem.create", () => {
+  describe("listItemCreateInputFromWebhook", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
-      await expect(
-        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
-      ).rejects.toEqual(new Error("Covid Test Supplier Record already exists"));
+      expect(
+        listItemCreateInputFromWebhook(covidTestProviderWebhookData)
+      ).rejects.toEqual(new Error("covidTestProviders record already exists"));
     });
 
     test.skip("listItem create command is correct", async () => {
@@ -992,8 +1110,11 @@ describe("ListItem Model:", () => {
       spyCountryUpsert();
       const spy = spyListItemCreate();
 
-      await CovidTestSupplierListItem.create(CovidTestProviderWebhookData);
+      await listItemCreateInputFromWebhook(covidTestProviderWebhookData);
 
+      /**
+       * TODO: refactor so that deseralisers/__tests__/* do the checking of in/output rather than spying on prisma.listItem.create.
+       */
       expect(spy).toHaveBeenCalledWith({
         data: {
           type: "covidTestProviders",
@@ -1068,7 +1189,7 @@ describe("ListItem Model:", () => {
       prisma.listItem.create.mockRejectedValue(error);
 
       await expect(
-        CovidTestSupplierListItem.create(CovidTestProviderWebhookData)
+        createListItem(covidTestProviderWebhookData)
       ).rejects.toEqual(error);
     });
   });
@@ -1077,9 +1198,10 @@ describe("ListItem Model:", () => {
     test("contact information is correct when email and phoneNumber are set", () => {
       const listItem: any = {
         jsonData: {
+          extra: "extra field",
           contactName: "ABC",
+          emailAddress: "123@a.bc",
           phoneNumber: "123",
-          email: "123",
         },
       };
 
@@ -1087,7 +1209,7 @@ describe("ListItem Model:", () => {
       expect(contactInfo).toEqual({
         contactName: "ABC",
         contactPhoneNumber: "123",
-        contactEmailAddress: "123",
+        contactEmailAddress: "123@a.bc",
       });
     });
 
@@ -1096,7 +1218,7 @@ describe("ListItem Model:", () => {
         jsonData: {
           contactName: "ABC",
           contactPhoneNumber: "123",
-          contactEmailAddress: "123",
+          publicEmailAddress: "123",
         },
       };
 

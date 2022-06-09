@@ -1,30 +1,37 @@
-import { get, merge } from "lodash";
-import pgescape from "pg-escape";
-import { prisma } from "./../db/prisma-client";
-import { AuditEvent, Prisma, Status, ListItem, ListItemEvent } from "@prisma/client";
-import { logger } from "server/services/logger";
-import {
-  LawyersFormWebhookData,
-  CovidTestSupplierFormWebhookData,
-  WebhookData,
-} from "server/components/formRunner";
+import { WebhookData } from "server/components/formRunner";
 import {
   EventJsonData,
   List,
-  User,
-  ServiceType,
   Point,
-  WebhookDataAsJsonObject,
-} from "./../types";
-import { recordListItemEvent } from "./../audit";
-import { recordEvent } from "./../listItem/listItemEvent";
-import { CovidTestSupplierListItem, LawyerListItem } from "./providers";
-import { ListItemWithAddressCountry } from "./providers/types";
+  ServiceType,
+  User,
+  ListItem,
+} from "server/models/types";
+import {
+  ListItemWithAddressCountry,
+  ListItemWithJsonData,
+} from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
-import { getChangedAddressFields } from "./providers/helpers";
-import { geoLocatePlaceByText } from "server/services/location";
 import { rawUpdateGeoLocation } from "server/models/helpers";
+import { geoLocatePlaceByText } from "server/services/location";
+import { recordListItemEvent } from "server/models/audit";
+import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
+import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
+import pgescape from "pg-escape";
+import { prisma } from "../db/prisma-client";
+import { logger } from "server/services/logger";
+import {
+  AuditEvent,
+  ListItemEvent,
+  Prisma,
+  Status,
+  ListItem as PrismaListItem,
+} from "@prisma/client";
+import { recordEvent } from "./listItemEvent";
+import { merge } from "lodash";
+import { DeserialisedWebhookData } from "./providers/deserialisers/types";
 export { findIndexListItems } from "./summary";
+export const createFromWebhook = listItemCreateInputFromWebhook;
 
 export async function findListItemsForList(list: List): Promise<ListItem[]> {
   try {
@@ -76,11 +83,9 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
   }
 }
 
-export async function findListItemById(
-  id: string | number
-): Promise<any> {
+export async function findListItemById(id: string | number): Promise<any> {
   try {
-    const returnVal = (await prisma.listItem.findUnique({
+    const returnVal = await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
         address: {
@@ -101,9 +106,8 @@ export async function findListItemById(
         history: true,
         pinnedBy: true,
       },
-    }));
+    });
     return returnVal;
-
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error("Failed to approve lawyer");
@@ -138,7 +142,8 @@ export async function togglerListItemIsApproved({
         where: { id },
         data,
       }),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: isApproved ? "approve" : "disapprove",
           itemId: id,
           userId,
@@ -166,7 +171,9 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
+  const auditEvent = isPublished
+    ? AuditEvent.PUBLISHED
+    : AuditEvent.UNPUBLISHED;
 
   try {
     const [listItem] = await prisma.$transaction([
@@ -175,7 +182,7 @@ export async function togglerListItemIsPublished({
         data: {
           isApproved: true,
           isPublished,
-          status
+          status,
         },
         include: {
           address: {
@@ -185,7 +192,8 @@ export async function togglerListItemIsPublished({
           },
         },
       }),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: isPublished ? "publish" : "unpublish",
           itemId: id,
           userId,
@@ -199,7 +207,7 @@ export async function togglerListItemIsPublished({
           itemId: id,
         },
         id,
-        isPublished ? ListItemEvent.PUBLISHED : ListItemEvent.UNPUBLISHED,
+        isPublished ? ListItemEvent.PUBLISHED : ListItemEvent.UNPUBLISHED
       ),
     ]);
 
@@ -213,7 +221,7 @@ export async function togglerListItemIsPublished({
 
 export async function persistListItemChanges(
   id: number,
-  userId: User["id"],
+  userId: User["id"]
 ): Promise<ListItem> {
   if (userId === undefined) {
     throw new Error("persistListItemChanges Error: userId is undefined");
@@ -225,13 +233,13 @@ export async function persistListItemChanges(
     const listItem = await prisma.listItem.findUnique({
       where: { id },
       include: {
-        history: true
-      }
+        history: true,
+      },
     });
 
     const editEvent = listItem?.history
       .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
-      .filter(audit => audit.type === "EDITED")
+      .filter((audit) => audit.type === "EDITED")
       .pop();
 
     const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
@@ -245,20 +253,22 @@ export async function persistListItemChanges(
           isApproved: true,
           isPublished: true,
           jsonData: eventJsonData?.updatedJsonData,
-        }
+        },
       }),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: "publish",
           itemId: id,
-          userId
+          userId,
         },
         auditEvent
       ),
 
-      recordEvent({
+      recordEvent(
+        {
           eventName: "publish",
           itemId: id,
-          userId
+          userId,
         },
         id,
         listItemEvent
@@ -292,22 +302,26 @@ export async function setEmailIsVerified({
     }
 
     // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
-    const { type } = item;
+    const { type, jsonData } = item as ListItemWithJsonData;
+    const { metadata } = jsonData;
     const serviceType = type as ServiceType;
 
-    if (get(item, "jsonData.metadata.emailVerified") === true) {
+    if (metadata?.emailVerified === true) {
       return {
+        ...metadata,
         type: serviceType,
       };
     }
 
-    const jsonData = merge(item.jsonData, {
-      metadata: { emailVerified: true },
-    });
+    const updatedJsonData = {
+      ...jsonData,
+      metadata: { ...metadata, emailVerified: true },
+    };
 
+    // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
-      data: { jsonData },
+      data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 
     return {
@@ -320,16 +334,43 @@ export async function setEmailIsVerified({
 }
 
 export async function createListItem(
-  serviceType: ServiceType,
   webhookData: WebhookData
 ): Promise<ListItemWithAddressCountry> {
-  switch (serviceType) {
-    case ServiceType.lawyers:
-      return await LawyerListItem.create(webhookData as LawyersFormWebhookData);
-    case ServiceType.covidTestProviders:
-      return await CovidTestSupplierListItem.create(
-        webhookData as CovidTestSupplierFormWebhookData
-      );
+  try {
+    const data = await listItemCreateInputFromWebhook(webhookData);
+
+    const listItem = await prisma.listItem.create({
+      data,
+      include: {
+        address: {
+          include: {
+            country: true,
+          },
+        },
+      },
+    });
+
+    await recordListItemEvent(
+      {
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      AuditEvent.NEW
+    );
+
+    await recordEvent(
+      {
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      listItem.id,
+      ListItemEvent.NEW
+    );
+
+    return listItem;
+  } catch (error) {
+    logger.error(`create ListItem failed ${error.message}`);
+    throw error;
   }
 }
 
@@ -338,7 +379,7 @@ type Nullable<T> = T | undefined | null;
 export async function update(
   id: ListItem["id"],
   userId: User["id"],
-  data: WebhookDataAsJsonObject<LawyersFormWebhookData> | WebhookDataAsJsonObject<CovidTestSupplierFormWebhookData>
+  data: DeserialisedWebhookData
 ): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
@@ -354,8 +395,13 @@ export async function update(
   const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
+  const areasOfLaw = data?.areasOfLaw;
   const updatedJsonData = merge(listItem.jsonData, data);
 
+  // @todo this will need restructuring to accommodate array field types for other providers
+  if (areasOfLaw) {
+    updatedJsonData.areasOfLaw = areasOfLaw;
+  }
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id },
     data: {
@@ -393,39 +439,44 @@ export async function update(
         prisma.listItem.update(listItemPrismaQuery),
         prisma.address.update(addressPrismaQuery!),
         rawUpdateGeoLocation(...geoLocationParams!),
-        recordListItemEvent({
+        recordListItemEvent(
+          {
             eventName: "publish",
             itemId: id,
             userId,
+            // @ts-ignore
             updatedJsonData,
           },
           AuditEvent.PUBLISHED
         ),
-        recordEvent({
+        recordEvent(
+          {
             eventName: "publish",
             itemId: id,
-            userId
+            userId,
           },
           id,
           ListItemEvent.PUBLISHED
         ),
       ]);
-
     } else {
       result = await prisma.$transaction([
         prisma.listItem.update(listItemPrismaQuery),
-        recordListItemEvent({
+        recordListItemEvent(
+          {
             eventName: "publish",
             itemId: id,
             userId,
+            // @ts-ignore
             updatedJsonData,
           },
           AuditEvent.PUBLISHED
         ),
-        recordEvent({
+        recordEvent(
+          {
             eventName: "publish",
             itemId: id,
-            userId
+            userId,
           },
           id,
           ListItemEvent.PUBLISHED
@@ -465,10 +516,11 @@ export async function deleteListItem(
           id,
         },
       }),
-      recordListItemEvent({
+      recordListItemEvent(
+        {
           eventName: "delete",
           itemId: id,
-          userId
+          userId,
         },
         AuditEvent.DELETED
       ),
