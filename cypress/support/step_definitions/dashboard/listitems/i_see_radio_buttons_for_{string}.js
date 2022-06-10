@@ -1,5 +1,5 @@
-Then("I see radio buttons", (radioButtons) => {
-  const items = radioButtons.raw()[0];
+Then("I see radio buttons {string}", (radioButtons) => {
+  const items = radioButtons.split(",");
   if (Array.isArray(items)) {
     for (const item of items) {
       cy.findByText(item, { exact: false });
@@ -7,8 +7,8 @@ Then("I see radio buttons", (radioButtons) => {
   }
 });
 
-And("I do not see radio buttons", (radioButtons) => {
-  const items = radioButtons.raw()[0];
+And("I do not see radio buttons {string}", (radioButtons) => {
+  const items = radioButtons.split(",");
   if (Array.isArray(items)) {
     for (const item of items) {
       cy.findByText(item, { exact: false })

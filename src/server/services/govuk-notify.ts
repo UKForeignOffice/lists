@@ -125,6 +125,11 @@ export async function sendEditDetailsEmail(
   changeLink: string
 ): Promise<void> {
   try {
+
+    if (config.isCybDev || config.isSmokeTest) {
+      return;
+    }
+
     const typeSingular = pluralize.singular(typePlural);
     await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),

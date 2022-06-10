@@ -98,7 +98,7 @@ export async function listItemGetController(
 
     const auditJsonData: EventJsonData =
       auditForEdits?.jsonData as EventJsonData;
-    const updatedJsonData = auditJsonData.updatedJsonData;
+    const updatedJsonData = auditJsonData?.updatedJsonData;
     if (updatedJsonData !== undefined) {
       listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
         listItem,
