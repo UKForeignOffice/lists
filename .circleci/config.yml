@@ -113,7 +113,10 @@ jobs:
 
       - run:
           name: Start Form Runner
-          command: npm run form-runner:start
+          background: true
+          environment:
+            PORT: "3001"
+          command: NODE_CONFIG='{"safelist":["localhost"]}' npm run form-runner:start
 
       - run:
           name: run build
