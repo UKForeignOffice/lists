@@ -11,10 +11,6 @@ Feature:
     And I have read the disclaimer
     Then I see "<found>"
 
-
-
-
-
     Examples:
       | profession | country | city | filters               | found              |
       | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Davide Cupertino   |

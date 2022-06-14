@@ -1,8 +1,0 @@
-{
-  "chromeWebSecurity": false,
-  "testFiles": ["**/*.feature"],
-  "video": false,
-  "env": {
-    "TAGS": "not @wip"
-  }
-}

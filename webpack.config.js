@@ -27,7 +27,7 @@ console.log("Webpack Starting", {
 
 const environmentOptions = {
   test: {
-    mode: "production",
+    mode: "none",
     watch: false,
     plugins: [],
   },

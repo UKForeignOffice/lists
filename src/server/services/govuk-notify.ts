@@ -19,6 +19,12 @@ export function getNotifyClient(): any {
     ];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
+    if (config.isSmokeTest) {
+      return import("./__mocks__/notifications-node-client").then(
+        (mocks) => mocks.NotifyClient
+      );
+    }
+
     notifyClient = new NotifyClient(config.GOVUK_NOTIFY_API_KEY?.trim());
   }
 
@@ -119,6 +125,11 @@ export async function sendEditDetailsEmail(
   changeLink: string
 ): Promise<void> {
   try {
+
+    if (config.isCybDev || config.isSmokeTest) {
+      return;
+    }
+
     const typeSingular = pluralize.singular(typePlural);
     await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
@@ -133,7 +144,6 @@ export async function sendEditDetailsEmail(
         },
       }
     );
-
   } catch (error) {
     throw new Error(`Unable to send change request email: ${error.message}`);
   }

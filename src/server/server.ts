@@ -21,7 +21,14 @@ import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 
-import { isProd } from "server/config";
+import {
+  isSmokeTest,
+  isLocalHost,
+  isProd,
+  NODE_ENV,
+  SERVICE_DOMAIN,
+} from "server/config";
+import { logger } from "server/services/logger";
 
 const server = express();
 
@@ -57,5 +64,8 @@ export async function getServer(): Promise<Express> {
   // error handlers
   configureErrorHandlers(server);
 
+  logger.info(
+    `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
+  );
   return server;
 }
