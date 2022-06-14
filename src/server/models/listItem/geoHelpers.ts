@@ -36,19 +36,24 @@ export async function getPlaceGeoPoint(props: {
 export function makeAddressGeoLocationString(
   webhookData: DeserialisedWebhookData
 ): string {
-  return `
-      ${webhookData["address.firstLine"] ?? ""},
-      ${webhookData["address.secondLine"] ?? ""},
-      ${webhookData.city} -
-      ${webhookData.addressCountry ?? webhookData.country} -
-      ${webhookData.postCode} ?? ""
-    `;
+  const address = [
+    webhookData["address.firstLine"],
+    webhookData["address.secondLine"],
+    webhookData.city,
+    webhookData.addressCountry ?? webhookData.country,
+    webhookData.postCode,
+  ]
+    .filter(Boolean)
+    .map((addressLine) => addressLine?.trim());
+
+  return address.join(", ");
 }
 
 export async function createAddressGeoLocation(
   item: DeserialisedWebhookData
 ): Promise<number> {
   const address = makeAddressGeoLocationString(item);
+  // TODO:- pass country into geoLocatePlaceByText so we can filter by country via AWS
   const point = await geoLocatePlaceByText(address);
 
   return await rawInsertGeoLocation(point);

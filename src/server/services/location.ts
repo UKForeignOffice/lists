@@ -56,6 +56,7 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 }
 
+// TODO:- pass country into geoLocatePlaceByText so we can filter by country via AWS
 export async function geoLocatePlaceByText(
   Text: string
 ): Promise<Location.Types.Position> {
