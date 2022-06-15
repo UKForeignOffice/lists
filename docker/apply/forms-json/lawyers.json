@@ -1,15 +1,15 @@
 {
-  "startPage": "/apply-to-the-find-an-english-speaking-funeral-director-abroad-service",
+  "startPage": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
   "pages": [
     {
-      "title": "Apply to the ‘Find an English-speaking funeral director abroad’ service",
-      "path": "/apply-to-the-find-an-english-speaking-funeral-director-abroad-service",
+      "title": "Apply to be added to the ‘Find a lawyer abroad’ service",
+      "path": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
       "components": [
         {
           "name": "rhnpiT",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">Funeral directors based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find an English-speaking funeral director abroad' service.</p>\n<p class=\"govuk-body\">This service provides lists of English-speaking funeral directors which are searchable by country and region to help British nationals find the support that best suits their needs.</p>\n<p class=\"govuk-body\">To be eligible to be added to a list you need to be:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n<li>based in the country you provide funeral services in</li>\n<li>qualified to provide funeral services, and are registered with the local authorities to provide funeral services (if applicable in your country)</li>\n</ul>\n</p>\n<p class=\"govuk-body\">You also need to be able to provide:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>funeral services and support to customers in English</li>\n  <li>reliable contact details, including an email address</li>\n</ul>\n<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must have access to the email address you provide. You will be sent a link that you must use to complete your application.\n  </strong>\n</div>\n",
+          "content": "<p class=\"govuk-body\">Lawyers based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find a lawyer abroad' service.</p>\n<p class=\"govuk-body\">The 'Find a lawyer abroad' service provides lists of English-speaking lawyers in specific countries to help British nationals find the legal support that best suits their needs.</p>\n<p class=\"govuk-body\">To be eligible to be added to a list you need to be qualified to practise law in that country.</p>\n<p class=\"govuk-body\">You also need to be able to provide:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>legal services and support to customers in English</li>\n  <li>reliable contact details, including email address</li>\n</ul>\n<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must have access to the email address you provide. You will be sent a link that you must use to complete your application.\n  </strong>\n</div>\n",
           "schema": {}
         },
         {
@@ -22,7 +22,7 @@
       ],
       "next": [
         {
-          "path": "/which-country-list-do-you-want-to-be-added-to"
+          "path": "/which-list-of-lawyers-do-you-want-to-be-added-to"
         }
       ],
       "controller": "./pages/start.js"
@@ -31,12 +31,11 @@
       "title": "Check your answers",
       "path": "/summary",
       "controller": "./pages/summary.js",
-      "components": [],
-      "next": []
+      "components": []
     },
     {
-      "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
-      "title": "Can you provide funeral services and support to customers in English?",
+      "path": "/can-you-provide-legal-services-and-support-to-customers-in-english",
+      "title": "Can you provide legal services and support to customers in English?",
       "components": [
         {
           "name": "speakEnglish",
@@ -53,7 +52,7 @@
           "condition": "50_TW9NLlvr2820-1-Qt6"
         },
         {
-          "path": "/are-you-a-member-of-a-professional-association-optional",
+          "path": "/which-legal-regulator-or-local-bar-associations-are-you-registered-with",
           "condition": "oV9fvQl39FkGahoM46257"
         }
       ]
@@ -66,31 +65,24 @@
           "name": "WlXNxl",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-hint\">\nYou can only be added to the 'Find an English-speaking funeral director abroad' service if you can provide services to British nationals in English\n\n</div>",
+          "content": "<div class=\"govuk-hint\">\nYou can only be added to the 'Find a lawyer abroad' service if you can provide support to English-speaking British nationals.\n\n</div>",
           "schema": {}
         }
       ],
       "next": []
     },
     {
-      "path": "/contact-name",
-      "title": "Contact name ",
+      "path": "/your-name",
+      "title": "Your full name",
       "components": [
         {
-          "name": "YBSPkn",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-hint\"> Provide the full name of someone at the company who the British Embassy can contact about your application. This will not be published on GOV.UK.\n\n</div>",
-          "schema": {}
-        },
-        {
           "name": "contactName",
+          "title": "Your full name",
+          "hint": "Enter your full name including first and last names. This is how your name will appear on GOV.UK if you are added to the list.",
           "options": {
-            "required": true,
-            "hideTitle": true
+            "required": true
           },
           "type": "TextField",
-          "title": "Contact's name",
           "schema": {}
         }
       ],
@@ -145,9 +137,7 @@
         },
         {
           "name": "postCode",
-          "options": {
-            "required": false
-          },
+          "options": {},
           "type": "TextField",
           "title": "Post code / area code",
           "schema": {}
@@ -168,15 +158,14 @@
       ]
     },
     {
-      "path": "/full-website-address-optional-zSiMpL",
-      "title": "Full website address (optional)",
+      "path": "/full-website-address-optional",
+      "title": "Full website address (Optional)",
       "components": [
         {
           "name": "rCHsNQ",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-hint\">Enter your full web address, for example: https://www.example.com or http://www.example.com.</p>\n\n<p class=\"govuk-hint\">If you do not know the full address, open your website in a new tab and copy the link.</p>",
-          "schema": {}
+          "content": "<p class=\"govuk-hint\">Enter your full web address, for example: https://www.example.com or http://www.example.com.</p>\n\n<p class=\"govuk-hint\">If you do not know the full address, open your website in a new tab and copy the link.</p>"
         },
         {
           "name": "websiteAddress",
@@ -236,43 +225,76 @@
       ]
     },
     {
-      "path": "/which-local-services-do-you-provide",
-      "title": "Which local services do you provide?",
+      "path": "/in-what-areas-of-law-are-you-qualified-to-practise",
+      "title": "In what areas of law are you qualified to practise? ",
       "components": [
         {
-          "name": "localServicesProvided",
-          "options": {
-            "hideTitle": true
-          },
+          "name": "areasOfLaw",
+          "options": {},
           "type": "CheckboxesField",
-          "title": "Local services provided",
+          "title": "Areas of law practised",
           "list": "iqn9pP",
           "schema": {},
-          "hint": "Select all services that you provide"
+          "hint": "Select all areas that apply."
+        }
+      ],
+      "next": [
+        {
+          "path": "/can-you-provide-legal-aid-to-british-nationals"
         },
         {
-          "name": "RuScuW",
+          "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+          "condition": "rCuWxL"
+        }
+      ]
+    },
+    {
+      "path": "/can-you-provide-legal-aid-to-british-nationals",
+      "title": "Can you provide legal aid to British nationals?",
+      "components": [
+        {
+          "name": "legalAid",
           "options": {},
-          "type": "InsetText",
-          "content": "<p class=“govuk-body”>If you provide a different service that you think should be included in this list, email <a href=\"#\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a>.</p>",
+          "type": "YesNoField",
+          "title": "Can you provide legal aid to British nationals?",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/religious-and-cultural-services-you-provide-optional"
+          "path": "/can-you-offer-pro-bono-service-to-british-nationals"
         }
       ]
     },
     {
-      "path": "/have-you-provided-services-to-british-nationals-before",
-      "title": "Have you provided services to British nationals before?",
+      "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+      "title": "Can you offer pro bono service to British nationals?",
+      "components": [
+        {
+          "name": "proBono",
+          "options": {
+            "required": true
+          },
+          "type": "YesNoField",
+          "title": "Can you offer pro bono service to British nationals?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/have-you-represented-british-nationals-before"
+        }
+      ]
+    },
+    {
+      "path": "/have-you-represented-british-nationals-before",
+      "title": "Have you represented British nationals before?",
       "components": [
         {
           "name": "representedBritishNationals",
           "options": {},
           "type": "YesNoField",
-          "title": "Have you provided services to British nationals before?",
+          "title": "Have you represented British nationals before?",
           "schema": {}
         }
       ],
@@ -314,29 +336,26 @@
       ],
       "next": [
         {
-          "path": "/full-website-address-optional-zSiMpL"
+          "path": "/full-website-address-optional"
         }
       ]
     },
     {
-      "path": "/are-you-a-member-of-a-professional-association-optional",
-      "title": "Are you a member of a professional association? (optional)",
+      "path": "/which-legal-regulator-or-local-bar-associations-are-you-registered-with",
+      "title": "Which legal regulator or local bar associations are you registered with?",
       "components": [
         {
           "name": "regulators",
-          "options": {
-            "hideTitle": true,
-            "required": false
-          },
-          "type": "TextField",
-          "hint": "Include any independent national or international associations, unions or regulatory bodies. The details you give may be checked by FCDO but will not be published on GOV.UK.",
-          "title": "Associations, unions or regulatory bodies",
+          "options": {},
+          "type": "MultilineTextField",
+          "title": "Regulator(s)",
+          "hint": "The details you give may be checked by FCDO but will not be published on GOV.UK.\n",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/contact-name"
+          "path": "/your-name"
         }
       ]
     },
@@ -348,7 +367,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li> currently qualified to provide funeral services, or are currently registered with the local authorities to\n    provide funeral services (if applicable in your country)\n  </li>\n  <li> reliable and willing to help on a regular basis</li>\n  <li> able to respond within a reasonable timeframe to client requests</li>\n  <li> willing to update or re-confirm your details on an annual basis on request</li>\n  <li> aware that inclusion on the 'Find an English-speaking funeral director abroad' service is not an endorsement by the FCDO and you\n    are not affiliated to the FCDO in any way\n  </li>\n</ul>\n",
+          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n</ul>\n\n\n",
           "schema": {}
         },
         {
@@ -369,8 +388,8 @@
       ]
     },
     {
-      "path": "/which-country-list-do-you-want-to-be-added-to",
-      "title": "Which country list do you want to be added to?",
+      "path": "/which-list-of-lawyers-do-you-want-to-be-added-to",
+      "title": "Which list of lawyers do you want to be added to?",
       "components": [
         {
           "name": "country",
@@ -378,23 +397,19 @@
           "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
-          "schema": {}
+          "schema": {},
+          "hint": "Select country"
         },
         {
           "name": "ZoFnKT",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country you select.\n  </strong>\n</div>",
-          "schema": {}
+          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country you select.\n  </strong>\n</div>"
         }
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
-          "condition": "isFDCountryPilot"
+          "path": "/what-size-is-your-company-or-firm"
         }
       ]
     },
@@ -413,7 +428,26 @@
       ],
       "next": [
         {
-          "path": "/do-you-provide-international-repatriation-services"
+          "path": "/in-what-areas-of-law-are-you-qualified-to-practise"
+        }
+      ]
+    },
+    {
+      "path": "/what-size-is-your-company-or-firm",
+      "title": "What size is your company or firm?",
+      "components": [
+        {
+          "name": "size",
+          "options": {},
+          "type": "RadiosField",
+          "title": "Company size",
+          "list": "mKafAn",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/can-you-provide-legal-services-and-support-to-customers-in-english"
         }
       ]
     },
@@ -449,151 +483,83 @@
         }
       ],
       "next": []
-    },
-    {
-      "path": "/do-you-provide-international-repatriation-services",
-      "title": "Do you provide international repatriation services?",
+    }
+  ],
+  "specialPages": {
+    "confirmationPage": {
+      "customText": {
+        "title": "Check your email",
+        "paymentSkipped": false,
+        "nextSteps": "We have sent you an email containing a link. You must use the link so that we can verify your email address."
+      },
       "components": [
         {
-          "name": "repatriation",
-          "options": {
-            "hideTitle": true
-          },
-          "type": "YesNoField",
-          "hint": "Repatriation is the process of returning the deceased to their own country.",
-          "title": "Do you provide repatriation services?",
+          "name": "WLskhZ",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    We cannot process your application unless you use the link.\n  </strong>\n</div>\n",
           "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/what-type-of-repatriation-services-do-you-provide",
-          "condition": "GnVOrG"
-        },
-        {
-          "path": "/which-local-services-do-you-provide"
-        }
-      ]
-    },
-    {
-      "path": "/what-type-of-repatriation-services-do-you-provide",
-      "title": "What type of repatriation services do you provide?",
-      "components": [
-        {
-          "name": "repatriationServicesProvided",
-          "options": {
-            "hideTitle": true
-          },
-          "type": "CheckboxesField",
-          "title": "What type of repatriation services do you provide?",
-          "list": "cYXZxZ",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/which-local-services-do-you-provide"
-        }
-      ]
-    },
-    {
-      "path": "/religious-and-cultural-services-you-provide-optional",
-      "title": "Religious and cultural services you provide (optional)",
-      "components": [
-        {
-          "name": "religiousCulturalServicesProvided",
-          "options": {
-            "hideTitle": true,
-            "required": false
-          },
-          "type": "TextField",
-          "title": "Religious and ceremonial services",
-          "hint": "Provide details of any religious or cultural services you provide, for example Islamic, Christian or Hindu funerals",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/languages-spoken-optional"
-        }
-      ]
-    },
-    {
-      "path": "/languages-spoken-optional",
-      "title": "Languages spoken (optional)",
-      "components": [
-        {
-          "name": "languagesSpoken",
-          "options": {
-            "hideTitle": true,
-            "required": false
-          },
-          "type": "TextField",
-          "title": "Languages",
-          "hint": "List the languages in which you can provide funeral services (apart from English)",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/have-you-provided-services-to-british-nationals-before"
         }
       ]
     }
-  ],
+  },
   "lists": [
     {
-      "title": "Local services provided",
+      "title": "Legal Practice Areas",
       "name": "iqn9pP",
       "type": "string",
       "items": [
         {
-          "text": "Local burials",
-          "value": "Local burials"
+          "text": "Bankruptcy",
+          "value": "Bankruptcy"
         },
         {
-          "text": "Cremation",
-          "value": "Cremation"
+          "text": "Corporate",
+          "value": "Corporate"
         },
         {
-          "text": "Embalming",
-          "value": "Embalming"
+          "text": "Criminal",
+          "value": "Criminal"
         },
         {
-          "text": "Post-mortem reconstruction",
-          "value": "Post-mortem reconstruction"
+          "text": "Employment",
+          "value": "Employment"
         },
         {
-          "text": "Legalisation of documents ",
-          "value": "Legalisation of documents"
+          "text": "Family",
+          "value": "Family"
         },
         {
-          "text": "Collection and forwarding of personal belongings",
-          "value": "collection"
+          "text": "Health",
+          "value": "Health"
         },
         {
-          "text": "Collection and forwarding of local death certificate",
-          "value": "Collection local death certificate"
+          "text": "Immigration",
+          "value": "Immigration"
         },
         {
-          "text": "Flower arrangements",
-          "value": "Flower arrangements"
+          "text": "Intellectual property",
+          "value": "Intellectual property"
         },
         {
-          "text": "Burial site acquisition",
-          "value": "Burial site acquisition"
+          "text": "International",
+          "value": "International"
         },
         {
-          "text": "Funeral transportation",
-          "value": "Funeral transportation"
+          "text": "Maritime",
+          "value": "Maritime"
         },
         {
-          "text": "Exhumations",
-          "value": "Exhumations"
+          "text": "Personal injury",
+          "value": "Personal injury"
         },
         {
-          "text": "State funerals and VIPs",
-          "value": "State funerals and VIPs"
+          "text": "Real estate",
+          "value": "Real estate"
+        },
+        {
+          "text": "Tax",
+          "value": "Tax"
         }
       ]
     },
@@ -1083,8 +1049,8 @@
           "value": "Macao"
         },
         {
-          "text": "Macedonia",
-          "value": "Macedonia"
+          "text": "North Macedonia",
+          "value": "North Macedonia"
         },
         {
           "text": "Madagascar",
@@ -1622,54 +1588,6 @@
           "value": "noPublish"
         }
       ]
-    },
-    {
-      "title": "Local services provided",
-      "name": "woePgy",
-      "type": "string",
-      "items": [
-        {
-          "text": "Funerals",
-          "value": "Funerals"
-        }
-      ]
-    },
-    {
-      "title": "Repatriation services provided",
-      "name": "cYXZxZ",
-      "type": "string",
-      "items": [
-        {
-          "text": "Body repatriation",
-          "value": "Body repatriation"
-        },
-        {
-          "text": "Ashes repatriation (from a cremation)",
-          "value": "Ashes repatriation (from a cremation)"
-        }
-      ]
-    },
-    {
-      "title": "Repatriation services",
-      "name": "PlEVQm",
-      "type": "string",
-      "items": [
-        {
-          "text": "Repatriation of the body",
-          "value": "Repatriation of the body"
-        }
-      ]
-    },
-    {
-      "title": "Repatriation",
-      "name": "LzkSjB",
-      "type": "string",
-      "items": [
-        {
-          "text": "Body",
-          "value": "Body"
-        }
-      ]
     }
   ],
   "sections": [
@@ -1688,7 +1606,7 @@
   ],
   "phaseBanner": {},
   "metadata": {
-    "type": "funeralDirectors"
+    "type": "lawyers"
   },
   "fees": [],
   "outputs": [
@@ -1697,7 +1615,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://localhost:3000/ingest/funeralDirectors"
+        "url": "http://lists:3000/ingest/lawyers"
       }
     }
   ],
@@ -1748,204 +1666,6 @@
       }
     },
     {
-      "name": "sC_WI7140dW0LN5R7pbFk",
-      "displayName": "qualifiedToPracticeLawYes",
-      "value": {
-        "name": "qualifiedToPracticeLawYes",
-        "conditions": [
-          {
-            "field": {
-              "name": "qualifiedToPracticeLaw",
-              "type": "YesNoField",
-              "display": "Are you qualified to practice law?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "true",
-              "display": "Yes"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "wQAJrkhE3WF5cKg-a0ocJ",
-      "displayName": "qualifiedToPracticeLawNo",
-      "value": {
-        "name": "qualifiedToPracticeLawNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "qualifiedToPracticeLaw",
-              "type": "YesNoField",
-              "display": "Are you qualified to practice law?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "false",
-              "display": "No"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "6ZEjcsVvflFMwoHRspRPd",
-      "displayName": "offerOutOfHoursServiceYes",
-      "value": {
-        "name": "offerOutOfHoursServiceYes",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursService",
-              "type": "YesNoField",
-              "display": "Do you offer out of hours service?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "true",
-              "display": "Yes"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "WiHImXvXbzDvbsY90biLb",
-      "displayName": "offerOutOfHoursServiceNo",
-      "value": {
-        "name": "offerOutOfHoursServiceNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursService",
-              "type": "YesNoField",
-              "display": "Do you offer out of hours service?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "false",
-              "display": "No"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "HbAUjaiVjoVTUhFXDxH8D",
-      "displayName": "outOfHoursContactDetailsDifferentYes",
-      "value": {
-        "name": "outOfHoursContactDetailsDifferentYes",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferent",
-              "type": "YesNoField",
-              "display": "Are the contact details different for the out of hours service?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "true",
-              "display": "Yes"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "YzSeD8_Zz49h7BNzTOfw8",
-      "displayName": "outOfHoursContactDetailsDifferentNo",
-      "value": {
-        "name": "outOfHoursContactDetailsDifferentNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferent",
-              "type": "YesNoField",
-              "display": "Are the contact details different for the out of hours service?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "false",
-              "display": "No"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "DzOdSI",
-      "displayName": "memberRegulatoryAuthorityYes",
-      "value": {
-        "name": "memberRegulatoryAuthorityYes",
-        "conditions": [
-          {
-            "field": {
-              "name": "memberOfRegulatoryAuthority",
-              "type": "YesNoField",
-              "display": "Are you a member of a local bar association or other regulatory authority/body?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "true",
-              "display": "true"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "VMgnBE",
-      "displayName": "memberRegulatoryAuthorityNo",
-      "value": {
-        "name": "memberRegulatoryAuthorityNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "memberOfRegulatoryAuthority",
-              "type": "YesNoField",
-              "display": "Are you a member of a local bar association or other regulatory authority/body?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "false",
-              "display": "false"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "uwhxHa",
-      "displayName": "outOfHoursPhoneNumberIsDifferent",
-      "value": {
-        "name": "outOfHoursPhoneNumberIsDifferent",
-        "conditions": [
-          {
-            "field": {
-              "name": "outOfHoursContactDetailsDifferences",
-              "type": "CheckboxesField",
-              "display": "Which out of hours contact details are different?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "phoneNumber",
-              "display": "phoneNumber"
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "HqfgkP",
       "displayName": "Regbodynone",
       "value": {
@@ -1962,70 +1682,6 @@
               "type": "Value",
               "value": "0",
               "display": "0"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "isFDCountryPilot",
-      "displayName": "Country pilots FD",
-      "value": {
-        "name": "isFDCountryPilot",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "India",
-              "display": "India"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Croatia",
-              "display": "Croatia"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Nigeria",
-              "display": "Nigeria"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Colombia",
-              "display": "Colombia"
             }
           }
         ]
@@ -2098,67 +1754,27 @@
       }
     },
     {
-      "displayName": "RepatriationServiceYes",
-      "name": "GnVOrG",
+      "displayName": "LegalaidNo",
+      "name": "rCuWxL",
       "value": {
-        "name": "RepatriationServiceYes",
+        "name": "LegalaidNo",
         "conditions": [
           {
             "field": {
-              "name": "repatriation",
-              "type": "YesNoField",
-              "display": "Do you provide repatriation services?"
+              "name": "country",
+              "type": "SelectField",
+              "display": "Country list"
             },
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "true",
-              "display": "true"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "RepatriationServiceNo",
-      "name": "RtQEfs",
-      "value": {
-        "name": "RepatriationServiceNo",
-        "conditions": [
-          {
-            "field": {
-              "name": "repatriation",
-              "type": "YesNoField",
-              "display": "Do you provide repatriation services?"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "false",
-              "display": "false"
+              "value": "Portugal",
+              "display": "Portugal"
             }
           }
         ]
       }
     }
   ],
-  "specialPages": {
-    "confirmationPage": {
-      "customText": {
-        "title": "Check your email",
-        "paymentSkipped": false,
-        "nextSteps": "We have sent you an email containing a link. You must use the link so that we can verify your email address."
-      },
-      "components": [
-        {
-          "name": "WLskhZ",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    We cannot process your application unless you use the link.\n  </strong>\n</div>\n",
-          "schema": {}
-        }
-      ]
-    }
-  },
   "skipSummary": false
 }

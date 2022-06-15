@@ -1,10 +1,8 @@
 import { PORT, NODE_ENV } from "./config";
 import { getServer } from "./server";
 import { logger } from "./services/logger";
-import { startFormRunner } from "server/components/formRunner";
 
 async function initApp(): Promise<void> {
-  await startFormRunner();
   const server = await getServer();
 
   server.listen(PORT, () => {
