@@ -14,7 +14,7 @@ WORKDIR /usr/src/app
 COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.config.js webpack.config.js  ./
 USER 1001
 RUN mkdir -p /usr/src/app/lib/form-runner
-COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.24.2-rc.854 ./usr/src/app lib/form-runner/
+COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.25.4-rc.863 ./usr/src/app lib/form-runner/
 RUN npm i
 
 FROM dependencies AS build
