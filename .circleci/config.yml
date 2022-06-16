@@ -72,10 +72,10 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
 
-      - restore_cache:
-          keys:
-            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-            - form-runner-1-
+#      - restore_cache:
+#          keys:
+#            - form-runner-yarn-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
+#            - form-runner-yarn-
 
       - restore_cache:
           keys:
@@ -88,46 +88,45 @@ jobs:
             google-chrome --version
             chromedriver --version
 
-      - run:
-          name: Install Form Runner
-          command: npm run form-runner:install
+#      - run:
+#          name: Install Form Runner
+#          command: npm run form-runner:install
+
+#      - save_cache:
+#          key: form-runner-yarn-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
+#          paths:
+#            - ./lib/form-runner/.yarn
 
       - run: npm ci
 
       - run:
           name: Prisma generate
           command: npm run prisma:generate
-
       - run:
           name: build postgres
           command: |
-            docker-compose -f docker-compose.ci.yml build \
-            --build-arg PGP_PUB=$PGP_PUB \
-            --build-arg PGP_SECRET=$PGP_SECRET \
-            --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+            docker-compose -f docker-compose.ci.yml build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
       - run:
           name: Start docker-compose and verify service(s)
           command: |
             docker-compose -f docker-compose.ci.yml up -d
             docker ps
 
-      - run:
-          name: Start Form Runner
-          background: true
-          environment:
-            PORT: "3001"
-          command: NODE_CONFIG='{"safelist":["localhost"]}' npm run form-runner:start
+#      - run:
+#          name: Start Form Runner
+#          background: true
+#          environment:
+#            PORT: "3001"
+#          command: NODE_CONFIG='{"safelist":["localhost"]}' npm run form-runner:start
 
-      - run:
-          name: run build
-          command: npm run build:ci
+#      - run:
+#          name: run build
+#          command: npm run build:ci
 
-      - run:
-          environment:
-            CI_SMOKE_TEST: "true"
-          name: run start
-          background: true
-          command: npm run start:ci
+#      - run:
+#          name: run start
+#          background: true
+#          command: npm run start:ci
 
       - run: sleep 30
 
@@ -136,15 +135,8 @@ jobs:
           command: |
             curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
       - run:
-          environment:
-            CI_SMOKE_TEST: "true"
           name: Run smoke tests
           command: npm run smoke-tests
-
-      - save_cache:
-          key: form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-          paths:
-            - ./lib/form-runner
 
       - save_cache:
           key: v1-deps-{{ checksum "package-lock.json" }}

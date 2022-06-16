@@ -1,0 +1,5 @@
+{
+  "enforceCsrf": true,
+  "safelist": ["localhost"],
+  "logPrettyPrint": false
+}

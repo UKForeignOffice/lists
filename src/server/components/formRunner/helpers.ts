@@ -39,14 +39,18 @@ export async function startFormRunner(): Promise<boolean> {
     const safelist = `${FORM_RUNNER_SAFELIST},${hostname}`;
     logger.info(`configuring safelist in form runner: ${safelist}`);
 
-    const formRunner = spawn(
-      `NODE_CONFIG='{"safelist":["${safelist?.split(",")?.join(
-        '","'
-      )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
-      {
-        shell: true,
-      }
-    );
+    // const formRunner = spawn(
+    //   `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
+    //     '","'
+    //   )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
+    //   {
+    //     shell: true,
+    //   }
+    // );
+    //
+    const formRunner = spawn(`npm run form-runner:start`, {
+      shell: true,
+    });
 
     formRunner.stderr.on("data", (data) => {
       logger.error(`Form Runner Error: ${data.toString()}`);

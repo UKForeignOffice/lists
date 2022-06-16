@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
-    "build:ci": "npm run prisma:generate && NODE_ENV=test webpack && npm run prisma:deploy",
-    "start:ci": "node ./dist/server.js",
+    "build:ci": "npm run prisma:generate && npm run form-runner:install && NODE_ENV=test webpack && npm run prisma:deploy",
+    "start:ci": "node --trace-warnings ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "NODE_ENV=production npm run form-runner:install && NODE_ENV=production webpack",
@@ -30,7 +30,7 @@
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
-    "smoke-tests": "npx cypress run --browser chrome"
+    "smoke-tests": "CYPRESS_BASE_URL=http://localhost:3000 npx cypress run --browser chrome"
   },
   "dependencies": {
     "@prisma/client": "^2.29.1",
