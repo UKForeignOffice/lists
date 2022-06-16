@@ -15,10 +15,11 @@ COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.
 USER 1001
 RUN mkdir -p /usr/src/app/lib/form-runner
 COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.25.4-rc.863 ./usr/src/app lib/form-runner/
-RUN npm i
+RUN cd lib/form-runner/runner/config && touch production.json && echo {} > production.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
+RUN npm i
 COPY --chown=appuser:appuser ./src ./src/
 USER 1001
 RUN npm run prisma:generate
