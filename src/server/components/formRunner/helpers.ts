@@ -5,7 +5,6 @@ import * as FormRunner from "./types";
 import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
-import { FORM_RUNNER_SAFELIST } from "server/config";
 import {
   LawyerListItemGetObject,
   List,
@@ -33,14 +32,18 @@ export async function startFormRunner(): Promise<boolean> {
 
     isStarting = true;
 
-    const formRunner = spawn(
-      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
-        '","'
-      )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
-      {
-        shell: true,
-      }
-    );
+    // const formRunner = spawn(
+    //   `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
+    //     '","'
+    //   )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
+    //   {
+    //     shell: true,
+    //   }
+    // );
+    //
+    const formRunner = spawn(`npm run form-runner:start`, {
+      shell: true,
+    });
 
     formRunner.stderr.on("data", (data) => {
       logger.error(`Form Runner Error: ${data.toString()}`);

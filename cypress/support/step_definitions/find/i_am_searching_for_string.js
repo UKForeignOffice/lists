@@ -1,4 +1,4 @@
-const base = "http://localhost:3000/find?serviceType=";
+const base = "/find?serviceType=";
 const urls = {
   lawyers: `${base}lawyers`,
 };
@@ -11,6 +11,8 @@ Given(
     cy.findByRole("button", { name: "Start" }).click();
     cy.findByRole("combobox").type(`${country}`);
     cy.findByRole("button", { name: "Continue" }).click();
-    cy.findByLabelText(`Where in ${country} do you want to find a lawyer`, { exact: false}).type(`${city}{enter}`);
+    cy.findByLabelText(`Where in ${country} do you want to find a lawyer`, {
+      exact: false,
+    }).type(`${city}{enter}`);
   }
 );
