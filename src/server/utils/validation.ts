@@ -18,11 +18,11 @@ export function isValidEmailAddress(email: string): boolean {
 }
 
 export function isGovUKEmailAddress(email: string): boolean {
-  // if (isCybDev) {
-  //   return isValidEmailAddress(email);
-  // } else {
+  if (isCybDev) {
+    return isValidEmailAddress(email);
+  } else {
     return isValidEmailAddress(email) && GOV_UK_EMAIL_REGEX.test(email);
-  // }
+  }
 }
 
 export function isCountryNameValid(countryName: string): boolean {
