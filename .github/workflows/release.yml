@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - auth-token-param
 
 jobs:
   release:
@@ -11,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@master
+        uses: actions/checkout@auth-token-param
 
       - name: Setup node env 🏗
         uses: actions/setup-node@v2.4.0
