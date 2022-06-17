@@ -1,7 +1,6 @@
 import Joi from "joi";
 import { get } from "lodash";
 import { countriesList } from "server/services/metadata";
-import { isCybDev } from "server/config";
 import * as config from "server/config";
 
 const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
@@ -18,7 +17,7 @@ export function isValidEmailAddress(email: string): boolean {
 }
 
 export function isGovUKEmailAddress(email: string): boolean {
-  if (isCybDev) {
+  if (config.isCybDev || config.isSmokeTest) {
     return isValidEmailAddress(email);
   } else {
     return isValidEmailAddress(email) && GOV_UK_EMAIL_REGEX.test(email);
