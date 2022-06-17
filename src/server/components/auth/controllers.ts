@@ -17,7 +17,8 @@ export function getLoginController(
   res: Response,
   next: NextFunction
 ): void {
-  const { invalidToken, token } = req.query;
+  const { token } = req.params;
+  const { invalidToken } = req.query;
 
   if (token !== undefined) {
     return next();

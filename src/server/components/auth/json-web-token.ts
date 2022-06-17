@@ -44,7 +44,7 @@ export async function createAuthenticationPath(
 ): Promise<string | boolean> {
   try {
     const token = await createAuthenticationJWT(user);
-    return `${authRoutes.login}?token=${token}`;
+    return `${authRoutes.login.replace(":token",`${token}`)}`;
   } catch (error) {
     logger.error(`createLoginJWT Error: ${error.message}`);
     throw error;
