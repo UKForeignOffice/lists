@@ -9,7 +9,7 @@ import { authRoutes } from "./routes";
 
 export const authRouter = express.Router();
 
-authRouter.get(authRoutes.loginInvalidToken, getLoginController, authController);
+authRouter.get(authRoutes.loginAuth, getLoginController, authController);
 authRouter.get(authRoutes.login, getLoginController, authController);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 authRouter.post(authRoutes.login, postLoginController);

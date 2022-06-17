@@ -1,5 +1,5 @@
 export const authRoutes = {
-  loginInvalidToken: "/login",
-  login: "/login/:token",
+  loginAuth: "/login/:token",
+  login: "/login",
   logout: "/logout",
 };
