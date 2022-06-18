@@ -22,7 +22,7 @@ jobs:
         run: npm ci --prefer-offline --no-audit
 
       - name: Release 🚀
-        run: npm run release --branches 'master','fix/auth-token-param'
+        run: npm run release --branches ["master","fix/auth-token-param"]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
