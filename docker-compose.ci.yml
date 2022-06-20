@@ -23,13 +23,23 @@ services:
       - "3000:3000"
     command: npm run start:ci
     environment:
-      NODE_ENV: ${NODE_ENV}
-      DOCKER_TAG: ${DOCKER_TAG}
       DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
       REDIS_HOST: "redis"
       REDIS_PORT: 6379
       REDIS_PASSWORD: redispassword
-      SANDBOX: "true"
+      REDIS_CLUSTER_MODE: false
+      FORM_RUNNER_URL: "apply:3001"
+    depends_on:
+      - postgres
+      - redis 
+      - apply
+  apply:
+    build:
+      context: "docker/apply"
+      dockerfile: Dockerfile
+    ports: 
+      - 3001:3001
     depends_on:
       - redis
-      - postgres
+
+  

@@ -5,17 +5,13 @@ import * as FormRunner from "./types";
 import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
-import { FORM_RUNNER_SAFELIST } from "server/config";
 import {
   LawyerListItemGetObject,
   List,
   BaseListItemGetObject,
-  ServiceType, FuneralDirectorListItemGetObject,
+  ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
-import * as funeralDirectors from "./funeralDirectors";
-import { kebabCase } from "lodash";
-import * as os from "os";
 
 let isStarting = false;
 
@@ -30,14 +26,10 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
+  // if (!isStarting && !isAlreadyRunning) {
+  //   logger.info("Form Runner Starting");
 
-  if (!isStarting && !isAlreadyRunning) {
-    logger.info("Form Runner Starting");
-
-    isStarting = true;
-    const hostname = os.hostname();
-    const safelist = `${FORM_RUNNER_SAFELIST},${hostname}`;
-    logger.info(`configuring safelist in form runner: ${safelist}`);
+  //   isStarting = true;
 
     // const formRunner = spawn(
     //   `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
@@ -48,42 +40,43 @@ export async function startFormRunner(): Promise<boolean> {
     //   }
     // );
     //
-    const formRunner = spawn(`npm run form-runner:start`, {
-      shell: true,
-    });
+    // const formRunner = spawn(`npm run form-runner:start`, {
+    //   shell: true,
+    // });
 
-    formRunner.stderr.on("data", (data) => {
-      logger.error(`Form Runner Error: ${data.toString()}`);
-    });
+  //   formRunner.stderr.on("data", (data) => {
+  //     logger.error(`Form Runner Error: ${data.toString()}`);
+  //   });
 
-    formRunner.stdout.on("data", (data) => {
-      logger.info(`Form Runner stdout: ${data.toString()}`);
-    });
+  //   formRunner.stdout.on("data", (data) => {
+  //     logger.info(`Form Runner stdout: ${data.toString()}`);
+  //   });
 
-    formRunner.on("exit", (code, signal) => {
-      isStarting = false;
-      logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
-    });
+  //   formRunner.on("exit", (code, signal) => {
+  //     isStarting = false;
+  //     logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
+  //   });
 
-    process.once("SIGUSR2", function () {
-      isStarting = false;
-      formRunner.kill();
-    });
+  //   process.once("SIGUSR2", function () {
+  //     isStarting = false;
+  //     formRunner.kill();
+  //   });
 
-    process.on("SIGINT", () => {
-      isStarting = false;
-      formRunner.kill();
-    });
-  }
+  //   process.on("SIGINT", () => {
+  //     isStarting = false;
+  //     formRunner.kill();
+  //   });
+  // }
 
-  while (true) {
-    const isReady = await isFormRunnerReady();
+  // while (true) {
+  //   const isReady = await isFormRunnerReady();
 
-    if (isReady) {
-      logger.info("Form Runner Started");
-      return true;
-    }
-  }
+  //   if (isReady) {
+  //     logger.info("Form Runner Started");
+  //     return true;
+  //   }
+  // }
+  return true;
 }
 
 export function getNewSessionWebhookData(
