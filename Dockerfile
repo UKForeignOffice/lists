@@ -11,24 +11,16 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.config.js webpack.config.js  ./
-# USER 1001
-# RUN mkdir -p /usr/src/app/lib/form-runner
-# COPY --chown=appuser:appuser --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.25.5-rc.864 ./usr/src/app lib/form-runner/
-# COPY --chown=appuser:appuser ./src/server/components/formRunner/config lib/form-runner/runner/config
-# COPY --chown=appuser:appuser ./src/server/components/formRunner/views lib/form-runner/runner/dist/server/views/
-# COPY --chown=appuser:appuser ./src/server/components/formRunner/forms-json lib/form-runner/runner/dist/server/forms/
-
-FROM dependencies AS build
-WORKDIR /usr/src/app
 USER 1001
+COPY --chown=appuser:appuser package.json package-lock.json ./
 RUN npm i
+COPY --chown=appuser:appuser tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY --chown=appuser:appuser ./src ./src/
 RUN npm run prisma:generate
 RUN npm run build:prod
 
 
-FROM build AS runner
+FROM dependencies AS runner
 WORKDIR /usr/src/app
 USER 1001
 ARG NODE_ENV
@@ -41,7 +33,5 @@ ENV REDIS_PORT=6379
 ENV REDIS_PASSWORD="redispassword"
 ENV REDIS_CLUSTER_MODE=false
 ENV FORM_RUNNER_URL=""
-
-HEALTHCHECK CMD curl --fail http://localhost:${PORT}/ || exit 1
-
+ENV DEBUG=true
 CMD ["npm", "run", "start:prod"]

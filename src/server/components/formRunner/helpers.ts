@@ -1,5 +1,4 @@
 import request from "supertest";
-import { spawn } from "child_process";
 import { logger } from "server/services/logger";
 import * as FormRunner from "./types";
 import { FORM_RUNNER_URL } from "./constants";
@@ -26,57 +25,20 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
-  // if (!isStarting && !isAlreadyRunning) {
-  //   logger.info("Form Runner Starting");
+    if (!isStarting && !isAlreadyRunning) {
+      logger.info("Form Runner Starting");
+      isStarting = true;
 
-  //   isStarting = true;
+    while (true) {
+      const isReady = await isFormRunnerReady();
 
-    // const formRunner = spawn(
-    //   `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
-    //     '","'
-    //   )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
-    //   {
-    //     shell: true,
-    //   }
-    // );
-    //
-    // const formRunner = spawn(`npm run form-runner:start`, {
-    //   shell: true,
-    // });
-
-  //   formRunner.stderr.on("data", (data) => {
-  //     logger.error(`Form Runner Error: ${data.toString()}`);
-  //   });
-
-  //   formRunner.stdout.on("data", (data) => {
-  //     logger.info(`Form Runner stdout: ${data.toString()}`);
-  //   });
-
-  //   formRunner.on("exit", (code, signal) => {
-  //     isStarting = false;
-  //     logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
-  //   });
-
-  //   process.once("SIGUSR2", function () {
-  //     isStarting = false;
-  //     formRunner.kill();
-  //   });
-
-  //   process.on("SIGINT", () => {
-  //     isStarting = false;
-  //     formRunner.kill();
-  //   });
-  // }
-
-  // while (true) {
-  //   const isReady = await isFormRunnerReady();
-
-  //   if (isReady) {
-  //     logger.info("Form Runner Started");
-  //     return true;
-  //   }
-  // }
-  return true;
+      if (isReady) {
+        logger.info("Form Runner Started");
+        return true;
+      }
+    }
+  } 
+  return true
 }
 
 export function getNewSessionWebhookData(

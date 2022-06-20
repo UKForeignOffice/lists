@@ -108,10 +108,11 @@ jobs:
             docker-compose -f docker-compose.ci.yml build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
       - run:
           name: Start docker-compose and verify service(s)
+          background: true
           command: |
-            docker-compose -f docker-compose.ci.yml up -d
+            docker-compose -f docker-compose.ci.yml up
             docker ps
-
+            
 #      - run:
 #          name: Start Form Runner
 #          background: true

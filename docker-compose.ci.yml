@@ -8,6 +8,12 @@ services:
     # if you are on Mac M1 please use the image below
     # see https://github.com/docker/for-mac/issues/5122
     # image: "gangstead/postgis:13-3.1-arm"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "master", "-d", "lists"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 30s  
     ports:
       - "5432:5432"
   redis:
@@ -27,12 +33,16 @@ services:
       REDIS_HOST: "redis"
       REDIS_PORT: 6379
       REDIS_PASSWORD: redispassword
-      REDIS_CLUSTER_MODE: false
+      REDIS_CLUSTER_MODE: "false"
       FORM_RUNNER_URL: "apply:3001"
+      DEBUG: "true"
     depends_on:
-      - postgres
-      - redis 
-      - apply
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      apply:
+        condition: service_started
   apply:
     build:
       context: "docker/apply"
