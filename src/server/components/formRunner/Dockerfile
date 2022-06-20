@@ -18,4 +18,7 @@ EXPOSE 3001
 USER 1001
 ENV PORT=3001
 ENV NODE_ENV="production"
+ENV REDIS_HOST="redis"
+ENV REDIS_PORT=6379
+ENV REDIS_PASSWORD="redispassword"
 CMD [ "yarn", "runner", "start"]

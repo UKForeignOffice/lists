@@ -26,11 +26,10 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
+  // if (!isStarting && !isAlreadyRunning) {
+  //   logger.info("Form Runner Starting");
 
-  if (!isStarting && !isAlreadyRunning) {
-    logger.info("Form Runner Starting");
-
-    isStarting = true;
+  //   isStarting = true;
 
     // const formRunner = spawn(
     //   `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
@@ -41,42 +40,43 @@ export async function startFormRunner(): Promise<boolean> {
     //   }
     // );
     //
-    const formRunner = spawn(`npm run form-runner:start`, {
-      shell: true,
-    });
+    // const formRunner = spawn(`npm run form-runner:start`, {
+    //   shell: true,
+    // });
 
-    formRunner.stderr.on("data", (data) => {
-      logger.error(`Form Runner Error: ${data.toString()}`);
-    });
+  //   formRunner.stderr.on("data", (data) => {
+  //     logger.error(`Form Runner Error: ${data.toString()}`);
+  //   });
 
-    formRunner.stdout.on("data", (data) => {
-      logger.info(`Form Runner stdout: ${data.toString()}`);
-    });
+  //   formRunner.stdout.on("data", (data) => {
+  //     logger.info(`Form Runner stdout: ${data.toString()}`);
+  //   });
 
-    formRunner.on("exit", (code, signal) => {
-      isStarting = false;
-      logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
-    });
+  //   formRunner.on("exit", (code, signal) => {
+  //     isStarting = false;
+  //     logger.info(`Form Runner Stopped: Code:${code}, Signal: ${signal}`);
+  //   });
 
-    process.once("SIGUSR2", function () {
-      isStarting = false;
-      formRunner.kill();
-    });
+  //   process.once("SIGUSR2", function () {
+  //     isStarting = false;
+  //     formRunner.kill();
+  //   });
 
-    process.on("SIGINT", () => {
-      isStarting = false;
-      formRunner.kill();
-    });
-  }
+  //   process.on("SIGINT", () => {
+  //     isStarting = false;
+  //     formRunner.kill();
+  //   });
+  // }
 
-  while (true) {
-    const isReady = await isFormRunnerReady();
+  // while (true) {
+  //   const isReady = await isFormRunnerReady();
 
-    if (isReady) {
-      logger.info("Form Runner Started");
-      return true;
-    }
-  }
+  //   if (isReady) {
+  //     logger.info("Form Runner Started");
+  //     return true;
+  //   }
+  // }
+  return true;
 }
 
 export function getNewSessionWebhookData(

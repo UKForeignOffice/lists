@@ -5,7 +5,7 @@ import {
   REDIS_PORT,
   REDIS_PASSWORD,
   REDIS_TLS,
-  isProd,
+  REDIS_CLUSTER_MODE,
 } from "server/config";
 
 export type RedisClient = IORedis.Cluster | IORedis.Redis;
@@ -20,7 +20,7 @@ export function isRedisAvailable(): boolean {
 
 export function getRedisClient(): RedisClient {
   if (redisClient === undefined) {
-    if (isProd) {
+    if (REDIS_CLUSTER_MODE) {
       redisClient = new IORedis.Cluster(
         [
           {

@@ -3,8 +3,8 @@ FROM ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG as base
 WORKDIR /usr/src/app
 RUN rm -r runner/dist/server/forms && rm -r runner/src && rm -r runner/test
 COPY forms-json runner/dist/server/forms
-COPY views runner/dist/server/views/
-
+COPY views/ runner/dist/server/views/
+COPY config/ runner/config
 FROM base as app
 WORKDIR /usr/src/app
 USER root
@@ -22,5 +22,6 @@ ENV REDIS_HOST="redis"
 ENV REDIS_PORT=6379
 ENV REDIS_PASSWORD="redispassword"
 ENV SANDBOX="true"
+
 
 CMD [ "yarn", "runner", "start"]

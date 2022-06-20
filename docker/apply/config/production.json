@@ -1,5 +1,9 @@
 {
   "enforceCsrf": true,
   "safelist": ["localhost"],
-  "logPrettyPrint": false
+  "logPrettyPrint": false,
+  "sandbox": true,
+  "redisHost": "redis",
+  "redisPort": 6379,
+  "redisPassword": "redispassword"
 }
