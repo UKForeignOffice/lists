@@ -108,9 +108,8 @@ jobs:
             docker-compose -f docker-compose.ci.yml build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
       - run:
           name: Start docker-compose and verify service(s)
-          background: true
           command: |
-            docker-compose -f docker-compose.ci.yml up
+            docker-compose -f docker-compose.ci.yml up -d
             docker ps
             
 #      - run:
@@ -129,13 +128,15 @@ jobs:
 #          background: true
 #          command: npm run start:ci
 
-      - run: sleep 30
+      - run: sleep 60
 
       - run:
           name: Check server is running
           command: |
             curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
       - run:
+          environment:
+            DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
           name: Run smoke tests
           command: npm run smoke-tests
 

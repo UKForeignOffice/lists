@@ -28,8 +28,7 @@ const transportsList = [
   // - Write all logs with level LOG_LEVEL and below to console.log
   new transports.Console({
     level: LOG_LEVEL,
-    format: formatters,
-    silent: isTest,
+    format: formatters
   }),
   new transports.File({ filename: "error.log", level: "error" }),
 ];
