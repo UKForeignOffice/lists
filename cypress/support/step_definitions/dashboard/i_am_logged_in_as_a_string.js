@@ -15,6 +15,6 @@ Given("I am logged in as a {string}", (role) => {
     },
   });
 
-  cy.visit("localhost:3000/login");
+  cy.visit("/login");
   cy.get("#email-address").type("smoke@cautionyourblast.com{enter}");
 });
