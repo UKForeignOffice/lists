@@ -2034,7 +2034,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://localhost:3000/ingest/funeralDirectors"
+        "url": "http://lists:3000/ingest/funeralDirectors"
       }
     }
   ],

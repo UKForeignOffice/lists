@@ -220,7 +220,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://localhost:3000/feedback"
+        "url": "http://lists:3000/feedback"
       }
     }
   ],
