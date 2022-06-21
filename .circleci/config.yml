@@ -98,9 +98,13 @@ jobs:
           command: |
             docker-compose -f docker-compose.ci.yml build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
       - run:
+          name: build lists
+          command: |
+            docker-compose -f docker-compose.ci.yml build lists            
+      - run:
           name: Start docker-compose and verify service(s)
           command: |
-            docker-compose -f docker-compose.ci.yml up --build -d
+            docker-compose -f docker-compose.ci.yml up -d
             docker ps
             
 #      - run:

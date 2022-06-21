@@ -16,11 +16,13 @@ COPY --chown=appuser:appuser package.json package-lock.json ./
 RUN npm i
 COPY --chown=appuser:appuser tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY --chown=appuser:appuser ./src ./src/
-RUN npm run prisma:generate
-RUN npm run build:prod
 
+FROM dependencies AS build
+WORKDIR /usr/src/app
+ARG BUILD_MODE=${BUILD_MODE}
+RUN npm run build:${BUILD_MODE}
 
-FROM dependencies AS runner
+FROM build AS runner
 WORKDIR /usr/src/app
 USER 1001
 ARG NODE_ENV
@@ -34,4 +36,7 @@ ENV REDIS_PASSWORD="redispassword"
 ENV REDIS_CLUSTER_MODE=false
 ENV FORM_RUNNER_URL=""
 ENV DEBUG=true
+ENV CI_SMOKE_TEST=true
+
 CMD ["npm", "run", "start:prod"]
+
