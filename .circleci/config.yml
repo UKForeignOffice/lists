@@ -88,16 +88,7 @@ jobs:
             google-chrome --version
             chromedriver --version
 
-#      - run:
-#          name: Install Form Runner
-#          command: npm run form-runner:install
-
-#      - save_cache:
-#          key: form-runner-yarn-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-#          paths:
-#            - ./lib/form-runner/.yarn
-
-      - run: npm ci
+      - run: npm i
 
       - run:
           name: Prisma generate
@@ -109,7 +100,7 @@ jobs:
       - run:
           name: Start docker-compose and verify service(s)
           command: |
-            docker-compose -f docker-compose.ci.yml up -d
+            docker-compose -f docker-compose.ci.yml up --build -d
             docker ps
             
 #      - run:
