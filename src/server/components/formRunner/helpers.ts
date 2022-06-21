@@ -47,7 +47,7 @@ export function getNewSessionWebhookData(
   questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
   const options = {
     message,
