@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run form-runner:install && npm run prisma:generate && webpack",
-    "build:ci": "npm run prisma:generate && npm run form-runner:install && NODE_ENV=test webpack && npm run prisma:deploy",
+    "build:ci": "npm run prisma:generate && NODE_ENV=test webpack",
     "start:ci": "npm run prisma:migrate && node --trace-warnings ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
