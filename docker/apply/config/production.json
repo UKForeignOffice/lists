@@ -1,6 +1,6 @@
 {
   "enforceCsrf": true,
-  "safelist": ["localhost"],
+  "safelist": ["lists"],
   "logPrettyPrint": false,
   "sandbox": true,
   "redisHost": "redis",
