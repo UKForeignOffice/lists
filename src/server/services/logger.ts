@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-import { LOG_LEVEL, isTest } from "server/config";
+import { LOG_LEVEL } from "server/config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message?.startsWith("HTTP GET")) {
@@ -28,17 +28,14 @@ const transportsList = [
   // - Write all logs with level LOG_LEVEL and below to console.log
   new transports.Console({
     level: LOG_LEVEL,
-    format: formatters
+    format: formatters,
   }),
   new transports.File({ filename: "error.log", level: "error" }),
 ];
 
 export const logger = createLogger({
   level: LOG_LEVEL,
-  format: format.combine(
-    format.errors({ stack: true }),
-    format.json(),
-  ),
+  format: format.combine(format.errors({ stack: true }), format.json()),
   defaultMeta: { service: "server" },
   transports: transportsList,
 });

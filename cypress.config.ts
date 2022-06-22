@@ -1,16 +1,16 @@
 export default {
   chromeWebSecurity: false,
-  video: !process.env.CI_SMOKE_TEST,
+  video: false,
   projectId: "fo4z8h",
   env: {
-    TAGS: 'not @wip',
+    TAGS: "not @wip",
   },
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config)
+      return require("./cypress/plugins/index.js")(on, config);
     },
-    specPattern: 'cypress/e2e/**/*.feature',
+    specPattern: "cypress/e2e/**/*.feature",
   },
-}
+};

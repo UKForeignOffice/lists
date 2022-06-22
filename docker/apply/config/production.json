@@ -3,9 +3,6 @@
   "safelist": ["lists"],
   "logPrettyPrint": false,
   "sandbox": true,
-  "redisHost": "redis",
-  "redisPort": 6379,
-  "redisPassword": "redispassword",
   "feedbackLink": "mailto:digitalservicesfeedback@fco.gov.uk",
   "port": 3001
 }
