@@ -1,13 +1,8 @@
 import supertest from "supertest";
 import * as child_process from "child_process";
-import {
-  startFormRunner,
-  isFormRunnerReady,
-  getNewSessionWebhookData,
-} from "../helpers";
+import { isFormRunnerReady, getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
-  LawyerListItemJsonData,
   BaseListItemGetObject,
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
@@ -21,17 +16,8 @@ jest.mock("supertest", () =>
   })
 );
 
-jest.mock("child_process");
-
 describe("Form Runner Service:", () => {
   describe("isFormRunnerReady", () => {
-    test("it returns true when form runner request is successful", async () => {
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(true);
-      expect(supertest).toHaveBeenCalledWith("localhost:3001");
-    });
-
     test("it returns false when form runner request fails", async () => {
       jest
         .spyOn(supertest(""), "get")
@@ -46,46 +32,6 @@ describe("Form Runner Service:", () => {
       const result = await isFormRunnerReady();
 
       expect(result).toBe(false);
-    });
-  });
-
-  describe("startFormRunner", () => {
-    test("spawn command is correct", async () => {
-      let calls = 1;
-
-      const mockGet: any = () => {
-        if (calls === 1) {
-          calls += 1;
-          return { status: 500 };
-        }
-
-        return { status: 200 };
-      };
-
-      jest.spyOn(supertest(""), "get").mockImplementation(mockGet);
-
-      const mockStderr = {
-        on: jest.fn(),
-      };
-
-      const mockStdout = {
-        on: jest.fn(),
-      };
-
-      jest.spyOn(child_process, "spawn").mockReturnValue({
-        stderr: mockStderr,
-        stdout: mockStdout,
-        on: jest.fn(),
-        once: jest.fn(),
-      } as any);
-
-      const result = await startFormRunner();
-
-      expect(result).toBe(true);
-      expect(child_process.spawn).toHaveBeenCalledWith(
-        "NODE_CONFIG='{\"safelist\":[\"localhost\"]}' PRIVACY_POLICY_URL='' npm run form-runner:start",
-        { shell: true }
-      );
     });
   });
 
@@ -332,7 +278,7 @@ describe("Form Runner Service:", () => {
   });
 
   describe("generateFormRunnerWebhookObject", () => {
-    const listJson: LawyerListItemJsonData = {
+    const listJson = {
       size: "Medium (16-350 legal professionals)",
       country: "Italy",
       proBono: false,

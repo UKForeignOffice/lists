@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_TAG="3.25.5-rc.864"
+ARG BASE_IMAGE_TAG="3.25.8-rc.867"
 FROM ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG as base
 WORKDIR /usr/src/app
 RUN rm -r runner/dist/server/forms && rm -r runner/src && rm -r runner/test
@@ -17,11 +17,6 @@ EXPOSE 3001
 
 USER 1001
 ENV PORT=3001
-ENV NODE_ENV="production"
-ENV REDIS_HOST="redis"
-ENV REDIS_PORT=6379
-ENV REDIS_PASSWORD="redispassword"
-ENV SANDBOX="true"
-
+ENV SERVICE_URL="apply:${PORT}"
 
 CMD [ "yarn", "runner", "start"]

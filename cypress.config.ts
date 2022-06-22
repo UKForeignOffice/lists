@@ -1,7 +1,7 @@
 export default {
   chromeWebSecurity: false,
-  video: true,
-  projectId: 'fo4z8h',
+  video: !process.env.CI_SMOKE_TEST,
+  projectId: "fo4z8h",
   env: {
     TAGS: 'not @wip',
   },

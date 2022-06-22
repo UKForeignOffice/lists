@@ -34,5 +34,4 @@ export const {
 } = process.env;
 
 // Form runner
-export const FORM_RUNNER_SAFELIST = process.env.FORM_RUNNER_SAFELIST;
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
