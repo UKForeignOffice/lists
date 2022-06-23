@@ -4,5 +4,6 @@
   "logPrettyPrint": false,
   "sandbox": true,
   "feedbackLink": "mailto:digitalservicesfeedback@fco.gov.uk",
-  "port": 3001
+  "port": 3001,
+  "serviceName": "Find a professional service abroad"
 }

@@ -7,5 +7,6 @@
   "redisPort": 6379,
   "redisPassword": "redispassword",
   "feedbackLink": "mailto:digitalservicesfeedback@fco.gov.uk",
-  "port": 3001
+  "port": 3001,
+  "serviceName": "Find a professional service abroad"
 }
