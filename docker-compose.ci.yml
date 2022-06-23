@@ -38,7 +38,7 @@ services:
       REDIS_CLUSTER_MODE: "false"
       FORM_RUNNER_URL: "apply:3001"
       DEBUG: "true"
-      LOG_LEVEL: "info"
+      LOG_LEVEL: "warn"
       CI_SMOKE_TEST: "true"
       NODE_ENV: "test"
       BUILD_MODE: "ci"
