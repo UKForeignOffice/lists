@@ -1,5 +1,4 @@
 import supertest from "supertest";
-import * as child_process from "child_process";
 import { isFormRunnerReady, getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
