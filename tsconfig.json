@@ -15,7 +15,8 @@
     "paths": {
       "client/*": ["client/*"],
       "server/*": ["server/*"],
-      "@jest/*": ["./../.jest/*"]
+      "@jest/*": ["./../.jest/*"],
+      "forms/*":  ["../docker/apply/forms-json/*"],
     }
   },
   "include": [
@@ -23,6 +24,7 @@
     "src",
     "src/server/**/*",
     "src/client/**/*",
+    "docker/apply/forms-json/*",
     "node_modules/jest-extended/types/**/*.d.ts",
   ],
   "exclude": [
@@ -30,5 +32,4 @@
     "src/**/*.test.ts"
   ],
   "ignore": ["dist"]
-
 }

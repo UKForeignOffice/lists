@@ -23,4 +23,7 @@ module.exports = {
   modulePathIgnorePatterns: ["<rootDir>/src/form-runner/form-runner-app"],
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
   globals: jestHelpers,
+  moduleNameMapper: {
+    "forms/(.*)": ["<rootDir>/docker/apply/forms-json/$1"],
+  },
 };

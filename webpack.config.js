@@ -151,6 +151,9 @@ const server = {
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".json"],
     modules: ["node_modules"],
+    alias: {
+      forms: path.resolve(__dirname, "docker/apply/forms-json/"),
+    },
     plugins: [new TsconfigPathsPlugin()],
   },
   node: {

@@ -8,8 +8,9 @@ module.exports = {
         alias: {
           "client/*": ["client/*"],
           "server/*": ["server/*"],
+          "forms/*": ["../docker/apply/forms-json/*"],
         },
-        extensions: [".ts", ".tsx"],
+        extensions: [".ts", ".tsx", ".json"],
       },
     ],
     "@babel/plugin-proposal-class-properties",
