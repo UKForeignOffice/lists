@@ -2,7 +2,6 @@ import request from "supertest";
 import { logger } from "server/services/logger";
 import * as FormRunner from "./types";
 import { FORM_RUNNER_URL } from "./constants";
-import path from "path";
 import fs from "fs";
 import {
   LawyerListItemGetObject,
