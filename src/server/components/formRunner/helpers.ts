@@ -11,7 +11,6 @@ import {
   ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
-
 let isStarting = false;
 
 export async function isFormRunnerReady(): Promise<boolean> {
@@ -25,9 +24,9 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
-    if (!isStarting && !isAlreadyRunning) {
-      logger.info("Form Runner Starting");
-      isStarting = true;
+  if (!isStarting && !isAlreadyRunning) {
+    logger.info("Form Runner Starting");
+    isStarting = true;
 
     while (true) {
       const isReady = await isFormRunnerReady();
@@ -37,8 +36,8 @@ export async function startFormRunner(): Promise<boolean> {
         return true;
       }
     }
-  } 
-  return true
+  }
+  return true;
 }
 
 export function getNewSessionWebhookData(
@@ -92,17 +91,10 @@ export async function generateFormRunnerWebhookData(
 }
 
 export async function parseJsonFormData(
-  listType: string,
-  isUnderTest?: boolean
+  listType: string
 ): Promise<Array<Partial<FormRunner.Question>>> {
-  const formsJsonFile =
-    isUnderTest === true
-      ? `/forms-json/${listType}.json`
-      : `../src/server/components/formRunner/forms-json/${listType}.json`;
-  const fileContents = await fs.promises.readFile(
-    path.join(__dirname, formsJsonFile),
-    "utf8"
-  );
+  const formsJsonFile = require.resolve(`forms/${listType}.json`);
+  const fileContents = await fs.promises.readFile(formsJsonFile, "utf8");
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<FormRunner.Question>> = formJsonData.pages
     .map((page: FormRunner.Page) => {
