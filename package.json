@@ -27,7 +27,7 @@
     "prisma:deploy": "npx prisma migrate deploy --schema ./src/server/models/db/schema.prisma",
     "prisma:studio": "npx prisma studio --schema ./src/server/models/db/schema.prisma",
     "prepare:husky": "husky install && npx husky add .husky/pre-commit \"npx lint-staged\" && npx husky add .husky/pre-push \"npm run type-check\"",
-    "release": "semantic-release",
+    "release": "semantic-release --branches master,fix/auth-token-param",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "smoke-tests": "npx cypress run --browser chrome"

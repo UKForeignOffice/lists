@@ -2,8 +2,7 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
+    branches: ['master','fix/auth-token-param']
 
 jobs:
   release:
@@ -26,3 +25,4 @@ jobs:
         run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
