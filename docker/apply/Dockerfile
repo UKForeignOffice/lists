@@ -20,5 +20,6 @@ EXPOSE 3001
 USER 1001
 ENV PORT=3001
 ENV SERVICE_URL="apply:${PORT}"
+ENV NODE_ENV="${NODE_ENV}"
 
 CMD [ "yarn", "runner", "start"]
