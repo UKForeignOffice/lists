@@ -78,8 +78,7 @@ export async function generateFormRunnerWebhookData(
   switch (list.type) {
     case ServiceType.lawyers:
       questions = await lawyers.generateFormRunnerWebhookData(
-        listItem as LawyerListItemGetObject,
-        isUnderTest
+        listItem as LawyerListItemGetObject
       );
       break;
     default:
