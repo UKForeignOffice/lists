@@ -86,10 +86,10 @@ jobs:
             docker-compose -f docker-compose.ci.yml up -d lists apply
             docker ps
 
-#      - run: # this will let you view logs from the apply and lists docker containers
-#          name: logs
-#          background: true
-#          command: docker-compose -f docker-compose.ci.yml logs -f apply lists
+      - run: # this will let you view logs from the apply and lists docker containers
+          name: logs
+          background: true
+          command: docker-compose -f docker-compose.ci.yml logs -f apply lists
 
       - run:
           environment:
