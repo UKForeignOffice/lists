@@ -196,4 +196,52 @@ export const questions: Questions = {
       return false;
     },
   },
+  sameCountry: {
+    getViewPartialName() {
+      return "questions/question-same-country.njk";
+    },
+    pageTitle() {
+      return "Do you want to use a funeral director in the country in which the person died?";
+    },
+    needsToAnswer(req: Request) {
+      const { sameCountry } = getAllRequestParams(req);
+      return sameCountry === undefined || sameCountry === "";
+    },
+    validate(req: Request) {
+      const { sameCountry } = getAllRequestParams(req);
+
+      if (sameCountry === "") {
+        return {
+          field: "same-country",
+          text: "You must select if you want to use a funeral director in the country in which the person died",
+          href: "#same-country-yes",
+        };
+      }
+      return false;
+    },
+  },
+  repatriation: {
+    getViewPartialName() {
+      return "questions/question-repatriation.njk";
+    },
+    pageTitle() {
+      return "Do you want to repatriation the deceased to the UK?";
+    },
+    needsToAnswer(req: Request) {
+      const { repatriation } = getAllRequestParams(req);
+      return repatriation === undefined || repatriation === "";
+    },
+    validate(req: Request) {
+      const { repatriation } = getAllRequestParams(req);
+
+      if (repatriation === "") {
+        return {
+          field: "repatriation",
+          text: "You must select if you want to to repatriation the deceased to the UK",
+          href: "#repatriation-yes",
+        };
+      }
+      return false;
+    },
+  },
 };

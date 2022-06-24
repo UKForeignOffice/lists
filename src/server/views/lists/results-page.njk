@@ -13,6 +13,9 @@
       {% if serviceType === ServiceType.covidTestProviders %}
         {% include "lists/partials/covid-test-providers/covid-test-providers-results-list.njk" %}
       {% endif %}
+      {% if serviceType === ServiceType.funeralDirectors %}
+        {% include "lists/partials/funeral-directors/funeral-directors-results-list.njk" %}
+      {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
       {% include "lists/partials/answers-box.njk" %}

@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: ['master','fix/auth-token-param']
+    branches: ['master']
 
 jobs:
   release:

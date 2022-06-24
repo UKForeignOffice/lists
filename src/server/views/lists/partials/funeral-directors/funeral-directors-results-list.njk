@@ -1,0 +1,55 @@
+{% import "./macros.njk" as macros %}
+{% import "../macros.njk" as partialsMacros %}
+
+{% set regionIsSet %}
+  {% if region and region !== "Not set" %}
+    yes
+  {% else %}
+    no
+  {% endif %}
+{% endset %}
+{% if searchResults.length === 0 %}
+  <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
+{% else %}
+  <h2 class="govuk-heading-l govuk-!-margin-bottom-4">Funeral Directors in {{ _.upperFirst(country) }}</h2>
+
+  <p class="govuk-body">Where funeral directors work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
+    system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted.</p>
+
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      You should do your own research before deciding which provider to use.
+    </strong>
+  </div>
+
+{% if (print !== "yes") %}
+  <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual funeral directors or this service.</p>
+{% endif %}
+{% if (print === "yes") %}
+{% include 'includes/disclaimer.njk' %}
+{% endif %}
+  <p class="govuk-body">
+    Results are ordered
+    {% if region and region !== "Not set" %}
+      by nearest to <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>.
+    {% else %}
+      alphabetically.
+    {% endif %}
+  </p>
+
+  <ul class="govuk-list">
+    {% for item in searchResults %}
+      <li>
+        {{ macros.funeralDirectorsListItem(item) }}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if not (print === "yes") %}
+    {{ macros.paginationSection(pagination) }}
+  {% endif %}
+{% endif %}
+
