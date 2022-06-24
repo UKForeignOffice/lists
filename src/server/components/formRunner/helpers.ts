@@ -25,9 +25,9 @@ export async function isFormRunnerReady(): Promise<boolean> {
 
 export async function startFormRunner(): Promise<boolean> {
   const isAlreadyRunning = await isFormRunnerReady();
-    if (!isStarting && !isAlreadyRunning) {
-      logger.info("Form Runner Starting");
-      isStarting = true;
+  if (!isStarting && !isAlreadyRunning) {
+    logger.info("Form Runner Starting");
+    isStarting = true;
 
     while (true) {
       const isReady = await isFormRunnerReady();
@@ -37,8 +37,8 @@ export async function startFormRunner(): Promise<boolean> {
         return true;
       }
     }
-  } 
-  return true
+  }
+  return true;
 }
 
 export function getNewSessionWebhookData(
@@ -101,6 +101,14 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest?: boolean
 ): Promise<Array<Partial<FormRunner.Question>>> {
+  /**
+   * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
+   * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
+   * doing this properly. See branch `origin/fix/containers` rev 1e76...6bb.
+   * For now, we need to keep ./forms-json in sync with /docker/apply/forms-json.
+   * I have tried doing a babel/tsc/webpack/jest moduleNameMapping change but it is still causing errors.
+   * Giving up. Enjoy
+   */
   const formsJsonFile =
     isUnderTest === true
       ? `/forms-json/${kebabCase(listType)}.json`
