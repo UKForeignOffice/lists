@@ -12,10 +12,9 @@ RUN mkdir -p /usr/src/app && \
 FROM base AS dependencies
 WORKDIR /usr/src/app
 USER 1001
-COPY --chown=appuser:appuser package.json package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm i
-COPY --chown=appuser:appuser tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
-COPY --chown=appuser:appuser docker/apply/forms-json ./docker/apply/forms-json/
+COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY --chown=appuser:appuser ./src ./src/
 
 FROM dependencies AS build
@@ -25,6 +24,7 @@ RUN npm run build:${BUILD_MODE}
 
 FROM build AS runner
 WORKDIR /usr/src/app
+
 USER 1001
 ARG NODE_ENV
 ARG DOCKER_TAG

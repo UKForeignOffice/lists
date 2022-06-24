@@ -1,6 +1,6 @@
 export default {
   chromeWebSecurity: false,
-  video: false,
+  video: true,
   projectId: "fo4z8h",
   env: {
     TAGS: "not @wip",

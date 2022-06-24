@@ -82,7 +82,7 @@ jobs:
           name: build and run  lists
           command: |
             docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
-            docker-compose -f docker-compose.ci.yml build lists apply
+            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.ci.yml build lists apply
             docker-compose -f docker-compose.ci.yml up -d lists apply
             docker ps
 
@@ -90,7 +90,8 @@ jobs:
 #          name: logs
 #          background: true
 #          command: docker-compose -f docker-compose.ci.yml logs -f apply lists
-
+#
+      
       - run:
           environment:
             DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
@@ -101,6 +102,7 @@ jobs:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
+            - ~/.npm/_npx
 
 
 

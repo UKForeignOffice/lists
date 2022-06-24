@@ -41,7 +41,6 @@ services:
       LOG_LEVEL: "info"
       CI_SMOKE_TEST: "true"
       NODE_ENV: "test"
-      BUILD_MODE: "ci"
     depends_on:
       postgres:
         condition: service_healthy
