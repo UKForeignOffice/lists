@@ -277,6 +277,7 @@ describe("Form Runner Service:", () => {
   });
 
   describe("generateFormRunnerWebhookObject", () => {
+    const isUnderTest = true;
     const listJson = {
       size: "Medium (16-350 legal professionals)",
       country: "Italy",
@@ -536,14 +537,16 @@ describe("Form Runner Service:", () => {
 
     test("generated form runner webhook data is correct", async () => {
       const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject
+        getObject as LawyerListItemGetObject,
+        isUnderTest
       );
 
       expect(result).toMatchObject(expectedListOutput);
     });
     test("generated object is correct", async () => {
       const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject
+        getObject as LawyerListItemGetObject,
+        isUnderTest
       );
       const newSessionWebhookData = getNewSessionWebhookData(
         "lawyers",

@@ -464,7 +464,8 @@ export async function listItemRequestChangeController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { listId, listItemId } = req.params;
+  const { listId, listItemId, underTest } = req.params;
+  const isUnderTest = underTest === "true";
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
 
@@ -498,7 +499,8 @@ export async function listItemRequestChangeController(
       list,
       listItem,
       changeMessage,
-      userId
+      userId,
+      isUnderTest,
     );
 
     req.flash(
@@ -525,7 +527,8 @@ async function handleListItemRequestChanges(
   list: List,
   listItem: ListItemGetObject,
   message: string,
-  userId: User["id"]
+  userId: User["id"],
+  isUnderTest: boolean,
 ): Promise<void> {
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
@@ -533,7 +536,8 @@ async function handleListItemRequestChanges(
   const formRunnerEditUserUrl = await initialiseFormRunnerSession(
     list,
     listItem,
-    message
+    message,
+    isUnderTest
   );
 
   // Email applicant
@@ -687,11 +691,13 @@ async function getListItem(
 async function initialiseFormRunnerSession(
   list: List,
   listItem: BaseListItemGetObject,
-  message: string
+  message: string,
+  isUnderTest: boolean
 ): Promise<string> {
   const questions = await generateFormRunnerWebhookData(
     list,
-    listItem
+    listItem,
+    isUnderTest,
   );
   const formRunnerWebhookData = getNewSessionWebhookData(
     list.type,
