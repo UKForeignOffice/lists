@@ -1,5 +1,4 @@
 import supertest from "supertest";
-import * as child_process from "child_process";
 import { isFormRunnerReady, getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
@@ -536,19 +535,15 @@ describe("Form Runner Service:", () => {
     };
 
     test("generated form runner webhook data is correct", async () => {
-      const isUnderTest = true;
       const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject,
-        isUnderTest
+        getObject as LawyerListItemGetObject
       );
 
       expect(result).toMatchObject(expectedListOutput);
     });
     test("generated object is correct", async () => {
-      const isUnderTest = true;
       const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject,
-        isUnderTest
+        getObject as LawyerListItemGetObject
       );
       const newSessionWebhookData = getNewSessionWebhookData(
         "lawyers",

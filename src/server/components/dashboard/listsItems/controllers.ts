@@ -464,10 +464,9 @@ export async function listItemRequestChangeController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { listId, listItemId, underTest } = req.params;
+  const { listId, listItemId } = req.params;
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
-  const isUnderTest = underTest === "true";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const list = (await findListById(listId)) ?? ({} as List);
@@ -498,7 +497,6 @@ export async function listItemRequestChangeController(
     await handleListItemRequestChanges(
       list,
       listItem,
-      isUnderTest,
       changeMessage,
       userId
     );
@@ -526,7 +524,6 @@ export async function listItemRequestChangeController(
 async function handleListItemRequestChanges(
   list: List,
   listItem: ListItemGetObject,
-  isUnderTest: boolean,
   message: string,
   userId: User["id"]
 ): Promise<void> {
@@ -536,7 +533,6 @@ async function handleListItemRequestChanges(
   const formRunnerEditUserUrl = await initialiseFormRunnerSession(
     list,
     listItem,
-    isUnderTest,
     message
   );
 
@@ -691,13 +687,11 @@ async function getListItem(
 async function initialiseFormRunnerSession(
   list: List,
   listItem: BaseListItemGetObject,
-  isUnderTest: boolean,
   message: string
 ): Promise<string> {
   const questions = await generateFormRunnerWebhookData(
     list,
-    listItem,
-    isUnderTest
+    listItem
   );
   const formRunnerWebhookData = getNewSessionWebhookData(
     list.type,

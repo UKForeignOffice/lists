@@ -73,15 +73,13 @@ export function getNewSessionWebhookData(
 export async function generateFormRunnerWebhookData(
   list: List,
   listItem: BaseListItemGetObject,
-  isUnderTest?: boolean
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
 
   switch (list.type) {
     case ServiceType.lawyers:
       questions = await lawyers.generateFormRunnerWebhookData(
-        listItem as LawyerListItemGetObject,
-        isUnderTest
+        listItem as LawyerListItemGetObject
       );
       break;
     case ServiceType.funeralDirectors:
@@ -98,8 +96,7 @@ export async function generateFormRunnerWebhookData(
 }
 
 export async function parseJsonFormData(
-  listType: string,
-  isUnderTest?: boolean
+  listType: string
 ): Promise<Array<Partial<FormRunner.Question>>> {
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
