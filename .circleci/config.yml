@@ -326,8 +326,6 @@ workflows:
           context:
             - VPN
             - AWS
-          requires:
-            - test
 
 
       - publish:
@@ -342,8 +340,6 @@ workflows:
           context:
             - VPN
             - AWS
-          requires:
-            - test
 
 
       - publish:
