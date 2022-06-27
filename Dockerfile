@@ -26,7 +26,7 @@ RUN npm run build:${BUILD_MODE}
 
 FROM build AS runner
 WORKDIR /usr/src/app
-
+RUN npm ci --production
 USER 1001
 ARG NODE_ENV
 ARG DOCKER_TAG
