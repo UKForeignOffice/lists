@@ -1,8 +1,8 @@
 {
   "enforceCsrf": true,
-  "safelist": ["lists"],
+  "safelist": ["lists", "find-a-professional-service-abroad.service.csd.fcdo.gov.uk"],
   "logPrettyPrint": false,
-  "sandbox": true,
+  "sandbox": false,
   "feedbackLink": "mailto:digitalservicesfeedback@fco.gov.uk",
   "port": 3001
 }
