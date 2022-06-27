@@ -15,7 +15,9 @@ USER 1001
 COPY package.json package-lock.json ./
 RUN npm i
 COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
+COPY docker/apply/forms-json ./
 COPY --chown=appuser:appuser ./src ./src/
+
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
