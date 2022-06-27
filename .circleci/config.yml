@@ -151,7 +151,7 @@ jobs:
                 name: Publish docker image - apply
                 command: |
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG .
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG --build-arg BUILD_MODE=prod  -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG .
                   docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG
 
       - when:
