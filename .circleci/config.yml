@@ -48,6 +48,7 @@ jobs:
     <<: *defaults
     machine:
       image: ubuntu-2004:202111-02
+      docker_layer_caching: true
 
     steps:
       - checkout
@@ -91,7 +92,7 @@ jobs:
 #          background: true
 #          command: docker-compose -f docker-compose.ci.yml logs -f apply lists
 #
-      
+
       - run:
           environment:
             DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
