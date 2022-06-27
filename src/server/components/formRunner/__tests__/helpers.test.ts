@@ -1,5 +1,5 @@
 import supertest from "supertest";
-import { isFormRunnerReady, getNewSessionWebhookData } from "../helpers";
+import { getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
   BaseListItemGetObject, ServiceType,
@@ -16,24 +16,6 @@ jest.mock("supertest", () =>
 );
 
 describe("Form Runner Service:", () => {
-  describe("isFormRunnerReady", () => {
-    test("it returns false when form runner request fails", async () => {
-      jest
-        .spyOn(supertest(""), "get")
-        .mockResolvedValue({ status: 400 } as any);
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(false);
-    });
-
-    test("it returns false when form runner request rejects", async () => {
-      jest.spyOn(supertest(""), "get").mockRejectedValue("Error");
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(false);
-    });
-  });
-
   describe("parseFormRunnerWebhookObject", () => {
     test("parsed object is correct", async () => {
       const webHookData: any = {

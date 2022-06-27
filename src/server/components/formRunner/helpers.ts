@@ -1,7 +1,4 @@
-import request from "supertest";
-import { logger } from "server/services/logger";
 import * as FormRunner from "./types";
-import { FORM_RUNNER_URL } from "./constants";
 import path from "path";
 import fs from "fs";
 import {
@@ -11,35 +8,6 @@ import {
   ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
-
-let isStarting = false;
-
-export async function isFormRunnerReady(): Promise<boolean> {
-  try {
-    const { status } = await request(FORM_RUNNER_URL).get("/health-check");
-    return status === 200;
-  } catch (error) {
-    return false;
-  }
-}
-
-export async function startFormRunner(): Promise<boolean> {
-  const isAlreadyRunning = await isFormRunnerReady();
-  if (!isStarting && !isAlreadyRunning) {
-    logger.info("Form Runner Starting");
-    isStarting = true;
-
-    while (true) {
-      const isReady = await isFormRunnerReady();
-
-      if (isReady) {
-        logger.info("Form Runner Started");
-        return true;
-      }
-    }
-  }
-  return true;
-}
 
 export function getNewSessionWebhookData(
   listType: string,
