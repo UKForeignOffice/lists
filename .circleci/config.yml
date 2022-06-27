@@ -9,6 +9,7 @@ orbs:
 defaults: &defaults
   working_directory: ~/repo
 
+
 jobs:
   test:
     <<: *defaults
@@ -327,7 +328,6 @@ workflows:
             - AWS
           requires:
             - test
-            - smoke
 
 
       - publish:
@@ -344,7 +344,6 @@ workflows:
             - AWS
           requires:
             - test
-            - smoke
 
 
       - publish:
