@@ -162,7 +162,7 @@ jobs:
             - run:
                 name: build postgres
                 command: |
-                  docker-compose -f docker-compose.ci.yml build postgres \
+                  docker-compose -f docker-compose.ci.yml build \
                   --build-arg PGP_PUB=$PGP_PUB \
                   --build-arg PGP_SECRET=$PGP_SECRET \
                   --build-arg PGP_OTRUST=$PGP_OTRUST postgres
