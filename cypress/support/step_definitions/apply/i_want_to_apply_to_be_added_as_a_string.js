@@ -1,4 +1,4 @@
-const base = "/application/";
+const base = "http://localhost:3001/";
 const urls = {
   lawyers: `${base}lawyers`,
 };
