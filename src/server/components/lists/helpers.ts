@@ -38,11 +38,19 @@ export function preProcessParams(params: { [name: string]: any }): {
   const hasSelectedAll: boolean =
     paramsCopy?.practiceArea?.includes("All") ?? false;
   const noRegionSelected = paramsCopy?.region === "";
+  let { country } = paramsCopy || "";
+  if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
+    delete paramsCopy.country;
+    country = null;
+  } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
+    country = "United Kingdom";
+  }
 
   return {
     ...paramsCopy,
     ...(hasSelectedAll && { practiceArea: "All" }),
     ...(noRegionSelected && { region: "Not set" }),
+    ...(country && { country: country }),
   };
 }
 

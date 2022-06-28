@@ -14,8 +14,8 @@ import { FuneralDirectorListItem } from "server/models/listItem/providers";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
-  QuestionName.country,
   QuestionName.sameCountry,
+  QuestionName.country,
   QuestionName.region,
   QuestionName.repatriation,
   QuestionName.readDisclaimer,
@@ -34,9 +34,9 @@ export async function searchFuneralDirectors(
   params.page = pageNum.toString();
 
   const filterProps = {
-    countryName: sameCountry === "yes" ? country : "United Kingdom",
+    countryName: sameCountry?.includes("yes") ? country : "United Kingdom",
     region,
-    repatriation,
+    repatriation: repatriation?.includes("yes") ?? false,
     offset: -1,
   };
 

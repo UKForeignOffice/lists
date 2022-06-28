@@ -12,6 +12,25 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
+
+      <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+            Why are you asking this question?
+          </span>
+        </summary>
+        <div class="govuk-details__text">
+          <p class="govuk-body">You can choose to use either a funeral director:</p>
+          <ul class="govuk-list govuk-list--bullet">
+            <li>based in the UK who will make the funeral arrangements with one of their international partners</li>
+            <li>based in the country in which the person died</li>
+          </ul>
+          <p class="govuk-body">Using a funeral director based in the UK may mean that the funeral costs will be greater as they will also charge you for their services.</p>
+          <p class="govuk-body">All UK-based and many local funeral directors on the lists will be able to arrange repatriation to the UK.</p>
+          <p class="govuk-body">If you select 'No' to this question, you'll be shown a list of UK-based international funeral directors.</p>
+        </div>
+      </details>
+
       <div class="govuk-radios govuk-radios--inline" role="radiogroup">
         <div class="govuk-radios__item">
           <input

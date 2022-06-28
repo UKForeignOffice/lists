@@ -8,7 +8,7 @@ import { fetchPublishedListItemQuery } from "server/models/listItem/providers/he
 export async function findPublishedFuneralDirectorsPerCountry(props: {
   countryName?: string;
   region?: string | "";
-  repatriation?: string | "";
+  repatriation?: boolean;
   offset?: number;
 }): Promise<FuneralDirectorListItemGetObject[]> {
   if (props.countryName === undefined) {
@@ -21,7 +21,7 @@ export async function findPublishedFuneralDirectorsPerCountry(props: {
     repatriation?: boolean;
   } = {};
 
-  if (props.repatriation === "yes") {
+  if (props.repatriation) {
     jsonQuery.repatriation = true;
   }
 

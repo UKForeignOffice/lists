@@ -7,11 +7,6 @@
           Do you want to repatriation the deceased to the UK?
         </label>
       </h1>
-      <div id="repatriation-hint" class="govuk-hint">
-        Lawyers in some countries may provide services on a pro bono basis.
-        Pro bono work is done for free or at a much reduced cost for people unable to afford full legal fees.
-        This is decided on a case by case basis.
-      </div>
       {% if error.field === 'repatriation' %}
         <span class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}

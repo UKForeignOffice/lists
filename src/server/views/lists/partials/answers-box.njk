@@ -12,6 +12,21 @@
       <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
     </p> #}
   {% endif %}
+  {% if sameCountry %}
+    <p class="govuk-body">
+      Local country preference<br />
+      <strong>
+        {{ "Yes, I want to use a local funeral director in this country" if sameCountry.includes("yes") else "No, I want to use a funeral director in the UK who works internationally" }}
+      </strong>
+      {% if print !== "yes" %}
+        <a
+          class="govuk-link noprint"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'sameCountry') }}"
+          aria-label="Change funeral director country preference answer"
+        >Change</a>
+      {% endif %}
+    </p>
+  {% endif %}
   {% if country %}
     <p class="govuk-body">
       Country<br />
@@ -50,6 +65,28 @@
           aria-label="Change results turnaround time answer"
         >Change</a>
       {% endif %}
+    </p>
+  {% endif %}
+  {% if repatriation %}
+    <p class="govuk-body">
+      Repatriation<br />
+      <strong>
+        {{ "Yes" if repatriation.includes("yes") else "No" }}
+      </strong>
+      {% if print !== "yes" %}
+        <a
+          class="govuk-link noprint"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'repatriation') }}"
+          aria-label="Change repatriation answer"
+        >Change</a>
+      {% endif %}
+    </p>
+  {% endif %}
+  {% if repatriationServices %}
+    <p class="govuk-body">
+      Areas of law<br />
+      <strong>{{ _.split(repatriationServices, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'repatriationServices') }}" aria-label="Change repatriation services answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if print !== "yes" and country %}

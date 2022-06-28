@@ -44,38 +44,33 @@
     <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">{{ item.jsonData.size if item.jsonData.size }}</span>
   </h3>
 
-  {% if item.jsonData.localServicesProvided %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Funeral services</strong>: {{ item.jsonData.localServicesProvided.map(_.startCase).join(", ") }}
-    </p>
-  {% endif %}
-  {% if item.jsonData.repatriationServicesProvided %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Repatriation services</strong>:
-      {{ item.jsonData.repatriationServicesProvided.map(_.startCase).join(", ") if item.jsonData.repatriationServicesProvided }}
-      {{ "None" if not item.jsonData.repatriationServicesProvided }}
-    </p>
-  {% endif %}
-  {% if item.jsonData.religiousCulturalServicesProvided %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Religious and cultural services</strong>: {{ item.jsonData.religiousCulturalServicesProvided.map(_.startCase).join(", ") }}
-    </p>
-  {% endif %}
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Funeral services</strong>:
+    {{ item.jsonData.localServicesProvided.map(_.startCase).join(", ") }}
+    {{ "None" if not item.jsonData.localServicesProvided }}
+  </p>
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Repatriation services</strong>:
+    {{ item.jsonData.repatriationServicesProvided.map(_.startCase).join(", ") if item.jsonData.repatriationServicesProvided }}
+    {{ "None" if not item.jsonData.repatriationServicesProvided }}
+  </p>
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Religious and cultural services</strong>:
+    {{ item.jsonData.religiousCulturalServicesProvided.map(_.startCase).join(", ") if item.jsonData.religiousCulturalServicesProvided }}
+    {{ "None" if not item.jsonData.repatriationServicesProvided }}
+  </p>
   {% if item.jsonData.languagesSpoken %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Languages spoken</strong>: {{ item.jsonData.languagesSpoken }}
     </p>
   {% endif %}
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Represented British nationals</strong>: {{ "Yes" if item.jsonData.representedBritishNationals === "true" else "No" }}
+  </p>
   {% if item.jsonData.regions %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Regions</strong>: {{ item.jsonData.regions }}
     </p>
-  {% endif %}
-  {% if additionalDetails(item) %}
-  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Additional details</strong>:
-    {{ additionalDetails(item) }}
-  </p>
   {% endif %}
 
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
