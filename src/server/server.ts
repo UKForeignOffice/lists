@@ -11,7 +11,6 @@ import {
   configureCookieParser,
   configureRateLimit,
 } from "./middlewares";
-import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
 import { initCookies } from "./components/cookies";
@@ -33,19 +32,12 @@ import { logger } from "server/services/logger";
 const server = express();
 
 export async function getServer(): Promise<Express> {
-  if (isProd) {
-    server.set("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
-  } else {
-    server.set("trust proxy", false);
-  }
-
   // middlewares
   configureAccessControl(server);
   configureHelmet(server);
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
-  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
