@@ -38,7 +38,7 @@ export async function listsPostController(
 
   const { country, serviceType } = params;
 
-  if ((serviceType === ServiceType.funeralDirectors || (country !== undefined && country !== ""))
+  if (country !== undefined && country !== ""
     && serviceType !== undefined) {
     try {
       const hasItems = await some(country, serviceType);
