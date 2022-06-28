@@ -23,7 +23,6 @@ import { initHealthCheck } from "./components/healthCheck";
 import {
   isSmokeTest,
   isLocalHost,
-  isProd,
   NODE_ENV,
   SERVICE_DOMAIN,
 } from "server/config";

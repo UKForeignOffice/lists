@@ -1,4 +1,3 @@
-import { assign } from "lodash";
 import * as helmet from "server/middlewares/helmet";
 import * as logger from "server/middlewares/logger";
 import * as compression from "server/middlewares/compression";
@@ -16,7 +15,6 @@ import * as healthCheck from "server/components/healthCheck/helpers";
 import * as lists from "server/components/lists/helpers";
 import * as sitemap from "server/components/sitemap/helpers";
 
-import * as serverConfig from "server/config/server-config";
 import { getServer } from "../server";
 
 describe("Server:", () => {
