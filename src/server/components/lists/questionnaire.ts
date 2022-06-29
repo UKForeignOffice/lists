@@ -200,25 +200,49 @@ export const questions: Questions = {
       return false;
     },
   },
-  sameCountry: {
+  insurance: {
     getViewPartialName() {
-      return "questions/question-same-country.njk";
+      return "questions/question-insurance.njk";
     },
     pageTitle() {
-      return "Do you want to use a funeral director in the country in which the person died?";
+      return "Did the deceased have insurance?";
     },
     needsToAnswer(req: Request) {
-      const { sameCountry } = getAllRequestParams(req);
-      return sameCountry === undefined || sameCountry === "";
+      const { insurance } = getAllRequestParams(req);
+      return insurance === undefined || insurance === "";
     },
     validate(req: Request) {
-      const { sameCountry } = getAllRequestParams(req);
+      const { insurance } = getAllRequestParams(req);
 
-      if (sameCountry === "") {
+      if (insurance === "") {
         return {
-          field: "same-country",
-          text: "You must select if you want to use a funeral director in the country in which the person died",
-          href: "#same-country-yes",
+          field: "insurance",
+          text: " Error: Did the deceased have insurance? is required",
+          href: "#insurance-yes",
+        };
+      }
+      return false;
+    },
+  },
+  contactInsurance: {
+    getViewPartialName() {
+      return "questions/question-contact-insurance.njk";
+    },
+    pageTitle() {
+      return "Did the deceased have insurance?";
+    },
+    needsToAnswer(req: Request) {
+      const { insurance, contactInsurance } = getAllRequestParams(req);
+      return insurance === "yes" && (contactInsurance === undefined || contactInsurance === "");
+    },
+    validate(req: Request) {
+      const { insurance } = getAllRequestParams(req);
+
+      if (insurance === "") {
+        return {
+          field: "insurance",
+          text: " Error: Did the deceased have insurance? is required",
+          href: "#insurance-yes",
         };
       }
       return false;
@@ -229,7 +253,7 @@ export const questions: Questions = {
       return "questions/question-repatriation.njk";
     },
     pageTitle() {
-      return "Do you want to repatriation the deceased to the UK?";
+      return "Do you want to repatriate the deceased back to the UK?";
     },
     needsToAnswer(req: Request) {
       const { repatriation } = getAllRequestParams(req);
@@ -241,7 +265,7 @@ export const questions: Questions = {
       if (repatriation === "") {
         return {
           field: "repatriation",
-          text: "You must select if you want to to repatriation the deceased to the UK",
+          text: "Repatriation is required",
           href: "#repatriation-yes",
         };
       }

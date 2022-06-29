@@ -9,7 +9,8 @@ export enum QuestionName {
   "readDisclaimer" = "readDisclaimer",
   "resultsTurnaround" = "resultsTurnaround",
   "readCovidDisclaimer" = "readCovidDisclaimer",
-  "sameCountry" = "sameCountry",
+  "insurance" = "insurance",
+  "contactInsurance" = "contactInsurance",
   "repatriation" = "repatriation",
 }
 
@@ -38,6 +39,8 @@ export interface ListsRequestParams {
   resultsTurnaround?: string;
   page?: string;
   print?: "yes" | "no" | "";
+  insurance?: "yes" | "no" | "";
+  contactInsurance?: "done" | "";
   sameCountry?: "yes" | "no" | "";
   repatriation?: "yes" | "no" | "";
 }

@@ -1,50 +1,52 @@
 <form class="form" action="{{ nextRoute }}" method="post">
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'repatriation' }}">
-    <fieldset class="govuk-fieldset" aria-describedby="repatriation-hint">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'insurance' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="insurance-hint">
       <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l" for="repatriation">
-          Do you want to repatriate the deceased back to the UK?
+        <label class="govuk-label govuk-label--l" for="insurance">
+          Did the deceased have insurance?
         </label>
       </h1>
       <div id="repatriate-hint" class="govuk-hint">
-        Repatriation is the process of bringing the deceased back to the UK.
+        For example, travel or repatriation insurance. If you are not sure whether they had insurance, check with their
+        bank, credit card company, or their employer if they were travelling for work.
       </div>
-      {% if error.field === 'repatriation' %}
+      {% if error.field === 'insurance' %}
         <span class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
+
       <div class="govuk-radios govuk-radios--inline" role="radiogroup">
         <div class="govuk-radios__item">
           <input
             aria-hidden="true"
             class="govuk-radios__input"
-            name="repatriation"
+            name="insurance"
             type="hidden"
             value=""
           />
           <input
             class="govuk-radios__input"
-            id="repatriation-yes"
-            name="repatriation"
+            id="insurance-yes"
+            name="insurance"
             type="radio"
             value="yes"
           />
-          <label class="govuk-label govuk-radios__label" for="repatriation-yes">
-            Yes, I want to bring the deceased back to the UK
+          <label class="govuk-label govuk-radios__label" for="insurance-yes">
+            Yes
           </label>
         </div>
         <div class="govuk-radios__item">
           <input
             class="govuk-radios__input"
-            id="repatriation-no"
-            name="repatriation"
+            id="insurance-no"
+            name="insurance"
             type="radio"
             value="no"
           />
-          <label class="govuk-label govuk-radios__label" for="repatriation-no">
-            No, I do not want to bring the deceased back to the UK
+          <label class="govuk-label govuk-radios__label" for="insurance-no">
+            No
           </label>
         </div>
       </div>

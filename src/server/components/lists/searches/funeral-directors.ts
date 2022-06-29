@@ -14,10 +14,11 @@ import { FuneralDirectorListItem } from "server/models/listItem/providers";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
-  QuestionName.sameCountry,
+  QuestionName.insurance,
+  QuestionName.contactInsurance,
+  QuestionName.repatriation,
   QuestionName.country,
   QuestionName.region,
-  QuestionName.repatriation,
   QuestionName.readDisclaimer,
 ];
 
@@ -26,7 +27,7 @@ export async function searchFuneralDirectors(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, sameCountry, country, region, repatriation, print = "no" } = params;
+  const { serviceType, country, region, repatriation, print = "no" } = params;
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
 
@@ -34,7 +35,7 @@ export async function searchFuneralDirectors(
   params.page = pageNum.toString();
 
   const filterProps = {
-    countryName: sameCountry?.includes("yes") ? country : "United Kingdom",
+    countryName: country,
     region,
     repatriation: repatriation?.includes("yes") ?? false,
     offset: -1,
