@@ -12,10 +12,6 @@ type Questions = {
   [key in QuestionName]: Question;
 };
 
-const stringNotSpecified = function(str: string | undefined): boolean {
-  return str === undefined || str === "";
-}
-
 export const questions: Questions = {
   readNotice: {
     getViewPartialName(req) {
@@ -46,8 +42,8 @@ export const questions: Questions = {
       return `In which country do you need a ${serviceLabel}?`;
     },
     needsToAnswer(req: Request) {
-      const { sameCountry, country } = getAllRequestParams(req);
-      return ((sameCountry === "yes" && stringNotSpecified(country)) || ((stringNotSpecified(sameCountry) || sameCountry === "no") && stringNotSpecified(country)));
+      const { country } = getAllRequestParams(req);
+      return country === undefined || country === "";
     },
     validate(req: Request) {
       const { country } = getAllRequestParams(req);
