@@ -217,7 +217,7 @@ export const questions: Questions = {
       if (insurance === "") {
         return {
           field: "insurance",
-          text: " Error: Did the deceased have insurance? is required",
+          text: " Error: You must select whether the deceased had insurance or not",
           href: "#insurance-yes",
         };
       }
@@ -265,7 +265,7 @@ export const questions: Questions = {
       if (repatriation === "") {
         return {
           field: "repatriation",
-          text: "Repatriation is required",
+          text: "You must select whether you want the deceased to be repatriated or not",
           href: "#repatriation-yes",
         };
       }

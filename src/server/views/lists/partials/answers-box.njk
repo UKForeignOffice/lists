@@ -12,21 +12,6 @@
       <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
     </p> #}
   {% endif %}
-  {% if repatriation %}
-    <p class="govuk-body">
-      Bring the deceased back to the UK<br />
-      <strong>
-        {{ "Yes" if repatriation.includes("yes") else "No" }}
-      </strong>
-      {% if print !== "yes" %}
-        <a
-          class="govuk-link noprint"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'repatriation') }}"
-          aria-label="Change repatriation answer"
-        >Change</a>
-      {% endif %}
-    </p>
-  {% endif %}
   {% if country %}
     <p class="govuk-body">
       Country<br />
@@ -63,6 +48,21 @@
           class="govuk-link noprint"
           href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
           aria-label="Change results turnaround time answer"
+        >Change</a>
+      {% endif %}
+    </p>
+  {% endif %}
+  {% if repatriation %}
+    <p class="govuk-body">
+      Repatriation needed<br />
+      <strong>
+        {{ "Yes" if repatriation.includes("yes") else "No" }}
+      </strong>
+      {% if print !== "yes" %}
+        <a
+          class="govuk-link noprint"
+          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'repatriation') }}"
+          aria-label="Change repatriation answer"
         >Change</a>
       {% endif %}
     </p>

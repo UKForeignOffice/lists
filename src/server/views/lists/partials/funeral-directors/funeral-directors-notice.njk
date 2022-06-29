@@ -16,6 +16,11 @@
     policies provide cover for the services you need before you contact a funeral director independently.
   </strong>
 </div>
+<form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <input name="readNotice" type="hidden" value="ok" />
+  <button class="govuk-button" data-module="govuk-button">Start</button>
+</form>
 <h2 class="govuk-heading-m">Disclaimer</h2>
 {% include 'includes/disclaimer.njk' %}
 <h2 class="govuk-heading-m" id="feedback-heading">Feedback on service providers</h2>
@@ -28,8 +33,3 @@
   If you have feedback specifically about this digital service, the FCDO welcomes your views. Email:
   <a class="govuk-link" href="mailto:digitalservicesfeedback@fco.gov.uk" class="govuk-link" target="_blank">digitalservicesfeedback@fco.gov.uk</a>
 </p>
-<form class="form" action="{{ nextRoute }}" method="post">
-  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-  <input name="readNotice" type="hidden" value="ok" />
-  <button class="govuk-button" data-module="govuk-button">Start</button>
-</form>
