@@ -27,7 +27,7 @@ export interface WebhookDeserialisers {
   [ServiceType.funeralDirectors]: WebhookDeserialiser<
     FuneralDirectorFormWebhookData,
     FuneralDirectorJsonData
-    >;
+  >;
   [ServiceType.covidTestProviders]: WebhookDeserialiser<
     CovidTestSupplierFormWebhookData,
     CovidTestSupplierJsonData
@@ -56,6 +56,10 @@ export interface BaseDeserialisedWebhookData {
   publishEmail: string;
   publicEmailAddress?: string;
   phoneNumber: string;
+  contactPhoneNumber?: string;
+  /**
+   * @deprecated deprecated in favour of {@link BaseDeserialisedWebhookData.contactPhoneNumber}
+   */
   emergencyPhoneNumber?: string;
   declaration: string[];
   type: ServiceType;
@@ -181,7 +185,10 @@ export type LawyerJsonData = LawyersFormWebhookData;
  * It will mean that your code can not be handled in a "generic" way, and you will have to write a deserialiser and serialiser.
  * The deserialised and serialised types should match as closely as possible.
  */
-export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData | FuneralDirectorJsonData;
+export type ListItemJsonData =
+  | LawyerJsonData
+  | CovidTestSupplierJsonData
+  | FuneralDirectorJsonData;
 
 /**
  * converts {@link DeserialisedWebhookData} to {@link Questions[]}
