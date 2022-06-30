@@ -378,8 +378,7 @@
           "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
-          "schema": {},
-          "hint": "Select country"
+          "schema": {}
         },
         {
           "name": "ZoFnKT",
@@ -531,7 +530,7 @@
           },
           "type": "TextField",
           "title": "Languages",
-          "hint": "Provide details of any languages you speak (apart from English)",
+          "hint": "List the languages in which you can provide funeral services (apart from English)",
           "schema": {}
         }
       ],
