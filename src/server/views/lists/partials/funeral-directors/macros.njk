@@ -65,11 +65,11 @@
     </p>
   {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Represented British nationals</strong>: {{ "Yes" if item.jsonData.representedBritishNationals === "true" else "No" }}
+    <strong>Represented British nationals before</strong>: {{ "Yes" if item.jsonData.representedBritishNationals === "true" else "No" }}
   </p>
   {% if item.jsonData.regions %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Regions</strong>: {{ item.jsonData.regions }}
+      <strong>Regions served</strong>: {{ item.jsonData.regions }}
     </p>
   {% endif %}
 
