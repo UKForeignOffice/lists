@@ -163,6 +163,7 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     [ServiceType.funeralDirectors]: [
       ...baseFields,
       "repatriation",
+      "languagesSpoken",
       "localServicesProvided",
       "representedBritishNationals",
       "repatriationServicesProvided",
