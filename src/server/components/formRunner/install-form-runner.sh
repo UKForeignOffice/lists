@@ -17,7 +17,7 @@ then
   echo "Form Runner Already Installed"
 else
   echo "Installing Form Runner"
-  git clone --depth 1 --branch 3.25.11-rc.870 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
+  git clone --depth 1 --branch 3.25.12-rc.871 https://github.com/XGovFormBuilder/digital-form-builder.git $form_runner_folder
   cd $form_runner_folder
   yarn install
   yarn run build:dependencies
