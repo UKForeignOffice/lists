@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import { Express, Request } from "express";
-import { get, omit, trim, mapKeys, isArray, without, lowerCase } from "lodash";
+import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
@@ -101,7 +101,7 @@ export function parseListValues(
 export function getServiceLabel(
   serviceType: string | undefined
 ): string | undefined {
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
     case ServiceType.covidTestProviders:
@@ -111,6 +111,15 @@ export function getServiceLabel(
     default:
       return undefined;
   }
+}
+
+export function getServiceTypeName(
+  serviceType: string | undefined
+): string | undefined {
+  if (!serviceType) {
+    return undefined;
+  }
+  return camelCase(serviceType);
 }
 
 export function getAllRequestParams(req: Request): ListsRequestParams {
@@ -184,7 +193,7 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
-  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
+  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${kebabCase(serviceType)}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {

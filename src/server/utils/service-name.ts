@@ -1,7 +1,8 @@
 import { ServiceType } from "server/models/types";
+import { getServiceTypeName } from "server/components/lists/helpers";
 
 const serviceName = (name: string): string => {
-  switch (name) {
+  switch (getServiceTypeName(name)) {
     case ServiceType.covidTestProviders:
       return "COVID-19 test providers";
     case ServiceType.lawyers:

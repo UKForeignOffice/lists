@@ -126,7 +126,8 @@ export async function sendEditDetailsEmail(
 ): Promise<void> {
   try {
 
-    if (config.isCybDev || config.isSmokeTest) {
+    logger.info(`isSmokeTest[${config.isSmokeTest}]`)
+    if (config.isSmokeTest) {
       return;
     }
 

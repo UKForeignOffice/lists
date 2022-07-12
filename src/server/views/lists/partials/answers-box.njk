@@ -30,7 +30,7 @@
     <p class="govuk-body">
       Areas of law<br />
       <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}" aria-label="Change field of law answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}" aria-label="Change area of law answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if resultsTurnaround %}
@@ -65,6 +65,13 @@
           aria-label="Change repatriation answer"
         >Change</a>
       {% endif %}
+    </p>
+  {% endif %}
+  {% if insurance %}
+    <p class="govuk-body">
+      Has insurance<br />
+      <strong>{{ "Yes" if insurance.includes("yes") else "No" }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'insurance') }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if print !== "yes" and country %}

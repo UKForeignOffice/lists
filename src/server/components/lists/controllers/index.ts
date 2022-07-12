@@ -8,6 +8,7 @@ import {
   getCountryLawyerRedirectLink,
   getParameterValue,
   getServiceLabel,
+  getServiceTypeName,
   preProcessParams,
   queryStringFromParams,
   removeQueryParameter,
@@ -46,7 +47,7 @@ export async function listsPostController(
 
       // @todo ALI: confirm redirect links for funeral directors
       if (!hasItems) {
-        switch (serviceType) {
+        switch (getServiceTypeName(serviceType)) {
           case ServiceType.lawyers:
             redirectLink = getCountryLawyerRedirectLink(country);
             break;
@@ -93,7 +94,7 @@ export function listsGetController(req: Request, res: Response): void {
     return;
   }
 
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
       break;
@@ -150,7 +151,7 @@ export function listsResultsController(
   const params = getAllRequestParams(req);
   const { serviceType } = params;
 
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       searchLawyers(req, res).catch((error) =>
         logger.error("Lists Result Controller", { error })
@@ -223,7 +224,7 @@ export function listsGetPrivateBetaPage(
   }
 
   res.render("lists/private-beta-page", {
-    serviceType,
+    serviceType: getServiceTypeName(serviceType as string),
     ServiceType,
   });
 }

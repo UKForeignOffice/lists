@@ -5,12 +5,12 @@ import { checkboxCSVToArray } from "server/models/listItem/providers/deserialise
 export const funeralDirectorDeserialiser: WebhookDeserialisers[ServiceType.funeralDirectors] =
   (webhookData) => {
 
-  const { repatriationServicesProvided = [], religiousCulturalServicesProvided = [], ...rest } = webhookData;
+  const { localServicesProvided = [], repatriationServicesProvided = [], religiousCulturalServicesProvided, ...rest } = webhookData;
   return {
+    localServicesProvided: checkboxCSVToArray(localServicesProvided),
     // @ts-ignore
     repatriationServicesProvided: checkboxCSVToArray(repatriationServicesProvided),
-    // @ts-ignore
-    religiousCulturalServicesProvided: checkboxCSVToArray(religiousCulturalServicesProvided),
+    religiousCulturalServicesProvided,
     ...rest,
   };
 };

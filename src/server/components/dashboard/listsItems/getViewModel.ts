@@ -36,6 +36,7 @@ const fieldTitles: { [prop: string]: string } = {
   localServicesProvided: "Local services",
   repatriationServicesProvided: "Repatriation services",
   religiousCulturalServicesProvided: "Religious and cultural services",
+  languagesSpoken: "Languages",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;

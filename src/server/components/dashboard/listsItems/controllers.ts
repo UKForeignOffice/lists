@@ -541,9 +541,14 @@ async function handleListItemRequestChanges(
   );
 
   // Email applicant
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`)
   const { contactName, contactEmailAddress } =
     getListItemContactInformation(listItem);
+
+  logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`)
   const listType = serviceName(list?.type ?? "");
+
+  logger.info(`Got list type [${listType}`);
   await sendEditDetailsEmail(
     contactName,
     contactEmailAddress,
@@ -551,6 +556,7 @@ async function handleListItemRequestChanges(
     message,
     formRunnerEditUserUrl
   );
+  logger.info(`Sent email, updating listItem`);
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
