@@ -17,9 +17,14 @@ export function getLoginController(
   res: Response,
   next: NextFunction
 ): void {
-  const { invalidToken, token } = req.query;
+  const { token } = req.params;
+  const { invalidToken, token: tokenParam } = req.query;
 
   if (token !== undefined) {
+    const redirectToLogin = `${authRoutes.login}?token=${token}`;
+    return res.redirect(redirectToLogin);
+  }
+  if (tokenParam !== undefined) {
     return next();
   }
 

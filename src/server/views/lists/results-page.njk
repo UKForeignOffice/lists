@@ -7,11 +7,14 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if serviceType === ServiceType.lawyers %}
+      {% if _.camelCase(serviceType) === ServiceType.lawyers %}
         {% include "lists/partials/lawyers/lawyers-results-list.njk" %}
       {% endif %}
-      {% if serviceType === ServiceType.covidTestProviders %}
+      {% if _.camelCase(serviceType) === ServiceType.covidTestProviders %}
         {% include "lists/partials/covid-test-providers/covid-test-providers-results-list.njk" %}
+      {% endif %}
+      {% if _.camelCase(serviceType) === ServiceType.funeralDirectors %}
+        {% include "lists/partials/funeral-directors/funeral-directors-results-list.njk" %}
       {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">

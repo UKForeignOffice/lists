@@ -82,7 +82,7 @@ describe("Auth JSON Web Token", () => {
       const path: any = await createAuthenticationPath({
         email: "test@gov.uk",
       });
-      const regex = /\/login\?token=.*/;
+        const regex = /\/login\/.*/;
       expect(regex.test(path)).toBe(true);
     });
 
@@ -91,7 +91,7 @@ describe("Auth JSON Web Token", () => {
         email: "test@gov.uk",
       });
 
-      const token = path.split("=")[1];
+      const token = path.split("/login/")[1];
       const json = jwt.decode(token);
 
       expect(json).toMatchObject({

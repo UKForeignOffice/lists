@@ -98,16 +98,16 @@ export interface CovidTestSupplierFormWebhookData
   bookingOptions: string;
 }
 
-export interface FuneralDirectorFormWebhookData
-  extends BaseDeserialisedWebhookData {
+export interface FuneralDirectorFormWebhookData extends BaseDeserialisedWebhookData {
   type: ServiceType.funeralDirectors;
 
   regions: string;
   addressCountry: string;
   representedBritishNationals: boolean;
+  localServicesProvided: string[];
   repatriation: boolean;
   repatriationServicesProvided: string[];
-  religiousCulturalServicesProvided: string[];
+  religiousCulturalServicesProvided: string;
   languagesSpoken: string;
 }
 

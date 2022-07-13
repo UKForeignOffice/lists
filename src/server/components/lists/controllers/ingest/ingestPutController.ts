@@ -6,19 +6,19 @@ import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import _ from "lodash";
 import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
+import { getServiceTypeName } from "server/components/lists/helpers";
 
 export async function ingestPutController(
   req: Request,
   res: Response
 ): Promise<void> {
   const id = req.params.id;
-  const serviceType = _.camelCase(req.params.serviceType) as ServiceType;
+  const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  if (!(serviceType in ServiceType)) {
+  if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
       error:
         "serviceType is incorrect, please make sure form's webhook output configuration is correct",

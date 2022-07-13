@@ -10,9 +10,12 @@ import {
   LawyerListItemGetObject,
   List,
   BaseListItemGetObject,
-  ServiceType,
+  ServiceType, FuneralDirectorListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
+import * as funeralDirectors from "./funeralDirectors";
+import { kebabCase } from "lodash";
+import * as os from "os";
 
 let isStarting = false;
 
@@ -32,9 +35,12 @@ export async function startFormRunner(): Promise<boolean> {
     logger.info("Form Runner Starting");
 
     isStarting = true;
+    const hostname = os.hostname();
+    const safelist = `${FORM_RUNNER_SAFELIST},${hostname}`;
+    logger.info(`configuring safelist in form runner: ${safelist}`);
 
     const formRunner = spawn(
-      `NODE_CONFIG='{"safelist":["${FORM_RUNNER_SAFELIST?.split(",")?.join(
+      `NODE_CONFIG='{"safelist":["${safelist?.split(",")?.join(
         '","'
       )}"]}' PRIVACY_POLICY_URL='' npm run form-runner:start`,
       {
@@ -119,6 +125,12 @@ export async function generateFormRunnerWebhookData(
         isUnderTest
       );
       break;
+    case ServiceType.funeralDirectors:
+      questions = await funeralDirectors.generateFormRunnerWebhookData(
+        listItem as FuneralDirectorListItemGetObject,
+        isUnderTest
+      );
+      break;
     default:
       questions = undefined;
   }
@@ -132,8 +144,8 @@ export async function parseJsonFormData(
 ): Promise<Array<Partial<FormRunner.Question>>> {
   const formsJsonFile =
     isUnderTest === true
-      ? `/forms-json/${listType}.json`
-      : `../src/server/components/formRunner/forms-json/${listType}.json`;
+      ? `/forms-json/${kebabCase(listType)}.json`
+      : `../src/server/components/formRunner/forms-json/${kebabCase(listType)}.json`;
   const fileContents = await fs.promises.readFile(
     path.join(__dirname, formsJsonFile),
     "utf8"

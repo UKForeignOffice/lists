@@ -9,6 +9,9 @@ export enum QuestionName {
   "readDisclaimer" = "readDisclaimer",
   "resultsTurnaround" = "resultsTurnaround",
   "readCovidDisclaimer" = "readCovidDisclaimer",
+  "insurance" = "insurance",
+  "contactInsurance" = "contactInsurance",
+  "repatriation" = "repatriation",
 }
 
 export interface QuestionError {
@@ -36,6 +39,10 @@ export interface ListsRequestParams {
   resultsTurnaround?: string;
   page?: string;
   print?: "yes" | "no" | "";
+  insurance?: "yes" | "no" | "";
+  contactInsurance?: "done" | "";
+  sameCountry?: "yes" | "no" | "";
+  repatriation?: "yes" | "no" | "";
 }
 
 export interface PaginationResults {

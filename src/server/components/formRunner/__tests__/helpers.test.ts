@@ -7,13 +7,14 @@ import {
 } from "../helpers";
 import {
   LawyerListItemGetObject,
-  LawyerListItemJsonData,
-  BaseListItemGetObject,
+  BaseListItemGetObject, ServiceType,
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
 import * as FormRunner from "./../types";
 import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
+import { LawyerJsonData } from "../../../models/listItem/providers/deserialisers/types";
+import * as os from "os";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -80,10 +81,11 @@ describe("Form Runner Service:", () => {
       } as any);
 
       const result = await startFormRunner();
+      const hostname = os.hostname();
 
       expect(result).toBe(true);
       expect(child_process.spawn).toHaveBeenCalledWith(
-        "NODE_CONFIG='{\"safelist\":[\"localhost\"]}' PRIVACY_POLICY_URL='' npm run form-runner:start",
+        "NODE_CONFIG='{\"safelist\":[\"localhost\",\"" + hostname + "\"]}' PRIVACY_POLICY_URL='' npm run form-runner:start",
         { shell: true }
       );
     });
@@ -332,7 +334,10 @@ describe("Form Runner Service:", () => {
   });
 
   describe("generateFormRunnerWebhookObject", () => {
-    const listJson: LawyerListItemJsonData = {
+    const listJson: LawyerJsonData = {
+      "address.firstLine": "", addressCountry: "",
+      city: "",
+      type: ServiceType.lawyers,
       size: "Medium (16-350 legal professionals)",
       country: "Italy",
       proBono: false,
@@ -364,7 +369,7 @@ describe("Form Runner Service:", () => {
       speakEnglish: true,
       websiteAddress: "https://www.alassistenzalegale.it/?lang=en",
       organisationName: "AL Assistenza Legale",
-      representedBritishNationals: true,
+      representedBritishNationals: true
     };
 
     const getObject: BaseListItemGetObject = {

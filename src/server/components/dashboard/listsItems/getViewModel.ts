@@ -36,6 +36,7 @@ const fieldTitles: { [prop: string]: string } = {
   localServicesProvided: "Local services",
   repatriationServicesProvided: "Repatriation services",
   religiousCulturalServicesProvided: "Religious and cultural services",
+  languagesSpoken: "Languages spoken in addition to English",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
@@ -163,6 +164,7 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     [ServiceType.funeralDirectors]: [
       ...baseFields,
       "repatriation",
+      "languagesSpoken",
       "localServicesProvided",
       "representedBritishNationals",
       "repatriationServicesProvided",

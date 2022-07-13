@@ -1,0 +1,153 @@
+{% from "summary-list/macro.njk" import govukSummaryList %}
+
+{% macro emailAddress(address, label) %}
+  <a class="govuk-link" href="mailto:{{address}}">{{ label }}</a>
+{% endmacro %}
+
+{% macro externalLink(href, label) %}
+  <a class="govuk-link" href="{{href}}" target="_blank" rel="noopener noreferrer">{{label}}</a>
+{% endmacro %}
+
+{% macro phoneNumber(number, label) %}
+  <a class="govuk-link" href="tel:{{number}}">{{ label }}</a>
+{% endmacro %}
+
+{% macro multiLinkText(content) %}
+  <div class="dashboard__multi-line-text">{{ content }}</div>
+{% endmacro %}
+
+{% macro additionalDetails(item) %}
+  {% set additionalDetails %}
+    {{ 'Repatriation' if item.jsonData.repatriation }}{{ ', ' if item.jsonData.repatriation and (item.jsonData.representedBritishNationals) }}
+    {{ 'Represented British nationals' if item.jsonData.representedBritishNationals }}
+  {% endset %}
+  {{ additionalDetails }}
+{% endmacro %}
+
+{% macro funeralDirectorsListItem(item) %}
+  {% if item.distanceinmeters >= 0 %}
+    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
+    </span>
+  {% endif %}
+  {% if item.jsonData.contactName %}
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-4">
+      {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
+    </h2>
+  {% endif %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
+    {% if item.jsonData.websiteAddress %}
+        <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
+    {% else %}
+        {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}
+    {% endif %}
+    <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">{{ item.jsonData.size if item.jsonData.size }}</span>
+  </h3>
+
+  {% if item.jsonData.localServicesProvided %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Funeral services</strong>:
+      {{ item.jsonData.localServicesProvided.map(_.upperFirst).join(", ") if item.jsonData.localServicesProvided }}
+    </p>
+  {% endif %}
+  {% if item.jsonData.regions %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Regions</strong>: {{ item.jsonData.regions }}
+    </p>
+  {% endif %}
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Represented British nationals before</strong>: {{ "Yes" if item.jsonData.representedBritishNationals === "true" else "No" }}
+  </p>
+  {% if item.jsonData.languagesSpoken %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Languages spoken in addition to English</strong>: {{ item.jsonData.languagesSpoken }}
+    </p>
+  {% endif %}
+  {% if item.jsonData.repatriationServicesProvided and item.jsonData.repatriationServicesProvided | length > 0 %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Repatriation services</strong>:
+      {{ item.jsonData.repatriationServicesProvided.map(_.upperFirst).join(", ") if item.jsonData.repatriationServicesProvided }}
+    </p>
+  {% endif %}
+  {% if item.jsonData.religiousCulturalServicesProvided %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Religious and cultural services</strong>:
+      {{ item.jsonData.religiousCulturalServicesProvided if item.jsonData.religiousCulturalServicesProvided }}
+    </p>
+  {% endif %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
+    Contact details
+  </h3>
+  <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+    <strong>Address</strong>:
+      {{ item.address.firstLine }}
+      {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
+      {{ "-" if item.address.postCode }} {{ item.address.postCode }}
+      {{ "-" if item.address.city }} {{ item.address.city }}
+  </p>
+  {% if item.jsonData.emailAddress %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.emailAddress }}">{{ item.jsonData.emailAddress }}</a>
+    </p>
+  {% endif %}
+  {% if item.jsonData.phoneNumber %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Telephone</strong>: <a class="govuk-link" href="tel:{{ item.jsonData.phoneNumber }}">{{ item.jsonData.phoneNumber }}</a>
+    </p>
+  {% endif %}
+  {% if item.jsonData.emergencyPhoneNumber %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Out of hours</strong>: <a class="govuk-link" href="tel:{{ item.jsonData.emergencyPhoneNumber }}">{{ item.jsonData.emergencyPhoneNumber }}</a>
+    </p>
+  {% endif %}
+  {% if item.jsonData.websiteAddress %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Website</strong>: <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ item.jsonData.websiteAddress }}</a>
+    </p>
+  {% endif %}
+{% endmacro %}
+
+{% macro paginationSection(pagination) %}
+  {% if pagination.results.count > 0 %}
+    <div class="fcdo-pagination">
+      <ul class="fcdo-pagination__list-items">
+        {% if pagination.previous.href !== "" %}
+          <li class="fcdo-pagination__item" id="prevButton">
+            <a class="fcdo-pagination__link fcdo-pagination__item--prev" href="{{ pagination.previous.href }}">
+              Previous
+            </a>
+          </li>
+        {% endif %}
+        {% if pagination.items.length > 1 %}
+          {% for item in pagination.items %}
+            {% set itemNumber = item.text | int  %}
+            <li class="fcdo-pagination__item">
+              {% if itemNumber === pagination.results.currentPage %}
+                <span class="fcdo-pagination__item-current-page">
+                  {{ item.text }}
+                </span>
+              {% else %}
+                <a class="fcdo-pagination__link" href="{{ item.href }}">
+                  {{ item.text }}
+                </a>
+              {% endif %}
+            </li>
+          {%  endfor %}
+        {% endif %}
+        {% if pagination.next.href !== "" %}
+          <li class="fcdo-pagination__item" id="nextButton">
+            <a class="fcdo-pagination__link fcdo-pagination__item--next fcdo-pagination__link--last" href="{{ pagination.next.href }}">
+              Next
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+      <p class="fcdo-pagination__results">
+        Showing <span class="fcdo-pagination__results-num">{{ pagination.results.from }}</span>
+        to <span class="fcdo-pagination__results-num">{{ pagination.results.to }}</span>
+        of <span class="fcdo-pagination__results-num">{{ pagination.results.count }}</span> results
+      </p>
+    </div>
+  {% endif %}
+{% endmacro %}
+
