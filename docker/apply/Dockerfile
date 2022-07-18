@@ -20,5 +20,7 @@ EXPOSE 3001
 USER 1001
 ENV PORT=3001
 ENV SERVICE_URL="apply:${PORT}"
-
+ENV SANDBOX="false"
+ENV LOG_PRETTY_PRINT="false"
+ENV FEEDBACK_LINK="mailto:digitalservicesfeedback@fco.gov.uk"
 CMD [ "yarn", "runner", "start"]
