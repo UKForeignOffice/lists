@@ -78,20 +78,20 @@ jobs:
       - run:
           name: build postgres
           command: |
-            docker-compose -f docker-compose.ci.yml build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+            docker-compose build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
 
       - run:
           name: build and run  lists
           command: |
             docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
-            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.ci.yml build lists apply
-            docker-compose -f docker-compose.ci.yml up -d lists apply
+            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build lists apply
+            docker-compose up -d lists apply
             docker ps
 
 #      - run: # this will let you view logs from the apply and lists docker containers
 #          name: logs
 #          background: true
-#          command: docker-compose -f docker-compose.ci.yml logs -f apply lists
+#          command: docker-compose logs -f apply lists
 #
 
       - run:
@@ -162,7 +162,7 @@ jobs:
             - run:
                 name: build postgres
                 command: |
-                  docker-compose -f docker-compose.ci.yml build \
+                  docker-compose build \
                   --build-arg PGP_PUB=$PGP_PUB \
                   --build-arg PGP_SECRET=$PGP_SECRET \
                   --build-arg PGP_OTRUST=$PGP_OTRUST postgres
