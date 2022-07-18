@@ -22,7 +22,7 @@ export const accessControl: RequestHandler = (req, res, next) => {
 
   const find = paths.find((path) =>
     path.type === PathType.Application
-      ? req.path.startsWith(`/${path.name}`)
+      ? req.path.startsWith(`/application/${path.name}`)
       : req.query.serviceType === path.name
   );
 
