@@ -8,6 +8,7 @@ import {
   ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
+import { kebabCase } from "lodash";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -64,7 +65,8 @@ export async function generateFormRunnerWebhookData(
 }
 
 export async function parseJsonFormData(
-  listType: string
+  listType: string,
+  isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
