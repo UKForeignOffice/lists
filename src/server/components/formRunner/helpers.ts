@@ -69,7 +69,7 @@ export async function generateFormRunnerWebhookData(
 
 export async function parseJsonFormData(
   listType: string,
-  isUnderTest: boolean
+  isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
 
   /**
