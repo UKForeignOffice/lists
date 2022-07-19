@@ -52,7 +52,7 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       sandbox: "false"
-      env_file: .env
+    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy
