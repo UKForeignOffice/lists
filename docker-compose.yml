@@ -52,7 +52,7 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       sandbox: "false"
-    env_file: .env
+#    env_file: .env uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
     depends_on:
       postgres:
         condition: service_healthy
