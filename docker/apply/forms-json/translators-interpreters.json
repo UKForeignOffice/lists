@@ -107,7 +107,7 @@
           "name": "mYwfbq",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-hint\">Give the address where clients can meet with you. This must match the country list you want to be added to.</p>\n\n<p class=\"govuk-hint\">This will be published on GOV.UK if you are added to the list.</p>",
+          "content": "<p class=\"govuk-hint\">Provide an address to be listed on GOV.UK. If this is your home address, you can choose below how much of the address you want to be made public.</p>",
           "schema": {}
         },
         {
@@ -155,9 +155,9 @@
           "name": "VMYTyb",
           "options": {},
           "type": "RadiosField",
-          "title": "Do you want to publish this address on GOV.UK?",
+          "title": "How detailed do you want your address to appear on GOV.UK? ",
           "list": "AqoKoh",
-          "hint": "British nationals will still be able to search your location if you choose not to publish on GOV.UK, ",
+          "hint": "If you choose to only have your town or city listed on GOV.UK, British nationals will still be shown their proximity to your actual address.",
           "values": {
             "type": "listRef"
           },
@@ -325,8 +325,8 @@
       ]
     },
     {
-      "path": "/names-of-professional-associations",
-      "title": "Name(s) of professional associations ",
+      "path": "/which-associations-are-you-a-part-of",
+      "title": "Which associations are you a part of? ",
       "components": [
         {
           "name": "regulators",
@@ -335,7 +335,7 @@
             "required": false
           },
           "type": "TextField",
-          "hint": "List any relevant independent national or international associations, unions or regulatory bodies. ",
+          "hint": "List any relevant independent national or international associations, unions or regulatory bodies. Provide the full title instead of an acronym.",
           "title": "Associations, unions or regulatory bodies",
           "schema": {}
         }
@@ -406,8 +406,8 @@
       ]
     },
     {
-      "path": "/which-areas-of-india-do-you-serve",
-      "title": "Which areas of India do you serve?",
+      "path": "/which-areas-of-the-country-do-you-serve",
+      "title": "Which areas of the country do you serve?",
       "components": [
         {
           "name": "regions",
@@ -483,7 +483,7 @@
           "condition": "DHbDHZ"
         },
         {
-          "path": "/what-translation-or-interpretation-qualifications-do-you-have",
+          "path": "/what-specialities-do-you-provide-translation-and-interpretation-in",
           "condition": ""
         }
       ]
@@ -511,7 +511,7 @@
           "list": "languages",
           "type": "AutocompleteField",
           "title": "Language",
-          "hint": "Add the languages you interpret or translate (apart from English)",
+          "hint": "Start typing and select a language. Select Continue to add another language. Include all the languages you speak, apart from English",
           "schema": {},
           "values": {
             "type": "listRef"
@@ -563,13 +563,13 @@
           "type": "CheckboxesField",
           "title": "Where services can be carried out",
           "list": "meRkEO",
-          "hint": "Select all that apply to you",
+          "hint": "Select all that apply to you. If you provide 'In person' services you will be asked to give details of where you will travel. ",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/which-areas-of-india-do-you-serve"
+          "path": "/which-areas-of-the-country-do-you-serve"
         },
         {
           "path": "/which-languages-do-you-translate-or-interpret",
@@ -578,8 +578,8 @@
       ]
     },
     {
-      "path": "/what-translation-or-interpretation-qualifications-do-you-have",
-      "title": "What translation or interpretation qualifications do you have?",
+      "path": "/what-specialities-do-you-provide-translation-and-interpretation-in",
+      "title": "What specialities do you provide translation and interpretation in?",
       "components": [
         {
           "name": "kISRMN",
@@ -616,7 +616,11 @@
           "type": "RadiosField",
           "list": "XWRfuo",
           "title": "Size of company or firm",
-          "schema": {}
+          "schema": {},
+          "hint": "The size of company is the number of professionals who can provide services, including freelancers and contractors. ",
+          "values": {
+            "type": "listRef"
+          }
         }
       ],
       "next": [
@@ -633,8 +637,8 @@
           "name": "YtjaKN",
           "options": {},
           "type": "YesNoField",
-          "hint": "This includes any relevant independent national or international associations, unions or regulatory bodies. This will appear on GOV.UK to help British nationals decide on a provider. ",
-          "title": "Associations YesNo",
+          "hint": "This includes any associations, unions or regulatory bodies that you think are relevant to your work. You will be asked to provide more details which will be published on GOV.UK. ",
+          "title": "Member of any associations?",
           "values": {
             "type": "listRef"
           },
@@ -643,7 +647,7 @@
       ],
       "next": [
         {
-          "path": "/names-of-professional-associations"
+          "path": "/which-associations-are-you-a-part-of"
         },
         {
           "path": "/what-size-is-your-company-or-firm",
@@ -2573,31 +2577,37 @@
       "type": "string",
       "items": [
         {
-          "text": "Legal, e.g. real estate, visas, death certificates, notary documents",
-          "value": "Legal"
+          "text": "Legal",
+          "value": "Legal",
+          "description": "e.g. real estate, visas, death certificates, notary documents"
         },
         {
-          "text": "Medical, e.g. medical records, autopsy reports",
-          "value": "Medical"
+          "text": "Medical",
+          "value": "Medical",
+          "description": "e.g. medical records, autopsy reports"
         },
         {
-          "text": "Events, e.g. weddings, conferences",
-          "value": "Events"
+          "text": "Events",
+          "value": "Events",
+          "description": "e.g. weddings, conferences"
         },
         {
-          "text": "Publishing, e.g. scientific, technical, medical, educational, fictional",
-          "value": "Publishing"
+          "text": "Publishing",
+          "value": "Publishing",
+          "description": "e.g. scientific, technical, medical, educational, fictional"
         },
         {
-          "text": "Business and commercial, e.g. contracts, transcripts, documents",
-          "value": "Business and commercial"
+          "text": "Business and commercial",
+          "value": "Business and commercial",
+          "description": "e.g. contracts, transcripts, documents"
         },
         {
-          "text": "Digital media, e.g. subtitling, captioning, voiceovers, dubbing",
-          "value": "Digital media"
+          "text": "Digital media",
+          "value": "Digital media",
+          "description": "e.g. subtitling, captioning, voiceovers, dubbing"
         },
         {
-          "text": "General translation",
+          "text": "General translation ",
           "value": "General translation",
           "description": " e.g. informal, personal text"
         }
@@ -2609,28 +2619,34 @@
       "type": "string",
       "items": [
         {
-          "text": "Medical assistance, e.g. hospitalisations, doctors surgeries",
-          "value": "Medical assistance"
+          "text": "Medical assistance",
+          "value": "Medical assistance",
+          "description": "e.g. hospitalisations, doctors surgeries"
         },
         {
-          "text": "Police and local authorities, e.g. arrests, immigration",
-          "value": "Police and local authorities"
+          "text": "Police and local authorities",
+          "value": "Police and local authorities",
+          "description": "e.g. arrests, immigration"
         },
         {
-          "text": "Courts and legal, e.g. hearings, trials",
-          "value": "Courts and legal"
+          "text": "Courts and legal",
+          "value": "Courts and legal",
+          "description": "e.g. hearings, trials"
         },
         {
-          "text": "Events, e.g. conferences, weddings",
-          "value": "Events"
+          "text": "Events",
+          "value": "Events",
+          "description": "e.g. conferences, weddings"
         },
         {
-          "text": "Media and communications, e.g. TV, radio",
-          "value": "Media and communications"
+          "text": "Media and communications",
+          "value": "Media and communications",
+          "description": "e.g. TV, radio"
         },
         {
-          "text": "Business and commerce, e.g. negotiations, meetings",
-          "value": "Business and commerce"
+          "text": "Business and commerce",
+          "value": "Business and commerce",
+          "description": "e.g. negotiations, meetings"
         },
         {
           "text": "General interpretation",
@@ -2645,7 +2661,7 @@
       "type": "string",
       "items": [
         {
-          "text": "In person in the regions given",
+          "text": "In person ",
           "value": "inPerson"
         },
         {
@@ -2678,16 +2694,16 @@
       ]
     },
     {
-      "title": "Do you want to publish this address on GOV.UK?",
+      "title": "How detailed do you want your address to appear on GOV.UK? ",
       "name": "AqoKoh",
       "type": "string",
       "items": [
         {
-          "text": "Yes, I am happy for this address to be published on GOV.UK",
+          "text": "Publish my full addresss on GOV.UK",
           "value": "Yes, I am happy for this address to be published on GOV.UK"
         },
         {
-          "text": "No, do not publish on GOV.UK",
+          "text": "Only publish my town or city on GOV.UK",
           "value": "No, do not publish on GOV.UK"
         }
       ]
