@@ -10,6 +10,9 @@ jest.mock("server/config", () => ({
   get isTest() {
     return mockIsTest;
   },
+  get FORM_RUNNER_URL() {
+    return "apply:3001";
+  },
 }));
 
 describe("access-control", () => {

@@ -13,7 +13,6 @@ import {
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
-  FORM_RUNNER_BASE_ROUTE,
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
 } from "server/components/formRunner/constants";
@@ -202,5 +201,5 @@ export function createFormRunnerEditListItemLink(token: string): string {
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${SERVICE_DOMAIN}${FORM_RUNNER_BASE_ROUTE}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+  return `${protocol}://${FORM_RUNNER_URL}/${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }

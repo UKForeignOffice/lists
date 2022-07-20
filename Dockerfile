@@ -11,19 +11,18 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json babel.config.js webpack.config.js  ./
 USER 1001
-RUN mkdir -p /usr/src/app/lib/form-runner
-COPY --from=ghcr.io/xgovformbuilder/digital-form-builder-runner:3.25.11-rc.870 ./usr/src/app lib/form-runner/
+COPY package.json package-lock.json ./
 RUN npm i
+COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
+COPY docker/apply/forms-json ./docker/apply/forms-json
+COPY --chown=appuser:appuser ./src ./src/
+
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
-COPY --chown=appuser:appuser ./src ./src/
-USER 1001
-RUN npm run prisma:generate
-RUN npm run build:prod
-
+ARG BUILD_MODE=${BUILD_MODE}
+RUN npm run build:${BUILD_MODE}
 
 FROM build AS runner
 WORKDIR /usr/src/app
@@ -32,5 +31,14 @@ ARG NODE_ENV
 ARG DOCKER_TAG
 ENV NODE_ENV=$NODE_ENV
 ENV DOCKER_TAG=$DOCKER_TAG
-EXPOSE 3000
+ENV PORT=3000
+ENV REDIS_HOST="redis"
+ENV REDIS_PORT=6379
+ENV REDIS_PASSWORD="redispassword"
+ENV REDIS_CLUSTER_MODE=false
+ENV FORM_RUNNER_URL=""
+ENV DEBUG=true
+ENV CI_SMOKE_TEST=true
+
 CMD ["npm", "run", "start:prod"]
+

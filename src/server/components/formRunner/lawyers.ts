@@ -40,7 +40,7 @@ const FormRunnerFields: { [key: string]: string } = {
 // TODO: use the SerialisedWebhookData as the return type
 export async function generateFormRunnerWebhookData(
   listItem: LawyerListItemGetObject,
-  isUnderTest?: boolean
+  isUnderTest: boolean
 ): Promise<Array<Partial<Question>>> {
   const questions = await parseJsonFormData(ServiceType.lawyers, isUnderTest);
   questions.forEach((question) => {

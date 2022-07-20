@@ -9,6 +9,7 @@ orbs:
 defaults: &defaults
   working_directory: ~/repo
 
+
 jobs:
   test:
     <<: *defaults
@@ -21,11 +22,6 @@ jobs:
 
       - restore_cache:
           keys:
-            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-            - form-runner-1-
-
-      - restore_cache:
-          keys:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
 
@@ -34,10 +30,6 @@ jobs:
       - run:
           name: Prisma generate
           command: npm run prisma:generate
-
-#      - run:
-#          name: Type check
-#          command: npm run type-check
 
       - run:
           name: Lint
@@ -48,21 +40,16 @@ jobs:
           command: npm run test
 
       - save_cache:
-          key: form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-          paths:
-            - ./lib/form-runner
-
-      - save_cache:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-
 
 
   smoke:
     <<: *defaults
     machine:
       image: ubuntu-2004:202111-02
+      docker_layer_caching: true
 
     steps:
       - checkout
@@ -71,11 +58,6 @@ jobs:
           node-version: '14'
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
-
-      - restore_cache:
-          keys:
-            - form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-            - form-runner-1-
 
       - restore_cache:
           keys:
@@ -88,72 +70,41 @@ jobs:
             google-chrome --version
             chromedriver --version
 
-      - run:
-          name: Install Form Runner
-          command: npm run form-runner:install
-
-      - run: npm ci
+      - run: npm i
 
       - run:
           name: Prisma generate
           command: npm run prisma:generate
-
       - run:
           name: build postgres
           command: |
-            docker-compose -f docker-compose.ci.yml build \
-            --build-arg PGP_PUB=$PGP_PUB \
-            --build-arg PGP_SECRET=$PGP_SECRET \
-            --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+            docker-compose build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
+
       - run:
-          name: Start docker-compose and verify service(s)
+          name: build and run  lists
           command: |
-            docker-compose -f docker-compose.ci.yml up -d
+            docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
+            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build lists apply
+            docker-compose up -d lists apply
             docker ps
 
-      - run:
-          name: Start Form Runner
+      - run: # this will let you view logs from the apply and lists docker containers
+          name: logs
           background: true
-          environment:
-            PORT: "3001"
-          command: NODE_CONFIG='{"safelist":["localhost"]}' npm run form-runner:start
+          command: docker-compose logs -f lists
 
-      - run:
-          name: run build
-          command: npm run build:ci
 
       - run:
           environment:
-            CI_SMOKE_TEST: "true"
-          name: run start
-          background: true
-          command: npm run start:ci
-
-      - run: sleep 30
-
-      - run:
-          name: Check server is running
-          command: |
-            curl -4 --retry 10 --retry-connrefused --retry-delay 10 http://localhost:3000/
-      - run:
-          environment:
-            CI_SMOKE_TEST: "true"
+            DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
           name: Run smoke tests
           command: npm run smoke-tests
-
-      - save_cache:
-          key: form-runner-1-{{ checksum "src/server/components/formRunner/install-form-runner.sh" }}
-          paths:
-            - ./lib/form-runner
 
       - save_cache:
           key: v1-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-
-      - store_artifacts:
-          path: cypress/videos
-          destination: cypress
+            - ~/.npm/_npx
 
 
   publish:
@@ -161,12 +112,13 @@ jobs:
 
     parameters:
       app:
-        description: The app to build and publish. Pick from lists or lists-postgres.
+        description: The app to build and publish. Pick from lists, lists-apply, lists-postgres.
         default: "lists"
         type: string
 
     machine:
       image: ubuntu-2004:202111-02
+      docker_layer_caching: true
 
     steps:
       - checkout
@@ -189,8 +141,20 @@ jobs:
                 name: Publish docker image - lists
                 command: |
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                  docker build --build-arg NODE_ENV=production --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
+                  docker build --build-arg NODE_ENV=production --build-arg=BUILD_MODE=prod --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
                   docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG
+
+      - when:
+          condition:
+            equal: [lists-apply, <<parameters.app>>]
+          steps:
+            - run:
+                name: Publish docker image - apply
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG docker/apply
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG
+
       - when:
           condition:
             equal: [lists-postgres, <<parameters.app>>]
@@ -198,7 +162,7 @@ jobs:
             - run:
                 name: build postgres
                 command: |
-                  docker-compose -f docker-compose.ci.yml build \
+                  docker-compose build \
                   --build-arg PGP_PUB=$PGP_PUB \
                   --build-arg PGP_SECRET=$PGP_SECRET \
                   --build-arg PGP_OTRUST=$PGP_OTRUST postgres
@@ -322,10 +286,16 @@ jobs:
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
-#      - kubernetes/update-container-image:
-#          namespace: << parameters.namespace >>
-#          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
-#          resource-name: deployment/lists-postgres
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-apply=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$CIRCLE_SHA1
+          resource-name: deployment/lists-apply
+
+
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+          resource-name: deployment/lists-postgres
 
       - run:
           name: Disconnect from OpenVPN
@@ -356,9 +326,21 @@ workflows:
           context:
             - VPN
             - AWS
-          requires:
-            - test
-            - smoke
+
+
+      - publish:
+          name: publish-lists-apply
+          app: lists-apply
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - deploy-test
+          context:
+            - VPN
+            - AWS
+
 
       - publish:
           name: publish-lists-postgres
@@ -382,6 +364,7 @@ workflows:
             - AWS
           requires:
             - publish-lists
+            - publish-lists-apply
             - publish-lists-postgres
           filters:
             branches:
