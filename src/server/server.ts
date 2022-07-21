@@ -34,12 +34,12 @@ const server = express();
 
 export async function getServer(): Promise<Express> {
   // middlewares
-  configureFormRunnerProxyMiddleware(server);
   configureAccessControl(server);
   configureHelmet(server);
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
+  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
