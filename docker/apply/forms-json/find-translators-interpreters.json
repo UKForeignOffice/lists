@@ -181,7 +181,7 @@
                     "title": "Language",
                     "schema": {},
                     "hint": "All service providers can translate and/or interpret to and from English."
-                },
+                }
             ],
             "next": [
                 {
