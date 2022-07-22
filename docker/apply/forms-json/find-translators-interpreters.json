@@ -16,7 +16,7 @@
                     "name": "QLkbfP",
                     "options": {},
                     "type": "Html",
-                    "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Disclaimer</p>\n\n<p class=\"govuk-body\">The FCDO does not accept any liability to any person or company for any financial loss or damage suffered through using these service providers or from the use of this information or from any failure to give information. Our non-exhaustive lists are not recommendations and should not be treated as such. For further information, read the full terms and conditions</p>\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on service providers</p>\n\n<p class=\"govuk-body\">If you have feedback on any translators or interpreters listed in this service, contact the British embassy or consulate in the relevant country. Providers will be removed from the list where appropriate.</p>\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views. Email: digitalservicesfeedback@fco.gov.uk.</p>\n\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Apply to be added to this service</p>\n\n<p class=\"govuk-body\">You can [apply to be added to this service](LINK) if you are based outside the UK, and can provide translation or interpretation services to British nationals in English.</p>",
+                    "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Disclaimer</p>\n\n<p class=\"govuk-body\">The FCDO does not accept any liability to any person or company for any financial loss or damage suffered through using these service providers or from the use of this information or from any failure to give information. Our non-exhaustive lists are not recommendations and should not be treated as such. For further information, read the full terms and conditions</p>\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on service providers</p>\n\n<p class=\"govuk-body\">If you have feedback on any translators or interpreters listed in this service, contact the British embassy or consulate in the relevant country. Providers will be removed from the list where appropriate.</p>\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views. Email: digitalservicesfeedback@fco.gov.uk.</p>\n\n\n<p class=\"govuk-body govuk-!-font-weight-bold\">Apply to be added to this service</p>\n\n<p class=\"govuk-body\">You can <a href=\"https://find-a-professional-service-abroad.service.forms.fcodev.org.uk/application/translators-interpreters\">apply to be added to this service</a> if you are based outside the UK, and can provide translation or interpretation services to British nationals in English.</p>",
                     "schema": {}
                 }
             ],
@@ -30,6 +30,16 @@
         {
             "path": "/where-in-france-do-you-need-a-translator-or-interpreter-optional",
             "title": "Where in France do you need a translator or interpreter? (Optional)",
+            "options": {
+                "summaryDisplayMode": {
+                  "samePage":true,
+                  "separatePage": true,
+                  "hideRowTitles": true
+                },
+                "customText": {
+                  "separatePageTitle": "You have selected these languages"
+                }
+              },
             "components": [
                 {
                     "name": "wsAiEL",
