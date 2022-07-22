@@ -63,6 +63,7 @@ jobs:
           keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v1-deps-
 
       - run:
