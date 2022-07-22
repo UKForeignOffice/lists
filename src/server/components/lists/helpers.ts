@@ -15,6 +15,7 @@ import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
+  FORM_RUNNER_PUBLIC_URL
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -201,5 +202,5 @@ export function createFormRunnerEditListItemLink(token: string): string {
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${FORM_RUNNER_URL}/${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+  return `${protocol}://${FORM_RUNNER_PUBLIC_URL}/${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }
