@@ -70,7 +70,7 @@
                 {
                     "name": "country",
                     "options": {},
-                    "type": "SelectField",
+                    "type": "AutocompleteField",
                     "title": "Country list",
                     "list": "country",
                     "schema": {},
