@@ -202,5 +202,5 @@ export function createFormRunnerEditListItemLink(token: string): string {
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${FORM_RUNNER_PUBLIC_URL}/${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+  return `${protocol}://${FORM_RUNNER_PUBLIC_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }
