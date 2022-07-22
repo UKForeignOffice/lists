@@ -30,9 +30,10 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
       },
       userResHeaderDecorator(headers, _userReq, userRes) {
         if (userRes.statusCode === 302) {
+          const location = headers.location?.startsWith('/') ? headers.location : `/${headers.location}`
           return {
             ...headers,
-            location: `/application${headers.location}`
+            location: `/application${location}`
           };
         }
 
