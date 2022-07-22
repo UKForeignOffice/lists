@@ -281,10 +281,10 @@ jobs:
           aws-region: eu-west-2
           install-kubectl: true
 
-      - kubernetes/update-container-image:
-          namespace: << parameters.namespace >>
-          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
-          resource-name: deployment/lists
+      # - kubernetes/update-container-image:
+      #     namespace: << parameters.namespace >>
+      #     container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
+      #     resource-name: deployment/lists
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
