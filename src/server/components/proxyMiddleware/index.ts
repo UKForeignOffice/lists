@@ -2,6 +2,13 @@ import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
 
+function isApplicationRequest(req: any) {
+  if(req.originalUrl.startsWith('/application')) {
+    return true
+  }
+  return false
+}
+
 /**
  * Proxy middleware for the form runner
  * @param app Express app
@@ -13,6 +20,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   } else {
     server.set("trust proxy", false);
   }
+
 
   server.use(
     `/application/*`,
@@ -28,12 +36,15 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           .toString("utf8")
           .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
       },
-      userResHeaderDecorator(headers, _userReq, userRes) {
-        if (userRes.statusCode === 302) {
-          const location = headers.location?.startsWith('/') ? headers.location : `/${headers.location}`
+      userResHeaderDecorator(headers, userReq, userRes) {
+
+        if (userRes.statusCode === 302 && isApplicationRequest(userReq)) {
+          const isCorrectPath = headers?.location?.startsWith('/application');
+          const prefix = isCorrectPath ? `${userReq.params[0]}/` : ""
+
           return {
             ...headers,
-            location: `/application${location}`
+            location: `/application${prefix}${headers.location}`
           };
         }
 
@@ -42,3 +53,5 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
     })
   );
 }
+
+

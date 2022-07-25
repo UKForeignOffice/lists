@@ -39,9 +39,9 @@ export async function getServer(): Promise<Express> {
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
+  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
-  // configureFormRunnerProxyMiddleware(server);
   configureViews(server);
   configureRateLimit(server);
   
