@@ -39,8 +39,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
       userResHeaderDecorator(headers, userReq, userRes) {
 
         if (userRes.statusCode === 302 && isApplicationRequest(userReq)) {
-          const isCorrectPath = headers?.location?.startsWith('/application');
-          const prefix = isCorrectPath ? `${userReq.params[0]}/` : ""
+            const prefix = headers.location?.includes(userReq.params[0]) ? `/${userReq.params[0]}` : ""
 
           return {
             ...headers,
