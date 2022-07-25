@@ -296,10 +296,10 @@ jobs:
           resource-name: deployment/lists-apply
 
 
-      # - kubernetes/update-container-image:
-      #     namespace: << parameters.namespace >>
-      #     container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
-      #     resource-name: deployment/lists-postgres
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+          resource-name: deployment/lists-postgres
 
       - run:
           name: Disconnect from OpenVPN
