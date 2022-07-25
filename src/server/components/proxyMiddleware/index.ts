@@ -2,13 +2,6 @@ import { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
 
-function isApplicationRequest(req: any) {
-  if(req.originalUrl.startsWith('/application')) {
-    return true
-  }
-  return false
-}
-
 /**
  * Proxy middleware for the form runner
  * @param app Express app
@@ -37,8 +30,9 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
       },
       userResHeaderDecorator(headers, userReq, userRes) {
+        const isApplicationRequest = userReq.originalUrl.startsWith('/application');
 
-        if (userRes.statusCode === 302 && isApplicationRequest(userReq)) {
+        if (userRes.statusCode === 302 && isApplicationRequest) {
             const prefix = headers.location?.includes(userReq.params[0]) ? `/${userReq.params[0]}` : ""
 
           return {
