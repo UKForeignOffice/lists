@@ -14,6 +14,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
     server.set("trust proxy", false);
   }
 
+
   server.use(
     `/application/*`,
     proxy(FORM_RUNNER_URL, {
@@ -28,12 +29,14 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
           .toString("utf8")
           .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
       },
-      userResHeaderDecorator(headers, _userReq, userRes) {
-        if (userRes.statusCode === 302) {
-          const location = headers.location?.startsWith('/') ? headers.location : `/${headers.location}`
+      userResHeaderDecorator(headers, userReq, userRes) {
+        const isApplicationRequest = userReq.originalUrl.startsWith('/application');
+
+        if (userRes.statusCode === 302 && isApplicationRequest) {
+            const prefix = headers.location?.startsWith('?view=') ? `/${userReq.params[0]}` : ""
           return {
             ...headers,
-            location: `/application${location}`
+            location: `/application${prefix}${headers.location}`
           };
         }
 
@@ -42,3 +45,5 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
     })
   );
 }
+
+
