@@ -46,7 +46,7 @@
 
   <p class="govuk-body">
     Send this link to organisations or individuals so they can apply to be added to the list<br/>
-    <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/{{_.kebabCase(list.type)}}">
+    <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}">
       http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
     </a>
   </p>
