@@ -1,6 +1,5 @@
 import { FuneralDirectorListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
-import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
@@ -15,7 +14,7 @@ export async function findPublishedFuneralDirectorsPerCountry(props: {
     throw new Error("Country name is missing");
   }
   const offset = props.offset ?? 0;
-  const countryName = startCase(toLower(props.countryName));
+  const countryName = props.countryName;
   const andWhere: string[] = [];
   const jsonQuery: {
     repatriation?: boolean;

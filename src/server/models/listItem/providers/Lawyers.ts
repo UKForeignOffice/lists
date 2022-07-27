@@ -1,6 +1,5 @@
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
-import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { legalPracticeAreasList } from "server/services/metadata";
@@ -18,7 +17,7 @@ export async function findPublishedLawyersPerCountry(props: {
     throw new Error("Country name is missing");
   }
   const offset = props.offset ?? 0;
-  const countryName = startCase(toLower(props.countryName));
+  const countryName = props.countryName;
   const andWhere: string[] = [];
   const jsonQuery: {
     legalAid?: boolean;
