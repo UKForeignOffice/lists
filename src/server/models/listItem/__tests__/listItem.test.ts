@@ -474,7 +474,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyers'
-        AND "Country".name = 'France'
+        AND "Country".name = 'france'
         AND "ListItem"."jsonData" @> '{"legalAid":true,"proBono":true}'
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
@@ -498,7 +498,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(spyLocation).toHaveBeenCalledWith("paris, france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });
 
@@ -517,7 +517,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(spyLocation).toHaveBeenCalledWith("paris, france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
         expectedQuery.replace('"legalAid":true,', "")
       );
@@ -538,7 +538,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(spyLocation).toHaveBeenCalledWith("paris, france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
         expectedQuery.replace(',"proBono":true', "")
       );
@@ -559,7 +559,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, France");
+      expect(spyLocation).toHaveBeenCalledWith("paris, france");
       expect(query.includes(`AND "ListItem"."jsonData" @>`)).toEqual(false);
     });
   });
@@ -1057,7 +1057,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'covidTestProviders'
-        AND "Country".name = 'Ghana'
+        AND "Country".name = 'ghana'
         AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= 1
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true

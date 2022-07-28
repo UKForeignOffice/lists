@@ -19,6 +19,8 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
+import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware"
+
 
 import {
   isSmokeTest,
@@ -37,11 +39,12 @@ export async function getServer(): Promise<Express> {
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
+  configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
   configureRateLimit(server);
-
+  
   // initialize components
   await initAuth(server);
   await initLists(server);
@@ -54,6 +57,8 @@ export async function getServer(): Promise<Express> {
 
   // error handlers
   configureErrorHandlers(server);
+
+
 
   logger.info(
     `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`

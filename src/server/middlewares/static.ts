@@ -17,7 +17,14 @@ const errorLogFile = path.join(ROOT, "error.log");
 
 export const configureStaticServer = (server: Express): void => {
   server.use("/assets", express.static(publicFolderPath));
-  server.use("/assets", express.static(govUKAssetsFolderPath));
+  server.use("/assets", express.static(govUKAssetsFolderPath, {
+    setHeaders: (res, path) => {
+      const WEBFONT_EXTENSIONS = /\.(?:eot|ttf|woff|svg|woff2)$/i;
+      if (WEBFONT_EXTENSIONS.test(path)) {
+        res.header("cache-control", "public, max-age=604800, immutable");
+      }
+    }
+  }));
   server.use("/assets/govuk-frontend/all.js", express.static(govUKAllJSPath));
   server.use("/assets", express.static(accessibleAutoCompletePath));
   server.use("/error-log", express.static(errorLogFile));

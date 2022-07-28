@@ -61,7 +61,9 @@ jobs:
 
       - restore_cache:
           keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v1-deps-
 
       - run:
@@ -88,23 +90,26 @@ jobs:
             docker-compose up -d lists apply
             docker ps
 
-      - run: # this will let you view logs from the apply and lists docker containers
-          name: logs
-          background: true
-          command: docker-compose logs -f lists
+      # - run: # this will let you view logs from the apply and lists docker containers
+      #     name: logs
+      #     background: true
+      #     command: docker-compose logs -f lists
 
 
       - run:
           environment:
             DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
+            CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           name: Run smoke tests
           command: npm run smoke-tests
+            - 
 
       - save_cache:
-          key: v1-deps-{{ checksum "package-lock.json" }}
+          key: v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-            - ~/.npm/_npx
+            - ~/.npm
+            - ~/.cache
 
 
   publish:
@@ -285,6 +290,7 @@ jobs:
           namespace: << parameters.namespace >>
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
+          
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
