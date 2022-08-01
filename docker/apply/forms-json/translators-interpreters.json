@@ -385,7 +385,7 @@
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country"
+          "hint": "Select country or territory"
         },
         {
           "name": "ZoFnKT",
@@ -2721,7 +2721,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://lists:3000/ingest/translators-interpreters"
+        "url": "http://host.docker.internal:3000/ingest/translators-interpreters"
       }
     }
   ],
