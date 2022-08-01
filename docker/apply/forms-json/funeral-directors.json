@@ -378,7 +378,8 @@
           "type": "AutocompleteField",
           "title": "Country list",
           "list": "country",
-          "schema": {}
+          "schema": {},
+          "hint": "Select country or territory"
         },
         {
           "name": "ZoFnKT",
@@ -1697,7 +1698,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://lists:3000/ingest/funeralDirectors"
+        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
       }
     }
   ],
