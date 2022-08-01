@@ -4,25 +4,27 @@ import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "server/models/types";
 import {
-  getServiceLabel,
   getAllRequestParams,
-  removeQueryParameter,
-  getParameterValue,
-  queryStringFromParams,
-  preProcessParams,
   getCountryLawyerRedirectLink,
+  getParameterValue,
+  getServiceLabel,
+  getServiceTypeName,
+  preProcessParams,
+  queryStringFromParams,
+  removeQueryParameter,
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
 import { QuestionError, QuestionName } from "./../types";
 import { legalPracticeAreasList } from "server/services/metadata";
-import { searchLawyers, lawyersQuestionsSequence } from "./../searches/lawyers";
-import {
-  searchCovidTestProvider,
-  covidTestProviderQuestionsSequence,
-} from "./../searches/covid-test-provider";
+import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
+import { covidTestProviderQuestionsSequence, searchCovidTestProvider, } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { some } from "server/models/listItem/providers/helpers";
+import {
+  funeralDirectorsQuestionsSequence,
+  searchFuneralDirectors
+} from "server/components/lists/searches/funeral-directors";
 
 export async function listsPostController(
   req: Request,
@@ -37,13 +39,15 @@ export async function listsPostController(
 
   const { country, serviceType } = params;
 
-  if (country !== undefined && country !== "" && serviceType !== undefined) {
+  if (country !== undefined && country !== ""
+    && serviceType !== undefined) {
     try {
       const hasItems = await some(country, serviceType);
       let redirectLink: string | undefined;
 
+      // @todo ALI: confirm redirect links for funeral directors
       if (!hasItems) {
-        switch (serviceType) {
+        switch (getServiceTypeName(serviceType)) {
           case ServiceType.lawyers:
             redirectLink = getCountryLawyerRedirectLink(country);
             break;
@@ -90,12 +94,15 @@ export function listsGetController(req: Request, res: Response): void {
     return;
   }
 
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       questionsSequence = lawyersQuestionsSequence;
       break;
     case ServiceType.covidTestProviders:
       questionsSequence = covidTestProviderQuestionsSequence;
+      break;
+    case ServiceType.funeralDirectors:
+      questionsSequence = funeralDirectorsQuestionsSequence;
       break;
     default:
       questionsSequence = [];
@@ -144,7 +151,7 @@ export function listsResultsController(
   const params = getAllRequestParams(req);
   const { serviceType } = params;
 
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       searchLawyers(req, res).catch((error) =>
         logger.error("Lists Result Controller", { error })
@@ -154,6 +161,11 @@ export function listsResultsController(
       searchCovidTestProvider(req, res).catch((error) => {
         logger.error("Lists Result Controller", { error });
       });
+      break;
+    case ServiceType.funeralDirectors:
+      searchFuneralDirectors(req, res).catch((error) =>
+        logger.error("Lists Result Controller", { error })
+      );
       break;
     default:
       next();
@@ -184,6 +196,9 @@ export async function listsConfirmApplicationController(
         case ServiceType.covidTestProviders:
           serviceName = "Find a COVID-19 test provider abroad";
           break;
+        case ServiceType.funeralDirectors:
+          serviceName = "Find a funeral director abroad";
+          break;
         default:
           serviceName = "Find a professional service abroad";
       }
@@ -209,7 +224,7 @@ export function listsGetPrivateBetaPage(
   }
 
   res.render("lists/private-beta-page", {
-    serviceType,
+    serviceType: getServiceTypeName(serviceType as string),
     ServiceType,
   });
 }

@@ -1,4 +1,4 @@
-const base = "http://localhost:3000/application/feedback";
+const base = "http://localhost:3001/feedback";
 
 Given("I am giving feedback", () => {
   cy.visit(base);

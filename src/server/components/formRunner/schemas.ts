@@ -10,7 +10,7 @@ const formRunnerQuestionSchema = Joi.object({
       type: Joi.string(),
       answer: Joi.alternatives().try(
         Joi.boolean(),
-        Joi.string().allow(null),
+        Joi.string().allow(null, ""),
         Joi.number(),
         Joi.array().items(Joi.string())
       ),

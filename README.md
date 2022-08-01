@@ -1,4 +1,4 @@
-# FCDO Lists
+# FCDO Lists 
 
 ## Architecture
 
@@ -18,12 +18,24 @@ The lists server is a NodeJs/Typescript application built on top of ExpressJS, a
 
 ### Form runner
 
-The lists server depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder) to deploy form journeys for data ingestion, this is how it works:
+The lists server depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder)
+to deploy form journeys for data ingestion. The base docker images for the form runner have already been built.
 
-1. During the build the CI executes the `src/server/components/formRunner/install-form-runner.sh` script which installs and configures the form-runner application inside the lists container (under `/lib` folder)
-2. When the lists server is starting it first initializes the form-runner on a separate process, which becomes available on `PORT:3001` and only once the form-runner is responding then the lists server starts listening to requests. At this stage both services are now running in parallel inside the same container, lists server on `PORT:3000` and form-runner on `PORT:3001`
-3. Lists server is the only application responding to external requests and it has a form-runner middleware responsible for proxying all requests from `/application/{formName}` to the form-runner application running on `http://localhost:3001`, allowing user's to go through form journeys seamlessly
-4. Once users complete a form-journey application the form-runner posts the data to (`localhost:3000/ingest/:serviceType`) and the lists application validates and ingests the data
+**To add new forms:** 
+1. Add or replace a form configuration in `docker/apply/forms-json/`
+2. The form runner will create a new route matching the file name.
+i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
+  
+
+To start the form runner
+```sh
+$ docker compose -f docker-compose.ci.yml up apply
+```
+
+By default, it will start on port 3001. It will be accessible from your local machine at localhost:3001.
+Since it is running inside a docker network, it can be accessed by other docker containers at `lists-apply(:3001)`.
+
+Once users complete a form-journey application the form-runner posts the data to `localhost:3000/ingest/:service`.
 
 ### Databases
 
@@ -87,6 +99,9 @@ Form runner variables:
 | name    |  type   | required | description                                                                             |
 | ------- | :-----: | :------: | :-------------------------------------------------------------------------------------- |
 | sandbox | boolean |  false   | Configure form-runner to work locally with a single redis instance instead of a cluster |
+
+However, you may also set environment variables via `docker/apply/config/*.json`. At runtime, if the `NODE_ENV` matches the config file name, 
+those environment variables will be used. See a complete list of environment variables and what they do in the [XGovFormBuilder/runner/config/default.js file](https://github.com/XGovFormBuilder/digital-form-builder/blob/main/runner/config/default.js).
 
 ### Getting started
 

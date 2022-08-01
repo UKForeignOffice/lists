@@ -11,18 +11,18 @@
 {%- endmacro -%}
 
 {%- macro multiLineText(value) -%}
-  <div class="dashboard__multi-line-text">{{ value }}</div>
+  <div class="dashboard__multi-line-text">{{ value if value else "Not provided" }}</div>
 {%- endmacro -%}
 
 {%- macro boolean(value) -%}
-    {{ "Yes" if (value === "Yes" or (value !== "No" and value)) else "No" }}
+  {{ "Yes" if (value === "Yes" or (value !== "No" and value)) else "No" }}
 {%- endmacro -%}
 
 {%- macro array(value) -%}
-    {{ value | join(", ") }}
+  {{ value | join(", ") if value and value | length > 0 else "Not provided" }}
 {%- endmacro -%}
 
 {%- macro string(value) -%}
-  {{ value }}
+  {{ value if value else "Not provided" }}
 {%- endmacro -%}
 

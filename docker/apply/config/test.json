@@ -1,0 +1,5 @@
+{
+  "safelist": ["lists"],
+  "logPrettyPrint": false,
+  "env": "test"
+}

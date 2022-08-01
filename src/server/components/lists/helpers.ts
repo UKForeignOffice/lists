@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import { Express, Request } from "express";
-import { get, omit, trim, mapKeys, isArray, without, lowerCase } from "lodash";
+import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
@@ -13,9 +13,9 @@ import {
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
-  FORM_RUNNER_BASE_ROUTE,
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
+  FORM_RUNNER_PUBLIC_URL
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -38,11 +38,19 @@ export function preProcessParams(params: { [name: string]: any }): {
   const hasSelectedAll: boolean =
     paramsCopy?.practiceArea?.includes("All") ?? false;
   const noRegionSelected = paramsCopy?.region === "";
+  let { country } = paramsCopy || "";
+  if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
+    delete paramsCopy.country;
+    country = null;
+  } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
+    country = "United Kingdom";
+  }
 
   return {
     ...paramsCopy,
     ...(hasSelectedAll && { practiceArea: "All" }),
     ...(noRegionSelected && { region: "Not set" }),
+    ...(country && { country: country }),
   };
 }
 
@@ -93,7 +101,7 @@ export function parseListValues(
 export function getServiceLabel(
   serviceType: string | undefined
 ): string | undefined {
-  switch (serviceType) {
+  switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
     case ServiceType.covidTestProviders:
@@ -103,6 +111,15 @@ export function getServiceLabel(
     default:
       return undefined;
   }
+}
+
+export function getServiceTypeName(
+  serviceType: string | undefined
+): string | undefined {
+  if (!serviceType) {
+    return undefined;
+  }
+  return camelCase(serviceType);
 }
 
 export function getAllRequestParams(req: Request): ListsRequestParams {
@@ -176,7 +193,7 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
-  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`;
+  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${kebabCase(serviceType)}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {
@@ -185,5 +202,5 @@ export function createFormRunnerEditListItemLink(token: string): string {
   }
 
   const protocol = isLocalHost ? "http" : "https";
-  return `${protocol}://${SERVICE_DOMAIN}${FORM_RUNNER_BASE_ROUTE}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+  return `${protocol}://${FORM_RUNNER_PUBLIC_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }

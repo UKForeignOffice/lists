@@ -2,7 +2,6 @@
 // TODO: Test
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
-import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import pgescape from "pg-escape";
@@ -29,7 +28,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       );
     }
 
-    const countryName = startCase(toLower(props.countryName));
+    const countryName = props.countryName;
 
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,

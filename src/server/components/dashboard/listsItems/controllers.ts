@@ -465,9 +465,9 @@ export async function listItemRequestChangeController(
   res: Response
 ): Promise<void> {
   const { listId, listItemId, underTest } = req.params;
+  const isUnderTest = underTest === "true";
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
-  const isUnderTest = underTest === "true";
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const list = (await findListById(listId)) ?? ({} as List);
@@ -498,9 +498,9 @@ export async function listItemRequestChangeController(
     await handleListItemRequestChanges(
       list,
       listItem,
-      isUnderTest,
       changeMessage,
-      userId
+      userId,
+      isUnderTest,
     );
 
     req.flash(
@@ -526,9 +526,9 @@ export async function listItemRequestChangeController(
 async function handleListItemRequestChanges(
   list: List,
   listItem: ListItemGetObject,
-  isUnderTest: boolean,
   message: string,
-  userId: User["id"]
+  userId: User["id"],
+  isUnderTest: boolean,
 ): Promise<void> {
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
@@ -536,14 +536,19 @@ async function handleListItemRequestChanges(
   const formRunnerEditUserUrl = await initialiseFormRunnerSession(
     list,
     listItem,
-    isUnderTest,
-    message
+    message,
+    isUnderTest
   );
 
   // Email applicant
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`)
   const { contactName, contactEmailAddress } =
     getListItemContactInformation(listItem);
+
+  logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`)
   const listType = serviceName(list?.type ?? "");
+
+  logger.info(`Got list type [${listType}`);
   await sendEditDetailsEmail(
     contactName,
     contactEmailAddress,
@@ -551,6 +556,7 @@ async function handleListItemRequestChanges(
     message,
     formRunnerEditUserUrl
   );
+  logger.info(`Sent email, updating listItem`);
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
@@ -685,13 +691,13 @@ async function getListItem(
 async function initialiseFormRunnerSession(
   list: List,
   listItem: BaseListItemGetObject,
-  isUnderTest: boolean,
-  message: string
+  message: string,
+  isUnderTest: boolean
 ): Promise<string> {
   const questions = await generateFormRunnerWebhookData(
     list,
     listItem,
-    isUnderTest
+    isUnderTest,
   );
   const formRunnerWebhookData = getNewSessionWebhookData(
     list.type,

@@ -11,7 +11,6 @@ import {
   configureCookieParser,
   configureRateLimit,
 } from "./middlewares";
-import { configureFormRunnerProxyMiddleware } from "./components/formRunner";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
 import { initCookies } from "./components/cookies";
@@ -20,11 +19,12 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
+import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware"
+
 
 import {
   isSmokeTest,
   isLocalHost,
-  isProd,
   NODE_ENV,
   SERVICE_DOMAIN,
 } from "server/config";
@@ -33,12 +33,6 @@ import { logger } from "server/services/logger";
 const server = express();
 
 export async function getServer(): Promise<Express> {
-  if (isProd) {
-    server.set("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
-  } else {
-    server.set("trust proxy", false);
-  }
-
   // middlewares
   configureAccessControl(server);
   configureHelmet(server);
@@ -50,7 +44,7 @@ export async function getServer(): Promise<Express> {
   configureBodyParser(server);
   configureViews(server);
   configureRateLimit(server);
-
+  
   // initialize components
   await initAuth(server);
   await initLists(server);
@@ -63,6 +57,8 @@ export async function getServer(): Promise<Express> {
 
   // error handlers
   configureErrorHandlers(server);
+
+
 
   logger.info(
     `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`

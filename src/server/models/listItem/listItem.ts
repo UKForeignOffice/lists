@@ -396,11 +396,19 @@ export async function update(
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
   const areasOfLaw = data?.areasOfLaw;
+  const repatriationServicesProvided = data?.repatriationServicesProvided;
+  const localServicesProvided = data?.localServicesProvided;
   const updatedJsonData = merge(listItem.jsonData, data);
 
   // @todo this will need restructuring to accommodate array field types for other providers
   if (areasOfLaw) {
     updatedJsonData.areasOfLaw = areasOfLaw;
+  }
+  if (repatriationServicesProvided) {
+    updatedJsonData.repatriationServicesProvided = repatriationServicesProvided;
+  }
+  if (localServicesProvided) {
+    updatedJsonData.localServicesProvided = localServicesProvided;
   }
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id },

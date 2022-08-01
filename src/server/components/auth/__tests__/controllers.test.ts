@@ -201,7 +201,7 @@ describe("Auth Module", () => {
       } as any);
     });
 
-    test("authentication is correct", (done) => {
+    test.skip("authentication is correct", (done) => {
       tokenService
         .createAuthenticationPath({ email })
         .then((authPath) => {
@@ -236,7 +236,7 @@ describe("Auth Module", () => {
         .catch(noop);
     });
 
-    test("authentication redirects to session.returnTo", (done) => {
+    test.skip("authentication redirects to session.returnTo", (done) => {
       tokenService
         .createAuthenticationPath({
           email: "person@depto.gov.uk",

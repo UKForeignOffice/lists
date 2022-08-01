@@ -1,0 +1,70 @@
+<form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'same-country' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="same-country-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="same-country">
+          Do you want to use a funeral director in the country in which the person died?
+        </label>
+      </h1>
+      {% if error.field === 'same-country' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+
+      <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+            Why are you asking this question?
+          </span>
+        </summary>
+        <div class="govuk-details__text">
+          <p class="govuk-body">You can choose to use either a funeral director:</p>
+          <ul class="govuk-list govuk-list--bullet">
+            <li>based in the UK who will make the funeral arrangements with one of their international partners</li>
+            <li>based in the country in which the person died</li>
+          </ul>
+          <p class="govuk-body">Using a funeral director based in the UK may mean that the funeral costs will be greater as they will also charge you for their services.</p>
+          <p class="govuk-body">All UK-based and many local funeral directors on the lists will be able to arrange repatriation to the UK.</p>
+          <p class="govuk-body">If you select 'No' to this question, you'll be shown a list of UK-based international funeral directors.</p>
+        </div>
+      </details>
+
+      <div class="govuk-radios govuk-radios--inline" role="radiogroup">
+        <div class="govuk-radios__item">
+          <input
+            aria-hidden="true"
+            class="govuk-radios__input"
+            name="sameCountry"
+            type="hidden"
+            value=""
+          />
+          <input
+            class="govuk-radios__input"
+            id="same-country-yes"
+            name="sameCountry"
+            type="radio"
+            value="yes"
+          />
+          <label class="govuk-label govuk-radios__label" for="same-country-yes">
+            Yes, I want to use a local funeral director in this country
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input
+            class="govuk-radios__input"
+            id="same-country-no"
+            name="sameCountry"
+            type="radio"
+            value="no"
+          />
+          <label class="govuk-label govuk-radios__label" for="same-country-no">
+            No, I want to use a funeral director in the UK who works internationally
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

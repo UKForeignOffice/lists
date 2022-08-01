@@ -196,4 +196,76 @@ export const questions: Questions = {
       return false;
     },
   },
+  insurance: {
+    getViewPartialName() {
+      return "questions/question-insurance.njk";
+    },
+    pageTitle() {
+      return "Did the deceased have insurance?";
+    },
+    needsToAnswer(req: Request) {
+      const { insurance } = getAllRequestParams(req);
+      return insurance === undefined || insurance === "";
+    },
+    validate(req: Request) {
+      const { insurance } = getAllRequestParams(req);
+
+      if (insurance === "") {
+        return {
+          field: "insurance",
+          text: " Error: You must select whether the deceased had insurance or not",
+          href: "#insurance-yes",
+        };
+      }
+      return false;
+    },
+  },
+  contactInsurance: {
+    getViewPartialName() {
+      return "questions/question-contact-insurance.njk";
+    },
+    pageTitle() {
+      return "Did the deceased have insurance?";
+    },
+    needsToAnswer(req: Request) {
+      const { insurance, contactInsurance } = getAllRequestParams(req);
+      return insurance === "yes" && (contactInsurance === undefined || contactInsurance === "");
+    },
+    validate(req: Request) {
+      const { insurance } = getAllRequestParams(req);
+
+      if (insurance === "") {
+        return {
+          field: "insurance",
+          text: " Error: Did the deceased have insurance? is required",
+          href: "#insurance-yes",
+        };
+      }
+      return false;
+    },
+  },
+  repatriation: {
+    getViewPartialName() {
+      return "questions/question-repatriation.njk";
+    },
+    pageTitle() {
+      return "Do you want to repatriate the deceased back to the UK?";
+    },
+    needsToAnswer(req: Request) {
+      const { repatriation } = getAllRequestParams(req);
+      return repatriation === undefined || repatriation === "";
+    },
+    validate(req: Request) {
+      const { repatriation } = getAllRequestParams(req);
+
+      if (repatriation === "") {
+        return {
+          field: "repatriation",
+          text: "You must select whether you want the deceased to be repatriated or not",
+          href: "#repatriation-yes",
+        };
+      }
+      return false;
+    },
+  },
 };

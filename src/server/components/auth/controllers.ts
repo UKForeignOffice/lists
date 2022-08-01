@@ -4,7 +4,7 @@ import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
 import { authRoutes } from "./routes";
 import passport from "./passport";
-import { isLocalHost, isSmokeTest, SERVICE_DOMAIN } from "server/config";
+import { isCybDev, isLocalHost, isSmokeTest, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
@@ -17,9 +17,14 @@ export function getLoginController(
   res: Response,
   next: NextFunction
 ): void {
-  const { invalidToken, token } = req.query;
+  const { token } = req.params;
+  const { invalidToken, token: tokenParam } = req.query;
 
   if (token !== undefined) {
+    const redirectToLogin = `${authRoutes.login}?token=${token}`;
+    return res.redirect(redirectToLogin);
+  }
+  if (tokenParam !== undefined) {
     return next();
   }
 
@@ -48,7 +53,7 @@ export async function postLoginController(
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
 
-    if (isLocalHost || isSmokeTest) {
+    if (isLocalHost || isSmokeTest || isCybDev) {
       res.redirect(authLink);
       return;
     }

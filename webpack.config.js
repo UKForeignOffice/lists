@@ -167,6 +167,14 @@ const server = {
   },
   plugins: [
     ...environmentOptions[nodeEnv].plugins,
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "docker", "apply", "forms-json"),
+          to: "src/server/components/formRunner/forms-json",
+        },
+      ],
+    }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         diagnosticOptions: {

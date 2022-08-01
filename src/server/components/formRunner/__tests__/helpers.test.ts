@@ -1,19 +1,14 @@
 import supertest from "supertest";
-import * as child_process from "child_process";
-import {
-  startFormRunner,
-  isFormRunnerReady,
-  getNewSessionWebhookData,
-} from "../helpers";
+import { getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
-  LawyerListItemJsonData,
-  BaseListItemGetObject,
+  BaseListItemGetObject, ServiceType,
 } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
 import * as FormRunner from "./../types";
 import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
+import { LawyerJsonData } from "../../../models/listItem/providers/deserialisers/types";
 
 jest.mock("supertest", () =>
   jest.fn().mockReturnValue({
@@ -21,74 +16,7 @@ jest.mock("supertest", () =>
   })
 );
 
-jest.mock("child_process");
-
 describe("Form Runner Service:", () => {
-  describe("isFormRunnerReady", () => {
-    test("it returns true when form runner request is successful", async () => {
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(true);
-      expect(supertest).toHaveBeenCalledWith("localhost:3001");
-    });
-
-    test("it returns false when form runner request fails", async () => {
-      jest
-        .spyOn(supertest(""), "get")
-        .mockResolvedValue({ status: 400 } as any);
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(false);
-    });
-
-    test("it returns false when form runner request rejects", async () => {
-      jest.spyOn(supertest(""), "get").mockRejectedValue("Error");
-      const result = await isFormRunnerReady();
-
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("startFormRunner", () => {
-    test("spawn command is correct", async () => {
-      let calls = 1;
-
-      const mockGet: any = () => {
-        if (calls === 1) {
-          calls += 1;
-          return { status: 500 };
-        }
-
-        return { status: 200 };
-      };
-
-      jest.spyOn(supertest(""), "get").mockImplementation(mockGet);
-
-      const mockStderr = {
-        on: jest.fn(),
-      };
-
-      const mockStdout = {
-        on: jest.fn(),
-      };
-
-      jest.spyOn(child_process, "spawn").mockReturnValue({
-        stderr: mockStderr,
-        stdout: mockStdout,
-        on: jest.fn(),
-        once: jest.fn(),
-      } as any);
-
-      const result = await startFormRunner();
-
-      expect(result).toBe(true);
-      expect(child_process.spawn).toHaveBeenCalledWith(
-        "NODE_CONFIG='{\"safelist\":[\"localhost\"]}' PRIVACY_POLICY_URL='' npm run form-runner:start",
-        { shell: true }
-      );
-    });
-  });
-
   describe("parseFormRunnerWebhookObject", () => {
     test("parsed object is correct", async () => {
       const webHookData: any = {
@@ -332,7 +260,10 @@ describe("Form Runner Service:", () => {
   });
 
   describe("generateFormRunnerWebhookObject", () => {
-    const listJson: LawyerListItemJsonData = {
+    const listJson: LawyerJsonData = {
+      "address.firstLine": "", addressCountry: "",
+      city: "",
+      type: ServiceType.lawyers,
       size: "Medium (16-350 legal professionals)",
       country: "Italy",
       proBono: false,
@@ -364,7 +295,7 @@ describe("Form Runner Service:", () => {
       speakEnglish: true,
       websiteAddress: "https://www.alassistenzalegale.it/?lang=en",
       organisationName: "AL Assistenza Legale",
-      representedBritishNationals: true,
+      representedBritishNationals: true
     };
 
     const getObject: BaseListItemGetObject = {

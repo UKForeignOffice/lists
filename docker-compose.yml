@@ -1,50 +1,75 @@
 version: "3.9"
 services:
   postgres:
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: ./docker/db
       dockerfile: Dockerfile
     # if you are on Mac M1 please use the image below
     # see https://github.com/docker/for-mac/issues/5122
     # image: "gangstead/postgis:13-3.1-arm"
-    environment:
-      - POSTGRES_DB=lists
-      - POSTGRES_USER=master
-      - POSTGRES_PASSWORD=postgrespass
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "master", "-d", "lists"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 30s
     ports:
       - "5432:5432"
-    volumes:
-      - ./config:/usr/src/config
-    command: postgres -c config_file=/usr/src/config/postgresql-local.conf
-  pgadmin:
-    image: "dpage/pgadmin4"
-    environment:
-      - PGADMIN_LISTEN_PORT=8080
-      - PGADMIN_DEFAULT_EMAIL=dev@gov.uk
-      - PGADMIN_DEFAULT_PASSWORD=password
-    ports:
-      - "8080:8080"
-    links:
-      - postgres
-    depends_on:
-      - postgres
-  pghero:
-    image: "ankane/pghero"
-    ports:
-      - "8081:8080"
-    environment:
-      - DATABASE_URL=postgresql://master:postgrespass@postgres:5432/lists
-    depends_on:
-      - postgres
   redis:
     image: "redis:alpine"
     command: redis-server --requirepass redispassword
     ports:
       - 6379:6379
-  redisinsight:
-    image: "redislabs/redisinsight:latest"
+  lists:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_MODE=ci
     ports:
-      - "8001:8001"
+      - "3000:3000"
+    command: npm run start:ci
+    environment:
+      DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redispassword
+      REDIS_CLUSTER_MODE: "false"
+      REDIS_TLS: "false"
+      FORM_RUNNER_URL: "apply:3001"
+      DEBUG: "true"
+      LOG_LEVEL: "info"
+      CI_SMOKE_TEST: "true"
+      NODE_ENV: "test"
+      LOCATION_SERVICE_INDEX_NAME: fcdo-professional-service-finder
+      GOVUK_NOTIFY_API_KEY: "${GOVUK_NOTIFY_API_KEY}"
+      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID: "${GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID}"
+      GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID: "${GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID}"
+      GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID: "${GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID}"
+      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID: "${GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID}"
+      GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID: "${GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
+      sandbox: "false"
+#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
+#    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      apply:
+        condition: service_started
+  apply:
+    build:
+      context: "docker/apply"
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: test
+
+    ports:
+      - 3001:3001
     depends_on:
       - redis
+

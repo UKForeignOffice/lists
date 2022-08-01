@@ -818,7 +818,6 @@ describe("Dashboard Controllers", () => {
       mockReq.params = {
         listId: "1",
         listItemId: "2",
-        underTest: "true",
       };
       mockReq.body = {
         message: "change the text",
@@ -899,8 +898,7 @@ describe("Dashboard Controllers", () => {
     beforeEach(() => {
       mockReq.params = {
         listId: "1",
-        listItemId: "2",
-        underTest: "true",
+        listItemId: "2"
       };
       mockReq.body = {
         message: "change the text",
