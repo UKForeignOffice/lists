@@ -1615,7 +1615,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://host.docker.internal:3000/ingest/lawyers"
+        "url": "http://lists:3000/ingest/lawyers"
       }
     }
   ],
