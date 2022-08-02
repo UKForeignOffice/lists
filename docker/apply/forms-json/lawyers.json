@@ -398,13 +398,13 @@
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country"
+          "hint": "Select country or territory"
         },
         {
           "name": "ZoFnKT",
           "options": {},
           "type": "Html",
-          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country you select.\n  </strong>\n</div>"
+          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country or territory you select.\n  </strong>\n</div>"
         }
       ],
       "next": [
