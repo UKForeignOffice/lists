@@ -95,11 +95,12 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
       jsonData.city?.trim() ?? "",
-    ].filter((line) => line)
+    ]
+      .filter((line) => line)
       .join(`\n`);
   }
   return jsonData?.[field];
-  }
+}
 
 function rowFromField(
   field: KeyOfJsonData,
@@ -140,6 +141,7 @@ function jsonDataAsRows(
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   const contactFields: KeyOfJsonData[] = [
     "address",
+    "publicEmailAddress",
     "email",
     "phoneNumber",
     "contactPhoneNumber",
