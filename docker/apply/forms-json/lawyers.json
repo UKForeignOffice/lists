@@ -137,7 +137,9 @@
         },
         {
           "name": "postCode",
-          "options": {},
+          "options": {
+            "required": false
+          },
           "type": "TextField",
           "title": "Post code / area code",
           "schema": {}
