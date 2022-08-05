@@ -140,7 +140,7 @@
     "prettier": "2.3.2",
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
-    "sass-loader": "^12.1.0",
+    "sass-loader": "^13.0.2",
     "semantic-release": "^18.0.0",
     "supertest": "^6.1.6",
     "ts-standard": "^10.0.0",
