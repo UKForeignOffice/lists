@@ -958,7 +958,7 @@ describe("ListItem Model:", () => {
           type: ServiceType.covidTestProviders,
           address: {
             country: {
-              name: startCase(toLower("united kingdom")),
+              name: "united kingdom",
             },
           },
         },
