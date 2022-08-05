@@ -1,6 +1,7 @@
 import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
+import { languages } from "server/services/metadata";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
@@ -17,6 +18,7 @@ const fieldTitles: { [prop: string]: string } = {
   /**
    * used to convert fieldNames to a user-facing string
    */
+  contactName: "Contact name",
   address: "Address",
   areasOfLaw: "Legal expertise",
   emailAddress: "Email - private",
@@ -25,10 +27,10 @@ const fieldTitles: { [prop: string]: string } = {
   organisationName: "Company",
   phoneNumber: "Telephone",
   proBono: "Pro bono",
-  publicEmailAddress: "Email - public",
+  publicEmailAddress: "Email address for GOV.UK",
   regions: "Regions",
-  regulators: "Regulators",
-  representedBritishNationals: "Represented BNs",
+  regulators: "Professional associations",
+  representedBritishNationals: "Provided services to British nationals before",
   size: "Company size",
   speakEnglish: "English language service",
   websiteAddress: "Website",
@@ -37,6 +39,11 @@ const fieldTitles: { [prop: string]: string } = {
   repatriationServicesProvided: "Repatriation services",
   religiousCulturalServicesProvided: "Religious and cultural services",
   languagesSpoken: "Languages spoken in addition to English",
+  servicesProvided: "Services provided",
+  languagesProvided: "Languages translated or interpreted",
+  translationSpecialties: "Translation services",
+  interpreterServices: "Interpretation services",
+  deliveryOfServices: "How services are carried out",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
@@ -138,9 +145,12 @@ function jsonDataAsRows(
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
+  if (!listItem.jsonData.publicEmailAddress) {
+    listItem.jsonData.publicEmailAddress = listItem.jsonData.emailAddress;
+  }
   const contactFields: KeyOfJsonData[] = [
     "address",
-    "email",
+    "publicEmailAddress",
     "phoneNumber",
     "contactPhoneNumber",
     "websiteAddress",
@@ -151,10 +161,12 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const { jsonData, type } = listItem;
-  const baseFields: KeyOfJsonData[] = ["organisationName", "size", "regions"];
+  const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
-      ...baseFields,
+      "organisationName",
+      "size",
+      "regions",
       "areasOfLaw",
       "legalAid",
       "proBono",
@@ -170,18 +182,35 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
       "repatriationServicesProvided",
       "religiousCulturalServicesProvided",
     ],
+    [ServiceType.translatorsInterpreters]: [
+      ...baseFields,
+      "servicesProvided",
+      "languagesProvided",
+      "translationSpecialties",
+      "interpreterServices",
+      "deliveryOfService",
+      "representedBritishNationals",
+    ],
   };
 
   const fieldsForType = fields[type] ?? baseFields;
+
+  if (type === ServiceType.translatorsInterpreters && listItem.jsonData.languagesProvided) {
+    // @ts-ignore
+    const languagesArray = listItem.jsonData.languagesProvided.map((item) => {
+      // @ts-ignore
+      return languages[item] || item;
+    });
+    listItem.jsonData.languagesProvided = languagesArray;
+  }
 
   return jsonDataAsRows(fieldsForType, jsonData);
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
   const baseFields: KeyOfJsonData[] = [
-    "emailAddress",
     "regulators",
-    "speakEnglish",
+    "emailAddress",
   ];
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
@@ -189,6 +218,8 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
 export function getDetailsViewModel(
   listItem: ListItemGetObject
 ): DetailsViewModel {
+  const headerField = ServiceType.lawyers === listItem.type ? listItem.jsonData.contactName : listItem.jsonData.organisationName;
+
   return {
     organisation: {
       rows: getOrganisationRows(listItem),
@@ -201,5 +232,6 @@ export function getDetailsViewModel(
       title: "Admin use only",
       rows: getAdminRows(listItem),
     },
+    headerField,
   };
 }

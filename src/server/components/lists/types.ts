@@ -12,6 +12,11 @@ export enum QuestionName {
   "insurance" = "insurance",
   "contactInsurance" = "contactInsurance",
   "repatriation" = "repatriation",
+  "servicesProvided" = "servicesProvided",
+  "languagesProvided" = "languagesProvided",
+  "translationSpecialties" = "translationSpecialties",
+  "interpreterServices" = "interpreterServices",
+  "interpreterTranslationServices" = "interpreterTranslationServices",
 }
 
 export interface QuestionError {
@@ -20,10 +25,22 @@ export interface QuestionError {
   href: string;
 }
 
+export interface QuestionData {
+  text: string;
+  value: string;
+  description?: string;
+}
+
+export interface QuestionDataSet {
+  name: string;
+  data: QuestionData[];
+}
+
 export interface Question {
   pageTitle: (req: Request) => string;
   needsToAnswer: (req: Request) => boolean;
   getViewPartialName: (req: Request) => string;
+  getPartialData?: (req: Request) => QuestionDataSet[] | QuestionData[];
   validate: (req: Request) => boolean | QuestionError;
 }
 
@@ -43,6 +60,13 @@ export interface ListsRequestParams {
   contactInsurance?: "done" | "";
   sameCountry?: "yes" | "no" | "";
   repatriation?: "yes" | "no" | "";
+  servicesProvided?: string | string[];
+  languagesProvided?: string | string[]; // need to include languages summary after this
+  newLanguage?: string; // need to include languages summary after this
+  translationSpecialties?: string | string[];
+  interpreterServices?: string | string[];
+  interpreterTranslationServices?: string | string[];
+  languagesPopulated?: boolean;
 }
 
 export interface PaginationResults {

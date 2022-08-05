@@ -7,6 +7,10 @@ import { trimAnswer } from "./helpers";
 import {
   funeralDirectorDeserialiser
 } from "server/models/listItem/providers/deserialisers/FuneralDirector.deserialiser";
+import {
+  translatorInterpreterDeserialiser
+} from "server/models/listItem/providers/deserialisers/TranslatorInterpreter.deserialiser";
+import { camelCase } from "lodash";
 
 export function baseDeserialiser(
   webhookData: FormRunner.WebhookData
@@ -15,7 +19,9 @@ export function baseDeserialiser(
    * Deserialises to {@link #BaseDeserialisedWebhookData}
    */
   const { questions = [], metadata } = webhookData;
-  const { type } = metadata;
+  let { type } = metadata;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  type = <ServiceType>camelCase(type);
 
   const parsed = questions
     .flatMap((question) => {
@@ -42,4 +48,5 @@ export const DESERIALISER: Record<
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.covidTestProviders]: covidTestProviderDeserialiser,
   [ServiceType.funeralDirectors]: funeralDirectorDeserialiser,
+  [ServiceType.translatorsInterpreters]: translatorInterpreterDeserialiser,
 };

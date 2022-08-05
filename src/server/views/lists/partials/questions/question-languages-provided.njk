@@ -1,0 +1,42 @@
+{% from "summary-list/macro.njk" import govukSummaryList %}
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <input type="hidden" name="languagesProvided" value="{{ languagesProvided }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'languages-provided' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="new-language-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="newLanguage">
+          {{ partialPageTitle }}
+        </label>
+      </h1>
+      <div id="languages-provided-hint" class="govuk-hint">
+        You can choose as many options from the list as you need.
+      </div>
+      {% if error.field === 'languages-provided' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <select id="new-language-autocomplete" name="newLanguage" className="govuk-input--error">
+        <option value=""></option>
+        {% for language in partialData %}
+          <option value="{{ language.value }}">{{ language.text }}</option>
+        {% endfor %}
+      </select>
+    </fieldset>
+  </div>
+  <button class="govuk-button govuk-button govuk-button--secondary" data-module="govuk-button" id="addAnotherButton" data-dashlane-label="true" data-form-type="other">
+    Add to list
+  </button>
+  {% if languagesRows %}
+    {{ govukSummaryList(languagesRows) }}
+    <button class="govuk-button" data-module="govuk-button" name="continueButton" value="clicked">Continue</button>
+  {% endif %}
+</form>
+<script nonce="{{cspNonce}}">
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#new-language-autocomplete'),
+    autoselect: true
+  })
+</script>

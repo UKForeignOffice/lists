@@ -219,6 +219,9 @@ $two-thirds: $one-third * 2;
   &__list-item-caption {
     position: relative;
   }
-
-
 }
+
+.govuk-summary-list__row--hidden-titles {
+  display: none;
+}
+

@@ -13,6 +13,13 @@ export async function ingestPostController(
   res: Response
 ): Promise<void> {
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
+  if (!serviceType) {
+    res.status(500).send({
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+    });
+    return;
+  }
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {

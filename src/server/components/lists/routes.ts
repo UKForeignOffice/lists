@@ -1,6 +1,7 @@
 export const listsRoutes = {
   start: "/",
   finder: "/find",
+  removeLanguage: "/language/:language/remove",
   results: "/results",
   feedback: "/feedback",
   feedbackSuccess: "/feedback/success",

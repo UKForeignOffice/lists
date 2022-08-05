@@ -462,7 +462,7 @@
       "title": "What services do you provide?",
       "components": [
         {
-          "name": "ServicesProvided",
+          "name": "servicesProvided",
           "options": {
             "hideTitle": true
           },
@@ -556,7 +556,7 @@
       "title": "How do you carry out your services?",
       "components": [
         {
-          "name": "NGZapp",
+          "name": "deliveryOfServices",
           "options": {
             "hideTitle": true
           },
@@ -582,16 +582,16 @@
       "title": "What specialities do you provide translation and interpretation in?",
       "components": [
         {
-          "name": "kISRMN",
+          "name": "translationSpecialties",
           "options": {},
           "type": "CheckboxesField",
           "list": "fyWHQS",
-          "title": "Translation services ",
+          "title": "Translation services",
           "hint": "Select all specialities for which you provide translation of written content. \n",
           "schema": {}
         },
         {
-          "name": "cucdTa",
+          "name": "interpreterServices",
           "options": {},
           "type": "CheckboxesField",
           "list": "dFCIlb",
@@ -611,7 +611,7 @@
       "title": "What size is your company or firm?",
       "components": [
         {
-          "name": "ywkAwx",
+          "name": "size",
           "options": {},
           "type": "RadiosField",
           "list": "XWRfuo",
@@ -2662,11 +2662,11 @@
       "items": [
         {
           "text": "In person ",
-          "value": "inPerson"
+          "value": "in Person"
         },
         {
           "text": "Remote (online)",
-          "value": "remote"
+          "value": "Remote"
         }
       ]
     },

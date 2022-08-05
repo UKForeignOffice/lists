@@ -16,6 +16,9 @@
       {% if _.camelCase(serviceType) === ServiceType.funeralDirectors %}
         {% include "lists/partials/funeral-directors/funeral-directors-results-list.njk" %}
       {% endif %}
+      {% if _.camelCase(serviceType) === ServiceType.translatorsInterpreters %}
+        {% include "lists/partials/translators-interpreters/translators-interpreters-results-list.njk" %}
+      {% endif %}
     </div>
     <div class="govuk-grid-column-one-third">
       {% include "lists/partials/answers-box.njk" %}

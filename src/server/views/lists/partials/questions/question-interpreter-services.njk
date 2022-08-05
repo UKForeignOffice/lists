@@ -1,16 +1,16 @@
 <form class="form" action="{{ nextRoute }}" method="post" required>
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'practice-area' }}">
-    <fieldset class="govuk-fieldset" aria-describedby="practice-area-hint">
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'interpreter-services' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="interpreter-services-hint">
       <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l" for="practiceArea">
-          In what areas of law do you need legal help?
+        <label class="govuk-label govuk-label--l" for="interpreterServices">
+          {{ partialPageTitle }}
         </label>
       </h1>
-      <div id="practice-area-hint" class="govuk-hint">
+      <div id="interpreter-services-hint" class="govuk-hint">
         You can choose as many options from the list as you need.
       </div>
-      {% if error.field === 'practice-area' %}
+      {% if error.field === 'interpreter-services' %}
         <span class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
@@ -19,41 +19,44 @@
         <div class="govuk-checkboxes__item">
           <input
             class="govuk-checkboxes__input"
-            id="practice-area-select-all"
-            name="practiceArea"
+            id="interpreter-services-select-all"
+            name="interpreterServices"
             type="checkbox"
             value="All"
             {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
           />
           <label
             class="govuk-label govuk-checkboxes__label"
-            for="practice-area-select-all"
+            for="interpreter-services-select-all"
           >
             Select all
           </label>
         </div>
-        {% for practiceArea in partialData %}
+        {% for service in partialData %}
         <div class="govuk-checkboxes__item">
           <input
             class="govuk-checkboxes__input"
-            id="practice-area-{{practiceArea.value.toLowerCase()}}"
-            name="practiceArea"
+            id="interpreter-services-{{service.value.toLowerCase()}}"
+            name="interpreterServices"
             type="checkbox"
-            value="{{ practiceArea.value }}"
-            {{ 'checked' if error.checkboxValues and practiceArea in error.checkboxValues }}
+            value="{{ service.value }}"
+            {{ 'checked' if error.checkboxValues and service.value in error.checkboxValues }}
           />
           <label
             class="govuk-label govuk-checkboxes__label"
-            for="practice-area-{{ practiceArea.value.toLowerCase() }}"
+            for="interpreter-services-{{ service.value.toLowerCase() }}"
           >
-            {{ practiceArea.text }}
+            {{ service.text }}
           </label>
+          <div id="interpreter-services-{{service.value.toLowerCase()}}-hint" class="govuk-hint govuk-checkboxes__hint">
+            {{ service.description }}
+          </div>
         </div>
         {% endfor %}
         <input
           aria-hidden="true"
           class="govuk-radios__input"
-          name="practiceArea"
+          name="interpreterServices"
           type="hidden"
           value=""
         />

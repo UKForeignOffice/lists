@@ -17,16 +17,25 @@ import {
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionError, QuestionName } from "./../types";
-import { legalPracticeAreasList } from "server/services/metadata";
+import { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
+import { languages, translationInterpretationServices } from "server/services/metadata";
 import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
 import { covidTestProviderQuestionsSequence, searchCovidTestProvider, } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { some } from "server/models/listItem/providers/helpers";
+import {
+  cleanLanguagesProvided,
+  getLanguagesRows,
+  setLanguagesProvided,
+  some
+} from "server/models/listItem/providers/helpers";
 import {
   funeralDirectorsQuestionsSequence,
-  searchFuneralDirectors
+  searchFuneralDirectors,
 } from "server/components/lists/searches/funeral-directors";
+import {
+  translatorsInterpretersQuestionsSequence,
+  searchTranslatorsInterpreters,
+} from "server/components/lists/searches/translators-interpreters";
 
 export async function listsPostController(
   req: Request,
@@ -36,9 +45,10 @@ export async function listsPostController(
   let params = getAllRequestParams(req);
 
   // clean parameters
-  params = preProcessParams(params);
-
-  const { country } = params;
+  params = preProcessParams(params, req);
+  const { country, newLanguage } = params;
+  const { continueButton } = req.body;
+  let languagesProvided = params.languagesProvided ?? "";
   let { serviceType } = params;
   const serviceTypeName = getServiceTypeName(serviceType);
 
@@ -76,8 +86,43 @@ export async function listsPostController(
   }
 
   const queryString = queryStringFromParams(params);
-  res.redirect(`${listsRoutes.finder}?${queryString}`);
+  if (newLanguage) {
+    languagesProvided = setLanguagesProvided(newLanguage, languagesProvided as string);
+    params.languagesProvided = languagesProvided;
+  }
+  // @ts-ignore
+  if (params?.continueButton) {
+    // @ts-ignore
+    delete params.continueButton;
+  }
+  let url = `${listsRoutes.finder}?${queryString}`;
+  const languagesPopulated = !!continueButton;
+  if (languagesPopulated && params.languagesProvided) {
+    url = url.concat(`&languagesPopulated=true`);
+  }
+
+  res.redirect(url);
 }
+
+export function removeLanguageGetController(req: Request, res: Response): void {
+  const params = getAllRequestParams(req);
+  if (params.page === undefined || params.page !== "") {
+    params.page = "";
+  }
+
+  let { languagesProvided } = params;
+  const languageToRemove = req.params.language;
+
+  // @ts-ignore
+  if (languageToRemove && languagesProvided && languagesProvided.includes(languageToRemove)) {
+    // @ts-ignore
+    languagesProvided = languagesProvided.split(',').filter((language: string) => language !== languageToRemove).join(",");
+    params.languagesProvided = languagesProvided;
+  }
+
+  const queryString = queryStringFromParams(params);
+  res.redirect(`${listsRoutes.finder}?${queryString}`);
+};
 
 export function listsGetController(req: Request, res: Response): void {
   let params = getAllRequestParams(req);
@@ -92,11 +137,35 @@ export function listsGetController(req: Request, res: Response): void {
   }
 
   const { serviceType } = params;
+  let { languagesProvided, servicesProvided } = params;
 
   let questionsSequence: QuestionName[];
   let partialPageTitle: string = "";
   let partialToRender: string = "";
   let error: boolean | QuestionError = false;
+  let partialData: QuestionDataSet[] | QuestionData[];
+  let languagesRows, languageNamesProvided, serviceNamesProvided;
+
+  if (languagesProvided) {
+    const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
+    languagesProvided = cleanedLanguagesProvided;
+    params.languagesProvided = cleanedLanguagesProvided ?? undefined;
+    languagesRows = getLanguagesRows(languagesProvided as string, queryString);
+
+    // populate filtered language names
+    languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
+      // @ts-ignore
+      return languages[language];
+    }).join(", ");
+  }
+
+  if (servicesProvided) {
+    // @ts-ignore
+    serviceNamesProvided = servicesProvided.split(",").map((service) => {
+      if (service === "All") return "All";
+      return translationInterpretationServices.find((metaDataService) => metaDataService.value === service)?.value;
+    });
+  }
 
   if (serviceType === undefined) {
     res.render("lists/question-page", {
@@ -119,6 +188,9 @@ export function listsGetController(req: Request, res: Response): void {
     case ServiceType.funeralDirectors:
       questionsSequence = funeralDirectorsQuestionsSequence;
       break;
+    case ServiceType.translatorsInterpreters:
+      questionsSequence = translatorsInterpretersQuestionsSequence;
+      break;
     default:
       questionsSequence = [];
   }
@@ -130,6 +202,7 @@ export function listsGetController(req: Request, res: Response): void {
       partialToRender = question.getViewPartialName(req);
       partialPageTitle = question.pageTitle(req);
       error = question.validate(req);
+      partialData = (question?.getPartialData && question?.getPartialData(req)) ?? [];
       return true;
     }
 
@@ -144,9 +217,14 @@ export function listsGetController(req: Request, res: Response): void {
       queryString,
       partialToRender,
       partialPageTitle,
+      languagesProvided,
+      languageNamesProvided,
+      serviceNamesProvided,
+      // @ts-ignore
+      partialData,
+      languagesRows,
       removeQueryParameter,
       getParameterValue,
-      legalPracticeAreasList,
       serviceLabel: getServiceLabel(params.serviceType),
       csrfToken: getCSRFToken(req),
     });
@@ -169,17 +247,22 @@ export function listsResultsController(
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       searchLawyers(req, res).catch((error) =>
-        logger.error("Lists Result Controller", { error })
+        logger.error("Find a lawyer result controller", { error })
       );
       break;
     case ServiceType.covidTestProviders:
       searchCovidTestProvider(req, res).catch((error) => {
-        logger.error("Lists Result Controller", { error });
+        logger.error("Find a COVID test provider result controller", { error });
       });
       break;
     case ServiceType.funeralDirectors:
       searchFuneralDirectors(req, res).catch((error) =>
-        logger.error("Lists Result Controller", { error })
+        logger.error("Find a funeral director result controller", { error })
+      );
+      break;
+    case ServiceType.translatorsInterpreters:
+      searchTranslatorsInterpreters(req, res).catch((error) =>
+        logger.error("Find a translator or interpreter result controller", { error })
       );
       break;
     default:
@@ -213,6 +296,9 @@ export async function listsConfirmApplicationController(
           break;
         case ServiceType.funeralDirectors:
           serviceName = "Find a funeral director abroad";
+          break;
+        case ServiceType.translatorsInterpreters:
+          serviceName = "Find a translator or interpreter abroad";
           break;
         default:
           serviceName = "Find a professional service abroad";

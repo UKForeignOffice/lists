@@ -6,7 +6,13 @@ import {
   getServiceLabel,
   getAllRequestParams,
 } from "./helpers";
-import { QuestionName, Question } from "./types";
+import { QuestionName, Question, QuestionData } from "./types";
+import {
+  interpretationServices,
+  languages, legalPracticeAreasList,
+  translationInterpretationServices,
+  translationSpecialties
+} from "server/services/metadata";
 
 type Questions = {
   [key in QuestionName]: Question;
@@ -70,6 +76,7 @@ export const questions: Questions = {
         [ServiceType.covidTestProviders]: `Where in ${formattedCountry} do you want to find a COVID-19 test provider?`,
         [ServiceType.lawyers]: `Where in ${formattedCountry} do you want to find a lawyer?`,
         [ServiceType.funeralDirectors]: `Where in ${formattedCountry} do you want to find a funeral director?`,
+        [ServiceType.translatorsInterpreters]: `Where in ${formattedCountry} do you want to find a translator or interpreter?`,
       };
 
       return serviceType !== undefined ? titles[serviceType] : "";
@@ -104,6 +111,14 @@ export const questions: Questions = {
       const practiceArea = parseListValues("practiceArea", params);
       const error = practiceArea === undefined;
       return error || practiceArea?.length === 0 || practiceArea === undefined;
+    },
+    getPartialData(req) {
+      return legalPracticeAreasList.map((areaOfLaw) => {
+        return {
+          text: areaOfLaw,
+          value: areaOfLaw,
+        }
+      });
     },
     validate(req: Request) {
       const params = getAllRequestParams(req);
@@ -266,6 +281,168 @@ export const questions: Questions = {
           field: "repatriation",
           text: "You must select whether you want the deceased to be repatriated or not",
           href: "#repatriation-yes",
+        };
+      }
+      return false;
+    },
+  },
+  servicesProvided: {
+    getViewPartialName() {
+      return "questions/question-services-provided.njk";
+    },
+    pageTitle() {
+      return "What services do you need?";
+    },
+    needsToAnswer(req: Request) {
+      const { servicesProvided } = getAllRequestParams(req);
+      return servicesProvided === undefined || servicesProvided === "";
+    },
+    getPartialData(req) {
+      return translationInterpretationServices;
+    },
+    validate(req: Request) {
+      const { repatriation } = getAllRequestParams(req);
+
+      if (repatriation === "") {
+        return {
+          field: "services-provider",
+          text: "You must select the type of services that you need",
+          href: "#services-provided-yes",
+        };
+      }
+      return false;
+    },
+  },
+  languagesProvided: {
+    getViewPartialName() {
+      return "questions/question-languages-provided.njk";
+    },
+    pageTitle() {
+      return "Which language(s) do you need translating or interpreting?";
+    },
+    needsToAnswer(req: Request) {
+      const { languagesProvided, languagesPopulated } = getAllRequestParams(req);
+      return  !languagesPopulated || languagesProvided === undefined || languagesProvided === "";
+    },
+    getPartialData(req) {
+      const partialData: QuestionData[] = [];
+      Object.entries(languages).forEach(([key, value]) => {
+        partialData.push({
+          text: value,
+          value: key,
+        })
+      });
+      return partialData;
+    },
+    validate(req: Request) {
+      const { languagesProvided, languagesPopulated } = getAllRequestParams(req);
+
+      if (languagesProvided === "" && languagesPopulated) {
+        return {
+          field: "languagesProvided",
+          text: "You must select the language(s) you need translating or interpreting",
+          href: "#languages-provided-yes",
+        };
+      }
+      return false;
+    },
+  },
+  translationSpecialties: {
+    getViewPartialName() {
+      return "questions/question-translation-specialties.njk";
+    },
+    pageTitle() {
+      return "What type of translation do you need?";
+    },
+    needsToAnswer(req: Request) {
+      const { servicesProvided, translationSpecialties, interpreterServices } = getAllRequestParams(req);
+      // @ts-ignore
+      const result: boolean = ((translationSpecialties === undefined || translationSpecialties === "") &&
+          (servicesProvided?.includes("Translation") ||
+            (servicesProvided?.includes("All")) && interpreterServices !== undefined && interpreterServices !== ""));
+      return result;
+    },
+    getPartialData(req) {
+      return translationSpecialties;
+    },
+    validate(req: Request) {
+      const { translationSpecialties } = getAllRequestParams(req);
+
+      if (translationSpecialties === "") {
+        return {
+          field: "translationSpecialties",
+          text: "You must select the type of translation you need",
+          href: "#translation-specialties-yes",
+        };
+      }
+      return false;
+    },
+  },
+  interpreterServices: {
+    getViewPartialName() {
+      return "questions/question-interpreter-services.njk";
+    },
+    pageTitle() {
+      return "What type of interpretation do you need?";
+    },
+    needsToAnswer(req: Request) {
+      const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
+      // @ts-ignore
+      const result: boolean = ((interpreterServices === undefined || interpreterServices === "") &&
+        (servicesProvided?.includes("Interpretation") ||
+          (servicesProvided?.includes("All")) && translationSpecialties !== undefined && translationSpecialties !== ""));
+      return result;
+    },
+    getPartialData(req) {
+      return interpretationServices;
+    },
+    validate(req: Request) {
+      const { interpreterServices } = getAllRequestParams(req);
+
+      if (interpreterServices === "") {
+        return {
+          field: "interpreterServices",
+          text: "You must select the type of interpretation you need",
+          href: "#interpreter-services-yes",
+        };
+      }
+      return false;
+    },
+  },
+  interpreterTranslationServices: {
+    getViewPartialName() {
+      return "questions/question-interpreter-translation-services.njk";
+    },
+    pageTitle() {
+      return "What types of translating and interpreting do you need?";
+    },
+    needsToAnswer(req: Request) {
+      const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
+      return (servicesProvided === undefined || servicesProvided.includes("All") ||
+        ((servicesProvided.includes("Translation of written content") && servicesProvided?.includes("Interpretation of spoken language")) ))
+        && (interpreterServices === undefined || interpreterServices === "")
+        && (translationSpecialties === undefined || translationSpecialties === "");
+    },
+    getPartialData(req) {
+      return [
+        {
+          name: "translationSpecialties",
+          data: translationSpecialties,
+        },
+        {
+          name: "interpretationServices",
+          data: interpretationServices,
+        }
+      ];
+    },
+    validate(req: Request) {
+      const { interpreterTranslationServices, interpreterServices, translationSpecialties } = getAllRequestParams(req);
+
+      if (interpreterTranslationServices === "" && interpreterServices === "" && translationSpecialties === "") {
+        return {
+          field: "interpreterTranslationServices",
+          text: "You must select the type of translation and interpreting you need",
+          href: "#interpreter-translation-services-yes",
         };
       }
       return false;

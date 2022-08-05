@@ -32,19 +32,34 @@ export async function initLists(server: Express): Promise<void> {
  *   - detects the presence of the _csrf property and deletes it.
  * @param params
  */
-export function preProcessParams(params: { [name: string]: any }): {
+export function preProcessParams(params: { [name: string]: any }, req: Request): {
   [name: string]: any;
 } {
   const { _csrf, ...paramsCopy } = params;
-  const hasSelectedAll: boolean =
-    paramsCopy?.practiceArea?.includes("All") ?? false;
+
+  // select all
+  const hasSelectedAll: boolean = paramsCopy?.practiceArea?.includes("All") ?? false;
+
+  // region validation
   const noRegionSelected = paramsCopy?.region === "";
+
+  // country validation
   let { country } = paramsCopy || "";
   if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
     delete paramsCopy.country;
     country = null;
   } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
     country = "United Kingdom";
+  }
+
+  // translation services validation
+  if (paramsCopy.servicesProvided) {
+    if (!paramsCopy.servicesProvided.includes("All") && !paramsCopy.servicesProvided.includes("Translation")) {
+      delete paramsCopy.translationSpecialties;
+    }
+    if (!paramsCopy.servicesProvided.includes("All") && !paramsCopy.servicesProvided.includes("Interpretation")) {
+      delete paramsCopy.interpreterServices;
+    }
   }
 
   return {
@@ -109,6 +124,8 @@ export function getServiceLabel(
       return "a COVID-19 test provider";
     case ServiceType.funeralDirectors:
       return "a funeral director";
+    case ServiceType.translatorsInterpreters:
+      return "a translator or interpreter";
     default:
       return undefined;
   }
