@@ -156,7 +156,7 @@ describe("Lawyers List:", () => {
         "italy",
         "thailand",
         "Antigua and Barbuda",
-        "Cote d’Ivoire",
+        "Côte d'Ivoire",
       ].forEach((country: any) => {
         const link = getCountryLawyerRedirectLink(country);
         const expectedLink = get(
