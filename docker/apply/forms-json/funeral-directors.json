@@ -394,8 +394,7 @@
           "path": "/you-cannot-be-added-to-the-list-at-this-time"
         },
         {
-          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
-          "condition": "isFDCountryPilot"
+          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english"
         }
       ]
     },
@@ -1963,70 +1962,6 @@
               "type": "Value",
               "value": "0",
               "display": "0"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "isFDCountryPilot",
-      "displayName": "Country pilots FD",
-      "value": {
-        "name": "isFDCountryPilot",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "India",
-              "display": "India"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Croatia",
-              "display": "Croatia"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Nigeria",
-              "display": "Nigeria"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Colombia",
-              "display": "Colombia"
             }
           }
         ]

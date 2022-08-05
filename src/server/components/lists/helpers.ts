@@ -8,6 +8,7 @@ import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
 import { CountryName, ServiceType } from "server/models/types";
 import {
+  fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
@@ -156,6 +157,20 @@ export const getCountryLawyerRedirectLink = (() => {
       pagesByCountry,
       lowerCase(countryName),
       "https://www.gov.uk/government/collections/list-of-lawyers"
+    );
+  };
+})();
+
+export const getCountryFuneralDirectorsRedirectLink = (() => {
+  const pagesByCountry = mapKeys(fcdoFuneralDirectorsByCountry, (_, key) =>
+    lowerCase(key)
+  );
+
+  return (countryName: CountryName): string => {
+    return get(
+      pagesByCountry,
+      lowerCase(countryName),
+      "https://www.gov.uk/government/collections/funeral-directors-worldwide-list"
     );
   };
 })();
