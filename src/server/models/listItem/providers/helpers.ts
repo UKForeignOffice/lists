@@ -154,7 +154,7 @@ export async function some(
         type: serviceType,
         address: {
           country: {
-            name: startCase(toLower(countryName)),
+            name: countryName,
           },
         },
       },
