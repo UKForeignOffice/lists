@@ -1,4 +1,3 @@
-import { toLower, startCase } from "lodash";
 import { prisma } from "./../../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
 
@@ -22,7 +21,8 @@ import {
   createListItem,
 } from "server/models/listItem/listItem";
 
-import { listItemCreateInputFromWebhook } from "../listItemCreateInputFromWebhook";
+import { deserialise, listItemCreateInputFromWebhook } from "../listItemCreateInputFromWebhook";
+import { WebhookData } from "../../../components/formRunner";
 
 jest.mock("../../db/prisma-client");
 
@@ -90,7 +90,8 @@ const lawyerWebhookData = {
   metadata: {
     type: "lawyers",
   },
-};
+} as WebhookData;
+
 const covidTestProviderWebhookData = {
   metadata: {
     type: "covidTestProviders",
@@ -305,7 +306,7 @@ const covidTestProviderWebhookData = {
       index: 0,
     },
   ],
-};
+} as WebhookData;
 
 /**
  * TODO:- split out (into /providers/__tests__ so tests are easier to read)
@@ -405,8 +406,8 @@ describe("ListItem Model:", () => {
       const spyCountry = spyCountryUpsert();
 
       await listItemCreateInputFromWebhook(lawyerWebhookData);
-
-      const expectedCountryName = startCase(toLower(lawyerWebhookData.country));
+      const deserialised = deserialise(lawyerWebhookData);
+      const expectedCountryName = deserialised.country;
 
       expect(spyCountry).toHaveBeenCalledWith({
         where: { name: expectedCountryName },
@@ -1099,7 +1100,7 @@ describe("ListItem Model:", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
-      expect(
+      await expect(
         listItemCreateInputFromWebhook(covidTestProviderWebhookData)
       ).rejects.toEqual(new Error("covidTestProviders record already exists"));
     });

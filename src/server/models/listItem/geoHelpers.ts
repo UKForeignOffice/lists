@@ -1,6 +1,5 @@
 // Helpers
 import { Country, Point } from "server/models/types";
-import { startCase, toLower } from "lodash";
 import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
@@ -9,11 +8,9 @@ import { Prisma } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function createCountry(country: string): Promise<Country> {
-  const countryName = startCase(toLower(country));
-
   return await prisma.country.upsert({
-    where: { name: countryName },
-    create: { name: countryName },
+    where: { name: country },
+    create: { name: country },
     update: {},
   });
 }
