@@ -74,6 +74,7 @@ export function configureHelmet(server: Express): void {
         ],
         fontSrc: [...TRUSTED, ...DATA, ...GOOGLE_FONTS_DOMAINS],
         frameSrc: [...TRUSTED, ...DATA, GOOGLE_ANALYTICS_DOMAINS[3]],
+        "form-action": [...TRUSTED, ...GOVUK_DOMAINS],
         upgradeInsecureRequests: isLocalHost ? null : [], // Do not upgrade requests to HTTPS when running locally
       },
     })
