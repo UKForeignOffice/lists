@@ -22,9 +22,10 @@ export async function getPlaceGeoPoint(props: {
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
-    return await geoLocatePlaceByText(`${text}, ${countryName}`);
+    return await geoLocatePlaceByText(text as string, countryName as string);
   } catch (error) {
-    logger.error(error.message);
+    const typedError = error as { message: string };
+    logger.error(typedError.message);
 
     return [0.0, 0.0];
   }
@@ -46,12 +47,18 @@ export function makeAddressGeoLocationString(
   return address.join(", ");
 }
 
+export function getCountryFromData(
+  webhookData: DeserialisedWebhookData
+): string {
+  return webhookData.addressCountry ?? webhookData.country;
+}
+
 export async function createAddressGeoLocation(
   item: DeserialisedWebhookData
 ): Promise<number> {
   const address = makeAddressGeoLocationString(item);
-  // TODO:- pass country into geoLocatePlaceByText so we can filter by country via AWS
-  const point = await geoLocatePlaceByText(address);
+  const country = getCountryFromData(item);
+  const point = await geoLocatePlaceByText(address, country);
 
   return await rawInsertGeoLocation(point);
 }

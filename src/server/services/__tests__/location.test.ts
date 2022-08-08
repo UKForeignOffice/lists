@@ -109,17 +109,18 @@ describe("Location service:", () => {
   describe("geoLocatePlaceByText", () => {
     test("locatePlaceByText request is correct", async () => {
       const location = getAWSLocationService();
-      await geoLocatePlaceByText("Bangkok, Thailand");
+      await geoLocatePlaceByText("Bangkok", "Thailand");
 
       expect(location.searchPlaceIndexForText).toHaveBeenCalledWith({
         MaxResults: 1,
-        Text: "Bangkok, Thailand",
+        Text: "Bangkok",
         IndexName: "LOCATION_SERVICE_INDEX_NAME",
+        FilterCountries: ["THA"],
       });
     });
 
     test("locatePlaceByText response is correct", async () => {
-      const result = await geoLocatePlaceByText("Bangkok, Thailand");
+      const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 
       expect(result).toEqual([100.50483000000008, 13.753360000000043]);
     });
@@ -133,7 +134,7 @@ describe("Location service:", () => {
           }),
         } as any);
 
-      const result = await geoLocatePlaceByText("Bangkok, Thailand");
+      const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 
       expect(result).toEqual([0.0, 0.0]);
     });

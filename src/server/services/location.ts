@@ -1,6 +1,7 @@
 import { Location } from "aws-sdk";
 import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
+import getCountryCodeFromCountryName from "./country-codes";
 
 const INDEX_PARAMS = {
   DataSource: "Esri",
@@ -34,7 +35,8 @@ export async function checkIfPlaceIndexExists(
     const result = await location.listPlaceIndexes().promise();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
-    logger.error(`checkIfPlaceIndexExists Error: ${error.message}`);
+    const typedError = error as { message: string };
+    logger.error(`checkIfPlaceIndexExists Error: ${typedError.message}`);
     return false;
   }
 }
@@ -51,25 +53,34 @@ export async function createPlaceIndex(): Promise<boolean> {
     await location.createPlaceIndex(INDEX_PARAMS).promise();
     return true;
   } catch (error) {
-    logger.error(`createPlaceIndex error: ${error.message}`);
+    const typedError = error as { message: string };
+    logger.error(`createPlaceIndex error: ${typedError.message}`);
     return false;
   }
 }
 
-// TODO:- pass country into geoLocatePlaceByText so we can filter by country via AWS
 export async function geoLocatePlaceByText(
-  Text: string
+  region: string,
+  country: string
 ): Promise<Location.Types.Position> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
 
   const location = getAWSLocationService();
+  const countryCode = region.toLowerCase().includes("vatican")
+    ? "VAT"
+    : getCountryCodeFromCountryName(country);
+
+  if (!countryCode)
+    throw new Error(`A country code for ${country} could not be found.`);
+
   const { Results } = await location
     .searchPlaceIndexForText({
       MaxResults: 1,
-      Text,
+      Text: region,
       IndexName: INDEX_PARAMS.IndexName,
+      FilterCountries: [countryCode],
     })
     .promise();
 
