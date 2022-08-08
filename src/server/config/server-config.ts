@@ -20,8 +20,9 @@ export const isSmokeTest = process.env.CI_SMOKE_TEST === "true";
 
 // AWS
 export const AWS_REGION = "eu-west-1";
+const nameForAWSLocationInstance = "fcdo-professional-service-finder";
 export const LOCATION_SERVICE_INDEX_NAME =
-  process.env.LOCATION_SERVICE_INDEX_NAME;
+  process.env.LOCATION_SERVICE_INDEX_NAME ?? nameForAWSLocationInstance;
 
 // GOVUK Notify
 export const {

@@ -11,7 +11,10 @@ import {
   ListItemWithAddressCountry,
   ListItemWithJsonData,
 } from "server/models/listItem/providers/types";
-import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
+import {
+  makeAddressGeoLocationString,
+  getCountryFromData,
+} from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -426,7 +429,8 @@ export async function update(
   if (requiresAddressUpdate) {
     try {
       const address = makeAddressGeoLocationString(data);
-      const point = await geoLocatePlaceByText(address);
+      const country = getCountryFromData(data);
+      const point = await geoLocatePlaceByText(address, country);
 
       addressPrismaQuery = {
         where: {

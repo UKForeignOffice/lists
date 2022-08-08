@@ -499,7 +499,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, france");
+      expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });
 
@@ -518,7 +518,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, france");
+      expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
         expectedQuery.replace('"legalAid":true,', "")
       );
@@ -539,7 +539,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, france");
+      expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.replace(/\s\s+/g, " ")).toEqual(
         expectedQuery.replace(',"proBono":true', "")
       );
@@ -560,7 +560,7 @@ describe("ListItem Model:", () => {
 
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
-      expect(spyLocation).toHaveBeenCalledWith("paris, france");
+      expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.includes(`AND "ListItem"."jsonData" @>`)).toEqual(false);
     });
   });
