@@ -391,9 +391,6 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
           "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english"
         }
       ]
@@ -1697,7 +1694,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://lists:3000/ingest/funeralDirectors"
+        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
       }
     }
   ],

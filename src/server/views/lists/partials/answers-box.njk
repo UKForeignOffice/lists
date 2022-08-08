@@ -15,7 +15,7 @@
   {% if country %}
     <p class="govuk-body">
       Country<br />
-      <strong>{{ _.upperFirst(country) }}</strong>{% if print !== "yes" %}
+      <strong>{{ country }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
