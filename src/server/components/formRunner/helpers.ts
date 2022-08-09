@@ -82,7 +82,7 @@ export async function parseJsonFormData(
    */
   const baseDir = isUnderTest
     ? __dirname.replace("src/server/components/formRunner", "docker/apply")
-    : __dirname.replace("dist", "dist/src/server/components/formRunner");
+    : __dirname.replace("dist", "docker/apply");
   const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
   const fileContents = await fs.promises.readFile(

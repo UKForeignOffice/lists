@@ -221,7 +221,7 @@ describe("Lawyers List:", () => {
       // country answer
       expect(answers.eq(1).text()).toEqual(`
       Country
-      Spain
+      spain
       Change
     `);
 

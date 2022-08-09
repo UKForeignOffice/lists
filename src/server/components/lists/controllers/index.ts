@@ -5,6 +5,7 @@ import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "server/models/types";
 import {
   getAllRequestParams,
+  getCountryFuneralDirectorsRedirectLink,
   getCountryLawyerRedirectLink,
   getParameterValue,
   getServiceLabel,
@@ -45,7 +46,6 @@ export async function listsPostController(
       const hasItems = await some(country, serviceType);
       let redirectLink: string | undefined;
 
-      // @todo ALI: confirm redirect links for funeral directors
       if (!hasItems) {
         switch (getServiceTypeName(serviceType)) {
           case ServiceType.lawyers:
@@ -53,6 +53,9 @@ export async function listsPostController(
             break;
           case ServiceType.covidTestProviders:
             redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
+            break;
+          case ServiceType.funeralDirectors:
+            redirectLink = getCountryFuneralDirectorsRedirectLink(country);
             break;
           default:
             redirectLink = undefined;

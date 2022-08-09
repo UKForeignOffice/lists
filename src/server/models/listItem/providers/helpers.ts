@@ -9,7 +9,7 @@ import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
-import { get, startCase, toLower } from "lodash";
+import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import {
@@ -154,7 +154,7 @@ export async function some(
         type: serviceType,
         address: {
           country: {
-            name: startCase(toLower(countryName)),
+            name: countryName,
           },
         },
       },
