@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import { Express, Request } from "express";
-import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase } from "lodash";
+import _, { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
@@ -218,4 +218,16 @@ export function createFormRunnerEditListItemLink(token: string): string {
 
   const protocol = isLocalHost ? "http" : "https";
   return `${protocol}://${FORM_RUNNER_PUBLIC_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
+}
+
+export function formatCountryParam(country: string): string {
+  let countryName: string = country;
+
+  if (countryName) {
+    countryName = _.startCase(country)
+    if (countryName === "Northern Cyprus") {
+      countryName = "northern Cyprus";
+    }
+  }
+  return countryName;
 }

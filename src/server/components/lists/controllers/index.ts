@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { listsRoutes } from "./../routes";
 import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
-import { ServiceType } from "server/models/types";
+import { CountryName, ServiceType } from "server/models/types";
 import {
+  formatCountryParam,
   getAllRequestParams,
   getCountryFuneralDirectorsRedirectLink,
   getCountryLawyerRedirectLink,
@@ -36,26 +37,30 @@ export async function listsPostController(
 
   // clean parameters
   params = preProcessParams(params);
-  const queryString = queryStringFromParams(params);
 
-  const { country, serviceType } = params;
+  const { country } = params;
+  let { serviceType } = params;
+  const serviceTypeName = getServiceTypeName(serviceType);
 
-  if (country !== undefined && country !== ""
-    && serviceType !== undefined) {
+  if (country !== undefined && country !== "" && serviceType !== undefined) {
     try {
-      const hasItems = await some(country, serviceType);
+      serviceType = serviceTypeName as ServiceType;
+      params = { ...params, serviceType };
+      const countryName: string = formatCountryParam(country);
+
+      const hasItems = await some(countryName as CountryName, serviceType);
       let redirectLink: string | undefined;
 
       if (!hasItems) {
-        switch (getServiceTypeName(serviceType)) {
+        switch (serviceType) {
           case ServiceType.lawyers:
-            redirectLink = getCountryLawyerRedirectLink(country);
+            redirectLink = getCountryLawyerRedirectLink(countryName as CountryName);
             break;
           case ServiceType.covidTestProviders:
             redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
             break;
           case ServiceType.funeralDirectors:
-            redirectLink = getCountryFuneralDirectorsRedirectLink(country);
+            redirectLink = getCountryFuneralDirectorsRedirectLink(countryName as CountryName);
             break;
           default:
             redirectLink = undefined;
@@ -70,6 +75,7 @@ export async function listsPostController(
     }
   }
 
+  const queryString = queryStringFromParams(params);
   res.redirect(`${listsRoutes.finder}?${queryString}`);
 }
 

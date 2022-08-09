@@ -208,7 +208,7 @@ describe("Lawyers List:", () => {
     test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
+          "/results?serviceType=lawyers&readNotice=ok&country=Spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
         )
         .type("text/html");
 
@@ -221,7 +221,7 @@ describe("Lawyers List:", () => {
       // country answer
       expect(answers.eq(1).text()).toEqual(`
       Country
-      spain
+      Spain
       Change
     `);
 
@@ -236,7 +236,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
       );
 
       // legal practice areas
@@ -246,7 +246,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&region=madrid&readDisclaimer=ok"
       );
     });
 

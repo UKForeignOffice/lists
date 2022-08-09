@@ -6,10 +6,12 @@ import {
   removeQueryParameter,
   getParameterValue,
   queryStringFromParams,
+  formatCountryParam,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { CovidTestSupplierListItem } from "server/models/listItem/providers";
+import { CountryName } from "server/models/types";
 
 export const covidTestProviderQuestionsSequence = [
   QuestionName.readNotice,
@@ -23,12 +25,13 @@ export async function searchCovidTestProvider(
   req: Request,
   res: Response
 ): Promise<void> {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
   const { serviceType, country, region, resultsTurnaround } = params;
-
+  const countryName = formatCountryParam(country as string);
+  params = { ...params, country: countryName as CountryName };
   const searchResults =
     await CovidTestSupplierListItem.findPublishedCovidTestSupplierPerCountry({
-      countryName: `${country}`,
+      countryName,
       region: `${region}`,
       turnaroundTime: Number(resultsTurnaround),
     });
