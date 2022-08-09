@@ -7,10 +7,12 @@ import {
   removeQueryParameter,
   getParameterValue,
   queryStringFromParams,
+  formatCountryParam,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
+import { CountryName } from "server/models/types";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
@@ -26,8 +28,11 @@ export async function searchFuneralDirectors(
   req: Request,
   res: Response
 ): Promise<void> {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
   const { serviceType, country, region, repatriation, print = "no" } = params;
+  const countryName = formatCountryParam(country as string);
+  params = { ...params, country: countryName as CountryName };
+
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
 
@@ -35,7 +40,7 @@ export async function searchFuneralDirectors(
   params.page = pageNum.toString();
 
   const filterProps = {
-    countryName: country,
+    countryName,
     region,
     repatriation: repatriation?.includes("yes") ?? false,
     offset: -1,

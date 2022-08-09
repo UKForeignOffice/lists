@@ -207,7 +207,7 @@ describe("Covid Test Providers List:", () => {
     test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
+           "/results?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
         )
         .type("text/html");
 
@@ -220,7 +220,7 @@ describe("Covid Test Providers List:", () => {
       // country answer
       expect(answers.eq(1).text()).toEqual(`
       Country
-      spain
+      Spain
       Change
     `);
 
@@ -235,7 +235,7 @@ describe("Covid Test Providers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&resultsTurnaround=12&readDisclaimer=ok"
+        "/find?serviceType=covidTestProviders&readNotice=ok&country=Spain&resultsTurnaround=12&readDisclaimer=ok"
       );
 
       // turnaround
@@ -247,14 +247,14 @@ describe("Covid Test Providers List:", () => {
       `.replace(/\s\s+/g, " ")
       );
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
+        "/find?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&readDisclaimer=ok"
       );
     });
 
     test("accessibility", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+          "/results?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
         )
         .type("text/html");
 
