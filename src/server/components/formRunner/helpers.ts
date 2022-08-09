@@ -5,7 +5,8 @@ import {
   LawyerListItemGetObject,
   List,
   BaseListItemGetObject,
-  ServiceType, FuneralDirectorListItemGetObject,
+  ServiceType,
+  FuneralDirectorListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
@@ -17,7 +18,7 @@ export function getNewSessionWebhookData(
   questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://host.docker.internal:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = `/summary`;
   const options = {
     message,
@@ -71,7 +72,6 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
-
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
