@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import { Express, Request } from "express";
-import _, { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase } from "lodash";
+import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
@@ -224,7 +224,7 @@ export function formatCountryParam(country: string): string {
   let countryName: string = country;
 
   if (countryName) {
-    countryName = _.startCase(country)
+    countryName = startCase(country)
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
