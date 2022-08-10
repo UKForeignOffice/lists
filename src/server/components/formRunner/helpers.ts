@@ -5,7 +5,8 @@ import {
   LawyerListItemGetObject,
   List,
   BaseListItemGetObject,
-  ServiceType, FuneralDirectorListItemGetObject,
+  ServiceType,
+  FuneralDirectorListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
@@ -71,7 +72,6 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
-
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
