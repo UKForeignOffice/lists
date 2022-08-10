@@ -110,15 +110,27 @@ function rowFromField(
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
+  const isPublicEmail = field === "publicEmailAddress";
+
   return {
     key: {
       text: fieldTitles[field] ?? "",
     },
     value: {
-      [valueKey]: value,
+      [valueKey]: isPublicEmail
+        ? chooseWhichEmailToUse(value, listItem)
+        : value,
     },
     type: getValueMacroType(value, field),
   };
+}
+
+function chooseWhichEmailToUse(
+  value: string | undefined,
+  listItem: ListItemJsonData
+): string {
+  if (value) return value;
+  return parseValue("emailAddress", listItem);
 }
 
 function removeEmpty(row: Types.govukRow): string | boolean {
