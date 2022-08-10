@@ -80,11 +80,17 @@ export async function listsPostController(
 }
 
 export function listsGetController(req: Request, res: Response): void {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
+
   if (params.page === undefined || params.page !== "") {
     params.page = "";
   }
   const queryString = queryStringFromParams(params);
+  if (params.country) {
+    const countryName: string = formatCountryParam(params.country as string);
+    params = { ...params, country: countryName as CountryName };
+  }
+
   const { serviceType } = params;
 
   let questionsSequence: QuestionName[];
