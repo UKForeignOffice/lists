@@ -8,6 +8,9 @@ import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
 import * as helpers from "server/models/listItem/providers/helpers";
+import * as lawyers from "../models/listItem/providers/Lawyers";
+import { LawyerListItem } from "server/models/listItem/providers";
+import { findPublishedLawyersPerCountry } from "../models/listItem/providers/Lawyers";
 
 describe("Lawyers List:", () => {
   let server: Express;
@@ -16,8 +19,13 @@ describe("Lawyers List:", () => {
     return jest.spyOn(helpers, "some").mockResolvedValue(resolvedValue);
   }
 
+  function mockFindPublishedLawyersPerCountry(): jest.SpyInstance {
+    return jest.spyOn(LawyerListItem, "findPublishedLawyersPerCountry");
+  }
+
   beforeAll(async () => {
     mockListItemSome();
+    mockFindPublishedLawyersPerCountry();
     server = await getServer();
   }, 30000);
 
@@ -78,6 +86,16 @@ describe("Lawyers List:", () => {
       expect(header.location).toBe(`${pageLink}&country=spain`);
     });
 
+    test("POST request is correct for country name starting with lowercase letter", async () => {
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ country: "northern Cyprus" });
+
+      expect(status).toBe(302);
+      expect(helpers.some).toBeCalledWith("northern Cyprus", "lawyers");
+      expect(header.location).toBe(`${pageLink}&country=northern%20Cyprus`);
+    });
+
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
@@ -87,6 +105,7 @@ describe("Lawyers List:", () => {
 
   describe("lawyer's region question page", () => {
     const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain";
+    const pageLinkLowercaseCountry = "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -98,6 +117,20 @@ describe("Lawyers List:", () => {
 
       expect(pageHeader.text().trim()).toBe(
         "Where in Spain do you want to find a lawyer? (Optional)"
+      );
+      expect(continueButton.text()).toBe("Continue");
+    });
+
+    test("GET request is correct for country starting with lowercase letter", async () => {
+      const { text } = await request(server).get(pageLinkLowercaseCountry).type("text/html");
+
+      const $html = $.load(text);
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
+
+      expect(pageHeader.text().trim()).toBe(
+        "Where in Northern Cyprus do you want to find a lawyer? (Optional)"
       );
       expect(continueButton.text()).toBe("Continue");
     });
@@ -212,6 +245,13 @@ describe("Lawyers List:", () => {
         )
         .type("text/html");
 
+      expect(await LawyerListItem.findPublishedLawyersPerCountry).toBeCalledWith({
+        countryName: "Spain",
+        region: "madrid",
+        practiceArea: ["maritime","real estate"],
+        offset: -1,
+      });
+
       const $html = $.load(text);
       const $main = $html("main");
       const $answerBox = $($main.find(".answers-box"));
@@ -221,7 +261,7 @@ describe("Lawyers List:", () => {
       // country answer
       expect(answers.eq(1).text()).toEqual(`
       Country
-      spain
+      Spain
       Change
     `);
 
@@ -236,7 +276,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
       );
 
       // legal practice areas
@@ -246,7 +286,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&region=madrid&readDisclaimer=ok"
       );
     });
 
@@ -289,6 +329,7 @@ describe("Lawyers List:", () => {
       .type("text/html");
 
     expect(status).toBe(302);
+    expect(helpers.some).toBeCalledWith("Spain", "lawyers");
     expect(header.location).toBe(
       "https://www.gov.uk/government/publications/spain-list-of-lawyers"
     );

@@ -8,10 +8,12 @@ import {
   getParameterValue,
   queryStringFromParams,
   parseListValues,
+  formatCountryParam,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { LawyerListItem } from "server/models/listItem/providers";
+import { CountryName } from "server/models/types";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -25,8 +27,10 @@ export async function searchLawyers(
   req: Request,
   res: Response
 ): Promise<void> {
-  const params = getAllRequestParams(req);
+  let params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no" } = params;
+  const countryName = formatCountryParam(country as string);
+  params = { ...params, country: countryName as CountryName };
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
   let practiceArea = parseListValues("practiceArea", params);
@@ -37,7 +41,7 @@ export async function searchLawyers(
   params.page = pageNum.toString();
 
   const allRows = await LawyerListItem.findPublishedLawyersPerCountry({
-    countryName: country,
+    countryName,
     region,
     practiceArea,
     offset: -1,
@@ -55,7 +59,7 @@ export async function searchLawyers(
     ROWS_PER_PAGE;
 
   const searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
-    countryName: country,
+    countryName,
     region,
     practiceArea,
     offset,

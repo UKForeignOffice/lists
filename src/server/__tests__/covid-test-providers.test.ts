@@ -8,6 +8,7 @@ import request from "supertest";
 import { axe } from "jest-axe";
 import { getServer } from "../server";
 import * as helpers from "server/models/listItem/providers/helpers";
+import * as CovidListItem from "../models/listItem/providers/CovidTestSupplier";
 
 describe("Covid Test Providers List:", () => {
   let server: Express;
@@ -16,8 +17,13 @@ describe("Covid Test Providers List:", () => {
     return jest.spyOn(helpers, "some")?.mockResolvedValue(resolvedValue);
   }
 
+  function mockFindPublishedCovidTestSupplierPerCountry(): jest.SpyInstance {
+    return jest.spyOn(CovidListItem, "findPublishedCovidTestSupplierPerCountry");
+  }
+
   beforeAll(async () => {
     mockListItemSome();
+    mockFindPublishedCovidTestSupplierPerCountry();
     server = await getServer();
   }, 30000);
 
@@ -80,6 +86,16 @@ describe("Covid Test Providers List:", () => {
       expect(header.location).toBe(`${pageLink}&country=spain`);
     });
 
+    test("POST request is correct for country name starting with lowercase letter", async () => {
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ country: "northern Cyprus" });
+
+      expect(status).toBe(302);
+      expect(helpers.some).toBeCalledWith("northern Cyprus", "covidTestProviders");
+      expect(header.location).toBe(`${pageLink}&country=northern%20Cyprus`);
+    });
+
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
@@ -90,6 +106,7 @@ describe("Covid Test Providers List:", () => {
   describe("Covid Test Providers region question page", () => {
     const pageLink =
       "/find?serviceType=covidTestProviders&readNotice=ok&country=spain";
+    const pageLinkLowercaseCountry = "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -112,6 +129,20 @@ describe("Covid Test Providers List:", () => {
 
       expect(status).toBe(302);
       expect(header.location).toBe(`${pageLink}&region=madrid`);
+    });
+
+    test("GET request is correct for country starting with lowercase letter", async () => {
+      const { text } = await request(server).get(pageLinkLowercaseCountry).type("text/html");
+
+      const $html = $.load(text);
+      const $main = $html("main");
+      const pageHeader = $main.find("h1");
+      const continueButton = $main.find("button");
+
+      expect(pageHeader.text().trim()).toBe(
+        "Where in Northern Cyprus do you want to find a lawyer? (Optional)"
+      );
+      expect(continueButton.text()).toBe("Continue");
     });
 
     test("accessibility", async () => {
@@ -207,9 +238,15 @@ describe("Covid Test Providers List:", () => {
     test("GET request answers box is correct", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
+           "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&resultsTurnaround=12&readDisclaimer=ok"
         )
         .type("text/html");
+
+      expect(await CovidListItem.findPublishedCovidTestSupplierPerCountry).toBeCalledWith({
+        countryName: "Spain",
+        region: "madrid",
+        turnaroundTime: 12,
+      });
 
       const $html = $.load(text);
       const $main = $html("main");
@@ -220,7 +257,7 @@ describe("Covid Test Providers List:", () => {
       // country answer
       expect(answers.eq(1).text()).toEqual(`
       Country
-      spain
+      Spain
       Change
     `);
 
@@ -235,7 +272,7 @@ describe("Covid Test Providers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&resultsTurnaround=12&readDisclaimer=ok"
+        "/find?serviceType=covidTestProviders&readNotice=ok&country=Spain&resultsTurnaround=12&readDisclaimer=ok"
       );
 
       // turnaround
@@ -247,14 +284,14 @@ describe("Covid Test Providers List:", () => {
       `.replace(/\s\s+/g, " ")
       );
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&readDisclaimer=ok"
+        "/find?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&readDisclaimer=ok"
       );
     });
 
     test("accessibility", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=covidTestProviders&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
+          "/results?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"
         )
         .type("text/html");
 
@@ -270,6 +307,7 @@ describe("Covid Test Providers List:", () => {
       .type("text/html");
 
     expect(status).toBe(302);
+    expect(helpers.some).toBeCalledWith("Spain", "covidTestProviders");
     expect(header.location).toBe(
       "/private-beta?serviceType=covidTestProviders"
     );

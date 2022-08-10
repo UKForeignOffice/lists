@@ -333,6 +333,8 @@ export const fcdoLawyersPagesByCountry = {
   China: "https://www.gov.uk/government/publications/china-list-of-lawyers",
   Colombia:
     "https://www.gov.uk/government/publications/colombia-list-of-lawyers",
+  "Congo, Democratic Republic":
+    "https://www.gov.uk/government/publications/democratic-republic-of-congo-list-of-lawyers",
   "Costa Rica":
     "https://www.gov.uk/government/publications/costa-rica-list-of-lawyers",
   "Côte d'Ivoire":
@@ -344,8 +346,6 @@ export const fcdoLawyersPagesByCountry = {
     "https://www.gov.uk/government/publications/cyprus-list-of-lawyers",
   "Czech Republic":
     "https://www.gov.uk/government/publications/czech-republic-list-of-lawyers",
-  "Democratic Republic of Congo":
-    "https://www.gov.uk/government/publications/democratic-republic-of-congo-list-of-lawyers",
   Denmark: "https://www.gov.uk/government/publications/denmark-list-of-lawyers",
   Dominica:
     "https://www.gov.uk/government/publications/dominica-list-of-lawyers",
