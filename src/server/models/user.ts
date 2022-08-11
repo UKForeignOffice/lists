@@ -2,7 +2,7 @@ import { omit } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
+import { User, UserCreateInput, UserUpdateInput } from "./types";
 
 export async function findUserByEmail(
   email: string
@@ -19,9 +19,7 @@ export async function findUserByEmail(
   }
 }
 
-export async function findUserById(
-  id: number
-): Promise<User | undefined> {
+export async function findUserById(id: number): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
       where: { id },
@@ -85,15 +83,5 @@ export async function findUsers(): Promise<User[]> {
   } catch (error) {
     logger.error(`findUsers Error ${error.message}`);
     return [];
-  }
-}
-
-export async function isSuperAdminUser(email: string): Promise<boolean> {
-  try {
-    const user = await findUserByEmail(email);
-    return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
-  } catch (error) {
-    logger.error(`isSuperAdminUser Error: ${error.message}`);
-    throw error;
   }
 }

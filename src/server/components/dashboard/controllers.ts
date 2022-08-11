@@ -1,8 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
-import { createList, findListByCountryAndType, findListById, findUserLists, updateList, } from "server/models/list";
+import {
+  findUserByEmail,
+  findUsers,
+  updateUser,
+} from "server/models/user";
+import {
+  createList,
+  findListByCountryAndType,
+  findListById,
+  findUserLists,
+  updateList,
+} from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import {
   CountryName,
@@ -11,13 +21,15 @@ import {
   UserRoles
 } from "server/models/types";
 import {
-  filterSuperAdminRole,
   userIsListAdministrator,
   userIsListPublisher,
   userIsListValidator,
 } from "./helpers";
-import { isCountryNameValid, isGovUKEmailAddress, } from "server/utils/validation";
-import { QuestionError, } from "server/components/lists";
+import {
+  isCountryNameValid,
+  isGovUKEmailAddress,
+} from "server/utils/validation";
+import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -91,25 +103,20 @@ export async function usersEditController(
     }
 
     let userSaved = false;
-    let isEditingSuperAdminUser = false;
-
-    try {
-      isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
-      if (isEditingSuperAdminUser) {
-        // disallow editing of SuperAdmins
-        res.status(405).send("Not allowed to edit super admin account");
-        return;
-      }
-    } catch (error) {
-      return next(error);
-    }
 
     if (req.method === "POST") {
-      const roles = (req.body.roles ?? "").split(",").map(trim);
+      let roles: UserRoles[];
+      const usersRoles: UserRoles | UserRoles[] = req.body.roles;
+
+      if (Array.isArray(usersRoles)) {
+        roles = usersRoles;
+      } else {
+        roles = (usersRoles ?? "").split(",").map(trim) as UserRoles[];
+      }
 
       await updateUser(userEmail, {
         jsonData: {
-          roles: filterSuperAdminRole(roles),
+          roles,
         },
       });
 
@@ -335,7 +342,7 @@ export async function listsEditController(
 export async function feedbackController(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");

@@ -1,23 +1,10 @@
 import {
-  filterSuperAdminRole,
   userIsListAdministrator,
   userIsListValidator,
   userIsListPublisher,
 } from "../helpers";
-import { UserRoles } from "server/models/types";
 
 describe("Dashboard Helpers", () => {
-  describe("filterSuperAdminRole", () => {
-    test("SuperAdmin role is filtered out", () => {
-      const result = filterSuperAdminRole([
-        UserRoles.ListsCreator,
-        UserRoles.SuperAdmin,
-      ]);
-      expect(result).toHaveLength(1);
-      expect(result.includes(UserRoles.SuperAdmin)).toBe(false);
-    });
-  });
-
   describe("userIsListAdministrator", () => {
     test("it return true when user is a list administrator", () => {
       const req: any = {
