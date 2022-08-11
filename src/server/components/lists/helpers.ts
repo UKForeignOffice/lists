@@ -220,6 +220,16 @@ export function createFormRunnerEditListItemLink(token: string): string {
   return `${protocol}://${FORM_RUNNER_PUBLIC_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${token}`;
 }
 
+function restoreSpecialCharacter(specialCharacter: string, country: string, countryName: string): string {
+  const index = country.indexOf(specialCharacter);
+  if (index > 0) {
+    const before = countryName.substring(0, index);
+    const after = specialCharacter === "," || specialCharacter === "." ? countryName.substring(index) : countryName.substring(index+1);
+    countryName = before.concat(specialCharacter, after);
+  }
+  return countryName;
+}
+
 export function formatCountryParam(country: string): string {
   let countryName: string = country;
 
@@ -228,6 +238,17 @@ export function formatCountryParam(country: string): string {
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
+    if (countryName === "Cote D Ivoire") {
+      countryName = "Côte d'Ivoire";
+    }
+    countryName = restoreSpecialCharacter(".", country, countryName);
+    countryName = restoreSpecialCharacter(",", country, countryName);
+    countryName = restoreSpecialCharacter("-", country, countryName);
+    countryName = restoreSpecialCharacter("ã", country, countryName);
+    countryName = restoreSpecialCharacter("é", country, countryName);
+    countryName = restoreSpecialCharacter("í", country, countryName);
+    countryName = restoreSpecialCharacter("ç", country, countryName);
+    countryName = restoreSpecialCharacter("ô", country, countryName);
   }
   return countryName;
 }

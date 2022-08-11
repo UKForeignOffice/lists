@@ -475,7 +475,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'lawyers'
-        AND "Country".name = 'france'
+        AND lower("Country".name) = 'france'
         AND "ListItem"."jsonData" @> '{"legalAid":true,"proBono":true}'
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
@@ -957,9 +957,12 @@ describe("ListItem Model:", () => {
           isApproved: true,
           isPublished: true,
           type: ServiceType.covidTestProviders,
-          address: {
+          list: {
             country: {
-              name: "united kingdom",
+              name: {
+                equals: "united kingdom",
+                mode: "insensitive",
+              },
             },
           },
         },
@@ -1058,7 +1061,7 @@ describe("ListItem Model:", () => {
         INNER JOIN "Country" ON "List"."countryId" = "Country".id
         INNER JOIN "GeoLocation" ON "Address"."geoLocationId" = "GeoLocation".id
         WHERE "ListItem"."type" = 'covidTestProviders'
-        AND "Country".name = 'ghana'
+        AND lower("Country".name) = 'ghana'
         AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= 1
         AND "ListItem"."isApproved" = true
         AND "ListItem"."isPublished" = true
