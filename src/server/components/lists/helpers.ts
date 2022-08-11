@@ -241,14 +241,10 @@ export function formatCountryParam(country: string): string {
     if (countryName === "Cote D Ivoire") {
       countryName = "Côte d'Ivoire";
     }
-    countryName = restoreSpecialCharacter(".", country, countryName);
-    countryName = restoreSpecialCharacter(",", country, countryName);
-    countryName = restoreSpecialCharacter("-", country, countryName);
-    countryName = restoreSpecialCharacter("ã", country, countryName);
-    countryName = restoreSpecialCharacter("é", country, countryName);
-    countryName = restoreSpecialCharacter("í", country, countryName);
-    countryName = restoreSpecialCharacter("ç", country, countryName);
-    countryName = restoreSpecialCharacter("ô", country, countryName);
+    const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
+    specialChars.forEach(specialChar => {
+      countryName = restoreSpecialCharacter(specialChar, country, countryName);
+    });
   }
   return countryName;
 }
