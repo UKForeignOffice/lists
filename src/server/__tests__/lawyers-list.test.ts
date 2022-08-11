@@ -96,6 +96,36 @@ describe("Lawyers List:", () => {
       expect(header.location).toBe(`${pageLink}&country=northern%20Cyprus`);
     });
 
+    test("POST request is correct for country name with special character ô", async () => {
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ country: "Côte d'Ivoire" });
+
+      expect(status).toBe(302);
+      expect(helpers.some).toBeCalledWith("Côte d'Ivoire", "lawyers");
+      expect(header.location).toBe(`${pageLink}&country=C%C3%B4te%20d'Ivoire`);
+    });
+
+    test("POST request is correct for country name with special character -", async () => {
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ country: "Guinea-Bissau" });
+
+      expect(status).toBe(302);
+      expect(helpers.some).toBeCalledWith("Guinea-Bissau", "lawyers");
+      expect(header.location).toBe(`${pageLink}&country=Guinea-Bissau`);
+    });
+
+    test("POST request is correct for country name with special character ã, í and é", async () => {
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ country: "São Tomé and Príncipe" });
+
+      expect(status).toBe(302);
+      expect(helpers.some).toBeCalledWith("São Tomé And Príncipe", "lawyers");
+      expect(header.location).toBe(`${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`);
+    });
+
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 

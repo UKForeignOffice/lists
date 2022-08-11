@@ -33,7 +33,7 @@ export function fetchPublishedListItemQuery(props: {
 }): string {
   const { type, countryName, region, fromGeoPoint, andWhere, offset } = props;
   const whereType = pgescape(`WHERE "ListItem"."type" = %L`, type);
-  const whereCountryName = pgescape(`AND "Country".name = %L`, countryName);
+  const whereCountryName = pgescape(`AND lower("Country".name) = %L`, countryName.toLowerCase());
 
   let withDistance = "";
   let orderBy = `ORDER BY "ListItem"."jsonData"->>'organisationName' ASC`;
@@ -152,9 +152,12 @@ export async function some(
         isApproved: true,
         isPublished: true,
         type: serviceType,
-        address: {
+        list: {
           country: {
-            name: countryName,
+            name: {
+              equals: countryName,
+              mode: "insensitive",
+            },
           },
         },
       },
