@@ -180,7 +180,7 @@ describe("Questionnaire", () => {
       const result = practiceArea.validate(req);
       expect(result).toEqual({
         field: "practice-area",
-        text: "Areas of law is not allowed to be empty",
+        text: "You must select at least one area of law",
         href: "#practice-area-bankruptcy",
       });
     });

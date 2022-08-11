@@ -102,7 +102,7 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const params = getAllRequestParams(req);
       const practiceArea = parseListValues("practiceArea", params);
-      const error = (practiceArea === undefined);
+      const error = practiceArea === undefined;
       return error || practiceArea?.length === 0 || practiceArea === undefined;
     },
     validate(req: Request) {
@@ -112,7 +112,7 @@ export const questions: Questions = {
       if (practiceArea?.join("") === "") {
         return {
           field: "practice-area",
-          text: "Areas of law is not allowed to be empty",
+          text: "You must select at least one area of law",
           href: "#practice-area-bankruptcy",
         };
       }
@@ -229,7 +229,10 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { insurance, contactInsurance } = getAllRequestParams(req);
-      return insurance === "yes" && (contactInsurance === undefined || contactInsurance === "");
+      return (
+        insurance === "yes" &&
+        (contactInsurance === undefined || contactInsurance === "")
+      );
     },
     validate(req: Request) {
       const { insurance } = getAllRequestParams(req);
