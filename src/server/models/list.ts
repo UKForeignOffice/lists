@@ -1,7 +1,7 @@
 import pgescape from "pg-escape";
 import { compact, toLower, trim } from "lodash";
-import { logger } from "server/services/logger";
-import { isGovUKEmailAddress } from "server/utils/validation";
+import { logger } from "../services/logger";
+import { isGovUKEmailAddress } from "../utils/validation";
 import { prisma } from "./db/prisma-client";
 import {
   List,

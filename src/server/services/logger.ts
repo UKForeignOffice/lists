@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-import { LOG_LEVEL } from "server/config";
+import { LOG_LEVEL } from "../config";
 
 const ignoreHttpGET = format((info) => {
   if (info.message?.startsWith("HTTP GET")) {

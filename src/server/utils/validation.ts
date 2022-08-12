@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { get } from "lodash";
-import { countriesList } from "server/services/metadata";
-import * as config from "server/config";
+import { countriesList } from "../services/metadata";
+import * as config from "../config";
 
 const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
 
