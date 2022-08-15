@@ -8,12 +8,13 @@ import {
   getAllRequestParams,
   getCountryFuneralDirectorsRedirectLink,
   getCountryLawyerRedirectLink,
+  getCountryTranslatorsInterpretersRedirectLink,
   getParameterValue,
   getServiceLabel,
   getServiceTypeName,
   preProcessParams,
   queryStringFromParams,
-  removeQueryParameter,
+  removeQueryParameter
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
@@ -71,6 +72,9 @@ export async function listsPostController(
             break;
           case ServiceType.funeralDirectors:
             redirectLink = getCountryFuneralDirectorsRedirectLink(countryName as CountryName);
+            break;
+          case ServiceType.translatorsInterpreters:
+            redirectLink = getCountryTranslatorsInterpretersRedirectLink(countryName as CountryName);
             break;
           default:
             redirectLink = undefined;

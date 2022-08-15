@@ -10,7 +10,8 @@ import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
-  listOfCountriesWithLegalAid,
+  fcdoTranslatorsInterpretersByCountry,
+  listOfCountriesWithLegalAid
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
@@ -188,6 +189,20 @@ export const getCountryFuneralDirectorsRedirectLink = (() => {
       pagesByCountry,
       lowerCase(countryName),
       "https://www.gov.uk/government/collections/funeral-directors-worldwide-list"
+    );
+  };
+})();
+
+export const getCountryTranslatorsInterpretersRedirectLink = (() => {
+  const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) =>
+    lowerCase(key)
+  );
+
+  return (countryName: CountryName): string => {
+    return get(
+      pagesByCountry,
+      lowerCase(countryName),
+      "https://www.gov.uk/government/collections/lists-of-translators-and-interpreters"
     );
   };
 })();
