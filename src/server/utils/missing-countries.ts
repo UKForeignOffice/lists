@@ -22,7 +22,7 @@ export const errorMessages = {
  * @example npm run add-missing-countries -- --service lawyers --emails "ali@cautionyourblast.com, jen@cautionyourblast.com"
  */
 async function addMissingCountriesScript(): Promise<void> {
-  let emails: string[] = [];
+  let emails: string[] | undefined;
   const argumentOneIdentifier = process.argv[3];
   const argumentOneValue = process.argv[4];
   const argumentTwoIdentifier = process.argv[5];
