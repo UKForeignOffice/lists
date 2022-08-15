@@ -2,11 +2,17 @@ import { prisma } from "../models/db/prisma-client";
 import { logger } from "../services/logger";
 import { createList } from "../models/list";
 import { countriesList } from "../services/metadata";
+import { isTest } from "../config";
 
 import { ServiceType } from "../models/types";
 import type { CountryName, List } from "../models/types";
 
 const DEFAULT_USER_EMAIL = "ali@cautionyourblast.com";
+
+export const errorMessages = {
+  serviceType: "Incorrect service type entered",
+  newCountries: "No new countries are needed for this service type",
+} as const;
 
 /**
  * This script compares the number of countries a service has in the db with what's in the countriesList metadat.ts file
@@ -15,34 +21,41 @@ const DEFAULT_USER_EMAIL = "ali@cautionyourblast.com";
  * @example npm run add-missing-countries -- --service lawyers
  * @example npm run add-missing-countries -- --service lawyers --emails "ali@cautionyourblast.com, jen@cautionyourblast.com"
  */
-async function addMissingCountriesCLI(): Promise<void> {
+async function addMissingCountriesScript(): Promise<void> {
   let emails: string[] = [];
+  const argumentOneIdentifier = process.argv[3];
+  const argumentOneValue = process.argv[4];
+  const argumentTwoIdentifier = process.argv[5];
+  const argumentTwoValue = process.argv[6];
 
-  if (process.argv[3] !== "--service") {
+  if (argumentOneIdentifier !== "--service") {
     logger.error(
       'Service type not correctly provided, try adding "-- --service" to the command'
     );
     process.exit();
   }
 
-  if (process.argv[5] === "--emails") {
-    emails = process.argv[6].split(",");
+  if (argumentTwoIdentifier === "--emails") {
+    const hasMultipleEmails = argumentTwoValue.includes(",");
+
+    emails = hasMultipleEmails
+      ? argumentTwoValue.split(",")
+      : [argumentTwoValue];
   }
 
-  const serviceType = process.argv[4];
+  const serviceType = argumentOneValue;
 
   await addMissingCountriesToService(serviceType, emails);
   process.exit();
 }
 
-async function addMissingCountriesToService(
+export async function addMissingCountriesToService(
   serviceType: string,
   listCreatedBy?: string[]
 ): Promise<void> {
   try {
     if (!checkServiceTypeExists(serviceType)) {
-      logger.error("Incorrect service type entered");
-      return;
+      throw new Error(errorMessages.serviceType);
     }
 
     const typedServiceType = serviceType as ServiceType;
@@ -51,8 +64,7 @@ async function addMissingCountriesToService(
     )) as CountryName[];
 
     if (missingCountries.length === 0) {
-      logger.error("Now new countries are needed for this service type");
-      return;
+      throw new Error(errorMessages.newCountries);
     }
 
     logger.info(
@@ -61,7 +73,7 @@ async function addMissingCountriesToService(
 
     for (const country of missingCountries) {
       const userEmails = listCreatedBy ?? [DEFAULT_USER_EMAIL];
-      const data = {
+      const listDataForDB = {
         country,
         serviceType: typedServiceType,
         validators: userEmails,
@@ -70,7 +82,7 @@ async function addMissingCountriesToService(
         createdBy: userEmails[0],
       };
 
-      await createList(data);
+      await createList(listDataForDB);
     }
   } catch (error: unknown) {
     logErrorMessage(error, "addMissingCountriesToService");
@@ -119,6 +131,8 @@ function logErrorMessage(error: unknown, functionName: string): Error {
   throw error;
 }
 
-addMissingCountriesCLI().catch((err) =>
-  logErrorMessage(err, "addMissingCountriesCLI")
-);
+if (!isTest) {
+  addMissingCountriesScript().catch((err) =>
+    logErrorMessage(err, "addMissingCountriesCLI")
+  );
+}
