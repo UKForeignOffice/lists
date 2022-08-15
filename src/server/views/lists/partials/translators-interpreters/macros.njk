@@ -87,10 +87,15 @@
   {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>:
+    {% if item.jsonData.addressDisplay === "partial" %}
+      {{ item.address.city }}
+    {% else %}
+      {{ item.addressDisplay }}
       {{ item.address.firstLine }}
       {{ "-" if item.address.secondLine }} {{ item.address.secondLine }}
       {{ "-" if item.address.postCode }} {{ item.address.postCode }}
       {{ "-" if item.address.city }} {{ item.address.city }}
+    {% endif %}
   </p>
   {% if item.jsonData.emailAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">

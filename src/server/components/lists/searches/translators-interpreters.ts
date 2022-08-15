@@ -22,6 +22,7 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.region,
   QuestionName.servicesProvided,
   QuestionName.languagesProvided,
+  QuestionName.languagesSummary,
   QuestionName.translationSpecialties,
   QuestionName.interpreterServices,
   QuestionName.interpreterTranslationServices,

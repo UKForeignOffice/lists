@@ -347,6 +347,40 @@ export const questions: Questions = {
       return false;
     },
   },
+  languagesSummary: {
+    getViewPartialName() {
+      return "questions/question-languages-summary.njk";
+    },
+    pageTitle() {
+      return "You have selected these languages";
+    },
+    needsToAnswer(req: Request) {
+      const { languagesProvided, languagesConfirmed } = getAllRequestParams(req);
+      return  !languagesConfirmed || languagesProvided === undefined || languagesProvided === "";
+    },
+    getPartialData(req) {
+      const partialData: QuestionData[] = [];
+      Object.entries(languages).forEach(([key, value]) => {
+        partialData.push({
+          text: value,
+          value: key,
+        })
+      });
+      return partialData;
+    },
+    validate(req: Request) {
+      const { languagesProvided, languagesConfirmed } = getAllRequestParams(req);
+
+      if (languagesProvided === "" && languagesConfirmed) {
+        return {
+          field: "languagesProvided",
+          text: "You must select the language(s) you need translating or interpreting",
+          href: "#languages-provided-yes",
+        };
+      }
+      return false;
+    },
+  },
   translationSpecialties: {
     getViewPartialName() {
       return "questions/question-translation-specialties.njk";
@@ -357,9 +391,10 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const { servicesProvided, translationSpecialties, interpreterServices } = getAllRequestParams(req);
       // @ts-ignore
-      const result: boolean = ((translationSpecialties === undefined || translationSpecialties === "") &&
-          (servicesProvided?.includes("Translation") ||
-            (servicesProvided?.includes("All")) && interpreterServices !== undefined && interpreterServices !== ""));
+      const result: boolean = (!translationSpecialties &&
+          (servicesProvided?.includes("Translation") ??
+            ((servicesProvided?.includes("All")) && !interpreterServices)
+          ));
       return result;
     },
     getPartialData(req) {
@@ -388,9 +423,10 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
       // @ts-ignore
-      const result: boolean = ((interpreterServices === undefined || interpreterServices === "") &&
-        (servicesProvided?.includes("Interpretation") ||
-          (servicesProvided?.includes("All")) && translationSpecialties !== undefined && translationSpecialties !== ""));
+      const result: boolean = (!interpreterServices &&
+        (servicesProvided?.includes("Interpretation") ??
+          (servicesProvided?.includes("All") && !translationSpecialties)
+        ));
       return result;
     },
     getPartialData(req) {
@@ -418,10 +454,10 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
-      return (servicesProvided === undefined || servicesProvided.includes("All") ||
-        ((servicesProvided.includes("Translation of written content") && servicesProvided?.includes("Interpretation of spoken language")) ))
-        && (interpreterServices === undefined || interpreterServices === "")
-        && (translationSpecialties === undefined || translationSpecialties === "");
+      return (!servicesProvided || servicesProvided.includes("All") ||
+          ((servicesProvided.includes("Translation of written content") && servicesProvided?.includes("Interpretation of spoken language")) ))
+        && (!interpreterServices)
+        && (!translationSpecialties);
     },
     getPartialData(req) {
       return [

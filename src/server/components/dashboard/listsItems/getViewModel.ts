@@ -41,6 +41,7 @@ const fieldTitles: { [prop: string]: string } = {
   languagesSpoken: "Languages spoken in addition to English",
   servicesProvided: "Services provided",
   languagesProvided: "Languages translated or interpreted",
+  addressDisplay: "How to display address on GOV.UK",
   translationSpecialties: "Translation services",
   interpreterServices: "Interpretation services",
   deliveryOfServices: "How services are carried out",
@@ -149,8 +150,10 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
     listItem.jsonData.publicEmailAddress = listItem.jsonData.emailAddress;
   }
   const contactFields: KeyOfJsonData[] = [
+    "contactName",
     "address",
-    "publicEmailAddress",
+    "addressDisplay",
+    "emailAddress",
     "phoneNumber",
     "contactPhoneNumber",
     "websiteAddress",
@@ -186,9 +189,10 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
       ...baseFields,
       "servicesProvided",
       "languagesProvided",
+      "languagesSummary",
       "translationSpecialties",
       "interpreterServices",
-      "deliveryOfService",
+      "deliveryOfServices",
       "representedBritishNationals",
     ],
   };

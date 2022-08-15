@@ -152,7 +152,7 @@
           "schema": {}
         },
         {
-          "name": "VMYTyb",
+          "name": "addressDisplay",
           "options": {},
           "type": "RadiosField",
           "title": "How detailed do you want your address to appear on GOV.UK? ",
@@ -634,7 +634,7 @@
       "title": "Are you a member of any professional associations?",
       "components": [
         {
-          "name": "YtjaKN",
+          "name": "memberOfProfessionalAssociations",
           "options": {},
           "type": "YesNoField",
           "hint": "This includes any associations, unions or regulatory bodies that you think are relevant to your work. You will be asked to provide more details which will be published on GOV.UK. ",
@@ -2661,7 +2661,7 @@
       "type": "string",
       "items": [
         {
-          "text": "In person ",
+          "text": "In person",
           "value": "in Person"
         },
         {
@@ -2681,7 +2681,7 @@
         },
         {
           "text": "Small firm (up to 15 professionals)",
-          "value": "Small firm "
+          "value": "Small firm"
         },
         {
           "text": "Medium firm (16-349 professionals)",
@@ -2700,11 +2700,11 @@
       "items": [
         {
           "text": "Publish my full addresss on GOV.UK",
-          "value": "Yes, I am happy for this address to be published on GOV.UK"
+          "value": "full"
         },
         {
           "text": "Only publish my town or city on GOV.UK",
-          "value": "No, do not publish on GOV.UK"
+          "value": "partial"
         }
       ]
     }

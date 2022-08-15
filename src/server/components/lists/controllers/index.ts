@@ -85,7 +85,6 @@ export async function listsPostController(
     }
   }
 
-  const queryString = queryStringFromParams(params);
   if (newLanguage) {
     languagesProvided = setLanguagesProvided(newLanguage, languagesProvided as string);
     params.languagesProvided = languagesProvided;
@@ -95,6 +94,7 @@ export async function listsPostController(
     // @ts-ignore
     delete params.continueButton;
   }
+  const queryString = queryStringFromParams(params);
   let url = `${listsRoutes.finder}?${queryString}`;
   const languagesPopulated = !!continueButton;
   if (languagesPopulated && params.languagesProvided) {
@@ -103,26 +103,6 @@ export async function listsPostController(
 
   res.redirect(url);
 }
-
-export function removeLanguageGetController(req: Request, res: Response): void {
-  const params = getAllRequestParams(req);
-  if (params.page === undefined || params.page !== "") {
-    params.page = "";
-  }
-
-  let { languagesProvided } = params;
-  const languageToRemove = req.params.language;
-
-  // @ts-ignore
-  if (languageToRemove && languagesProvided && languagesProvided.includes(languageToRemove)) {
-    // @ts-ignore
-    languagesProvided = languagesProvided.split(',').filter((language: string) => language !== languageToRemove).join(",");
-    params.languagesProvided = languagesProvided;
-  }
-
-  const queryString = queryStringFromParams(params);
-  res.redirect(`${listsRoutes.finder}?${queryString}`);
-};
 
 export function listsGetController(req: Request, res: Response): void {
   let params = getAllRequestParams(req);
@@ -145,12 +125,16 @@ export function listsGetController(req: Request, res: Response): void {
   let error: boolean | QuestionError = false;
   let partialData: QuestionDataSet[] | QuestionData[];
   let languagesRows, languageNamesProvided, serviceNamesProvided;
+  let backUrl: string = "";
 
   if (languagesProvided) {
     const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
     languagesProvided = cleanedLanguagesProvided;
     params.languagesProvided = cleanedLanguagesProvided ?? undefined;
     languagesRows = getLanguagesRows(languagesProvided as string, queryString);
+    const paramsCopy = { ...params };
+    delete paramsCopy.languagesPopulated;
+    backUrl = `${listsRoutes.finder}?${queryStringFromParams(paramsCopy)}`;
 
     // populate filtered language names
     languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
@@ -223,6 +207,7 @@ export function listsGetController(req: Request, res: Response): void {
       // @ts-ignore
       partialData,
       languagesRows,
+      backUrl,
       removeQueryParameter,
       getParameterValue,
       serviceLabel: getServiceLabel(params.serviceType),
@@ -235,6 +220,26 @@ export function listsGetController(req: Request, res: Response): void {
   // redirect to results page
   res.redirect(`${listsRoutes.results}?${queryString}`);
 }
+
+export function removeLanguageGetController(req: Request, res: Response): void {
+  const params = getAllRequestParams(req);
+  if (params.page === undefined || params.page !== "") {
+    params.page = "";
+  }
+
+  let { languagesProvided } = params;
+  const languageToRemove = req.params.language;
+
+  // @ts-ignore
+  if (languageToRemove && languagesProvided && languagesProvided.includes(languageToRemove)) {
+    // @ts-ignore
+    languagesProvided = languagesProvided.split(',').filter((language: string) => language !== languageToRemove).join(",");
+    params.languagesProvided = languagesProvided;
+  }
+
+  const queryString = queryStringFromParams(params);
+  res.redirect(`${listsRoutes.finder}?${queryString}`);
+};
 
 export function listsResultsController(
   req: Request,

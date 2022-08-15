@@ -14,6 +14,7 @@ export enum QuestionName {
   "repatriation" = "repatriation",
   "servicesProvided" = "servicesProvided",
   "languagesProvided" = "languagesProvided",
+  "languagesSummary" = "languagesSummary",
   "translationSpecialties" = "translationSpecialties",
   "interpreterServices" = "interpreterServices",
   "interpreterTranslationServices" = "interpreterTranslationServices",
@@ -67,6 +68,7 @@ export interface ListsRequestParams {
   interpreterServices?: string | string[];
   interpreterTranslationServices?: string | string[];
   languagesPopulated?: boolean;
+  languagesConfirmed?: boolean;
 }
 
 export interface PaginationResults {

@@ -87,6 +87,7 @@
       <strong>{{ languageNamesProvided }}</strong>{% if print !== "yes" %}
       {% set trimmedQueryString = removeQueryParameter(queryString, 'languageNamesProvided') %}
       {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesPopulated') %}
+      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesConfirmed') %}
       <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ trimmedQueryString }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
