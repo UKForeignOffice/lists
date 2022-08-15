@@ -401,7 +401,7 @@
         },
         {
           "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
-          "condition": "isFDCountryPilot"
+          "condition": "isTranslatorCountryPilot"
         }
       ]
     },
@@ -483,8 +483,7 @@
           "condition": "DHbDHZ"
         },
         {
-          "path": "/what-specialities-do-you-provide-translation-and-interpretation-in",
-          "condition": ""
+          "path": "/what-specialities-do-you-provide-translation-and-interpretation-in"
         }
       ]
     },
@@ -494,7 +493,7 @@
       "controller": "RepeatingFieldPageController",
       "options": {
         "summaryDisplayMode": {
-          "samePage":true,
+          "samePage": true,
           "separatePage": true,
           "hideRowTitles": true
         },
@@ -2750,10 +2749,10 @@
       }
     },
     {
-      "name": "isFDCountryPilot",
-      "displayName": "Country pilots FD",
+      "name": "isTranslatorCountryPilot",
+      "displayName": "Country pilots Translators Interpreters",
       "value": {
-        "name": "isFDCountryPilot",
+        "name": "isTranslatorCountryPilot",
         "conditions": [
           {
             "field": {
@@ -2764,8 +2763,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "India",
-              "display": "India"
+              "value": "Poland",
+              "display": "Poland"
             }
           },
           {
@@ -2778,8 +2777,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Croatia",
-              "display": "Croatia"
+              "value": "Indonesia",
+              "display": "Indonesia"
             }
           },
           {
@@ -2792,8 +2791,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Nigeria",
-              "display": "Nigeria"
+              "value": "Egypt",
+              "display": "Egypt"
             }
           },
           {
@@ -2806,8 +2805,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Colombia",
-              "display": "Colombia"
+              "value": "Argentina",
+              "display": "Argentina"
             }
           }
         ]
@@ -2839,11 +2838,11 @@
       "displayName": "needsTranslation",
       "name": "needsTranslation",
       "value": {
-        "name": "ServicesProvided",
+        "name": "needsTranslation",
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2865,7 +2864,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2879,7 +2878,7 @@
           {
             "coordinator": "and",
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2901,7 +2900,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2923,7 +2922,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2937,7 +2936,7 @@
           {
             "coordinator": "and",
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2959,7 +2958,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2973,7 +2972,7 @@
           {
             "coordinator": "and",
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
