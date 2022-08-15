@@ -6,8 +6,6 @@ import { listsRoutes, getServiceLabel } from "server/components/lists";
 export function sitemapController(_req: Request, res: Response): void {
   const exclude: string[] = [
     ServiceType.covidTestProviders,
-    ServiceType.funeralDirectors,
-    ServiceType.translatorsInterpreters,
   ];
   const sections = Object.keys(ServiceType)
     .filter((name) => !exclude.includes(name))
