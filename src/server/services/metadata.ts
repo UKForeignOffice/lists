@@ -365,8 +365,6 @@ export const fcdoLawyersPagesByCountry = {
     "https://www.gov.uk/government/publications/colombia-list-of-lawyers",
   "Congo, Democratic Republic":
     "https://www.gov.uk/government/publications/democratic-republic-of-congo-list-of-lawyers",
-  "Congo, Democratic Republic":
-    "https://www.gov.uk/government/publications/democratic-republic-of-congo-list-of-lawyers",
   "Costa Rica":
     "https://www.gov.uk/government/publications/costa-rica-list-of-lawyers",
   "Côte d'Ivoire":
@@ -835,7 +833,8 @@ export const fcdoFuneralDirectorsByCountry = {
     "https://www.gov.uk/government/publications/funeral-directors-in-nicaragua",
   Nigeria:
     "https://www.gov.uk/government/publications/nigeria-list-of-funeral-directors",
-  "North Korea": "https://www.gov.uk/government/publications/democratic-peoples-republic-of-korea-list-of-funeral-directors",
+  "North Korea":
+    "https://www.gov.uk/government/publications/democratic-peoples-republic-of-korea-list-of-funeral-directors",
   "North Macedonia":
     "https://www.gov.uk/government/publications/north-macedonia-funeral-directors",
   Norway:
