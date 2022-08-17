@@ -5,25 +5,25 @@ Feature:
     Given I am logged in as a "SuperAdmin"
     And A lawyers list exists for Eurasia
     And there are these list items
-      | contactName | organisationName  | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         |
-      | Winston     | Winston Law       | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | O'brien     | Brien Law         | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | Julia       | Julia Law         | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | Joker       | Emmanuel Law      | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          |
-      | Parsons     | Parsons Law       | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update |
+      | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         |
+      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
+      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
+      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
+      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          |
+      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update |
     Given I am viewing list item index for reference:SMOKE
 
- Scenario Outline: View list item details
+  Scenario Outline: View list item details
     When I am viewing the list item details for "<contactName>"
     Then I see radio buttons "<radioButtons>"
     And I do not see radio buttons "<radioButtonsConfirm>"
     And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName  | radioButtons                                | radioButtonsConfirm          |
-      | Winston      |  Publish,Request changes,Remove             | Unpublish,Confirm and update |
-      | Julia        |  Publish,Request changes,Remove             | Unpublish,Confirm and update |
-      | Joker        |  Request changes,Confirm and update,Remove  | Publish,Unpublish            |
+      | contactName | radioButtons                              | radioButtonsConfirm          |
+      | Winston     | Publish,Request changes,Remove            | Unpublish,Confirm and update |
+      | Julia       | Publish,Request changes,Remove            | Unpublish,Confirm and update |
+      | Joker       | Request changes,Confirm and update,Remove | Publish,Unpublish            |
 
 
   Scenario Outline: Request changes for list item
@@ -51,10 +51,10 @@ Feature:
     And I click the "Publish" button
     Then I see the notification text "<organisationName> has been published"
 
-  Examples:
-    | contactName | organisationName |
-    | Julia       | Julia Law        |
-    | Winston     | Winston Law      |
+    Examples:
+      | contactName | organisationName |
+      | Julia       | Julia Law        |
+      | Winston     | Winston Law      |
 
 
   Scenario Outline: Remove list item
@@ -66,7 +66,7 @@ Feature:
     And I click the "Remove" button
     Then I see the notification text "<organisationName> has been removed"
 
-  Examples:
+    Examples:
       | contactName | organisationName |
       | Julia       | Julia Law        |
       | Winston     | Winston Law      |
@@ -91,3 +91,14 @@ Feature:
     And I click the "Unpublish" button
     Then I see the notification text "Parsons Law has been unpublished"
 
+
+  Scenario Outline: Show expected fields on list detail
+    Given I am viewing the list item details for "Winston"
+    Then I should see "Company" with a value of "Winston Law"
+
+    Examples:
+      | dataName        | dataValue                  |
+      | Company         | Winston Law                |
+      | Email - public  | smoke@cautionyourblast.com |
+      | Email - private | smoke@cautionyourblast.com |
+      | Regions         | France and UK              |
