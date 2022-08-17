@@ -332,7 +332,7 @@
           "name": "regulators",
           "options": {
             "hideTitle": true,
-            "required": false
+            "required": true
           },
           "type": "TextField",
           "hint": "List any relevant independent national or international associations, unions or regulatory bodies. Provide the full title instead of an acronym.",
@@ -510,7 +510,7 @@
           "list": "languages",
           "type": "AutocompleteField",
           "title": "Language",
-          "hint": "Start typing and select a language. Select Continue to add another language. Include all the languages you speak, apart from English",
+          "hint": "Start typing and select a language. Add each language separately. Include all the languages you provide a service in, apart from English.",
           "schema": {},
           "values": {
             "type": "listRef"
@@ -528,7 +528,7 @@
       "title": "What specialities do you provide interpretation in?",
       "components": [
         {
-          "name": "interpretationSpecialties",
+          "name": "interpreterServices",
           "type": "CheckboxesField",
           "title": "Interpretation specialities",
           "list": "dFCIlb",
@@ -2613,7 +2613,7 @@
       ]
     },
     {
-      "title": "NewInterpretationSpecialities",
+      "title": "NewinterpreterServices",
       "name": "dFCIlb",
       "type": "string",
       "items": [
@@ -2661,7 +2661,7 @@
       "items": [
         {
           "text": "In person",
-          "value": "in Person"
+          "value": "In person"
         },
         {
           "text": "Remote (online)",
@@ -2835,86 +2835,6 @@
       }
     },
     {
-      "displayName": "needsTranslation",
-      "name": "needsTranslation",
-      "value": {
-        "name": "needsTranslation",
-        "conditions": [
-          {
-            "field": {
-              "name": "servicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Translation",
-              "display": "Translation"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "Needs both",
-      "name": "SxvEdt",
-      "value": {
-        "name": "Needs both",
-        "conditions": [
-          {
-            "field": {
-              "name": "servicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Translation",
-              "display": "Translation"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "servicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Interpretation",
-              "display": "Interpretation"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "needsInterpretation",
-      "name": "utgajj",
-      "value": {
-        "name": "needsInterpretation",
-        "conditions": [
-          {
-            "field": {
-              "name": "servicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Interpretation",
-              "display": "Interpretation"
-            }
-          }
-        ]
-      }
-    },
-    {
       "displayName": "needsTranslationOnly",
       "name": "tkpRoc",
       "value": {
@@ -2994,7 +2914,7 @@
         "conditions": [
           {
             "field": {
-              "name": "NGZapp",
+              "name": "deliveryOfServices",
               "type": "CheckboxesField",
               "display": "Where services can be carried out"
             },
@@ -3002,13 +2922,13 @@
             "value": {
               "type": "Value",
               "value": "remote",
-              "display": "remote"
+              "display": "Remote (online)"
             }
           },
           {
             "coordinator": "and",
             "field": {
-              "name": "NGZapp",
+              "name": "deliveryOfServices",
               "type": "CheckboxesField",
               "display": "Where services can be carried out"
             },
@@ -3016,7 +2936,7 @@
             "value": {
               "type": "Value",
               "value": "inPerson",
-              "display": "inPerson"
+              "display": "In person"
             }
           }
         ]
@@ -3030,7 +2950,7 @@
         "conditions": [
           {
             "field": {
-              "name": "YtjaKN",
+              "name": "memberOfProfessionalAssociations",
               "type": "YesNoField",
               "display": "Associations YesNo"
             },

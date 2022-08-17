@@ -1,7 +1,7 @@
 import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
-import { languages } from "server/services/metadata";
+import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
@@ -28,6 +28,7 @@ const fieldTitles: { [prop: string]: string } = {
   phoneNumber: "Telephone",
   proBono: "Pro bono",
   publicEmailAddress: "Email address for GOV.UK",
+  emailAddressToPublish: "Email address for GOV.UK",
   regions: "Regions",
   regulators: "Professional associations",
   representedBritishNationals: "Provided services to British nationals before",
@@ -146,19 +147,25 @@ function jsonDataAsRows(
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
-  if (!listItem.jsonData.publicEmailAddress) {
-    listItem.jsonData.publicEmailAddress = listItem.jsonData.emailAddress;
+  if (listItem.jsonData.publicEmailAddress) {
+    listItem.jsonData.emailAddressToPublish = listItem.jsonData.publicEmailAddress;
+
+  } else {
+    listItem.jsonData.emailAddressToPublish = listItem.jsonData.emailAddress;
   }
   const contactFields: KeyOfJsonData[] = [
     "contactName",
     "address",
     "addressDisplay",
-    "emailAddress",
+    "emailAddressToPublish",
     "phoneNumber",
     "contactPhoneNumber",
     "websiteAddress",
   ];
 
+  if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
+    listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
+  }
   return jsonDataAsRows(contactFields, listItem.jsonData);
 }
 
@@ -199,10 +206,11 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
 
   const fieldsForType = fields[type] ?? baseFields;
 
+  if (type === ServiceType.translatorsInterpreters && listItem.jsonData.deliveryOfServices) {
+    listItem.jsonData.deliveryOfServices = DeliveryOfServices[listItem.jsonData.deliveryOfServices];
+  }
   if (type === ServiceType.translatorsInterpreters && listItem.jsonData.languagesProvided) {
-    // @ts-ignore
-    const languagesArray = listItem.jsonData.languagesProvided.map((item) => {
-      // @ts-ignore
+    const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => {
       return languages[item] || item;
     });
     listItem.jsonData.languagesProvided = languagesArray;

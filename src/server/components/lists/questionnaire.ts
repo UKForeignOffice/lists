@@ -390,11 +390,11 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, translationSpecialties, interpreterServices } = getAllRequestParams(req);
-      // @ts-ignore
-      const result: boolean = (!translationSpecialties &&
-          (servicesProvided?.includes("Translation") ??
-            ((servicesProvided?.includes("All")) && !interpreterServices)
-          ));
+      const result: boolean = (!translationSpecialties
+        && !!interpreterServices
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        && (servicesProvided?.includes("translation") || servicesProvided?.includes("All"))
+      ) as boolean;
       return result;
     },
     getPartialData(req) {
@@ -422,11 +422,11 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
-      // @ts-ignore
-      const result: boolean = (!interpreterServices &&
-        (servicesProvided?.includes("Interpretation") ??
-          (servicesProvided?.includes("All") && !translationSpecialties)
-        ));
+      const result: boolean = (!interpreterServices
+        && !!translationSpecialties
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        && (servicesProvided?.includes("interpretation") || servicesProvided?.includes("All"))
+      ) as boolean;
       return result;
     },
     getPartialData(req) {
@@ -454,8 +454,10 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
-      return (!servicesProvided || servicesProvided.includes("All") ||
-          ((servicesProvided.includes("Translation of written content") && servicesProvided?.includes("Interpretation of spoken language")) ))
+      return (!servicesProvided
+          || servicesProvided.includes("All")
+          || (servicesProvided.includes("translation") && servicesProvided?.includes("interpretation"))
+        )
         && (!interpreterServices)
         && (!translationSpecialties);
     },

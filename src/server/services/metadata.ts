@@ -898,7 +898,7 @@ export const listOfCountriesWithLegalAid = [
   "Ukraine",
 ];
 
-export const languages = {
+export const languages: Record<string, string> = {
   "aa": "Afar",
   "ab": "Abkhazian",
   "ae": "Avestan",
@@ -1170,3 +1170,16 @@ export const interpretationServices: QuestionData[] = [
     description: "e.g. informal, conversational",
   }
 ];
+
+export const ServicesProvided: Record<string, string> = {
+  interpretation: "Interpretation",
+  translation: "Translation",
+}
+export const AddressDisplay: Record<string, string> = {
+  full: "Full address",
+  partial: "Town or city only",
+}
+export const DeliveryOfServices: Record<string, string> = {
+  inPerson: "In person",
+  remote: "Remote",
+}
