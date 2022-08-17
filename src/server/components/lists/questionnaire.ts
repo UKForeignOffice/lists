@@ -317,8 +317,16 @@ export const questions: Questions = {
     getViewPartialName() {
       return "questions/question-languages-provided.njk";
     },
-    pageTitle() {
-      return "Which language(s) do you need translating or interpreting?";
+    pageTitle(req: Request) {
+      const { servicesProvided } = getAllRequestParams(req);
+      let title = "Which language(s) do you need translating or interpreting?";
+      if (servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All") ) {
+        title = "Which language(s) do you need translating?";
+
+      } else if (servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All") ) {
+        title = "Which language(s) do you need interpreting?";
+      }
+      return title;
     },
     needsToAnswer(req: Request) {
       const { languagesProvided, languagesPopulated } = getAllRequestParams(req);

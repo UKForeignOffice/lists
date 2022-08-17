@@ -1087,11 +1087,11 @@ export const languages: Record<string, string> = {
 export const translationInterpretationServices: QuestionData[] = [
   {
     text: "Translation of written content",
-    value: "Translation",
+    value: "translation",
   },
   {
     text: "Interpretation of spoken language",
-    value: "Interpretation",
+    value: "interpretation",
   }
 ];
 
