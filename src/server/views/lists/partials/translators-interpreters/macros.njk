@@ -74,7 +74,7 @@
     </p>
   {%  endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-    <strong>Represented British nationals before</strong>: {{ "Yes" if item.jsonData.representedBritishNationals === "true" else "No" }}
+    <strong>Represented British nationals before</strong>: {{ "Yes" if item.jsonData.representedBritishNationals else "No" }}
   </p>
 
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
@@ -97,9 +97,14 @@
       {{ "-" if item.address.city }} {{ item.address.city }}
     {% endif %}
   </p>
-  {% if item.jsonData.emailAddress %}
+  {% set emailAddress = item.jsonData.emailAddress %}
+  {% if item.jsonData.publicEmailAddress %}
+    {% set emailAddress = item.jsonData.publicEmailAddress %}
+  {% endif %}
+
+  {% if emailAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.emailAddress }}">{{ item.jsonData.emailAddress }}</a>
+      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ emailAddress }}">{{ emailAddress }}</a>
     </p>
   {% endif %}
   {% if item.jsonData.phoneNumber %}
