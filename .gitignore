@@ -113,7 +113,7 @@ dist
 # VSCode
 .vscode
 
-# idea 
+# idea
 .idea
 
 # Auto generated assets
@@ -129,3 +129,7 @@ lib/
 # env
 .env
 *.env
+
+# cypress
+cypress/videos
+cypress/screenshots
