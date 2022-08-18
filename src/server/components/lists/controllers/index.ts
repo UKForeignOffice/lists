@@ -125,6 +125,7 @@ export function listsGetController(req: Request, res: Response): void {
 
   let questionsSequence: QuestionName[];
   let partialPageTitle: string = "";
+  let partialPageHintText: string = "";
   let partialToRender: string = "";
   let error: boolean | QuestionError = false;
   let partialData: QuestionDataSet[] | QuestionData[];
@@ -189,6 +190,7 @@ export function listsGetController(req: Request, res: Response): void {
     if (question.needsToAnswer(req)) {
       partialToRender = question.getViewPartialName(req);
       partialPageTitle = question.pageTitle(req);
+      partialPageHintText = question.pageHintText?.(req) ?? "";
       error = question.validate(req);
       partialData = (question?.getPartialData && question?.getPartialData(req)) ?? [];
       return true;
@@ -205,6 +207,7 @@ export function listsGetController(req: Request, res: Response): void {
       queryString,
       partialToRender,
       partialPageTitle,
+      partialPageHintText,
       languagesProvided,
       languageNamesProvided,
       serviceNamesProvided,

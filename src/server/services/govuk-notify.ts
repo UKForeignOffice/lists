@@ -131,7 +131,10 @@ export async function sendEditDetailsEmail(
       return;
     }
 
-    const typeSingular = pluralize.singular(typePlural);
+    const typeSingular = typePlural.split(" ").map((word: string) => {
+      return pluralize.singular(word);
+    }).join(" ");
+
     await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
       emailAddress,

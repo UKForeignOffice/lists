@@ -328,6 +328,18 @@ export const questions: Questions = {
       }
       return title;
     },
+    pageHintText(req: Request) {
+      const { servicesProvided } = getAllRequestParams(req);
+      const hintTextStart = "Start typing and select a language. All providers can";
+      let hintText = `${hintTextStart} translate or interpret into English.`;
+      if (servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All") ) {
+        hintText = `${hintTextStart} translate into English.`;
+
+      } else if (servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All") ) {
+        hintText = `${hintTextStart} interpret into English.`;
+      }
+      return hintText;
+    },
     needsToAnswer(req: Request) {
       const { languagesProvided, languagesPopulated } = getAllRequestParams(req);
       return  !languagesPopulated || languagesProvided === undefined || languagesProvided === "";

@@ -10,7 +10,7 @@
         </label>
       </h1>
       <div id="languages-provided-hint" class="govuk-hint">
-        You can choose as many options from the list as you need.
+        {{ partialPageHintText }}
       </div>
       {% if error.field === 'languages-provided' %}
         <span class="govuk-error-message">

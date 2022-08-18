@@ -39,6 +39,7 @@ export interface QuestionDataSet {
 
 export interface Question {
   pageTitle: (req: Request) => string;
+  pageHintText?: (req: Request) => string;
   needsToAnswer: (req: Request) => boolean;
   getViewPartialName: (req: Request) => string;
   getPartialData?: (req: Request) => QuestionDataSet[] | QuestionData[];

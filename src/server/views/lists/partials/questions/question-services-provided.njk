@@ -8,7 +8,7 @@
         </label>
       </h1>
       <div id="services-provided-hint" class="govuk-hint">
-        You can choose as many options from the list as you need.
+        Select all the services that you provide
       </div>
       {% if error.field === 'services-provided' %}
         <span class="govuk-error-message">
@@ -16,22 +16,6 @@
         </span>
       {% endif %}
       <div class="govuk-checkboxes">
-        <div class="govuk-checkboxes__item">
-          <input
-            class="govuk-checkboxes__input"
-            id="services-provided-select-all"
-            name="servicesProvided"
-            type="checkbox"
-            value="All"
-            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
-          />
-          <label
-            class="govuk-label govuk-checkboxes__label"
-            for="services-provided-select-all"
-          >
-            Select all
-          </label>
-        </div>
         {% for service in partialData %}
         <div class="govuk-checkboxes__item">
           <input
