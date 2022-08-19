@@ -42,8 +42,7 @@ export const configureViews = (server: Express): void => {
 
   engine.addFilter("renderRowValues", function (rows: govukRow[], macroSet) {
     return (rows ?? []).map((row) => {
-      // @ts-ignore
-      const macro = macroSet[row.type];
+      const macro = macroSet[row.type!];
 
       const value = row.value;
       if (value.text !== undefined) {
@@ -57,7 +56,6 @@ export const configureViews = (server: Express): void => {
         value,
       };
     });
-    // @ts-ignore
   });
 
   nunjucksDate.install(engine);
