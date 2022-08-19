@@ -94,11 +94,17 @@ Feature:
 
   Scenario Outline: Show expected fields on list detail
     Given I am viewing the list item details for "Winston"
-    Then I should see "Company" with a value of "Winston Law"
+    Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
 
     Examples:
-      | dataName        | dataValue                  |
-      | Company         | Winston Law                |
-      | Email - public  | smoke@cautionyourblast.com |
-      | Email - private | smoke@cautionyourblast.com |
-      | Regions         | France and UK              |
+      | rowLabel                 | rowValue                               | rowPosition |
+      | Company                  | Winston Law                            | 1           |
+      | Company size             | Independent lawyer / sole practitioner | 2           |
+      | Regions                  | France and UK                          | 3           |
+      | Legal aid                | Yes                                    | 4           |
+      | Pro bono                 | Yes                                    | 5           |
+      | Represented BNs          | Yes                                    | 6           |
+      | Email - public           | smoke@cautionyourblast.com             | 7           |
+      | Email - private          | smoke@cautionyourblast.com             | 8           |
+      | Regulators               | Miniluv                                | 9           |
+      | English language service | Yes                                    | 10          |
