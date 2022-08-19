@@ -1,6 +1,15 @@
+/* eslint-disable */
 import { rand, randCompanyName, randFullName } from "@ngneat/falso";
 
 Given("A lawyers list exists for Eurasia", () => {
+  createListForService("lawyers");
+});
+
+Given("A funeral directors list exists for Eurasia", () => {
+  createListForService("funeralDirectors");
+});
+
+function createListForService(service) {
   const jsonData = {
     administrators: ["smoke@cautionyourblast.com"],
     publishers: ["smoke@cautionyourblast.com"],
@@ -36,7 +45,7 @@ Given("A lawyers list exists for Eurasia", () => {
     operation: "list.upsert",
     variables: {
       create: {
-        type: "lawyers",
+        type: service,
         reference: "SMOKE",
         jsonData,
         country: {
@@ -46,6 +55,7 @@ Given("A lawyers list exists for Eurasia", () => {
         },
       },
       update: {
+        type: service,
         jsonData,
         items: {
           deleteMany: {},
@@ -56,15 +66,16 @@ Given("A lawyers list exists for Eurasia", () => {
       },
     },
   });
-});
+}
 
 Given("there are these list items", (table) => {
   /**
-   * | contactName | companyName | status | isPublished | isBlocked | isApproved | emailVerified | isPinned | displayedRadioButtons | hiddenRadioButtons
+   * | contactName | companyName | status | isPublished | isBlocked | isApproved | emailVerified | isPinned | displayedRadioButtons | hiddenRadioButtons | service?
    */
   const rows = table.hashes();
 
   const items = rows.map((row) => {
+    const service = row.service ?? "lawyers";
     const {
       contactName,
       organisationName,
@@ -77,7 +88,6 @@ Given("there are these list items", (table) => {
       hiddenRadioButtons,
       emailVerified,
       city,
-      areasOfLaw,
       ...rest
     } = row;
 
@@ -85,11 +95,10 @@ Given("there are these list items", (table) => {
     const isApproved = isApprovedString === "true";
     const isBlocked = isBlockedString === "true";
 
-    const jsonData = {
+    const baseJsonData = {
       contactName,
       organisationName,
       emailAddress,
-      areasOfLaw,
       metadata: {
         emailVerified: emailVerified === "true",
       },
@@ -100,12 +109,43 @@ Given("there are these list items", (table) => {
       },
     };
 
+    const jsonDataLawyers = {
+      ...baseJsonData,
+      areasOfLaw: row.areasOfLaw ?? [],
+      size: "Independent lawyer / sole practitioner",
+      proBono: true,
+      regions: "France and UK",
+      legalAid: true,
+      emergencyPhoneNumber: null,
+      regulators: "Miniluv",
+    };
+
+    const jsonDataFuneralDirectors = {
+      ...baseJsonData,
+      localServicesProvided: [
+        "Local burials",
+        "Flower arrangements",
+        "Exhumations",
+      ],
+      representedBritishNationals: true,
+      repatriationServicesProvided: [
+        "Body repatriation",
+        "Ashes repatriation (from a cremation)",
+      ],
+    };
+
+    const jsonData = {
+      lawyers: jsonDataLawyers,
+      funeralDirectors: jsonDataFuneralDirectors,
+    };
+
     return listItem({
       ...rest,
       isPublished,
       isApproved,
       isBlocked,
-      jsonData,
+      jsonData: jsonData[service],
+      service,
     });
   });
   cy.task("db", {
@@ -146,31 +186,24 @@ Given("there are these list items", (table) => {
 });
 
 function listItem(options) {
-  const { jsonData, status, isPinned, ...rest } = options;
+  const { jsonData, status, isPinned, service, ...rest } = options;
 
   return {
-    type: "lawyers",
+    type: service,
     jsonData: {
-      size: "Independent lawyer / sole practitioner",
       country: "Eurasia",
-      proBono: true,
-      regions: "France and UK",
-      legalAid: true,
       metadata: {
         emailVerified: jsonData.metadata.emailVerified,
       },
-      areasOfLaw: [],
-      regulators: "Miniluv",
       contactName: jsonData.contactName ?? randFullName(),
-      declaration: [],
-      phoneNumber: "",
+      declaration: ["confirm"],
+      phoneNumber: "1234567",
       emailAddress:
         jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
       publishEmail: "Yes",
       speakEnglish: true,
       websiteAddress: null,
       organisationName: jsonData.organisationName ?? randCompanyName(),
-      emergencyPhoneNumber: null,
       representedBritishNationals: true,
       ...jsonData,
     },
