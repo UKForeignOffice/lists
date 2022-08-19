@@ -1,3 +1,4 @@
+/* eslint-disable */
 Given("I am logged in as a {string}", (role) => {
   cy.task("db", {
     operation: "user.upsert",
