@@ -11,7 +11,7 @@ import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
-import { UpdatableAddressFields } from "server/models/listItem/providers/types";
+import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
 import {
   DeserialisedWebhookData,
   ListItemJsonData,
@@ -243,18 +243,19 @@ export function cleanLanguagesProvided(languagesProvided: string): string | unde
   return languagesProvided;
 }
 
-export function getLanguagesRows(languagesProvided: string, queryString: string): Object | undefined {
+export function getLanguagesRows(languagesProvided: string, queryString: string): LanguageRows {
 
   if (!languagesProvided) {
-    return undefined;
+    const languageRows: LanguageRows = { rows: [] };
+    return languageRows;
   }
-  const languagesJson = languagesProvided?.split(",").map((language: string) => {
+  const languagesJson: LanguageRow[] = languagesProvided?.split(",").map((language: string) => {
     // @ts-ignore
     const languageName: string = languages[language];
     logger.info(`language name: ${languageName}`);
     const removeLanguageUrl = listsRoutes.removeLanguage.replace(":language", language);
 
-    return {
+    const languageRow: LanguageRow = {
       key: {
         text: language,
         classes: "govuk-summary-list__row--hidden-titles",
@@ -270,10 +271,12 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
           visuallyHiddenText: language
         }]
       }
-    }
+    };
+    return languageRow;
   });
 
-  return {
-    rows: languagesJson || {}
-  };
+  const languageRows: LanguageRows = {
+    rows: languagesJson
+  }  || { rows: [] };
+  return languageRows;
 }

@@ -414,7 +414,7 @@ export const questions: Questions = {
         && !!interpreterServices
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         && (servicesProvided?.includes("translation") || servicesProvided?.includes("All"))
-      ) as boolean;
+      ) ?? false;
       return result;
     },
     getPartialData(req) {
@@ -446,7 +446,7 @@ export const questions: Questions = {
         && !!translationSpecialties
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         && (servicesProvided?.includes("interpretation") || servicesProvided?.includes("All"))
-      ) as boolean;
+      ) ?? false;
       return result;
     },
     getPartialData(req) {

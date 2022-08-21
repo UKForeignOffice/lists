@@ -70,6 +70,7 @@ export interface ListsRequestParams {
   interpreterTranslationServices?: string | string[];
   languagesPopulated?: boolean;
   languagesConfirmed?: boolean;
+  continueButton?: string;
 }
 
 export interface PaginationResults {

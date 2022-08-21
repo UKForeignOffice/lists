@@ -28,7 +28,7 @@
   <button class="govuk-button govuk-button govuk-button--secondary" data-module="govuk-button" id="addAnotherButton" data-dashlane-label="true" data-form-type="other">
     Add to list
   </button>
-  {% if languagesRows %}
+  {% if languagesRows and languagesRows.rows.length > 0 %}
     {{ govukSummaryList(languagesRows) }}
     <button class="govuk-button" data-module="govuk-button" name="continueButton" value="clicked">Continue</button>
   {% endif %}

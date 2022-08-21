@@ -37,6 +37,7 @@ import {
   translatorsInterpretersQuestionsSequence,
   searchTranslatorsInterpreters,
 } from "server/components/lists/searches/translators-interpreters";
+import { LanguageRows } from "server/models/listItem/providers/types";
 
 export async function listsPostController(
   req: Request,
@@ -93,9 +94,7 @@ export async function listsPostController(
     languagesProvided = setLanguagesProvided(newLanguage, languagesProvided as string);
     params.languagesProvided = languagesProvided;
   }
-  // @ts-ignore
   if (params?.continueButton) {
-    // @ts-ignore
     delete params.continueButton;
   }
   const queryString = queryStringFromParams(params);
@@ -122,20 +121,21 @@ export function listsGetController(req: Request, res: Response): void {
 
   const { serviceType } = params;
   let { languagesProvided, servicesProvided } = params;
-
-  let questionsSequence: QuestionName[];
   let partialPageTitle: string = "";
-  let partialPageHintText: string = "";
+  let partialPageHintText: string = ""
   let partialToRender: string = "";
   let error: boolean | QuestionError = false;
-  let partialData: QuestionDataSet[] | QuestionData[];
-  let languagesRows, languageNamesProvided, serviceNamesProvided;
   let backUrl: string = "";
+  let languagesRows: LanguageRows = { rows: [] };
+  let languageNamesProvided: string | undefined = "";
+  let serviceNamesProvided: string[] = [];
+  let questionsSequence: QuestionName[],
+    partialData: QuestionDataSet[] | QuestionData[];
 
   if (languagesProvided) {
     const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
     languagesProvided = cleanedLanguagesProvided;
-    params.languagesProvided = cleanedLanguagesProvided ?? undefined;
+    params.languagesProvided = cleanedLanguagesProvided;
     languagesRows = getLanguagesRows(languagesProvided as string, queryString);
     const paramsCopy = { ...params };
     delete paramsCopy.languagesPopulated;
