@@ -320,10 +320,10 @@ export const questions: Questions = {
     pageTitle(req: Request) {
       const { servicesProvided } = getAllRequestParams(req);
       let title = "Which language(s) do you need translating or interpreting?";
-      if (servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All") ) {
+      if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
         title = "Which language(s) do you need translating?";
 
-      } else if (servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All") ) {
+      } else if (isInterpretingServiceOnlyPopulated(servicesProvided as string[])) {
         title = "Which language(s) do you need interpreting?";
       }
       return title;
@@ -332,10 +332,10 @@ export const questions: Questions = {
       const { servicesProvided } = getAllRequestParams(req);
       const hintTextStart = "Start typing and select a language. All providers can";
       let hintText = `${hintTextStart} translate or interpret into English.`;
-      if (servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All") ) {
+      if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
         hintText = `${hintTextStart} translate into English.`;
 
-      } else if (servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All") ) {
+      } else if (isInterpretingServiceOnlyPopulated(servicesProvided as string[])) {
         hintText = `${hintTextStart} interpret into English.`;
       }
       return hintText;
@@ -507,3 +507,11 @@ export const questions: Questions = {
     },
   },
 };
+
+function isTranslatingServiceOnlyPopulated(servicesProvided: string[]): boolean {
+  return servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All");
+}
+
+function isInterpretingServiceOnlyPopulated(servicesProvided: string[]): boolean {
+  return servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All");
+}
