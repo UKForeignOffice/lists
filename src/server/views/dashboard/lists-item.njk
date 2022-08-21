@@ -2,7 +2,12 @@
 {% import "./macros.njk" as dashboardMacros %}
 
 {% block aside %}
-  <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
+  </div>
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
+  </div>
 {% endblock %}
 
 {% block dashboard %}

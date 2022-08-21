@@ -1218,11 +1218,11 @@ describe("ListItem Model:", () => {
     });
 
     test("contact information is correct when contactEmailAddress and contactPhoneNumber are set", () => {
-      const listItem: any = {
+      const listItem: object = {
         jsonData: {
           contactName: "ABC",
           contactPhoneNumber: "123",
-          publicEmailAddress: "123",
+          emailAddress: "123",
         },
       };
 

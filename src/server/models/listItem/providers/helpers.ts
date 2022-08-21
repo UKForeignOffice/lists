@@ -170,8 +170,9 @@ export async function some(
     });
 
     return result.length > 0;
-  } catch (error) {
-    logger.error(`countryHasAnyListItem Error: ${error.message}`);
+  } catch (error: unknown) {
+    const typedError = error as { message: string };
+    logger.error(`countryHasAnyListItem Error: ${typedError.message}`);
     return false;
   }
 }
@@ -182,9 +183,7 @@ export function getListItemContactInformation(listItem: ListItem): {
   contactPhoneNumber: string;
 } {
   const contactName = get(listItem?.jsonData, "contactName");
-  const contactEmailAddress =
-    get(listItem?.jsonData, "publicEmailAddress") ??
-    get(listItem?.jsonData, "emailAddress");
+  const contactEmailAddress = get(listItem?.jsonData, "emailAddress");
   const contactPhoneNumber =
     get(listItem?.jsonData, "contactPhoneNumber") ??
     get(listItem?.jsonData, "phoneNumber");

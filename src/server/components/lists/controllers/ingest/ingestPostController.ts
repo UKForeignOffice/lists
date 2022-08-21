@@ -3,7 +3,10 @@ import { ServiceType } from "server/models/types";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";
-import { createConfirmationLink, getServiceTypeName } from "server/components/lists/helpers";
+import {
+  createConfirmationLink,
+  getServiceTypeName,
+} from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
@@ -47,7 +50,7 @@ export async function ingestPostController(
     const { country } = address;
     const jsonData = item.jsonData as ListItemJsonData;
     const { contactName } = jsonData;
-    const email = jsonData?.publicEmailAddress ?? jsonData?.emailAddress;
+    const email = jsonData?.emailAddress;
 
     if (email === null) {
       throw new Error("No email address supplied");
@@ -64,8 +67,9 @@ export async function ingestPostController(
     );
 
     res.send({});
-  } catch (e) {
-    logger.error(`listsDataIngestionController Error: ${e.message}`);
+  } catch (error) {
+    const typedError = error as { message: string };
+    logger.error(`listsDataIngestionController Error: ${typedError.message}`);
 
     res.status(422).send({
       error: "Unable to process form",
