@@ -5,7 +5,7 @@ import { countriesList } from "../services/metadata";
 import { isTest } from "../config";
 
 import { ServiceType } from "../models/types";
-import type { CountryName, List } from "../models/types";
+import type { CountryName, List, ListJsonData, Country } from "../models/types";
 
 const DEFAULT_USER_EMAIL = "ali@cautionyourblast.com";
 
@@ -20,30 +20,21 @@ export const errorMessages = {
  *
  * @example npm run add-missing-countries -- --service lawyers
  * @example npm run add-missing-countries -- --service lawyers --emails "ali@cautionyourblast.com, jen@cautionyourblast.com"
+ * @example npm run add-missing-countries -- --service lawyers --emails "funeralDirectors"
+ * @example npm run add-missing-countries -- --service lawyers --emails "funeralDirectors, france"
  */
 async function addMissingCountriesScript(): Promise<void> {
-  let emails: string[] | undefined;
-  const argumentOneIdentifier = process.argv[3];
-  const argumentOneValue = process.argv[4];
-  const argumentTwoIdentifier = process.argv[5];
-  const argumentTwoValue = process.argv[6];
+  const serviceTypeIdentifier = process.argv[3];
+  const serviceType = process.argv[4];
+  const emailsString = process.argv[6];
+  const emails = emailsString.split(",");
 
-  if (argumentOneIdentifier !== "--service") {
+  if (serviceTypeIdentifier !== "--service") {
     logger.error(
       'Service type not correctly provided, try adding "-- --service" to the command'
     );
     process.exit();
   }
-
-  if (argumentTwoIdentifier === "--emails") {
-    const hasMultipleEmails = argumentTwoValue.includes(",");
-
-    emails = hasMultipleEmails
-      ? argumentTwoValue.split(",")
-      : [argumentTwoValue];
-  }
-
-  const serviceType = argumentOneValue;
 
   await addMissingCountriesToService(serviceType, emails);
   process.exit();
@@ -56,6 +47,21 @@ export async function addMissingCountriesToService(
   try {
     if (!checkServiceTypeExists(serviceType)) {
       throw new Error(errorMessages.serviceType);
+    }
+    const userEmails = listCreatedBy ?? [DEFAULT_USER_EMAIL];
+    const serviceNameExistsInEmailsArray =
+      listCreatedBy && checkServiceTypeExists(listCreatedBy[0]);
+
+    let emailFields: ListJsonData = {
+      validators: userEmails,
+      publishers: userEmails,
+      administrators: userEmails,
+    };
+
+    if (serviceNameExistsInEmailsArray) {
+      emailFields = (await getEmailsFromExistingList(
+        listCreatedBy as string[]
+      )) as ListJsonData;
     }
 
     const typedServiceType = serviceType as ServiceType;
@@ -72,14 +78,11 @@ export async function addMissingCountriesToService(
     );
 
     for (const country of missingCountries) {
-      const userEmails = listCreatedBy ?? [DEFAULT_USER_EMAIL];
       const listDataForDB = {
         country,
         serviceType: typedServiceType,
-        validators: userEmails,
-        publishers: userEmails,
-        administrators: userEmails,
-        createdBy: userEmails[0],
+        createdBy: emailFields.publishers[0],
+        ...emailFields,
       };
 
       await createList(listDataForDB);
@@ -95,6 +98,55 @@ function checkServiceTypeExists(serviceType: string): boolean {
   }
 
   return false;
+}
+
+async function getEmailsFromExistingList(
+  listInfo: string[]
+): Promise<ListJsonData | undefined> {
+  try {
+    const listType = listInfo[0];
+    const listCountry = listInfo[1];
+    const searchCountry = listCountry
+      ? {
+          countryId: await getCountryIdFromName(listCountry),
+        }
+      : {};
+    const selectedList = (await prisma.list.findFirst({
+      where: { type: listType, ...searchCountry },
+    })) as List;
+
+    if (!selectedList) {
+      throw new Error(
+        `List could not be found for ${listType} ${
+          listCountry && `with country ${listCountry.trim()}`
+        }`
+      );
+    }
+
+    return selectedList.jsonData;
+  } catch (error: unknown) {
+    logErrorMessage(error, "getEmailsFromExistingList");
+  }
+}
+
+async function getCountryIdFromName(countryFromArg: string): Promise<number> {
+  const countryName = nameFromCountriesList(countryFromArg);
+  const countryDataFromDB = (await prisma.country.findFirst({
+    where: {
+      name: countryName,
+    },
+  })) as Country;
+
+  return countryDataFromDB.id;
+}
+
+function nameFromCountriesList(countryFromArg: string): string {
+  const country = countriesList.find(
+    (country) =>
+      country.text.toLowerCase() === countryFromArg.trim().toLowerCase()
+  ) as Record<string, string>;
+
+  return country.text;
 }
 
 async function getMissingCountries(
