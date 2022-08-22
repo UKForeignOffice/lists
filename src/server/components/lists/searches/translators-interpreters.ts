@@ -29,9 +29,9 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-type ServicesProvided = "translation" | "interpretation" | "all";
+type TranslatorInterpreterServicesProvided = "translation" | "interpretation" | "all";
 
-function makeResultsTitle(country: string | undefined, servicesProvided: string[] | ServicesProvided[]) {
+function makeResultsTitle(country: string | undefined, servicesProvided: string[] | TranslatorInterpreterServicesProvided[]) {
   let servicesString = "translator or interpreter" 
 
   const needsTranslatorOnly = servicesProvided.includes("translation") && !servicesProvided.includes("interpretation");
@@ -60,7 +60,7 @@ export async function searchTranslatorsInterpreters(
   let languageNamesProvided, serviceNamesProvided;
   let servicesProvided = parseListValues("servicesProvided", params);
   if (servicesProvided != null) {
-    servicesProvided = servicesProvided.map((service) => service.toLowerCase()) as ServicesProvided[];
+    servicesProvided = servicesProvided.map((service) => service.toLowerCase()) as TranslatorInterpreterServicesProvided[];
   }
   let translationSpecialties = parseListValues("translationSpecialties", params);
   if (translationSpecialties != null) {
