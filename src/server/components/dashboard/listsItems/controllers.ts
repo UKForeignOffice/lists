@@ -69,6 +69,7 @@ const serviceTypeDetailsHeading: Record<ServiceType, string> = {
   covidTestProviders: "Covid test provider",
   funeralDirectors: "Funeral director",
   lawyers: "Lawyer",
+  translatorsInterpreters: "Translator or interpreter",
 };
 
 export async function listItemGetController(

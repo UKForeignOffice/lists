@@ -1,0 +1,67 @@
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'translation-specialties' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="translation-specialties-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="translationSpecialties">
+          {{ partialPageTitle }}
+        </label>
+      </h1>
+      <div id="translation-specialties-hint" class="govuk-hint">
+        You can choose as many options from the list as you need.
+      </div>
+      {% if error.field === 'translation-specialties' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <div class="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="translation-specialties-select-all"
+            name="translationSpecialties"
+            type="checkbox"
+            value="All"
+            {{ 'checked' if error.checkboxValues and "All" in error.checkboxValues }}
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="translation-specialties-select-all"
+          >
+            Select all
+          </label>
+        </div>
+        {% for service in partialData %}
+          <div class="govuk-checkboxes__item">
+            <input
+              class="govuk-checkboxes__input"
+              id="translation-specialties-{{service.value.toLowerCase()}}"
+              name="translationSpecialties"
+              type="checkbox"
+              value="{{ service.value }}"
+              {{ 'checked' if error.checkboxValues and service.value in error.checkboxValues }}
+            />
+            <label
+              class="govuk-label govuk-checkboxes__label"
+              for="translation-specialties-{{ service.value.toLowerCase() }}"
+            >
+              {{ service.text }}
+            </label>
+            <div id="translator-services-{{service.value.toLowerCase()}}-hint" class="govuk-hint govuk-checkboxes__hint">
+              {{ service.description }}
+            </div>
+          </div>
+        {% endfor %}
+        <input
+          aria-hidden="true"
+          class="govuk-radios__input"
+          name="translationSpecialties"
+          type="hidden"
+          value=""
+        />
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

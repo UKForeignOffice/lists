@@ -102,7 +102,7 @@ jobs:
             CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           name: Run smoke tests
           command: npm run smoke-tests
-            - 
+            -
 
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
@@ -290,7 +290,7 @@ jobs:
           namespace: << parameters.namespace >>
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
-          
+
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
@@ -356,7 +356,7 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - deploy-test
+#                - deploy-test
                 - deploy-db
           context:
             - VPN
@@ -371,7 +371,7 @@ workflows:
           requires:
             - publish-lists
             - publish-lists-apply
-            - publish-lists-postgres
+#            - publish-lists-postgres
           filters:
             branches:
               only:

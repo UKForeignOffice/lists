@@ -11,11 +11,13 @@ import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
-import { UpdatableAddressFields } from "server/models/listItem/providers/types";
+import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
 import {
   DeserialisedWebhookData,
   ListItemJsonData,
 } from "server/models/listItem/providers/deserialisers/types";
+import { languages } from "server/services/metadata";
+import { listsRoutes } from "server/components/lists";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -221,4 +223,59 @@ export function getChangedAddressFields(
       ...(valueHasChanged && { [key]: webhookValue }),
     };
   }, {});
+}
+
+export function setLanguagesProvided(newLanguage: string, languagesProvided: string): string {
+  return languagesProvided === "" ? `${newLanguage}` : languagesProvided.concat(`,${newLanguage}`);
+}
+
+export function cleanLanguagesProvided(languagesProvided: string): string | undefined {
+
+  if (!languagesProvided) {
+    return undefined;
+  }
+  languagesProvided = languagesProvided?.split(",").filter((language: string) => {
+    // @ts-ignore
+    const languageName: string = languages[language];
+    return languageName;
+  }).join(",");
+  return languagesProvided;
+}
+
+export function getLanguagesRows(languagesProvided: string, queryString: string): LanguageRows {
+
+  if (!languagesProvided) {
+    const languageRows: LanguageRows = { rows: [] };
+    return languageRows;
+  }
+  const languagesJson: LanguageRow[] = languagesProvided?.split(",").map((language: string) => {
+    // @ts-ignore
+    const languageName: string = languages[language];
+    logger.info(`language name: ${languageName}`);
+    const removeLanguageUrl = listsRoutes.removeLanguage.replace(":language", language);
+
+    const languageRow: LanguageRow = {
+      key: {
+        text: language,
+        classes: "govuk-summary-list__row--hidden-titles",
+      },
+      value: {
+        text: languageName,
+        classes: "govuk-summary-list__key--hidden-titles",
+      },
+      actions: {
+        items: [{
+          href: `${removeLanguageUrl}?${queryString}`,
+          text: "Remove",
+          visuallyHiddenText: language
+        }]
+      }
+    };
+    return languageRow;
+  });
+
+  const languageRows: LanguageRows = {
+    rows: languagesJson
+  }  || { rows: [] };
+  return languageRows;
 }

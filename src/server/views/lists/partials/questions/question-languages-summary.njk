@@ -1,0 +1,33 @@
+{% from "summary-list/macro.njk" import govukSummaryList %}
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <input type="hidden" name="languagesProvided" value="{{ languagesProvided }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'languages-provided' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="language-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="languages-provided">
+          {{ partialPageTitle }}
+        </label>
+      </h1>
+      {% if error.field === 'languages-confirmed' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+
+      {% if languagesRows %}
+        {{ govukSummaryList(languagesRows) }}
+      {% endif %}
+      <button class="govuk-button" data-module="govuk-button" name="languagesConfirmed" value="true">Continue</button>
+      &nbsp;
+      <a href="{{ backUrl }}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add another</a>
+    </fieldset>
+  </div>
+</form>
+<script nonce="{{cspNonce}}">
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#new-language-autocomplete'),
+    autoselect: true
+  })
+</script>

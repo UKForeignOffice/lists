@@ -26,3 +26,25 @@ export enum EVENTS {
 export type UpdatableAddressFields = Partial<
   Pick<Address, "firstLine" | "secondLine" | "city" | "postCode">
 >;
+
+export interface LanguageRow {
+  key: {
+    text: string,
+    classes: string,
+  },
+  value: {
+    text: string,
+    classes: string,
+  },
+  actions: {
+    items: [{
+      href: string,
+      text: string,
+      visuallyHiddenText: string
+    }]
+  }
+};
+
+export interface LanguageRows {
+  rows: LanguageRow[],
+}

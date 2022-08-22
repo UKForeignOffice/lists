@@ -3,13 +3,15 @@ import path from "path";
 import fs from "fs";
 import {
   LawyerListItemGetObject,
+  FuneralDirectorListItemGetObject,
+  TranslatorInterpreterListItemGetObject,
   List,
   BaseListItemGetObject,
   ServiceType,
-  FuneralDirectorListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
+import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
 
 export function getNewSessionWebhookData(
@@ -61,6 +63,12 @@ export async function generateFormRunnerWebhookData(
         isUnderTest
       );
       break;
+    case ServiceType.translatorsInterpreters:
+      questions = await translatorsInterpreters.generateFormRunnerWebhookData(
+        listItem as TranslatorInterpreterListItemGetObject,
+        isUnderTest
+      );
+      break;
     default:
       questions = undefined;
   }
@@ -72,6 +80,7 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
+
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from

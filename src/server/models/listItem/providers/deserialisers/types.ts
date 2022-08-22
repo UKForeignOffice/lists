@@ -32,6 +32,10 @@ export interface WebhookDeserialisers {
     CovidTestSupplierFormWebhookData,
     CovidTestSupplierJsonData
   >;
+  [ServiceType.translatorsInterpreters]: WebhookDeserialiser<
+    TranslatorInterpreterFormWebhookData,
+    TranslatorInterpreterJsonData
+  >;
 }
 
 export interface BaseDeserialisedWebhookData {
@@ -99,7 +103,7 @@ export interface CovidTestSupplierFormWebhookData
 }
 
 export interface FuneralDirectorFormWebhookData extends BaseDeserialisedWebhookData {
-  type: ServiceType.funeralDirectors;
+  type: ServiceType.translatorsInterpreters;
 
   regions: string;
   addressCountry: string;
@@ -111,10 +115,25 @@ export interface FuneralDirectorFormWebhookData extends BaseDeserialisedWebhookD
   languagesSpoken: string;
 }
 
+export interface TranslatorInterpreterFormWebhookData extends BaseDeserialisedWebhookData {
+  type: ServiceType.translatorsInterpreters;
+
+  regions: string;
+  deliveryOfServices: string[];
+  servicesProvided: string[];
+  translationSpecialties: string[];
+  interpreterServices: string[];
+  languagesProvided: string[];
+  representedBritishNationals: boolean;
+  addressDisplay: string;
+  memberOfProfessionalAssociations: boolean;
+}
+
 export type DeserialisedWebhookData =
   | LawyersFormWebhookData
   | CovidTestSupplierFormWebhookData
-  | FuneralDirectorFormWebhookData;
+  | FuneralDirectorFormWebhookData
+  | TranslatorInterpreterFormWebhookData;
 
 /**
  * Describes the {@link DESERIALISER} const. Since it is a Record type,
@@ -172,6 +191,8 @@ export type FuneralDirectorJsonData = FuneralDirectorFormWebhookData;
 
 export type LawyerJsonData = LawyersFormWebhookData;
 
+export type TranslatorInterpreterJsonData = TranslatorInterpreterFormWebhookData;
+
 /**
  * when serviceTypeJsonData does not match serviceTypeWebhookData, you must ensure that:
  * - your deserialiser (turns formRunner data to listItem.jsonData, i.e. at ingestion points) correctly returns a value that matches serviceTypeJsonData
@@ -181,7 +202,7 @@ export type LawyerJsonData = LawyersFormWebhookData;
  * It will mean that your code can not be handled in a "generic" way, and you will have to write a deserialiser and serialiser.
  * The deserialised and serialised types should match as closely as possible.
  */
-export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData | FuneralDirectorJsonData;
+export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData | FuneralDirectorJsonData | TranslatorInterpreterJsonData;
 
 /**
  * converts {@link DeserialisedWebhookData} to {@link Questions[]}

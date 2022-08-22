@@ -10,7 +10,8 @@ import { CountryName, ServiceType } from "server/models/types";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
-  listOfCountriesWithLegalAid,
+  fcdoTranslatorsInterpretersByCountry,
+  listOfCountriesWithLegalAid
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
@@ -32,19 +33,34 @@ export async function initLists(server: Express): Promise<void> {
  *   - detects the presence of the _csrf property and deletes it.
  * @param params
  */
-export function preProcessParams(params: { [name: string]: any }): {
+export function preProcessParams(params: { [name: string]: any }, req: Request): {
   [name: string]: any;
 } {
   const { _csrf, ...paramsCopy } = params;
-  const hasSelectedAll: boolean =
-    paramsCopy?.practiceArea?.includes("All") ?? false;
+
+  // select all
+  const hasSelectedAll: boolean = paramsCopy?.practiceArea?.includes("All") ?? false;
+
+  // region validation
   const noRegionSelected = paramsCopy?.region === "";
+
+  // country validation
   let { country } = paramsCopy || "";
   if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
     delete paramsCopy.country;
     country = null;
   } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
     country = "United Kingdom";
+  }
+
+  // translation services validation
+  if (paramsCopy.servicesProvided) {
+    if (!paramsCopy.servicesProvided.includes("translation")) {
+      delete paramsCopy.translationSpecialties;
+    }
+    if (!paramsCopy.servicesProvided.includes("interpretation")) {
+      delete paramsCopy.interpreterServices;
+    }
   }
 
   return {
@@ -109,6 +125,8 @@ export function getServiceLabel(
       return "a COVID-19 test provider";
     case ServiceType.funeralDirectors:
       return "a funeral director";
+    case ServiceType.translatorsInterpreters:
+      return "a translator or interpreter";
     default:
       return undefined;
   }
@@ -171,6 +189,20 @@ export const getCountryFuneralDirectorsRedirectLink = (() => {
       pagesByCountry,
       lowerCase(countryName),
       "https://www.gov.uk/government/collections/funeral-directors-worldwide-list"
+    );
+  };
+})();
+
+export const getCountryTranslatorsInterpretersRedirectLink = (() => {
+  const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) =>
+    lowerCase(key)
+  );
+
+  return (countryName: CountryName): string => {
+    return get(
+      pagesByCountry,
+      lowerCase(countryName),
+      "https://www.gov.uk/government/collections/lists-of-translators-and-interpreters"
     );
   };
 })();

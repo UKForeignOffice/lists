@@ -1,0 +1,39 @@
+<h1 class="govuk-heading-l">
+  Find a translator or interpreter {{ "in " + _.startCase(country) if country else "abroad"}}
+</h1>
+<p class="govuk-body">
+  The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking translators and interpreters abroad to
+  help British nationals find the support they need.
+</p>
+<p class="govuk-body">You can search for translators and interpreters by country or a more specific location.</p>
+<p class="govuk-body">All translators and interpreters on the lists have confirmed they can:</p>
+
+<ul class="govuk-list govuk-list--bullet">
+  <li>translate and/or interpret to and from English</li>
+  <li>are qualified in their country to practice translation or interpretation</li>
+</ul>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    You should always do your own research and carry out your own checks into a provider before using them.
+  </strong>
+</div>
+<form class="form" action="{{ nextRoute }}" method="post">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <input name="readNotice" type="hidden" value="ok" />
+  <button class="govuk-button" data-module="govuk-button">Start</button>
+</form>
+<h2 class="govuk-heading-m">Disclaimer</h2>
+{% include 'includes/disclaimer.njk' %}
+<h2 class="govuk-heading-m" id="feedback-heading">Feedback on service providers</h2>
+<p class="govuk-body">
+  If you have feedback on any translators or interpreters, contact the <a class="govuk-link" href="https://www.gov.uk/world/embassies" class="govuk-link" target="_blank">British embassy or consulate</a> in
+  the relevant country. Providers will be removed from the list where appropriate.
+</p>
+<h2 class="govuk-heading-m">Feedback on this service</h2>
+<p class="govuk-body">
+  If you have feedback specifically about this digital service, the FCDO welcomes your views. Email:
+  <a class="govuk-link" href="mailto:digitalservicesfeedback@fco.gov.uk" class="govuk-link" target="_blank">digitalservicesfeedback@fco.gov.uk</a>
+</p>

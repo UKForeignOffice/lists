@@ -152,7 +152,7 @@
           "schema": {}
         },
         {
-          "name": "VMYTyb",
+          "name": "addressDisplay",
           "options": {},
           "type": "RadiosField",
           "title": "How detailed do you want your address to appear on GOV.UK? ",
@@ -332,7 +332,7 @@
           "name": "regulators",
           "options": {
             "hideTitle": true,
-            "required": false
+            "required": true
           },
           "type": "TextField",
           "hint": "List any relevant independent national or international associations, unions or regulatory bodies. Provide the full title instead of an acronym.",
@@ -401,7 +401,7 @@
         },
         {
           "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
-          "condition": "isFDCountryPilot"
+          "condition": "isTranslatorCountryPilot"
         }
       ]
     },
@@ -462,7 +462,7 @@
       "title": "What services do you provide?",
       "components": [
         {
-          "name": "ServicesProvided",
+          "name": "servicesProvided",
           "options": {
             "hideTitle": true
           },
@@ -483,8 +483,7 @@
           "condition": "DHbDHZ"
         },
         {
-          "path": "/what-specialities-do-you-provide-translation-and-interpretation-in",
-          "condition": ""
+          "path": "/what-specialities-do-you-provide-translation-and-interpretation-in"
         }
       ]
     },
@@ -494,7 +493,7 @@
       "controller": "RepeatingFieldPageController",
       "options": {
         "summaryDisplayMode": {
-          "samePage":true,
+          "samePage": true,
           "separatePage": true,
           "hideRowTitles": true
         },
@@ -511,7 +510,7 @@
           "list": "languages",
           "type": "AutocompleteField",
           "title": "Language",
-          "hint": "Start typing and select a language. Select Continue to add another language. Include all the languages you speak, apart from English",
+          "hint": "Start typing and select a language. Add each language separately. Include all the languages you provide a service in, apart from English.",
           "schema": {},
           "values": {
             "type": "listRef"
@@ -529,7 +528,7 @@
       "title": "What specialities do you provide interpretation in?",
       "components": [
         {
-          "name": "interpretationSpecialties",
+          "name": "interpreterServices",
           "type": "CheckboxesField",
           "title": "Interpretation specialities",
           "list": "dFCIlb",
@@ -556,7 +555,7 @@
       "title": "How do you carry out your services?",
       "components": [
         {
-          "name": "NGZapp",
+          "name": "deliveryOfServices",
           "options": {
             "hideTitle": true
           },
@@ -569,11 +568,11 @@
       ],
       "next": [
         {
-          "path": "/which-areas-of-the-country-do-you-serve"
-        },
-        {
           "path": "/which-languages-do-you-translate-or-interpret",
           "condition": "vFsuBS"
+        },
+        {
+          "path": "/which-areas-of-the-country-do-you-serve"
         }
       ]
     },
@@ -582,16 +581,16 @@
       "title": "What specialities do you provide translation and interpretation in?",
       "components": [
         {
-          "name": "kISRMN",
+          "name": "translationSpecialties",
           "options": {},
           "type": "CheckboxesField",
           "list": "fyWHQS",
-          "title": "Translation services ",
+          "title": "Translation services",
           "hint": "Select all specialities for which you provide translation of written content. \n",
           "schema": {}
         },
         {
-          "name": "cucdTa",
+          "name": "interpreterServices",
           "options": {},
           "type": "CheckboxesField",
           "list": "dFCIlb",
@@ -611,7 +610,7 @@
       "title": "What size is your company or firm?",
       "components": [
         {
-          "name": "ywkAwx",
+          "name": "size",
           "options": {},
           "type": "RadiosField",
           "list": "XWRfuo",
@@ -634,7 +633,7 @@
       "title": "Are you a member of any professional associations?",
       "components": [
         {
-          "name": "YtjaKN",
+          "name": "memberOfProfessionalAssociations",
           "options": {},
           "type": "YesNoField",
           "hint": "This includes any associations, unions or regulatory bodies that you think are relevant to your work. You will be asked to provide more details which will be published on GOV.UK. ",
@@ -2614,7 +2613,7 @@
       ]
     },
     {
-      "title": "NewInterpretationSpecialities",
+      "title": "NewinterpreterServices",
       "name": "dFCIlb",
       "type": "string",
       "items": [
@@ -2661,7 +2660,7 @@
       "type": "string",
       "items": [
         {
-          "text": "In person ",
+          "text": "In person",
           "value": "inPerson"
         },
         {
@@ -2681,7 +2680,7 @@
         },
         {
           "text": "Small firm (up to 15 professionals)",
-          "value": "Small firm "
+          "value": "Small firm"
         },
         {
           "text": "Medium firm (16-349 professionals)",
@@ -2700,11 +2699,11 @@
       "items": [
         {
           "text": "Publish my full addresss on GOV.UK",
-          "value": "Yes, I am happy for this address to be published on GOV.UK"
+          "value": "full"
         },
         {
           "text": "Only publish my town or city on GOV.UK",
-          "value": "No, do not publish on GOV.UK"
+          "value": "partial"
         }
       ]
     }
@@ -2750,10 +2749,10 @@
       }
     },
     {
-      "name": "isFDCountryPilot",
-      "displayName": "Country pilots FD",
+      "name": "isTranslatorCountryPilot",
+      "displayName": "Country pilots Translators Interpreters",
       "value": {
-        "name": "isFDCountryPilot",
+        "name": "isTranslatorCountryPilot",
         "conditions": [
           {
             "field": {
@@ -2764,8 +2763,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "India",
-              "display": "India"
+              "value": "Poland",
+              "display": "Poland"
             }
           },
           {
@@ -2778,8 +2777,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Croatia",
-              "display": "Croatia"
+              "value": "Indonesia",
+              "display": "Indonesia"
             }
           },
           {
@@ -2792,8 +2791,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Nigeria",
-              "display": "Nigeria"
+              "value": "Egypt",
+              "display": "Egypt"
             }
           },
           {
@@ -2806,8 +2805,8 @@
             "operator": "is",
             "value": {
               "type": "Value",
-              "value": "Colombia",
-              "display": "Colombia"
+              "value": "Argentina",
+              "display": "Argentina"
             }
           }
         ]
@@ -2836,86 +2835,6 @@
       }
     },
     {
-      "displayName": "needsTranslation",
-      "name": "needsTranslation",
-      "value": {
-        "name": "ServicesProvided",
-        "conditions": [
-          {
-            "field": {
-              "name": "ServicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Translation",
-              "display": "Translation"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "Needs both",
-      "name": "SxvEdt",
-      "value": {
-        "name": "Needs both",
-        "conditions": [
-          {
-            "field": {
-              "name": "ServicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Translation",
-              "display": "Translation"
-            }
-          },
-          {
-            "coordinator": "and",
-            "field": {
-              "name": "ServicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Interpretation",
-              "display": "Interpretation"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "displayName": "needsInterpretation",
-      "name": "utgajj",
-      "value": {
-        "name": "needsInterpretation",
-        "conditions": [
-          {
-            "field": {
-              "name": "ServicesProvided",
-              "type": "CheckboxesField",
-              "display": "What services do you provide?"
-            },
-            "operator": "contains",
-            "value": {
-              "type": "Value",
-              "value": "Interpretation",
-              "display": "Interpretation"
-            }
-          }
-        ]
-      }
-    },
-    {
       "displayName": "needsTranslationOnly",
       "name": "tkpRoc",
       "value": {
@@ -2923,7 +2842,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2937,7 +2856,7 @@
           {
             "coordinator": "and",
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2959,7 +2878,7 @@
         "conditions": [
           {
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2973,7 +2892,7 @@
           {
             "coordinator": "and",
             "field": {
-              "name": "ServicesProvided",
+              "name": "servicesProvided",
               "type": "CheckboxesField",
               "display": "What services do you provide?"
             },
@@ -2995,7 +2914,7 @@
         "conditions": [
           {
             "field": {
-              "name": "NGZapp",
+              "name": "deliveryOfServices",
               "type": "CheckboxesField",
               "display": "Where services can be carried out"
             },
@@ -3003,13 +2922,13 @@
             "value": {
               "type": "Value",
               "value": "remote",
-              "display": "remote"
+              "display": "Remote (online)"
             }
           },
           {
             "coordinator": "and",
             "field": {
-              "name": "NGZapp",
+              "name": "deliveryOfServices",
               "type": "CheckboxesField",
               "display": "Where services can be carried out"
             },
@@ -3017,7 +2936,7 @@
             "value": {
               "type": "Value",
               "value": "inPerson",
-              "display": "inPerson"
+              "display": "In person"
             }
           }
         ]
@@ -3031,7 +2950,7 @@
         "conditions": [
           {
             "field": {
-              "name": "YtjaKN",
+              "name": "memberOfProfessionalAssociations",
               "type": "YesNoField",
               "display": "Associations YesNo"
             },

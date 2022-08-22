@@ -74,6 +74,37 @@
       <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'insurance') }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
+  {% if serviceNamesProvided %}
+    <p class="govuk-body">
+      Services needed<br />
+      <strong>{{ _.split(serviceNamesProvided, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'servicesProvided') }}" aria-label="Change what services do you need answer">Change</a>{% endif %}
+    </p>
+  {% endif %}
+  {% if languageNamesProvided %}
+    <p class="govuk-body">
+      Languages needed<br />
+      <strong>{{ languageNamesProvided }}</strong>{% if print !== "yes" %}
+      {% set trimmedQueryString = removeQueryParameter(queryString, 'languageNamesProvided') %}
+      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesPopulated') %}
+      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesConfirmed') %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ trimmedQueryString }}" aria-label="Change has insurance answer">Change</a>{% endif %}
+    </p>
+  {% endif %}
+  {% if translationSpecialties %}
+    <p class="govuk-body">
+      Translation types<br />
+      <strong>{{ _.split(translationSpecialties, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'translationSpecialties') }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
+    </p>
+  {% endif %}
+  {% if interpreterServices %}
+    <p class="govuk-body">
+      Interpretation types<br />
+      <strong>{{ _.split(interpreterServices, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'interpreterServices') }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
+    </p>
+  {% endif %}
   {% if print !== "yes" and country %}
     <p class="govuk-body noprint">
         <a

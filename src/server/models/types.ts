@@ -3,7 +3,9 @@ import { countriesList } from "server/services/metadata";
 import {
   ListItemJsonData,
   LawyerJsonData,
-  CovidTestSupplierJsonData, FuneralDirectorJsonData,
+  CovidTestSupplierJsonData,
+  FuneralDirectorJsonData,
+  TranslatorInterpreterJsonData
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
 
@@ -11,6 +13,7 @@ export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
   "lawyers" = "lawyers",
   "funeralDirectors" = "funeralDirectors",
+  "translatorsInterpreters" = "translatorsInterpreters",
 }
 
 export type JsonObject = PrismaClient.Prisma.JsonObject;
@@ -94,6 +97,11 @@ export interface CovidTestSupplierListItemCreateInput
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
+export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetObject {
+  type: ServiceType.translatorsInterpreters;
+  jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
+}
+
 export interface CovidTestSupplierListItemGetObject
   extends BaseListItemGetObject {
   type: ServiceType.covidTestProviders;
@@ -103,7 +111,8 @@ export interface CovidTestSupplierListItemGetObject
 export type ListItemGetObject =
   | CovidTestSupplierListItemGetObject
   | LawyerListItemGetObject
-  | FuneralDirectorListItemGetObject;
+  | FuneralDirectorListItemGetObject
+  | TranslatorInterpreterListItemGetObject;
 
 export type LegalAreas =
   | "bankruptcy"

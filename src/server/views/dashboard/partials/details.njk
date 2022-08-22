@@ -18,14 +18,14 @@
     <input type="hidden" name="action" value="unpin" form="pinForm"/>
 
     <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
-      {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
+      {{ _.startCase(_.toLower(details.headerField)) }}
       <input type="image" src="/assets/images/unpin.png" width="24px" height="24px" form="pinForm"/>
     </h2>
   {% else %}
     <input type="hidden" name="action" value="pin" form="pinForm"/>
 
     <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
-      {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}
+      {{ _.startCase(_.toLower(details.headerField)) }}
       <input type="image" src="/assets/images/pin.png" width="24px" height="24px" form="pinForm"/>
     </h2>
 

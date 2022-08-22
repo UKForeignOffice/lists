@@ -1,0 +1,48 @@
+<form class="form" action="{{ nextRoute }}" method="post" required>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'services-provided' }}">
+    <fieldset class="govuk-fieldset" aria-describedby="services-provided-hint">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="servicesProvided">
+          {{ partialPageTitle }}
+        </label>
+      </h1>
+      <div id="services-provided-hint" class="govuk-hint">
+        Select all the services that you provide
+      </div>
+      {% if error.field === 'services-provided' %}
+        <span class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+        </span>
+      {% endif %}
+      <div class="govuk-checkboxes">
+        {% for service in partialData %}
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="services-provided-{{service.value.toLowerCase()}}"
+            name="servicesProvided"
+            type="checkbox"
+            value="{{ service.value }}"
+            {{ 'checked' if error.checkboxValues and service.value in error.checkboxValues }}
+          />
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="services-provided-{{ service.value.toLowerCase() }}"
+          >
+            {{ service.text }}
+          </label>
+        </div>
+        {% endfor %}
+        <input
+          aria-hidden="true"
+          class="govuk-radios__input"
+          name="servicesProvided"
+          type="hidden"
+          value=""
+        />
+      </div>
+    </fieldset>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>

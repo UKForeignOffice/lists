@@ -9,6 +9,8 @@ const serviceName = (name: string): string => {
       return "lawyers";
     case ServiceType.funeralDirectors:
       return "funeral directors";
+    case ServiceType.translatorsInterpreters:
+      return "translators or interpreters";
     default:
       throw new Error("Service name not found");
   }
