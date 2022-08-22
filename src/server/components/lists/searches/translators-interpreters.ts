@@ -37,8 +37,9 @@ const serviceTypeToNoun: {[key: string]: string} = {
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
   const sanitisedServicesProvidedQuery = servicesProvided.map(service => serviceTypeToNoun[service]).filter(Boolean)
-
-  return `Find a ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`
+  const interpretationOnly = sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) && sanitisedServicesProvidedQuery.length === 1;
+  const article = interpretationOnly ? "an" : "a";
+  return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`
 }
 
 
