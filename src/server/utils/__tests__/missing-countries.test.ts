@@ -9,7 +9,7 @@ import type { List, Country } from "../../models/types";
 const { addMissingCountriesToService } = missingCountries;
 const testServiceType = "lawyers";
 const testServiceTypeEnum = ServiceType[testServiceType];
-const fakeDataTestEmail = "test@createFake.com";
+const fakeDataTestEmail = "test@createfake.com";
 
 let stubCreateListDBMethod;
 
@@ -107,13 +107,14 @@ describe.only("addMissingCountriesToService()", () => {
   it("gets emails from existing list if service name passed in as email argument", async () => {
     // when
     mockFindFirstFromListTable();
+    mockFindManyFromListTable(true);
 
     const testCreatedBy = ["lawyers"];
     const emailsFromFakeDataCreation = {
-      validators: fakeDataTestEmail,
-      publishers: fakeDataTestEmail,
-      administrators: fakeDataTestEmail,
-      createdBy: fakeDataTestEmail[0],
+      validators: [fakeDataTestEmail],
+      publishers: [fakeDataTestEmail],
+      administrators: [fakeDataTestEmail],
+      createdBy: fakeDataTestEmail,
     };
     const exectedFirstArg = {
       type: testServiceType,
@@ -142,13 +143,14 @@ describe.only("addMissingCountriesToService()", () => {
     // when
     mockFindFirstFromListTable();
     mockFindFirstFromCountryTable();
+    mockFindManyFromListTable(true);
 
     const testCreatedBy = ["lawyers", "afghanistan"];
     const emailsFromFakeDataCreation = {
-      validators: fakeDataTestEmail,
-      publishers: fakeDataTestEmail,
-      administrators: fakeDataTestEmail,
-      createdBy: fakeDataTestEmail[0],
+      validators: [fakeDataTestEmail],
+      publishers: [fakeDataTestEmail],
+      administrators: [fakeDataTestEmail],
+      createdBy: fakeDataTestEmail,
     };
     const exectedFirstArg = {
       type: testServiceType,
@@ -173,9 +175,9 @@ describe.only("addMissingCountriesToService()", () => {
     });
   });
 
-  it("throws an error if list to copy emails from could not be found", async () => {
+  it.only("throws an error if list to copy emails from could not be found", async () => {
     // when
-    mockFindFirstFromListTable();
+    mockFindManyFromListTable(true);
 
     const testCreatedBy = ["funeralDirectors"];
     const fn = async () =>
@@ -249,7 +251,7 @@ function mockFindManyFromListTable(removeSomeCountries: boolean = false) {
   );
 }
 
-function mockFindFirstFromListTable() {
+function mockFindFirstFromListTable(returnNull: boolean = false) {
   prisma.list.findFirst.mockResolvedValue(
     createFakeListData({
       serviceType: testServiceTypeEnum,
