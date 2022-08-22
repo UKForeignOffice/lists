@@ -568,11 +568,11 @@
       ],
       "next": [
         {
-          "path": "/which-areas-of-the-country-do-you-serve"
-        },
-        {
           "path": "/which-languages-do-you-translate-or-interpret",
           "condition": "vFsuBS"
+        },
+        {
+          "path": "/which-areas-of-the-country-do-you-serve"
         }
       ]
     },
@@ -2661,11 +2661,11 @@
       "items": [
         {
           "text": "In person",
-          "value": "In person"
+          "value": "inPerson"
         },
         {
           "text": "Remote (online)",
-          "value": "Remote"
+          "value": "remote"
         }
       ]
     },
