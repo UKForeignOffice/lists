@@ -27,7 +27,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe.only("addMissingCountriesToService", () => {
+describe.only("addMissingCountriesToService()", () => {
   it("throws error if an incorrect service type is entered", async () => {
     // when
     const incorrectValues = ["lawyer", "funeral-director", "something"];
@@ -107,7 +107,6 @@ describe.only("addMissingCountriesToService", () => {
   it("gets emails from existing list if service name passed in as email argument", async () => {
     // when
     mockFindFirstFromListTable();
-    mockFindManyFromListTable();
 
     const testCreatedBy = ["lawyers"];
     const emailsFromFakeDataCreation = {
@@ -142,7 +141,6 @@ describe.only("addMissingCountriesToService", () => {
   it("gets emails from existing list of specific country if service type and country added as email argument", async () => {
     // when
     mockFindFirstFromListTable();
-    mockFindManyFromListTable();
     mockFindFirstFromCountryTable();
 
     const testCreatedBy = ["lawyers", "afghanistan"];
