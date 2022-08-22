@@ -11,7 +11,7 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
-import { languages, translationInterpretationServices } from "server/services/metadata";
+import { languages, ServicesProvided, translationInterpretationServices } from "server/services/metadata";
 import { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { cleanLanguagesProvided } from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
@@ -29,6 +29,28 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
+type ServicesProvided = "translation" | "interpretation" | "all";
+
+function makeResultsTitle(country: string | undefined, servicesProvided: string[] | ServicesProvided[]) {
+  let servicesString = "translator or interpreter" 
+
+  const needsTranslatorOnly = servicesProvided.includes("translation") && !servicesProvided.includes("interpretation");
+  const needsInterpreterOnly = servicesProvided.includes("interpretation") && !servicesProvided.includes("translation");
+
+  if(needsTranslatorOnly) {
+    servicesString = "translator"
+  }
+
+  if(needsInterpreterOnly) {
+    servicesString = "interpretater"
+  }
+
+  const countryString = country ? `in ${country}` : "abroad";
+
+  return `Find a ${servicesString} ${countryString}`
+}
+
+
 export async function searchTranslatorsInterpreters(
   req: Request,
   res: Response
@@ -38,7 +60,7 @@ export async function searchTranslatorsInterpreters(
   let languageNamesProvided, serviceNamesProvided;
   let servicesProvided = parseListValues("servicesProvided", params);
   if (servicesProvided != null) {
-    servicesProvided = servicesProvided.map((service) => service.toLowerCase());
+    servicesProvided = servicesProvided.map((service) => service.toLowerCase()) as ServicesProvided[];
   }
   let translationSpecialties = parseListValues("translationSpecialties", params);
   if (translationSpecialties != null) {
@@ -117,6 +139,7 @@ export async function searchTranslatorsInterpreters(
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
+    resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
     removeQueryParameter,
     getParameterValue,

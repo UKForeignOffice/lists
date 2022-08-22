@@ -74,7 +74,7 @@
       <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'insurance') }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if serviceNamesProvided %}
+  {% if serviceNamesProvided and serviceNamesProvided.length %}
     <p class="govuk-body">
       Services needed<br />
       <strong>{{ _.split(serviceNamesProvided, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
