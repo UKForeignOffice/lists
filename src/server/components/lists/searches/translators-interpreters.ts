@@ -11,7 +11,7 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
-import { languages, ServicesProvided, translationInterpretationServices } from "server/services/metadata";
+import { languages, translationInterpretationServices } from "server/services/metadata";
 import { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { cleanLanguagesProvided } from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
@@ -31,7 +31,7 @@ export const translatorsInterpretersQuestionsSequence = [
 
 type TranslatorInterpreterServicesProvided = "translation" | "interpretation" | "all";
 
-function makeResultsTitle(country: string | undefined, servicesProvided: string[] | TranslatorInterpreterServicesProvided[]) {
+function makeResultsTitle(country: string | undefined, servicesProvided: string[] | TranslatorInterpreterServicesProvided[]): string {
   let servicesString = "translator or interpreter" 
 
   const needsTranslatorOnly = servicesProvided.includes("translation") && !servicesProvided.includes("interpretation");
@@ -45,9 +45,7 @@ function makeResultsTitle(country: string | undefined, servicesProvided: string[
     servicesString = "interpretater"
   }
 
-  const countryString = country ? `in ${country}` : "abroad";
-
-  return `Find a ${servicesString} ${countryString}`
+  return `Find a ${servicesString} in ${country}`
 }
 
 
