@@ -12,6 +12,10 @@ const DEFAULT_USER_EMAIL = "ali@cautionyourblast.com";
 export const errorMessages = {
   serviceType: "Incorrect service type entered",
   newCountries: "No new countries are needed for this service type",
+  missingList: (listType: string, listCountry?: string) =>
+    `List could not be found for ${listType} ${
+      listCountry && `with country ${listCountry.trim()}`
+    }`,
 } as const;
 
 /**
@@ -116,11 +120,7 @@ async function getEmailsFromExistingList(
     })) as List;
 
     if (!selectedList) {
-      throw new Error(
-        `List could not be found for ${listType} ${
-          listCountry && `with country ${listCountry.trim()}`
-        }`
-      );
+      throw new Error(errorMessages.missingList(listType, listCountry));
     }
 
     return selectedList.jsonData;

@@ -4,15 +4,30 @@ import { ServiceType } from "../../models/types";
 import { prisma } from "../../models/db/__mocks__/prisma-client";
 import * as validation from "../../utils/validation";
 
-import type { List } from "../../models/types";
+import type { List, Country } from "../../models/types";
 
 const { addMissingCountriesToService } = missingCountries;
 const testServiceType = "lawyers";
 const testServiceTypeEnum = ServiceType[testServiceType];
+const fakeDataTestEmail = "test@createFake.com";
+
+let stubCreateListDBMethod;
 
 jest.mock("../../models/db/prisma-client");
 
-describe("addMissingCountriesToService", () => {
+beforeEach(() => {
+  preventGOVUKEmailCheck();
+
+  stubCreateListDBMethod = jest
+    .spyOn(prisma.list, "create")
+    .mockResolvedValue(createFakeListValue(testServiceTypeEnum));
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+describe.only("addMissingCountriesToService", () => {
   it("throws error if an incorrect service type is entered", async () => {
     // when
     const incorrectValues = ["lawyer", "funeral-director", "something"];
@@ -28,7 +43,7 @@ describe("addMissingCountriesToService", () => {
 
   it("throws error if all countries for a service type have already been added", async () => {
     // when
-    getFakeDataFromListTable();
+    mockFindManyFromListTable();
 
     const fn = async () => await addMissingCountriesToService(testServiceType);
 
@@ -40,13 +55,9 @@ describe("addMissingCountriesToService", () => {
 
   it("adds lists only to countries are missing from the countries list", async () => {
     // when
-    preventGOVUKEmailCheck();
-    getFakeDataFromListTable(true);
+    mockFindManyFromListTable(true);
 
     const totalCountriesMinusRemovedCountries = 78;
-    const stubCreateListDBMethod = jest
-      .spyOn(prisma.list, "create")
-      .mockResolvedValue(createFakeListValue(testServiceTypeEnum));
 
     await addMissingCountriesToService(testServiceType);
 
@@ -58,8 +69,7 @@ describe("addMissingCountriesToService", () => {
 
   it("adds correct emails to validators, publishers, administrators and createdBy properties", async () => {
     // when
-    preventGOVUKEmailCheck();
-    getFakeDataFromListTable(true);
+    mockFindManyFromListTable(true);
 
     const testEmails = [
       "person1@test.com",
@@ -85,23 +95,112 @@ describe("addMissingCountriesToService", () => {
         createdBy: testEmails[0],
       },
     };
-    const stubCreateListDBMethod = jest
-      .spyOn(prisma.list, "create")
-      .mockResolvedValue(createFakeListValue(testServiceTypeEnum));
 
     await addMissingCountriesToService(testServiceType, testEmails);
 
-    // when
+    // then
     expect(stubCreateListDBMethod).toHaveBeenNthCalledWith(1, {
       data: exectedFirstArg,
     });
   });
+
+  it("gets emails from existing list if service name passed in as email argument", async () => {
+    // when
+    mockFindFirstFromListTable();
+    mockFindManyFromListTable();
+
+    const testCreatedBy = ["lawyers"];
+    const emailsFromFakeDataCreation = {
+      validators: fakeDataTestEmail,
+      publishers: fakeDataTestEmail,
+      administrators: fakeDataTestEmail,
+      createdBy: fakeDataTestEmail[0],
+    };
+    const exectedFirstArg = {
+      type: testServiceType,
+      country: {
+        connectOrCreate: {
+          where: {
+            name: "Afghanistan",
+          },
+          create: {
+            name: "Afghanistan",
+          },
+        },
+      },
+      jsonData: emailsFromFakeDataCreation,
+    };
+
+    await addMissingCountriesToService(testServiceType, testCreatedBy);
+
+    // then
+    expect(stubCreateListDBMethod).toHaveBeenNthCalledWith(1, {
+      data: exectedFirstArg,
+    });
+  });
+
+  it("gets emails from existing list of specific country if service type and country added as email argument", async () => {
+    // when
+    mockFindFirstFromListTable();
+    mockFindManyFromListTable();
+    mockFindFirstFromCountryTable();
+
+    const testCreatedBy = ["lawyers", "afghanistan"];
+    const emailsFromFakeDataCreation = {
+      validators: fakeDataTestEmail,
+      publishers: fakeDataTestEmail,
+      administrators: fakeDataTestEmail,
+      createdBy: fakeDataTestEmail[0],
+    };
+    const exectedFirstArg = {
+      type: testServiceType,
+      country: {
+        connectOrCreate: {
+          where: {
+            name: "Afghanistan",
+          },
+          create: {
+            name: "Afghanistan",
+          },
+        },
+      },
+      jsonData: emailsFromFakeDataCreation,
+    };
+
+    await addMissingCountriesToService(testServiceType, testCreatedBy);
+
+    // then
+    expect(stubCreateListDBMethod).toHaveBeenNthCalledWith(1, {
+      data: exectedFirstArg,
+    });
+  });
+
+  it("throws an error if list to copy emails from could not be found", async () => {
+    // when
+    mockFindFirstFromListTable();
+
+    const testCreatedBy = ["funeralDirectors"];
+    const fn = async () =>
+      await addMissingCountriesToService(testServiceType, testCreatedBy);
+
+    // then
+    await expect(fn()).rejects.toThrow(
+      missingCountries.errorMessages.missingList(testCreatedBy[0])
+    );
+  });
 });
 
-function createFakeListData(
-  serviceType: ServiceType,
-  removeSomeCountries?: boolean
-) {
+type CreateFakeDataOptions = {
+  serviceType: ServiceType;
+  removeSomeCountries?: boolean;
+  returnSingleList?: boolean;
+};
+
+function createFakeListData({
+  serviceType,
+  removeSomeCountries = false,
+  returnSingleList = false,
+}: CreateFakeDataOptions) {
   let listData: List[] = [];
   let editableCountryList = [...countriesList];
 
@@ -115,11 +214,10 @@ function createFakeListData(
       country: { name: country.text },
     });
   }
-  return listData;
+  return returnSingleList ? listData[0] : listData;
 }
 
 function createFakeListValue(serviceType: ServiceType) {
-  const testEmail = "test@test.com";
   return {
     id: 1,
     reference: "123",
@@ -128,10 +226,10 @@ function createFakeListValue(serviceType: ServiceType) {
     type: serviceType,
     countryId: 1,
     jsonData: {
-      createdBy: testEmail,
-      publishers: [testEmail],
-      validators: [testEmail],
-      administrators: [testEmail],
+      createdBy: fakeDataTestEmail,
+      publishers: [fakeDataTestEmail],
+      validators: [fakeDataTestEmail],
+      administrators: [fakeDataTestEmail],
     },
   };
 }
@@ -144,8 +242,28 @@ function preventGOVUKEmailCheck() {
   jest.spyOn(validation, "isGovUKEmailAddress").mockImplementation(() => true);
 }
 
-function getFakeDataFromListTable(removeSomeCountries: boolean = false) {
+function mockFindManyFromListTable(removeSomeCountries: boolean = false) {
   prisma.list.findMany.mockResolvedValue(
-    createFakeListData(testServiceTypeEnum, removeSomeCountries)
+    createFakeListData({
+      serviceType: testServiceTypeEnum,
+      removeSomeCountries,
+    }) as List[]
   );
+}
+
+function mockFindFirstFromListTable() {
+  prisma.list.findFirst.mockResolvedValue(
+    createFakeListData({
+      serviceType: testServiceTypeEnum,
+      returnSingleList: true,
+    }) as List
+  );
+}
+function mockFindFirstFromCountryTable() {
+  prisma.country.findFirst.mockResolvedValue({
+    id: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: "Afghanistan",
+  } as Country);
 }
