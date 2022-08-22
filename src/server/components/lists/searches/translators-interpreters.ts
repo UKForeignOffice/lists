@@ -15,6 +15,7 @@ import { languages, translationInterpretationServices } from "server/services/me
 import { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { cleanLanguagesProvided } from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
+import { listsRoutes } from "../routes";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -29,23 +30,15 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-type TranslatorInterpreterServicesProvided = "translation" | "interpretation" | "all";
+const serviceTypeToNoun: {[key: string]: string} = {
+  translation: "translator", 
+  interpretation: "interpreter"
+};
 
-function makeResultsTitle(country: string | undefined, servicesProvided: string[] | TranslatorInterpreterServicesProvided[]): string {
-  let servicesString = "translator or interpreter" 
+function makeResultsTitle(country: string, servicesProvided: string[]): string {
+  const sanitisedServicesProvidedQuery = servicesProvided.map(service => serviceTypeToNoun[service]).filter(Boolean)
 
-  const needsTranslatorOnly = servicesProvided.includes("translation") && !servicesProvided.includes("interpretation");
-  const needsInterpreterOnly = servicesProvided.includes("interpretation") && !servicesProvided.includes("translation");
-
-  if(needsTranslatorOnly) {
-    servicesString = "translator"
-  }
-
-  if(needsInterpreterOnly) {
-    servicesString = "interpretater"
-  }
-
-  return `Find a ${servicesString} in ${country}`
+  return `Find a ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`
 }
 
 
@@ -55,10 +48,16 @@ export async function searchTranslatorsInterpreters(
 ): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no", languagesProvided } = params;
+
+  if(!country) { 
+    const query = new URLSearchParams(req.query as Record<string, string>);
+    return res.redirect(`${listsRoutes.finder}?${query.toString()}`)
+  }
+
   let languageNamesProvided, serviceNamesProvided;
   let servicesProvided = parseListValues("servicesProvided", params);
   if (servicesProvided != null) {
-    servicesProvided = servicesProvided.map((service) => service.toLowerCase()) as TranslatorInterpreterServicesProvided[];
+    servicesProvided = servicesProvided.map((service) => service.toLowerCase());
   }
   let translationSpecialties = parseListValues("translationSpecialties", params);
   if (translationSpecialties != null) {
