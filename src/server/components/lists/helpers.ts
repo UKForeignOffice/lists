@@ -55,10 +55,10 @@ export function preProcessParams(params: { [name: string]: any }, req: Request):
 
   // translation services validation
   if (paramsCopy.servicesProvided) {
-    if (!paramsCopy.servicesProvided.includes("All") && !paramsCopy.servicesProvided.includes("Translation")) {
+    if (!paramsCopy.servicesProvided.includes("translation")) {
       delete paramsCopy.translationSpecialties;
     }
-    if (!paramsCopy.servicesProvided.includes("All") && !paramsCopy.servicesProvided.includes("Interpretation")) {
+    if (!paramsCopy.servicesProvided.includes("interpretation")) {
       delete paramsCopy.interpreterServices;
     }
   }

@@ -411,10 +411,12 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const { servicesProvided, translationSpecialties, interpreterServices } = getAllRequestParams(req);
       const result: boolean = (!translationSpecialties
-        && !!interpreterServices
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-        && (servicesProvided?.includes("translation") || servicesProvided?.includes("All"))
-      ) ?? false;
+        && (servicesProvided?.includes("translation")
+          && (!servicesProvided?.includes("interpretation")
+            || ((servicesProvided?.includes("interpretation") && !!interpreterServices))
+          )
+        )
+      ) as boolean;
       return result;
     },
     getPartialData(req) {
@@ -443,10 +445,12 @@ export const questions: Questions = {
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
       const result: boolean = (!interpreterServices
-        && !!translationSpecialties
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-        && (servicesProvided?.includes("interpretation") || servicesProvided?.includes("All"))
-      ) ?? false;
+        && (servicesProvided?.includes("interpretation")
+          && (!servicesProvided?.includes("translation")
+            || ((servicesProvided?.includes("translation") && !!translationSpecialties))
+          )
+        )
+      ) as boolean;
       return result;
     },
     getPartialData(req) {
