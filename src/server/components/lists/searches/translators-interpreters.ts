@@ -15,6 +15,7 @@ import { languages, translationInterpretationServices } from "server/services/me
 import { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { cleanLanguagesProvided } from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
+import { listsRoutes } from "../routes";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -29,12 +30,31 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
+const serviceTypeToNoun: {[key: string]: string} = {
+  translation: "translator", 
+  interpretation: "interpreter"
+};
+
+function makeResultsTitle(country: string, servicesProvided: string[]): string {
+  const sanitisedServicesProvidedQuery = servicesProvided.map(service => serviceTypeToNoun[service]).filter(Boolean)
+  const interpretationOnly = sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) && sanitisedServicesProvidedQuery.length === 1;
+  const article = interpretationOnly ? "an" : "a";
+  return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`
+}
+
+
 export async function searchTranslatorsInterpreters(
   req: Request,
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no", languagesProvided } = params;
+
+  if(!country) { 
+    const query = new URLSearchParams(req.query as Record<string, string>);
+    return res.redirect(`${listsRoutes.finder}?${query.toString()}`)
+  }
+
   let languageNamesProvided, serviceNamesProvided;
   let servicesProvided = parseListValues("servicesProvided", params);
   if (servicesProvided != null) {
@@ -117,6 +137,7 @@ export async function searchTranslatorsInterpreters(
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
     ...params,
+    resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
     removeQueryParameter,
     getParameterValue,
