@@ -35,7 +35,7 @@ export async function checkIfPlaceIndexExists(
     const result = await location.listPlaceIndexes().promise();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
-    const typedError = error as { message: string };
+    const typedError = error as Error;
     logger.error(`checkIfPlaceIndexExists Error: ${typedError.message}`);
     return false;
   }
@@ -53,7 +53,7 @@ export async function createPlaceIndex(): Promise<boolean> {
     await location.createPlaceIndex(INDEX_PARAMS).promise();
     return true;
   } catch (error) {
-    const typedError = error as { message: string };
+    const typedError = error as Error;
     logger.error(`createPlaceIndex error: ${typedError.message}`);
     return false;
   }
