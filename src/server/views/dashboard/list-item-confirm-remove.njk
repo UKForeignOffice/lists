@@ -20,7 +20,7 @@
 
     <p class="govuk-body govuk-!-padding-2 confirmation-focus-box" data-testid="provider-summary">
       {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}<br/>
-      {{ _.startCase(_.toLower(listItem.jsonData.organisationName if listItem.jsonData.organisationName)) }}<br/>
+      {{ listItem.jsonData.organisationName if listItem.jsonData.organisationName }}<br/>
       {{ listItem.jsonData.emailAddress }}<br/>
       {{ listItem.jsonData.phoneNumber }}
     </p>
