@@ -9,6 +9,7 @@ import { getRedisClient, isRedisAvailable } from "server/services/redis";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
+const FOUR_HOURS = 4 * ONE_HOUR;
 const ONE_DAY = 24 * ONE_HOUR;
 const SECRET_NAME = "SESSION_SECRET";
 
@@ -33,7 +34,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
     proxy: !isLocalHost,
     cookie: {
       secure: !isLocalHost,
-      maxAge: isLocalHost ? ONE_DAY : ONE_HOUR,
+      maxAge: isLocalHost ? ONE_DAY : FOUR_HOURS,
     },
     name: "lists_sid",
   };
