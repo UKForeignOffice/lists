@@ -7,7 +7,7 @@ Feature:
 		And there are these list items
 			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | service          |
 			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
-			| Nima        | Nima and Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
+			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
 			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
 			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
@@ -37,7 +37,7 @@ Feature:
 		Examples:
 			| contactName | organisationName       |
 			| Lola        | Lola Funeral Directors |
-			| Nima        | Nima and Sons          |
+			| Nima        | Nima And Sons          |
 
 
 	Scenario Outline: Publish list item
@@ -50,7 +50,7 @@ Feature:
 		Examples:
 			| contactName | organisationName       |
 			| Lola        | Lola Funeral Directors |
-			| Nima        | Nima and Sons          |
+			| Nima        | Nima And Sons          |
 
 
 	Scenario Outline: Remove list item
@@ -64,7 +64,7 @@ Feature:
 		Examples:
 			| contactName | organisationName       |
 			| Lola        | Lola Funeral Directors |
-			| Nima        | Nima and Sons          |
+			| Nima        | Nima And Sons          |
 
 
 	Scenario: Confirm and update list item
@@ -87,12 +87,12 @@ Feature:
 		Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
 
 		Examples:
-			| rowLabel                 | rowValue                                                 | rowPosition |
-			| Company                  | Lola Funeral Directors                                   | 1           |
-			| Local services           | Local burials, Flower arrangements, Exhumations          | 2           |
-			| Represented BNs          | Yes                                                      | 3           |
-			| Repatriation services    | Body repatriation, Ashes repatriation (from a cremation) | 4           |
-			| Email - public           | smoke@cautionyourblast.com                               | 5           |
-			| Telephone                | 1234567                                                  | 6           |
-			| Email - private          | smoke@cautionyourblast.com                               | 7           |
-			| English language service | Yes                                                      | 8           |
+			| rowLabel                                      | rowValue                                                 | rowPosition |
+			| Contact name                                  | Lola                                                     | 1           |
+			| Local services                                | Local burials, Flower arrangements, Exhumations          | 2           |
+			| Provided services to British nationals before | Yes                                                      | 3           |
+			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) | 4           |
+			| Contact name                                  | Lola                                                     | 5           |
+			| Email address for GOV.UK                      | smoke@cautionyourblast.com                               | 6           |
+			| Telephone                                     | 1234567                                                  | 7           |
+			| Email - private                               | smoke@cautionyourblast.com                               | 8           |

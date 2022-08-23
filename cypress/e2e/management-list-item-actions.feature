@@ -97,14 +97,16 @@ Feature:
     Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
 
     Examples:
-      | rowLabel                 | rowValue                               | rowPosition |
-      | Company                  | Winston Law                            | 1           |
-      | Company size             | Independent lawyer / sole practitioner | 2           |
-      | Regions                  | France and UK                          | 3           |
-      | Legal aid                | Yes                                    | 4           |
-      | Pro bono                 | Yes                                    | 5           |
-      | Represented BNs          | Yes                                    | 6           |
-      | Email - public           | smoke@cautionyourblast.com             | 7           |
-      | Email - private          | smoke@cautionyourblast.com             | 8           |
-      | Regulators               | Miniluv                                | 9           |
-      | English language service | Yes                                    | 10          |
+      | rowLabel                                      | rowValue                               | rowPosition |
+      | Company                                       | Winston Law                            | 1           |
+      | Company size                                  | Independent lawyer / sole practitioner | 2           |
+      | Regions                                       | France and UK                          | 3           |
+      | Legal expertise                               | Not provided                           | 4           |
+      | Legal aid                                     | Yes                                    | 5           |
+      | Pro bono                                      | Yes                                    | 6           |
+      | Provided services to British nationals before | Yes                                    | 7           |
+      | Contact name                                  | Winston                                | 8           |
+      | Email address for GOV.UK                      | smoke@cautionyourblast.com             | 9           |
+      | Telephone                                     | 1234567                                | 10          |
+      | Professional associations                     | Miniluv                                | 11          |
+      | Email - private                               | smoke@cautionyourblast.com             | 12          |
