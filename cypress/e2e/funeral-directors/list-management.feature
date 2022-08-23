@@ -5,9 +5,11 @@ Feature:
 		Given I am logged in as a "SuperAdmin"
 		And A funeral directors list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons          | hiddenRadioButtons           | service          |
-			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW    | false       | false     | false      | true          | Publish,Request changes,Remove | Unpublish,Confirm and update | funeralDirectors |
-			| Nima        | Nima and Sons          | smoke@cautionyourblast.com | NEW    | false       | false     | false      | true          | Publish,Request changes,Remove | Unpublish,Confirm and update | funeralDirectors |
+			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | service          |
+			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
+			| Nima        | Nima and Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
+			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
+			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
 
 
@@ -23,19 +25,19 @@ Feature:
 			| Nima        | Publish,Request changes,Remove | Unpublish,Confirm and update |
 
 
-	# Scenario Outline: Request changes for list item
-	# 	When I am viewing the list item details for "<contactName>"
-	# 	And The textarea should show if I click the Request changes radio button
-	# 	And I enter a message in the textarea
-	# 	And I click the "Continue" button
-	# 	Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
-	# 	And I click the "Request changes" button
-	# 	Then I see the notification text "Change request sent to <organisationName>"
+	Scenario Outline: Request changes for list item
+		When I am viewing the list item details for "<contactName>"
+		And The textarea should show if I click the Request changes radio button
+		And I enter a message in the textarea
+		And I click the "Continue" button
+		Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
+		And I click the "Request changes" button
+		Then I see the notification text "Change request sent to <organisationName>"
 
-	# 	Examples:
-	# 		| contactName | organisationName       |
-	# 		| Lola        | Lola Funeral Directors |
-	# 		| Nima        | Nima and Sons          |
+		Examples:
+			| contactName | organisationName       |
+			| Lola        | Lola Funeral Directors |
+			| Nima        | Nima and Sons          |
 
 
 	Scenario Outline: Publish list item
@@ -66,16 +68,31 @@ Feature:
 
 
 	Scenario: Confirm and update list item
-		When I am viewing the list item details for "Nima"
+		When I am viewing the list item details for "Tristen"
 		And I click the "Confirm and update" radio button
 		And I click the "Continue" button
 		And I click the "Update" button
-		Then I see the notification text "Nima and Sonshas been updated and published"
+		Then I see the notification text "Peace Funerals has been updated and published"
 
 
 	Scenario: Unpublish list item
-		When I am viewing the list item details for "Lola"
+		When I am viewing the list item details for "Catherine"
 		And I click the "Unpublish" radio button
 		And I click the "Continue" button
 		And I click the "Unpublish" button
-		Then I see the notification text "Lola Funeral Directorshas been unpublished"
+		Then I see the notification text "C & A Reed has been unpublished"
+
+	Scenario Outline: Show expected fields on list detail
+		Given I am viewing the list item details for "Lola"
+		Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
+
+		Examples:
+			| rowLabel                 | rowValue                                                 | rowPosition |
+			| Company                  | Lola Funeral Directors                                   | 1           |
+			| Local services           | Local burials, Flower arrangements, Exhumations          | 2           |
+			| Represented BNs          | Yes                                                      | 3           |
+			| Repatriation services    | Body repatriation, Ashes repatriation (from a cremation) | 4           |
+			| Email - public           | smoke@cautionyourblast.com                               | 5           |
+			| Telephone                | 1234567                                                  | 6           |
+			| Email - private          | smoke@cautionyourblast.com                               | 7           |
+			| English language service | Yes                                                      | 8           |
