@@ -123,7 +123,9 @@ describe("Lawyers List:", () => {
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("São Tomé And Príncipe", "lawyers");
-      expect(header.location).toBe(`${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`);
+      expect(header.location).toBe(
+        `${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`
+      );
     });
 
     test("accessibility", async () => {
@@ -135,7 +137,8 @@ describe("Lawyers List:", () => {
 
   describe("lawyer's region question page", () => {
     const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain";
-    const pageLinkLowercaseCountry = "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
+    const pageLinkLowercaseCountry =
+      "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -152,7 +155,9 @@ describe("Lawyers List:", () => {
     });
 
     test("GET request is correct for country starting with lowercase letter", async () => {
-      const { text } = await request(server).get(pageLinkLowercaseCountry).type("text/html");
+      const { text } = await request(server)
+        .get(pageLinkLowercaseCountry)
+        .type("text/html");
 
       const $html = $.load(text);
       const $main = $html("main");
@@ -275,10 +280,12 @@ describe("Lawyers List:", () => {
         )
         .type("text/html");
 
-      expect(await LawyerListItem.findPublishedLawyersPerCountry).toBeCalledWith({
+      expect(
+        await LawyerListItem.findPublishedLawyersPerCountry
+      ).toBeCalledWith({
         countryName: "Spain",
         region: "madrid",
-        practiceArea: ["maritime","real estate"],
+        practiceArea: ["maritime", "real estate"],
         offset: -1,
       });
 
@@ -290,23 +297,23 @@ describe("Lawyers List:", () => {
 
       // country answer
       expect(answers.eq(1).text()).toEqual(`
-      Country
-      Spain
-      Change
-    `);
-
-      expect(answers.eq(1).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
-      );
-
-      // region answer
-      expect(answers.eq(2).text()).toEqual(`
       Location
       Madrid
       Change
     `);
-      expect(answers.eq(2).find("a").attr("href")).toEqual(
+
+      expect(answers.eq(1).find("a").attr("href")).toEqual(
         "/find?serviceType=lawyers&readNotice=ok&country=Spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+      );
+
+      // region answer
+      expect(answers.eq(2).text()).toEqual(`
+      Country
+      Spain
+      Change
+    `);
+      expect(answers.eq(2).find("a").attr("href")).toEqual(
+        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
       );
 
       // legal practice areas
