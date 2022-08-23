@@ -31,28 +31,23 @@
       {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
     </span>
   {% endif %}
-  {% if item.jsonData.contactName %}
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-4">
-      {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
-    </h2>
-  {% endif %}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-4">
     {% if item.jsonData.websiteAddress %}
         <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
     {% else %}
         {{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}
     {% endif %}
     <span class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">{{ item.jsonData.size if item.jsonData.size }}</span>
-  </h3>
+  </h2>
 
+  {% if item.jsonData.regions %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Regions served</strong>: {{ item.jsonData.regions }}
+    </p>
+  {% endif %}
   {% if item.jsonData.areasOfLaw %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Legal expertise</strong>: {{ item.jsonData.areasOfLaw.map(_.startCase).join(", ") }}
-    </p>
-  {% endif %}
-  {% if item.jsonData.regions %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Regions</strong>: {{ item.jsonData.regions }}
     </p>
   {% endif %}
   {% if additionalDetails(item) %}
@@ -65,6 +60,11 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
     Contact details
   </h3>
+  {% if item.jsonData.contactName %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>{{ _.startCase(_.toLower(item.jsonData.contactName)) }}</strong>
+    </p>
+  {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>:
       {{ item.address.firstLine }}
@@ -137,4 +137,3 @@
     </div>
   {% endif %}
 {% endmacro %}
-
