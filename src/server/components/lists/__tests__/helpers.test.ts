@@ -151,7 +151,7 @@ describe("Lawyers List:", () => {
     test("redirect link is for Spain correct", () => {
       [
         "ghana",
-        "burma",
+        "myanmar",
         "spain",
         "italy",
         "thailand",
