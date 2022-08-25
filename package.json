@@ -30,7 +30,7 @@
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
-    "smoke-tests": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx -y cypress run --browser chrome --record",
+    "smoke-tests": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx -y cypress run --browser chrome",
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open"
   },
   "dependencies": {
