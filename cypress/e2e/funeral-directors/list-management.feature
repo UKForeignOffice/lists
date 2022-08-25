@@ -3,7 +3,7 @@ Feature:
 
 	Background:
 		Given I am logged in as a "SuperAdmin"
-		And A funeral directors list exists for Eurasia
+		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
 			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | service          |
 			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |

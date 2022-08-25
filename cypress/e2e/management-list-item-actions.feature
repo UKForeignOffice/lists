@@ -3,7 +3,7 @@ Feature:
 
   Background:
     Given I am logged in as a "SuperAdmin"
-    And A lawyers list exists for Eurasia
+    And A "lawyers" list exists for Eurasia
     And there are these list items
       | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         |
       | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |

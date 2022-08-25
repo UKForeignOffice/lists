@@ -2,12 +2,11 @@
 Then(
   "I should see {string} with a value of {string} on row number {string}",
   (rowLabel, rowValue, rowPosition) => {
-    const rowAtPosition = (position) =>
-      cy
-        .get(".govuk-summary-list > .govuk-summary-list__row")
-        .eq(Number(position) - 1);
+    const rowPos = Number(rowPosition) - 1;
+    const ROLE_FOR_DT_ELEM = "term";
+    const ROLE_FOR_DD_ELEM = "definition";
 
-    rowAtPosition(rowPosition).contains("dt", rowLabel);
-    rowAtPosition(rowPosition).contains("dd", rowValue);
+    cy.findAllByRole(ROLE_FOR_DT_ELEM).eq(rowPos).contains(rowLabel);
+    cy.findAllByRole(ROLE_FOR_DD_ELEM).eq(rowPos).contains(rowValue);
   }
 );
