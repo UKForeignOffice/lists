@@ -3,7 +3,7 @@ Feature:
 
   Background:
     Given I am logged in as a "SuperAdmin"
-    And A lawyers list exists for Eurasia
+    And A "lawyers" list exists for Eurasia
     And there are these list items
       | contactName | status            | isPublished | isBlocked | isApproved | emailVerified |
       | Winston     | NEW               | false       | false     | false      | true          |
@@ -84,7 +84,3 @@ Feature:
       | Parsons |
     And not the list items
       | Winston | Emmanuel | Julia | O'Brien |
-
-
-
-
