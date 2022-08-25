@@ -1,12 +1,8 @@
 /* eslint-disable */
 import { rand, randCompanyName, randFullName } from "@ngneat/falso";
 
-Given("A lawyers list exists for Eurasia", () => {
-  createListForService("lawyers");
-});
-
-Given("A funeral directors list exists for Eurasia", () => {
-  createListForService("funeralDirectors");
+Given("A {string} list exists for Eurasia", (providerType) => {
+  createListForService(providerType);
 });
 
 function createListForService(service) {
