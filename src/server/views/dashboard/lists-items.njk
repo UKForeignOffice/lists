@@ -3,6 +3,8 @@
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
+{% from "select/macro.njk" import govukSelect %}
+{% from "button/macro.njk" import govukButton %}
 
 
 {% block aside %}
@@ -50,6 +52,35 @@
       http{{ 's' if SERVICE_DOMAIN.indexOf('localhost') === -1 }}://{{SERVICE_DOMAIN}}/application/{{_.kebabCase(list.type)}}
     </a>
   </p>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+<form action="#" method="POST" class="dashboard__list-sort-form">
+  <label class="govuk-label" for="sort">
+    Sort by
+  </label>
+  {{ govukSelect({
+    id: "sort",
+    name: "sort",
+    classes: "dashboard__list-sort-item",
+    items: [
+      {
+        value: "oldest",
+        text: "Oldest first",
+        selected: true
+      },
+      {
+        value: "newest",
+        text: "Newest first"
+      }
+    ]
+  }) }}
+
+  {{ govukButton({
+    text: "Apply Sort",
+    classes: "dashboard__list-sort-item"
+  }) }}
+  </form>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% if list.pinnedItems.length !== 0 %}
