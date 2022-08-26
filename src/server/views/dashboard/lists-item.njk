@@ -33,16 +33,21 @@
       <div class="govuk-list dashboard__content-list">
           <div id="item-{{ listItem.id }}">
             {% include "./partials/details.njk" %}
-            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons) }}
+            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons, req) }}
           </div>
       </div>
     </form>
 
     <script nonce="{{cspNonce}}">
-
       const hiddenClass = "govuk-radios__conditional--hidden";
-      document.querySelector("#conditional-action-requestChanges").classList.add(hiddenClass);
       const radios = document.querySelectorAll('input[type=radio][name="action"]');
+      const radiosArray = Array.from(radios);
+      const requestChangesRadioBtn = radiosArray.find(radio => radio.value === "requestChanges");
+
+      if (requestChangesRadioBtn && !requestChangesRadioBtn.checked) {
+        document.getElementById("conditional-action-requestChanges").classList.add(hiddenClass);
+      }
+
       radios.forEach(radio => radio.addEventListener('change', () => {
         const isRequestingChanges = radio.value === "requestChanges" && radio.checked;
         const requestChangesTextarea = document.getElementById("conditional-action-requestChanges");
