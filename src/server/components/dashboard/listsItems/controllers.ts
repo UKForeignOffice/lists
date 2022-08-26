@@ -501,7 +501,7 @@ export async function listItemRequestChangeController(
       listItem,
       changeMessage,
       userId,
-      isUnderTest,
+      isUnderTest
     );
 
     req.flash(
@@ -511,6 +511,8 @@ export async function listItemRequestChangeController(
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+
+    req.session.changeMessage = undefined;
   } catch (error: any) {
     req.flash(
       "errorMsg",
@@ -529,7 +531,7 @@ async function handleListItemRequestChanges(
   listItem: ListItemGetObject,
   message: string,
   userId: User["id"],
-  isUnderTest: boolean,
+  isUnderTest: boolean
 ): Promise<void> {
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
@@ -542,11 +544,15 @@ async function handleListItemRequestChanges(
   );
 
   // Email applicant
-  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`)
+  logger.info(
+    `Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`
+  );
   const { contactName, contactEmailAddress } =
     getListItemContactInformation(listItem);
 
-  logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`)
+  logger.info(
+    `Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`
+  );
   const listType = serviceName(list?.type ?? "");
 
   logger.info(`Got list type [${listType}`);
@@ -698,7 +704,7 @@ async function initialiseFormRunnerSession(
   const questions = await generateFormRunnerWebhookData(
     list,
     listItem,
-    isUnderTest,
+    isUnderTest
   );
   const formRunnerWebhookData = getNewSessionWebhookData(
     list.type,
