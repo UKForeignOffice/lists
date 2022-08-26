@@ -24,11 +24,9 @@
     "src/server/**/*",
     "src/client/**/*",
     "node_modules/jest-extended/types/**/*.d.ts",
+    "bin/__tests__/missing-countries.test.ts",
+    "bin/missing-countries.ts"
   ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "ignore": ["dist"]
-
 }

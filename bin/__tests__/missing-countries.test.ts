@@ -1,10 +1,10 @@
 import * as missingCountries from "../missing-countries";
-import { countriesList } from "../../services/metadata";
-import { ServiceType } from "../../models/types";
-import { prisma } from "../../models/db/__mocks__/prisma-client";
-import * as validation from "../../utils/validation";
+import { countriesList } from "../../src/server/services/metadata";
+import { ServiceType } from "../../src/server/models/types";
+import { prisma } from "../../src/server/models/db/__mocks__/prisma-client";
+import * as validation from "../../src/server/utils/validation";
 
-import type { List, Country } from "../../models/types";
+import type { List, Country } from "../../src/server/models/types";
 
 const { addMissingCountriesToService } = missingCountries;
 const testServiceType = "lawyers";
@@ -34,7 +34,8 @@ describe.only("addMissingCountriesToService()", () => {
 
     // then
     for (const value of incorrectValues) {
-      const fn = async () => await addMissingCountriesToService(value);
+      const fn = async (): Promise<void> =>
+        await addMissingCountriesToService(value);
       await expect(fn()).rejects.toThrow(
         missingCountries.errorMessages.serviceType
       );
@@ -45,7 +46,8 @@ describe.only("addMissingCountriesToService()", () => {
     // when
     mockFindManyFromListTable();
 
-    const fn = async () => await addMissingCountriesToService(testServiceType);
+    const fn = async (): Promise<void> =>
+      await addMissingCountriesToService(testServiceType);
 
     // then
     await expect(fn()).rejects.toThrow(
@@ -180,7 +182,7 @@ describe.only("addMissingCountriesToService()", () => {
     mockFindManyFromListTable(true);
 
     const testCreatedBy = ["funeralDirectors"];
-    const fn = async () =>
+    const fn = async (): Promise<void> =>
       await addMissingCountriesToService(testServiceType, testCreatedBy);
 
     // then
@@ -190,18 +192,18 @@ describe.only("addMissingCountriesToService()", () => {
   });
 });
 
-type CreateFakeDataOptions = {
+interface CreateFakeDataOptions {
   serviceType: ServiceType;
   removeSomeCountries?: boolean;
   returnSingleList?: boolean;
-};
+}
 
 function createFakeListData({
   serviceType,
   removeSomeCountries = false,
   returnSingleList = false,
-}: CreateFakeDataOptions) {
-  let listData: List[] = [];
+}: CreateFakeDataOptions): List | List[] {
+  const listData: List[] = [];
   let editableCountryList = [...countriesList];
 
   if (removeSomeCountries) {
@@ -217,7 +219,7 @@ function createFakeListData({
   return returnSingleList ? listData[0] : listData;
 }
 
-function createFakeListValue(serviceType: ServiceType) {
+function createFakeListValue(serviceType: ServiceType): List {
   return {
     id: 1,
     reference: "123",
@@ -234,15 +236,15 @@ function createFakeListValue(serviceType: ServiceType) {
   };
 }
 
-function removeThirdOfCountries(country, index) {
+function removeThirdOfCountries(country, index): Country | undefined {
   if (index % 3 !== 0) return country;
 }
 
-function preventGOVUKEmailCheck() {
+function preventGOVUKEmailCheck(): void {
   jest.spyOn(validation, "isGovUKEmailAddress").mockImplementation(() => true);
 }
 
-function mockFindManyFromListTable(removeSomeCountries: boolean = false) {
+function mockFindManyFromListTable(removeSomeCountries: boolean = false): void {
   prisma.list.findMany.mockResolvedValue(
     createFakeListData({
       serviceType: testServiceTypeEnum,
@@ -251,7 +253,7 @@ function mockFindManyFromListTable(removeSomeCountries: boolean = false) {
   );
 }
 
-function mockFindFirstFromListTable(returnNull: boolean = false) {
+function mockFindFirstFromListTable(returnNull: boolean = false): void {
   prisma.list.findFirst.mockResolvedValue(
     createFakeListData({
       serviceType: testServiceTypeEnum,
@@ -259,11 +261,11 @@ function mockFindFirstFromListTable(returnNull: boolean = false) {
     }) as List
   );
 }
-function mockFindFirstFromCountryTable() {
+function mockFindFirstFromCountryTable(): void {
   prisma.country.findFirst.mockResolvedValue({
     id: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
     name: "Afghanistan",
-  } as Country);
+  });
 }

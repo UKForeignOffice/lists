@@ -32,7 +32,7 @@
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
     "smoke-tests": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx -y cypress run --browser chrome",
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open",
-    "add-missing-countries": "NODE_PATH=/src npx -y ts-node ./src/server/utils/missing-countries.ts --esm"
+    "add-missing-countries": "npx -y ts-node ./bin/missing-countries.ts --esm --swc"
   },
   "dependencies": {
     "@prisma/client": "^2.29.1",

@@ -1,13 +1,19 @@
-import { prisma } from "../models/db/prisma-client";
-import { logger } from "../services/logger";
-import { createList } from "../models/list";
-import { countriesList } from "../services/metadata";
-import { isTest } from "../config";
+import { prisma } from "../src/server/models/db/prisma-client";
+import { logger } from "../src/server/services/logger";
+import { createList } from "../src/server/models/list";
+import { countriesList } from "../src/server/services/metadata";
+import { isTest } from "../src/server/config";
 
-import { ServiceType } from "../models/types";
-import type { CountryName, List, ListJsonData, Country } from "../models/types";
+import { ServiceType } from "../src/server/models/types";
+import type {
+  CountryName,
+  List,
+  ListJsonData,
+  Country,
+} from "../src/server/models/types";
 
 const DEFAULT_USER_EMAIL = "ali@cautionyourblast.com";
+const FIRST_SCRIPT_ARG_POS = 4;
 
 export const errorMessages = {
   serviceType: "Incorrect service type entered",
@@ -24,13 +30,13 @@ export const errorMessages = {
  *
  * @example npm run add-missing-countries -- --service lawyers
  * @example npm run add-missing-countries -- --service lawyers --emails "ali@cautionyourblast.com, jen@cautionyourblast.com"
- * @example npm run add-missing-countries -- --service lawyers --emails "funeralDirectors"
+ * @example npm run add-missing-countries -- --service lawyers --emails "funeralDirectors" // get email data for the first funeral director list
  * @example npm run add-missing-countries -- --service lawyers --emails "funeralDirectors, france"
  */
 async function addMissingCountriesScript(): Promise<void> {
-  const serviceTypeIdentifier = process.argv[3];
-  const serviceType = process.argv[4];
-  const emailsString = process.argv[6];
+  const serviceTypeIdentifier = process.argv[FIRST_SCRIPT_ARG_POS];
+  const serviceType = process.argv[FIRST_SCRIPT_ARG_POS + 1];
+  const emailsString = process.argv[FIRST_SCRIPT_ARG_POS + 3];
   const emails = emailsString.split(",");
 
   if (serviceTypeIdentifier !== "--service") {
@@ -151,7 +157,7 @@ function nameFromCountriesList(countryFromArg: string): string {
 
 async function getMissingCountries(
   serviceType: ServiceType
-): Promise<CountryName[] | undefined> {
+): Promise<string[] | undefined> {
   try {
     const listsOfServiceType = (await prisma.list.findMany({
       where: { type: serviceType },
@@ -162,14 +168,15 @@ async function getMissingCountries(
 
     const countriesFromLists = listsOfServiceType.map(
       (list: List) => list.country?.name
-    ) as CountryName[];
+    ) as string[];
 
-    const formatedMetadataCountries = countriesList.map(
+    const formatedMetadataCountries: string[] = countriesList.map(
       (country) => country.text
     );
-    const missingCountriesFromLists = formatedMetadataCountries.filter(
-      (country) => !countriesFromLists.includes(country)
-    );
+    const missingCountriesFromLists: string[] =
+      formatedMetadataCountries.filter(
+        (country) => !countriesFromLists.includes(country)
+      );
 
     return missingCountriesFromLists;
   } catch (error: unknown) {
