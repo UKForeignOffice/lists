@@ -2,6 +2,9 @@
 {% extends "./dashboard.njk" %}
 
 {% block aside %}
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}">Back</a>
+  </div>
 {% endblock %}
 
 {% block dashboard %}
