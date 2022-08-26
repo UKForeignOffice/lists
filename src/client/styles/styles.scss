@@ -218,6 +218,18 @@ $two-thirds: $one-third * 2;
   &__list-item-caption {
     position: relative;
   }
+
+  &__list-sort-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 24rem;
+  }
+
+  &__list-sort-item,
+  &__list-sort-form > .govuk-form-group {
+    margin-bottom: 0;
+  }
 }
 
 .govuk-summary-list__row--hidden-titles {
