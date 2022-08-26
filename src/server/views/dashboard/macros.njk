@@ -53,7 +53,7 @@
   </div>
 {% endmacro %}
 
-{% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons, req) %}
+{% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons, changeMessage) %}
 
   <div class="govuk-!-margin-top-8">
   <div class="govuk-form-group">
@@ -82,7 +82,7 @@
         {% endif %}
         {% if "request-changes" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit" form="mainForm" {% if req.session.changeMessage %} checked {% endif %}>
+          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit" form="mainForm" {% if changeMessage %} checked {% endif %}>
           <label class="govuk-label govuk-radios__label" for="action-requestChanges">
             Request changes
           </label>
@@ -92,7 +92,7 @@
             <div id="action-edit-hint" class="govuk-hint">
               Provide simple and concise instructions to the service provider on what they need to change.
             </div>
-            <textarea class="govuk-textarea" id="message" name="message" rows="5" aria-describedby="action-requestChanges-hint">{{ req.session.changeMessage if req.session.changeMessage }}</textarea>
+            <textarea class="govuk-textarea" id="message" name="message" rows="5" aria-describedby="action-requestChanges-hint">{{ changeMessage if changeMessage }}</textarea>
           </div>
         </div>
         {% endif %}

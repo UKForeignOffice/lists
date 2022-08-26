@@ -33,7 +33,7 @@
       <div class="govuk-list dashboard__content-list">
           <div id="item-{{ listItem.id }}">
             {% include "./partials/details.njk" %}
-            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons, req) }}
+            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons, changeMessage) }}
           </div>
       </div>
     </form>
