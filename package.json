@@ -30,7 +30,8 @@
     "release": "semantic-release",
     "form-runner:install": "./src/server/components/formRunner/install-form-runner.sh",
     "form-runner:start": "cd ./lib/form-runner && yarn runner start",
-    "smoke-tests": "CYPRESS_RECORD_KEY=25c07c62-df3a-455b-8189-7e4a1c97ff9c CYPRESS_BASE_URL=http://localhost:3000 npx cypress run --browser chrome --record --parallel",
+    "smoke-tests": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx -y cypress run --browser chrome",
+    "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open",
     "add-missing-countries": "NODE_PATH=/src npx -y ts-node ./src/server/utils/missing-countries.ts --esm"
   },
   "dependencies": {

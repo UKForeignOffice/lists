@@ -1,3 +1,4 @@
+/* eslint-disable */
 Given(
   "I am viewing the list item details for {string}",
   async (contactName) => {
