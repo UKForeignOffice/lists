@@ -139,7 +139,7 @@ export async function listItemGetController(
   const actionButtonsForStatus = actionButtons[listItem.status];
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
-    req,
+    changeMessage: req.session?.changeMessage,
     list,
     listItem,
     isPinned,
