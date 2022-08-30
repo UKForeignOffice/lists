@@ -55,34 +55,6 @@
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-<form action="#" method="POST" class="dashboard__list-sort-form">
-  <label class="govuk-label" for="sort">
-    Sort by
-  </label>
-  {{ govukSelect({
-    id: "sort",
-    name: "sort",
-    classes: "dashboard__list-sort-item",
-    items: [
-      {
-        value: "oldest",
-        text: "Oldest first",
-        selected: true
-      },
-      {
-        value: "newest",
-        text: "Newest first"
-      }
-    ]
-  }) }}
-
-  {{ govukButton({
-    text: "Apply Sort",
-    classes: "dashboard__list-sort-item"
-  }) }}
-  </form>
-
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% if list.pinnedItems.length !== 0 %}
     <h2 class="govuk-heading-m">Pinned items</h2>
     <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
@@ -91,8 +63,8 @@
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>
-
   {% endif %}
+
   {% if list.items.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}

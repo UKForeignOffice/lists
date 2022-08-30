@@ -129,7 +129,11 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       activeQueries.to_do as Prisma.ListItemWhereInput[]
     );
   }
+
   baseQuery.select.items = {
+    orderBy: {
+      createdAt: "asc",
+    },
     where: {
       AND: [
         {
