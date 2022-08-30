@@ -5,12 +5,12 @@ Feature:
     Given I am logged in as a "SuperAdmin"
     And A "lawyers" list exists for Eurasia
     And there are these list items
-      | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         |
-      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               |
-      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          |
-      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update |
+      | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | createdAt |
+      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 01/01/22  |
+      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 05/01/22  |
+      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 12/01/22  |
+      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 03/02/22  |
+      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | 08/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
   Scenario Outline: View list item details
@@ -93,7 +93,7 @@ Feature:
 
 
   Scenario Outline: Show expected fields on list detail
-    Given I am viewing the list item details for "Winston"
+    When I am viewing the list item details for "Winston"
     Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
 
     Examples:

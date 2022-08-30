@@ -83,7 +83,7 @@ Feature:
 		Then I see the notification text "C & A Reed has been unpublished"
 
 	Scenario Outline: Show expected fields on list detail
-		Given I am viewing the list item details for "Lola"
+		When I am viewing the list item details for "Lola"
 		Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
 
 		Examples:
