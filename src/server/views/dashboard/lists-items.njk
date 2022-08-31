@@ -51,6 +51,10 @@
     </a>
   </p>
 
+  {% if list.items.length > 1 %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <div class="govuk-body">Sorted by "Oldest first"</div>
+  {% endif %}
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% if list.pinnedItems.length !== 0 %}
     <h2 class="govuk-heading-m">Pinned items</h2>
