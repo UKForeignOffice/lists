@@ -1,11 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import {
-  findUserByEmail,
-  findUsers,
-  updateUser,
-} from "server/models/user";
+import { findUserByEmail, findUsers, updateUser } from "server/models/user";
 import {
   createList,
   findListByCountryAndType,
@@ -14,12 +10,7 @@ import {
   updateList,
 } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import {
-  CountryName,
-  List,
-  ServiceType,
-  UserRoles
-} from "server/models/types";
+import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
 import {
   userIsListAdministrator,
   userIsListPublisher,
@@ -123,7 +114,7 @@ export async function usersEditController(
       userSaved = true;
     }
 
-    const user = await findUserByEmail(`${userEmail}`);
+    const user = await findUserByEmail(userEmail);
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,

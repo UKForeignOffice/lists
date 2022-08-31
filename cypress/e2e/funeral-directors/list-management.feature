@@ -1,5 +1,4 @@
-Feature:
-	List management actions
+Feature: List management actions
 
 	Background:
 		Given I am logged in as a "SuperAdmin"
