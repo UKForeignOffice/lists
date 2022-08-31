@@ -3,8 +3,6 @@
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
-{% from "select/macro.njk" import govukSelect %}
-{% from "button/macro.njk" import govukButton %}
 
 
 {% block aside %}
@@ -54,7 +52,6 @@
   </p>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
   {% if list.pinnedItems.length !== 0 %}
     <h2 class="govuk-heading-m">Pinned items</h2>
     <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
@@ -63,8 +60,8 @@
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>
-  {% endif %}
 
+  {% endif %}
   {% if list.items.length === 0 %}
     <p class="govuk-body">This list is empty</p>
   {% else %}
