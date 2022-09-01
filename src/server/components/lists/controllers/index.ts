@@ -3,6 +3,8 @@ import { listsRoutes } from "./../routes";
 import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { CountryName, ServiceType } from "server/models/types";
+import { SERVICE_DOMAIN } from "server/config";
+import { kebabCase } from "lodash";
 import {
   formatCountryParam,
   getAllRequestParams,
@@ -14,20 +16,31 @@ import {
   getServiceTypeName,
   preProcessParams,
   queryStringFromParams,
-  removeQueryParameter
+  removeQueryParameter,
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
-import { languages, translationInterpretationServices } from "server/services/metadata";
+import {
+  QuestionData,
+  QuestionDataSet,
+  QuestionError,
+  QuestionName,
+} from "./../types";
+import {
+  languages,
+  translationInterpretationServices,
+} from "server/services/metadata";
 import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
-import { covidTestProviderQuestionsSequence, searchCovidTestProvider, } from "./../searches/covid-test-provider";
+import {
+  covidTestProviderQuestionsSequence,
+  searchCovidTestProvider,
+} from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import {
   cleanLanguagesProvided,
   getLanguagesRows,
   setLanguagesProvided,
-  some
+  some,
 } from "server/models/listItem/providers/helpers";
 import {
   funeralDirectorsQuestionsSequence,
@@ -66,16 +79,22 @@ export async function listsPostController(
       if (!hasItems) {
         switch (serviceType) {
           case ServiceType.lawyers:
-            redirectLink = getCountryLawyerRedirectLink(countryName as CountryName);
+            redirectLink = getCountryLawyerRedirectLink(
+              countryName as CountryName
+            );
             break;
           case ServiceType.covidTestProviders:
             redirectLink = `${listsRoutes.privateBeta}?serviceType=${ServiceType.covidTestProviders}`;
             break;
           case ServiceType.funeralDirectors:
-            redirectLink = getCountryFuneralDirectorsRedirectLink(countryName as CountryName);
+            redirectLink = getCountryFuneralDirectorsRedirectLink(
+              countryName as CountryName
+            );
             break;
           case ServiceType.translatorsInterpreters:
-            redirectLink = getCountryTranslatorsInterpretersRedirectLink(countryName as CountryName);
+            redirectLink = getCountryTranslatorsInterpretersRedirectLink(
+              countryName as CountryName
+            );
             break;
           default:
             redirectLink = undefined;
@@ -91,7 +110,10 @@ export async function listsPostController(
   }
 
   if (newLanguage) {
-    languagesProvided = setLanguagesProvided(newLanguage, languagesProvided as string);
+    languagesProvided = setLanguagesProvided(
+      newLanguage,
+      languagesProvided as string
+    );
     params.languagesProvided = languagesProvided;
   }
   if (params?.continueButton) {
@@ -122,7 +144,7 @@ export function listsGetController(req: Request, res: Response): void {
   const { serviceType } = params;
   let { languagesProvided, servicesProvided } = params;
   let partialPageTitle: string = "";
-  let partialPageHintText: string = ""
+  let partialPageHintText: string = "";
   let partialToRender: string = "";
   let error: boolean | QuestionError = false;
   let backUrl: string = "";
@@ -133,7 +155,9 @@ export function listsGetController(req: Request, res: Response): void {
     partialData: QuestionDataSet[] | QuestionData[];
 
   if (languagesProvided) {
-    const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
+    const cleanedLanguagesProvided = cleanLanguagesProvided(
+      languagesProvided as string
+    );
     languagesProvided = cleanedLanguagesProvided;
     params.languagesProvided = cleanedLanguagesProvided;
     languagesRows = getLanguagesRows(languagesProvided as string, queryString);
@@ -142,17 +166,22 @@ export function listsGetController(req: Request, res: Response): void {
     backUrl = `${listsRoutes.finder}?${queryStringFromParams(paramsCopy)}`;
 
     // populate filtered language names
-    languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
-      // @ts-ignore
-      return languages[language];
-    }).join(", ");
+    languageNamesProvided = cleanedLanguagesProvided
+      ?.split(",")
+      .map((language: string) => {
+        // @ts-ignore
+        return languages[language];
+      })
+      .join(", ");
   }
 
   if (servicesProvided) {
     // @ts-ignore
     serviceNamesProvided = servicesProvided.split(",").map((service) => {
       if (service === "All") return "All";
-      return translationInterpretationServices.find((metaDataService) => metaDataService.value === service)?.value;
+      return translationInterpretationServices.find(
+        (metaDataService) => metaDataService.value === service
+      )?.value;
     });
   }
 
@@ -184,6 +213,7 @@ export function listsGetController(req: Request, res: Response): void {
       questionsSequence = [];
   }
 
+  const serviceTypeName = getServiceTypeName(serviceType);
   const askQuestion = questionsSequence.some((questionName) => {
     const question = questions[questionName];
 
@@ -192,12 +222,17 @@ export function listsGetController(req: Request, res: Response): void {
       partialPageTitle = question.pageTitle(req);
       partialPageHintText = question.pageHintText?.(req) ?? "";
       error = question.validate(req);
-      partialData = (question?.getPartialData && question?.getPartialData(req)) ?? [];
+      partialData =
+        (question?.getPartialData && question?.getPartialData(req)) ?? [];
       return true;
     }
 
     return false;
   });
+
+  const serviceApplyUrl = `http${
+    SERVICE_DOMAIN.includes("localhost") ? "" : "s"
+  }://${SERVICE_DOMAIN}/application/${kebabCase(serviceTypeName)}`;
 
   if (askQuestion) {
     res.render("lists/question-page", {
@@ -211,6 +246,7 @@ export function listsGetController(req: Request, res: Response): void {
       languagesProvided,
       languageNamesProvided,
       serviceNamesProvided,
+      serviceApplyUrl,
       // @ts-ignore
       partialData,
       languagesRows,
@@ -238,15 +274,22 @@ export function removeLanguageGetController(req: Request, res: Response): void {
   const languageToRemove = req.params.language;
 
   // @ts-ignore
-  if (languageToRemove && languagesProvided && languagesProvided.includes(languageToRemove)) {
+  if (
+    languageToRemove &&
+    languagesProvided &&
+    languagesProvided.includes(languageToRemove)
+  ) {
     // @ts-ignore
-    languagesProvided = languagesProvided.split(',').filter((language: string) => language !== languageToRemove).join(",");
+    languagesProvided = languagesProvided
+      .split(",")
+      .filter((language: string) => language !== languageToRemove)
+      .join(",");
     params.languagesProvided = languagesProvided;
   }
 
   const queryString = queryStringFromParams(params);
   res.redirect(`${listsRoutes.finder}?${queryString}`);
-};
+}
 
 export function listsResultsController(
   req: Request,
@@ -274,7 +317,9 @@ export function listsResultsController(
       break;
     case ServiceType.translatorsInterpreters:
       searchTranslatorsInterpreters(req, res).catch((error) =>
-        logger.error("Find a translator or interpreter result controller", { error })
+        logger.error("Find a translator or interpreter result controller", {
+          error,
+        })
       );
       break;
     default:
