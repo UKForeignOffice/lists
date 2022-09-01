@@ -247,6 +247,7 @@ export const countriesList = [
   { text: "Slovenia", value: "Slovenia", code: "SVN" },
   { text: "Solomon Islands", value: "Solomon Islands", code: "SLB" },
   { text: "Somalia", value: "Somalia", code: "SOM" },
+  { text: "Somaliland", value: "Somaliland", code: "SOM" },
   { text: "South Africa", value: "South Africa", code: "ZAF" },
   {
     text: "South Georgia and South Sandwich Islands",
