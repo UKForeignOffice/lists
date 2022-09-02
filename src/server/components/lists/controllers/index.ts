@@ -230,9 +230,11 @@ export function listsGetController(req: Request, res: Response): void {
     return false;
   });
 
+  const serviceDomain = SERVICE_DOMAIN ?? "";
+
   const serviceApplyUrl = `http${
-    SERVICE_DOMAIN.includes("localhost") ? "" : "s"
-  }://${SERVICE_DOMAIN}/application/${kebabCase(serviceTypeName)}`;
+    serviceDomain.includes("localhost") ? "" : "s"
+  }://${serviceDomain}/application/${kebabCase(serviceTypeName)}`;
 
   if (askQuestion) {
     res.render("lists/question-page", {
