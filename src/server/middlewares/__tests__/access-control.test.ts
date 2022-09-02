@@ -75,7 +75,7 @@ describe("access-control", () => {
 
     it("should pass through in test mode", async () => {
       const { status } = await application.get(
-        "/find?serviceType=covidTestProviders"
+        "/find?serviceType=covid-test-providers"
       );
 
       expect(status).toEqual(200);

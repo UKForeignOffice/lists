@@ -270,7 +270,7 @@ export function removeLanguageGetController(req: Request, res: Response): void {
     params.page = "";
   }
 
-  let { languagesProvided } = params;
+  let languagesProvided = params.languagesProvided as string;
   const languageToRemove = req.params.language;
 
   // @ts-ignore
