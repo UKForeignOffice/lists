@@ -935,33 +935,24 @@ export const fcdoFuneralDirectorsByCountry = {
 
 export const fcdoTranslatorsInterpretersByCountry = {
   Albania:
-
     "https://www.gov.uk/government/publications/albania-list-of-translators",
   Angola: "https://www.gov.uk/government/publications/angola-translators",
   Argentina:
-
     "https://www.gov.uk/government/publications/argentina-list-of-translators-and-interpreters",
   Armenia: "https://www.gov.uk/government/publications/armenia-list-of-lawyers",
   Austria:
-
     "https://www.gov.uk/government/publications/austria-list-of-translators-and-interpreters",
   Azerbaijan:
-
     "https://www.gov.uk/government/publications/azerbaijan-list-of-translators-and-interpreters",
   Bahrain:
-
     "https://www.gov.uk/government/publications/bahrain-list-of-translators-and-interpreters",
   Bangladesh:
-
     "https://www.gov.uk/government/publications/bangladesh-list-of-translators",
   Belarus:
-
     "https://www.gov.uk/government/publications/belarus-list-of-translators-and-interpreters",
   Bolivia:
-
     "https://www.gov.uk/government/publications/list-of-translators-la-paz",
   "Bosnia and Herzegovina":
-
     "https://www.gov.uk/government/publications/bosnia-and-herzegovina-list-of-translators-and-interpreters",
   Brazil: "https://www.gov.uk/government/publications/brazil-list-of-lawyers",
   Bulgaria:
@@ -979,38 +970,27 @@ export const fcdoTranslatorsInterpretersByCountry = {
     "https://www.gov.uk/government/publications/chile-list-of-translators-and-interpreters",
   China: "https://www.gov.uk/government/publications/china-list-of-lawyers",
   "Costa Rica":
-
     "https://www.gov.uk/government/publications/costa-rica-list-of-translators-and-interpreters",
   "Cote d’Ivoire":
-
     "https://www.gov.uk/government/publications/cote-divoire-list-of-translators-and-interpreters",
   Croatia:
-
     "https://www.gov.uk/government/publications/translators-and-interpreters-in-croatia",
   Cuba: "https://www.gov.uk/government/publications/cuba-list-of-translators-and-interpreters",
   Cyprus:
-
     "https://www.gov.uk/government/publications/cyprus-north-list-of-lawyers",
   "Czech Republic":
-
     "https://www.gov.uk/government/publications/czech-republic-list-of-translators-and-interpreters",
   "Congo, Democratic Republic":
-
     "https://www.gov.uk/government/publications/list-of-translators-and-interpreters-in-drc",
   Denmark:
-
     "https://www.gov.uk/government/publications/denmark-list-of-translators-and-interpreters",
   Djibouti:
-
     "https://www.gov.uk/government/publications/djibouti-list-of-funeral-directors-medical-facilities-and-translators",
   "Dominican Republic":
-
     "https://www.gov.uk/government/publications/dominican-republic-list-of-translators",
   Ecuador:
-
     "https://www.gov.uk/government/publications/ecuador-list-of-translators-and-interpreters",
   "El Salvador":
-
     "https://www.gov.uk/government/publications/el-salvador-list-of-lawyers",
   Eritrea: "https://www.gov.uk/government/publications/eritrea-list-of-lawyers",
   Estonia:
@@ -1050,60 +1030,42 @@ export const fcdoTranslatorsInterpretersByCountry = {
   Iran: "https://www.gov.uk/government/publications/iran-list-of-translators",
   Iraq: "https://www.gov.uk/government/publications/iraq-translators-and-interpreters",
   Israel:
-
     "https://www.gov.uk/government/publications/israel-list-of-translators",
   Italy:
-
     "https://www.gov.uk/government/publications/italy-list-of-translators-and-interpreters",
   Japan:
-
     "https://www.gov.uk/government/publications/japan-translators-and-interpreters",
   Jordan:
-
     "https://www.gov.uk/government/publications/jordan-list-of-translators",
   Kazakhstan:
-
     "https://www.gov.uk/government/publications/kazakhstan-list-of-translators-and-interpreters",
   Kosovo:
-
     "https://www.gov.uk/government/publications/kosovo-list-of-translators-and-interpreters",
   Kuwait:
-
     "https://www.gov.uk/government/publications/british-embassy-kuwait-translators-list",
   Kyrgyzstan:
-
     "https://www.gov.uk/government/publications/kyrgyzstan-list-of-lawyers-translators",
   Laos: "https://www.gov.uk/government/publications/laos-list-of-lawyers",
   Latvia:
-
     "https://www.gov.uk/government/publications/latvia-list-of-translators-and-interpreters",
   Lebanon: "https://www.gov.uk/government/publications/lebanon-translators",
   Belgium:
-
     "https://www.gov.uk/government/publications/list-of-translators-and-interpreters-in-belgium",
   Cameroon:
-
     "https://www.gov.uk/government/publications/list-of-translators-and-interpreters-in-cameroon",
   Egypt:
-
     "https://www.gov.uk/government/publications/list-of-translators-and-interpreters-in-egypt",
   Algeria:
-
     "https://www.gov.uk/government/publications/list-of-translators-in-algeria",
   Lithuania:
-
     "https://www.gov.uk/government/publications/list-of-english-speaking-lawyers-and-translators",
   Luxembourg:
-
     "https://www.gov.uk/government/publications/british-embassy-luxembourg-translators",
   Macao:
-
     "https://www.gov.uk/government/publications/macao-list-of-translators-and-interpreters",
   Madagascar:
-
     "https://www.gov.uk/government/publications/madagascar-list-of-translatorsinterpreters",
   Malaysia:
-
     "https://www.gov.uk/government/publications/malaysia-list-of-translators-interpreters",
   Mali: "https://www.gov.uk/government/publications/mali-list-of-translatorsinterpreters",
   Mexico:
@@ -1132,21 +1094,16 @@ export const fcdoTranslatorsInterpretersByCountry = {
     "https://www.gov.uk/government/publications/norway-list-of-translators-and-interpreters",
   Oman: "https://www.gov.uk/government/publications/oman-list-of-translators",
   Pakistan:
-
     "https://www.gov.uk/government/publications/pakistan-list-of-translators-and-interpreters",
   Panama: "https://www.gov.uk/government/publications/panama-list-of-lawyers",
   Paraguay:
-
     "https://www.gov.uk/government/publications/list-of-translators-and-interpreters-in-paraguay",
   Peru: "https://www.gov.uk/government/publications/peru-list-of-lawyers",
   Philippines:
-
     "https://www.gov.uk/government/publications/philippines-list-of-translators-and-interpreters",
   Poland:
-
     "https://www.gov.uk/government/publications/poland-list-of-translators-and-interpreters",
   Portugal:
-
     "https://www.gov.uk/government/publications/portugal-list-of-translators-and-interpreters",
   Qatar: "https://www.gov.uk/government/publications/qatar-list-of-lawyers",
   Congo:
@@ -1440,7 +1397,7 @@ export const translationInterpretationServices: QuestionData[] = [
   {
     text: "Interpretation of spoken language",
     value: "interpretation",
-  },,
+  },
 ];
 
 export const translationSpecialties: QuestionData[] = [
@@ -1448,7 +1405,6 @@ export const translationSpecialties: QuestionData[] = [
     text: "Legal",
     value: "Legal",
     description:
-
       "e.g. real estate, visas, death certificates, notary documents",
   },
   {
@@ -1480,7 +1436,7 @@ export const translationSpecialties: QuestionData[] = [
     text: "General translation ",
     value: "General translation",
     description: " e.g. informal, personal text",
-  },,
+  },
 ];
 
 export const interpretationServices: QuestionData[] = [
@@ -1518,18 +1474,18 @@ export const interpretationServices: QuestionData[] = [
     text: "General interpretation",
     value: "General interpretation ",
     description: "e.g. informal, conversational",
-  },,
+  },
 ];
 
 export const ServicesProvided: Record<string, string> = {
   interpretation: "Interpretation",
   translation: "Translation",
-};;
+};
 export const AddressDisplay: Record<string, string> = {
   full: "Full address",
   partial: "Town or city only",
-};;
+};
 export const DeliveryOfServices: Record<string, string> = {
   inPerson: "In person",
   remote: "Remote",
-};;
+};
