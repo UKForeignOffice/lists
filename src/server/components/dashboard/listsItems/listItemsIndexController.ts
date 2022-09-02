@@ -97,6 +97,7 @@ export async function listItemsIndexController(
     const { listId } = req.params;
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { tag: queryTag, page } = sanitisedQueryParams;
+    req.session.changeMessage = undefined;
 
     const list = await findIndexListItems({
       listId: Number(listId),
