@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_TAG="3.25.23-rc.882"
+ARG BASE_IMAGE_TAG="3.25.24-rc.883"
 FROM ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG as base
 WORKDIR /usr/src/app
 RUN rm -r runner/dist/server/forms && rm -r runner/src
