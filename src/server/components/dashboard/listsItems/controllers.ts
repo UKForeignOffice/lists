@@ -511,8 +511,6 @@ export async function listItemRequestChangeController(
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-
-    req.session.changeMessage = undefined;
   } catch (error: any) {
     req.flash(
       "errorMsg",
