@@ -1,4 +1,4 @@
-Feature: List management role changing
+Feature: List management role changing for super Admins
 
     Background:
         Given I am logged in as a "SuperAdmin"
