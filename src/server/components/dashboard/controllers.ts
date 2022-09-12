@@ -278,7 +278,10 @@ export async function listsEditController(
           }
         } else {
           const list = await findListById(listId);
-          if (list !== undefined && userIsListAdministrator(req, list)) {
+          if (
+            list !== undefined &&
+            (userIsListAdministrator(req, list) || req.user?.isSuperAdmin())
+          ) {
             await updateList(
               Number(listId),
               pick(data, ["validators", "publishers", "administrators"])
