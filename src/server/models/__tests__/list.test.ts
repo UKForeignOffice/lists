@@ -36,7 +36,7 @@ describe("List Model:", () => {
     test("query is correct", async () => {
       prisma.$queryRaw.mockResolvedValue([sampleList]);
 
-      await findUserLists("test@gov.uk");
+      await findUserLists({ email: "test@gov.uk" });
 
       const expectedQuery = `
         SELECT *,
@@ -52,7 +52,7 @@ describe("List Model:", () => {
         WHERE "jsonData"->'validators' @> '"test@gov.uk"'
         OR "jsonData"->'publishers' @> '"test@gov.uk"'
         OR "jsonData"->'administrators' @> '"test@gov.uk"'
-        ORDER BY id ASC    
+        ORDER BY id ASC
       `.replace(/\s\s+/g, " ");
 
       const query = (prisma.$queryRaw.mock.calls[0][0] as string).replace(
@@ -66,7 +66,7 @@ describe("List Model:", () => {
     test("returned value is correct", async () => {
       prisma.$queryRaw.mockResolvedValue([sampleList]);
 
-      const result = await findUserLists("test@gov.uk");
+      const result = await findUserLists({ email: "test@gov.uk" });
 
       expect(result).toMatchObject([sampleList]);
     });
@@ -74,7 +74,7 @@ describe("List Model:", () => {
     test("it returns undefined when queryRaw fails", async () => {
       prisma.$queryRaw.mockRejectedValue({ message: "queryRaw error message" });
 
-      const result = await findUserLists("test@gov.uk");
+      const result = await findUserLists({ email: "test@gov.uk" });
 
       expect(result).toBeUndefined();
       expect(logger.error).toHaveBeenCalledWith(

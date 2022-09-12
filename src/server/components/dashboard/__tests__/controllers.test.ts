@@ -148,14 +148,12 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it calls findUserLists correctly", async () => {
-      const usersLists: any = [{ id: 1 }];
+      const usersLists = [{ id: 1 }];
       const spyFindUsersList = mockFindUserLists(usersLists);
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(spyFindUsersList).toHaveBeenCalledWith(
-        mockReq.user.userData.email
-      );
+      expect(spyFindUsersList).toHaveBeenCalledWith(mockReq.user.userData);
     });
 
     test("it calls next with findUsersList error", async () => {
@@ -298,14 +296,14 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1 }];
+      const lists = [{ id: 1 }];
       const spy = jest
         .spyOn(listModel, "findUserLists")
         .mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
 
-      expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
+      expect(spy).toHaveBeenCalledWith(mockReq.user.userData);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
       expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
     });
