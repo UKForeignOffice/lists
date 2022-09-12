@@ -23,7 +23,7 @@ export async function findUserLists(
   const isSuperAdmin = authenticatedUser.isSuperAdmin();
 
   try {
-    const query = `
+    const getListsForEmail = `
       SELECT *,
       (
         SELECT ROW_TO_JSON(c)
@@ -40,9 +40,23 @@ export async function findUserLists(
       ORDER BY id ASC
     `;
 
-    const lists = isSuperAdmin
-      ? await prisma.list.findMany()
-      : await prisma.$queryRaw(query);
+    const getAllLists = `
+      SELECT *,
+      (
+        SELECT ROW_TO_JSON(c)
+        FROM (
+          SELECT name
+          FROM "Country"
+          WHERE "List"."countryId" = "Country"."id"
+        ) as c
+      ) as country
+      FROM public."List"
+      ORDER BY id ASC
+    `;
+
+    const lists = await prisma.$queryRaw(
+      isSuperAdmin ? getAllLists : getListsForEmail
+    );
 
     return lists ?? undefined;
   } catch (error: any) {
