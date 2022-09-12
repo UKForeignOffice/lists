@@ -16,7 +16,7 @@ import {
   getServiceTypeName,
   preProcessParams,
   queryStringFromParams,
-  removeQueryParameter
+  removeQueryParameter,
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
@@ -29,15 +29,15 @@ import {
   cleanLanguagesProvided,
   getLanguagesRows,
   setLanguagesProvided,
-  some
+  some,
 } from "server/models/listItem/providers/helpers";
 import {
   funeralDirectorsQuestionsSequence,
-  searchFuneralDirectors
+  searchFuneralDirectors,
 } from "server/components/lists/searches/funeral-directors";
 import {
   translatorsInterpretersQuestionsSequence,
-  searchTranslatorsInterpreters
+  searchTranslatorsInterpreters,
 } from "server/components/lists/searches/translators-interpreters";
 import { LanguageRows } from "server/models/listItem/providers/types";
 
@@ -162,7 +162,7 @@ export function listsGetController(req: Request, res: Response): void {
       ...params,
       partialToRender: "question-service-type.njk",
       getServiceLabel,
-      csrfToken: getCSRFToken(req)
+      csrfToken: getCSRFToken(req),
     });
     return;
   }
@@ -200,7 +200,7 @@ export function listsGetController(req: Request, res: Response): void {
     return false;
   });
 
-  const serviceDomain = SERVICE_DOMAIN;
+  const serviceDomain = SERVICE_DOMAIN ?? "";
 
   const serviceApplyUrl = `http${
     serviceDomain.includes("localhost") ? "" : "s"
@@ -226,7 +226,7 @@ export function listsGetController(req: Request, res: Response): void {
       removeQueryParameter,
       getParameterValue,
       serviceLabel: getServiceLabel(params.serviceType),
-      csrfToken: getCSRFToken(req)
+      csrfToken: getCSRFToken(req),
     });
 
     return;
@@ -280,7 +280,7 @@ export function listsResultsController(req: Request, res: Response, next: NextFu
     case ServiceType.translatorsInterpreters:
       searchTranslatorsInterpreters(req, res).catch((error) =>
         logger.error("Find a translator or interpreter result controller", {
-          error
+          error,
         })
       );
       break;
@@ -298,7 +298,7 @@ export async function listsConfirmApplicationController(
 
   try {
     const { type } = await setEmailIsVerified({
-      reference
+      reference,
     });
 
     if (type === undefined) {
@@ -324,7 +324,7 @@ export async function listsConfirmApplicationController(
       }
 
       res.render("lists/application-confirmation-page", {
-        serviceName
+        serviceName,
       });
     }
   } catch (e) {
@@ -341,6 +341,6 @@ export function listsGetPrivateBetaPage(req: Request, res: Response, next: NextF
 
   res.render("lists/private-beta-page", {
     serviceType: getServiceTypeName(serviceType as string),
-    ServiceType
+    ServiceType,
   });
 }
