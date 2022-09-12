@@ -47,7 +47,7 @@ export async function startRouteController(
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await findUserLists(req.user?.userData.email);
+    const lists = await findUserLists(req.user?.userData);
     const isNewUser =
       !req.user?.isSuperAdmin() &&
       !req.user?.isListsCreator() &&
@@ -139,7 +139,7 @@ export async function listsController(
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    const lists = (await findUserLists(req.user?.userData)) ?? [];
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,

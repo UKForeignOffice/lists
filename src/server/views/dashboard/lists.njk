@@ -8,7 +8,7 @@
       </div>
     </div>
   {% endif %}
-  
+
   {% if lists.length > 0 %}
     <table class="govuk-table">
       <caption class="govuk-table__caption govuk-table__caption--l">
@@ -26,21 +26,21 @@
         {% for list in lists %}
           <tr class="govuk-table__row">
             <td scope="row" class="govuk-table__header">
-              {% if userIsListValidator(req, list) or userIsListPublisher(req, list) %}
+              {% if req.user.isSuperAdmin() or userIsListValidator(req, list) or userIsListPublisher(req, list) %}
                 <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">{{ _.startCase(list.type) }}</a>
               {% else %}
                 {{ _.startCase(list.type) }}
               {% endif %}
             </td>
             <td class="govuk-table__cell">{{ list.country.name }}</td>
-            
+
             <td class="govuk-table__cell govuk-table__cell--numeric"></td>
 
             <td class="govuk-table__cell govuk-table__cell--numeric">
-              {% if userIsListAdministrator(req, list) %}
+              {% if req.user.isSuperAdmin() or userIsListAdministrator(req, list) %}
                 <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
               {% endif %}
-            </td>            
+            </td>
           </tr>
         {% endfor %}
       </tbody>

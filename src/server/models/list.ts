@@ -3,6 +3,9 @@ import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
+import { AuthenticatedUser } from "server/components/auth/authenticated-user";
+import type { User } from "server/models/types";
+
 import {
   List,
   CountryName,
@@ -12,9 +15,12 @@ import {
 } from "./types";
 
 export async function findUserLists(
-  email: string
+  userData: User
 ): Promise<List[] | undefined> {
+  const email = userData.email;
+  const authenticatedUser = new AuthenticatedUser(userData);
   const emailAddress = pgescape.string(email.toLowerCase());
+  const isSuperAdmin = authenticatedUser.isSuperAdmin();
 
   try {
     const query = `
@@ -34,9 +40,12 @@ export async function findUserLists(
       ORDER BY id ASC
     `;
 
-    const lists = await prisma.$queryRaw(query);
+    const lists = isSuperAdmin
+      ? await prisma.list.findMany()
+      : await prisma.$queryRaw(query);
+
     return lists ?? undefined;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`findUserLists Error: ${error.message}`);
     return undefined;
   }
@@ -55,7 +64,7 @@ export async function findListById(
       },
     })) as List;
     return lists ?? undefined;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`findListById Error: ${error.message}`);
     return undefined;
   }
@@ -78,7 +87,7 @@ export async function findListByCountryAndType(
       },
     })) as List[];
     return lists ?? undefined;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`findListByCountryAndType Error: ${error.message}`);
     return undefined;
   }
@@ -137,7 +146,7 @@ export async function createList(listData: {
 
     const list = (await prisma.list.create({ data })) as List;
     return list ?? undefined;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`createList Error: ${error.message}`);
     throw error;
   }
@@ -184,7 +193,7 @@ export async function updateList(
       data,
     })) as List;
     return list ?? undefined;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`updateList Error: ${error.message}`);
     throw error;
   }
