@@ -4,11 +4,11 @@
     <fieldset class="govuk-fieldset" aria-describedby="repatriation-hint">
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="repatriation">
-          Do you want to repatriate the deceased back to the UK?
+          Do you want to repatriate the person who died to the UK?
         </label>
       </h1>
       <div id="repatriate-hint" class="govuk-hint">
-        Repatriation is the process of bringing the deceased back to the UK.
+        Repatriation is the process of returning a person to their own country.
       </div>
       {% if error.field === 'repatriation' %}
         <span class="govuk-error-message">
@@ -32,7 +32,7 @@
             value="yes"
           />
           <label class="govuk-label govuk-radios__label" for="repatriation-yes">
-            Yes, I want to bring the deceased back to the UK
+            Yes, I want to bring the body or ashes back to the UK
           </label>
         </div>
         <div class="govuk-radios__item">
@@ -44,7 +44,7 @@
             value="no"
           />
           <label class="govuk-label govuk-radios__label" for="repatriation-no">
-            No, I do not want to bring the deceased back to the UK
+            No, I do not want to bring the body or ashes back to the UK
           </label>
         </div>
       </div>
