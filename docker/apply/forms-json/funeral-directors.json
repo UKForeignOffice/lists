@@ -457,7 +457,7 @@
             "hideTitle": true
           },
           "type": "YesNoField",
-          "hint": "Repatriation is the process of returning the deceased to their own country.",
+          "hint": "Repatriation is the process of returning the body or ashes of the person who died to their own country.",
           "title": "Do you provide repatriation services?",
           "schema": {}
         }
