@@ -1,5 +1,4 @@
 -- Adds all remaining countries for lawyers service
--- Existing country ids were ["36", "34", "1", "2"]
 
 INSERT INTO
     "List" ("reference", "updatedAt", type, "countryId", "jsonData")
@@ -113,4 +112,4 @@ VALUES
   (gen_random_uuid(), NOW(), 'lawyers', '365', '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}'),
   (gen_random_uuid(), NOW(), 'lawyers', '366', '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}'),
   (gen_random_uuid(), NOW(), 'lawyers', '367', '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}'),
-  (gen_random_uuid(), NOW(), 'lawyers', '368', '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}')
+  (gen_random_uuid(), NOW(), 'lawyers', '368', '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}');
