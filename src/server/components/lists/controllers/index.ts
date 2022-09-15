@@ -40,6 +40,7 @@ import {
   searchTranslatorsInterpreters,
 } from "server/components/lists/searches/translators-interpreters";
 import { LanguageRows } from "server/models/listItem/providers/types";
+import serviceName from "server/utils/service-name";
 
 export async function listsPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   let params = getAllRequestParams(req);
@@ -226,6 +227,7 @@ export function listsGetController(req: Request, res: Response): void {
       removeQueryParameter,
       getParameterValue,
       serviceLabel: getServiceLabel(params.serviceType),
+      serviceLabelPlural: serviceName(params.serviceType as string),
       csrfToken: getCSRFToken(req),
     });
 

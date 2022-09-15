@@ -385,7 +385,7 @@
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country or territory"
+          "hint": "Select a country or territory"
         },
         {
           "name": "ZoFnKT",
@@ -2578,7 +2578,7 @@
         {
           "text": "Legal",
           "value": "Legal",
-          "description": "e.g. real estate, visas, death certificates, notary documents"
+          "description": "e.g. property, visas, death certificates, notarised documents"
         },
         {
           "text": "Medical",
@@ -2620,7 +2620,7 @@
         {
           "text": "Medical assistance",
           "value": "Medical assistance",
-          "description": "e.g. hospitalisations, doctors surgeries"
+          "description": "e.g. hospitalisations, doctor's appointments"
         },
         {
           "text": "Police and local authorities",
@@ -2643,7 +2643,7 @@
           "description": "e.g. TV, radio"
         },
         {
-          "text": "Business and commerce",
+          "text": "Business and commercial",
           "value": "Business and commerce",
           "description": "e.g. negotiations, meetings"
         },
