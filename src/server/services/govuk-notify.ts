@@ -135,6 +135,8 @@ export async function sendEditDetailsEmail(
       return pluralize.singular(word);
     }).join(" ");
 
+    message = message.replace(/(?:\r\n)/g, "\n^");
+
     await getNotifyClient().sendEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
       emailAddress,
