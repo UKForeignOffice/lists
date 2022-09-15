@@ -1,7 +1,7 @@
 -- This is an empty migration.
 
 INSERT INTO
-    "Country" ("updatedAt", name)
+    "Country" ("updatedAt", "name")
 VALUES
   (NOW(), 'Afghanistan'),
   (NOW(), 'Albania'),
@@ -18,7 +18,6 @@ VALUES
   (NOW(), 'Bosnia and Herzegovina'),
   (NOW(), 'British Indian Ocean Territory'),
   (NOW(), 'British Virgin Islands'),
-  (NOW(), 'Myanmar'),
   (NOW(), 'Burundi'),
   (NOW(), 'Cameroon'),
   (NOW(), 'Canada'),
