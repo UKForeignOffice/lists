@@ -330,15 +330,15 @@ export const questions: Questions = {
     },
     pageHintText(req: Request) {
       const { servicesProvided } = getAllRequestParams(req);
-      const hintTextStart = "Start typing and select a language. All providers can";
-      let hintText = `${hintTextStart} translate or interpret into English.`;
+      const hintTextStart = "Start typing and select a language. All ";
+      let hintText = `${hintTextStart} translators and interpreters`;
       if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
-        hintText = `${hintTextStart} translate into English.`;
+        hintText = `${hintTextStart} translators`;
 
       } else if (isInterpretingServiceOnlyPopulated(servicesProvided as string[])) {
-        hintText = `${hintTextStart} interpret into English.`;
+        hintText = `${hintTextStart} interpreters`;
       }
-      return hintText;
+      return `${hintText} can provide services in English.`;
     },
     needsToAnswer(req: Request) {
       const { languagesProvided, languagesPopulated } = getAllRequestParams(req);

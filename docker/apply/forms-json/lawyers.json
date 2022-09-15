@@ -400,7 +400,7 @@
           "title": "Country list",
           "list": "country",
           "schema": {},
-          "hint": "Select country or territory"
+          "hint": "Select a country or territory"
         },
         {
           "name": "ZoFnKT",

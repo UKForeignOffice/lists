@@ -1404,7 +1404,7 @@ export const translationSpecialties: QuestionData[] = [
     text: "Legal",
     value: "Legal",
     description:
-      "e.g. real estate, visas, death certificates, notary documents",
+      "e.g. property, visas, death certificates, notarised documents",
   },
   {
     text: "Medical",
@@ -1442,12 +1442,12 @@ export const interpretationServices: QuestionData[] = [
   {
     text: "Medical assistance",
     value: "Medical assistance",
-    description: "e.g. hospitalisations, doctors surgeries",
+    description: "e.g. hospitalisations, doctor's appointments",
   },
   {
     text: "Police and local authorities",
     value: "Police and local authorities",
-    description: "e.g. arrests, immigration",
+    description: "e.g. arrests, immigration issues",
   },
   {
     text: "Courts and legal",
@@ -1465,7 +1465,7 @@ export const interpretationServices: QuestionData[] = [
     description: "e.g. TV, radio",
   },
   {
-    text: "Business and commerce",
+    text: "Business and commercial",
     value: "Business and commerce",
     description: "e.g. negotiations, meetings",
   },
