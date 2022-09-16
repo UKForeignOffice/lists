@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import { logger } from "../../services/logger";
-import { isLocalHost } from "../../config";
+import { logger } from "server/services/logger";
+import { isLocalHost } from "server/config";
 
 const logLevel: Prisma.LogDefinition[] = [
   {
