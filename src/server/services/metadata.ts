@@ -101,7 +101,7 @@ export const countriesList = [
   { text: "Cuba", value: "Cuba", code: "CUB" },
   { text: "Curaçao", value: "Curaçao", code: "CUW" },
   { text: "Cyprus", value: "Cyprus", code: "CYP" },
-  { text: "northern Cyprus", value: "northern Cyprus", code: "CYP" },
+  { text: "northern Cyprus", value: "Northern Cyprus", code: "CYP" },
   { text: "Czech Republic", value: "Czech Republic", code: "CZE" },
   { text: "Denmark", value: "Denmark", code: "DNK" },
   { text: "Djibouti", value: "Djibouti", code: "DJI" },
