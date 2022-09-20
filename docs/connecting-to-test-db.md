@@ -66,7 +66,7 @@ If you only have the b64 encoded key, to import the key
  `% $encoded_key | base64 --decode | gpg --import`
 
 To encrypt the database
-`% gpg -o test_data.sql.zip.gpg -r $key_fingerprint test_data.sql`
+`% gpg -e -o test_data.sql.zip.gpg -r $key_fingerprint test_data.sql`
 For the recipient `-r`, you may use the key's fingerprint, or the UID of the key. 
 
 To find the key's fingerprint
