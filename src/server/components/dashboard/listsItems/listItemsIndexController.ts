@@ -5,6 +5,7 @@ import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { prisma } from "server/models/db/prisma-client";
 import { userIsListPublisher } from "server/components/dashboard/helpers";
+import { logger } from "server/services/logger";
 
 import type { List } from "server/models/types";
 
@@ -97,6 +98,7 @@ export async function listItemsIndexController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+  const unauthorisedMsg = "User is unauthorised to view this page";
   try {
     const { listId } = req.params;
     const listData = (await prisma.list.findUnique({
@@ -106,8 +108,10 @@ export async function listItemsIndexController(
     })) as List;
 
     const userCanPublishList = userIsListPublisher(req as unknown as Request, listData);
+
     if (!userCanPublishList) {
-      res.render("errors/list-management-unauthorised");
+      logger.error(unauthorisedMsg);
+      return res.render("errors/list-management-unauthorised");
     }
 
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
@@ -138,7 +142,7 @@ export async function listItemsIndexController(
       // @ts-expect-error
       csrfToken: getCSRFToken(req as Request),
     });
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 }
