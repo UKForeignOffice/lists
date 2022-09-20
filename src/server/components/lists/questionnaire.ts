@@ -330,7 +330,7 @@ export const questions: Questions = {
     },
     pageHintText(req: Request) {
       const { servicesProvided } = getAllRequestParams(req);
-      const hintTextStart = "Start typing and select a language. You can select more than one language.  All ";
+      const hintTextStart = "Start typing and select a language. You can select more than one language. All ";
       let hintText = `${hintTextStart} translators and interpreters`;
       if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
         hintText = `${hintTextStart} translators`;
