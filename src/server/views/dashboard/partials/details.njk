@@ -47,6 +47,6 @@
 {% if requestedChanges %}
   <h3 class="govuk-heading-m govuk-!-margin-bottom-4">Changes requested to provider</h3>
   <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
-    <p class=govuk-body">{{ requestedChanges }}</p>
+    <p class=govuk-body">{{ requestedChanges | striptags(true) | escape | nl2br }}</p>
   </div>
 {% endif %}
