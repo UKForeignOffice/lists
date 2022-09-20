@@ -59,7 +59,23 @@ You must have access to `keybase://team/cautionyourblast.fcdo/config` to access 
 
 ## Encrypting the database
 
-You must have gnupg (gpg) installed with at least the public key imported into your keychain.
+To import the public key (pub.asc)
+`% import pub.asc`
 
-1. `cat pub.asc | base64 --decode | gpg --import`
-2. encrypt the database `gpg -o test_data.sql.zip.gpg -r BC6D45323BC3CB12EAB271379A2CC0D6099DA303 test_data.sql`
+If you only have the b64 encoded key, to import the key
+ `% $encoded_key | base64 --decode | gpg --import`
+
+To encrypt the database
+`% gpg -o test_data.sql.zip.gpg -r $key_fingerprint test_data.sql`
+For the recipient `-r`, you may use the key's fingerprint, or the UID of the key. 
+
+To find the key's fingerprint
+`% gpg -k` will list all the public keys in your keychain. It will look something like this:
+```
+pub   rsa3072 2022-03-23 [SC]
+      15E44D74231F2A6ED9981C78D9A575DB77C087CC # <- fingerprint
+uid           [ultimate] CYBLists-23-03-22 #<- uid
+sub   rsa3072 2022-03-23 [E]
+```
+
+
