@@ -1,17 +1,14 @@
 import { Request } from "express";
 import { startCase, kebabCase } from "lodash";
 import { ServiceType } from "server/models/types";
-import {
-  parseListValues,
-  getServiceLabel,
-  getAllRequestParams,
-} from "./helpers";
+import { parseListValues, getServiceLabel, getAllRequestParams } from "./helpers";
 import { QuestionName, Question, QuestionData } from "./types";
 import {
   interpretationServices,
-  languages, legalPracticeAreasList,
+  languages,
+  legalPracticeAreasList,
   translationInterpretationServices,
-  translationSpecialties
+  translationSpecialties,
 } from "server/services/metadata";
 
 type Questions = {
@@ -117,7 +114,7 @@ export const questions: Questions = {
         return {
           text: areaOfLaw,
           value: areaOfLaw,
-        }
+        };
       });
     },
     validate(req: Request) {
@@ -193,9 +190,7 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { resultsTurnaround } = getAllRequestParams(req);
-      return (
-        resultsTurnaround === undefined || resultsTurnaround === "undefined"
-      );
+      return resultsTurnaround === undefined || resultsTurnaround === "undefined";
     },
     validate(req: Request) {
       const { resultsTurnaround } = getAllRequestParams(req);
@@ -244,10 +239,7 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { insurance, contactInsurance } = getAllRequestParams(req);
-      return (
-        insurance === "yes" &&
-        (contactInsurance === undefined || contactInsurance === "")
-      );
+      return insurance === "yes" && (contactInsurance === undefined || contactInsurance === "");
     },
     validate(req: Request) {
       const { insurance } = getAllRequestParams(req);
@@ -322,7 +314,6 @@ export const questions: Questions = {
       let title = "Which language(s) do you need translating or interpreting?";
       if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
         title = "Which language(s) do you need translating?";
-
       } else if (isInterpretingServiceOnlyPopulated(servicesProvided as string[])) {
         title = "Which language(s) do you need interpreting?";
       }
@@ -334,7 +325,6 @@ export const questions: Questions = {
       let hintText = `${hintTextStart} translators and interpreters`;
       if (isTranslatingServiceOnlyPopulated(servicesProvided as string[])) {
         hintText = `${hintTextStart} translators`;
-
       } else if (isInterpretingServiceOnlyPopulated(servicesProvided as string[])) {
         hintText = `${hintTextStart} interpreters`;
       }
@@ -342,7 +332,7 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { languagesProvided, languagesPopulated } = getAllRequestParams(req);
-      return  !languagesPopulated || languagesProvided === undefined || languagesProvided === "";
+      return !languagesPopulated || languagesProvided === undefined || languagesProvided === "";
     },
     getPartialData(req) {
       const partialData: QuestionData[] = [];
@@ -350,7 +340,7 @@ export const questions: Questions = {
         partialData.push({
           text: value,
           value: key,
-        })
+        });
       });
       return partialData;
     },
@@ -376,7 +366,7 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { languagesProvided, languagesConfirmed } = getAllRequestParams(req);
-      return  !languagesConfirmed || languagesProvided === undefined || languagesProvided === "";
+      return !languagesConfirmed || languagesProvided === undefined || languagesProvided === "";
     },
     getPartialData(req) {
       const partialData: QuestionData[] = [];
@@ -384,7 +374,7 @@ export const questions: Questions = {
         partialData.push({
           text: value,
           value: key,
-        })
+        });
       });
       return partialData;
     },
@@ -410,13 +400,10 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, translationSpecialties, interpreterServices } = getAllRequestParams(req);
-      const result: boolean = (!translationSpecialties
-        && (servicesProvided?.includes("translation")
-          && (!servicesProvided?.includes("interpretation")
-            || ((servicesProvided?.includes("interpretation") && !!interpreterServices))
-          )
-        )
-      ) as boolean;
+      const result: boolean = (!translationSpecialties &&
+        servicesProvided?.includes("translation") &&
+        (!servicesProvided?.includes("interpretation") ||
+          (servicesProvided?.includes("interpretation") && !!interpreterServices))) as boolean;
       return result;
     },
     getPartialData(req) {
@@ -444,13 +431,10 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
-      const result: boolean = (!interpreterServices
-        && (servicesProvided?.includes("interpretation")
-          && (!servicesProvided?.includes("translation")
-            || ((servicesProvided?.includes("translation") && !!translationSpecialties))
-          )
-        )
-      ) as boolean;
+      const result: boolean = (!interpreterServices &&
+        servicesProvided?.includes("interpretation") &&
+        (!servicesProvided?.includes("translation") ||
+          (servicesProvided?.includes("translation") && !!translationSpecialties))) as boolean;
       return result;
     },
     getPartialData(req) {
@@ -478,12 +462,13 @@ export const questions: Questions = {
     },
     needsToAnswer(req: Request) {
       const { servicesProvided, interpreterServices, translationSpecialties } = getAllRequestParams(req);
-      return (!servicesProvided
-          || servicesProvided.includes("All")
-          || (servicesProvided.includes("translation") && servicesProvided?.includes("interpretation"))
-        )
-        && (!interpreterServices)
-        && (!translationSpecialties);
+      return (
+        (!servicesProvided ||
+          servicesProvided.includes("All") ||
+          (servicesProvided.includes("translation") && servicesProvided?.includes("interpretation"))) &&
+        !interpreterServices &&
+        !translationSpecialties
+      );
     },
     getPartialData(req) {
       return [
@@ -494,7 +479,7 @@ export const questions: Questions = {
         {
           name: "interpretationServices",
           data: interpretationServices,
-        }
+        },
       ];
     },
     validate(req: Request) {
@@ -513,9 +498,17 @@ export const questions: Questions = {
 };
 
 function isTranslatingServiceOnlyPopulated(servicesProvided: string[]): boolean {
-  return servicesProvided?.includes("translation") && !servicesProvided?.includes("interpretation") && !servicesProvided?.includes("All");
+  return (
+    servicesProvided?.includes("translation") &&
+    !servicesProvided?.includes("interpretation") &&
+    !servicesProvided?.includes("All")
+  );
 }
 
 function isInterpretingServiceOnlyPopulated(servicesProvided: string[]): boolean {
-  return servicesProvided?.includes("interpretation") && !servicesProvided?.includes("translation") && !servicesProvided?.includes("All");
+  return (
+    servicesProvided?.includes("interpretation") &&
+    !servicesProvided?.includes("translation") &&
+    !servicesProvided?.includes("All")
+  );
 }
