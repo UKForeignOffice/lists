@@ -72,7 +72,7 @@ Given("there are these list items", (table) => {
 
   const items = rows.map((row) => {
     const service = row.service ?? "lawyers";
-    const createdAt = row.createdAt ? new Date(row.createdAt) : new Date();
+    const createdAt = row.updatedAt ? new Date(row.updatedAt) : new Date();
     const {
       contactName,
       organisationName,
@@ -119,16 +119,9 @@ Given("there are these list items", (table) => {
 
     const jsonDataFuneralDirectors = {
       ...baseJsonData,
-      localServicesProvided: [
-        "Local burials",
-        "Flower arrangements",
-        "Exhumations",
-      ],
+      localServicesProvided: ["Local burials", "Flower arrangements", "Exhumations"],
       representedBritishNationals: true,
-      repatriationServicesProvided: [
-        "Body repatriation",
-        "Ashes repatriation (from a cremation)",
-      ],
+      repatriationServicesProvided: ["Body repatriation", "Ashes repatriation (from a cremation)"],
     };
 
     const jsonData = {
@@ -142,7 +135,7 @@ Given("there are these list items", (table) => {
       isApproved,
       isBlocked,
       jsonData: jsonData[service],
-      createdAt,
+      updatedAt,
       service,
     });
   });
@@ -196,8 +189,7 @@ function listItem(options) {
       contactName: jsonData.contactName ?? randFullName(),
       declaration: ["confirm"],
       phoneNumber: "1234567",
-      emailAddress:
-        jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
+      emailAddress: jsonData.emailAddress ?? "ignoremyemail@noemail-ignoreme.uk",
       publishEmail: "Yes",
       speakEnglish: true,
       websiteAddress: null,

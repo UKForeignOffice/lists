@@ -5,7 +5,7 @@ Feature:
         Given I am logged in as a "SuperAdmin"
         And A "lawyers" list exists for Eurasia
         And there are these list items
-            | contactName | organisationName | status            | isPublished | isBlocked | isApproved | emailVerified | createdAt |
+            | contactName | organisationName | status            | isPublished | isBlocked | isApproved | emailVerified | updatedAt |
             | Winston     | Winston Law      | NEW               | false       | false     | false      | true          | 01/01/22  |
             | O'brien     | Brien Law        | NEW               | false       | false     | false      | false         | 05/01/22  |
             | Julia       | Julia Law        | OUT_WITH_PROVIDER | false       | false     | false      | true          | 12/01/22  |
