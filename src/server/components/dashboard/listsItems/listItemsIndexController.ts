@@ -98,7 +98,6 @@ export async function listItemsIndexController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const unauthorisedMsg = "User is unauthorised to view this page";
   try {
     const { listId } = req.params;
     const listData = (await prisma.list.findUnique({
@@ -110,7 +109,7 @@ export async function listItemsIndexController(
     const userCanPublishList = userIsListPublisher(req as unknown as Request, listData);
 
     if (!userCanPublishList) {
-      logger.error(unauthorisedMsg);
+      logger.error("User doesn't have publishing right on this list");
       return res.render("errors/list-management-unauthorised");
     }
 
