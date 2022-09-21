@@ -72,7 +72,7 @@ Given("there are these list items", (table) => {
 
   const items = rows.map((row) => {
     const service = row.service ?? "lawyers";
-    const createdAt = row.updatedAt ? new Date(row.updatedAt) : new Date();
+    const updatedAt = row.updatedAt ? new Date(row.updatedAt) : new Date();
     const {
       contactName,
       organisationName,
