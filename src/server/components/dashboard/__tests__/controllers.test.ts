@@ -1,5 +1,10 @@
 import { authRoutes } from "server/components/auth";
-import { List, BaseListItemGetObject, ServiceType, UserRoles } from "server/models/types";
+import {
+  List,
+  BaseListItemGetObject,
+  ServiceType,
+  UserRoles,
+} from "server/models/types";
 import * as userModel from "server/models/user";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
@@ -111,7 +116,9 @@ describe("Dashboard Controllers", () => {
 
   describe("startRouteController", () => {
     function mockFindUserLists(resolvedValue: any): jest.SpyInstance {
-      return jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(resolvedValue);
+      return jest
+        .spyOn(listModel, "findUserLists")
+        .mockResolvedValueOnce(resolvedValue);
     }
 
     beforeEach(() => {
@@ -148,7 +155,9 @@ describe("Dashboard Controllers", () => {
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(spyFindUsersList).toHaveBeenCalledWith(mockReq.user.userData.email);
+      expect(spyFindUsersList).toHaveBeenCalledWith(
+        mockReq.user.userData.email
+      );
     });
 
     test("it calls next with findUsersList error", async () => {
@@ -208,7 +217,9 @@ describe("Dashboard Controllers", () => {
   describe("usersListController", () => {
     test("it renders correctly template with found users", async () => {
       const users: any = [{ id: 1 }];
-      const spyFindUsers = jest.spyOn(userModel, "findUsers").mockResolvedValueOnce(users);
+      const spyFindUsers = jest
+        .spyOn(userModel, "findUsers")
+        .mockResolvedValueOnce(users);
 
       await usersListController(mockReq, mockRes, mockNext);
 
@@ -235,12 +246,16 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it returns 405 when trying to edit a SuperAdmin", async () => {
-      const spyIsSuperAdmin = jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(true);
+      const spyIsSuperAdmin = jest
+        .spyOn(userModel, "isSuperAdminUser")
+        .mockResolvedValueOnce(true);
 
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(405);
-      expect(mockRes.send).toHaveBeenCalledWith("Not allowed to edit super admin account");
+      expect(mockRes.send).toHaveBeenCalledWith(
+        "Not allowed to edit super admin account"
+      );
       expect(spyIsSuperAdmin).toHaveBeenCalledWith(mockReq.params.userEmail);
     });
 
@@ -256,7 +271,9 @@ describe("Dashboard Controllers", () => {
     test("it renders correct template with correct user value", async () => {
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(userBeingEdited);
+      const spyFindUser = jest
+        .spyOn(userModel, "findUserByEmail")
+        .mockResolvedValueOnce(userBeingEdited);
 
       await usersEditController(mockReq, mockRes, mockNext);
 
@@ -268,7 +285,9 @@ describe("Dashboard Controllers", () => {
     test("it correctly updates user removing SuperAdmin role", async () => {
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyUpdateUser = jest.spyOn(userModel, "updateUser").mockResolvedValueOnce(userBeingEdited);
+      const spyUpdateUser = jest
+        .spyOn(userModel, "updateUser")
+        .mockResolvedValueOnce(userBeingEdited);
 
       mockReq.method = "POST";
       mockReq.body = {
@@ -308,7 +327,9 @@ describe("Dashboard Controllers", () => {
 
     test("it renders correct template with found lists", async () => {
       const lists: any = [{ id: 1 }];
-      const spy = jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
+      const spy = jest
+        .spyOn(listModel, "findUserLists")
+        .mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
 
@@ -344,7 +365,10 @@ describe("Dashboard Controllers", () => {
     beforeEach(() => {
       listItems = [{ id: 1 }];
 
-      spyFindListItemsForList = jest.spyOn(listItemModel, "findListItemsForList");
+      spyFindListItemsForList = jest.spyOn(
+        listItemModel,
+        "findListItemsForList"
+      );
     });
 
     test.skip("it renders correctly", async () => {
@@ -587,7 +611,9 @@ describe("Dashboard Controllers", () => {
           validators: ["email@gov.uk"],
           createdBy: mockReq.user.userData.email,
         });
-        expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/lists/${list.id}?listCreated=true`);
+        expect(mockRes.redirect).toHaveBeenCalledWith(
+          `/dashboard/lists/${list.id}?listCreated=true`
+        );
       });
 
       test("it errors when trying to create a that already exists", async () => {
@@ -601,7 +627,10 @@ describe("Dashboard Controllers", () => {
         await listsEditController(mockReq, mockRes, mockNext);
 
         expect(spyCreateList).not.toHaveBeenCalled();
-        expect(spyFindListByCountryAndType).toHaveBeenCalledWith(mockReq.body.country, mockReq.body.serviceType);
+        expect(spyFindListByCountryAndType).toHaveBeenCalledWith(
+          mockReq.body.country,
+          mockReq.body.serviceType
+        );
         expect(mockRes.render.mock.calls[0][1].error).toEqual({
           field: "serviceType",
           href: "#serviceType",
@@ -635,7 +664,9 @@ describe("Dashboard Controllers", () => {
           publishers: ["email@gov.uk"],
           validators: ["email@gov.uk"],
         });
-        expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/lists/${list.id}?listUpdated=true`);
+        expect(mockRes.redirect).toHaveBeenCalledWith(
+          `/dashboard/lists/${list.id}?listUpdated=true`
+        );
       });
 
       test("it invokes next with updateList error", async () => {
@@ -692,7 +723,9 @@ describe("Dashboard Controllers", () => {
         listItemId: "2",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
 
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,
@@ -707,7 +740,9 @@ describe("Dashboard Controllers", () => {
         },
       });
 
-      deleteListItem = jest.spyOn(listItemModel, "deleteListItem").mockResolvedValue(listItem);
+      deleteListItem = jest
+        .spyOn(listItemModel, "deleteListItem")
+        .mockResolvedValue(listItem);
     });
 
     it.skip("should redirect if user is undefined", async () => {
@@ -788,7 +823,9 @@ describe("Dashboard Controllers", () => {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
@@ -856,13 +893,15 @@ describe("Dashboard Controllers", () => {
     beforeEach(() => {
       mockReq.params = {
         listId: "1",
-        listItemId: "2",
+        listItemId: "2"
       };
       mockReq.body = {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
+      userIsListPublisher = jest
+        .spyOn(helpers, "userIsListPublisher")
+        .mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
@@ -922,7 +961,10 @@ describe("Dashboard Controllers", () => {
         .spyOn(helpers, "getInitiateFormRunnerSessionToken")
         .mockResolvedValue("string");
 
-      const spySendEditDetailsEmail = jest.spyOn(govukNotify, "sendEditDetailsEmail");
+      const spySendEditDetailsEmail = jest.spyOn(
+        govukNotify,
+        "sendEditDetailsEmail"
+      );
 
       // await dashboardControllers.listItemPostConfirmationController(mockReq, mockRes);
 
