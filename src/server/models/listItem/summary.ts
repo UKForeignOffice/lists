@@ -1,15 +1,7 @@
-import {
-  IndexListItem,
-  ListIndexOptions,
-  TAGS,
-  Tags,
-} from "server/models/listItem/types";
+import { IndexListItem, ListIndexOptions, TAGS, Tags } from "server/models/listItem/types";
 import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
-import {
-  calculatePagination,
-  tagQueryFactory,
-} from "server/models/listItem/queryFactory";
+import { calculatePagination, tagQueryFactory } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
@@ -19,21 +11,11 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 
 function listItemsWithIndexDetails(item: ListItem): IndexListItem {
   const { jsonData, createdAt, updatedAt, id, status } = item;
-  const {
-    organisationName,
-    contactName,
-    publishers,
-    validators,
-    administrators,
-  } = jsonData as ListItemJsonData;
+  const { organisationName, contactName, publishers, validators, administrators } = jsonData as ListItemJsonData;
   const isPublished = item.isPublished && TAGS.published;
   const isNew =
-    (item.status === Status.NEW ||
-      item.status === Status.EDITED ||
-      item.status === Status.UNPUBLISHED) &&
-    TAGS.to_do;
-  const isOutWithProvider =
-    item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
+    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED) && TAGS.to_do;
+  const isOutWithProvider = item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
     updatedAt: format(updatedAt, "dd MMMM yyyy"),
@@ -91,8 +73,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const paginationOptions: {} | { take: number; skip: number } =
-    calculatePagination(options);
+  const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
   const activeQueries = getActiveQueries(tags, options);
 
@@ -113,26 +94,20 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
 
   if (activeQueries.out_with_provider) {
-    itemsWhereOr = itemsWhereOr.concat(
-      activeQueries.out_with_provider as Prisma.ListItemWhereInput[]
-    );
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider as Prisma.ListItemWhereInput[]);
   }
 
   if (activeQueries.published) {
-    itemsWhereOr = itemsWhereOr.concat(
-      activeQueries.published as Prisma.ListItemWhereInput[]
-    );
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.published as Prisma.ListItemWhereInput[]);
   }
 
   if (activeQueries.to_do) {
-    itemsWhereOr = itemsWhereOr.concat(
-      activeQueries.to_do as Prisma.ListItemWhereInput[]
-    );
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do as Prisma.ListItemWhereInput[]);
   }
 
   baseQuery.select.items = {
     orderBy: {
-      createdAt: "asc",
+      updatedAt: "asc",
     },
     where: {
       AND: [
