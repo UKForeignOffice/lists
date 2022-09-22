@@ -484,9 +484,11 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
     const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
     return next(err);
   } else if (!userIsListPublisher(req, list)) {
-    res.status(403);
-    logger.error("User doesn't have publishing right on this list");
-    return res.render("errors/list-management-unauthorised");
+    res.status(403).send({
+      error: {
+        message: "User doesn't have publishing right on this list",
+      },
+    });
   }
   return next();
 }
