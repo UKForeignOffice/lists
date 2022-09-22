@@ -1,5 +1,3 @@
--- This is an empty migration.
-
 INSERT INTO
     "Country" ("updatedAt", "name")
 VALUES
@@ -94,7 +92,7 @@ VALUES
   (NOW(), 'United States'),
   (NOW(), 'Uzbekistan'),
   (NOW(), 'Vanuatu'),
-  (NOW(), 'Vatican City'),
   (NOW(), 'Wallis and Futuna Islands'),
   (NOW(), 'Western Sahara'),
-  (NOW(), 'Yemen');
+  (NOW(), 'Yemen')
+  ON CONFLICT (name) DO NOTHING;
