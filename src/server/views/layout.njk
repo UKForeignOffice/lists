@@ -17,14 +17,18 @@
     })(window,document,'script','dataLayer','GTM-KZWHG2G');</script>
     <!-- End Google Tag Manager -->
 
-    <!-- Google Tag Manager -->
-    <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
-    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
-    <!-- End Google Tag Manager -->
+  <!-- Google Tag Manager -->
+  <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
+  n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
+
+  <script>
+    window.dataLayer = window.dataLayer || []; window.dataLayer.push({ "event": "virtualPageview", "page-title ": document.title });
+  </script>
+  <!-- End Google Tag Manager -->
   {% endif %}
 
   <link as="font" href="/assets/fonts/bold-affa96571d-v2.woff" type="font/woff2" crossorigin="anonymous">
@@ -42,7 +46,7 @@
 
 
 {% block pageTitle %}
-  {{ SERVICE_NAME }}
+  {{ SERVICE_NAME }}{{ " - " + pageTitle if pageTitle }}
 {% endblock %}
 
 {% block skipLink %}
@@ -56,7 +60,7 @@
 {% block bodyStart %}
     <script nonce="{{cspNonce}}">
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
-    </script>
+  </script>
     {% if isProd %}
       <!-- Google Tag Manager (noscript) -->
       <noscript>

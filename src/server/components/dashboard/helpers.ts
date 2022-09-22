@@ -3,6 +3,10 @@ import { logger } from "server/services/logger";
 import axios from "axios";
 import { List, ListJsonData, UserRoles } from "server/models/types";
 import { NewSessionData } from "../formRunner/types";
+import { dashboardRoutes } from "server/components/dashboard/routes";
+import { sitemapRoute } from "server/components/sitemap/routes";
+import { authRoutes } from "server/components/auth";
+import serviceName from "server/utils/service-name";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
@@ -56,4 +60,28 @@ export async function getInitiateFormRunnerSessionToken(
 
   logger.info(`token: ${token}`);
   return token;
+}
+
+export const pageTitles: { [key: string]: string } = {
+  [dashboardRoutes.usersEdit]: "list management - edit user",
+  [dashboardRoutes.usersList]: "list management - user list",
+  [dashboardRoutes.lists]: "list management - all provider lists",
+  [dashboardRoutes.listsEdit]: "list management - :serviceType in :country - edit provider list",
+  [dashboardRoutes.listsItems]: "list management - :serviceType in :country - provider list",
+  [dashboardRoutes.listsItem]: "list management - :serviceType in :country - provider details",
+  [dashboardRoutes.listsItemDelete]: "list management - :serviceType in :country - confirm delete provider",
+  [dashboardRoutes.listsItemPublish]: "list management - :serviceType in :country - confirm publish list item",
+  [dashboardRoutes.listsItemRequestChanges]: "list management - :serviceType in :country - confirm request changes to provider",
+  [dashboardRoutes.listsItemUpdate]: "list management - :serviceType in :country - confirm update provider",
+  [sitemapRoute]: "site map",
+  [authRoutes.login]: "list management - login",
+  [authRoutes.logout]: "list management - logout",
+}
+
+export function getPageTitle(pageTitle: string, serviceType?: string, country?: string): string {
+  let result = pageTitle;
+  if (serviceType) {
+    result = result.replace(":serviceType", serviceName(serviceType));
+  }
+  return result.replace(":country", country ?? "Undefined");
 }
