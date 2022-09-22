@@ -1,20 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
-import {
-  EventJsonData,
-  List,
-  Point,
-  ServiceType,
-  User,
-  ListItem,
-} from "server/models/types";
-import {
-  ListItemWithAddressCountry,
-  ListItemWithJsonData,
-} from "server/models/listItem/providers/types";
-import {
-  makeAddressGeoLocationString,
-  getCountryFromData,
-} from "server/models/listItem/geoHelpers";
+import { EventJsonData, List, Point, ServiceType, User, ListItem } from "server/models/types";
+import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import { makeAddressGeoLocationString, getCountryFromData } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -23,13 +10,7 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import {
-  AuditEvent,
-  ListItemEvent,
-  Prisma,
-  Status,
-  ListItem as PrismaListItem,
-} from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
@@ -41,7 +22,8 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
     /**
      * TODO:- should this be using prisma.listItem.findMany(..)?
      */
-    return await prisma.$queryRaw(`SELECT
+    return await prisma.$queryRaw(
+      `SELECT
         "ListItem".*,
         (
           SELECT ROW_TO_JSON(a)
@@ -79,9 +61,10 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
       AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
       AND "Country".id = ${list.countryId}
 
-      ORDER BY "ListItem"."createdAt" DESC`);
+      ORDER BY "ListItem"."createdAt" DESC` as unknown as TemplateStringsArray
+    );
   } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
+    logger.error(`approveLawyer Error ${(error as Error).message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
@@ -112,7 +95,7 @@ export async function findListItemById(id: string | number): Promise<any> {
     });
     return returnVal;
   } catch (error) {
-    logger.error(`findListItemById Error ${error.message}`);
+    logger.error(`findListItemById Error ${(error as Error).message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
@@ -174,9 +157,7 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const auditEvent = isPublished
-    ? AuditEvent.PUBLISHED
-    : AuditEvent.UNPUBLISHED;
+  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
 
   try {
     const [listItem] = await prisma.$transaction([
@@ -222,10 +203,7 @@ export async function togglerListItemIsPublished({
   }
 }
 
-export async function persistListItemChanges(
-  id: number,
-  userId: User["id"]
-): Promise<ListItem> {
+export async function persistListItemChanges(id: number, userId: User["id"]): Promise<ListItem> {
   if (userId === undefined) {
     throw new Error("persistListItemChanges Error: userId is undefined");
   }
@@ -290,11 +268,7 @@ interface SetEmailIsVerified {
   type?: ServiceType;
 }
 
-export async function setEmailIsVerified({
-  reference,
-}: {
-  reference: string;
-}): Promise<SetEmailIsVerified> {
+export async function setEmailIsVerified({ reference }: { reference: string }): Promise<SetEmailIsVerified> {
   try {
     const item = await prisma.listItem.findUnique({
       where: { reference },
@@ -324,6 +298,7 @@ export async function setEmailIsVerified({
     // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
+      // @ts-ignore
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 
@@ -336,9 +311,7 @@ export async function setEmailIsVerified({
   }
 }
 
-export async function createListItem(
-  webhookData: WebhookData
-): Promise<ListItemWithAddressCountry> {
+export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountry> {
   try {
     const data = await listItemCreateInputFromWebhook(webhookData);
 
@@ -379,11 +352,7 @@ export async function createListItem(
 
 type Nullable<T> = T | undefined | null;
 
-export async function update(
-  id: ListItem["id"],
-  userId: User["id"],
-  data: DeserialisedWebhookData
-): Promise<void> {
+export async function update(id: ListItem["id"], userId: User["id"], data: DeserialisedWebhookData): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
       where: { id },
@@ -500,17 +469,12 @@ export async function update(
       throw Error("listItem.update prisma update failed");
     }
   } catch (err) {
-    logger.error(
-      `listItem.update transactional error - rolling back ${err.message}`
-    );
+    logger.error(`listItem.update transactional error - rolling back ${err.message}`);
     throw err;
   }
 }
 
-export async function deleteListItem(
-  id: number,
-  userId: User["id"]
-): Promise<void> {
+export async function deleteListItem(id: number, userId: User["id"]): Promise<void> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }

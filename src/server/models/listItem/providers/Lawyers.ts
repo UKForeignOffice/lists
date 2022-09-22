@@ -33,17 +33,13 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   if (Object.keys(jsonQuery).length > 0) {
-    andWhere.push(
-      `AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`
-    );
+    andWhere.push(`AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`);
   }
 
   if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
     let legalPracticeAreas = props.practiceArea;
     if (legalPracticeAreas.some((item) => item === "all")) {
-      legalPracticeAreas = legalPracticeAreasList.map((area) =>
-        area.toLowerCase()
-      );
+      legalPracticeAreas = legalPracticeAreasList.map((area) => area.toLowerCase());
     }
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
@@ -67,7 +63,7 @@ export async function findPublishedLawyersPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query);
+    return await prisma.$queryRaw(query as unknown as TemplateStringsArray);
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
     return [];
