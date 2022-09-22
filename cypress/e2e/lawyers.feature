@@ -1,6 +1,4 @@
-Feature:
-
-  I want to search for lawyers
+Feature: I want to search for lawyers
 
   Background:
 
@@ -12,6 +10,6 @@ Feature:
     Then I see "<found>"
 
     Examples:
-      | profession | country | city | filters               | found           |
-      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
-      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
+      | profession | country | city   | filters               | found           |
+      | lawyers    | Italy   | Sicily | [Bankruptcy,Criminal] | Serena Torrente |
+      | lawyers    | Italy   | Sicily | [Bankruptcy,Criminal] | Serena Torrente |
