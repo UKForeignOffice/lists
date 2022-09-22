@@ -881,10 +881,12 @@ describe("Dashboard Controllers", () => {
       const next = jest.fn();
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
-      const err = next.mock.calls[0][0];
-
-      expect(err.status).toBe(403)
-      expect(err.message).toContain("User does not have publishing")
+      expect(mockRes.status).toHaveBeenLastCalledWith(403);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
     });
 
     it("should call editListItem with the correct params", async () => {
@@ -1003,11 +1005,12 @@ describe("Dashboard Controllers", () => {
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
 
-      const err = next.mock.calls[0][0];
-      expect(err.status).toBe(403)
-      expect(err.message).toContain("User does not have publishing")
-
-
+      expect(mockRes.status).toHaveBeenLastCalledWith(403);
+      expect(mockRes.send).toHaveBeenCalledWith({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
     });
 
     it.skip("should call editListItem with the correct params", async () => {
