@@ -27,7 +27,6 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
 
-
   /**
    * To aide debugging, you can output the page HTML using the following technique:
    *     cy.get('html:root')
@@ -38,13 +37,13 @@ module.exports = (on, config) => {
    *       });
    */
   on("task", {
-    db: ({ operation, variables }) => {
+    db: async ({ operation, variables }) => {
       const [model, action] = operation.split(".");
-      return db[model][action](variables);
+      return await db[model][action](variables);
     },
     log: (message) => {
       logger.log(message);
       return null;
-    }
+    },
   });
 };
