@@ -63,7 +63,7 @@ export async function findPublishedLawyersPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query as unknown as TemplateStringsArray);
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
     return [];
