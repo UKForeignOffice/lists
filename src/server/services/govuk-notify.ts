@@ -2,10 +2,7 @@ import { NotifyClient } from "notifications-node-client";
 import pluralize from "pluralize";
 import * as config from "server/config";
 import { logger } from "./logger";
-import {
-  isGovUKEmailAddress,
-  throwIfConfigVarIsUndefined,
-} from "server/utils/validation";
+import { isGovUKEmailAddress, throwIfConfigVarIsUndefined } from "server/utils/validation";
 
 let notifyClient: any;
 
@@ -20,9 +17,7 @@ export function getNotifyClient(): any {
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
     if (config.isSmokeTest) {
-      return import("./__mocks__/notifications-node-client").then(
-        (mocks) => mocks.NotifyClient
-      );
+      return import("./__mocks__/notifications-node-client").then((mocks) => mocks.NotifyClient);
     }
 
     notifyClient = new NotifyClient(config.GOVUK_NOTIFY_API_KEY?.trim());
@@ -31,10 +26,7 @@ export function getNotifyClient(): any {
   return notifyClient;
 }
 
-export async function sendAuthenticationEmail(
-  email: string,
-  authenticationLink: string
-): Promise<boolean> {
+export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
 
   if (!isGovUKEmailAddress(emailAddress)) {
@@ -54,7 +46,7 @@ export async function sendAuthenticationEmail(
 
     return result.statusText === "Created";
   } catch (error) {
-    logger.error(`sendAuthenticationEmail Error: ${error.message}`);
+    logger.error(`sendAuthenticationEmail Error: ${(error as Error).message}`);
     return false;
   }
 }
@@ -82,7 +74,7 @@ export async function sendApplicationConfirmationEmail(
 
     return statusText === "Created";
   } catch (error) {
-    logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
+    logger.error(`sendApplicationConfirmationEmail Error: ${(error as Error).message}`);
     return false;
   }
 }
@@ -112,7 +104,7 @@ export async function sendDataPublishedEmail(
 
     return statusText === "Created";
   } catch (error) {
-    logger.error(`sendDataPublishedEmail Error: ${error.message}`);
+    logger.error(`sendDataPublishedEmail Error: ${(error as Error).message}`);
     return false;
   }
 }
@@ -125,32 +117,30 @@ export async function sendEditDetailsEmail(
   changeLink: string
 ): Promise<void> {
   try {
-
-    logger.info(`isSmokeTest[${config.isSmokeTest}]`)
+    logger.info(`isSmokeTest[${config.isSmokeTest}]`);
     if (config.isSmokeTest) {
       return;
     }
 
-    const typeSingular = typePlural.split(" ").map((word: string) => {
-      return pluralize.singular(word);
-    }).join(" ");
+    const typeSingular = typePlural
+      .split(" ")
+      .map((word: string) => {
+        return pluralize.singular(word);
+      })
+      .join(" ");
 
     message = message.replace(/(?:\r\n)/g, "\n^");
 
-    await getNotifyClient().sendEmail(
-      config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
-      emailAddress,
-      {
-        personalisation: {
-          typeSingular,
-          typePlural,
-          contactName,
-          message,
-          changeLink,
-        },
-      }
-    );
+    await getNotifyClient().sendEmail(config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(), emailAddress, {
+      personalisation: {
+        typeSingular,
+        typePlural,
+        contactName,
+        message,
+        changeLink,
+      },
+    });
   } catch (error) {
-    throw new Error(`Unable to send change request email: ${error.message}`);
+    throw new Error(`Unable to send change request email: ${(error as Error).message}`);
   }
 }

@@ -4,9 +4,7 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
 
-export async function findUserByEmail(
-  email: string
-): Promise<User | undefined> {
+export async function findUserByEmail(email: string): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
@@ -14,14 +12,12 @@ export async function findUserByEmail(
 
     return user ?? undefined;
   } catch (error) {
-    logger.error(`findUserByEmail Error ${error.message}`);
+    logger.error(`findUserByEmail Error ${(error as Error).message}`);
     return undefined;
   }
 }
 
-export async function findUserById(
-  id: number
-): Promise<User | undefined> {
+export async function findUserById(id: number): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
       where: { id },
@@ -29,14 +25,12 @@ export async function findUserById(
 
     return user ?? undefined;
   } catch (error) {
-    logger.error(`findUserById Error ${error.message}`);
+    logger.error(`findUserById Error ${(error as Error).message}`);
     return undefined;
   }
 }
 
-export async function createUser(
-  data: UserCreateInput
-): Promise<User | undefined> {
+export async function createUser(data: UserCreateInput): Promise<User | undefined> {
   if (!isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to create non GOV.UK user ${data.email}`);
     return undefined;
@@ -50,15 +44,12 @@ export async function createUser(
       },
     })) as User;
   } catch (error) {
-    logger.error(`createUser Error ${error.message}`);
+    logger.error(`createUser Error ${(error as Error).message}`);
     return undefined;
   }
 }
 
-export async function updateUser(
-  email: string,
-  data: UserUpdateInput
-): Promise<User | undefined> {
+export async function updateUser(email: string, data: UserUpdateInput): Promise<User | undefined> {
   if (typeof data.email === "string" && !isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to update non GOV.UK user ${data.email}`);
     return undefined;
@@ -70,7 +61,7 @@ export async function updateUser(
       data: omit(data, ["email"]),
     })) as User;
   } catch (error) {
-    logger.error(`updateUser Error ${error.message}`);
+    logger.error(`updateUser Error ${(error as Error).message}`);
     return undefined;
   }
 }
@@ -83,7 +74,7 @@ export async function findUsers(): Promise<User[]> {
       },
     })) as User[];
   } catch (error) {
-    logger.error(`findUsers Error ${error.message}`);
+    logger.error(`findUsers Error ${(error as Error).message}`);
     return [];
   }
 }
@@ -93,7 +84,7 @@ export async function isSuperAdminUser(email: string): Promise<boolean> {
     const user = await findUserByEmail(email);
     return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
   } catch (error) {
-    logger.error(`isSuperAdminUser Error: ${error.message}`);
+    logger.error(`isSuperAdminUser Error: ${(error as Error).message}`);
     throw error;
   }
 }

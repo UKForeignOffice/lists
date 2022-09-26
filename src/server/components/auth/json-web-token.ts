@@ -27,26 +27,22 @@ export async function getJwtSecret(): Promise<string> {
   return JWT_SECRET;
 }
 
-export async function createAuthenticationJWT(
-  user: Pick<User, "email">
-): Promise<string | boolean> {
+export async function createAuthenticationJWT(user: Pick<User, "email">): Promise<string | boolean> {
   try {
     const secret = await getJwtSecret();
     return jwt.sign({ user }, secret, JWT_OPTIONS);
   } catch (error) {
-    logger.error(`createLoginJWT Error: ${error.message}`);
+    logger.error(`createLoginJWT Error: ${(error as Error).message}`);
     throw error;
   }
 }
 
-export async function createAuthenticationPath(
-  user: Pick<User, "email">
-): Promise<string | boolean> {
+export async function createAuthenticationPath(user: Pick<User, "email">): Promise<string | boolean> {
   try {
     const token = await createAuthenticationJWT(user);
-    return `${authRoutes.loginAuth.replace(":token",`${token}`)}`;
+    return `${authRoutes.loginAuth.replace(":token", `${token}`)}`;
   } catch (error) {
-    logger.error(`createLoginJWT Error: ${error.message}`);
+    logger.error(`createLoginJWT Error: ${(error as Error).message}`);
     throw error;
   }
 }

@@ -21,35 +21,39 @@ declare module "express-session" {
 }
 
 export async function configureExpressSession(server: Express): Promise<void> {
-  const secret = await getSecretValue(SECRET_NAME);
+  try {
+    const secret = await getSecretValue(SECRET_NAME);
 
-  setTimeout(() => {
-    rotateSecret(SECRET_NAME).catch(noop);
-  }, random(200) * ONE_MINUTE);
+    setTimeout(() => {
+      rotateSecret(SECRET_NAME).catch(noop);
+    }, random(200) * ONE_MINUTE);
 
-  const options: session.SessionOptions = {
-    secret: secret,
-    saveUninitialized: true,
-    resave: false,
-    proxy: !isLocalHost,
-    cookie: {
-      secure: !isLocalHost,
-      maxAge: isLocalHost ? ONE_DAY : FOUR_HOURS,
-    },
-    name: "lists_sid",
-  };
+    const options: session.SessionOptions = {
+      secret: secret,
+      saveUninitialized: true,
+      resave: false,
+      proxy: !isLocalHost,
+      cookie: {
+        secure: !isLocalHost,
+        maxAge: isLocalHost ? ONE_DAY : FOUR_HOURS,
+      },
+      name: "lists_sid",
+    };
 
-  if (isRedisAvailable()) {
-    const redisClient = getRedisClient();
-    const RedisStore = connectRedis(session);
+    if (isRedisAvailable()) {
+      const redisClient = getRedisClient();
+      const RedisStore = connectRedis(session);
 
-    options.store = new RedisStore({
-      client: redisClient,
-      prefix: "lists_session_",
-    });
+      options.store = new RedisStore({
+        client: redisClient,
+        prefix: "lists_session_",
+      });
 
-    logger.info("Redis session storage initialized successfully");
+      logger.info("Redis session storage initialized successfully");
+    }
+
+    server.use(session(options));
+  } catch (error) {
+    logger.error(`configureExpressSession: Error ${(error as Error).message}`);
   }
-
-  server.use(session(options));
 }

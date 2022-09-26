@@ -2,6 +2,7 @@ import { FuneralDirectorListItemGetObject, ServiceType } from "server/models/typ
 import { Field, Question } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 import { get } from "lodash";
+import { logger } from "server/services/logger";
 
 // TODO:- use type mapping or keyof operator instead of simple object type
 /**
@@ -43,12 +44,16 @@ const FormRunnerFields: { [key: string]: string } = {
 export async function generateFormRunnerWebhookData(
   listItem: FuneralDirectorListItemGetObject,
   isUnderTest: boolean = false
-): Promise<Array<Partial<Question>>> {
-  const questions = await parseJsonFormData(ServiceType.funeralDirectors, isUnderTest);
-  questions.forEach((question) => {
-    question.fields?.forEach((field: Field) => {
-      field.answer = get(listItem, FormRunnerFields[field.key]);
+): Promise<Array<Partial<Question>> | undefined> {
+  try {
+    const questions = await parseJsonFormData(ServiceType.funeralDirectors, isUnderTest);
+    questions?.forEach((question) => {
+      question.fields?.forEach((field: Field) => {
+        field.answer = get(listItem, FormRunnerFields[field.key]);
+      });
     });
-  });
-  return questions;
+    return questions;
+  } catch (error) {
+    logger.error(`generateFormRunnerWebhookData Error: ${(error as Error).message}`);
+  }
 }

@@ -5,13 +5,9 @@ import { authRouter } from "./router";
 import { configureExpressSession } from "./express-session";
 import { isSmokeTest } from "server/config";
 import { HttpException } from "server/middlewares/error-handlers";
-import { configureRateLimit } from "server/middlewares";
+import { logger } from "server/services/logger";
 
-export function ensureAuthenticated(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function ensureAuthenticated(req: Request, res: Response, next: NextFunction): void {
   if (req.isAuthenticated() || isSmokeTest) {
     next();
   } else {
@@ -20,11 +16,7 @@ export function ensureAuthenticated(
   }
 }
 
-export function ensureUserIsSuperAdmin(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function ensureUserIsSuperAdmin(req: Request, res: Response, next: NextFunction): void {
   if (req.isAuthenticated() && req.user.isSuperAdmin()) {
     next();
   } else {
@@ -34,8 +26,11 @@ export function ensureUserIsSuperAdmin(
 }
 
 export async function initAuth(server: Express): Promise<void> {
-  await configureExpressSession(server);
-  await configurePassport(server);
-  configureRateLimit(server);
-  server.use(authRouter);
+  try {
+    await configureExpressSession(server);
+    await configurePassport(server);
+    server.use(authRouter);
+  } catch (error) {
+    logger.error(`initAuth: Error ${(error as Error).message}`);
+  }
 }

@@ -15,25 +15,19 @@ export async function createCountry(country: string): Promise<Country> {
   });
 }
 
-export async function getPlaceGeoPoint(props: {
-  countryName?: string;
-  text?: string;
-}): Promise<Point> {
+export async function getPlaceGeoPoint(props: { countryName?: string; text?: string }): Promise<Point> {
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
     return await geoLocatePlaceByText(text as string, countryName as string);
   } catch (error) {
-    const typedError = error as { message: string };
-    logger.error(typedError.message);
+    logger.error((error as Error).message);
 
     return [0.0, 0.0];
   }
 }
 
-export function makeAddressGeoLocationString(
-  webhookData: DeserialisedWebhookData
-): string {
+export function makeAddressGeoLocationString(webhookData: DeserialisedWebhookData): string {
   const address = [
     webhookData["address.firstLine"],
     webhookData["address.secondLine"],
@@ -47,53 +41,57 @@ export function makeAddressGeoLocationString(
   return address.join(", ");
 }
 
-export function getCountryFromData(
-  webhookData: DeserialisedWebhookData
-): string {
+export function getCountryFromData(webhookData: DeserialisedWebhookData): string {
   return webhookData.addressCountry ?? webhookData.country;
 }
 
-export async function createAddressGeoLocation(
-  item: DeserialisedWebhookData
-): Promise<number> {
-  const address = makeAddressGeoLocationString(item);
-  const country = getCountryFromData(item);
-  const point = await geoLocatePlaceByText(address, country);
+export async function createAddressGeoLocation(item: DeserialisedWebhookData): Promise<number | undefined> {
+  try {
+    const address = makeAddressGeoLocationString(item);
+    const country = getCountryFromData(item);
+    const point = await geoLocatePlaceByText(address, country);
 
-  return await rawInsertGeoLocation(point);
+    return await rawInsertGeoLocation(point);
+  } catch (error) {
+    logger.error(`createAddressGeoLocation Error: ${(error as Error).message}`);
+  }
 }
 
 export async function createAddressObject(
   webhookData: DeserialisedWebhookData
-): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput> {
-  const {
-    "address.firstLine": firstLine,
-    "address.secondLine": secondLine,
-    postCode = "",
-    city,
-    addressCountry,
-    country,
-  } = webhookData;
-
-  const geoLocationId = await createAddressGeoLocation(webhookData);
-  const dbCountry = await createCountry(addressCountry ?? country);
-
-  return {
-    create: {
-      firstLine,
-      secondLine,
-      postCode,
+): Promise<Prisma.AddressCreateNestedOneWithoutListItemInput | undefined> {
+  try {
+    const {
+      "address.firstLine": firstLine,
+      "address.secondLine": secondLine,
+      postCode = "",
       city,
-      country: {
-        connect: {
-          id: dbCountry.id,
+      addressCountry,
+      country,
+    } = webhookData;
+
+    const geoLocationId = await createAddressGeoLocation(webhookData);
+    const dbCountry = await createCountry(addressCountry ?? country);
+
+    return {
+      create: {
+        firstLine,
+        secondLine,
+        postCode,
+        city,
+        country: {
+          connect: {
+            id: dbCountry.id,
+          },
+        },
+        geoLocation: {
+          connect: {
+            id: geoLocationId,
+          },
         },
       },
-      geoLocation: {
-        connect: {
-          id: geoLocationId,
-        },
-      },
-    },
-  };
+    };
+  } catch (error) {
+    logger.error(`createAddressObject Error: ${(error as Error).message}`);
+  }
 }

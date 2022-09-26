@@ -34,7 +34,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
-import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemConfirmationPages, ListItemUrls } from "server/components/dashboard/listsItems/types";
 import {
   getConfirmationPages,
@@ -61,65 +60,68 @@ export async function listItemGetController(req: Request, res: Response): Promis
       text: errorMsg,
     };
   }
-  const list = await findListById(listId);
-  const listItem: ListItemGetObject = await findListItemById(listItemId);
-  let requestedChanges;
 
-  if (listItem.status === Status.EDITED) {
-    const auditForEdits = listItem?.history
-      ?.filter((event) => event.type === "EDITED")
-      .sort((a, b) => a.id - b.id)
-      .pop();
+  try {
+    const list = await findListById(listId);
+    const listItem: ListItemGetObject = await findListItemById(listItemId);
+    let requestedChanges;
 
-    const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
-    const updatedJsonData = auditJsonData?.updatedJsonData;
-    if (updatedJsonData !== undefined) {
-      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
-      const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
-      // @ts-ignore
-      listItem.address = {
-        ...listItem.address,
-        ...updatedAddressFields,
-      };
+    if (listItem.status === Status.EDITED) {
+      const auditForEdits = listItem?.history
+        ?.filter((event) => event.type === "EDITED")
+        .sort((a, b) => a.id - b.id)
+        .pop();
+
+      const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
+      const updatedJsonData = auditJsonData?.updatedJsonData;
+      if (updatedJsonData !== undefined) {
+        listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
+        const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
+        // @ts-ignore
+        listItem.address = {
+          ...listItem.address,
+          ...updatedAddressFields,
+        };
+      }
     }
+
+    if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
+      const eventForRequestedChanges = listItem?.history
+        ?.filter((event) => event.type === "OUT_WITH_PROVIDER")
+        .sort((a, b) => a.id - b.id)
+        .pop();
+
+      requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
+    }
+    const actionButtons: { [key: string]: string[] } = {
+      NEW: ["publish", "request-changes", "remove"],
+      OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
+      EDITED: ["update", "request-changes", "remove"],
+      // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
+      // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
+      // REVIEWED: ["update", "request-changes", "remove"],
+      PUBLISHED: ["unpublish", "remove"],
+      UNPUBLISHED: ["publish", "request-changes", "remove"],
+    };
+
+    const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
+    const actionButtonsForStatus = actionButtons[listItem.status];
+    res.render("dashboard/lists-item", {
+      ...DEFAULT_VIEW_PROPS,
+      changeMessage: req.session?.changeMessage,
+      list,
+      listItem,
+      isPinned,
+      actionButtons: actionButtonsForStatus,
+      requestedChanges,
+      error,
+      title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
+      details: getDetailsViewModel(listItem),
+      csrfToken: getCSRFToken(req),
+    });
+  } catch (error) {
+    logger.error(`listItemGetController Error: ${(error as Error).message}`);
   }
-
-  if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
-    const eventForRequestedChanges = listItem?.history
-      ?.filter((event) => event.type === "OUT_WITH_PROVIDER")
-      .sort((a, b) => a.id - b.id)
-      .pop();
-
-    requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
-  }
-
-  const actionButtons: Record<string, string[]> = {
-    NEW: ["publish", "request-changes", "remove"],
-    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove"],
-    // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
-    // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
-    // REVIEWED: ["update", "request-changes", "remove"],
-    PUBLISHED: ["unpublish", "remove"],
-    UNPUBLISHED: ["publish", "request-changes", "remove"],
-  };
-
-  const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  const actionButtonsForStatus = actionButtons[listItem.status];
-
-  res.render("dashboard/lists-item", {
-    ...DEFAULT_VIEW_PROPS,
-    changeMessage: req.session?.changeMessage,
-    list,
-    listItem,
-    isPinned,
-    actionButtons: actionButtonsForStatus,
-    requestedChanges,
-    error,
-    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
-    details: getDetailsViewModel(listItem),
-    csrfToken: getCSRFToken(req),
-  });
 }
 
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
@@ -138,13 +140,15 @@ export async function listItemPostController(req: Request, res: Response): Promi
 
     if (!action) {
       req.flash("errorMsg", "You must select an action");
-      return res.redirect(listItemUrls.listItem);
+
+      return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
     }
 
     if (action === "requestChanges") {
       if (!message) {
         req.flash("errorMsg", "You must provide a message to request a change");
-        return res.redirect(listItemUrls.listItem);
+
+        return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
       }
 
       req.session.changeMessage = message;
@@ -264,8 +268,8 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
     }
 
     return listItem;
-  } catch (e: any) {
-    logger.error(`deleteListItem Error ${e.message}`);
+  } catch (error) {
+    logger.error(`deleteListItem Error ${(error as Error).message}`);
 
     throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
   }
@@ -373,7 +377,7 @@ export async function listItemRequestChangeController(req: Request, res: Respons
     req.flash("successBannerColour", "blue");
     res.redirect(listIndex);
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${listItem?.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
@@ -398,8 +402,10 @@ async function handleListItemRequestChanges(
   const listType = serviceName(list?.type ?? "");
 
   logger.info(`Got list type [${listType}`);
-  await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);
-  logger.info(`Sent email, updating listItem`);
+
+  await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl!);
+  logger.info("Sent email, updating listItem");
+
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
@@ -462,13 +468,14 @@ export async function listItemPublishController(req: Request, res: Response): Pr
     await handlePublishListItem(Number(listItemId), isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
+    req.flash("successBannerTitle", `${listItem?.jsonData.organisationName} has been ${successBannerHeading}`);
     req.flash("successBannerHeading", successBannerHeading);
     req.flash("successBannerColour", "green");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-  } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+
+  } catch (error) {
+    req.flash("errorMsg", `${listItem?.jsonData.organisationName} could not be updated. ${(error as Error).message}`);
+    res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
   }
 }
 
@@ -522,32 +529,47 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   const { listId, listItemId } = req.params;
   const userId = req.user?.userData?.id;
 
-  const list = await findListById(listId);
-  const listItem = await findListItemById(listItemId);
 
-  if (userId === undefined) {
-    return res.redirect(authRoutes.logout);
-  }
+    const list = await findListById(listId);
+    const listItem = await findListItemById(listItemId);
 
-  if (list === undefined) {
-    const err = new HttpException(404, "404", `Could not find list ${listId}`);
-    return next(err);
-  } else if (listItem === undefined) {
-    const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
-    return next(err);
-  } else if (list?.type !== listItem?.type) {
-    const err = new HttpException(
-      400,
-      "400",
-      `Trying to edit a list item which is a different service type to list ${listId}`
-    );
-    return next(err);
-  } else if (list?.id !== listItem?.listId) {
-    const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
-    return next(err);
-  } else if (!userIsListPublisher(req, list)) {
-    const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
-    return next(err);
+    if (userId === undefined) {
+      return res.redirect(authRoutes.logout);
+    }
+
+    if (list === undefined) {
+      res.status(404).send({
+        error: {
+          message: `Could not find list ${listId}`,
+        },
+      });
+    } else if (listItem === undefined) {
+      res.status(404).send({
+        error: {
+          message: `Could not find list item ${listItemId}`,
+        },
+      });
+    } else if (list?.type !== listItem?.type) {
+      res.status(400).send({
+        error: {
+          message: `Trying to edit a list item which is a different service type to list ${listId}`,
+        },
+      });
+    } else if (list?.id !== listItem?.listId) {
+      res.status(400).send({
+        error: {
+          message: `Trying to edit a list item which does not belong to list ${listId}`,
+        },
+      });
+    } else if (!userIsListPublisher(req, list)) {
+      res.status(403).send({
+        error: {
+          message: "User doesn't have publishing right on this list",
+        },
+      });
+    }
+    return next();
+  } catch (error) {
+    logger.error(`listItemEditRequestValidation Error: ${(error as Error).message}`);
   }
-  return next();
 }

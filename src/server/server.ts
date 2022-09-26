@@ -18,20 +18,14 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
-import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware"
+import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-
-import {
-  isSmokeTest,
-  isLocalHost,
-  NODE_ENV,
-  SERVICE_DOMAIN,
-} from "server/config";
+import { isSmokeTest, isLocalHost, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
 const server = express();
 
-export async function getServer(): Promise<Express> {
+export async function getServer(): Promise<Express | undefined> {
   // middlewares
   configureAccessControl(server);
   configureHelmet(server);
@@ -44,22 +38,25 @@ export async function getServer(): Promise<Express> {
   configureViews(server);
 
   // initialize components
-  await initAuth(server);
-  await initLists(server);
-  await initCookies(server);
-  await initSitemap(server);
-  await initFeedback(server);
-  await initDashboard(server);
-  await initDevelopment(server);
-  await initHealthCheck(server);
 
-  // error handlers
-  configureErrorHandlers(server);
+  try {
+    await initAuth(server);
+    await initLists(server);
+    await initCookies(server);
+    await initSitemap(server);
+    await initFeedback(server);
+    await initDashboard(server);
+    await initDevelopment(server);
+    await initHealthCheck(server);
 
+    // error handlers
+    configureErrorHandlers(server);
 
-
-  logger.info(
-    `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
-  );
-  return server;
+    logger.info(
+      `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
+    );
+    return server;
+  } catch (error) {
+    logger.error("There has been an issue with the startup");
+  }
 }

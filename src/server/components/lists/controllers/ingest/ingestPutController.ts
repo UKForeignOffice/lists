@@ -10,18 +10,14 @@ import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 
-export async function ingestPutController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function ingestPutController(req: Request, res: Response): Promise<void> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
-      error:
-        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
     return;
   }
@@ -39,7 +35,6 @@ export async function ingestPutController(
 
   try {
     data = deserialise(value);
-
   } catch (e) {
     res.status(422).json({ error: "questions could not be deserialised" });
     return;
@@ -88,8 +83,8 @@ export async function ingestPutController(
 
     res.status(204).send();
     return;
-  } catch (e) {
-    logger.error(`listsDataIngestionController Error: ${e.message}`);
+  } catch (error) {
+    logger.error(`listsDataIngestionController Error: ${(error as Error).message}`);
     /**
      * TODO:- Queue?
      */

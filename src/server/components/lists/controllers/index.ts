@@ -329,8 +329,10 @@ export async function listsConfirmApplicationController(
         serviceName,
       });
     }
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    logger.error(`export async function listsConfirmApplicationController(
+      Error: ${(error as Error).message}`);
+    next(error);
   }
 }
 

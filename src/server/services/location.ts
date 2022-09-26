@@ -27,16 +27,13 @@ export function getAWSLocationService(): Location {
   return location;
 }
 
-export async function checkIfPlaceIndexExists(
-  placeIndexName: string
-): Promise<boolean> {
+export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<boolean> {
   try {
     const location = getAWSLocationService();
     const result = await location.listPlaceIndexes().promise();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
-    const typedError = error as Error;
-    logger.error(`checkIfPlaceIndexExists Error: ${typedError.message}`);
+    logger.error(`checkIfPlaceIndexExists Error: ${(error as Error).message}`);
     return false;
   }
 }
@@ -53,8 +50,7 @@ export async function createPlaceIndex(): Promise<boolean> {
     await location.createPlaceIndex(INDEX_PARAMS).promise();
     return true;
   } catch (error) {
-    const typedError = error as Error;
-    logger.error(`createPlaceIndex error: ${typedError.message}`);
+    logger.error(`createPlaceIndex error: ${(error as Error).message}`);
     return false;
   }
 }
@@ -62,33 +58,34 @@ export async function createPlaceIndex(): Promise<boolean> {
 export async function geoLocatePlaceByText(
   region: string,
   country: string
-): Promise<Location.Types.Position> {
-  if (!placeIndexExists) {
-    placeIndexExists = await createPlaceIndex();
+): Promise<Location.Types.Position | unknown> {
+  try {
+    if (!placeIndexExists) {
+      placeIndexExists = await createPlaceIndex();
+    }
+
+    const location = getAWSLocationService();
+    const countryCode = region.toLowerCase().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
+
+    if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
+
+    const { Results } = await location
+      .searchPlaceIndexForText({
+        MaxResults: 1,
+        Text: region,
+        IndexName: INDEX_PARAMS.IndexName,
+        FilterCountries: [countryCode],
+      })
+      .promise();
+
+    // Return location if found
+    if (Results.length > 0) {
+      return Results[0].Place.Geometry.Point ?? [0.0, 0.0];
+    }
+
+    // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)
+    return [0.0, 0.0];
+  } catch (error) {
+    logger.error(`geoLocatePlaceByText error: ${(error as Error).message}`);
   }
-
-  const location = getAWSLocationService();
-  const countryCode = region.toLowerCase().includes("vatican")
-    ? "VAT"
-    : getCountryCodeFromCountryName(country);
-
-  if (!countryCode)
-    throw new Error(`A country code for ${country} could not be found.`);
-
-  const { Results } = await location
-    .searchPlaceIndexForText({
-      MaxResults: 1,
-      Text: region,
-      IndexName: INDEX_PARAMS.IndexName,
-      FilterCountries: [countryCode],
-    })
-    .promise();
-
-  // Return location if found
-  if (Results.length > 0) {
-    return Results[0].Place.Geometry.Point ?? [0.0, 0.0];
-  }
-
-  // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)
-  return [0.0, 0.0];
 }

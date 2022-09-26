@@ -4,6 +4,7 @@ import { CountryName, ServiceType } from "server/models/types";
 import { findListByCountryAndType } from "server/models/list";
 import { prisma } from "server/models/db/prisma-client";
 import { PrismaPromise } from "@prisma/client";
+import { logger } from "server/services/logger";
 
 /**
  * TODO:- This should really be a tuple of [number, number] but AWS sdk uses a number array..?!s
@@ -14,36 +15,39 @@ function isValidPoint(point: Point): Boolean {
   return isNumber(point[0]) || isNumber(point[1]);
 }
 
-export const rawInsertGeoLocation = async (
-  point: Point | number[]
-): Promise<number> => {
-  if (!isValidPoint(point)) {
-    throw new Error("Invalid points entered");
+export const rawInsertGeoLocation = async (point: Point | number[]): Promise<number | undefined> => {
+  try {
+    if (!isValidPoint(point)) {
+      throw new Error("Invalid points entered");
+    }
+
+    const db = getDbPool();
+    const result = await db.query(`
+      INSERT INTO public."GeoLocation" (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
+    `);
+
+    if (result.rows.length === 0) {
+      throw new Error("Unable to insert raw GeoLocation");
+    }
+
+    return result.rows[0].id;
+  } catch (error) {
+    logger.error(`rawInsertGeoLocation Error: ${(error as Error).message}`);
   }
-
-  const db = getDbPool();
-  const result = await db.query(`
-    INSERT INTO public."GeoLocation" (location) VALUES ('POINT(${point[0]} ${point[1]})') RETURNING id
-  `);
-
-  if (result.rows.length === 0) {
-    throw new Error("Unable to insert raw GeoLocation");
-  }
-
-  return result.rows[0].id;
 };
 
-export const rawUpdateGeoLocation = (
-  id: number,
-  point: Point
-): PrismaPromise<number> => {
-  if (!isValidPoint(point)) {
-    throw new Error("Invalid points entered");
-  }
+export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> | undefined => {
+  try {
+    if (!isValidPoint(point)) {
+      throw new Error("Invalid points entered");
+    }
 
-  return prisma.$queryRaw(`
-    UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id
-  `);
+    return prisma.$queryRaw(`
+      UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id
+    `);
+  } catch (error) {
+    logger.error(`rawUpdateGeoLocation Error: ${(error as Error).message}`);
+  }
 };
 
 export function geoPointIsValid(geoPoint: any): boolean {
@@ -54,7 +58,11 @@ export async function getListIdForCountryAndType(
   country: CountryName,
   serviceType: ServiceType
 ): Promise<number | undefined> {
-  const existingLists = await findListByCountryAndType(country, serviceType);
+  try {
+    const existingLists = await findListByCountryAndType(country, serviceType);
 
-  return existingLists?.[0]?.id ?? -1;
+    return existingLists?.[0]?.id ?? -1;
+  } catch (error) {
+    logger.error(`getListIdForCountryAndType Error: ${(error as Error).message}`);
+  }
 }

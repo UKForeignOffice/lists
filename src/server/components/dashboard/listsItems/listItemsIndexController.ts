@@ -3,6 +3,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { logger } from "server/services/logger";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -125,6 +126,7 @@ export async function listItemsIndexController(
       csrfToken: getCSRFToken(req as Request),
     });
   } catch (error) {
+    logger.error(`listItemsIndexController Error: ${(error as Error).message}`);
     next(error);
   }
 }

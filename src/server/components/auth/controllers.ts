@@ -12,11 +12,7 @@ export const authController = passport.authenticate("jwt", {
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 
-export function getLoginController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function getLoginController(req: Request, res: Response, next: NextFunction): void {
   const { token } = req.params;
   const { invalidToken, token: tokenParam } = req.query;
 
@@ -33,11 +29,7 @@ export function getLoginController(
   });
 }
 
-export async function postLoginController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function postLoginController(req: Request, res: Response, next: NextFunction): Promise<void> {
   const emailAddress = req.body.emailAddress?.trim();
 
   try {
@@ -62,9 +54,9 @@ export async function postLoginController(
     res.render("login", {
       success: true,
     });
-  } catch (e) {
-    logger.error("postLoginController", e);
-    next(e);
+  } catch (error) {
+    logger.error("postLoginController", error);
+    next(error);
   }
 }
 

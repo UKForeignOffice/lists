@@ -1,20 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
-import {
-  EventJsonData,
-  List,
-  Point,
-  ServiceType,
-  User,
-  ListItem,
-} from "server/models/types";
-import {
-  ListItemWithAddressCountry,
-  ListItemWithJsonData,
-} from "server/models/listItem/providers/types";
-import {
-  makeAddressGeoLocationString,
-  getCountryFromData,
-} from "server/models/listItem/geoHelpers";
+import { EventJsonData, List, Point, ServiceType, User, ListItem } from "server/models/types";
+import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import { makeAddressGeoLocationString, getCountryFromData } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -23,13 +10,7 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import {
-  AuditEvent,
-  ListItemEvent,
-  Prisma,
-  Status,
-  ListItem as PrismaListItem,
-} from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
@@ -81,7 +62,7 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
 
       ORDER BY "ListItem"."createdAt" DESC`);
   } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
+    logger.error(`approveLawyer Error ${(error as Error).message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
@@ -112,7 +93,7 @@ export async function findListItemById(id: string | number): Promise<any> {
     });
     return returnVal;
   } catch (error) {
-    logger.error(`findListItemById Error ${error.message}`);
+    logger.error(`findListItemById Error ${(error as Error).message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
@@ -156,7 +137,7 @@ export async function togglerListItemIsApproved({
     ]);
     return listItem;
   } catch (error) {
-    logger.error(`togglerListItemIsApproved Error ${error.message}`);
+    logger.error(`togglerListItemIsApproved Error ${(error as Error).message}`);
     throw error;
   }
 }
@@ -174,9 +155,7 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const auditEvent = isPublished
-    ? AuditEvent.PUBLISHED
-    : AuditEvent.UNPUBLISHED;
+  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
 
   try {
     const [listItem] = await prisma.$transaction([
@@ -216,16 +195,13 @@ export async function togglerListItemIsPublished({
 
     return listItem;
   } catch (error) {
-    logger.error(`publishLawyer Error ${error.message}`);
+    logger.error(`publishLawyer Error ${(error as Error).message}`);
 
     throw new Error("Failed to publish lawyer");
   }
 }
 
-export async function persistListItemChanges(
-  id: number,
-  userId: User["id"]
-): Promise<ListItem> {
+export async function persistListItemChanges(id: number, userId: User["id"]): Promise<ListItem> {
   if (userId === undefined) {
     throw new Error("persistListItemChanges Error: userId is undefined");
   }
@@ -279,8 +255,8 @@ export async function persistListItemChanges(
     ]);
 
     return updatedListItem;
-  } catch (e) {
-    logger.error(`persistListItemChanges Error ${e.message}`);
+  } catch (error) {
+    logger.error(`persistListItemChanges Error ${(error as Error).message}`);
 
     throw new Error("Failed to persist updates to list item");
   }
@@ -290,11 +266,7 @@ interface SetEmailIsVerified {
   type?: ServiceType;
 }
 
-export async function setEmailIsVerified({
-  reference,
-}: {
-  reference: string;
-}): Promise<SetEmailIsVerified> {
+export async function setEmailIsVerified({ reference }: { reference: string }): Promise<SetEmailIsVerified> {
   try {
     const item = await prisma.listItem.findUnique({
       where: { reference },
@@ -336,9 +308,7 @@ export async function setEmailIsVerified({
   }
 }
 
-export async function createListItem(
-  webhookData: WebhookData
-): Promise<ListItemWithAddressCountry> {
+export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountry> {
   try {
     const data = await listItemCreateInputFromWebhook(webhookData);
 
@@ -372,18 +342,14 @@ export async function createListItem(
 
     return listItem;
   } catch (error) {
-    logger.error(`create ListItem failed ${error.message}`);
+    logger.error(`create ListItem failed ${(error as Error).message}`);
     throw error;
   }
 }
 
 type Nullable<T> = T | undefined | null;
 
-export async function update(
-  id: ListItem["id"],
-  userId: User["id"],
-  data: DeserialisedWebhookData
-): Promise<void> {
+export async function update(id: ListItem["id"], userId: User["id"], data: DeserialisedWebhookData): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
       where: { id },
@@ -499,18 +465,13 @@ export async function update(
     if (!result) {
       throw Error("listItem.update prisma update failed");
     }
-  } catch (err) {
-    logger.error(
-      `listItem.update transactional error - rolling back ${err.message}`
-    );
-    throw err;
+  } catch (error) {
+    logger.error(`listItem.update transactional error - rolling back ${(error as Error).message}`);
+    throw error;
   }
 }
 
-export async function deleteListItem(
-  id: number,
-  userId: User["id"]
-): Promise<void> {
+export async function deleteListItem(id: number, userId: User["id"]): Promise<void> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }
@@ -537,8 +498,8 @@ export async function deleteListItem(
         AuditEvent.DELETED
       ),
     ]);
-  } catch (e) {
-    logger.error(`deleteListItem Error ${e.message}`);
+  } catch (error) {
+    logger.error(`deleteListItem Error ${(error as Error).message}`);
 
     throw new Error("Failed to delete item");
   }

@@ -1,27 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
-import { createList, findListByCountryAndType, findListById, findUserLists, updateList, } from "server/models/list";
+import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
+import { createList, findListByCountryAndType, findListById, findUserLists, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import {
-  CountryName,
-  List,
-  ServiceType,
-  UserRoles
-} from "server/models/types";
-import {
-  filterSuperAdminRole,
-  userIsListAdministrator,
-  userIsListPublisher,
-  userIsListValidator,
-} from "./helpers";
-import { isCountryNameValid, isGovUKEmailAddress, } from "server/utils/validation";
-import { QuestionError, } from "server/components/lists";
+import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
+import { filterSuperAdminRole, userIsListAdministrator, userIsListPublisher, userIsListValidator } from "./helpers";
+import { isCountryNameValid, isGovUKEmailAddress } from "server/utils/validation";
+import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
+import { logger } from "server/services/logger";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -34,21 +25,14 @@ export const DEFAULT_VIEW_PROPS = {
   userIsListAdministrator,
 };
 
-export async function startRouteController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function startRouteController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user === undefined) {
       return res.redirect(authRoutes.logout);
     }
 
     const lists = await findUserLists(req.user?.userData.email);
-    const isNewUser =
-      !req.user?.isSuperAdmin() &&
-      !req.user?.isListsCreator() &&
-      get(lists ?? [], "length") === 0;
+    const isNewUser = !req.user?.isSuperAdmin() && !req.user?.isListsCreator() && get(lists ?? [], "length") === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
@@ -56,15 +40,12 @@ export async function startRouteController(
       req,
     });
   } catch (error) {
+    logger.error(`startRouteController Error: ${(error as Error).message}`);
     next(error);
   }
 }
 
-export async function usersListController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function usersListController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const users = await findUsers();
     res.render("dashboard/users-list", {
@@ -74,15 +55,12 @@ export async function usersListController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error(`usersListController Error: ${(error as Error).message}`);
     next(error);
   }
 }
 
-export async function usersEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function usersEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { userEmail } = req.params;
 
@@ -101,6 +79,7 @@ export async function usersEditController(
         return;
       }
     } catch (error) {
+      logger.error(`not editing super admin user: ${(error as Error).message}`);
       return next(error);
     }
 
@@ -127,15 +106,12 @@ export async function usersEditController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error(`error with finding user email: ${(error as Error).message}`);
     next(error);
   }
 }
 
-export async function listsController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listsController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user?.userData.email === undefined) {
       return res.redirect(authRoutes.logout);
@@ -155,11 +131,7 @@ export async function listsController(
 }
 
 // TODO: test
-export async function listsEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
     const { listCreated, listUpdated } = req.query;
@@ -169,15 +141,9 @@ export async function listsEditController(
     let error: QuestionError | {} = {};
 
     if (isPost) {
-      const validators: string[] = compact(
-        req.body.validators.split(",").map(trim).map(toLower)
-      );
-      const publishers: string[] = compact(
-        req.body.publishers.split(",").map(trim).map(toLower)
-      );
-      const administrators: string[] = compact(
-        req.body.administrators.split(",").map(trim).map(toLower)
-      );
+      const validators: string[] = compact(req.body.validators.split(",").map(trim).map(toLower));
+      const publishers: string[] = compact(req.body.publishers.split(",").map(trim).map(toLower));
+      const administrators: string[] = compact(req.body.administrators.split(",").map(trim).map(toLower));
 
       const user = req.user;
       if (!user?.isSuperAdmin() &&
@@ -200,10 +166,7 @@ export async function listsEditController(
               : "Validators contain an invalid email address",
           href: "#validators",
         };
-      } else if (
-        publishers.length === 0 ||
-        publishers.some((email) => !isGovUKEmailAddress(email))
-      ) {
+      } else if (publishers.length === 0 || publishers.some((email) => !isGovUKEmailAddress(email))) {
         error = {
           field: "publishers",
           text:
@@ -212,10 +175,7 @@ export async function listsEditController(
               : "Publishers contain an invalid email address",
           href: "#publishers",
         };
-      } else if (
-        administrators.length === 0 ||
-        administrators.some((email) => !isGovUKEmailAddress(email))
-      ) {
+      } else if (administrators.length === 0 || administrators.some((email) => !isGovUKEmailAddress(email))) {
         error = {
           field: "administrators",
           text:
@@ -241,17 +201,12 @@ export async function listsEditController(
             href: "#country",
           };
         } else {
-          const existingLists = await findListByCountryAndType(
-            req.body.country as CountryName,
-            req.body.serviceType
-          );
+          const existingLists = await findListByCountryAndType(req.body.country as CountryName, req.body.serviceType);
 
           if (existingLists !== undefined && existingLists?.length > 0) {
             error = {
               field: "serviceType",
-              text: `A ${startCase(req.body.serviceType)} list for ${
-                req.body.country
-              } already exists`,
+              text: `A ${startCase(req.body.serviceType)} list for ${req.body.country} already exists`,
               href: "#serviceType",
             };
           }
@@ -271,26 +226,13 @@ export async function listsEditController(
         if (listId === "new") {
           const list = await createList(data);
           if (list?.id !== undefined) {
-            return res.redirect(
-              `${dashboardRoutes.listsEdit.replace(
-                ":listId",
-                `${list.id}`
-              )}?listCreated=true`
-            );
+            return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${list.id}`)}?listCreated=true`);
           }
         } else {
           const list = await findListById(listId);
           if (list !== undefined && userIsListAdministrator(req, list)) {
-            await updateList(
-              Number(listId),
-              pick(data, ["validators", "publishers", "administrators"])
-            );
-            return res.redirect(
-              `${dashboardRoutes.listsEdit.replace(
-                ":listId",
-                `${listId}`
-              )}?listUpdated=true`
-            );
+            await updateList(Number(listId), pick(data, ["validators", "publishers", "administrators"]));
+            return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}?listUpdated=true`);
           }
         }
       } else {
@@ -327,16 +269,13 @@ export async function listsEditController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error(`listsEditController Error: ${(error as Error).message}`);
     next(error);
   }
 }
 
 // TODO: test
-export async function feedbackController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function feedbackController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");
     res.render("dashboard/feedbacks-list", {
@@ -346,6 +285,7 @@ export async function feedbackController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error(`feedbackController Error: ${(error as Error).message}`);
     next(error);
   }
 }
