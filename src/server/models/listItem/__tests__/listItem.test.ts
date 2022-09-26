@@ -969,7 +969,7 @@ describe("ListItem Model:", () => {
 
     test("queryRaw command is correct", async () => {
       spyLocationService();
-      const spyQueryRaw = prisma.$queryRaw.mockResolvedValue([]);
+      const spyQueryRaw = prisma.$queryRawUnsafe.mockResolvedValue([]);
 
       await findPublishedCovidTestSupplierPerCountry({
         countryName: "ghana",
@@ -1021,13 +1021,13 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
         LIMIT 10 OFFSET 0
-    `.replace(/\s\s+/g, " ");
+      `.replace(/\s\s+/g, " ");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });
 
     test("result is correct", async () => {
       spyLocationService();
-      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+      prisma.$queryRawUnsafe.mockResolvedValue([sampleListItem]);
 
       const result = await findPublishedCovidTestSupplierPerCountry({
         countryName: "Ghana",
@@ -1040,7 +1040,7 @@ describe("ListItem Model:", () => {
 
     test("it returns an empty list when queryRaw rejects", async () => {
       spyLocationService();
-      prisma.$queryRaw.mockRejectedValue("");
+      prisma.$queryRawUnsafe.mockRejectedValue("");
 
       const result = await findPublishedCovidTestSupplierPerCountry({
         countryName: "Ghana",

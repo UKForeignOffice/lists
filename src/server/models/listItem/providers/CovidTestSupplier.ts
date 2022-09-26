@@ -41,7 +41,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query as unknown as TemplateStringsArray);
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedCovidTestSupplierPerCountry ERROR: ", error);
     return [];

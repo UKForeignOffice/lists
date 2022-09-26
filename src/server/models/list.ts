@@ -26,7 +26,7 @@ export async function findUserLists(email: string): Promise<List[] | undefined> 
       ORDER BY id ASC
     `;
     // @ts-ignore
-    const lists: List[] = await prisma.$queryRaw(query);
+    const lists: List[] = await prisma.$queryRawUnsafe(query);
     return lists ?? undefined;
   } catch (error) {
     logger.error(`findUserLists Error: ${(error as Error).message}`);

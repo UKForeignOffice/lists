@@ -43,7 +43,7 @@ export async function findPublishedFuneralDirectorsPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query as unknown as TemplateStringsArray);
+    return await prisma.$queryRaw`${query}`;
   } catch (error) {
     logger.error("findPublishedFuneralDirectors ERROR: ", error);
     return [];

@@ -36,11 +36,9 @@ export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<nu
     throw new Error("Invalid points entered");
   }
 
-  return prisma.$queryRaw(
-    `
+  return prisma.$queryRaw`
     UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id
-  ` as unknown as TemplateStringsArray
-  );
+  `;
 };
 
 export function geoPointIsValid(geoPoint: any): boolean {
