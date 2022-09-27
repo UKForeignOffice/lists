@@ -3,11 +3,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { prisma } from "server/models/db/prisma-client";
-import { userIsListPublisher } from "server/components/dashboard/helpers";
-import { logger } from "server/services/logger";
-
-import type { List } from "server/models/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
@@ -100,18 +95,6 @@ export async function listItemsIndexController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const listData = (await prisma.list.findUnique({
-      where: {
-        id: Number(listId),
-      },
-    })) as List;
-
-    const userCanPublishList = userIsListPublisher(req as unknown as Request, listData);
-
-    if (!userCanPublishList) {
-      logger.error("User doesn't have publishing right on this list");
-      return res.render("errors/list-management-unauthorised");
-    }
 
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { tag: queryTag, page } = sanitisedQueryParams;

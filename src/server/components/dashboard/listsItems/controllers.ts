@@ -123,55 +123,70 @@ export async function listItemGetController(req: Request, res: Response): Promis
     csrfToken: getCSRFToken(req),
   });
 }
+function getCurrentUrl(req: Request, fullUrl: boolean = true): string {
+  const { listId, listItemId } = req.params;
+
+  if (Number.isInteger(Number(listId))) throw new Error("listId is not a number");
+
+  if (fullUrl) {
+    if (Number.isInteger(Number(listItemId))) throw new Error("listItemId is not a number");
+    return dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId);
+  }
+
+  return dashboardRoutes.listsItems.replace(":listId", listId);
+}
 
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
   const { listId, listItemId } = req.params;
   const { message, action } = req.body;
+  try {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const list = (await findListById(listId)) ?? ({} as List);
+    const listItem: ListItemGetObject = await findListItemById(listItemId);
+    const listJson: ListItemJsonData = listItem.jsonData;
+    listJson.country = list?.country?.name ?? "";
+    const confirmationPages: { [key: string]: string } = {
+      publish: "dashboard/list-item-confirm-publish",
+      unpublish: "dashboard/list-item-confirm-unpublish",
+      requestChanges: "dashboard/list-item-confirm-changes",
+      update: "dashboard/list-item-confirm-update",
+      pin: "dashboard/list-item-confirm-pin",
+      unpin: "dashboard/list-item-confirm-pin",
+      remove: "dashboard/list-item-confirm-remove",
+    };
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: ListItemGetObject = await findListItemById(listItemId);
-  const listJson: ListItemJsonData = listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
-  const confirmationPages: { [key: string]: string } = {
-    publish: "dashboard/list-item-confirm-publish",
-    unpublish: "dashboard/list-item-confirm-unpublish",
-    requestChanges: "dashboard/list-item-confirm-changes",
-    update: "dashboard/list-item-confirm-update",
-    pin: "dashboard/list-item-confirm-pin",
-    unpin: "dashboard/list-item-confirm-pin",
-    remove: "dashboard/list-item-confirm-remove",
-  };
+    const confirmationPage = confirmationPages[action];
 
-  const confirmationPage = confirmationPages[action];
-
-  if (!action) {
-    req.flash("errorMsg", "You must select an action");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
-  }
-
-  if (action === "requestChanges") {
-    if (!message) {
-      req.flash("errorMsg", "You must provide a message to request a change");
-      return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    if (!action) {
+      req.flash("errorMsg", "You must select an action");
+      return res.redirect(getCurrentUrl(req));
     }
 
-    req.session.changeMessage = message;
-  }
+    if (action === "requestChanges") {
+      if (!message) {
+        req.flash("errorMsg", "You must provide a message to request a change");
+        return res.redirect(getCurrentUrl(req));
+      }
 
-  res.render(confirmationPage, {
-    ...DEFAULT_VIEW_PROPS,
-    list,
-    listItem,
-    message,
-    action,
-    req,
-    csrfToken: getCSRFToken(req),
-  });
+      req.session.changeMessage = message;
+    }
+
+    res.render(confirmationPage, {
+      ...DEFAULT_VIEW_PROPS,
+      list,
+      listItem,
+      message,
+      action,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  } catch (error) {
+    logger.error(`listItemPostController Error: ${(error as Error).message}`);
+  }
 }
 
 export async function listItemPinController(req: Request, res: Response): Promise<void> {
-  const { listId, listItemId } = req.params;
+  const { listItemId } = req.params;
   const { action } = req.body;
   const userId = req?.user?.userData?.id;
   const isPinned = action === "pin";
@@ -181,7 +196,7 @@ export async function listItemPinController(req: Request, res: Response): Promis
 
   if (userId === undefined) {
     req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   try {
@@ -193,10 +208,10 @@ export async function listItemPinController(req: Request, res: Response): Promis
     );
     req.flash("successBannerHeading", `${isPinned ? "Pinned" : "Unpinned"}`);
     req.flash("successBannerColour", "blue");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+    res.redirect(getCurrentUrl(req, false));
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 }
 
@@ -278,7 +293,7 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
 }
 
 export async function listItemDeleteController(req: Request, res: Response): Promise<void> {
-  const { listId, listItemId } = req.params;
+  const { listItemId } = req.params;
   const userId = req?.user?.userData?.id;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -286,7 +301,7 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
 
   if (userId === undefined) {
     req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   try {
@@ -295,10 +310,10 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
     req.flash("successBannerHeading", "Removed");
     req.flash("successBannerColour", "red");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+    res.redirect(getCurrentUrl(req, false));
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 }
 
@@ -312,7 +327,7 @@ export async function listItemUpdateController(req: Request, res: Response): Pro
 
   if (userId === undefined) {
     req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   try {
@@ -324,7 +339,7 @@ export async function listItemUpdateController(req: Request, res: Response): Pro
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 }
 
@@ -364,12 +379,12 @@ export async function listItemRequestChangeController(req: Request, res: Respons
 
   if (userId === undefined) {
     req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   if (!changeMessage) {
     req.flash("errorMsg", "You must provide a message to request a change");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   try {
@@ -378,10 +393,10 @@ export async function listItemRequestChangeController(req: Request, res: Respons
     req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+    res.redirect(getCurrentUrl(req, false));
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 }
 
@@ -390,7 +405,7 @@ async function handleListItemRequestChanges(
   listItem: ListItemGetObject,
   message: string,
   userId: User["id"],
-  isUnderTest: boolean,
+  isUnderTest: boolean
 ): Promise<void> {
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
@@ -462,7 +477,7 @@ export async function listItemPublishController(req: Request, res: Response): Pr
 
   if (userId === undefined) {
     req.flash("errorMsg", "Unable to perform action - user could not be identified");
-    return res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    return res.redirect(getCurrentUrl(req));
   }
 
   try {
@@ -475,7 +490,7 @@ export async function listItemPublishController(req: Request, res: Response): Pr
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    res.redirect(dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId));
+    res.redirect(getCurrentUrl(req));
   }
 }
 
