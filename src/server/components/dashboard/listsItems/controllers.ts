@@ -125,11 +125,10 @@ export async function listItemGetController(req: Request, res: Response): Promis
 }
 function getCurrentUrl(req: Request, fullUrl: boolean = true): string {
   const { listId, listItemId } = req.params;
-
-  if (Number.isInteger(Number(listId))) throw new Error("listId is not a number");
+  if (!Number.isInteger(Number(listId))) throw new Error("listId is not a number");
 
   if (fullUrl) {
-    if (Number.isInteger(Number(listItemId))) throw new Error("listItemId is not a number");
+    if (!Number.isInteger(Number(listItemId))) throw new Error("listItemId is not a number");
     return dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId);
   }
 
@@ -578,7 +577,9 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   } else if (!userIsListPublisher(req, list)) {
     res.status(403);
     logger.error("User doesn't have publishing right on this list");
-    return res.render("errors/list-management-unauthorised");
+    return res.render("errors/403", {
+      message: "User does not have publishing rights on this list",
+    });
   }
   return next();
 }
