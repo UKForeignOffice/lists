@@ -18,7 +18,9 @@ export async function redirectIfUnauthorised(req: Request, res: Response, next: 
 
     if (!userCanPublishList) {
       logger.error("User doesn't have publishing right on this list");
-      return res.render("errors/list-management-unauthorised");
+      return res.render("errors/403", {
+        message: "User does not have publishing rights on this list",
+      });
     }
 
     next();
