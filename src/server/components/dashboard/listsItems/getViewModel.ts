@@ -104,8 +104,7 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
       jsonData.city?.trim() ?? "",
-    ]
-      .filter((line) => line)
+    ].filter((line) => line)
       .join(`\n`);
   }
   return jsonData?.[field];
@@ -229,8 +228,7 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
 export function getDetailsViewModel(
   listItem: ListItemGetObject
 ): DetailsViewModel {
-  const headerField =
-    ServiceType.lawyers === listItem.type ? listItem.jsonData.contactName : listItem.jsonData.organisationName;
+  const headerField = ServiceType.lawyers === listItem.type ? listItem.jsonData.contactName : listItem.jsonData.organisationName;
 
   return {
     organisation: {
