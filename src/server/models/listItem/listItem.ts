@@ -14,6 +14,7 @@ import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem }
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
+import type { Address, Country } from "server/models/types";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -310,9 +311,9 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
 
 export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountry> {
   try {
-    const data = await listItemCreateInputFromWebhook(webhookData);
+    const data = (await listItemCreateInputFromWebhook(webhookData)) as Awaited<Prisma.ListItemCreateInput>;
 
-    const listItem = await prisma.listItem.create({
+    const listItem: ListItem & { address: Address & { country: Country } } = await prisma.listItem.create({
       data,
       include: {
         address: {
@@ -357,7 +358,7 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
         address: true,
       },
     })
-    .catch((e) => {
+    .catch((e: string) => {
       throw Error(`list item ${id} not found - ${e}`);
     });
 
@@ -396,7 +397,7 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
     try {
       const address = makeAddressGeoLocationString(data);
       const country = getCountryFromData(data);
-      const point = await geoLocatePlaceByText(address, country);
+      const point = (await geoLocatePlaceByText(address, country)) as Awaited<Point>;
 
       addressPrismaQuery = {
         where: {
@@ -416,6 +417,7 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
       result = await prisma.$transaction([
         prisma.listItem.update(listItemPrismaQuery),
         prisma.address.update(addressPrismaQuery!),
+        // @ts-ignore
         rawUpdateGeoLocation(...geoLocationParams!),
         recordListItemEvent(
           {

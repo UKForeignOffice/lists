@@ -69,6 +69,7 @@ export async function getSecretValue(secretName: string): Promise<string> {
     const secret = await secretsManager.getSecretValue(params).promise();
     return `${secret.SecretString}`;
   } catch (error) {
+    // @ts-ignore
     if (error.code === "ResourceNotFoundException") {
       await createSecret(secretName);
       return await getSecretValue(secretName);

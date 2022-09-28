@@ -21,46 +21,42 @@ export async function listItemCreateInputFromWebhook(
   webhook: WebhookData,
   skipAddressCreation: Boolean = false
 ): Promise<Prisma.ListItemCreateInput | undefined> {
-  try {
-    const deserialised = deserialise(webhook);
-    const { type, country } = deserialised;
+  const deserialised = deserialise(webhook);
+  const { type, country } = deserialised;
 
-    const exists = await checkListItemExists({
-      organisationName: deserialised.organisationName,
-      countryName: deserialised.country,
-    });
+  const exists = await checkListItemExists({
+    organisationName: deserialised.organisationName,
+    countryName: deserialised.country,
+  });
 
-    if (exists) {
-      throw new Error(`${type} record already exists`);
-    }
-
-    const listId = await getListIdForCountryAndType(country as CountryName, type);
-
-    if (!listId) {
-      logger.error(`list for ${country} and ${type} could not be found`, "createListItem");
-    }
-
-    let address = {};
-
-    if (!skipAddressCreation) {
-      address = await createAddressObject(deserialised);
-    }
-
-    return {
-      type,
-      isApproved: false,
-      isPublished: false,
-      list: {
-        connect: {
-          id: listId,
-        },
-      },
-      jsonData: {
-        ...deserialised,
-      },
-      address,
-    };
-  } catch (error) {
-    logger.error(`listItemCreateInputFromWebhook Error: ${(error as Error).message}`);
+  if (exists) {
+    throw new Error(`${type} record already exists`);
   }
+
+  const listId = await getListIdForCountryAndType(country as CountryName, type);
+
+  if (!listId) {
+    logger.error(`list for ${country} and ${type} could not be found`, "createListItem");
+  }
+
+  let address = {};
+
+  if (!skipAddressCreation) {
+    address = (await createAddressObject(deserialised)) as Awaited<{}>;
+  }
+
+  return {
+    type,
+    isApproved: false,
+    isPublished: false,
+    list: {
+      connect: {
+        id: listId,
+      },
+    },
+    jsonData: {
+      ...deserialised,
+    },
+    address,
+  };
 }

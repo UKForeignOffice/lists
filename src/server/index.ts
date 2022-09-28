@@ -5,7 +5,7 @@ import { logger } from "./services/logger";
 async function initApp(): Promise<void> {
   const server = await getServer();
 
-  server.listen(PORT, () => {
+  server?.listen(PORT, () => {
     logger.info(`Server listening on PORT: ${PORT}, NODE_ENV: ${NODE_ENV}`);
   });
 

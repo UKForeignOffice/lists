@@ -111,14 +111,13 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     },
     where: {
       AND: [
+        // @ts-ignore
         {
           pinnedBy: {
             none: {
-              // @ts-ignore
               id: options.userId,
             },
           },
-          // @ts-ignore
           jsonData: { path: ["metadata", "emailVerified"], equals: true },
         },
       ],

@@ -19,7 +19,7 @@ export async function getPlaceGeoPoint(props: { countryName?: string; text?: str
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
-    return await geoLocatePlaceByText(text as string, countryName as string);
+    return (await geoLocatePlaceByText(text as string, countryName as string)) as Awaited<Point>;
   } catch (error) {
     logger.error((error as Error).message);
 
@@ -49,7 +49,7 @@ export async function createAddressGeoLocation(item: DeserialisedWebhookData): P
   try {
     const address = makeAddressGeoLocationString(item);
     const country = getCountryFromData(item);
-    const point = await geoLocatePlaceByText(address, country);
+    const point = (await geoLocatePlaceByText(address, country)) as Awaited<Point>;
 
     return await rawInsertGeoLocation(point);
   } catch (error) {
