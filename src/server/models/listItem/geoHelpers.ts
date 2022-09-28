@@ -15,7 +15,10 @@ export async function createCountry(country: string): Promise<Country> {
   });
 }
 
-export async function getPlaceGeoPoint(props: { countryName?: string; text?: string }): Promise<Point> {
+export async function getPlaceGeoPoint(props: {
+  countryName?: string;
+  text?: string;
+}): Promise<Point> {
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
@@ -27,7 +30,9 @@ export async function getPlaceGeoPoint(props: { countryName?: string; text?: str
   }
 }
 
-export function makeAddressGeoLocationString(webhookData: DeserialisedWebhookData): string {
+export function makeAddressGeoLocationString(
+  webhookData: DeserialisedWebhookData
+): string {
   const address = [
     webhookData["address.firstLine"],
     webhookData["address.secondLine"],
@@ -41,11 +46,15 @@ export function makeAddressGeoLocationString(webhookData: DeserialisedWebhookDat
   return address.join(", ");
 }
 
-export function getCountryFromData(webhookData: DeserialisedWebhookData): string {
+export function getCountryFromData(
+  webhookData: DeserialisedWebhookData
+): string {
   return webhookData.addressCountry ?? webhookData.country;
 }
 
-export async function createAddressGeoLocation(item: DeserialisedWebhookData): Promise<number | undefined> {
+export async function createAddressGeoLocation(
+  item: DeserialisedWebhookData
+): Promise<number | undefined> {
   try {
     const address = makeAddressGeoLocationString(item);
     const country = getCountryFromData(item);

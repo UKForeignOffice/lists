@@ -27,7 +27,9 @@ export async function getJwtSecret(): Promise<string> {
   return JWT_SECRET;
 }
 
-export async function createAuthenticationJWT(user: Pick<User, "email">): Promise<string | boolean> {
+export async function createAuthenticationJWT(
+  user: Pick<User, "email">
+): Promise<string | boolean> {
   try {
     const secret = await getJwtSecret();
     return jwt.sign({ user }, secret, JWT_OPTIONS);
@@ -37,7 +39,9 @@ export async function createAuthenticationJWT(user: Pick<User, "email">): Promis
   }
 }
 
-export async function createAuthenticationPath(user: Pick<User, "email">): Promise<string | boolean> {
+export async function createAuthenticationPath(
+  user: Pick<User, "email">
+): Promise<string | boolean> {
   try {
     const token = await createAuthenticationJWT(user);
     return `${authRoutes.loginAuth.replace(":token", `${token}`)}`;

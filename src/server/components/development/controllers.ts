@@ -52,6 +52,10 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
       res.status(500).send((error as Error).message);
     }
   } else {
-    res.send(`Got email: ${email} and key is valid ${(GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)}`);
+    res.send(
+      `Got email: ${email} and key is valid ${(
+        GOVUK_NOTIFY_API_KEY ?? ""
+      ).includes(`${key}`)}`
+    );
   }
 }

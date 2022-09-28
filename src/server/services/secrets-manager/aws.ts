@@ -35,7 +35,9 @@ export async function createSecret(secretName: string): Promise<boolean> {
 export async function rotateSecret(secretName: string): Promise<boolean> {
   try {
     const secretsManager = getAWSSecretsManager();
-    const { CreatedDate, ARN } = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+    const { CreatedDate, ARN } = await secretsManager
+      .getSecretValue({ SecretId: secretName })
+      .promise();
 
     if (CreatedDate === undefined || ARN === undefined) {
       throw new Error(`Could not getSecret values for secret ${secretName}`);
@@ -56,7 +58,9 @@ export async function rotateSecret(secretName: string): Promise<boolean> {
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
-    logger.error(`Failed to rotate secret ${secretName}. Error: ${(error as Error).message}`);
+    logger.error(
+      `Failed to rotate secret ${secretName}. Error: ${(error as Error).message}`
+    );
     return false;
   }
 }

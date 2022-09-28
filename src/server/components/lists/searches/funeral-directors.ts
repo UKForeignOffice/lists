@@ -25,7 +25,10 @@ export const funeralDirectorsQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchFuneralDirectors(req: Request, res: Response): Promise<void> {
+export async function searchFuneralDirectors(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     let params = getAllRequestParams(req);
     const { serviceType, country, region, repatriation, print = "no" } = params;

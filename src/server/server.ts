@@ -20,7 +20,12 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-import { isSmokeTest, isLocalHost, NODE_ENV, SERVICE_DOMAIN } from "server/config";
+import {
+  isSmokeTest,
+  isLocalHost,
+  NODE_ENV,
+  SERVICE_DOMAIN,
+} from "server/config";
 import { logger } from "server/services/logger";
 
 const server = express();

@@ -6,8 +6,7 @@ import {
   getAllRequestParams,
   removeQueryParameter,
   getParameterValue,
-  queryStringFromParams,
-  parseListValues,
+  queryStringFromParams, parseListValues
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -39,14 +38,15 @@ const serviceTypeToNoun: { [key: string]: string } = {
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
   const sanitisedServicesProvidedQuery = servicesProvided.map((service) => serviceTypeToNoun[service]).filter(Boolean);
-  const interpretationOnly =
-    sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) &&
-    sanitisedServicesProvidedQuery.length === 1;
+  const interpretationOnly = sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) && sanitisedServicesProvidedQuery.length === 1;
   const article = interpretationOnly ? "an" : "a";
   return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
 }
 
-export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
+export async function searchTranslatorsInterpreters(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const params = getAllRequestParams(req);
     const { serviceType, country, region, print = "no", languagesProvided } = params;
@@ -81,13 +81,10 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
       params.languagesProvided = cleanedLanguagesProvided ?? undefined;
 
       // populate filtered language names
-      languageNamesProvided = cleanedLanguagesProvided
-        ?.split(",")
-        .map((language: string) => {
-          // @ts-ignore
-          return languages[language];
-        })
-        .join(", ");
+      languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
+        // @ts-ignore
+        return languages[language];
+      }).join(", ");
     }
 
     if (servicesProvided) {

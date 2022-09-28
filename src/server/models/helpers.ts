@@ -15,7 +15,9 @@ function isValidPoint(point: Point): Boolean {
   return isNumber(point[0]) || isNumber(point[1]);
 }
 
-export const rawInsertGeoLocation = async (point: Point | number[]): Promise<number | undefined> => {
+export const rawInsertGeoLocation = async (
+  point: Point | number[]
+): Promise<number | undefined> => {
   try {
     if (!isValidPoint(point)) {
       throw new Error("Invalid points entered");
@@ -36,7 +38,10 @@ export const rawInsertGeoLocation = async (point: Point | number[]): Promise<num
   }
 };
 
-export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> | undefined => {
+export const rawUpdateGeoLocation = (
+  id: number,
+  point: Point
+): PrismaPromise<number> | undefined => {
   try {
     if (!isValidPoint(point)) {
       throw new Error("Invalid points entered");

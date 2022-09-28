@@ -7,7 +7,11 @@ import { isSmokeTest } from "server/config";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 
-export function ensureAuthenticated(req: Request, res: Response, next: NextFunction): void {
+export function ensureAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (req.isAuthenticated() || isSmokeTest) {
     next();
   } else {
@@ -16,7 +20,11 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
   }
 }
 
-export function ensureUserIsSuperAdmin(req: Request, res: Response, next: NextFunction): void {
+export function ensureUserIsSuperAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (req.isAuthenticated() && req.user.isSuperAdmin()) {
     next();
   } else {

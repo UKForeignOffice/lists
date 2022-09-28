@@ -3,9 +3,17 @@ import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput } from "./types";
+import {
+  List,
+  CountryName,
+  ServiceType,
+  ListCreateInput,
+  ListUpdateInput,
+} from "./types";
 
-export async function findUserLists(email: string): Promise<List[] | undefined> {
+export async function findUserLists(
+  email: string
+): Promise<List[] | undefined> {
   const emailAddress = pgescape.string(email.toLowerCase());
 
   try {
@@ -34,7 +42,9 @@ export async function findUserLists(email: string): Promise<List[] | undefined> 
   }
 }
 
-export async function findListById(listId: string | number): Promise<List | undefined> {
+export async function findListById(
+  listId: string | number
+): Promise<List | undefined> {
   try {
     const lists = (await prisma.list.findUnique({
       where: {
@@ -51,7 +61,10 @@ export async function findListById(listId: string | number): Promise<List | unde
   }
 }
 
-export async function findListByCountryAndType(country: CountryName, type: ServiceType): Promise<List[] | undefined> {
+export async function findListByCountryAndType(
+  country: CountryName,
+  type: ServiceType
+): Promise<List[] | undefined> {
   try {
     const lists = (await prisma.list.findMany({
       where: {
@@ -90,7 +103,9 @@ export async function createList(listData: {
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
-    const administrators = compact(listData.administrators.map(trim).map(toLower));
+    const administrators = compact(
+      listData.administrators.map(trim).map(toLower)
+    );
 
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
@@ -147,7 +162,9 @@ export async function updateList(
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
-    const administrators = compact(listData.administrators.map(trim).map(toLower));
+    const administrators = compact(
+      listData.administrators.map(trim).map(toLower)
+    );
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
     }

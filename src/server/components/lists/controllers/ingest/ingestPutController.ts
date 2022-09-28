@@ -10,14 +10,18 @@ import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 
-export async function ingestPutController(req: Request, res: Response): Promise<void> {
+export async function ingestPutController(
+  req: Request,
+  res: Response
+): Promise<void> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
-      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+      error:
+        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
     return;
   }

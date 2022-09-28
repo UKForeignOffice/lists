@@ -22,7 +22,10 @@ export const covidTestProviderQuestionsSequence = [
   QuestionName.readCovidDisclaimer,
 ];
 
-export async function searchCovidTestProvider(req: Request, res: Response): Promise<void> {
+export async function searchCovidTestProvider(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     let params = getAllRequestParams(req);
     const { serviceType, country, region, resultsTurnaround } = params;

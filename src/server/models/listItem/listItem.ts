@@ -1,7 +1,20 @@
 import { WebhookData } from "server/components/formRunner";
-import { EventJsonData, List, Point, ServiceType, User, ListItem } from "server/models/types";
-import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
-import { makeAddressGeoLocationString, getCountryFromData } from "server/models/listItem/geoHelpers";
+import {
+  EventJsonData,
+  List,
+  Point,
+  ServiceType,
+  User,
+  ListItem,
+} from "server/models/types";
+import {
+  ListItemWithAddressCountry,
+  ListItemWithJsonData,
+} from "server/models/listItem/providers/types";
+import {
+  makeAddressGeoLocationString,
+  getCountryFromData,
+} from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -10,7 +23,13 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
+import {
+  AuditEvent,
+  ListItemEvent,
+  Prisma,
+  Status,
+  ListItem as PrismaListItem,
+} from "@prisma/client";
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
@@ -156,7 +175,9 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
+  const auditEvent = isPublished
+    ? AuditEvent.PUBLISHED
+    : AuditEvent.UNPUBLISHED;
 
   try {
     const [listItem] = await prisma.$transaction([
@@ -202,7 +223,10 @@ export async function togglerListItemIsPublished({
   }
 }
 
-export async function persistListItemChanges(id: number, userId: User["id"]): Promise<ListItem> {
+export async function persistListItemChanges(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
   if (userId === undefined) {
     throw new Error("persistListItemChanges Error: userId is undefined");
   }
@@ -267,7 +291,11 @@ interface SetEmailIsVerified {
   type?: ServiceType;
 }
 
-export async function setEmailIsVerified({ reference }: { reference: string }): Promise<SetEmailIsVerified> {
+export async function setEmailIsVerified({
+  reference,
+}: {
+  reference: string;
+}): Promise<SetEmailIsVerified> {
   try {
     const item = await prisma.listItem.findUnique({
       where: { reference },
@@ -309,7 +337,9 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
   }
 }
 
-export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountry> {
+export async function createListItem(
+  webhookData: WebhookData
+): Promise<ListItemWithAddressCountry> {
   try {
     const data = (await listItemCreateInputFromWebhook(webhookData)) as Awaited<Prisma.ListItemCreateInput>;
 
@@ -350,7 +380,11 @@ export async function createListItem(webhookData: WebhookData): Promise<ListItem
 
 type Nullable<T> = T | undefined | null;
 
-export async function update(id: ListItem["id"], userId: User["id"], data: DeserialisedWebhookData): Promise<void> {
+export async function update(
+  id: ListItem["id"],
+  userId: User["id"],
+  data: DeserialisedWebhookData
+): Promise<void> {
   const listItemResult = await prisma.listItem
     .findFirst({
       where: { id },
@@ -468,12 +502,17 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
       throw Error("listItem.update prisma update failed");
     }
   } catch (error) {
-    logger.error(`listItem.update transactional error - rolling back ${(error as Error).message}`);
+    logger.error(
+      `listItem.update transactional error - rolling back ${(error as Error).message}`
+    );
     throw error;
   }
 }
 
-export async function deleteListItem(id: number, userId: User["id"]): Promise<void> {
+export async function deleteListItem(
+  id: number,
+  userId: User["id"]
+): Promise<void> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }

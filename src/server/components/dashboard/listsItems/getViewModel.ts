@@ -90,7 +90,10 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   return "string";
 }
 
-function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonData): ListItemJsonData[T] {
+function parseValue<T extends KeyOfJsonData>(
+  field: T,
+  jsonData: ListItemJsonData
+): ListItemJsonData[T] {
   /**
    * if a field needs to be parsed differently, add a statement here.
    * TODO: if there are a lot of cases, refactor into an object!
@@ -108,7 +111,10 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
   return jsonData?.[field];
 }
 
-function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
+function rowFromField(
+  field: KeyOfJsonData,
+  listItem: ListItemJsonData
+): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
@@ -129,11 +135,16 @@ function removeEmpty(row: Types.govukRow): string | boolean {
   return row.value.text ?? row.value.html ?? false;
 }
 
-function jsonDataAsRows(fields: KeyOfJsonData[] | KeyOfJsonData, jsonData: ListItemJsonData): Types.govukRow[] {
+function jsonDataAsRows(
+  fields: KeyOfJsonData[] | KeyOfJsonData,
+  jsonData: ListItemJsonData
+): Types.govukRow[] {
   if (!Array.isArray(fields)) {
     return [rowFromField(fields, jsonData)];
   }
-  return fields.map((field) => rowFromField(field, jsonData)).filter(removeEmpty);
+  return fields
+    .map((field) => rowFromField(field, jsonData))
+    .filter(removeEmpty);
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
@@ -208,11 +219,16 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const baseFields: KeyOfJsonData[] = ["regulators", "emailAddress"];
+  const baseFields: KeyOfJsonData[] = [
+    "regulators",
+    "emailAddress",
+  ];
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
-export function getDetailsViewModel(listItem: ListItemGetObject): DetailsViewModel {
+export function getDetailsViewModel(
+  listItem: ListItemGetObject
+): DetailsViewModel {
   const headerField =
     ServiceType.lawyers === listItem.type ? listItem.jsonData.contactName : listItem.jsonData.organisationName;
 
