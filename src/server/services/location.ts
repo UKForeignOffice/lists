@@ -55,10 +55,7 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 }
 
-export async function geoLocatePlaceByText(
-  region: string,
-  country: string
-): Promise<Location.Types.Position | unknown> {
+export async function geoLocatePlaceByText(region: string, country: string): Promise<Location.Types.Position> {
   try {
     if (!placeIndexExists) {
       placeIndexExists = await createPlaceIndex();
@@ -87,5 +84,6 @@ export async function geoLocatePlaceByText(
     return [0.0, 0.0];
   } catch (error) {
     logger.error(`geoLocatePlaceByText error: ${(error as Error).message}`);
+    return [0.0, 0.0];
   }
 }
