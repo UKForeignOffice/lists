@@ -98,9 +98,9 @@
         {% endif %}
         {% if "update" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="update" form="mainForm">
+          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="{% if listItem.isPublished %}update{% else %}publish{% endif %}" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-update">
-            Confirm and update
+            {% if listItem.isPublished %}Confirm and update{% else %}Publish{% endif %}
           </label>
         </div>
         {% endif %}

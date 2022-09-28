@@ -125,7 +125,7 @@ export async function listItemGetController(
     requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
   }
 
-  const actionButtons: { [key: string]: string[] } = {
+  const actionButtons: Record<string, string[]> = {
     NEW: ["publish", "request-changes", "remove"],
     OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
     EDITED: ["update", "request-changes", "remove"],
