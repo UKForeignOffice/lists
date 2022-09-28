@@ -69,9 +69,9 @@ Feature:
 
 	Scenario: Confirm and update list item
 		When I am viewing the list item details for "Tristen"
-		And I click the "Confirm and update" radio button
+		And I click the "Publish" radio button
 		And I click the "Continue" button
-		And I click the "Update" button
+		And I click the "Publish" button
 		Then I see the notification text "Peace Funerals has been updated and published"
 
 
