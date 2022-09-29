@@ -10,6 +10,7 @@ Feature:
       | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 05/01/22  |
       | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 12/01/22  |
       | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 03/02/22  |
+      | Bruce       | Wayne Lawyers     | smoke@cautionyourblast.com | EDITED            | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 04/02/22  |
       | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | 08/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
@@ -74,13 +75,22 @@ Feature:
       | Parsons     | Parsons Law      |
 
 
-  Scenario: Confirm and update list item
+  Scenario: Confirm and update unpublished list item
 
     When I am viewing the list item details for "Joker"
     And I click the "Publish" radio button
     And I click the "Continue" button
     And I click the "Publish" button
-    Then I see the notification text "Emmanuel Law has been updated and published"
+    Then I see the notification text "Emmanuel Law has been published"
+
+
+  Scenario: Confirm and update published  list item
+
+    When I am viewing the list item details for "Bruce"
+    And I click the "Confirm and update" radio button
+    And I click the "Continue" button
+    And I click the "Update" button
+    Then I see the notification text "Wayne Lawyers has been updated and published"
 
 
   Scenario: Unpublish list item
