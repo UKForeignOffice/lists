@@ -9,6 +9,7 @@ Feature:
 			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
 			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
 			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
+			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
 			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
 
@@ -67,12 +68,20 @@ Feature:
 			| Nima        | Nima And Sons          |
 
 
-	Scenario: Confirm and update list item
+	Scenario: Confirm and update unpublished list item
 		When I am viewing the list item details for "Tristen"
 		And I click the "Publish" radio button
 		And I click the "Continue" button
 		And I click the "Publish" button
-		Then I see the notification text "Peace Funerals has been updated and published"
+		Then I see the notification text "Peace Funerals has been published"
+
+
+	Scenario: Confirm and update published list item
+		When I am viewing the list item details for "Luke"
+		And I click the "Confirm and update" radio button
+		And I click the "Continue" button
+		And I click the "Update" button
+		Then I see the notification text "Samba directors has been updated and published"
 
 
 	Scenario: Unpublish list item
