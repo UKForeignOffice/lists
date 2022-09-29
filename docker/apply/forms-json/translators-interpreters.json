@@ -16,7 +16,7 @@
           "name": "QLkbfP",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views.</p>\n\n<p class=\"govuk-body\">Email: <a href=\"#\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a></p>",
+          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views.</p>\n\n<p class=\"govuk-body\">Email: <a href=\"mailto:digitalservicesfeedback@fco.gov.uk\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a></p>",
           "schema": {}
         }
       ],
@@ -260,7 +260,7 @@
           "name": "RuScuW",
           "options": {},
           "type": "InsetText",
-          "content": "<p class=“govuk-body”>If you provide a different service that you think should be included in this list, email <a href=\"#\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a>.</p>",
+          "content": "<p class=“govuk-body”>If you provide a different service that you think should be included in this list, email <a href=\"mailto:digitalservicesfeedback@fco.gov.uk\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a>.</p>",
           "schema": {}
         }
       ],
@@ -540,7 +540,7 @@
           "name": "SpiFhf",
           "options": {},
           "type": "InsetText",
-          "content": "<p class=“govuk-body”>If you provide a different service that you think should be included in this list, email <a href=\"#\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a>.</p>",
+          "content": "<p class=“govuk-body”>If you provide a different service that you think should be included in this list, email <a href=\"mailto:digitalservicesfeedback@fco.gov.uk\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a>.</p>",
           "schema": {}
         }
       ],
