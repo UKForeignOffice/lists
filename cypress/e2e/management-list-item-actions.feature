@@ -10,7 +10,7 @@ Feature:
       | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 05/01/22  |
       | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 12/01/22  |
       | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 03/02/22  |
-      | Bruce       | Wayne Lawyers     | smoke@cautionyourblast.com | EDITED            | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 04/02/22  |
+      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED            | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 04/02/22  |
       | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | 08/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
@@ -24,7 +24,8 @@ Feature:
       | contactName | radioButtons                              | radioButtonsConfirm          |
       | Winston     | Publish,Request changes,Remove            | Unpublish,Confirm and update |
       | Julia       | Publish,Request changes,Remove            | Unpublish,Confirm and update |
-      | Joker       | Request changes,Confirm and update,Remove | Publish,Unpublish            |
+      | Bruce       | Request changes,Confirm and update,Remove | Publish,Unpublish            |
+      | Joker       | Request changes,Publish,Remove            | Uodate,Unpublish             |
 
 
   Scenario Outline: Request changes for list item
