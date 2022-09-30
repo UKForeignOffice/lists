@@ -8,6 +8,9 @@ import type { List } from "server/models/types";
 export async function redirectIfUnauthorised(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
+
+    if (!Number.isInteger(Number(listId))) throw new Error("listId is not a number");
+
     const listData = (await prisma.list.findUnique({
       where: {
         id: Number(listId),
@@ -26,5 +29,6 @@ export async function redirectIfUnauthorised(req: Request, res: Response, next: 
     next();
   } catch (error) {
     logger.error(`redirectIfUnauthorised Error: ${(error as Error).message}`);
+    return res.render("errors/404");
   }
 }

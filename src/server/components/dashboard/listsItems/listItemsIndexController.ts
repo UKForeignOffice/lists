@@ -124,7 +124,7 @@ export async function listItemsIndexController(
       // @ts-expect-error
       csrfToken: getCSRFToken(req as Request),
     });
-  } catch (error: unknown) {
+  } catch (error) {
     next(error);
   }
 }
