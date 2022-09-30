@@ -602,12 +602,18 @@ export async function listItemPublishController(
     await handlePublishListItem(Number(listItemId), isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
+    req.flash(
+      "successBannerTitle",
+      `${listItem.jsonData.organisationName} has been ${successBannerHeading}`
+    );
     req.flash("successBannerHeading", successBannerHeading);
     req.flash("successBannerColour", "green");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    req.flash(
+      "errorMsg",
+      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
+    );
     return res.redirect(
       dashboardRoutes.listsItem
         .replace(":listId", listId)
@@ -629,7 +635,8 @@ export async function handlePublishListItem(
 
   if (updatedListItem.isPublished) {
     const searchLink = createListSearchBaseLink(updatedListItem.type);
-    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
+    const { contactName, contactEmailAddress } =
+      getListItemContactInformation(updatedListItem);
     const typeName = serviceName(updatedListItem.type);
 
     await sendDataPublishedEmail(
