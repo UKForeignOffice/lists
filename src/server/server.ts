@@ -9,7 +9,6 @@ import {
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
-  configureRateLimit,
 } from "./middlewares";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
