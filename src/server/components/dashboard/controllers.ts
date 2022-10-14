@@ -21,6 +21,7 @@ import { QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { HttpException } from "server/middlewares/error-handlers";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -177,6 +178,15 @@ export async function listsEditController(
       const administrators: string[] = compact(
         req.body.administrators.split(",").map(trim).map(toLower)
       );
+
+      const user = req.user;
+      if (!user?.isSuperAdmin() &&
+        (!user?.userData?.email || !publishers.includes(user?.userData?.email) ||
+          (listId === "new" && !user?.isSuperAdmin()))
+      ) {
+        const err = new HttpException(403, "403", "You are not authorized to access this list.");
+        return next(err);
+      }
 
       if (
         validators.length === 0 ||

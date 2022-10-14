@@ -1,4 +1,4 @@
-import { configureErrorHandlers } from "../error-handlers";
+import { configureErrorHandlers, HttpException } from "../error-handlers";
 
 describe("Error handlers middleware", () => {
   let server: any;
@@ -25,7 +25,7 @@ describe("Error handlers middleware", () => {
 
   test("it configures error handler", () => {
     configureErrorHandlers(server);
-    expect(server.use).toHaveBeenCalledTimes(3);
+    expect(server.use).toHaveBeenCalledTimes(2);
   });
 
   describe("404 error handler", () => {
@@ -71,7 +71,7 @@ describe("Error handlers middleware", () => {
     beforeEach(() => {
       configureErrorHandlers(server);
       handle500 = server.use.mock.calls[1][0];
-      error = { status: 500 };
+      error = new HttpException(500, "500", "Error has occurred");
     });
 
     test("response status is 500", () => {
@@ -79,17 +79,17 @@ describe("Error handlers middleware", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
 
-    test("it renders errors/500.njk when request expects HTML", () => {
+    test("it renders errors/generic-error.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle500(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/500");
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 500});
     });
 
     test("it responds with json when request expects JSON", () => {
       req.accepts.mockReturnValue("json");
       handle500(error, req, res);
       expect(res.json).toHaveBeenCalledWith({
-        error: "Sorry, there is a problem with the service",
+        error: "This request could not be processed - Error has occurred",
       });
     });
 
@@ -97,7 +97,7 @@ describe("Error handlers middleware", () => {
       req.accepts.mockReturnValue("something else");
       handle500(error, req, res);
       expect(res.send).toHaveBeenCalledWith(
-        "Sorry, there is a problem with the service"
+        "This request could not be processed - Error has occurred"
       );
     });
   });
@@ -108,8 +108,8 @@ describe("Error handlers middleware", () => {
 
     beforeEach(() => {
       configureErrorHandlers(server);
-      handle403 = server.use.mock.calls[2][0];
-      error = { status: 403, code: "EBADCSRFTOKEN" };
+      handle403 = server.use.mock.calls[1][0];
+      error = new HttpException(403, "EBADCSRFTOKEN", "Error has occurred");
     });
 
     test("response status is 403", () => {
@@ -117,17 +117,17 @@ describe("Error handlers middleware", () => {
       expect(res.status).toHaveBeenCalledWith(403);
     });
 
-    test("it renders errors/403.njk when request expects HTML", () => {
+    test("it renders errors/generic-error when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle403(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/403");
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 403});
     });
 
     test("it responds with json when request expects JSON", () => {
       req.accepts.mockReturnValue("json");
       handle403(error, req, res);
       expect(res.json).toHaveBeenCalledWith({
-        error: "This request could not be processed.  Please try again.",
+        error: "This request could not be processed - Error has occurred",
       });
     });
 
@@ -135,7 +135,7 @@ describe("Error handlers middleware", () => {
       req.accepts.mockReturnValue("something else");
       handle403(error, req, res);
       expect(res.send).toHaveBeenCalledWith(
-        "This request could not be processed.  Please try again."
+        "This request could not be processed - Error has occurred"
       );
     });
   });

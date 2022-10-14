@@ -51,6 +51,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
+import { HttpException } from "server/middlewares/error-handlers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject,
@@ -229,7 +230,7 @@ export async function listItemPinController(
   const isPinned = action === "pin";
   const listItem: ListItemGetObject = (await findListItemById(
     listItemId
-  )) as ListItemGetObject;  
+  )) as ListItemGetObject;
 
   try {
     const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
@@ -360,7 +361,7 @@ export async function listItemDeleteController(
       req.flash("errorMsg", "Unable to perform action - user could not be identified");
       return res.redirect(listItemUrl);
     }
-    
+
     await deleteListItem(Number(listItemId), userId);
 
     req.flash(
@@ -399,7 +400,7 @@ export async function listItemUpdateController(
     if (userId === undefined) {
       req.flash("errorMsg", "Unable to perform action - user could not be identified");
       return res.redirect(listItemUrl);
-    }    
+    }
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been updated and published`);
     req.flash("successBannerHeading", "Updated and published");
@@ -454,7 +455,7 @@ export async function listItemRequestChangeController(
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
   const list = ((await findListById(listId)) ?? {}) as List;
-  const listItem = await getListItem(listItemId, list);  
+  const listItem = await getListItem(listItemId, list);
 
   try {
     const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
@@ -598,7 +599,7 @@ export async function listItemPublishController(
       req.flash("errorMsg", "Unable to perform action - user could not be identified");
       return res.redirect(listItemUrl);
     }
-  
+
     await handlePublishListItem(Number(listItemId), isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
@@ -700,35 +701,24 @@ export async function listItemEditRequestValidation(
   }
 
   if (list === undefined) {
-    res.status(404).send({
-      error: {
-        message: `Could not find list ${listId}`,
-      },
-    });
+    const err = new HttpException(404, "404", `Could not find list ${listId}`);
+    return next(err);
+
   } else if (listItem === undefined) {
-    res.status(404).send({
-      error: {
-        message: `Could not find list item ${listItemId}`,
-      },
-    });
+    const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
+    return next(err);
+
   } else if (list?.type !== listItem?.type) {
-    res.status(400).send({
-      error: {
-        message: `Trying to edit a list item which is a different service type to list ${listId}`,
-      },
-    });
+    const err = new HttpException(400, "400", `Trying to edit a list item which is a different service type to list ${listId}`);
+    return next(err);
+
   } else if (list?.id !== listItem?.listId) {
-    res.status(400).send({
-      error: {
-        message: `Trying to edit a list item which does not belong to list ${listId}`,
-      },
-    });
+    const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
+    return next(err);
+
   } else if (!userIsListPublisher(req, list)) {
-    res.status(403);
-    logger.error("User doesn't have publishing right on this list");
-    return res.render("errors/403", {
-      message: "User does not have publishing rights on this list",
-    });
+    const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
+    return next(err);
   }
   return next();
 }

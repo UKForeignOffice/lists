@@ -1,4 +1,5 @@
 import { ensureAuthenticated, ensureUserIsSuperAdmin } from "../helpers";
+import { NextFunction } from "express";
 
 describe("Auth Service", () => {
   describe("ensureAuthenticated", () => {
@@ -54,7 +55,7 @@ describe("Auth Service", () => {
     });
 
     test("response is 405 Not allowed when user is not a SuperAdmin", () => {
-      const next = jest.fn();
+      const next: NextFunction = mockNextFunction(405, "Not allowed");
       const res: any = {
         status: jest.fn().mockReturnThis(),
         send: jest.fn(),
@@ -70,9 +71,15 @@ describe("Auth Service", () => {
 
       expect(req.isAuthenticated).toHaveBeenCalled();
       expect(req.user.isSuperAdmin).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(405);
-      expect(res.send).toHaveBeenCalledWith("Not allowed");
-      expect(next).not.toHaveBeenCalled();
     });
   });
+
+  function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
+    const next: NextFunction = (err) => {
+      expect(err.message).toBe(expectedMessage)
+      expect(err.status).toBe(expectedStatus)
+    };
+    return next;
+  }
+
 });

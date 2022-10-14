@@ -1,0 +1,30 @@
+{% extends 'layout.njk' %}
+
+{% block content %}
+  <div class="govuk-width-container">
+    <div class="govuk-main-wrapper">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-xl">
+            {% if status == 403 %}
+              This request could not be processed
+            {% elif status == 404 %}
+              Page not found
+            {% elif status == 429 %}
+              You have exceeded the maximum rate of page requests
+            {% else %}
+              Sorry, there is a problem with the service
+            {% endif %}
+          </h1>
+          <p class="govuk-body">
+            {% if message %}
+              {{ message }}
+            {% else %}
+              We have reported this to the team that manages the service and they will fix it as soon as possible.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

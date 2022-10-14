@@ -17,13 +17,11 @@ import {
   usersEditController,
   usersListController,
 } from "../controllers";
-// import * as dashboardControllers from "server/components/dashboard/controllers";
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
 import { NextFunction } from "express";
 import {
   listItemDeleteController,
-  listItemEditRequestValidation as listItemEditRequestValidation1,
   listItemEditRequestValidation,
   listItemGetController,
 } from "server/components/dashboard/listsItems/controllers";
@@ -854,26 +852,20 @@ describe("Dashboard Controllers", () => {
 
     it("should return a 404 if list is not found", async () => {
       spyFindListById.mockResolvedValueOnce(undefined);
+      const next = mockNextFunction(404, "Could not find list 1");
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(spyFindListById).toHaveBeenCalledWith("1");
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        error: {
-          message: "Could not find list 1",
-        },
-      });
     });
 
     it("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
+      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
-
-      expect(mockRes.status).toHaveBeenLastCalledWith(403);
     });
 
     it("should call editListItem with the correct params", async () => {
@@ -924,23 +916,51 @@ describe("Dashboard Controllers", () => {
     it("should redirect if user is undefined", async () => {
       mockReq.user = undefined;
 
-      await listItemEditRequestValidation1(mockReq, mockRes, next);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
     });
 
     it("should return a 404 if list is not found", async () => {
       spyFindListById.mockResolvedValueOnce(undefined);
+      const next = mockNextFunction(404, "Could not find list 1");
 
-      await listItemEditRequestValidation1(mockReq, mockRes, next);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
 
       expect(spyFindListById).toHaveBeenCalledWith("1");
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        error: {
-          message: "Could not find list 1",
-        },
-      });
+    });
+
+    it("should return a 404 if list item is not found", async () => {
+      spyFindListById.mockResolvedValueOnce({ id: 1 });
+      spyFindListItemById.mockResolvedValueOnce(undefined);
+      const next = mockNextFunction(404, "Could not find list item 2");
+
+      await listItemEditRequestValidation(mockReq, mockRes, next);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(spyFindListItemById).toHaveBeenCalledWith("2");
+    });
+
+    it("should return a 400 if list service type differs to list item service type", async () => {
+      spyFindListById.mockResolvedValueOnce({ id: 1, type: "lawyers" });
+      spyFindListItemById.mockResolvedValueOnce({ id: 2, listId: 1, type: "funeralDirectors" });
+      const next = mockNextFunction(400, "Trying to edit a list item which is a different service type to list 1");
+
+      await listItemEditRequestValidation(mockReq, mockRes, next);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(spyFindListItemById).toHaveBeenCalledWith("2");
+    });
+
+    it("should return a 400 if list item not associated with the list", async () => {
+      spyFindListById.mockResolvedValueOnce({ id: 1, type: "lawyers" });
+      spyFindListItemById.mockResolvedValueOnce({ id: 2, listId: 2, type: "lawyers" });
+      const next = mockNextFunction(400, "Trying to edit a list item which does not belong to list 1");
+
+      await listItemEditRequestValidation(mockReq, mockRes, next);
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(spyFindListItemById).toHaveBeenCalledWith("2");
     });
 
     it("should return a 403 if user is not permitted to make changes to the list", async () => {
@@ -948,9 +968,9 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
 
-      await listItemEditRequestValidation1(mockReq, mockRes, next);
+      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
 
-      expect(mockRes.status).toHaveBeenLastCalledWith(403);
+      await listItemEditRequestValidation(mockReq, mockRes, next);
     });
 
     it.skip("should call editListItem with the correct params", async () => {
@@ -973,4 +993,12 @@ describe("Dashboard Controllers", () => {
       expect(1).toBe(1);
     });
   });
+
+  function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
+    const next: NextFunction = (err) => {
+      expect(err.message).toBe(expectedMessage)
+      expect(err.status).toBe(expectedStatus)
+    };
+    return next;
+  }
 });

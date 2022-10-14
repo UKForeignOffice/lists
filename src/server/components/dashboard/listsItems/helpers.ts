@@ -4,6 +4,7 @@ import { userIsListPublisher } from "server/components/dashboard/helpers";
 
 import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
+import { HttpException } from "server/middlewares/error-handlers";
 
 export async function redirectIfUnauthorised(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -20,15 +21,14 @@ export async function redirectIfUnauthorised(req: Request, res: Response, next: 
     const userCanPublishList = userIsListPublisher(req, listData);
 
     if (!userCanPublishList) {
-      logger.error("User doesn't have publishing right on this list");
-      return res.render("errors/403", {
-        message: "User does not have publishing rights on this list",
-      });
+      const err = new HttpException(403, "403", "User is not authorized to access this list.");
+      return next(err);
     }
 
     next();
   } catch (error) {
     logger.error(`redirectIfUnauthorised Error: ${(error as Error).message}`);
-    return res.render("errors/404");
+    const err = new HttpException(403, "403", "Unable to validate this request.  Please try again.");
+    return next(err);
   }
 }
