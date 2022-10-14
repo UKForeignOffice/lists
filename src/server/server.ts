@@ -43,8 +43,7 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
-  configureRateLimit(server);
-  
+
   // initialize components
   await initAuth(server);
   await initLists(server);

@@ -1,10 +1,17 @@
-import { Express, Request, Response } from "express";
+import { Express, NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
-export interface HttpException extends Error {
+export class HttpException extends Error {
+  constructor(status: number, code: string, message: string) {
+    super(message);
+    this.name = "HttpException";
+    this.status = status;
+    this.code = code;
+    this.message = message;
+  }
+
   status: number;
   code?: string;
-  message: string;
 }
 
 export const acceptsHTML = (req: Request): boolean => {
@@ -28,62 +35,38 @@ export const configureErrorHandlers = (server: Express): void => {
         error: "The resource you where looking for is not available.",
       });
     } else {
-      // default to plain-text. send()
       res
         .type("txt")
         .send("The resource you where looking for is not available.");
     }
   });
 
-  server.use(function (err: HttpException, req: Request, res: Response) {
-    logger.error("500 Error", err);
-
+  server.use(function (err: HttpException, req: Request, res: Response, next: NextFunction) {
+    logger.error(`${err.status} Error`, err);
     res.status("status" in err ? err.status : 500);
 
     if (acceptsHTML(req)) {
-      res.render("errors/500");
+      res.render("errors/generic-error", {
+        message: err.message ?? "",
+        status: err.status
+      });
     } else if (acceptsJSON(req)) {
       res.json({
-        error: "Sorry, there is a problem with the service",
+        error: getErrorMessage(err.message),
       });
     } else {
-      res.type("txt").send("Sorry, there is a problem with the service");
-    }
-  });
-
-  server.use(function (err: HttpException, req: Request, res: Response, next: Function) {
-    if (err.code !== 'EBADCSRFTOKEN') return next(err)
-
-    logger.warn("403 Forbidden. Bad CSRF token.", { path: req.path });
-
-    // handle CSRF token errors here
-    res.status(403)
-
-    if (acceptsHTML(req)) {
-      res.render("errors/403");
-    } else if (acceptsJSON(req)) {
-      res.json({
-        error: "This request could not be processed.  Please try again.",
-      });
-    } else {
-      res.type("txt").send("This request could not be processed.  Please try again.");
+      res.type("txt").send(getErrorMessage(err.message));
     }
   });
 };
 
-export function rateLimitExceededErrorHandler (req: Request, res: Response, next: Function): void {
-  logger.warn("429 Too many requests", { path: req.path });
-  res.status(429);
+function getErrorMessage(message: string): string {
+  let error = `This request could not be processed`;
+  error = `${error}${message ? " - " + message : error}`;
+  return error;
+}
 
-  if (acceptsHTML(req)) {
-    res.render("errors/429");
-  } else if (acceptsJSON(req)) {
-    res.json({
-      error: "You have exceeded the maximum rate of page requests",
-    });
-  } else {
-    res
-      .type("txt")
-      .send("You have exceeded the maximum rate of page requests");
-  }
+export function rateLimitExceededErrorHandler (req: Request, res: Response, next: Function): void {
+  const err = new HttpException(429, "429", "Maximum rate of page requests exceeded - wait and try again");
+  return next(err);
 }
