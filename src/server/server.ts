@@ -9,7 +9,6 @@ import {
   configureStaticServer,
   configureErrorHandlers,
   configureCookieParser,
-  configureRateLimit,
 } from "./middlewares";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
@@ -43,8 +42,7 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureBodyParser(server);
   configureViews(server);
-  configureRateLimit(server);
-  
+
   // initialize components
   await initAuth(server);
   await initLists(server);

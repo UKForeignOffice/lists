@@ -110,3 +110,8 @@ Feature:
       | Telephone                                     | 1234567                                | 10          |
       | Professional associations                     | Miniluv                                | 11          |
       | Email - private                               | smoke@cautionyourblast.com             | 12          |
+
+
+  Scenario: Should not be able to view list if not publisher
+    When I visit a list that I am not a publisher of
+    Then I should see an unauthorised page

@@ -95,6 +95,7 @@ export async function listItemsIndexController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
+
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { tag: queryTag, page } = sanitisedQueryParams;
     req.session.changeMessage = undefined;

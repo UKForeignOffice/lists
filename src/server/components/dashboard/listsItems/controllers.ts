@@ -51,6 +51,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
+import { HttpException } from "server/middlewares/error-handlers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject,
@@ -123,6 +124,7 @@ export async function listItemGetController(
 
     requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
   }
+
   const actionButtons: { [key: string]: string[] } = {
     NEW: ["publish", "request-changes", "remove"],
     OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
@@ -137,6 +139,7 @@ export async function listItemGetController(
   const isPinned =
     listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
+
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
     changeMessage: req.session?.changeMessage,
@@ -152,6 +155,17 @@ export async function listItemGetController(
   });
 }
 
+function getCurrentUrls(req: Request): {listItemUrl: string, listIndexUrl: string} {
+  const { listId, listItemId } = req.params;
+
+  if (!Number.isInteger(Number(listItemId))) throw new Error("listItemId is not a number");
+
+  return {
+    listItemUrl: dashboardRoutes.listsItem.replace(":listId", listId).replace(":listItemId", listItemId),
+    listIndexUrl: dashboardRoutes.listsItems.replace(":listId", listId)
+  }
+}
+
 export async function listItemPostController(
   req: Request,
   res: Response
@@ -159,54 +173,51 @@ export async function listItemPostController(
   const { listId, listItemId } = req.params;
   const { message, action } = req.body;
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
-  const listItem: ListItemGetObject = await findListItemById(listItemId);
-  const listJson: ListItemJsonData = listItem.jsonData;
-  listJson.country = list?.country?.name ?? "";
-  const confirmationPages: { [key: string]: string } = {
-    publish: "dashboard/list-item-confirm-publish",
-    unpublish: "dashboard/list-item-confirm-unpublish",
-    requestChanges: "dashboard/list-item-confirm-changes",
-    update: "dashboard/list-item-confirm-update",
-    pin: "dashboard/list-item-confirm-pin",
-    unpin: "dashboard/list-item-confirm-pin",
-    remove: "dashboard/list-item-confirm-remove",
-  };
+  try {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const { listItemUrl } = getCurrentUrls(req);
+    const list = ((await findListById(listId)) ?? {}) as List;
+    const listItem: ListItemGetObject = await findListItemById(listItemId);
+    const listJson: ListItemJsonData = listItem.jsonData;
+    listJson.country = list?.country?.name ?? "";
+    const confirmationPages: { [key: string]: string } = {
+      publish: "dashboard/list-item-confirm-publish",
+      unpublish: "dashboard/list-item-confirm-unpublish",
+      requestChanges: "dashboard/list-item-confirm-changes",
+      update: "dashboard/list-item-confirm-update",
+      pin: "dashboard/list-item-confirm-pin",
+      unpin: "dashboard/list-item-confirm-pin",
+      remove: "dashboard/list-item-confirm-remove",
+    };
 
-  const confirmationPage = confirmationPages[action];
+    const confirmationPage = confirmationPages[action];
 
-  if (!action) {
-    req.flash("errorMsg", "You must select an action");
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
-  if (action === "requestChanges") {
-    if (!message) {
-      req.flash("errorMsg", "You must provide a message to request a change");
-      return res.redirect(
-        dashboardRoutes.listsItem
-          .replace(":listId", listId)
-          .replace(":listItemId", listItemId)
-      );
+    if (!action) {
+      req.flash("errorMsg", "You must select an action");
+      return res.redirect(listItemUrl);
     }
 
-    req.session.changeMessage = message;
-  }
+    if (action === "requestChanges") {
+      if (!message) {
+        req.flash("errorMsg", "You must provide a message to request a change");
+        return res.redirect(listItemUrl);
+      }
 
-  res.render(confirmationPage, {
-    ...DEFAULT_VIEW_PROPS,
-    list,
-    listItem,
-    message,
-    action,
-    req,
-    csrfToken: getCSRFToken(req),
-  });
+      req.session.changeMessage = message;
+    }
+
+    res.render(confirmationPage, {
+      ...DEFAULT_VIEW_PROPS,
+      list,
+      listItem,
+      message,
+      action,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  } catch (error) {
+    logger.error(`listItemPostController Error: ${(error as Error).message}`);
+  }
 }
 
 export async function listItemPinController(
@@ -217,25 +228,20 @@ export async function listItemPinController(
   const { action } = req.body;
   const userId = req?.user?.userData?.id;
   const isPinned = action === "pin";
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const listItem: ListItemGetObject = (await findListItemById(
     listItemId
   )) as ListItemGetObject;
 
-  if (userId === undefined) {
-    req.flash(
-      "errorMsg",
-      "Unable to perform action - user could not be identified"
-    );
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
   try {
+    const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+
+    if (userId === undefined) {
+      req.flash(
+        "errorMsg",
+        "Unable to perform action - user could not be identified"
+      );
+      return res.redirect(listItemUrl);
+    }
     await handlePinListItem(Number(listItemId), userId, isPinned);
 
     req.flash(
@@ -246,12 +252,9 @@ export async function listItemPinController(
     );
     req.flash("successBannerHeading", `${isPinned ? "Pinned" : "Unpinned"}`);
     req.flash("successBannerColour", "blue");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
-  } catch (error: any) {
-    req.flash(
-      "errorMsg",
-      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
-    );
+    res.redirect(listIndexUrl);
+  } catch (error) {
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${(error as Error).message}`);
     return res.redirect(
       dashboardRoutes.listsItem
         .replace(":listId", listId)
@@ -345,27 +348,20 @@ export async function listItemDeleteController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { listId, listItemId } = req.params;
+  const { listItemId, listId } = req.params;
   const userId = req?.user?.userData?.id;
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const listItem: ListItemGetObject = (await findListItemById(
     listItemId
   )) as ListItemGetObject;
 
-  if (userId === undefined) {
-    req.flash(
-      "errorMsg",
-      "Unable to perform action - user could not be identified"
-    );
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
   try {
+    const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+
+    if (userId === undefined) {
+      req.flash("errorMsg", "Unable to perform action - user could not be identified");
+      return res.redirect(listItemUrl);
+    }
+
     await deleteListItem(Number(listItemId), userId);
 
     req.flash(
@@ -374,7 +370,7 @@ export async function listItemDeleteController(
     );
     req.flash("successBannerHeading", "Removed");
     req.flash("successBannerColour", "red");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+    res.redirect(listIndexUrl);
   } catch (error: any) {
     req.flash(
       "errorMsg",
@@ -395,29 +391,18 @@ export async function listItemUpdateController(
   const { listId, listItemId } = req.params;
   const listItemIdNumber = Number(listItemId);
   const userId = req?.user?.userData?.id;
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const listItem: ListItemGetObject = await findListItemById(listItemId);
 
-  if (userId === undefined) {
-    req.flash(
-      "errorMsg",
-      "Unable to perform action - user could not be identified"
-    );
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
   try {
-    await handleListItemUpdate(listItemIdNumber, userId);
+    const { listItemUrl } = getCurrentUrls(req);
+    await handleListItemUpdate(listItemIdNumber, userId!);
 
-    req.flash(
-      "successBannerTitle",
-      `${listItem.jsonData.organisationName} has been updated and published`
-    );
+    if (userId === undefined) {
+      req.flash("errorMsg", "Unable to perform action - user could not be identified");
+      return res.redirect(listItemUrl);
+    }
+
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been updated and published`);
     req.flash("successBannerHeading", "Updated and published");
     req.flash("successBannerColour", "green");
     res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
@@ -469,33 +454,22 @@ export async function listItemRequestChangeController(
   const isUnderTest = underTest === "true";
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
+  const list = ((await findListById(listId)) ?? {}) as List;
   const listItem = await getListItem(listItemId, list);
 
-  if (userId === undefined) {
-    req.flash(
-      "errorMsg",
-      "Unable to perform action - user could not be identified"
-    );
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
-  if (!changeMessage) {
-    req.flash("errorMsg", "You must provide a message to request a change");
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
   try {
+    const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+
+    if (userId === undefined) {
+      req.flash("errorMsg", "Unable to perform action - user could not be identified");
+      return res.redirect(listItemUrl);
+    }
+
+    if (!changeMessage) {
+      req.flash("errorMsg", "You must provide a message to request a change");
+      return res.redirect(listItemUrl);
+    }
+
     await handleListItemRequestChanges(
       list,
       listItem,
@@ -510,7 +484,7 @@ export async function listItemRequestChangeController(
     );
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
-    res.redirect(dashboardRoutes.listsItems.replace(":listId", listId));
+    res.redirect(listIndexUrl);
   } catch (error: any) {
     req.flash(
       "errorMsg",
@@ -616,23 +590,16 @@ export async function listItemPublishController(
   const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const list = (await findListById(listId)) ?? ({} as List);
+  const list = ((await findListById(listId)) ?? {}) as List;
   const listItem = await getListItem(listItemId, list);
 
-  if (userId === undefined) {
-    req.flash(
-      "errorMsg",
-      "Unable to perform action - user could not be identified"
-    );
-    return res.redirect(
-      dashboardRoutes.listsItem
-        .replace(":listId", listId)
-        .replace(":listItemId", listItemId)
-    );
-  }
-
   try {
+    const { listItemUrl } = getCurrentUrls(req);
+    if (userId === undefined) {
+      req.flash("errorMsg", "Unable to perform action - user could not be identified");
+      return res.redirect(listItemUrl);
+    }
+
     await handlePublishListItem(Number(listItemId), isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
@@ -648,7 +615,7 @@ export async function listItemPublishController(
       "errorMsg",
       `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
     );
-    res.redirect(
+    return res.redirect(
       dashboardRoutes.listsItem
         .replace(":listId", listId)
         .replace(":listItemId", listItemId)
@@ -734,35 +701,24 @@ export async function listItemEditRequestValidation(
   }
 
   if (list === undefined) {
-    res.status(404).send({
-      error: {
-        message: `Could not find list ${listId}`,
-      },
-    });
+    const err = new HttpException(404, "404", `Could not find list ${listId}`);
+    return next(err);
+
   } else if (listItem === undefined) {
-    res.status(404).send({
-      error: {
-        message: `Could not find list item ${listItemId}`,
-      },
-    });
+    const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
+    return next(err);
+
   } else if (list?.type !== listItem?.type) {
-    res.status(400).send({
-      error: {
-        message: `Trying to edit a list item which is a different service type to list ${listId}`,
-      },
-    });
+    const err = new HttpException(400, "400", `Trying to edit a list item which is a different service type to list ${listId}`);
+    return next(err);
+
   } else if (list?.id !== listItem?.listId) {
-    res.status(400).send({
-      error: {
-        message: `Trying to edit a list item which does not belong to list ${listId}`,
-      },
-    });
+    const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
+    return next(err);
+
   } else if (!userIsListPublisher(req, list)) {
-    res.status(403).send({
-      error: {
-        message: "User doesn't have publishing right on this list",
-      },
-    });
+    const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
+    return next(err);
   }
   return next();
 }

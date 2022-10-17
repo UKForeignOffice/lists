@@ -25,6 +25,7 @@ import {
   listItemRequestChangeController,
   listItemUpdateController
 } from "server/components/dashboard/listsItems/controllers";
+import { redirectIfUnauthorised } from "server/components/dashboard/listsItems/helpers";
 
 export const dashboardRouter = express.Router();
 
@@ -55,18 +56,19 @@ dashboardRouter.all(
 dashboardRouter.get(
   dashboardRoutes.listsItems,
   csrfRequestHandler,
+  redirectIfUnauthorised,
   // @ts-expect-error
   listsItemsController
 );
 
 // list items
-dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemGetController);
-dashboardRouter.post(dashboardRoutes.listsItemDelete, csrfRequestHandler, listItemEditRequestValidation, listItemDeleteController);
-dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, listItemPostController);
-dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listItemEditRequestValidation, listItemPublishController);
-dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, listItemRequestChangeController);
-dashboardRouter.post(dashboardRoutes.listsItemUpdate, csrfRequestHandler, listItemEditRequestValidation, listItemUpdateController);
-dashboardRouter.post(dashboardRoutes.listsItemPin, csrfRequestHandler, listItemEditRequestValidation, listItemPinController);
+dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemGetController);
+dashboardRouter.post(dashboardRoutes.listsItemDelete, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemDeleteController);
+dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPostController);
+dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPublishController);
+dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemRequestChangeController);
+dashboardRouter.post(dashboardRoutes.listsItemUpdate, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemUpdateController);
+dashboardRouter.post(dashboardRoutes.listsItemPin, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPinController);
 
 // feedback
 dashboardRouter.get(
