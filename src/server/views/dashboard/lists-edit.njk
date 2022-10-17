@@ -121,10 +121,11 @@
             {{ publisher }}
           </dt>
           <dd class="govuk-summary-list__actions">
-            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="publisherEmail" value="{{ publisher }}" form="removePublisher">
-
+            {% if publisher !== user.email %}
+            <button class="govuk-button govuk-button--secondary govuk-!-margin-0" data-module="govuk-button" name="publisherEmail" value="{{ publisher }}" form="removePublisher">
               Remove<span class="govuk-visually-hidden"> publisher</span>
             </button>
+            {% endif %}
           </dd>
         </div>
       {% endfor %}

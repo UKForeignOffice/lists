@@ -155,6 +155,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       ...DEFAULT_VIEW_PROPS,
       publiser: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
       listId,
+      user: req.user?.userData,
       list,
       req,
       csrfToken: getCSRFToken(req),
@@ -272,6 +273,7 @@ export async function listsEditPostController(
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
       listId,
+      user: user.userData,
       error,
       list,
       req,
