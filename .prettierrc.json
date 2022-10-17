@@ -1,11 +1,3 @@
 {
-  "printWidth": 120,
-  "overrides": [
-    {
-      "files": "*.njk",
-      "options": {
-        "parser": "html"
-      }
-    }
-  ]
+  "printWidth": 120
 }

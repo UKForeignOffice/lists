@@ -57,7 +57,6 @@
       </fieldset>
     </div>
 
-
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
       <h3 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--m" for="country-autocomplete">
@@ -76,64 +75,19 @@
         <select id="country-autocomplete" name="country" className="govuk-input--error">
           <option value=""></option>
           {% for country in countriesList %}
-            <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name ===  country.value}}>{{ country.text }}</option>
+            <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name === country.value}}>{{ country.text }}</option>
           {% endfor %}
         </select>
       {% endif %}
     </div>
 
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'administrators' }}">
-      <fieldset class="govuk-fieldset">
-        <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="administrators">
-            Users that can manage this settings
-          </label>
-        </h3>
-        {% if error.field === 'administrators' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
-        <div id="administrators-hint-2" class="govuk-hint">
-          Enter the user’s email address, please separate multiple addresses with commas
-        </div>
-        <input
-          class="govuk-input"
-          id="administrators"
-          name="administrators"
-          type="text"
-          aria-describedby="administrators-hint administrators-hint-2"
-          value="{{list.jsonData.administrators or req.user.userData.email}}"
-        >
-      </fieldset>
-    </div>
-
-
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'validators' }}">
-      <fieldset class="govuk-fieldset">
-        <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="validators">
-            Users that can validate content
-          </label>
-        </h3>
-        {% if error.field === 'validators' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
-        <div id="validators-hint" class="govuk-hint">
-          Enter the user’s email address, please separate multiple addresses with commas
-        </div>
-        <input class="govuk-input" id="validators" name="validators" type="text" aria-describedby="validators-hint" value="{{list.jsonData.validators}}">
-      </fieldset>
-    </div>
-
+    <hr />
 
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publishers' }}">
       <fieldset class="govuk-fieldset">
         <h3 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--m" for="publishers">
-            Users that can publish content
+            Users
           </label>
         </h3>
         {% if error.field === 'publishers' %}
@@ -141,21 +95,40 @@
             <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
           </span>
         {% endif %}
-        <div id="publishers-hint" class="govuk-hint">
-          Enter the user’s email address, please separate multiple addresses with commas
+        <div id="publishers-hint" class="govuk-body">
+          All users can accept and publish service providers on the funeral directors list in {{list.country.name}}.
         </div>
-        <input class="govuk-input" id="publishers" name="publishers" type="text" aria-describedby="publishers-hint" value="{{list.jsonData.publishers}}">
+        <label class="govuk-label" for="publishers">
+          Enter an email address
+        </label>
+        <input class="govuk-input" id="publishers" name="publishers" type="email" aria-describedby="publishers-hint">
       </fieldset>
     </div>
+
     <button class="govuk-button" data-module="govuk-button">
       {% if listId === 'new' %}
         Create
       {% else %}
-        Save
+        Add to list
       {% endif %}
-
     </button>
+
+    <dl class="govuk-summary-list">
+      {% for publishers in list.jsonData.publishers %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            {{ publishers }}
+          </dt>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">
+              Remove<span class="govuk-visually-hidden"> publishers</span>
+            </a>
+          </dd>
+        </div>
+      {% endfor %}
+    </dl>
   </form>
+
   <script nonce="{{cspNonce}}">
     accessibleAutocomplete.enhanceSelectElement({
       defaultValue: '{{list.country.name}}',
