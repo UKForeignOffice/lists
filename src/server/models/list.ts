@@ -102,32 +102,19 @@ export async function createList(listData: {
 export async function updateList(
   listId: number,
   listData: {
-    validators: string[];
     publishers: string[];
-    administrators: string[];
   }
 ): Promise<List | undefined> {
   try {
-    const validators = compact(listData.validators.map(trim).map(toLower));
-    if (validators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Validators contain a non GOV UK email address");
-    }
 
     const publishers = compact(listData.publishers.map(trim).map(toLower));
     if (publishers.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
-    const administrators = compact(listData.administrators.map(trim).map(toLower));
-    if (administrators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Administrators contain a non GOV UK email address");
-    }
-
     const data: ListUpdateInput = {
       jsonData: {
-        validators,
         publishers,
-        administrators,
       },
     };
 

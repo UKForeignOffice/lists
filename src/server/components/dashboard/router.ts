@@ -7,7 +7,10 @@ import {
 import {
   startRouteController,
   usersListController,
-  usersEditController, feedbackController,
+  usersEditController,
+  listsItemsController,
+  listsEditPostController,
+  listPublisherDelete,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -35,7 +38,29 @@ dashboardRouter.all(
 );
 
 // lists
-dashboardRouter.use('/dashboard/lists', listRouter);
+dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
+dashboardRouter.get(
+  dashboardRoutes.listsEdit,
+  csrfRequestHandler,
+  listsEditController
+);
+dashboardRouter.post(
+  dashboardRoutes.listsEdit,
+  csrfRequestHandler,
+  listsEditPostController
+);
+dashboardRouter.post(
+  dashboardRoutes.listsPublisherDelete,
+  csrfRequestHandler,
+  listPublisherDelete
+);
+dashboardRouter.get(
+  dashboardRoutes.listsItems,
+  csrfRequestHandler,
+  redirectIfUnauthorised,
+  // @ts-expect-error
+  listsItemsController
+);
 
 dashboardRouter.get(
   dashboardRoutes.feedback,
