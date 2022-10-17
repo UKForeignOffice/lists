@@ -1,7 +1,6 @@
 import {
   userIsListAdministrator,
-  userIsListValidator,
-  userIsListPublisher,
+  userIsListValidator
 } from "../helpers";
 
 describe("Dashboard Helpers", () => {
@@ -39,46 +38,6 @@ describe("Dashboard Helpers", () => {
       };
 
       const result = userIsListAdministrator(user, list);
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("userIsListPublisher", () => {
-    test("it return true when user is a list publisher", () => {
-      const req: any = {
-        user: {
-          userData: {
-            email: "user@test.com",
-          },
-        },
-      };
-
-      const list: any = {
-        jsonData: {
-          publishers: ["a@a.com", "user@test.com"],
-        },
-      };
-
-      const result = userIsListPublisher(req, list);
-      expect(result).toBe(true);
-    });
-
-    test("it return false when user is not a list publisher", () => {
-      const req: any = {
-        user: {
-          userData: {
-            email: "user@test.com",
-          },
-        },
-      };
-
-      const list: any = {
-        jsonData: {
-          publishers: ["a@a.com"],
-        },
-      };
-
-      const result = userIsListPublisher(req, list);
       expect(result).toBe(false);
     });
   });

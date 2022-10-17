@@ -8,7 +8,7 @@ import {
 import { getJwtSecret } from "./json-web-token";
 import { User } from "server/models/types";
 import { findUserByEmail, createUser } from "server/models/user";
-import { AuthenticatedUser } from "./authenticated-user";
+import AuthenticatedUser from "./authenticated-user";
 
 import { JWT_ALGORITHM } from "./constants";
 import { logger } from "server/services/logger";

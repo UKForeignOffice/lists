@@ -37,6 +37,14 @@ dashboardRouter.all(
 // lists
 dashboardRouter.use('/dashboard/lists', listRouter);
 
+dashboardRouter.post(
+  dashboardRoutes.listsPublisherDelete,
+  csrfRequestHandler,
+  redirectIfUnauthorised,
+  listPublisherDelete
+);
+
+// feedback
 dashboardRouter.get(
   dashboardRoutes.feedback,
   csrfRequestHandler,

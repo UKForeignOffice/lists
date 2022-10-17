@@ -7,23 +7,23 @@ import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
 
-type ListWithJsonData = Partial<List> & {
+export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
 };
 
 export function userIsListAdministrator(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.administrators?.includes(email) : false;
+  return !!email && (list?.jsonData?.administrators?.includes?.(email) ?? false);
 }
 
 export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.publishers?.includes(email) : false;
+  return !!email && (list?.jsonData?.publishers?.includes?.(email) ?? false);
 }
 
 export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.validators?.includes(email) : false;
+  return !!email && (list?.jsonData?.validators?.includes?.(email) ?? false);
 }
 
 export async function getInitiateFormRunnerSessionToken(

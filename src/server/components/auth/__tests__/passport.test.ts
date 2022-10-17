@@ -2,7 +2,7 @@ import passport from "passport";
 import * as passportJwt from "passport-jwt";
 
 import * as jsonWebToken from "../json-web-token";
-import { AuthenticatedUser } from "../authenticated-user";
+import AuthenticatedUser from "../authenticated-user";
 import * as userModel from "server/models/user";
 import { configurePassport } from "../passport";
 

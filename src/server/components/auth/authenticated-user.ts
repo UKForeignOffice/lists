@@ -1,11 +1,10 @@
 import { User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
+import { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export class AuthenticatedUser {
-  readonly userData: User;
-  readonly emailAddress: User["email"];
-  readonly roles: UserRoles[];
+  public readonly userData: User;
 
   constructor(userData: User) {
     this.userData = userData;
@@ -69,5 +68,13 @@ export class AuthenticatedUser {
     }
 
     return lists ?? [];
+  }
+
+  isListPublisher(list: ListWithJsonData): boolean {
+    const email = this.userData.email;
+
+    return email !== undefined
+      ? Boolean(list?.jsonData?.publishers?.includes(email))
+      : false;
   }
 }

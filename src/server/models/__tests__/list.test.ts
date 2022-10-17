@@ -209,9 +209,7 @@ describe("List Model:", () => {
         },
         data: {
           jsonData: {
-            validators: compact(listData.validators),
             publishers: compact(listData.publishers),
-            administrators: compact(listData.administrators),
           },
         },
       });
@@ -224,17 +222,11 @@ describe("List Model:", () => {
         message: "Update error message",
       });
 
-      expect(logger.error).toHaveBeenCalledWith("updateList Error: Update error message");
+      expect(logger.error).toHaveBeenCalledWith(
+        "updateList Error: Update error message"
+      );
     });
 
-    test("it throws when validators contains a non GOV.UK email address", async () => {
-      await expect(
-        updateList(listId, {
-          ...listData,
-          validators: ["invalid@email.com"],
-        })
-      ).rejects.toEqual(new Error("Validators contain a non GOV UK email address"));
-    });
 
     test("it throws when publishers contains a non GOV.UK email address", async () => {
       await expect(
@@ -242,16 +234,9 @@ describe("List Model:", () => {
           ...listData,
           publishers: ["invalid@email.com"],
         })
-      ).rejects.toEqual(new Error("Publishers contain a non GOV UK email address"));
-    });
-
-    test("it throws when administrators contains a non GOV.UK email address", async () => {
-      await expect(
-        updateList(listId, {
-          ...listData,
-          administrators: ["invalid@email.com"],
-        })
-      ).rejects.toEqual(new Error("Administrators contain a non GOV UK email address"));
+      ).rejects.toEqual(
+        new Error("Publishers contain a non GOV UK email address")
+      );
     });
   });
 });

@@ -1,13 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
-import { createList, findListByCountryAndType, findListById, updateList } from "server/models/list";
+import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
+import { createList, findListById, findUserLists, updateList, } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
-import { pageTitles, userIsListAdministrator, userIsListPublisher, userIsListValidator } from "./helpers";
-import { isCountryNameValid, isGovUKEmailAddress } from "server/utils/validation";
-import { QuestionError } from "server/components/lists";
+import {
+  List,
+  ServiceType,
+  UserRoles
+} from "server/models/types";
+import {
+  filterSuperAdminRole,
+  userIsListAdministrator,
+  userIsListValidator,
+} from "./helpers";
+import { isGovUKEmailAddress, } from "server/utils/validation";
+import { QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -20,7 +28,6 @@ export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,
-  userIsListPublisher,
   userIsListValidator,
   userIsListAdministrator,
 };
@@ -140,120 +147,9 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const { listCreated, listUpdated } = req.query;
-    const isPost = req.method === "POST";
+    const changeMsg = req.flash("changeMsg")[0];
 
-    let list: Partial<List> | undefined;
-    let error: QuestionError | {} = {};
-
-    if (isPost) {
-      const validators: string[] = compact(req.body.validators.split(",").map(trim).map(toLower));
-      const publishers: string[] = compact(req.body.publishers.split(",").map(trim).map(toLower));
-      const administrators: string[] = compact(req.body.administrators.split(",").map(trim).map(toLower));
-
-      const user = req.user;
-      if (
-        !user?.isSuperAdmin() &&
-        (!user?.userData?.email ||
-          !publishers.includes(user?.userData?.email) ||
-          (listId === "new" && !user?.isSuperAdmin()))
-      ) {
-        const err = new HttpException(403, "403", "You are not authorized to access this list.");
-        return next(err);
-      }
-
-      if (validators.length === 0 || validators.some((email) => !isGovUKEmailAddress(email))) {
-        error = {
-          field: "validators",
-          text:
-            validators.length === 0
-              ? "You must indicated at least one validator"
-              : "Validators contain an invalid email address",
-          href: "#validators",
-        };
-      } else if (publishers.length === 0 || publishers.some((email) => !isGovUKEmailAddress(email))) {
-        error = {
-          field: "publishers",
-          text:
-            publishers.length === 0
-              ? "You must indicated at least one publisher"
-              : "Publishers contain an invalid email address",
-          href: "#publishers",
-        };
-      } else if (administrators.length === 0 || administrators.some((email) => !isGovUKEmailAddress(email))) {
-        error = {
-          field: "administrators",
-          text:
-            administrators.length === 0
-              ? "You must indicated at least one administrator"
-              : "Administrators contain an invalid email address",
-          href: "#administrators",
-        };
-      }
-
-      if (listId === "new") {
-        // TODO validate servicetype exists?
-        if (req.body.serviceType === undefined) {
-          error = {
-            field: "serviceType",
-            text: "Please select service type",
-            href: "#serviceType",
-          };
-        } else if (!isCountryNameValid(req.body.country)) {
-          error = {
-            field: "country",
-            text: "Invalid country name",
-            href: "#country",
-          };
-        } else {
-          const existingLists = await findListByCountryAndType(req.body.country as CountryName, req.body.serviceType);
-
-          if (existingLists !== undefined && existingLists?.length > 0) {
-            error = {
-              field: "serviceType",
-              text: `A ${startCase(req.body.serviceType)} list for ${req.body.country} already exists`,
-              href: "#serviceType",
-            };
-          }
-        }
-      }
-
-      if (!("field" in error)) {
-        const data = {
-          country: req.body.country,
-          serviceType: req.body.serviceType,
-          validators: req.body.validators.split(","),
-          publishers: req.body.publishers.split(","),
-          administrators: req.body.administrators.split(","),
-          createdBy: `${req.user?.userData.email}`,
-        };
-
-        if (listId === "new") {
-          const list = await createList(data);
-          if (list?.id !== undefined) {
-            return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${list.id}`)}?listCreated=true`);
-          }
-        } else {
-          const list = await findListById(listId);
-          if (list !== undefined && (userIsListAdministrator(req, list) || req.user?.isSuperAdmin())) {
-            await updateList(Number(listId), pick(data, ["validators", "publishers", "administrators"]));
-            return res.redirect(`${res.locals.listsEditUrl}?listUpdated=true`);
-          }
-        }
-      } else {
-        list = {
-          type: req.body.serviceType,
-          jsonData: {
-            validators: req.body.validators,
-            publishers: req.body.publishers,
-            administrators: req.body.administrators,
-          },
-          country: {
-            name: req.body.country,
-          },
-        };
-      }
-    }
+    let list: List | undefined;
 
     if (listId !== "new") {
       list = await findListById(listId);
@@ -267,16 +163,189 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       title: pageTitles[dashboardRoutes.listsEdit],
       listCreated,
       listUpdated,
+      publisher: { change: changeMsg },
       listId,
-      isPost,
-      error,
+      user: req.user?.userData,
       list,
       req,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    const err = new HttpException(404, "404", "List could not be found.");
+    next(err);
+  }
+}
+
+export async function listsEditPostController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const removeButtonClicked = "userEmail" in req.body;
+
+    return removeButtonClicked
+      ? await listEditRemovePublisher(req, res)
+      : await listEditAddPublisher(req, res, next);
+
+  } catch (error) {
+    logger.error(`listsEditPostController error: ${(error as Error).message}`);
     next(error);
   }
+}
+
+export async function listEditAddPublisher(req: Request,
+  res: Response, next: NextFunction): Promise<void> {
+
+  const { listId } = req.params;
+  let error: Partial<QuestionError> = {};
+
+  const list: List | undefined = await findListById(listId);
+  const publisher: string = req.body.publisher;
+
+  const user = req.user;
+  const userIsSuperAdmin = user?.isSuperAdmin();
+
+  if (!userIsSuperAdmin || (listId === "new" && !userIsSuperAdmin))  {
+    const err = new HttpException(403, "403", "You are not authorized to access this list.");
+    return next(err);
+  }
+
+  if (!publisher || !isGovUKEmailAddress(publisher)) {
+    error = {
+      field: "publisher",
+      text:
+        !publisher
+          ? "You must indicated a publisher"
+          : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
+      href: "#publisher",
+    };
+  }
+
+  if (list?.jsonData.publishers.includes(publisher)) {
+    error = {
+      field: "publisher",
+      text: "This user already exists",
+      href: "#publisher",
+    };
+  }
+
+  const errorExists = ("field" in error);
+
+  if (errorExists) {
+    return res.render("dashboard/lists-edit", {
+      ...DEFAULT_VIEW_PROPS,
+      listId,
+      user: user?.userData,
+      error,
+      list,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  }
+
+  const data = {
+    country: req.body.country,
+    serviceType: req.body.serviceType,
+    validators: [],
+    publishers: req.body.publisher,
+    administrators: [],
+    createdBy: `${req.user?.userData.email}`,
+  };
+
+  req.flash("changeMsg", `User ${publisher} has been created`);
+
+  if (listId === "new") {
+    const newList = await createList(data);
+
+    if (newList?.id !== undefined) {
+      return res.redirect(
+        `${dashboardRoutes.listsEdit.replace(
+          ":listId",
+          `${newList.id}`
+        )}`
+      );
+    }
+  }
+
+  const publishersListWithNewEmail = [...(list as List).jsonData.publishers, publisher];
+
+  if (list !== undefined) {
+    await updateList(
+      Number(listId),
+      {publishers: publishersListWithNewEmail}
+    );
+    return res.redirect(
+      `${dashboardRoutes.listsEdit.replace(
+        ":listId",
+        `${listId}`
+      )}`
+    );
+  }
+}
+
+export async function listEditRemovePublisher(
+  req: Request,
+  res: Response
+): Promise<void> {
+
+  const { listId } = req.params;
+  const userEmail = req.body.userEmail;
+  const list: List | undefined = await findListById(listId);
+
+  res.render("dashboard/list-edit-confirm-delete-user", {
+    ...DEFAULT_VIEW_PROPS,
+    listId,
+    userEmail,
+    list,
+    req,
+    csrfToken: getCSRFToken(req),
+  });
+}
+
+export async function listPublisherDelete(
+  req: Request,
+  res: Response
+): Promise<void> {
+
+  const { listId } = req.params;
+  const userEmail = req.body.userEmail;
+  const list: List | undefined = await findListById(listId);
+  const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
+
+  if (userHasRemovedOwnEmail) {
+    const error = {
+      field: "publisherList",
+      text: "You cannot remove your own email address from a list",
+      href: "#publishers",
+    };
+
+    return res.render("dashboard/list-edit-confirm-delete-user", {
+      ...DEFAULT_VIEW_PROPS,
+      listId,
+      userEmail,
+      error,
+      list,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  }
+
+  const updatedPublishers = (list as List).jsonData.publishers.filter(publisher => publisher !== userEmail);
+
+  await updateList(
+    Number(listId),
+    { publishers: updatedPublishers }
+  );
+
+  req.flash("changeMsg", `User ${userEmail} has been removed`);
+
+  return res.redirect(
+    `${dashboardRoutes.listsEdit.replace(
+      ":listId",
+      `${listId}`
+    )}`
+  );
 }
 
 // TODO: test
