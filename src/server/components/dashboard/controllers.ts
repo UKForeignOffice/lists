@@ -140,7 +140,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const { listCreated, listUpdated, publisherDeleted, publisherEmail } = req.query;
+    const { publisherChangeType, publisherEmail } = req.query;
 
     let list: List | undefined;
 
@@ -153,10 +153,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      title: pageTitles[dashboardRoutes.listsEdit],
-      listCreated,
-      listUpdated,
-      publiser: { deleted: publisherDeleted, message: `User ${publisherEmail} has been removed`},
+      publiser: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
       listId,
       list,
       req,
@@ -174,7 +171,6 @@ export async function listsEditPostController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { listCreated, listUpdated, publisherDeleted } = req.query;
 
     let error: QuestionError | {} = {};
 
@@ -252,14 +248,14 @@ export async function listsEditPostController(
             `${dashboardRoutes.listsEdit.replace(
               ":listId",
               `${newList.id}`
-            )}?listCreated=true`
+            )}?publisherChangeType=created&publisherEmail=${publisher}`
           );
         }
       }
 
       const updatedPublishers = [...(list as List).jsonData.publishers, publisher];
 
-      if (list !== undefined && userIsListAdministrator(req, list)) {
+      if (list !== undefined) {
         await updateList(
           Number(listId),
           {publishers: updatedPublishers}
@@ -268,16 +264,13 @@ export async function listsEditPostController(
           `${dashboardRoutes.listsEdit.replace(
             ":listId",
             `${listId}`
-          )}?listUpdated=true`
+          )}?publisherChangeType=added&publisherEmail=${publisher}`
         );
       }
     }
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      listCreated,
-      listUpdated,
-      publisherDeleted,
       listId,
       error,
       list,
@@ -285,6 +278,7 @@ export async function listsEditPostController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error(`listsEditPostController error: ${(error as Error).message}`);
     next(error);
   }
 }
@@ -309,10 +303,11 @@ export async function listPublisherDelete(
       `${dashboardRoutes.listsEdit.replace(
         ":listId",
         `${listId}`
-      )}?publisherDeleted=true&publisherEmail=${publiserEmail}`
+      )}?publisherChangeType=removed&publisherEmail=${publiserEmail}`
     );
 
   } catch (error) {
+    logger.error(`listPublisherDelete error: ${(error as Error).message}`);
     next(error);
   }
 }

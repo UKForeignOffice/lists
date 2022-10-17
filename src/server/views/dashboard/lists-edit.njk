@@ -10,16 +10,8 @@
   </h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
-  {% if listCreated %}
-    {{ dashboardMacros.successBanner("List created successfully") }}
-  {% endif %}
-
-  {% if listUpdated %}
-    {{ dashboardMacros.successBanner("List updated successfully") }}
-  {% endif %}
-
-  {% if publiser.deleted %}
-    {{ dashboardMacros.successBanner("User removed successfully", publiser.message) }}
+  {% if publiser.change %}
+    {{ dashboardMacros.successBanner("Success", publiser.message) }}
   {% endif %}
 
   {% if error.field %}
