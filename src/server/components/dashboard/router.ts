@@ -42,16 +42,19 @@ dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
 dashboardRouter.get(
   dashboardRoutes.listsEdit,
   csrfRequestHandler,
+  redirectIfUnauthorised,
   listsEditController
 );
 dashboardRouter.post(
   dashboardRoutes.listsEdit,
   csrfRequestHandler,
+  redirectIfUnauthorised,
   listsEditPostController
 );
 dashboardRouter.post(
   dashboardRoutes.listsPublisherDelete,
   csrfRequestHandler,
+  redirectIfUnauthorised,
   listPublisherDelete
 );
 dashboardRouter.get(

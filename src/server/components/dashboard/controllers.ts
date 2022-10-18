@@ -222,6 +222,15 @@ export async function listEditAddPublisher(  req: Request,
     };
   }
 
+  if (list?.jsonData.publishers.includes(publisher)) {
+    error = {
+      field: "publishers",
+      text: "This user already exists",
+      href: "#publishers",
+    };
+
+  }
+
   const noErrorsExist = !("field" in error);
 
   if (noErrorsExist) {
