@@ -165,6 +165,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       publiser: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
       listId,
       user: req.user?.userData,
+      isSuperAdmin: req.user?.isSuperAdmin(),
       list,
       req,
       csrfToken: getCSRFToken(req),
