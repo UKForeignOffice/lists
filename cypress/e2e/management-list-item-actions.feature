@@ -1,5 +1,4 @@
-Feature:
-  Dashboard filtering
+Feature: Dashboard filtering
 
   Background:
     Given I am logged in as a "SuperAdmin"
