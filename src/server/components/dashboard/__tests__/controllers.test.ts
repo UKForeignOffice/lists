@@ -40,6 +40,7 @@ describe("Dashboard Controllers", () => {
       method: "GET",
       params: {
         userEmail: "user@gov.uk",
+        publisherEmail: "user@gov.uk",
       },
       query: {},
       user: {
@@ -214,8 +215,32 @@ describe("Dashboard Controllers", () => {
   describe("usersEditController", () => {
     test("it invokes next when userEmail param is not defined", async () => {
       mockReq.params.userEmail = undefined;
+      mockReq.params.publisherEmail = undefined;
       await usersEditController(mockReq, mockRes, mockNext);
       expect(mockNext).toHaveBeenCalled();
+    });
+
+    test("it returns 405 when trying to edit a SuperAdmin", async () => {
+      const spyIsSuperAdmin = jest
+        .spyOn(userModel, "isSuperAdminUser")
+        .mockResolvedValueOnce(true);
+
+      await usersEditController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(405);
+      expect(mockRes.send).toHaveBeenCalledWith(
+        "Not allowed to edit super admin account"
+      );
+      expect(spyIsSuperAdmin).toHaveBeenCalledWith(mockReq.params.publisherEmail);
+    });
+
+    test("it invokes next with isSuperAdmin rejected error", async () => {
+      const error = new Error("isSuperAdmin rejected");
+      jest.spyOn(userModel, "isSuperAdminUser").mockRejectedValueOnce(error);
+
+      await usersEditController(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
     });
 
     test("it renders correct template with correct user value", async () => {
@@ -225,7 +250,7 @@ describe("Dashboard Controllers", () => {
 
       await usersEditController(mockReq, mockRes, mockNext);
 
-      expect(spyFindUser).toHaveBeenCalledWith(mockReq.params.userEmail);
+      expect(spyFindUser).toHaveBeenCalledWith(mockReq.params.publisherEmail);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-edit");
       expect(mockRes.render.mock.calls[0][1].user).toBe(userBeingEdited);
     });
@@ -243,7 +268,8 @@ describe("Dashboard Controllers", () => {
       };
 
       await usersEditController(mockReq, mockRes, mockNext);
-      expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
+
+      expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.publisherEmail, {
         jsonData: {
           roles: [UserRoles.SuperAdmin, UserRoles.ListsCreator],
         },
