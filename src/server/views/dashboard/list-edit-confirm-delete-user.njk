@@ -1,0 +1,34 @@
+{% from "button/macro.njk" import govukButton %}
+{% extends "./dashboard.njk" %}
+
+{% block aside %}
+{% endblock %}
+
+{% block dashboard %}
+
+  {% if error.field %}
+    {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
+
+  <form class="form" action="{{ dashboardRoutes.listsPublisherDelete.replace(':listId', list.id) }}" method="post" required>
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+    <input type="hidden" name="publisherEmail" value="{{ publisherEmail }}" />
+
+    <h1 class="govuk-heading-l">
+      Confirm the removal of this user
+    </h1>
+
+    <p class="govuk-body">
+        You are about to revoke the permissions for <strong>{{ publisherEmail }}</strong> to accept and publish {{ _.startCase(list.type) }} to the {{ list.country.name }} list.
+    </p>
+
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: "Remove",
+        classes: "govuk-button--ok govuk-!-margin-bottom-2"
+      }) }}
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}">Cancel</a>
+    </div>
+  </form>
+
+{% endblock %}
