@@ -13,7 +13,10 @@ type ListWithJsonData = Partial<List> & {
 
 export function userIsListAdministrator(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.administrators?.includes(email) : false;
+
+  return email !== undefined
+    ? Boolean(list?.jsonData?.administrators?.includes(email))
+    : false;
 }
 
 export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
@@ -23,7 +26,10 @@ export function userIsListPublisher(req: Request, list: ListWithJsonData): boole
 
 export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.validators?.includes(email) : false;
+
+  return email !== undefined
+    ? Boolean(list?.jsonData?.validators?.includes(email))
+    : false;
 }
 
 export async function getInitiateFormRunnerSessionToken(
