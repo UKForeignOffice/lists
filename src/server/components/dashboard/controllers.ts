@@ -162,10 +162,9 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      publiser: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
+      publisher: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
       listId,
       user: req.user?.userData,
-      isSuperAdmin: req.user?.isSuperAdmin(),
       list,
       req,
       csrfToken: getCSRFToken(req),
