@@ -305,4 +305,21 @@ export function helpPageController(req: Request, res: Response): void {
   res.render("dashboard/help", {
     backUrl: req.session.currentUrl ?? "/dashboard/lists",
   });
+<<<<<<< HEAD
+=======
+}
+
+export async function listsEditAnnualReviewDateController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const { listId } = req.params;
+  const list = await findListById(listId);
+
+  res.render("dashboard/lists-edit-annual-review-date", {
+    ...DEFAULT_VIEW_PROPS,
+    list,
+  });
+>>>>>>> c17aaf4a (chore: add confirmation start date page)
 }
