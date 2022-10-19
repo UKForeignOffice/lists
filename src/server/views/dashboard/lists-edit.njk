@@ -1,11 +1,12 @@
 {% extends "./dashboard.njk" %}
 
 {% block dashboard %}
+  <h2 class="govuk-heading-m" style="color: #b1b4b6;">{{list.country.name}}</h2>
   <h1 class="govuk-heading-l">
     {% if listId === 'new' %}
       Create new list
     {% else %}
-      Editing list {{ listId }}
+      Settings - {{ list.type }}
     {% endif %}
   </h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
@@ -21,55 +22,27 @@
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
 
-  <form class="form" action="{{ listsEditUrl }}" method="post" required>
+  <div>
+    <h2 class="govuk-heading-m">Annual review</h2>
+    <p class="govuk-body">The last annual review started 26 July 2020.</p>
 
+    <h3 class="govuk-heading-s govuk-!-margin-0">Next annual review start date </h3>
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          {{ annualReviewDate }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="#">
+            Change<span class="govuk-visually-hidden"> date</span>
+          </a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
-      <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-          <h3 class="govuk-fieldset__heading govuk-heading-m">
-            Service Type?
-          </h3>
-        </legend>
-        {% if error.field === 'serviceType' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
-        <div class="govuk-radios">
-          {% for prop, serviceType in ServiceType %}
-            <div class="govuk-radios__item">
-              <input
-                class="govuk-radios__input"
-
-                id="serviceType-{{ serviceType }}"
-                name="serviceType"
-                type="radio"
-                value="{{ serviceType }}"
-                {{-" checked" if list.type === serviceType }}
-                {{-" disabled" if listId !== 'new' }}
-              >
-              <label class="govuk-label govuk-radios__label" for="serviceType">
-                {{ _.startCase(serviceType) }}
-              </label>
-            </div>
-          {% endfor %}
-        </div>
-      </fieldset>
-    </div>
-
-      <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
-        <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="country-autocomplete">
-            Which country is this list for?
-          </label>
-        </h3>
-        {% if error.field === 'country' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
 
         {% if listId !== 'new' %}
           <input class="govuk-input" name="country" type="text" value="{{list.country.name}}" disabled>
