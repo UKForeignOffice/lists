@@ -6,7 +6,7 @@
     {% if listId === 'new' %}
       Create new list
     {% else %}
-      Settings - {{ list.type }}
+      Settings - {{ _.startCase(list.type) }}
     {% endif %}
   </h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
@@ -24,16 +24,17 @@
 
   <div>
     <h2 class="govuk-heading-m">Annual review</h2>
-    <p class="govuk-body">The last annual review started 26 July 2020.</p>
-
+    {% if list.jsonData.lastAnnualReviewStartDate %}
+      <p class="govuk-body">The last annual review started {{ list.jsonData.lastAnnualReviewStartDate }}.</p>
+    {% endif %}
     <h3 class="govuk-heading-s govuk-!-margin-0">Next annual review start date </h3>
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dd class="govuk-summary-list__value">
-          {{ annualReviewDate }}
+          {{ list.jsonData.annualReviewStartDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="#">
+          <a class="govuk-link" href="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}">
             Change<span class="govuk-visually-hidden"> date</span>
           </a>
         </dd>

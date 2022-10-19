@@ -318,3 +318,17 @@ export async function feedbackController(req: Request, res: Response, next: Next
     next(error);
   }
 }
+
+export async function listsEditAnnualReviewDateController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const { listId } = req.params;
+  const list = await findListById(listId);
+
+  res.render("dashboard/lists-edit-annual-review-date", {
+    ...DEFAULT_VIEW_PROPS,
+    list,
+  });
+}

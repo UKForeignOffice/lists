@@ -25,8 +25,9 @@ export type Country = PrismaClient.Country;
 // List
 export interface ListJsonData extends JsonObject {
   users?: string[];
+  annualReviewStartDate?: string;
+  lastAnnualReviewStartDate?: string;
 }
-
 export interface List extends PrismaClient.List {
   jsonData: ListJsonData;
   country?: Partial<Country>;

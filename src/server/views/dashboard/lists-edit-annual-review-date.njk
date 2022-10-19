@@ -1,0 +1,63 @@
+{% from "button/macro.njk" import govukButton %}
+{% extends "./dashboard.njk" %}
+
+{% block aside %}
+{% endblock %}
+
+{% block dashboard %}
+
+  <form class="form" action="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}" method="post" required>
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+    <input type="hidden" name="action" value="update"/>
+
+    <h2 class="govuk-heading-m" style="color: #b1b4b6;">{{list.country.name}}</h2>
+
+    <h1 class="govuk-heading-l">
+      Change annual review start date
+    </h1>
+
+    <p class="govuk-body">The next funeral directors list annual review starts <strong>{{ list.jsonData.annualReviewStartDate}}.</strong></p>
+
+    <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group" aria-describedby="passport-issued-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            </legend>
+            <div id="passport-issued-hint" class="govuk-hint">
+                The new date must be within 6 months of today’s date
+            </div>
+            <div class="govuk-date-input" id="passport-issued">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                    Day
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                    Month
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" inputmode="numeric">
+                </div>
+            </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="govuk-button-group">
+
+      {{ govukButton({
+        text: "Continue",
+        classes: "govuk-button--ok govuk-!-margin-bottom-2"
+      }) }}
+
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}">Cancel</a>
+    </div>
+
+  </form>
+
+{% endblock %}
