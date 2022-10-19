@@ -24,14 +24,14 @@
 
   <div>
     <h2 class="govuk-heading-m">Annual review</h2>
-    {% if list.jsonData.lastAnnualReviewStartDate %}
-      <p class="govuk-body">The last annual review started {{ list.jsonData.lastAnnualReviewStartDate }}.</p>
+    {% if lastAnnualReviewStartDate %}
+      <p class="govuk-body">The last annual review started {{ lastAnnualReviewStartDate }}.</p>
     {% endif %}
     <h3 class="govuk-heading-s govuk-!-margin-0">Next annual review start date </h3>
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dd class="govuk-summary-list__value">
-          {{ list.jsonData.annualReviewStartDate }}
+          {{ annualReviewStartDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link" href="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}">

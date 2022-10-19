@@ -4,6 +4,7 @@ import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
+import { format } from "date-fns";
 import { List, ServiceType, UserRoles } from "server/models/types";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { QuestionError } from "server/components/lists";
@@ -149,9 +150,14 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
+    const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
+    const lastAnnualReviewStartDate = formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
+
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
       publisher: { change: changeMsg },
+      annualReviewStartDate,
+      lastAnnualReviewStartDate,
       listId,
       user: req.user?.userData,
       list,
@@ -304,6 +310,10 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   return res.redirect(res.locals.listsEditUrl);
 }
 
+function formatAnnualReviewDate(list: List, field: string): string {
+  return list.jsonData[field] ? format(list.jsonData[field] as number, "d MMMM yyyy") : "";
+}
+
 // TODO: test
 export async function feedbackController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -326,9 +336,11 @@ export async function listsEditAnnualReviewDateController(
 ): Promise<void> {
   const { listId } = req.params;
   const list = await findListById(listId);
+  const newAnnualReviewDate = "";
 
-  res.render("dashboard/lists-edit-annual-review-date", {
+  res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
+    newAnnualReviewDate,
     list,
   });
 }

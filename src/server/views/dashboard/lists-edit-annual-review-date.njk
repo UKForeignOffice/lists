@@ -8,7 +8,6 @@
 
   <form class="form" action="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-    <input type="hidden" name="action" value="update"/>
 
     <h2 class="govuk-heading-m" style="color: #b1b4b6;">{{list.country.name}}</h2>
 
@@ -21,27 +20,27 @@
     <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
 
     <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset" role="group" aria-describedby="passport-issued-hint">
+        <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             </legend>
-            <div id="passport-issued-hint" class="govuk-hint">
+            <div id="annual-review-date" class="govuk-hint">
                 The new date must be within 6 months of today’s date
             </div>
-            <div class="govuk-date-input" id="passport-issued">
+            <div class="govuk-date-input" id="annual-review-date">
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                <label class="govuk-label govuk-date-input__label" for="annual-review-date-day">
                     Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="annual-review-date-day" name="annual-review-date-day" type="text" inputmode="numeric">
                 </div>
             </div>
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                <label class="govuk-label govuk-date-input__label" for="annual-review-date-month">
                     Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="annual-review-date-month" name="annual-review-date-month" type="text" inputmode="numeric">
                 </div>
             </div>
             </div>
