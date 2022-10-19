@@ -180,12 +180,11 @@ export async function listsEditPostController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const postFunction: Record<string, () => Promise<void>> = {
-      addPublisher: async () => await listEditAddPublisher(req, res, next),
-      removePublisher: async () => await listEditRemovePublisher(req, res),
-    };
+    const removeButtonClicked = "publisherEmail" in req.body;
 
-    return await postFunction[req.body.action]();
+    return removeButtonClicked
+      ? await listEditRemovePublisher(req, res)
+      : await listEditAddPublisher(req, res, next);
 
   } catch (error) {
     logger.error(`listsEditPostController error: ${(error as Error).message}`);
