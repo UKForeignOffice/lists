@@ -6,8 +6,9 @@ import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/
 import { createList, findListById, updateList, updateAnnualReviewDate } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import { List, ServiceType, UserRoles } from "server/models/types";
-import { isGovUKEmailAddress } from "server/utils/validation";
-import { QuestionError } from "server/components/lists";
+import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
+import { isGovUKEmailAddress, } from "server/utils/validation";
+import { QuestionError, } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -443,10 +444,21 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
 async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
   const { listId } = req.params;
+  const list = (await findListById(listId)) as List;
   const { newAnnualReviewDate } = req.body;
   const newAnnualReviewDateFormatted = new Date(newAnnualReviewDate as string);
+  const annualReviewDate = format(newAnnualReviewDateFormatted, DATE_FORMAT);
 
   await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
+
+  for (const emailAddress of list.jsonData.publishers as string[]) {
+    await sendAnnualReviewDateChangeEmail({
+      emailAddress,
+      serviceType: list.type,
+      country: list.country!.name!,
+      annualReviewDate,
+    });
+  }
 
   return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", listId)}?annualReviewDateUpdated=true`);
 }
