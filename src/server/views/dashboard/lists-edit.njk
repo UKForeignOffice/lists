@@ -18,6 +18,10 @@
     {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
   {% endif %}
 
+  {% if annualReviewDateUpdated %}
+    {{ dashboardMacros.successBanner("Updated successfully", "Annual review date updated successfully") }}
+  {% endif %}
+
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}

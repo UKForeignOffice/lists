@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { trim } from "lodash";
+import { parseISO, format } from "date-fns";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList } from "server/models/list";
+import { createList, findListById, updateList, updateAnnualReviewDate } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import { format } from "date-fns";
 import { List, ServiceType, UserRoles } from "server/models/types";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { QuestionError } from "server/components/lists";
@@ -16,6 +16,7 @@ import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { ListIndexRes } from "server/components/dashboard/listsItems/types";
 
+const DATE_FORMAT = "d MMMM yyyy";
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
 export const DEFAULT_VIEW_PROPS = {
@@ -311,7 +312,9 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 }
 
 function formatAnnualReviewDate(list: List, field: string): string {
-  return list.jsonData[field] ? format(list.jsonData[field] as number, "d MMMM yyyy") : "";
+  return list.jsonData[field]
+    ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT)
+    : "";
 }
 
 // TODO: test
@@ -334,13 +337,72 @@ export async function listsEditAnnualReviewDateController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { listId } = req.params;
-  const list = await findListById(listId);
-  const newAnnualReviewDate = "";
+  try {
+    const { listId } = req.params;
+    const list = await findListById(listId);
+    const annualReviewStartDate = formatAnnualReviewDate((list as List), "annualReviewStartDate");
 
-  res.render("dashboard/lists-edit-annual-review-date-confirm", {
+    res.render("dashboard/lists-edit-annual-review-date", {
+      ...DEFAULT_VIEW_PROPS,
+      annualReviewStartDate,
+      list,
+      csrfToken: getCSRFToken(req),
+    });
+  } catch(error) {
+    logger.error(`listsEditAnnualReviewDateController Error: ${(error as Error).message}`)
+    next(error);
+  }
+}
+
+export async function listsEditAnnualReviewDatePostController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { listId } = req.params;
+    const list = await findListById(listId);
+
+    return (req.body.action === "confirmNewDate")
+      ? await confirmNewAnnualReviewDate(req, res, list as List)
+      : await updateNewAnnualReviewDate(req, res, listId);
+
+  } catch(error) {
+    logger.error(`listsEditAnnualReviewDatePostController Error: ${(error as Error).message}`)
+    next(error);
+  }
+}
+
+async function confirmNewAnnualReviewDate(req: Request, res: Response, list: List): Promise<void> {
+  const todaysDate = new Date();
+  let annualReviewYear = todaysDate.getFullYear() + 1;
+
+  const { annualReviewStartDate } = list.jsonData;
+
+  if (annualReviewStartDate) {
+    const annualReveiwDate = new Date(annualReviewStartDate);
+    annualReviewYear = annualReveiwDate.getFullYear();
+  }
+
+  const addLeadingZero = (value: string): string => value.padStart(2, "0");
+  const formatDateValue = (value: string): string => addLeadingZero(req.body[value]);
+  const userValuesInAmericanDateFormat = `${annualReviewYear}-${formatDateValue("annual-review-date-month")}-${formatDateValue("annual-review-date-day")}`;
+  const newAnnualReveiwDate = new Date(userValuesInAmericanDateFormat);
+
+  return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
-    newAnnualReviewDate,
+    newAnnualReveiwDateFormatted: format(parseISO(userValuesInAmericanDateFormat), DATE_FORMAT),
+    newAnnualReveiwDate,
     list,
+    csrfToken: getCSRFToken(req),
   });
+}
+
+async function updateNewAnnualReviewDate(req: Request, res: Response, listId: string): Promise<void> {
+  const { newAnnualReveiwDate } = req.body;
+  const newAnnualReveiwDateFormatted = new Date(newAnnualReveiwDate as string);
+
+  await updateAnnualReviewDate(listId, newAnnualReveiwDateFormatted.toISOString());
+
+  return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", listId)}?annualReviewDateUpdated=true`);
 }

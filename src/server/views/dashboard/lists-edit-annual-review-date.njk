@@ -15,7 +15,7 @@
       Change annual review start date
     </h1>
 
-    <p class="govuk-body">The next funeral directors list annual review starts <strong>{{ list.jsonData.annualReviewStartDate}}.</strong></p>
+    <p class="govuk-body">The next funeral directors list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
     <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
 
@@ -48,11 +48,9 @@
     </div>
 
     <div class="govuk-button-group">
-
-      {{ govukButton({
-        text: "Continue",
-        classes: "govuk-button--ok govuk-!-margin-bottom-2"
-      }) }}
+      <button class="govuk-button govuk-!-margin-bottom-2" data-module="govuk-button" name="action" value="confirmNewDate">
+        Continue
+      </button>
 
       <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}">Cancel</a>
     </div>
