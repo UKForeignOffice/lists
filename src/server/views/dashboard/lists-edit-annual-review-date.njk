@@ -24,34 +24,34 @@
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReveiwDateForm">
         <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
         <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            </legend>
-            <div id="annual-review-date" class="govuk-hint">
-                The new date must be within 6 months of today’s date
-            </div>
-            {% if error.text %}
-              <span class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-              </span>
-            {% endif %}
-            <div class="govuk-date-input" id="annual-review-date">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+          </legend>
+          <div id="annual-review-date" class="govuk-hint">
+              The new date must be within 6 months of today’s date
+          </div>
+          {% if error.text %}
+            <span class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+            </span>
+          {% endif %}
+          <div class="govuk-date-input" id="annual-review-date">
             <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
+              <div class="govuk-form-group">
                 <label class="govuk-label govuk-date-input__label" for="annual-review-date-day">
                     Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="annual-review-date-day" name="annual-review-date-day" type="text" inputmode="numeric">
-                </div>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" id="annual-review-date-day" name="annual-review-date-day" type="text" inputmode="numeric">
+              </div>
             </div>
             <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
+              <div class="govuk-form-group">
                 <label class="govuk-label govuk-date-input__label" for="annual-review-date-month">
                     Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="annual-review-date-month" name="annual-review-date-month" type="text" inputmode="numeric">
-                </div>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" id="annual-review-date-month" name="annual-review-date-month" type="text" inputmode="numeric">
+              </div>
             </div>
-            </div>
+          </div>
         </fieldset>
     </div>
 

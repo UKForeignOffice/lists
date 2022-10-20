@@ -454,7 +454,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   for (const emailAddress of list.jsonData.publishers as string[]) {
     await sendAnnualReviewDateChangeEmail({
       emailAddress,
-      serviceType: list.type,
+      serviceType: startCase(list.type),
       country: list.country!.name!,
       annualReviewDate,
     });
