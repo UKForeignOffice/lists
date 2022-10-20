@@ -6,6 +6,10 @@
 
 {% block dashboard %}
 
+  {% if error.text %}
+    {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
+
   <form class="form" action="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
 
@@ -17,15 +21,19 @@
 
     <p class="govuk-body">The next funeral directors list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
-    <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
-
-    <div class="govuk-form-group">
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReveiwDateForm">
+        <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
         <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             </legend>
             <div id="annual-review-date" class="govuk-hint">
                 The new date must be within 6 months of today’s date
             </div>
+            {% if error.text %}
+              <span class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+              </span>
+            {% endif %}
             <div class="govuk-date-input" id="annual-review-date">
             <div class="govuk-date-input__item">
                 <div class="govuk-form-group">

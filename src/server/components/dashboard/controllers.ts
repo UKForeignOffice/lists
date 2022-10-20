@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { trim } from "lodash";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, add, isBefore } from "date-fns";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList, updateAnnualReviewDate } from "server/models/list";
@@ -312,9 +312,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 }
 
 function formatAnnualReviewDate(list: List, field: string): string {
-  return list.jsonData[field]
-    ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT)
-    : "";
+  return list.jsonData[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
 // TODO: test
@@ -339,17 +337,42 @@ export async function listsEditAnnualReviewDateController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
+    const { missingValuesError, leapYearError, maxDateError } = req.query;
+    let error: Partial<QuestionError> = {};
+
     const list = await findListById(listId);
-    const annualReviewStartDate = formatAnnualReviewDate((list as List), "annualReviewStartDate");
+    const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
+
+    if (missingValuesError) {
+      error = {
+        text: "Enter a date for the annual review",
+        href: "#annualReviewDateForm",
+      };
+    }
+
+    if (leapYearError) {
+      error = {
+        text: "The date you entered cannot be used",
+        href: "#annualReviewDateForm",
+      };
+    }
+
+    if (maxDateError) {
+      error = {
+        text: "The date entered should not be 6 months over the previous date",
+        href: "#annualReviewDateForm",
+      };
+    }
 
     res.render("dashboard/lists-edit-annual-review-date", {
       ...DEFAULT_VIEW_PROPS,
+      error,
       annualReviewStartDate,
       list,
       csrfToken: getCSRFToken(req),
     });
-  } catch(error) {
-    logger.error(`listsEditAnnualReviewDateController Error: ${(error as Error).message}`)
+  } catch (error) {
+    logger.error(`listsEditAnnualReviewDateController Error: ${(error as Error).message}`);
     next(error);
   }
 }
@@ -360,49 +383,70 @@ export async function listsEditAnnualReviewDatePostController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { listId } = req.params;
-    const list = await findListById(listId);
-
-    return (req.body.action === "confirmNewDate")
-      ? await confirmNewAnnualReviewDate(req, res, list as List)
-      : await updateNewAnnualReviewDate(req, res, listId);
-
-  } catch(error) {
-    logger.error(`listsEditAnnualReviewDatePostController Error: ${(error as Error).message}`)
+    return req.body.action === "confirmNewDate"
+      ? await confirmNewAnnualReviewDate(req, res)
+      : await updateNewAnnualReviewDate(req, res);
+  } catch (error) {
+    logger.error(`listsEditAnnualReviewDatePostController Error: ${(error as Error).message}`);
     next(error);
   }
 }
 
-async function confirmNewAnnualReviewDate(req: Request, res: Response, list: List): Promise<void> {
+async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
   const todaysDate = new Date();
-  let annualReviewYear = todaysDate.getFullYear() + 1;
 
-  const { annualReviewStartDate } = list.jsonData;
+  const { listId } = req.params;
+  const list = await findListById(listId);
+  let annualReviewYear = todaysDate.getFullYear() + 1;
+  let maxDate = add(todaysDate, { months: 6 });
+
+  const userEnteredMonth: string = req.body["annual-review-date-month"];
+  const userEnteredDay: string = req.body["annual-review-date-day"];
+
+  if (!userEnteredMonth || !userEnteredDay) {
+    return res.redirect(
+      `${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?missingValuesError=true`
+    );
+  }
+
+  if (userEnteredMonth === "2" && userEnteredDay === "29") {
+    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?leapYearError=true`);
+  }
+
+  const { annualReviewStartDate } = (list as List).jsonData;
 
   if (annualReviewStartDate) {
-    const annualReveiwDate = new Date(annualReviewStartDate);
-    annualReviewYear = annualReveiwDate.getFullYear();
+    const annualReviewDate = new Date(annualReviewStartDate);
+    annualReviewYear = annualReviewDate.getFullYear();
+    maxDate = add(annualReviewDate, { months: 6 });
   }
 
   const addLeadingZero = (value: string): string => value.padStart(2, "0");
-  const formatDateValue = (value: string): string => addLeadingZero(req.body[value]);
-  const userValuesInAmericanDateFormat = `${annualReviewYear}-${formatDateValue("annual-review-date-month")}-${formatDateValue("annual-review-date-day")}`;
-  const newAnnualReveiwDate = new Date(userValuesInAmericanDateFormat);
+
+  const userValuesInAmericanDateFormat = `${annualReviewYear}-${addLeadingZero(userEnteredMonth)}-${addLeadingZero(
+    userEnteredDay
+  )}`;
+  const newAnnualReviewDate = new Date(userValuesInAmericanDateFormat);
+
+  if (!isBefore(newAnnualReviewDate, maxDate)) {
+    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?maxDateError=true`);
+  }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
-    newAnnualReveiwDateFormatted: format(parseISO(userValuesInAmericanDateFormat), DATE_FORMAT),
-    newAnnualReveiwDate,
+    newAnnualReviewDateFormatted: format(parseISO(userValuesInAmericanDateFormat), DATE_FORMAT),
+    newAnnualReviewDate,
     list,
     csrfToken: getCSRFToken(req),
   });
 }
 
-async function updateNewAnnualReviewDate(req: Request, res: Response, listId: string): Promise<void> {
-  const { newAnnualReveiwDate } = req.body;
-  const newAnnualReveiwDateFormatted = new Date(newAnnualReveiwDate as string);
+async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
+  const { listId } = req.params;
+  const { newAnnualReviewDate } = req.body;
+  const newAnnualReviewDateFormatted = new Date(newAnnualReviewDate as string);
 
-  await updateAnnualReviewDate(listId, newAnnualReveiwDateFormatted.toISOString());
+  await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
 
   return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", listId)}?annualReviewDateUpdated=true`);
 }
