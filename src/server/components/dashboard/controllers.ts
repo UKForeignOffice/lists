@@ -18,8 +18,7 @@ import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
 import { format, parseISO } from "date-fns";
-
-const DATE_FORMAT_SHORT_MONTH = "d MMM yyyy";
+import { DATE_FORMAT } from "./annualReview/controllers";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -144,7 +143,7 @@ function listsWithFormattedDates(lists: List[]): List[] {
 }
 
 function formatAnnualReviewDate(list: List, field: string): string {
-  return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH) : "";
+  return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
 // TODO: test
@@ -305,21 +304,4 @@ export function helpPageController(req: Request, res: Response): void {
   res.render("dashboard/help", {
     backUrl: req.session.currentUrl ?? "/dashboard/lists",
   });
-<<<<<<< HEAD
-=======
-}
-
-export async function listsEditAnnualReviewDateController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  const { listId } = req.params;
-  const list = await findListById(listId);
-
-  res.render("dashboard/lists-edit-annual-review-date", {
-    ...DEFAULT_VIEW_PROPS,
-    list,
-  });
->>>>>>> c17aaf4a (chore: add confirmation start date page)
 }
