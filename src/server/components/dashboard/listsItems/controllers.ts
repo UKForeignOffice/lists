@@ -26,6 +26,7 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
+import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -80,13 +81,13 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "remove"],
-    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove"],
+    NEW: ["publish", "request-changes", "remove", "archive"],
+    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove", "archive"],
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
     PUBLISHED: ["unpublish", "remove"],
-    UNPUBLISHED: ["publish", "request-changes", "remove"],
-    CHECK_ANNUAL_REVIEW: ["unpublish", "remove"],
-    ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove"],
+    UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
+    CHECK_ANNUAL_REVIEW: ["unpublish", "remove", "archive"],
+    ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove", "archive"],
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
@@ -96,15 +97,18 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     ...DEFAULT_VIEW_PROPS,
     changeMessage: req.session?.changeMessage,
     list,
+    req,
     listItem,
     isPinned,
-    actionButtons: actionButtonsForStatus ?? [],
+    actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
+    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
 }
+
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
   const { message, action } = req.body;
   const { list, listItem, listItemUrl } = res.locals;

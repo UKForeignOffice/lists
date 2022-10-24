@@ -14,3 +14,8 @@ export const csrfRequestHandler = (!isTest ? csrfInstance : (req: Request, res: 
 export function getCSRFToken(req: Request): string {
   return (!isTest ? req.csrfToken() : "");
 }
+
+export function addUrlToSession(req: Request, _: Response, next: NextFunction): void {
+  req.session.currentUrl = req.originalUrl;
+  return next();
+}

@@ -203,9 +203,6 @@ $two-thirds: $one-third * 2;
   &__list-item-pin {
     border: none;
     background: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     cursor: pointer;
     &:focus {
       @include govuk-focused-text;
@@ -252,4 +249,22 @@ $two-thirds: $one-third * 2;
 
 .grey-text {
   color:  #868D91;
+}
+
+.list-mgmt {
+  .govuk-header__logo {
+    width: 38.33%;
+  }
+
+  .govuk-header__navigation {
+    float: right
+  }
+
+  .govuk-header__navigation-list {
+    margin: 0
+  }
+
+  .govuk-header__content {
+    max-width: 33.66%;
+  }
 }
