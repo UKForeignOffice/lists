@@ -21,7 +21,7 @@
 
     <p class="govuk-body">The next funeral directors list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReveiwDateForm">
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReviewDateForm">
         <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
         <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -40,7 +40,7 @@
                 <label class="govuk-label govuk-date-input__label" for="annual-review-date-day">
                     Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" id="annual-review-date-day" name="annual-review-date-day" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" data-testid="day" id="annual-review-date-day" name="annual-review-date-day" type="text" inputmode="numeric">
               </div>
             </div>
             <div class="govuk-date-input__item">
@@ -48,7 +48,7 @@
                 <label class="govuk-label govuk-date-input__label" for="annual-review-date-month">
                     Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" id="annual-review-date-month" name="annual-review-date-month" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" data-testid="month" id="annual-review-date-month" name="annual-review-date-month" type="text" inputmode="numeric">
               </div>
             </div>
           </div>

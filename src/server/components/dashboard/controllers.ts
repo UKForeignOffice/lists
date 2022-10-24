@@ -353,14 +353,14 @@ export async function listsEditAnnualReviewDateController(
 
     if (leapYearError) {
       error = {
-        text: "The date you entered cannot be used",
+        text: "You cannot set the annual review to this date. Please choose another",
         href: "#annualReviewDateForm",
       };
     }
 
     if (maxDateError) {
       error = {
-        text: "The date entered should not be 6 months over the previous date",
+        text: "You can only change the date up to 6 months after the current review date",
         href: "#annualReviewDateForm",
       };
     }
