@@ -876,7 +876,7 @@ describe("Dashboard Controllers", () => {
       expect(err.code).toBe("404")
     });
 
-    it("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
       const next = jest.fn();
 
@@ -997,8 +997,7 @@ describe("Dashboard Controllers", () => {
 
     });
 
-    //TODO: this is tested 3 times..?
-    it("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
       const next = jest.fn();
 
