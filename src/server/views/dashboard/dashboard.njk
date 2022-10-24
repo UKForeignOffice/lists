@@ -7,27 +7,8 @@
   </div>
   <div class="govuk-width-container dashboard__container">
     <div class="govuk-grid-row back-links__container">
-      <div class="govuk-grid-column-one-quarter back-links__aside">
-        {% block aside %}
-        <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
-          <ul class="govuk-list">
-            {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
-            {% if req.user.isSuperAdmin() %}
-              {{ dashboardMacros.navMenu("Feedbacks", dashboardRoutes.feedback, req) }}
-              {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
-            {% endif %}
-          </ul>
-        </nav>
-        {% endblock %}
-      </div>
-      <div class="govuk-grid-column-three-quarters">
+      <div class="govuk-grid-column-full">
         {% block dashboard %}
-          <h1 class="govuk-heading-l">Dashboard</h1>
-
-          {% if isNewUser %}
-            {% include "./partials/new-user-banner.njk" %}
-          {% endif %}
-
         {% endblock %}
       </div>
     </div>

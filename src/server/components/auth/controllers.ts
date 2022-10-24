@@ -8,7 +8,7 @@ import { isCybDev, isLocalHost, isSmokeTest, SERVICE_DOMAIN } from "server/confi
 import { logger } from "server/services/logger";
 
 export const authController = passport.authenticate("jwt", {
-  successReturnToOrRedirect: "/dashboard",
+  successReturnToOrRedirect: "/dashboard/lists",
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 

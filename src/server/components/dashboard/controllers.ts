@@ -22,6 +22,9 @@ import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
+import { format, parseISO } from "date-fns";
+
+const DATE_FORMAT_SHORT_MONTH = "d MMM yyyy";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -44,17 +47,7 @@ export async function startRouteController(
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await findUserLists(req.user?.userData.email);
-    const isNewUser =
-      !req.user?.isSuperAdmin() &&
-      !req.user?.isListsCreator() &&
-      get(lists ?? [], "length") === 0;
-
-    res.render("dashboard/dashboard", {
-      ...DEFAULT_VIEW_PROPS,
-      isNewUser,
-      req,
-    });
+    res.redirect(dashboardRoutes.lists)
   } catch (error) {
     next(error);
   }
@@ -141,18 +134,37 @@ export async function listsController(
     }
 
     const email = req.user!.userData.email;
-
     const lists = (await findUserLists(email)) ?? [];
+    const isNewUser =
+      !req.user?.isSuperAdmin() &&
+      !req.user?.isListsCreator() &&
+      get(lists ?? [], "length") === 0;
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       req,
-      lists,
+      lists: listsWithFormattedDates(lists),
+      isNewUser,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
   }
+}
+
+function listsWithFormattedDates(lists: List[]): List[] {
+  return lists.map(list => ({
+    ...list,
+    annualReviewStartDate: formatAnnualReviewDate((list), "annualReviewStartDate"),
+    lastAnnualReviewStartDate: formatAnnualReviewDate((list), "lastAnnualReviewStartDate"),
+  })
+  );
+}
+
+function formatAnnualReviewDate(list: List, field: string): string {
+  return list.jsonData[field]
+    ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH)
+    : "";
 }
 
 // TODO: test
