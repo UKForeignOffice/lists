@@ -8,7 +8,7 @@
 
   <form class="form" action="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-    <input type="hidden" name="newAnnualReveiwDate" value="{{ newAnnualReveiwDate }}" />
+    <input type="hidden" name="newAnnualReviewDate" value="{{ newAnnualReviewDate }}" />
 
     <h2 class="govuk-heading-m" style="color: #b1b4b6;">{{list.country.name}}</h2>
 
@@ -16,7 +16,7 @@
       Confirm new annual review start date
     </h1>
 
-    <p class="govuk-body">You are about to change the next funeral directors list annual review date to<br /> <strong>{{ newannualReviewDateFormatted }}.</strong></p>
+    <p class="govuk-body">You are about to change the next funeral directors list annual review date to<br /> <strong>{{ newAnnualReviewDateFormatted }}.</strong></p>
 
     <p class="govuk-body">Confirming this will:</p>
     <ul class="govuk-list govuk-list--bullet">

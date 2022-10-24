@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { trim } from "lodash";
+import { trim, startCase } from "lodash";
 import { parseISO, format, add, isBefore } from "date-fns";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
@@ -7,8 +7,8 @@ import { createList, findListById, updateList, updateAnnualReviewDate } from "se
 import { findFeedbackByType } from "server/models/feedback";
 import { List, ServiceType, UserRoles } from "server/models/types";
 import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
-import { isGovUKEmailAddress, } from "server/utils/validation";
-import { QuestionError, } from "server/components/lists";
+import { isGovUKEmailAddress } from "server/utils/validation";
+import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
