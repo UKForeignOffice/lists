@@ -39,6 +39,8 @@ export async function startRouteController(req: Request, res: Response, next: Ne
   } catch (error) {
     next(error);
   }
+
+  res.redirect(dashboardRoutes.lists);
 }
 
 export async function usersListController(req: Request, res: Response, next: NextFunction): Promise<void> {
