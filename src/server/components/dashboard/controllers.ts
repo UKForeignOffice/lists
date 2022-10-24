@@ -17,6 +17,9 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
+import { format, parseISO } from "date-fns";
+
+const DATE_FORMAT_SHORT_MONTH = "d MMM yyyy";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -32,14 +35,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await req.user!.getLists();
-    const isNewUser = !req.user?.isAdministrator && lists.length === 0;
-
-    res.render("dashboard/dashboard", {
-      ...DEFAULT_VIEW_PROPS,
-      isNewUser,
-      req,
-    });
+    res.redirect(dashboardRoutes.lists);
   } catch (error) {
     next(error);
   }
@@ -124,17 +120,31 @@ export async function listsController(req: Request, res: Response, next: NextFun
     }
 
     const lists = await req.user?.getLists();
+    const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
       req,
-      lists,
+      isNewUser,
+      lists: listsWithFormattedDates(lists as List[]),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
   }
+}
+
+function listsWithFormattedDates(lists: List[]): List[] {
+  return lists.map((list) => ({
+    ...list,
+    annualReviewStartDate: formatAnnualReviewDate(list, "annualReviewStartDate"),
+    lastAnnualReviewStartDate: formatAnnualReviewDate(list, "lastAnnualReviewStartDate"),
+  }));
+}
+
+function formatAnnualReviewDate(list: List, field: string): string {
+  return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH) : "";
 }
 
 // TODO: test
@@ -289,4 +299,10 @@ export async function feedbackController(req: Request, res: Response, next: Next
   } catch (error) {
     next(error);
   }
+}
+
+export function helpPageController(req: Request, res: Response): void {
+  res.render("dashboard/help", {
+    backUrl: req.session.currentUrl ?? "/dashboard/lists",
+  });
 }
