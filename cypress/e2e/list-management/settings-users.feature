@@ -30,13 +30,13 @@ Feature: List management users
       | joker@cautionyourblast.com   |
 
 
-Scenario: User cannot delete themselves
-  Given I remove the user "smoke@cautionyourblast.com"
-  And I see page with heading "Confirm the removal of this user"
-  And I click the "Remove" button
-  Then I should see the error "You cannot remove your own email address from a list"
+  Scenario: User cannot delete themselves
+    Given I remove the user "smoke@cautionyourblast.com"
+    And I see page with heading "Confirm the removal of this user"
+    And I click the "Remove" button
+    Then I should see the error "You cannot remove your own email address from a list"
 
 
-Scenario: Prevent adding duplicate user
-  Given I enter "smoke@cautionyourblast.com" in the email input
-  Then I should see the error "This user already exists"
+  Scenario: Prevent adding duplicate user
+    Given I enter "smoke@cautionyourblast.com" in the email input
+    Then I should see the error "This user already exists"

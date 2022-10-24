@@ -25,9 +25,15 @@
     <div class="govuk-button-group">
       {{ govukButton({
         text: "Remove",
-        classes: "govuk-button--ok govuk-!-margin-bottom-2"
+        classes: "govuk-!-margin-bottom-2"
       }) }}
-      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}">Cancel</a>
+
+      {{ govukButton({
+        text: "Cancel",
+        href: dashboardRoutes.listsEdit.replace(':listId', list.id),
+        classes: "govuk-button--secondary govuk-!-margin-bottom-2",
+        element: "a"
+      }) }}
     </div>
   </form>
 
