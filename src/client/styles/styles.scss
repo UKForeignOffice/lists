@@ -239,3 +239,21 @@ $two-thirds: $one-third * 2;
     width: 100%;
   }
 }
+
+.list-mgmt {
+  .govuk-header__logo {
+    width: 40.33%;
+  }
+
+  .govuk-header__navigation {
+    float: right
+  }
+
+  .govuk-header__navigation-list {
+    margin: 0
+  }
+
+  .govuk-header__content {
+    max-width: 37.66%;
+  }
+}
