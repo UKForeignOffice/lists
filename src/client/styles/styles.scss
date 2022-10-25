@@ -203,9 +203,6 @@ $two-thirds: $one-third * 2;
   &__list-item-pin {
     border: none;
     background: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     cursor: pointer;
     &:focus {
       @include govuk-focused-text;

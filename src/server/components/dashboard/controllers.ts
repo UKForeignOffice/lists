@@ -148,7 +148,6 @@ export async function listsController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    console.log(error, "errorbo")
     next(error);
   }
 }
