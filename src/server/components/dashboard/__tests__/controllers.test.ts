@@ -142,12 +142,12 @@ describe("Dashboard Controllers", () => {
       };
     });
 
-    test("it renders correct template", async () => {
+    test("it renders correct template", async () => { //** */
       mockFindUserLists(undefined);
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/dashboard");
+      expect(mockRes.redirect.mock.calls[0][0]).toBe("/dashboard/lists");
     });
 
     test("it redirects to logout if req.user is undefined", async () => {
@@ -156,70 +156,6 @@ describe("Dashboard Controllers", () => {
       await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
-    });
-
-    test("it calls findUserLists correctly", async () => {
-      const usersLists: any = [{ id: 1 }];
-      const spyFindUsersList = mockFindUserLists(usersLists);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(spyFindUsersList).toHaveBeenCalledWith(
-        mockReq.user.userData.email
-      );
-    });
-
-    test("it calls next with findUsersList error", async () => {
-      const error = new Error("test error");
-      jest.spyOn(listModel, "findUserLists").mockRejectedValueOnce(error);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(error);
-    });
-
-    test("it identifies a new user correctly", async () => {
-      mockFindUserLists(undefined);
-      mockReq.user.isSuperAdmin.mockReturnValueOnce(false);
-      mockReq.user.isListsCreator.mockReturnValueOnce(false);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
-    });
-
-    test("a SuperAdmin is not a new user", async () => {
-      mockFindUserLists(undefined);
-      mockReq.user.isSuperAdmin.mockReturnValueOnce(true);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
-    });
-
-    test("a ListsCreator is not not a new user", async () => {
-      mockFindUserLists(undefined);
-      mockReq.user.isListsCreator.mockReturnValueOnce(true);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
-    });
-
-    test("a user with access to existing lists is not a new user", async () => {
-      mockFindUserLists([{ id: 1 }]);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
-    });
-
-    test("a new user is correctly indicated via isNewUser view prop", async () => {
-      mockFindUserLists(undefined);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
     });
   });
 
@@ -336,19 +272,6 @@ describe("Dashboard Controllers", () => {
       expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
     });
 
-    test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1 }];
-      const spy = jest
-        .spyOn(listModel, "findUserLists")
-        .mockResolvedValueOnce(lists);
-
-      await listsController(mockReq, mockRes, mockNext);
-
-      expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
-      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
-      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
-    });
-
     test("it renders correct with empty list when findUserLists result is undefined", async () => {
       const lists: any = undefined;
       jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
@@ -365,6 +288,19 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+
+    test("it renders correct template with found lists", async () => {
+      const lists: any = [{ id: 1, jsonData: {} }];
+      const spy = jest
+        .spyOn(listModel, "findUserLists")
+        .mockResolvedValueOnce(lists);
+
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
+      expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
+      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
     });
   });
 

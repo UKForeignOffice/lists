@@ -143,11 +143,12 @@ export async function listsController(
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       req,
-      lists: listsWithFormattedDates(lists),
       isNewUser,
+      lists: listsWithFormattedDates(lists),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    console.log(error, "errorbo")
     next(error);
   }
 }
@@ -162,7 +163,7 @@ function listsWithFormattedDates(lists: List[]): List[] {
 }
 
 function formatAnnualReviewDate(list: List, field: string): string {
-  return list.jsonData[field]
+  return list?.jsonData?.[field]
     ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH)
     : "";
 }
