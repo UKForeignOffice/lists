@@ -364,8 +364,10 @@ export async function feedbackController(
 }
 
 export function helpPageController(
-  _: Request,
-  res: Response
-  ): void {
-    res.render("dashboard/help");
-  }
+  req: Request,
+  res: Response,
+): void {
+    res.render("dashboard/help", {
+      backUrl: req.session.currentUrl ?? "/dashboard/lists"
+    });
+}
