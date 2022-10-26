@@ -123,42 +123,6 @@ describe("Dashboard Controllers", () => {
     };
   });
 
-  describe("startRouteController", () => {
-    function mockFindUserLists(resolvedValue: any): jest.SpyInstance {
-      return jest
-        .spyOn(listModel, "findUserLists")
-        .mockResolvedValueOnce(resolvedValue);
-    }
-
-    beforeEach(() => {
-      mockReq = {
-        user: {
-          userData: {
-            email: "testemail@govuk.com",
-          },
-          isSuperAdmin: jest.fn(),
-          isListsCreator: jest.fn(),
-        },
-      };
-    });
-
-    test("it renders correct template", async () => { //** */
-      mockFindUserLists(undefined);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.redirect.mock.calls[0][0]).toBe("/dashboard/lists");
-    });
-
-    test("it redirects to logout if req.user is undefined", async () => {
-      mockReq.user = undefined;
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
-    });
-  });
-
   describe("usersListController", () => {
     test("it renders correctly template with found users", async () => {
       const users: any = [{ id: 1 }];
@@ -301,6 +265,42 @@ describe("Dashboard Controllers", () => {
       expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
       expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
+    });
+  });
+
+  describe("startRouteController", () => {
+    function mockFindUserLists(resolvedValue: any): jest.SpyInstance {
+      return jest
+        .spyOn(listModel, "findUserLists")
+        .mockResolvedValueOnce(resolvedValue);
+    }
+
+    beforeEach(() => {
+      mockReq = {
+        user: {
+          userData: {
+            email: "testemail@govuk.com",
+          },
+          isSuperAdmin: jest.fn(),
+          isListsCreator: jest.fn(),
+        },
+      };
+    });
+
+    test("it renders correct template", async () => { //** */
+      mockFindUserLists(undefined);
+
+      await startRouteController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.redirect.mock.calls[0][0]).toBe("/dashboard/lists");
+    });
+
+    test("it redirects to logout if req.user is undefined", async () => {
+      mockReq.user = undefined;
+
+      await startRouteController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
     });
   });
 
