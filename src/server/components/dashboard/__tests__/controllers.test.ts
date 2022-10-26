@@ -255,7 +255,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1, jsonData: {} }];
+      const lists: any = [{ id: 1 }];
       const spy = jest
         .spyOn(listModel, "findUserLists")
         .mockResolvedValueOnce(lists);
@@ -264,7 +264,7 @@ describe("Dashboard Controllers", () => {
 
       expect(spy).toHaveBeenCalledWith(mockReq.user.userData.email);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
-      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
+      expect(mockRes.render.mock.calls[0][1].lists).toStrictEqual([{"annualReviewStartDate": "", "id": 1, "lastAnnualReviewStartDate": ""}]);
     });
   });
 
