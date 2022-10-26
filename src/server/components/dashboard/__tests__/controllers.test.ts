@@ -999,10 +999,12 @@ describe("Dashboard Controllers", () => {
 
     });
 
-    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
-      const next = jest.fn();
+      spyFindListById.mockResolvedValueOnce(list);
+      spyFindListItemById.mockResolvedValueOnce(listItem);
 
+      const next = jest.fn();
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
 
