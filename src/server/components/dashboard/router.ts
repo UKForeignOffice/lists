@@ -7,7 +7,9 @@ import {
 import {
   startRouteController,
   usersListController,
-  usersEditController, feedbackController,
+  feedbackController,
+  usersEditController,
+  helpPageController,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -42,4 +44,10 @@ dashboardRouter.get(
   csrfRequestHandler,
   ensureUserIsSuperAdmin,
   feedbackController
+);
+
+// help
+dashboardRouter.get(
+  dashboardRoutes.listsHelp,
+  helpPageController
 );

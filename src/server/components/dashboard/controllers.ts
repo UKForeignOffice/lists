@@ -362,3 +362,10 @@ export async function feedbackController(
     next(error);
   }
 }
+
+export function helpPageController(
+  _: Request,
+  res: Response
+  ): void {
+    res.render("dashboard/help");
+  }

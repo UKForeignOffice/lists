@@ -18,5 +18,6 @@ export const dashboardRoutes = {
   listsItemPublish: "/dashboard/lists/:listId/items/:listItemId/publish",
   listsItemRequestChanges: "/dashboard/lists/:listId/items/:listItemId/changes",
   listsItemUpdate: "/dashboard/lists/:listId/items/:listItemId/update",
+  listsHelp: "/dashboard/help",
   listsTest: "/dashboard/test",
 } as const;
