@@ -87,7 +87,13 @@
   </p>
   {% if item.jsonData.emailAddress %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Email</strong>: <a class="govuk-link" href="mailto:{{ item.jsonData.emailAddress }}">{{ item.jsonData.emailAddress }}</a>
+      <strong>Email</strong>:
+      <a
+        class="govuk-link"
+        href="mailto:{{ item.jsonData.publicEmailAddress if item.jsonData.publicEmailAddress else item.jsonData.emailAddress }}"
+      >
+        {{ item.jsonData.publicEmailAddress if item.jsonData.publicEmailAddress else item.jsonData.emailAddress }}
+      </a>
     </p>
   {% endif %}
   {% if item.jsonData.phoneNumber %}
