@@ -26,7 +26,7 @@
         {% for list in lists %}
           <tr class="govuk-table__row">
             <td scope="row" class="govuk-table__header">
-              {% if userIsListPublisher(req, list) or req.user.isSuperAdmin() %}
+              {% if req.user.isListPublisher(req, list) or req.user.isSuperAdmin() %}
                 <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">{{ _.startCase(list.type) }}</a>
               {% else %}
                 {{ _.startCase(list.type) }}

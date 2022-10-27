@@ -1,6 +1,12 @@
 import { User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
+import {
+  userIsListPublisher,
+  ListWithJsonData
+} from "server/components/dashboard/helpers";
+
+import type { Request } from "express";
 
 export class AuthenticatedUser {
   readonly userData: User;
@@ -69,5 +75,9 @@ export class AuthenticatedUser {
     }
 
     return lists ?? [];
+  }
+
+  oldIsListPublisher(req: Request, list: ListWithJsonData): boolean {
+    return userIsListPublisher(req, list);
   }
 }
