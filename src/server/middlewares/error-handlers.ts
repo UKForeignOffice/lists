@@ -1,4 +1,4 @@
-import { Express, NextFunction, Request, Response } from "express";
+import { Express, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
 export class HttpException extends Error {
