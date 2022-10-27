@@ -41,14 +41,13 @@ export const configureErrorHandlers = (server: Express): void => {
   });
 
   server.use(function (err: HttpException, req: Request, res: Response) {
-    logger.error(`${err.status} Error:`, err.stack);
+    logger.error(`${err.status} Error:`, err);
     res.status("status" in err ? err.status : 500);
 
     if (acceptsHTML(req)) {
       res.render("errors/generic-error", {
         message: err.message ?? "",
-        status: err.status,
-        stack: err.stack
+        status: err.status
       });
     } else if (acceptsJSON(req)) {
       res.json({

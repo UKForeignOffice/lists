@@ -13,7 +13,6 @@ import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
-import { logger } from "server/services/logger";
 
 export function getNewSessionWebhookData(
   listType: string,
