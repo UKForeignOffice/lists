@@ -408,7 +408,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   if (!isBefore(newAnnualReviewDate, maxDate)) {
     req.flash("annualReviewError", "You can only change the date up to 6 months after the current review date");
-    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?maxDateError=true`);
+    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {

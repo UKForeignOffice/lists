@@ -31,20 +31,6 @@
               The new date must be within 6 months of today’s date
           </div>
 
-{# {{ govukDateInput({
-  id: "passport-issued",
-  namePrefix: "passport-issued",
-  fieldset: {
-    legend: {
-      text: "When was your passport issued?",
-      isPageHeading: true,
-      classes: "govuk-fieldset__legend--l"
-    }
-  },
-  errorMessage: {
-    text: error.text
-  }
-}) }} #}
           {% if error.text %}
             <span class="govuk-error-message">
               <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
