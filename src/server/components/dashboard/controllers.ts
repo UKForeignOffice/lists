@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { trim, startCase } from "lodash";
-import { parseISO, format, add, isBefore } from "date-fns";
+import { parseISO, format, add, isBefore, parse, isValid } from "date-fns";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList, updateAnnualReviewDate } from "server/models/list";
@@ -338,36 +338,15 @@ export async function listsEditAnnualReviewDateController(
 ): Promise<void> {
   try {
     const { listId } = req.params;
-    const { missingValuesError, leapYearError, maxDateError } = req.query;
-    let error: Partial<QuestionError> = {};
-
     const list = await findListById(listId);
     const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
 
-    if (missingValuesError) {
-      error = {
-        text: "Enter a date for the annual review",
-        href: "#annualReviewDateForm",
-      };
-    }
-
-    if (leapYearError) {
-      error = {
-        text: "You cannot set the annual review to this date. Please choose another",
-        href: "#annualReviewDateForm",
-      };
-    }
-
-    if (maxDateError) {
-      error = {
-        text: "You can only change the date up to 6 months after the current review date",
-        href: "#annualReviewDateForm",
-      };
-    }
-
     res.render("dashboard/lists-edit-annual-review-date", {
       ...DEFAULT_VIEW_PROPS,
-      error,
+      error: {
+        text: req.flash('annualReviewError')[0],
+        href: "#annualReviewDateForm",
+      },
       annualReviewStartDate,
       list,
       csrfToken: getCSRFToken(req),
@@ -401,17 +380,17 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   let annualReviewYear = todaysDate.getFullYear() + 1;
   let maxDate = add(todaysDate, { months: 6 });
 
-  const userEnteredMonth: string = req.body["annual-review-date-month"];
-  const userEnteredDay: string = req.body["annual-review-date-day"];
+  const { month, day } = req.body;
+  const parsedDate = parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
 
-  if (!userEnteredMonth || !userEnteredDay) {
-    return res.redirect(
-      `${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?missingValuesError=true`
-    );
+  if (!month || !day) {
+    req.flash("annualReviewError", "Enter a date for the annual review");
+    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}`);
   }
 
-  if (userEnteredMonth === "2" && userEnteredDay === "29") {
-    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?leapYearError=true`);
+  if ((month === "2" && day === "29") || !isValid(parsedDate)) {
+    req.flash("annualReviewError", "You cannot set the annual review to this date. Please choose another");
+    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}`);
   }
 
   const { annualReviewStartDate } = (list as List).jsonData;
@@ -424,12 +403,11 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   const addLeadingZero = (value: string): string => value.padStart(2, "0");
 
-  const userValuesInAmericanDateFormat = `${annualReviewYear}-${addLeadingZero(userEnteredMonth)}-${addLeadingZero(
-    userEnteredDay
-  )}`;
+  const userValuesInAmericanDateFormat = `${annualReviewYear}-${addLeadingZero(month)}-${addLeadingZero(day)}`;
   const newAnnualReviewDate = new Date(userValuesInAmericanDateFormat);
 
   if (!isBefore(newAnnualReviewDate, maxDate)) {
+    req.flash("annualReviewError", "You can only change the date up to 6 months after the current review date");
     return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", listId)}?maxDateError=true`);
   }
 
