@@ -16,6 +16,7 @@ import {
   startRouteController,
   usersEditController,
   usersListController,
+  http500Error,
 } from "../controllers";
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
@@ -164,7 +165,7 @@ describe("Dashboard Controllers", () => {
 
       await startRouteController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(mockNext).toHaveBeenCalledWith(http500Error(error, 'startRouteController'));
     });
 
     test("it identifies a new user correctly", async () => {
@@ -232,7 +233,7 @@ describe("Dashboard Controllers", () => {
 
       await usersListController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(mockNext).toHaveBeenCalledWith(http500Error(error, 'usersListController'));
     });
   });
 
@@ -859,7 +860,7 @@ describe("Dashboard Controllers", () => {
       expect(spyFindListById).toHaveBeenCalledWith("1");
     });
 
-    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);

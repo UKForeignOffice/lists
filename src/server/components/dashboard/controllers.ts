@@ -35,7 +35,7 @@ export const DEFAULT_VIEW_PROPS = {
   userIsListAdministrator,
 };
 
-function http500Error(error: unknown, fnName: string): HttpException {
+export function http500Error(error: unknown, fnName: string): HttpException {
   return new HttpException(500, `${fnName} Error: ${(error as Error).message}`);
 }
 
