@@ -21,7 +21,10 @@ export function userIsListAdministrator(req: Request, list: ListWithJsonData): b
 
 export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
   const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.publishers?.includes(email) : false;
+
+  return email !== undefined
+    ? Boolean(list?.jsonData?.publishers?.includes(email))
+    : false;
 }
 
 export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
