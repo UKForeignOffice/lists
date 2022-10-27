@@ -82,7 +82,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/generic-error.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle500(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 500, stack: error.stack});
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 500});
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -120,7 +120,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/generic-error when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle403(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 403, stack: error.stack});
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 403});
     });
 
     test("it responds with json when request expects JSON", () => {
