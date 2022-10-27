@@ -1,4 +1,4 @@
-import { Express, Request, Response } from "express";
+import { Express, NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
 export class HttpException extends Error {
@@ -6,6 +6,7 @@ export class HttpException extends Error {
     super(message);
     this.name = "HttpException";
     this.status = status;
+    this.code = String(status);
     this.message = message;
   }
 
@@ -41,7 +42,7 @@ export const configureErrorHandlers = (server: Express): void => {
   });
 
   server.use(function (err: HttpException, req: Request, res: Response) {
-    logger.error(`${err.status} Error:`, err);
+    logger.error(`${err.status} Error`, err);
     res.status("status" in err ? err.status : 500);
 
     if (acceptsHTML(req)) {
