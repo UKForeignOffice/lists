@@ -1,12 +1,11 @@
-import { Express, NextFunction, Request, Response } from "express";
+import { Express, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
 export class HttpException extends Error {
-  constructor(status: number, code: string, message: string) {
+  constructor(status: number, message: string) {
     super(message);
     this.name = "HttpException";
     this.status = status;
-    this.code = code;
     this.message = message;
   }
 
@@ -41,14 +40,15 @@ export const configureErrorHandlers = (server: Express): void => {
     }
   });
 
-  server.use(function (err: HttpException, req: Request, res: Response, next: NextFunction) {
-    logger.error(`${err.status} Error`, err);
+  server.use(function (err: HttpException, req: Request, res: Response) {
+    logger.error(`${err.status} Error:`, err.stack);
     res.status("status" in err ? err.status : 500);
 
     if (acceptsHTML(req)) {
       res.render("errors/generic-error", {
         message: err.message ?? "",
-        status: err.status
+        status: err.status,
+        stack: err.stack
       });
     } else if (acceptsJSON(req)) {
       res.json({
@@ -67,6 +67,6 @@ function getErrorMessage(message: string): string {
 }
 
 export function rateLimitExceededErrorHandler (req: Request, res: Response, next: Function): void {
-  const err = new HttpException(429, "429", "Maximum rate of page requests exceeded - wait and try again");
+  const err = new HttpException(429, "Maximum rate of page requests exceeded - wait and try again");
   return next(err);
 }

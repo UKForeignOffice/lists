@@ -22,7 +22,7 @@ export async function getPlaceGeoPoint(props: {
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
-    return (await geoLocatePlaceByText(text as string, countryName as string)) as Awaited<Point>;
+    return (await geoLocatePlaceByText(text as string, countryName as string));
   } catch (error) {
     logger.error((error as Error).message);
 

@@ -43,25 +43,20 @@ export async function getServer(): Promise<Express | undefined> {
   configureViews(server);
 
   // initialize components
+  await initAuth(server);
+  await initLists(server);
+  await initCookies(server);
+  await initSitemap(server);
+  await initFeedback(server);
+  await initDashboard(server);
+  await initDevelopment(server);
+  await initHealthCheck(server);
 
-  try {
-    await initAuth(server);
-    await initLists(server);
-    await initCookies(server);
-    await initSitemap(server);
-    await initFeedback(server);
-    await initDashboard(server);
-    await initDevelopment(server);
-    await initHealthCheck(server);
+  // error handlers
+  configureErrorHandlers(server);
 
-    // error handlers
-    configureErrorHandlers(server);
-
-    logger.info(
-      `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
-    );
-    return server;
-  } catch (error) {
-    logger.error("There has been an issue with the startup");
-  }
+  logger.info(
+    `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
+  );
+  return server;
 }

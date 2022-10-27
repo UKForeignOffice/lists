@@ -6,7 +6,6 @@ import { configureExpressSession } from "./express-session";
 import { isSmokeTest } from "server/config";
 import { HttpException } from "server/middlewares/error-handlers";
 import { configureRateLimit } from "server/middlewares";
-import { logger } from "server/services/logger";
 
 export function ensureAuthenticated(
   req: Request,
@@ -29,18 +28,14 @@ export function ensureUserIsSuperAdmin(
   if (req.isAuthenticated() && req.user.isSuperAdmin()) {
     next();
   } else {
-    const err = new HttpException(405, "405", "Not allowed");
+    const err = new HttpException(405, "Not allowed");
     return next(err);
   }
 }
 
 export async function initAuth(server: Express): Promise<void> {
-  try {
-    await configureExpressSession(server);
-    await configurePassport(server);
-    configureRateLimit(server);
-    server.use(authRouter);
-  } catch (error) {
-    logger.error(`initAuth: Error ${(error as Error).message}`);
-  }
+  await configureExpressSession(server);
+  await configurePassport(server);
+  configureRateLimit(server);
+  server.use(authRouter);
 }

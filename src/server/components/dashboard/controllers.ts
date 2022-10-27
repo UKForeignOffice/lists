@@ -35,6 +35,10 @@ export const DEFAULT_VIEW_PROPS = {
   userIsListAdministrator,
 };
 
+function http500Error(error: unknown, fnName: string): HttpException {
+  return new HttpException(500, `${fnName} Error: ${(error as Error).message}`);
+}
+
 export async function startRouteController(
   req: Request,
   res: Response,
@@ -57,8 +61,7 @@ export async function startRouteController(
       req,
     });
   } catch (error) {
-    logger.error(`startRouteController Error: ${(error as Error).message}`);
-    next(error);
+    next(http500Error(error, 'startRouteController'));
   }
 }
 
@@ -76,8 +79,7 @@ export async function usersListController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    logger.error(`usersListController Error: ${(error as Error).message}`);
-    next(error);
+    next(http500Error(error, 'usersListController'));
   }
 }
 
@@ -189,7 +191,7 @@ export async function listsEditController(
         (!user?.userData?.email || !publishers.includes(user?.userData?.email) ||
           (listId === "new" && !user?.isSuperAdmin()))
       ) {
-        const err = new HttpException(403, "403", "You are not authorized to access this list.");
+        const err = new HttpException(403, "You are not authorized to access this list.");
         return next(err);
       }
 
@@ -332,8 +334,7 @@ export async function listsEditController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    logger.error(`listsEditController Error: ${(error as Error).message}`);
-    next(error);
+    next(http500Error(error, 'listsEditController'));
   }
 }
 
@@ -352,7 +353,7 @@ export async function feedbackController(
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    logger.error(`feedbackController Error: ${(error as Error).message}`);
-    next(error);
+    next(http500Error(error, 'feedbackController'));
+
   }
 }

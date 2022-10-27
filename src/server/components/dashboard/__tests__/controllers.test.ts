@@ -767,7 +767,7 @@ describe("Dashboard Controllers", () => {
       });
     });
 
-    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
 
       await listItemDeleteController(mockReq, mockRes);
@@ -963,7 +963,7 @@ describe("Dashboard Controllers", () => {
       expect(spyFindListItemById).toHaveBeenCalledWith("2");
     });
 
-    it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
+    it("should return a 403 if user is not permitted to make changes to the list", async () => {
       userIsListPublisher.mockReturnValueOnce(false);
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);

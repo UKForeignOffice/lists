@@ -71,7 +71,7 @@ describe("Error handlers middleware", () => {
     beforeEach(() => {
       configureErrorHandlers(server);
       handle500 = server.use.mock.calls[1][0];
-      error = new HttpException(500, "500", "Error has occurred");
+      error = new HttpException(500, "Error has occurred");
     });
 
     test("response status is 500", () => {
@@ -109,7 +109,7 @@ describe("Error handlers middleware", () => {
     beforeEach(() => {
       configureErrorHandlers(server);
       handle403 = server.use.mock.calls[1][0];
-      error = new HttpException(403, "EBADCSRFTOKEN", "Error has occurred");
+      error = new HttpException(403, "Error has occurred");
     });
 
     test("response status is 403", () => {

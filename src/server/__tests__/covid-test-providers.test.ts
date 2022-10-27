@@ -299,7 +299,7 @@ describe("Covid Test Providers List:", () => {
       );
     });
 
-    test.skip("accessibility", async () => {
+    test("accessibility", async () => {
       const { text } = await request(server)
         .get(
           "/results?serviceType=covidTestProviders&readNotice=ok&country=Spain&region=madrid&practiceArea=maritime,real%20estate&legalAid=no&readDisclaimer=ok"

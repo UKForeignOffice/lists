@@ -54,6 +54,6 @@ export async function configureExpressSession(server: Express): Promise<void> {
 
     server.use(session(options));
   } catch (error) {
-    logger.error(`configureExpressSession: Error ${(error as Error).message}`);
+    throw new Error(`configureExpressSession: Error ${(error as Error).message}`);
   }
 }

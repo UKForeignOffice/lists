@@ -51,31 +51,27 @@ export async function generateFormRunnerWebhookData(
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
 
-  try {
-    switch (list.type) {
-      case ServiceType.lawyers:
-        questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
-        break;
-      case ServiceType.funeralDirectors:
-        questions = await funeralDirectors.generateFormRunnerWebhookData(
-          listItem as FuneralDirectorListItemGetObject,
-          isUnderTest
-        );
-        break;
-      case ServiceType.translatorsInterpreters:
-        questions = await translatorsInterpreters.generateFormRunnerWebhookData(
-          listItem as TranslatorInterpreterListItemGetObject,
-          isUnderTest
-        );
-        break;
-      default:
-        questions = undefined;
-    }
-
-    return questions;
-  } catch (error) {
-    logger.error(`generateFormRunnerWebhookData Error: ${(error as Error).message}`);
+  switch (list.type) {
+    case ServiceType.lawyers:
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      break;
+    case ServiceType.funeralDirectors:
+      questions = await funeralDirectors.generateFormRunnerWebhookData(
+        listItem as FuneralDirectorListItemGetObject,
+        isUnderTest
+      );
+      break;
+    case ServiceType.translatorsInterpreters:
+      questions = await translatorsInterpreters.generateFormRunnerWebhookData(
+        listItem as TranslatorInterpreterListItemGetObject,
+        isUnderTest
+      );
+      break;
+    default:
+      questions = undefined;
   }
+
+  return questions;
 }
 
 export async function parseJsonFormData(
@@ -120,6 +116,6 @@ export async function parseJsonFormData(
 
     return questions;
   } catch (error) {
-    logger.error(`parseJsonFormData Error: ${(error as Error).message}`);
+    throw new Error(`parseJsonFormData Error: ${(error as Error).message}`);
   }
 }

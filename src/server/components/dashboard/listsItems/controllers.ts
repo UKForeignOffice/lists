@@ -42,6 +42,7 @@ import {
 } from "server/services/govuk-notify";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
+import { HttpException } from "server/middlewares/error-handlers";
 
 import { recordEvent } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
@@ -76,68 +77,64 @@ export async function listItemGetController(
     };
   }
 
-  try {
-    const list = await findListById(listId);
-    const listItem: ListItemGetObject = await findListItemById(listItemId);
-    let requestedChanges;
+  const list = await findListById(listId);
+  const listItem: ListItemGetObject = await findListItemById(listItemId);
+  let requestedChanges;
 
-    if (listItem.status === Status.EDITED) {
-      const auditForEdits = listItem?.history
-        ?.filter((event) => event.type === "EDITED")
-        .sort((a, b) => a.id - b.id)
-        .pop();
+  if (listItem.status === Status.EDITED) {
+    const auditForEdits = listItem?.history
+      ?.filter((event) => event.type === "EDITED")
+      .sort((a, b) => a.id - b.id)
+      .pop();
 
-      const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
-      const updatedJsonData = auditJsonData?.updatedJsonData;
-      if (updatedJsonData !== undefined) {
-        listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
-        const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
-        // @ts-ignore
-        listItem.address = {
-          ...listItem.address,
-          ...updatedAddressFields,
-        };
-      }
+    const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
+    const updatedJsonData = auditJsonData?.updatedJsonData;
+    if (updatedJsonData !== undefined) {
+      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
+      const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
+      // @ts-ignore
+      listItem.address = {
+        ...listItem.address,
+        ...updatedAddressFields,
+      };
     }
-
-    if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
-      const eventForRequestedChanges = listItem?.history
-        ?.filter((event) => event.type === "OUT_WITH_PROVIDER")
-        .sort((a, b) => a.id - b.id)
-        .pop();
-
-      requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
-    }
-    const actionButtons: { [key: string]: string[] } = {
-      NEW: ["publish", "request-changes", "remove"],
-      OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
-      EDITED: ["update", "request-changes", "remove"],
-      // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
-      // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
-      // REVIEWED: ["update", "request-changes", "remove"],
-      PUBLISHED: ["unpublish", "remove"],
-      UNPUBLISHED: ["publish", "request-changes", "remove"],
-    };
-
-    const isPinned =
-    listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-    const actionButtonsForStatus = actionButtons[listItem.status];
-    res.render("dashboard/lists-item", {
-      ...DEFAULT_VIEW_PROPS,
-      changeMessage: req.session?.changeMessage,
-      list,
-      listItem,
-      isPinned,
-      actionButtons: actionButtonsForStatus,
-      requestedChanges,
-      error,
-      title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
-      details: getDetailsViewModel(listItem),
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    logger.error(`listItemGetController Error: ${(error as Error).message}`);
   }
+
+  if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
+    const eventForRequestedChanges = listItem?.history
+      ?.filter((event) => event.type === "OUT_WITH_PROVIDER")
+      .sort((a, b) => a.id - b.id)
+      .pop();
+
+    requestedChanges = eventForRequestedChanges?.jsonData?.requestedChanges;
+  }
+  const actionButtons: { [key: string]: string[] } = {
+    NEW: ["publish", "request-changes", "remove"],
+    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
+    EDITED: ["update", "request-changes", "remove"],
+    // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
+    // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
+    // REVIEWED: ["update", "request-changes", "remove"],
+    PUBLISHED: ["unpublish", "remove"],
+    UNPUBLISHED: ["publish", "request-changes", "remove"],
+  };
+
+  const isPinned =
+  listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
+  const actionButtonsForStatus = actionButtons[listItem.status];
+  res.render("dashboard/lists-item", {
+    ...DEFAULT_VIEW_PROPS,
+    changeMessage: req.session?.changeMessage,
+    list,
+    listItem,
+    isPinned,
+    actionButtons: actionButtonsForStatus,
+    requestedChanges,
+    error,
+    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
+    details: getDetailsViewModel(listItem),
+    csrfToken: getCSRFToken(req),
+  });
 }
 
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
@@ -301,7 +298,7 @@ export async function handlePinListItem(
   } catch (error) {
     logger.error(`deleteListItem Error ${(error as Error).message}`);
 
-    throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
+    throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item: ${(error as Error).message}`);
   }
 }
 
@@ -631,36 +628,26 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
     }
 
     if (list === undefined) {
-      res.status(404).send({
-        error: {
-          message: `Could not find list ${listId}`,
-        },
-      });
+      const err = new HttpException(404, `Could not find list ${listId}`);
+      return next(err);
+
     } else if (listItem === undefined) {
-      res.status(404).send({
-        error: {
-          message: `Could not find list item ${listItemId}`,
-        },
-      });
+      const err = new HttpException(404, `Could not find list item ${listItemId}`);
+      return next(err);
+
     } else if (list?.type !== listItem?.type) {
-      res.status(400).send({
-        error: {
-          message: `Trying to edit a list item which is a different service type to list ${listId}`,
-        },
-      });
+      const err = new HttpException(400, `Trying to edit a list item which is a different service type to list ${listId}`);
+      return next(err);
+
     } else if (list?.id !== listItem?.listId) {
-      res.status(400).send({
-        error: {
-          message: `Trying to edit a list item which does not belong to list ${listId}`,
-        },
-      });
+      const err = new HttpException(400, `Trying to edit a list item which does not belong to list ${listId}`);
+      return next(err);
+
     } else if (!userIsListPublisher(req, list)) {
-      res.status(403).send({
-        error: {
-          message: "User doesn't have publishing right on this list",
-        },
-      });
+      const err = new HttpException(403, "User does not have publishing rights on this list.");
+      return next(err);
     }
+
     return next();
   } catch (error) {
     logger.error(`listItemEditRequestValidation Error: ${(error as Error).message}`);
