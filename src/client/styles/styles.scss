@@ -283,4 +283,7 @@ $two-thirds: $one-third * 2;
 .grey-border-bottom {
   border-bottom: 1px solid grey;
   padding-bottom: 1rem;
+  .grey-text {
+    color:  #868D91;
+  }
 }
