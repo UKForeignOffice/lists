@@ -5,12 +5,12 @@ Feature:
 		Given I am logged in as a "SuperAdmin"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | service          |
-			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
-			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | funeralDirectors |
-			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
-			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | funeralDirectors |
-			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | funeralDirectors |
+			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                      | hiddenRadioButtons                          | service          |
+			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
+			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
+			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Publish,Remove             | Unpublish,Update live version               | funeralDirectors |
+			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | false     | false      | true          | Request changes,Update live version,Remove | Publish,Unpublish                           | funeralDirectors |
+			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                          | Publish,Update live version,Request changes | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
 
 
@@ -73,12 +73,12 @@ Feature:
 		And I click the "Publish" radio button
 		And I click the "Continue" button
 		And I click the "Publish" button
-		Then I see the notification text "Peace Funerals has been published"
+		Then I see the notification text "Peace Funerals has been updated and published"
 
 
 	Scenario: Confirm and update published list item
 		When I am viewing the list item details for "Luke"
-		And I click the "Confirm and update" radio button
+		And I click the "Update live version" radio button
 		And I click the "Continue" button
 		And I click the "Update" button
 		Then I see the notification text "Samba directors has been updated and published"

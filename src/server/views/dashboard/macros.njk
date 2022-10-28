@@ -72,6 +72,14 @@
           </label>
         </div>
         {% endif %}
+        {% if "update-new" in actionButtons %}
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateNew" form="mainForm">
+            <label class="govuk-label govuk-radios__label" for="action-update">
+              Publish
+            </label>
+          </div>
+        {% endif %}
         {% if "unpublish" in actionButtons %}
         <div class="govuk-radios__item">
           <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish" form="mainForm">
@@ -96,11 +104,11 @@
           </div>
         </div>
         {% endif %}
-        {% if "update" in actionButtons %}
+        {% if "update-live" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="{{ 'update' if listItem.isPublished else 'publish' }}" form="mainForm">
+          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateLive" form="mainForm">
           <label class="govuk-label govuk-radios__label" for="action-update">
-            {% if listItem.isPublished %}Confirm and update{% else %}Publish{% endif %}
+            Update live version
           </label>
         </div>
         {% endif %}

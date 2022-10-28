@@ -5,13 +5,13 @@ Feature:
     Given I am logged in as a "SuperAdmin"
     And A "lawyers" list exists for Eurasia
     And there are these list items
-      | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                     | hiddenRadioButtons                         | updatedAt |
-      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 01/01/22  |
-      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 05/01/22  |
-      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove            | Unpublish,Confirm and update               | 12/01/22  |
-      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 03/02/22  |
-      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED            | true        | false     | false      | true          | Request changes,Confirm and update,Remove | Publish,Unpublish                          | 04/02/22  |
-      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                         | Publish,Request changes,Confirm and update | 08/01/22  |
+      | contactName | organisationName | emailAddress               | status            | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                      | hiddenRadioButtons                          | updatedAt |
+      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | false     | false      | true          | Publish,Request changes,Remove             | Unpublish,Update live version               | 01/01/22  |
+      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false     | false      | false         | Publish,Request changes,Remove             | Unpublish,Update live version               | 05/01/22  |
+      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | false     | false      | true          | Publish,Request changes,Remove             | Unpublish,Update live version               | 12/01/22  |
+      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | false     | false      | true          | Publish,Request changes,Remove             | Update live version,Unpublish               | 03/02/22  |
+      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED            | true        | false     | false      | true          | Update live version,Request changes,Remove | Publish,Unpublish                           | 04/02/22  |
+      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | false     | false      | true          | Unpublish, Remove                          | Publish,Request changes,Update live version | 08/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
   Scenario Outline: View list item details
@@ -21,11 +21,11 @@ Feature:
     And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName | radioButtons                              | radioButtonsConfirm          |
-      | Winston     | Publish,Request changes,Remove            | Unpublish,Confirm and update |
-      | Julia       | Publish,Request changes,Remove            | Unpublish,Confirm and update |
-      | Bruce       | Request changes,Confirm and update,Remove | Publish,Unpublish            |
-      | Joker       | Request changes,Publish,Remove            | Uodate,Unpublish             |
+      | contactName | radioButtons                               | radioButtonsConfirm                         |
+      | Winston     | Publish,Request changes,Remove             | Unpublish,Update live version               |
+      | Julia       | Publish,Request changes,Remove             | Unpublish,Update live version               |
+      | Bruce       | Update live version,Request changes,Remove | Publish,Unpublish                           |
+      | Joker       | Publish,Request changes,Remove             | Update live version,Unpublish               |
 
 
   Scenario Outline: Request changes for list item
@@ -82,13 +82,13 @@ Feature:
     And I click the "Publish" radio button
     And I click the "Continue" button
     And I click the "Publish" button
-    Then I see the notification text "Emmanuel Law has been published"
+    Then I see the notification text "Emmanuel Law has been updated and published"
 
 
   Scenario: Confirm and update published  list item
 
     When I am viewing the list item details for "Bruce"
-    And I click the "Confirm and update" radio button
+    And I click the "Update live version" radio button
     And I click the "Continue" button
     And I click the "Update" button
     Then I see the notification text "Wayne Lawyers has been updated and published"
