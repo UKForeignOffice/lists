@@ -1,11 +1,7 @@
 /**
  * Field(s) must be specified for non primitive macros, since they cannot be type checked for.
  */
-export type NonPrimitiveMacros =
-  | "link"
-  | "emailAddress"
-  | "phoneNumber"
-  | "multiLineText";
+export type NonPrimitiveMacros = "link" | "emailAddress" | "phoneNumber" | "multiLineText";
 
 /**
  * Can be checked for type in a "vanilla" way
@@ -31,4 +27,30 @@ export interface govukRow {
 export interface govukSummaryList {
   title?: string;
   rows: govukRow[];
+}
+
+export interface ListItemUrls {
+  listItem: string;
+  listIndex: string;
+  listItemPublish: string;
+  listItemUpdate: string;
+  listItemRequestChanges: string;
+  listItemDelete: string;
+  listItemPin: string;
+}
+
+export interface ListItemConfirmationPage {
+  path: string;
+  postActionPageUrl: string;
+}
+
+export interface ListItemConfirmationPages {
+  publish: ListItemConfirmationPage;
+  unpublish: ListItemConfirmationPage;
+  requestChanges: ListItemConfirmationPage;
+  updateLive: ListItemConfirmationPage;
+  updateNew: ListItemConfirmationPage;
+  pin: ListItemConfirmationPage;
+  unpin: ListItemConfirmationPage;
+  remove: ListItemConfirmationPage;
 }
