@@ -377,7 +377,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   const { listId } = req.params;
   const list = await findListById(listId);
-  let annualReviewYear = todaysDate.getFullYear() + 1;
+  let annualReviewYear = todaysDate.getFullYear();
   let maxDate = add(todaysDate, { months: 6 });
 
   const { month, day } = req.body;
@@ -413,8 +413,8 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
-    newAnnualReviewDateFormatted: format(parseISO(userValuesInAmericanDateFormat), DATE_FORMAT),
-    newAnnualReviewDate,
+    newAnnualReviewDateFormatted: format(parsedDate, DATE_FORMAT),
+    newAnnualReviewDate: parsedDate,
     list,
     csrfToken: getCSRFToken(req),
   });
