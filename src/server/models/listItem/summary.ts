@@ -1,10 +1,11 @@
-import { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
+import { IndexListItem, ListIndexOptions, TAGS } from "server/models/listItem/types";
+import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { Prisma } from "@prisma/client";
+import { Prisma, Status } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "server/models/listItem/summary.helpers";
@@ -12,9 +13,23 @@ import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "ser
 /**
  * Use this as a viewmodel.
  */
+
+export type ListIndex =   {
+  id: number;
+  type: List["type"];
+  country: List["country"];
+  pinnedItems: IndexListItem[];
+  items: IndexListItem[];
+} & PaginationResults;
+
+
 function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
-  const { jsonData, createdAt, updatedAt, id } = item;
+  const { jsonData, createdAt, updatedAt, id, status } = item;
   const { organisationName, contactName } = jsonData as ListItemJsonData;
+  const isPublished = item.isPublished && TAGS.live;
+  const isNew =
+    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED) && TAGS.to_do;
+  const isOutWithProvider = item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
 
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
@@ -24,7 +39,19 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     id,
     activityStatus: getActivityStatus(item),
     publishingStatus: getPublishingStatus(item),
+    status,
+    tags: [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[],
+    lastPublished: getLastPublished(item.history),
   };
+}
+
+function getLastPublished(events: Array<{type: string, time: Date}> | undefined): string {
+  if (!events || events.length === 0) return "Not applicable";
+
+  const publishedEvents = events.filter(event => event.type === "PUBLISHED");
+  const sortedByDate = publishedEvents.sort((a, b) => a.time.getTime() - b.time.getTime());
+
+  return (sortedByDate.length > 0) ? format(sortedByDate[0].time, "dd MMMM yyyy") : "Not applicable";
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
