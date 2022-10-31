@@ -1,0 +1,121 @@
+{% extends "./dashboard.njk" %}
+{% import "../lists/partials/covid-test-providers/macros.njk" as covidTestProvidersMacros %}
+{% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
+{% import "./macros.njk" as dashboardMacros %}
+{% from "checkboxes/macro.njk" import govukCheckboxes %}
+
+{% block aside %}
+<aside>
+  <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">Back</a>
+  <form class="govuk-!-margin-top-4">
+    {{ govukCheckboxes({
+      name: "tag",
+      fieldset: {
+        legend: {
+          html: "<strong>Activity status</strong>"
+        }
+      },
+      items: tags
+    }) }}
+
+
+    {{ govukCheckboxes({
+      name: "tag",
+      fieldset: {
+        legend: {
+          html: "<strong>Publishing status</strong>"
+        }
+      },
+      items: publishingStatus
+    }) }}
+    <button class="govuk-button">Apply filters</button>
+  </form>
+</aside>
+
+{% endblock %}
+
+{% block dashboard %}
+
+  {% if messages.successBannerTitle %}
+    {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
+    {% set title = messages.successBannerTitle %}
+    {% set colourClass = ".govuk-tag--blue" %}
+    {% if messages.successBannerColour === "green" %}
+      {% set colourClass = ".govuk-tag--green" %}
+    {% elseif messages.successBannerColour === "red" %}
+      {% set colourClass = ".govuk-tag--red" %}
+    {% endif %}
+    {{ dashboardMacros.successBanner(bannerHeading, title, colourClass) }}
+  {% endif %}
+
+  <h1 class="govuk-heading-l">
+    {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ list.country.name }}
+  </h1>
+
+  <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Annual review
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-notification-banner__heading">
+        Annual review will start on 2 September at 11am (GMT)
+
+        <a href="https://www.google.com">
+          <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" data-module="govuk-button">Change date</button>
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Annual review has started
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-notification-banner__heading">
+        All published service providers were sent a request to review their information on 2 September at 11am (GMT)
+      </p>
+    </div>
+  </div>
+
+  <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        Service providers are going to be unpublished
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+        <strong>2 service providers are going to be unpublished at 1pm on 14 October as they have not responded to the annual review. <a href="#" class="govuk-link">Check which providers</a> are going to be unpublished.</strong>
+    </div>
+  </div>
+
+  {% if list.items.length > 1 %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <div class="govuk-body">List is ordered by last updated, with the oldest items at the top</div>
+  {% endif %}
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% if list.pinnedItems.length !== 0 %}
+    <h2 class="govuk-heading-m">Pinned items</h2>
+    <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
+      {% for listItem in list.pinnedItems %}
+        {% set list = list %}
+        {% include "./partials/list-item-summary.njk" %}
+      {% endfor %}
+    </ul>
+
+  {% endif %}
+  {% if list.items.length === 0 %}
+    <p class="govuk-body">This list is empty</p>
+  {% else %}
+    <ul class="govuk-list dashboard__content-list">
+      {% for listItem in list.items %}
+        {% set list = list %}
+        {% include "./partials/list-item-summary-temp.njk" %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

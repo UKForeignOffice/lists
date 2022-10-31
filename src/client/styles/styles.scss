@@ -273,3 +273,8 @@ $two-thirds: $one-third * 2;
 .govuk-notification-banner__full-width {
   max-width: 100%;
 }
+
+.govuk-notification-banner--error {
+  border-color: 	#AA2A16;
+  background-color: 	#AA2A16;
+}
