@@ -8,7 +8,7 @@ import { getPaginationValues } from "server/models/listItem/pagination";
 import { Prisma, Status } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "server/models/listItem/summary.helpers";
+import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
 
 /**
  * Use this as a viewmodel.
@@ -38,8 +38,6 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     organisationName,
     contactName,
     id,
-    activityStatus: getActivityStatus(item),
-    publishingStatus: getPublishingStatus(item),
     status,
     activityStatus: tags.map(addClassToTag),
     publishingStatus: ['live'].map(addClassToTag),
