@@ -1,0 +1,40 @@
+{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
+{% import "../dashboard/partials/macros.njk" as rowMacros %}
+
+{% extends "layout.njk" %}
+{% block content %}
+  <h1 class="govuk-heading-l">
+    Check that your information is still correct
+  </h1>
+
+  {{ govukNotificationBanner({
+    text: 'To remain on the list of [type] in [country] you need to either: '
+  }) }}
+
+  {{ govukSummaryList({
+    rows: rows | renderRowValues(rowMacros, rows)
+  }) }}
+
+  {{ govukRadios({
+    name: "is-your-information-correct",
+    fieldset: {
+      legend: {
+        text: "Is your information still correct?",
+        isPageHeading: true,
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes, I confirm my information is still correct"
+      },
+      {
+        value: "no",
+        text: "No, I need to update my information"
+      }
+    ]
+  }) }}
+{% endblock %}
