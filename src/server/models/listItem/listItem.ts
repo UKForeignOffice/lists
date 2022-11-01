@@ -113,6 +113,63 @@ export async function findListItemByReference(ref: string): Promise<ListItem | n
   }
 }
 
+<<<<<<< HEAD
+=======
+export async function findListItemByReference(ref: string): Promise<ListItem | null> {
+  try {
+    return await prisma.listItem.findUnique({
+        where: { reference: ref }
+    });
+  } catch (error) {
+    throw new Error(`findListItemByReference Error ${(error as Error).message}`);
+  }
+}
+
+export async function togglerListItemIsApproved({
+  id,
+  isApproved,
+  userId,
+}: {
+  id: number;
+  isApproved: boolean;
+  userId: User["id"];
+}): Promise<ListItem> {
+  const data: {
+    isApproved: boolean;
+    isPublished?: boolean;
+  } = { isApproved };
+
+  if (userId === undefined) {
+    throw new Error("togglerListItemIsApproved Error: userId is undefined");
+  }
+
+  if (!isApproved) {
+    data.isPublished = false;
+  }
+
+  try {
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: { id },
+        data,
+      }),
+      recordListItemEvent(
+        {
+          eventName: isApproved ? "approve" : "disapprove",
+          itemId: id,
+          userId,
+        },
+        AuditEvent.UNPUBLISHED
+      ),
+    ]);
+    return listItem;
+  } catch (error) {
+    logger.error(`togglerListItemIsApproved Error ${error.message}`);
+    throw error;
+  }
+}
+
+>>>>>>> c1c75595 (chore: render correct data onto the page)
 /**
  * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
  */
