@@ -21,7 +21,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
-    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW
+    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
     if (await dateHasExpired(listItem.id)) {
@@ -143,7 +143,7 @@ export async function declarationPostController(req: Request, res: Response, nex
     await prisma.listItem.update({
       where: { id: listItem.id },
       data: {
-        status: Status.CHECK_ANNUAL_REVIEW
+        status: Status.CHECK_ANNUAL_REVIEW,
       },
     });
 
