@@ -143,7 +143,7 @@ export async function listItemsIndexController(
     if (list === undefined) {
       return next();
     }
-    res.render("dashboard/lists-items-temp", {
+    res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
       req,
