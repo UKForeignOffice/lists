@@ -59,7 +59,7 @@ function addClassToTag(tags: string): { name: string, class: string } {
   const names: Record<string, string> = {
     to_do: 'To do',
     published: 'Published',
-    out_with_provider: "With provider",
+    out_with_provider: "out with provider",
     annual_review: "Annual review",
     new: "New",
     live: "Live",
