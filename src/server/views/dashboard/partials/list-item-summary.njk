@@ -21,6 +21,7 @@
     </h2>
   </div>
   <div class="dashboard__list-item-tag-container">
+    {% for tag in listItem.activityStatus %}
       {% include "./list-item-tag.njk" %}
   </div>
   <div class="dashboard__list-item-body">

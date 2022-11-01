@@ -182,7 +182,7 @@ $two-thirds: $one-third * 2;
   }
   &__list-item-tag-container {
     position: absolute;
-    top: govuk-spacing(3);
+    top: 0;
     right: 0;
     width: $one-third;
     text-align: right;

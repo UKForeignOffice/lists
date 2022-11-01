@@ -34,15 +34,22 @@
       {{ listItem.contactName }}
     </h2>
   </div>
-  <div class="dashboard__list-item-tag-container">
-    {% for tag in listItem.tags %}
-      {% include "./list-item-tag.njk" %}
-    {% endfor %}
-  </div>
+
   <div class="dashboard__list-item-body">
-    <strong class="govuk-tag dashboard__list-item-tag govuk-tag--blue">
-      {{ dictionary[listItem.status] }}
-    </strong>
+    <div>
+      {% for tag in listItem.publishingStatus %}
+        <strong class="govuk-tag dashboard__list-item-tag {{ tag.class }}">
+          {{ tag.name }}
+        </strong>
+      {% endfor %}
+      <div class="dashboard__list-item-tag-container">
+        {% for tag in listItem.activityStatus %}
+          <strong class="govuk-tag dashboard__list-item-tag {{ tag.class }}">
+            {{ tag.name }}
+          </strong>
+        {% endfor %}
+      </div>
+    </div>
     <p>
       <span class="govuk-!-font-weight-bold">Last updated</span>
       {{ listItem.updatedAt }}

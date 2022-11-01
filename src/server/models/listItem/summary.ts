@@ -30,6 +30,7 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
   const isNew =
     (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED) && TAGS.to_do;
   const isOutWithProvider = item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
+  const tags = [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[];
 
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
@@ -40,8 +41,36 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     activityStatus: getActivityStatus(item),
     publishingStatus: getPublishingStatus(item),
     status,
-    tags: [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[],
+    activityStatus: tags.map(addClassToTag),
+    publishingStatus: ['live'].map(addClassToTag),
     lastPublished: getLastPublished(item.history),
+  };
+}
+
+function addClassToTag(tags: string): { name: string, class: string } {
+  const colours: Record<string, string> = {
+    published: "green",
+    approved: "turquoise",
+    to_do: "blue",
+    out_with_provider: "yellow",
+    new: "grey",
+    live: "green",
+    unpublished: "red",
+  }
+
+  const names: Record<string, string> = {
+    to_do: 'To do',
+    published: 'Published',
+    out_with_provider: "With provider",
+    annual_review: "Annual review",
+    new: "New",
+    live: "Live",
+    unpublished: "Unpublished",
+  }
+
+  return {
+    name: names[tags],
+    class: `govuk-tag--${colours[tags]}`,
   };
 }
 

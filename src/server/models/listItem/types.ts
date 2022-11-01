@@ -53,7 +53,8 @@ export type IndexListItem = Pick<
   publishingStatus: string;
   activityStatus: ActivityStatusViewModel;
   status: string;
-  tags: string[];
+  activityStatus: Array<Record<string, string>>;
+  publishingStatus?: Array<Record<string, string>>;
   lastPublished: string;
 };
 
