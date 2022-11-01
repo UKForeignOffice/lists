@@ -113,6 +113,16 @@ export async function findListItemByReference(ref: string): Promise<ListItem | n
   }
 }
 
+export async function findListItemByReference(ref: string): Promise<ListItem | null> {
+  try {
+    return await prisma.listItem.findUnique({
+        where: { reference: ref }
+    });
+  } catch (error) {
+    throw new Error(`findListItemByReference Error ${(error as Error).message}`);
+  }
+}
+
 export async function togglerListItemIsApproved({
   id,
   isApproved,
