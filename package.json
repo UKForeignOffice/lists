@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npm run prisma:generate && webpack",
     "build:ci": "npm run prisma:generate && NODE_ENV=test webpack",
-    "start:ci": "npm run prisma:migrate && node --trace-warnings ./dist/server.js",
+    "start:ci": "npm run prisma:deploy && node --trace-warnings ./dist/server.js",
     "deploy-test": "git push origin HEAD:deploy-test --force",
     "environment": "docker-compose pull && docker-compose up --remove-orphans",
     "build:prod": "npm run prisma:generate && NODE_ENV=production webpack",
