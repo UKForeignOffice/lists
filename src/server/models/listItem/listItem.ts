@@ -413,17 +413,17 @@ export async function update(
   if (localServicesProvided) {
     updatedJsonData.localServicesProvided = localServicesProvided;
   }
-  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
-    where: { id },
-    data: {
-      jsonData: updatedJsonData,
-      isApproved: true,
-      isPublished: true,
-      status: Status.PUBLISHED,
-    },
-  };
 
-  let addressPrismaQuery: Nullable<Prisma.AddressUpdateArgs>;
+  const updateEvent = {
+    time: new Date(),
+    type: ListItemEvent.PUBLISHED,
+    jsonData: {
+      eventName: "publish",
+      itemId: id,
+      userId,
+    },
+  }
+
   let geoLocationParams: Nullable<[number, Point]>;
 
   if (requiresAddressUpdate) {
@@ -432,68 +432,52 @@ export async function update(
       const country = getCountryFromData(data);
       const point = await geoLocatePlaceByText(address, country);
 
-      addressPrismaQuery = {
-        where: {
-          id: currentAddress.id,
-        },
-        data: addressUpdates,
-      };
       geoLocationParams = [currentAddress.geoLocationId!, point];
     } catch (e) {
       throw Error("GeoLocation update failed");
     }
   }
 
+
+  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
+    where: { id },
+    data: {
+      jsonData: updatedJsonData,
+      isApproved: true,
+      isPublished: true,
+      status: Status.PUBLISHED,
+      history: {
+        create: [ updateEvent ]
+      },
+      ...(requiresAddressUpdate && {
+        address: {
+          update: {
+            ...addressUpdates
+          }
+        }
+      })
+    },
+  };
+
   try {
     let result;
-    if (requiresAddressUpdate) {
-      result = await prisma.$transaction([
-        prisma.listItem.update(listItemPrismaQuery),
-        prisma.address.update(addressPrismaQuery!),
-        rawUpdateGeoLocation(...geoLocationParams!),
-        recordListItemEvent(
-          {
-            eventName: "publish",
-            itemId: id,
-            userId,
-            // @ts-ignore
-            updatedJsonData,
-          },
-          AuditEvent.PUBLISHED
-        ),
-        recordEvent(
-          {
-            eventName: "publish",
-            itemId: id,
-            userId,
-          },
-          id,
-          ListItemEvent.PUBLISHED
-        ),
-      ]);
+
+    const updateItem = prisma.listItem.update(listItemPrismaQuery);
+    const updateAudit = recordListItemEvent(
+      {
+        eventName: "publish",
+        itemId: id,
+        userId,
+        // @ts-ignore
+        updatedJsonData,
+      },
+      AuditEvent.PUBLISHED
+    )
+
+    if(requiresAddressUpdate) {
+      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit])
     } else {
-      result = await prisma.$transaction([
-        prisma.listItem.update(listItemPrismaQuery),
-        recordListItemEvent(
-          {
-            eventName: "publish",
-            itemId: id,
-            userId,
-            // @ts-ignore
-            updatedJsonData,
-          },
-          AuditEvent.PUBLISHED
-        ),
-        recordEvent(
-          {
-            eventName: "publish",
-            itemId: id,
-            userId,
-          },
-          id,
-          ListItemEvent.PUBLISHED
-        ),
-      ]);
+      result = await prisma.$transaction([updateItem, updateAudit])
     }
 
     if (!result) {

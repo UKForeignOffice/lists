@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
-  previewFeatures = ["filterJson", "selectRelationCount"]
+  previewFeatures = ["filterJson", "selectRelationCount", "referentialActions"]
 }
 
 datasource db {
@@ -41,6 +41,8 @@ model ListItem {
   isApproved          Boolean @default(false)
   isPublished         Boolean @default(false)
   isBlocked           Boolean @default(false)
+  //isAnnualReview
+
 
   pinnedBy            User[]
 
@@ -155,8 +157,8 @@ model GeoLocation {
 
 model Event {
   id                  Int    @id @default(autoincrement())
-  time                DateTime
-  listItem            ListItem @relation(fields: [listItemId], references: [id])
+  time                DateTime @default(now())
+  listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
   jsonData            Json

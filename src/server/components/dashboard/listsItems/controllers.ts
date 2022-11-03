@@ -15,7 +15,7 @@ import {
 } from "server/models/types";
 import { dashboardRoutes } from "server/components/dashboard";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, ListItemEvent, Status } from "@prisma/client";
+import { AuditEvent, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -31,7 +31,7 @@ import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/go
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
-import { recordEvent } from "server/models/listItem/listItemEvent";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
@@ -200,68 +200,36 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
   }
 
   try {
-    let listItem;
-    if (isPinned) {
-      [listItem] = await prisma.$transaction([
-        prisma.listItem.update({
-          where: {
-            id,
-          },
-          data: {
-            pinnedBy: {
-              connect: [{ id: userId }],
-            },
-          },
-        }),
-        recordListItemEvent(
-          {
-            eventName: "pin",
-            itemId: id,
-            userId,
-          },
-          AuditEvent.PINNED
-        ),
-        recordEvent(
-          {
-            eventName: "pin",
-            itemId: id,
-            userId,
-          },
+    const auditEvent = recordListItemEvent(
+      {
+        eventName: isPinned ? "pin": "unpin",
+        itemId: id,
+        userId,
+      },
+      isPinned ? AuditEvent.PINNED : AuditEvent.UNPINNED
+    )
+
+    const connectOrDisconnect = isPinned ? "connect" : "disconnect";
+    const pinOrUnpinEvent = isPinned ? EVENTS.PINNED(userId) : EVENTS.PINNED(userId)
+
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: {
           id,
-          ListItemEvent.PINNED
-        ),
-      ]);
-    } else {
-      [listItem] = await prisma.$transaction([
-        prisma.listItem.update({
-          where: {
-            id,
+        },
+        data: {
+          pinnedBy: {
+            [connectOrDisconnect]: [{ id: userId }],
           },
-          data: {
-            pinnedBy: {
-              disconnect: [{ id: userId }],
-            },
-          },
-        }),
-        recordListItemEvent(
-          {
-            eventName: "unpin",
-            itemId: id,
-            userId,
-          },
-          AuditEvent.UNPINNED
-        ),
-        recordEvent(
-          {
-            eventName: "unpin",
-            itemId: id,
-            userId,
-          },
-          id,
-          ListItemEvent.UNPINNED
-        ),
-      ]);
-    }
+          history: {
+            create: [
+              pinOrUnpinEvent
+            ]
+          }
+        },
+      }),
+      auditEvent
+    ])
 
     return listItem;
   } catch (e: any) {
@@ -403,19 +371,19 @@ async function handleListItemRequestChanges(
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
-  const listItemEvent = ListItemEvent.OUT_WITH_PROVIDER;
 
   try {
     await prisma.$transaction([
       prisma.listItem.update({
         where: { id: listItem.id },
-        data: { status, isPublished: false },
-        include: {
-          address: {
-            include: {
-              country: true,
-            },
-          },
+        data: {
+          status,
+          isPublished: false,
+          history: {
+            create: [
+              EVENTS.OUT_WITH_PROVIDER(userId, message)
+            ]
+          }
         },
       }),
       recordListItemEvent(
@@ -426,16 +394,6 @@ async function handleListItemRequestChanges(
           requestedChanges: message,
         },
         auditEvent
-      ),
-      recordEvent(
-        {
-          eventName: "requestChange",
-          itemId: listItem.id,
-          userId,
-          requestedChanges: message,
-        },
-        listItem.id,
-        listItemEvent
       ),
     ]);
   } catch (error: any) {
