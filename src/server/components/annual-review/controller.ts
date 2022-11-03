@@ -1,14 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { startCase } from "lodash";
 import { Status } from "@prisma/client";
+import { add, isPast } from "date-fns";
 
 import * as Types from "../dashboard/listsItems/types";
 import { findListItemByReference } from "server/models/listItem/listItem";
 import { getDetailsViewModel } from "server/components/dashboard/listsItems/getViewModel";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
-import type { ListItemGetObject } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
+
+import type { ListItemGetObject, List } from "server/models/types";
+
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -16,13 +19,21 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
+    const userHasConfirmed = listItem.status === Status.CHANGE_ANNUAL_REVIEW;
     let error = null;
+
+    if (await dateHasExpired(listItem.id)) {
+      res.redirect("annual-review/error?expired=true");
+    }
+
+    if (userHasConfirmed) {
+      res.redirect("annual-review/error?confirmed=true");
+    }
 
     if (errorMsg) {
       error = { text: errorMsg };
     }
 
-    console.log(listItem, "listItem")
     res.render("annual-review/provider-confirmation", {
       rows,
       country: listItem?.jsonData?.country,
@@ -34,6 +45,23 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
   } catch (err) {
     next(err);
   }
+}
+
+async function dateHasExpired(listId: number): Promise<boolean | undefined> {
+  const listData = await prisma.list.findUnique({
+    where: {
+      id: Number(listId),
+    },
+  }) as List;
+
+  if (!listData?.jsonData?.annualReviewStartDate) {
+    throw new Error("An annual review start date does not exist");
+  }
+
+  const annualReviewStartDate = new Date(listData?.jsonData?.annualReviewStartDate);
+  const maxDate = add(annualReviewStartDate, { weeks: 6 });
+
+  return isPast(maxDate);
 }
 
 function formatDataForSummaryRows(listItem: ListItemGetObject): Types.govukRow[] {
