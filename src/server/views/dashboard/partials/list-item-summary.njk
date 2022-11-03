@@ -21,8 +21,9 @@
     </h2>
   </div>
   <div class="dashboard__list-item-tag-container">
-    {% for tag in listItem.activityStatus %}
-      {% include "./list-item-tag.njk" %}
+    <strong class="govuk-tag dashboard__list-item-tag {{ listItem.activityStatus.class }}">
+      {{ listItem.activityStatus.name }}
+    </strong>
   </div>
   <div class="dashboard__list-item-body">
     <p>
