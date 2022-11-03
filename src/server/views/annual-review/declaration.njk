@@ -6,55 +6,55 @@
 
 
 {% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-three-quarters">
-    <div class="back-links__item govuk-!-margin-top-0 govuk-!-margin-bottom-5">
-      <a class="govuk-link govuk-back-link" href="/annual-review/confirm/{{ reference }}">Back</a>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <div class="back-links__item govuk-!-margin-top-0 govuk-!-margin-bottom-5">
+        <a class="govuk-link govuk-back-link" href="/annual-review/confirm/{{ reference }}">Back</a>
+      </div>
+
+      {% if error.text %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: error.text,
+              href: "#is-your-information-correct"
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-l">
+        Declaration
+      </h1>
+
+      <p class="govuk-body">By continuing you declare that you are:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation</li>
+        <li>not disbarred from practising law</li>
+        <li>reliable and willing to help on a regular basis</li>
+        <li>able to respond within a reasonable timeframe to client requests</li>
+        <li>willing to update or re-confirm your details on a bi-annual basis on request </li>
+        <li> aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way</li>
+      </ul>
+
+      <form action="/annual-review/declaration/{{ reference }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ govukCheckboxes({
+          name: "confirmation",
+          errorMessage: error,
+          items: [
+            {
+              value: "confirm",
+              text: "Confirmed"
+            }
+          ]
+        }) }}
+
+        {{ govukButton({
+          text: "Submit"
+        }) }}
+      </form>
     </div>
-
-    {% if error.text %}
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: [
-          {
-            text: error.text,
-            href: "#is-your-information-correct"
-          }
-        ]
-      }) }}
-    {% endif %}
-
-    <h1 class="govuk-heading-l">
-      Declaration
-    </h1>
-
-    <p class="govuk-body">By continuing you declare that you are:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation</li>
-      <li>not disbarred from practising law</li>
-      <li>reliable and willing to help on a regular basis</li>
-      <li>able to respond within a reasonable timeframe to client requests</li>
-      <li>willing to update or re-confirm your details on a bi-annual basis on request </li>
-      <li> aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way</li>
-    </ul>
-
-    <form action="/annual-review/declaration/{{ reference }}" method="post">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-      {{ govukCheckboxes({
-        name: "confirmation",
-        errorMessage: error,
-        items: [
-          {
-            value: "confirm",
-            text: "Confirmed"
-          }
-        ]
-      }) }}
-
-      {{ govukButton({
-        text: "Submit"
-      }) }}
-    </form>
   </div>
-</div>
 {% endblock %}

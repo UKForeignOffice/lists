@@ -1,0 +1,24 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <h1 class="govuk-heading-xl">
+        {% if confirmed %}
+          You have already submitted your annual review
+        {% else %}
+          This link has expired
+        {% endif %}
+      </h1>
+
+      <p class="govuk-body">
+        {% if confirmed %}
+          The annual review for your business has already been submitted.
+        {% else %}
+          This link has expired
+        {% endif %}
+      </p>
+      <p class="govuk-body">Contact the British consulate or embassy in your country if you have any questions.</p>
+    </div>
+  </div>
+{% endblock %}
