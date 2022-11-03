@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { startCase } from "lodash";
+import { Status } from "@prisma/client";
 
 import * as Types from "../dashboard/listsItems/types";
 import { findListItemByReference } from "server/models/listItem/listItem";
@@ -7,6 +8,7 @@ import { getDetailsViewModel } from "server/components/dashboard/listsItems/getV
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import type { ListItemGetObject } from "server/models/types";
+import { prisma } from "server/models/db/prisma-client";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -20,6 +22,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
       error = { text: errorMsg };
     }
 
+    console.log(listItem, "listItem")
     res.render("annual-review/provider-confirmation", {
       rows,
       country: listItem?.jsonData?.country,
@@ -40,7 +43,7 @@ function formatDataForSummaryRows(listItem: ListItemGetObject): Types.govukRow[]
   return mergedRows;
 }
 
-export function confirmPostController(req: Request, res: Response, next: NextFunction): void {
+export function confirmPostController(req: Request, res: Response): void {
   const chosenValue = req.body["is-your-information-correct"];
 
   if (!chosenValue) {
@@ -75,17 +78,29 @@ export function declarationGetController(req: Request, res: Response, next: Next
   res.render("annual-review/declaration", { reference: listItemRef, error, csrfToken: getCSRFToken(req) });
 }
 
-export function declarationPostController(req: Request, res: Response): void {
-  const { confirmation } = req.body;
-  const { listItemRef } = req.params;
+export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { confirmation } = req.body;
+    const { listItemRef } = req.params;
 
-  if (!confirmation) {
-    req.flash("declarationError", "You must tick the declaration box");
-    return res.redirect(`/annual-review/declaration/${listItemRef}`);
+    if (!confirmation) {
+      req.flash("declarationError", "You must select the declaration box to proceed");
+      return res.redirect(`/annual-review/declaration/${listItemRef}`);
+    }
+
+    const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
+
+    await prisma.listItem.update({
+      where: { id: listItem.id },
+      data: {
+        status: Status.CHECK_ANNUAL_REVIEW,
+      },
+    });
+
+    res.redirect("/annual-review/submitted");
+  } catch (err) {
+    next(err);
   }
-
-  // Use prisma to add CHECK_ANNUAL_REVIEW status to listItem
-  res.redirect("/annual-review/submitted");
 }
 
 export function submittedGetController(_: Request, res: Response): void {

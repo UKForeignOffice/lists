@@ -1,4 +1,4 @@
-# FCDO Lists 
+# FCDO Lists
 
 ## Architecture
 
@@ -21,11 +21,11 @@ The lists server is a NodeJs/Typescript application built on top of ExpressJS, a
 The lists server depends on [XGovFormBuilder/digital-form-builder](https://github.com/XGovFormBuilder/digital-form-builder)
 to deploy form journeys for data ingestion. The base docker images for the form runner have already been built.
 
-**To add new forms:** 
+**To add new forms:**
 1. Add or replace a form configuration in `docker/apply/forms-json/`
 2. The form runner will create a new route matching the file name.
 i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
-  
+
 
 To start the form runner
 ```sh
@@ -100,7 +100,7 @@ Form runner variables:
 | ------- | :-----: | :------: | :-------------------------------------------------------------------------------------- |
 | sandbox | boolean |  false   | Configure form-runner to work locally with a single redis instance instead of a cluster |
 
-However, you may also set environment variables via `docker/apply/config/*.json`. At runtime, if the `NODE_ENV` matches the config file name, 
+However, you may also set environment variables via `docker/apply/config/*.json`. At runtime, if the `NODE_ENV` matches the config file name,
 those environment variables will be used. See a complete list of environment variables and what they do in the [XGovFormBuilder/runner/config/default.js file](https://github.com/XGovFormBuilder/digital-form-builder/blob/main/runner/config/default.js).
 
 ### Getting started
@@ -154,10 +154,10 @@ We use [CircleCI](https://circleci.com) for CI. Config for this is committed alo
 
 ## Deploy Development Environment
 
-Push your changes to `deploy-dev` branch and the CI will build and deploy the development environment (you might need to use "the `--force`").
+Push your changes to `deploy-test` branch and the CI will build and deploy the development environment (you might need to use "the `--force`").
 
 ```bash
-git push origin HEAD:deploy-dev --force
+git push origin HEAD:deploy-test --force
 ```
 
 ## Continuous Delivery
