@@ -12,14 +12,14 @@
 
   <form class="form" action="{{ dashboardRoutes.listsPublisherDelete.replace(':listId', list.id) }}" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-    <input type="hidden" name="publisherEmail" value="{{ publisherEmail }}" />
+    <input type="hidden" name="userEmail" value="{{ userEmail }}" />
 
     <h1 class="govuk-heading-l">
       Confirm the removal of this user
     </h1>
 
     <p class="govuk-body">
-        You are about to revoke the permissions for <strong>{{ publisherEmail }}</strong> to accept and publish {{ _.startCase(list.type) }} to the {{ list.country.name }} list.
+        You are about to revoke the permissions for <strong>{{ userEmail }}</strong> to accept and publish {{ _.startCase(list.type) }} to the {{ list.country.name }} list.
     </p>
 
     <div class="govuk-button-group">

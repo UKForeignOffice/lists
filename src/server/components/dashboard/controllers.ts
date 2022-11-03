@@ -70,9 +70,9 @@ export async function usersListController(req: Request, res: Response, next: Nex
 
 export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
-    const { publisherEmail } = req.params;
+    const { userEmail } = req.params;
 
-    if (typeof publisherEmail !== "string") {
+    if (typeof userEmail !== "string") {
       return next();
     }
 
@@ -80,7 +80,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
     let isEditingSuperAdminUser = false;
 
     try {
-      isEditingSuperAdminUser = await isSuperAdminUser(publisherEmail);
+      isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
       if (isEditingSuperAdminUser) {
         // disallow editing of SuperAdmins
         logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
@@ -100,7 +100,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
         roles = (usersRoles ?? "").split(",").map(trim) as UserRoles[];
       }
 
-      await updateUser(publisherEmail, {
+      await updateUser(userEmail, {
         jsonData: {
           roles,
         },
@@ -109,7 +109,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       userSaved = true;
     }
 
-    const user = await findUserByEmail(`${publisherEmail}`);
+    const user = await findUserByEmail(`${userEmail}`);
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
@@ -149,7 +149,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const { publisherChangeType, publisherEmail } = req.query;
+    const { publisherChangeType, userEmail } = req.query;
 
     let list: List | undefined;
 
@@ -162,7 +162,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      publisher: { change: publisherChangeType, message: `User ${publisherEmail} has been ${publisherChangeType}`},
+      publisher: { change: publisherChangeType, message: `User ${userEmail} has been ${publisherChangeType}`},
       listId,
       user: req.user?.userData,
       list,
@@ -180,7 +180,7 @@ export async function listsEditPostController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const removeButtonClicked = "publisherEmail" in req.body;
+    const removeButtonClicked = "userEmail" in req.body;
 
     return removeButtonClicked
       ? await listEditRemovePublisher(req, res)
@@ -249,7 +249,7 @@ export async function listEditAddPublisher(  req: Request,
           `${dashboardRoutes.listsEdit.replace(
             ":listId",
             `${newList.id}`
-          )}?publisherChangeType=created&publisherEmail=${publisher}`
+          )}?publisherChangeType=created&userEmail=${publisher}`
         );
       }
     }
@@ -287,13 +287,13 @@ export async function listEditRemovePublisher(
 ): Promise<void> {
 
   const { listId } = req.params;
-  const publisherEmail = req.body.publisherEmail;
+  const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
 
   res.render("dashboard/list-edit-confirm-delete-user", {
     ...DEFAULT_VIEW_PROPS,
     listId,
-    publisherEmail,
+    userEmail,
     list,
     req,
     csrfToken: getCSRFToken(req),
@@ -306,9 +306,9 @@ export async function listPublisherDelete(
 ): Promise<void> {
 
   const { listId } = req.params;
-  const publisherEmail = req.body.publisherEmail;
+  const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
-  const userHasRemovedOwnEmail = publisherEmail === req.user?.userData.email;
+  const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
 
   if (userHasRemovedOwnEmail) {
     const error = {
@@ -320,7 +320,7 @@ export async function listPublisherDelete(
     return res.render("dashboard/list-edit-confirm-delete-user", {
       ...DEFAULT_VIEW_PROPS,
       listId,
-      publisherEmail,
+      userEmail,
       error,
       list,
       req,
@@ -328,7 +328,7 @@ export async function listPublisherDelete(
     });
   }
 
-  const updatedPublishers = (list as List).jsonData.publishers.filter(publisher => publisher !== publisherEmail);
+  const updatedPublishers = (list as List).jsonData.publishers.filter(publisher => publisher !== userEmail);
 
   await updateList(
     Number(listId),
@@ -339,7 +339,7 @@ export async function listPublisherDelete(
     `${dashboardRoutes.listsEdit.replace(
       ":listId",
       `${listId}`
-    )}?publisherChangeType=removed&publisherEmail=${publisherEmail}`
+    )}?publisherChangeType=removed&userEmail=${userEmail}`
   );
 }
 
