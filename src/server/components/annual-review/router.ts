@@ -17,5 +17,6 @@ annualReviewRouter.get(
 );
 annualReviewRouter.post("/annual-review/declaration/:listItemRef", AnnualReviewController.declarationPostController);
 annualReviewRouter.get("/annual-review/submitted", AnnualReviewController.submittedGetController);
+annualReviewRouter.get("/annual-review/error", AnnualReviewController.errorGetController);
 
 export default annualReviewRouter;

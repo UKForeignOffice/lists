@@ -12,22 +12,21 @@ import { prisma } from "server/models/db/prisma-client";
 
 import type { ListItemGetObject, List } from "server/models/types";
 
-
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listItemRef } = req.params;
     const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
-    const userHasConfirmed = listItem.status === Status.CHANGE_ANNUAL_REVIEW;
+    const userHasConfirmed = listItem.status === Status.ANNUAL_REVIEW; // CHECK_ANNUAL_REVIEW
     let error = null;
 
     if (await dateHasExpired(listItem.id)) {
-      res.redirect("annual-review/error?expired=true");
+      res.redirect("/annual-review/error?expired=true");
     }
 
     if (userHasConfirmed) {
-      res.redirect("annual-review/error?confirmed=true");
+      res.redirect("/annual-review/error?confirmed=true");
     }
 
     if (errorMsg) {
@@ -54,9 +53,10 @@ async function dateHasExpired(listId: number): Promise<boolean | undefined> {
     },
   }) as List;
 
-  if (!listData?.jsonData?.annualReviewStartDate) {
-    throw new Error("An annual review start date does not exist");
-  }
+  // TODO: uncomment after annual review stuff merged in
+  // if (!listData?.jsonData?.annualReviewStartDate) {
+  //   throw new Error("An annual review start date does not exist");
+  // }
 
   const annualReviewStartDate = new Date(listData?.jsonData?.annualReviewStartDate);
   const maxDate = add(annualReviewStartDate, { weeks: 6 });
@@ -121,7 +121,7 @@ export async function declarationPostController(req: Request, res: Response, nex
     await prisma.listItem.update({
       where: { id: listItem.id },
       data: {
-        status: Status.CHECK_ANNUAL_REVIEW,
+        status: Status.ANNUAL_REVIEW, // CHECK_ANNUAL_REVIEW
       },
     });
 
@@ -133,4 +133,13 @@ export async function declarationPostController(req: Request, res: Response, nex
 
 export function submittedGetController(_: Request, res: Response): void {
   res.render("annual-review/submitted");
+}
+
+export function errorGetController(req: Request, res: Response): void {
+  const { expired, confirmed } = req.query;
+
+  res.render("annual-review/error", {
+    expired,
+    confirmed,
+  });
 }
