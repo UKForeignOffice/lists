@@ -22,11 +22,11 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     let error = null;
 
     if (await dateHasExpired(listItem.id)) {
-      res.redirect("/annual-review/error?expired=true");
+      return res.redirect("/annual-review/error?expired=true");
     }
 
     if (userHasConfirmed) {
-      res.redirect("/annual-review/error?confirmed=true");
+      return res.redirect("/annual-review/error?confirmed=true");
     }
 
     if (errorMsg) {
@@ -47,11 +47,11 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
 }
 
 async function dateHasExpired(listId: number): Promise<boolean | undefined> {
-  const listData = await prisma.list.findUnique({
+  const listData = (await prisma.list.findUnique({
     where: {
       id: Number(listId),
     },
-  }) as List;
+  })) as List;
 
   // TODO: uncomment after annual review stuff merged in
   // if (!listData?.jsonData?.annualReviewStartDate) {
