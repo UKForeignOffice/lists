@@ -73,11 +73,6 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
     Contact details
   </h3>
-  {% if item.jsonData.contactName %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>{{ _.startCase(_.toLower(item.jsonData.contactName)) }}</strong>
-    </p>
-  {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>:
       {{ item.address.firstLine }}

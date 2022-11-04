@@ -29,11 +29,6 @@
       {{ (item.distanceinmeters / 1609).toFixed(1) }} miles
     </span>
   {% endif %}
-  {% if item.jsonData.contactName %}
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-4">
-      {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
-    </h2>
-  {% endif %}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
     {% if item.jsonData.websiteAddress %}
         <a class="govuk-link" href="{{ item.jsonData.websiteAddress }}" rel="noopener noreferrer" target="_blank">{{ _.startCase(_.toLower(item.jsonData.organisationName if item.jsonData.organisationName)) }}</a>
@@ -80,11 +75,6 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-4">
     Contact details
   </h3>
-  {% if item.jsonData.contactName %}
-    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Contact name</strong>: {{ _.startCase(_.toLower(item.jsonData.contactName)) }}
-    </p>
-  {% endif %}
   <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
     <strong>Address</strong>:
     {% if item.jsonData.addressDisplay === "partial" %}
