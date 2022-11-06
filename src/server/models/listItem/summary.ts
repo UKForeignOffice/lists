@@ -5,28 +5,92 @@ import { calculatePagination, tagQueryFactory } from "server/models/listItem/que
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { ListItem, Prisma, Status } from "@prisma/client";
+import { ListItem, Prisma, Status, Event, ListItemEvent } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
-function listItemsWithIndexDetails(item: ListItem): IndexListItem {
+
+// TODO: we should start implementing i18n.
+const dictionary: Record<Status, string> = {
+  NEW: 'check new entry',
+  OUT_WITH_PROVIDER: 'edits requested',
+  EDITED: 'check edits',
+  ANNUAL_REVIEW: '',
+  REVIEW_OVERDUE: 'annual review overdue',
+  REVIEWED: 'REVIEWED',
+  PUBLISHED: 'PUBLISHED',
+  UNPUBLISHED: 'UNPUBLISHED',
+}
+
+
+
+const publishingStatusDictionary: Record<string, string> = {
+  isPublished: 'live',
+  unpublished: 'unpublished',
+}
+
+enum PUBLISHING_STATUS {
+  new = "new",
+  live = "live",
+  unpublished = "unpublished",
+  archived = "archived"
+}
+
+function newestEventOfType(history: Event[], type: ListItemEvent): number {
+  return history.findIndex(event => event.type === type)
+}
+
+
+
+function hasBeenUnpublishedSincePublishing(history: Event[]): boolean {
+  const newestPublishEvent = newestEventOfType(history, ListItemEvent.PUBLISHED)
+  const newestUnpublishEvent = newestEventOfType(history, ListItemEvent.UNPUBLISHED)
+  return newestUnpublishEvent !== -1 && newestUnpublishEvent < newestPublishEvent;
+
+}
+
+function getPublishingStatus(item: ListItemWithHistory) {
+
+  if(item.isPublished) {
+    return PUBLISHING_STATUS.live
+  }
+
+  if(item.status === Status.NEW) {
+    return PUBLISHING_STATUS.new
+  }
+
+  if(hasBeenUnpublishedSincePublishing(item.history)) {
+      return PUBLISHING_STATUS.unpublished
+  }
+
+
+
+}
+
+type ListItemWithHistory = ListItem & {
+  history: Event[]
+}
+
+
+/**
+ * Use this as a viewmodel.
+ */
+
+
+function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
+
   const { jsonData, createdAt, updatedAt, id, status } = item;
-  const { organisationName, contactName, publishers, validators, administrators } = jsonData as ListItemJsonData;
-  const isPublished = item.isPublished && TAGS.published;
-  const isNew =
-    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED) && TAGS.to_do;
-  const isOutWithProvider = item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
+  const { organisationName, contactName } = jsonData as ListItemJsonData;
+
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
     updatedAt: format(updatedAt, "dd MMMM yyyy"),
     organisationName,
     contactName,
-    publishers,
-    validators,
-    administrators,
     id,
+    activityStatus: dictionary[status],
+    publishingStatus: getPublishingStatus(item),
     status,
-    tags: [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[],
   };
 }
 
@@ -50,13 +114,79 @@ function findPinnedIndexListItems(options: ListIndexOptions) {
 function getActiveQueries(
   tags: Array<keyof Tags>,
   options: ListIndexOptions
-): { [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput } {
+): { [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput[] } {
   return tags.reduce((prev, tag) => {
     return {
       ...prev,
-      [tag]: tagQueryFactory[tag](options),
+      [tag]: tagQueryFactory[tag],
     };
   }, {});
+}
+
+export async function indexListItems(options: ListIndexOptions) {
+  const { listId } = options;
+  const { tags = [] } = options;
+
+  const activeQueries = getActiveQueries(tags, options);
+
+  return await prisma.listItem.findMany({
+    where: {
+      listId: 82,
+    }
+  })
+
+}
+class ListItemQueryBuilder {
+
+}
+
+class IndexQuery {
+  baseQuery: Prisma.ListItemFindManyArgs = {
+      select: {
+        history: true
+      },
+      where: {
+        AND: [],
+      },
+
+  }
+
+  constructor(options: ListIndexOptions) {
+
+  }
+
+  /**
+   *   if (activeQueries.out_with_provider) {
+   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider);
+   *   }
+   *
+   *   if (activeQueries.live) {
+   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.live);
+   *   }
+   *
+   *   if (activeQueries.to_do) {
+   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do);
+   *   }
+   *
+   *   baseQuer
+   */
+
+
+  withProvider() {}
+
+  live() {
+
+  }
+
+  noActionNeeded() {
+
+  }
+
+  todo() {
+
+  }
+
+
 }
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
@@ -69,13 +199,15 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   } & PaginationResults
 > {
   const { listId } = options;
-  const { tags = [] } = options;
+  const { activity = [], publishing = [] } = options;
+  const reqQueries = [...activity, ...publishing]
 
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
+  // note: we are applying take/skip on List (i.e. take 20 Lists) rather than take 20 Items
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
-  const activeQueries = getActiveQueries(tags, options);
+  const activeQueries = getActiveQueries(reqQueries, options)
 
   const baseQuery = {
     where: {
@@ -84,6 +216,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     select: {
       type: true,
       country: true,
+      jsonData: false,
       items: {
         where: {
           AND: [],
@@ -94,18 +227,21 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
 
   if (activeQueries.out_with_provider) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider as Prisma.ListItemWhereInput[]);
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider);
   }
 
-  if (activeQueries.published) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.published as Prisma.ListItemWhereInput[]);
+  if (activeQueries.live) {
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.live);
   }
 
   if (activeQueries.to_do) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do as Prisma.ListItemWhereInput[]);
+    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do);
   }
 
   baseQuery.select.items = {
+    include: {
+      history: true
+    },
     orderBy: {
       updatedAt: "desc",
     },
@@ -134,8 +270,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       OR: itemsWhereOr,
     };
   }
-  const [pinned, result] = await prisma.$transaction([
-    findPinnedIndexListItems(options),
+  const [result] = await prisma.$transaction([
     prisma.list.findUnique(baseQuery),
   ]);
   if (!result) {
@@ -154,7 +289,6 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     id: listId,
     type,
     country,
-    pinnedItems: (pinned?.pinnedItems ?? []).map(listItemsWithIndexDetails),
     items: items.map(listItemsWithIndexDetails),
     ...pagination,
   };

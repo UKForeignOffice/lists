@@ -32,6 +32,7 @@ export const dashboardRouter = express.Router();
 dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
+dashboardRouter.get('/test/lists/:listId/items', csrfRequestHandler, listsItemsController)
 // Users
 dashboardRouter.get(
   dashboardRoutes.usersList,
@@ -61,14 +62,17 @@ dashboardRouter.get(
   listsItemsController
 );
 
+
+
 // list items
-dashboardRouter.get(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemGetController);
-dashboardRouter.post(dashboardRoutes.listsItemDelete, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemDeleteController);
-dashboardRouter.post(dashboardRoutes.listsItem, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPostController);
-dashboardRouter.post(dashboardRoutes.listsItemPublish, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPublishController);
-dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemRequestChangeController);
-dashboardRouter.post(dashboardRoutes.listsItemUpdate, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemUpdateController);
-dashboardRouter.post(dashboardRoutes.listsItemPin, csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised, listItemPinController);
+dashboardRouter.all('/dashboard/lists/:listId/items/*', csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised)
+dashboardRouter.get(dashboardRoutes.listsItem, listItemGetController);
+dashboardRouter.post(dashboardRoutes.listsItemDelete, listItemDeleteController);
+dashboardRouter.post(dashboardRoutes.listsItem, listItemPostController);
+dashboardRouter.post(dashboardRoutes.listsItemPublish, listItemPublishController);
+dashboardRouter.post(dashboardRoutes.listsItemRequestChanges, listItemRequestChangeController);
+dashboardRouter.post(dashboardRoutes.listsItemUpdate, listItemUpdateController);
+dashboardRouter.post(dashboardRoutes.listsItemPin, listItemPinController);
 
 // feedback
 dashboardRouter.get(

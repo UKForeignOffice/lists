@@ -136,6 +136,21 @@ export const EVENTS = {
     jsonData: {
       eventName: "edited"
     }
+  }),
+
+
+  [ListItemEvent.CHECK_ANNUAL_REVIEW]: () => ({
+    type: ListItemEvent.CHECK_ANNUAL_REVIEW,
+    jsonData: {
+      eventName: "check annual review"
+    }
+  }),
+
+  [ListItemEvent.ANNUAL_REVIEW_STARTED]: () => ({
+    type: ListItemEvent.CHECK_ANNUAL_REVIEW,
+    jsonData: {
+      eventName: "annual review started"
+    }
   })
 
 

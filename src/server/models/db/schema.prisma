@@ -38,11 +38,10 @@ model ListItem {
   address             Address @relation(fields: [addressId], references: [id])
   addressId           Int
 
-  isApproved          Boolean @default(false)
+  isApproved          Boolean @default(false) //TODO: deprecate
   isPublished         Boolean @default(false)
-  isBlocked           Boolean @default(false)
-  //isAnnualReview
-
+  isBlocked           Boolean @default(false) //TODO: deprecate
+  isAnnualReview      Boolean @default(false)
 
   pinnedBy            User[]
 
@@ -122,16 +121,17 @@ model Feedback {
   @@index([type])
 }
 
+// actions that can be performed on anything that is not a ListItem. ListItems have their own events.
 enum AuditEvent {
   NEW
-  OUT_WITH_PROVIDER
-  EDITED
-  ANNUAL_REVIEW
-  REVIEWED
-  UNPUBLISHED
-  PUBLISHED
-  PINNED
-  UNPINNED
+  OUT_WITH_PROVIDER // TODO: deprecate
+  EDITED // TODO: deprecate
+  ANNUAL_REVIEW // TODO: deprecate
+  REVIEWED // TODO: deprecate
+  UNPUBLISHED // TODO: deprecate
+  PUBLISHED // TODO: deprecate
+  PINNED // TODO: deprecate
+  UNPINNED // TODO: deprecate
   DELETED
   UNDEFINED
 }
@@ -140,20 +140,12 @@ enum Status {
   NEW
   OUT_WITH_PROVIDER
   EDITED
-  ANNUAL_REVIEW
-  REVIEW_OVERDUE
-  REVIEWED
-  PUBLISHED
-  UNPUBLISHED
+  PUBLISHED // "No action needed"
+  UNPUBLISHED // "Removed by post"?
+  CHECK_ANNUAL_REVIEW
+  ANNUAL_REVIEW_OVERDUE
 }
 
-model GeoLocation {
-  id          Int @id @default(autoincrement())
-  location    Unsupported("geography(POINT)")
-  address     Address[]
-
-  @@index([location])
-}
 
 model Event {
   id                  Int    @id @default(autoincrement())
@@ -164,16 +156,26 @@ model Event {
   jsonData            Json
 }
 
+// add any actions that can be performed on a list item.
 enum ListItemEvent {
   NEW
-  OUT_WITH_PROVIDER
+  OUT_WITH_PROVIDER // Requested changes
   EDITED
-  ANNUAL_REVIEW
-  REVIEWED
   UNPUBLISHED
   PUBLISHED
   PINNED
   UNPINNED
   DELETED
   UNDEFINED
+  ANNUAL_REVIEW_STARTED
+  CHECK_ANNUAL_REVIEW
+}
+
+// note: keep GeoLocation here -- syntax parsers don't like the unsupported
+model GeoLocation {
+  id          Int @id @default(autoincrement())
+  location    Unsupported("geography(POINT)")
+  address     Address[]
+
+  @@index([location])
 }
