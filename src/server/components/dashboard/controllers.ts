@@ -42,15 +42,11 @@ export async function startRouteController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  try {
-    if (req.user === undefined) {
-      return res.redirect(authRoutes.logout);
-    }
-
-    res.redirect(dashboardRoutes.lists)
-  } catch (error) {
-    next(error);
+  if (req.user === undefined) {
+    return res.redirect(authRoutes.logout);
   }
+
+  res.redirect(dashboardRoutes.lists)
 }
 
 export async function usersListController(

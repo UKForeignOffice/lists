@@ -6,6 +6,7 @@
   {% endif %}
 
   {% if lists.length > 0 %}
+  <a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a>
     <table class="govuk-table">
       <caption class="govuk-table__caption govuk-table__caption--l">
         Lists
