@@ -25,11 +25,7 @@ export type Country = PrismaClient.Country;
 // List
 export interface ListJsonData extends JsonObject {
   users?: string[];
-<<<<<<< HEAD
   annualReviewStartDate?: string | number;
-=======
-  annualReviewStartDate?: string;
->>>>>>> c17aaf4a (chore: add confirmation start date page)
   lastAnnualReviewStartDate?: string;
 }
 export interface List extends PrismaClient.List {
