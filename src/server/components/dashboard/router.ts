@@ -51,8 +51,8 @@ dashboardRouter.post(
   redirectIfUnauthorised,
   listsEditPostController
 );
-dashboardRouter.delete(
-  dashboardRoutes.listsEdit,
+dashboardRouter.post(
+  dashboardRoutes.listsPublisherDelete,
   csrfRequestHandler,
   redirectIfUnauthorised,
   listPublisherDelete

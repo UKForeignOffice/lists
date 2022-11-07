@@ -233,57 +233,58 @@ export async function listEditAddPublisher(req: Request,
 
   }
 
-  const noErrorsExist = !("field" in error);
+  const errorExists = ("field" in error);
 
-  if (noErrorsExist) {
-    const data = {
-      country: req.body.country,
-      serviceType: req.body.serviceType,
-      validators: [],
-      publishers: req.body.publishers,
-      administrators: [],
-      createdBy: `${req.user?.userData.email}`,
-    };
+  if (errorExists) {
+    return res.render("dashboard/lists-edit", {
+      ...DEFAULT_VIEW_PROPS,
+      listId,
+      user: user?.userData,
+      error,
+      list,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  }
 
-    if (listId === "new") {
-      const newList = await createList(data);
-      req.flash("changeMsg", `User ${publisher} has been created`);
+  const data = {
+    country: req.body.country,
+    serviceType: req.body.serviceType,
+    validators: [],
+    publishers: req.body.publishers,
+    administrators: [],
+    createdBy: `${req.user?.userData.email}`,
+  };
 
-      if (newList?.id !== undefined) {
-        return res.redirect(
-          `${dashboardRoutes.listsEdit.replace(
-            ":listId",
-            `${newList.id}`
-          )}`
-        );
-      }
-    }
+  req.flash("changeMsg", `User ${publisher} has been created`);
 
-    const publishersListWithNewEmail = [...(list as List).jsonData.publishers, publisher];
+  if (listId === "new") {
+    const newList = await createList(data);
 
-    if (list !== undefined) {
-      await updateList(
-        Number(listId),
-        {publishers: publishersListWithNewEmail}
-      );
+    if (newList?.id !== undefined) {
       return res.redirect(
         `${dashboardRoutes.listsEdit.replace(
           ":listId",
-          `${listId}`
+          `${newList.id}`
         )}`
       );
     }
   }
 
-  return res.render("dashboard/lists-edit", {
-    ...DEFAULT_VIEW_PROPS,
-    listId,
-    user: user?.userData,
-    error,
-    list,
-    req,
-    csrfToken: getCSRFToken(req),
-  });
+  const publishersListWithNewEmail = [...(list as List).jsonData.publishers, publisher];
+
+  if (list !== undefined) {
+    await updateList(
+      Number(listId),
+      {publishers: publishersListWithNewEmail}
+    );
+    return res.redirect(
+      `${dashboardRoutes.listsEdit.replace(
+        ":listId",
+        `${listId}`
+      )}`
+    );
+  }
 }
 
 export async function listEditRemovePublisher(
