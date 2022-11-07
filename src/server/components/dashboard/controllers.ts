@@ -316,9 +316,9 @@ function formatAnnualReviewDate(list: List, field: string): string {
   return list.jsonData[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
-function getMaxDate(date: number | Date): Date {
+function getMaxDate(date: number | string | Date): Date {
   const annualReviewDate = isValid(date) ? date : new Date(date);
-  const maxDate = add(annualReviewDate, { months: 6 });
+  const maxDate = add(annualReviewDate as Date, { months: 6 });
 
   return maxDate;
 }
@@ -415,7 +415,7 @@ function getAnnualReviewYear({
   lastAnnualReview: number;
 }): number {
   const date = new Date(lastAnnualReview);
-  const userEnteredDate = new Date(`${day}/${month}/${date.getFullYear()}`);
+  const userEnteredDate = new Date(`${month}/${day}/${date.getFullYear()}`);
   if (isBefore(userEnteredDate, date)) {
     return date.getFullYear() + 1;
   }
