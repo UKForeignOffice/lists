@@ -28,7 +28,11 @@
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
           </legend>
           <div id="annual-review-date" class="govuk-hint">
+            {% if maxDate %}
+              The new date must be before {{formattedMaxDate}}
+            {% else %}
               The new date must be within 6 months of today’s date
+            {% endif %}
           </div>
 
           {% if error.text %}

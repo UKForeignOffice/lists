@@ -22,7 +22,7 @@ Feature: List management change annual review date
     And I click the "Continue" button
     Then I should see the error "You cannot set the annual review to this date. Please choose another"
 
-  Scenario: User cannot enter date 6 months
+  Scenario: User cannot enter date more than 6 months after annual review date
     Given I enter "1" in the "day" input
     And I enter "9" in the "month" input
     And I click the "Continue" button
