@@ -37,7 +37,7 @@
             <td class="govuk-table__cell govuk-table__cell--numeric"></td>
 
             <td class="govuk-table__cell govuk-table__cell--numeric">
-              {% if userIsListPublisher(req, list) or req.user.isSuperAdmin() %}
+              {% if req.user.isListPublisher(req, list) or req.user.isSuperAdmin() %}
                 <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
               {% endif %}
             </td>

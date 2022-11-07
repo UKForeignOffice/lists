@@ -10,7 +10,7 @@
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
 
-  <form class="form" action="{{ dashboardRoutes.listsPublisherDelete.replace(':listId', list.id) }}" method="post" required>
+  <form class="form" action="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" method="delete" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <input type="hidden" name="userEmail" value="{{ userEmail }}" />
 

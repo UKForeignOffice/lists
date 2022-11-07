@@ -15,15 +15,7 @@ export function userIsListAdministrator(req: Request, list: ListWithJsonData): b
   const email = req.user?.userData.email;
 
   return email !== undefined
-    ? Boolean(list?.jsonData?.administrators?.includes(email))
-    : false;
-}
-
-export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-
-  return email !== undefined
-    ? Boolean(list?.jsonData?.publishers?.includes(email))
+    ? list?.jsonData?.administrators?.includes(email) as boolean
     : false;
 }
 
@@ -31,7 +23,7 @@ export function userIsListValidator(req: Request, list: ListWithJsonData): boole
   const email = req.user?.userData.email;
 
   return email !== undefined
-    ? Boolean(list?.jsonData?.validators?.includes(email))
+    ? list?.jsonData?.validators?.includes(email) as boolean
     : false;
 }
 

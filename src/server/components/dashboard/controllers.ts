@@ -12,7 +12,6 @@ import {
 import {
   filterSuperAdminRole,
   userIsListAdministrator,
-  userIsListPublisher,
   userIsListValidator,
 } from "./helpers";
 import { isGovUKEmailAddress, } from "server/utils/validation";
@@ -29,7 +28,6 @@ export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,
-  userIsListPublisher,
   userIsListValidator,
   userIsListAdministrator,
 };
@@ -149,7 +147,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const { publisherChangeType, userEmail } = req.query;
+    const changeMsg = req.flash("changeMsg")[0];
 
     let list: List | undefined;
 
@@ -162,7 +160,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      publisher: { change: publisherChangeType, message: `User ${userEmail} has been ${publisherChangeType}`},
+      publisher: { change: changeMsg },
       listId,
       user: req.user?.userData,
       list,
@@ -170,7 +168,8 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    next(error);
+    const err = new HttpException(404, "404", "List could not be found.");
+    next(err);
   }
 }
 
@@ -192,40 +191,44 @@ export async function listsEditPostController(
   }
 }
 
-export async function listEditAddPublisher(  req: Request,
+export async function listEditAddPublisher(req: Request,
   res: Response, next: NextFunction): Promise<void> {
 
   const { listId } = req.params;
   let error: Partial<QuestionError> = {};
 
   const list: List | undefined = await findListById(listId);
-  const publisher: string = req.body.publishers;
+  const publisher: string = req.body.publisher;
 
   const user = req.user;
-  if (!user?.isSuperAdmin() &&
-    (!user?.userData?.email || publisher === user?.userData?.email ||
-      (listId === "new" && !user?.isSuperAdmin()))
-  ) {
+  const userIsSuperAdmin = user?.isSuperAdmin();
+
+  if (!userIsSuperAdmin || (listId === "new" && !userIsSuperAdmin))  {
     const err = new HttpException(403, "403", "You are not authorized to access this list.");
+    return next(err);
+  }
+
+  if (publisher === user?.userData?.email) {
+    const err = new HttpException(401, "401", "You cannot add your own email address to a list");
     return next(err);
   }
 
   if (!publisher || !isGovUKEmailAddress(publisher)) {
     error = {
-      field: "publishers",
+      field: "publisher",
       text:
         !publisher
           ? "You must indicated a publisher"
           : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
-      href: "#publishers",
+      href: "#publisher",
     };
   }
 
   if (list?.jsonData.publishers.includes(publisher)) {
     error = {
-      field: "publishers",
+      field: "publisher",
       text: "This user already exists",
-      href: "#publishers",
+      href: "#publisher",
     };
 
   }
@@ -244,12 +247,14 @@ export async function listEditAddPublisher(  req: Request,
 
     if (listId === "new") {
       const newList = await createList(data);
+      req.flash("changeMsg", `User ${publisher} has been created`);
+
       if (newList?.id !== undefined) {
         return res.redirect(
           `${dashboardRoutes.listsEdit.replace(
             ":listId",
             `${newList.id}`
-          )}?publisherChangeType=created&userEmail=${publisher}`
+          )}`
         );
       }
     }
@@ -273,7 +278,7 @@ export async function listEditAddPublisher(  req: Request,
   return res.render("dashboard/lists-edit", {
     ...DEFAULT_VIEW_PROPS,
     listId,
-    user: user.userData,
+    user: user?.userData,
     error,
     list,
     req,
@@ -335,11 +340,13 @@ export async function listPublisherDelete(
     { publishers: updatedPublishers }
   );
 
+  req.flash("changeMsg", `User ${userEmail} has been removed`);
+
   return res.redirect(
     `${dashboardRoutes.listsEdit.replace(
       ":listId",
       `${listId}`
-    )}?publisherChangeType=removed&userEmail=${userEmail}`
+    )}`
   );
 }
 

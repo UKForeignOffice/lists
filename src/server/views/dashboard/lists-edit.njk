@@ -11,7 +11,7 @@
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   {% if publisher.change %}
-    {{ dashboardMacros.successBanner("Success", publisher.message) }}
+    {{ dashboardMacros.successBanner("Success", publisher.change) }}
   {% endif %}
 
   {% if error.field %}
@@ -82,25 +82,25 @@
 
       <hr />
 
-      <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publishers' }}">
+      <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publisher' }}">
         <fieldset class="govuk-fieldset">
           <h3 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--m" for="publishers">
+            <label class="govuk-label govuk-label--m" for="publisher">
               Users
             </label>
           </h3>
-          {% if error.field === 'publishers' %}
+          {% if error.field === 'publisher' %}
             <span class="govuk-error-message">
               <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
             </span>
           {% endif %}
-          <div id="publishers-hint" class="govuk-body">
+          <div id="publisher-hint" class="govuk-body">
             All users can accept and publish service providers on the funeral directors list in {{list.country.name}}.
           </div>
-            <label class="govuk-label" for="publishers">
+            <label class="govuk-label" for="publisher">
               Enter an email address
             </label>
-            <input class="govuk-input" id="publishers" name="publishers" type="email" aria-describedby="publishers-hint">
+            <input class="govuk-input" id="publisher" name="publisher" type="email" aria-describedby="publisher-hint">
         </fieldset>
       </div>
 

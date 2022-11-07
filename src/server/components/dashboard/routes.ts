@@ -11,7 +11,6 @@ export const dashboardRoutes = {
   // lists
   lists: "/dashboard/lists",
   listsEdit: "/dashboard/lists/:listId",
-  listsPublisherDelete: "/dashboard/lists/:listId/publisher-delete",
   listsItems: "/dashboard/lists/:listId/items",
   listsItem: "/dashboard/lists/:listId/items/:listItemId",
   listsItemDelete: "/dashboard/lists/:listId/items/:listItemId/delete",
