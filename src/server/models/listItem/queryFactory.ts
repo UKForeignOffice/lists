@@ -1,33 +1,47 @@
 import {
   PaginationOptions,
   Tags,
-  TAGS,
 } from "server/models/listItem/types";
-import { Status, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 /**
  * covert TAGS to prisma query options object
  */
-export const tagQueryFactory: Record<
-  keyof Tags, Array<Prisma.ListItemWhereInput | Prisma.Enumerable<Prisma.ListItemWhereInput>>> = {
-  archived: [],
-  new: [],
-  no_action_needed: [],
-  unpublished: [],
-  [TAGS.out_with_provider]: [{ status: Status.OUT_WITH_PROVIDER }],
-  [TAGS.live]: [{ isPublished: true }],
-  [TAGS.to_do]: [{ status: Status.NEW },{ status: Status.EDITED },{ status: Status.UNPUBLISHED }]
-};
-
-export const tagToPrismaQueryMap = {
-  archived: [],
-  new: [],
-  no_action_needed: [],
-  unpublished: [],
-  [TAGS.out_with_provider]: [{ status: Status.OUT_WITH_PROVIDER }],
-  [TAGS.live]: [{ isPublished: true }],
-  [TAGS.to_do]: [{ status: Status.NEW },{ status: Status.EDITED },{ status: Status.UNPUBLISHED }]
+export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput> = {
+  out_with_provider: {
+    status: {
+      in: ["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"]
+    }
+  },
+  to_do: {
+    status: {
+      in: ["NEW", "EDITED", "UNPUBLISHED", "CHECK_ANNUAL_REVIEW"]
+    }
+  },
+  no_action_needed: {
+    AND: [
+      { status: "PUBLISHED" },
+      { isAnnualReview: false }
+    ]
+  },
+  live: {
+    isPublished: true,
+  },
+  new: {
+    history: { // return if item has never been published
+      some: {
+        NOT: {
+          type: "PUBLISHED"
+        }
+      }
+    }
+  },
+  unpublished: {
+    status: "UNPUBLISHED"
+  },
+  archived: {},
 }
+
 
 export function calculatePagination(
   paginationOptions: PaginationOptions
