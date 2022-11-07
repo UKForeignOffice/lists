@@ -1,18 +1,18 @@
 import { findUserLists, findListById, findListByCountryAndType, createList, updateList } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
-import { logger } from "server/services/logger";
-import { ServiceType } from "../types";
+import { List, ServiceType } from "../types";
 import { compact } from "lodash";
+import { logger } from "../../services/logger";
 
 jest.mock("../db/prisma-client");
 jest.mock("server/services/logger");
 
 describe("List Model:", () => {
-  const sampleList: any = {
+  const sampleList: List = {
     id: 1,
     reference: "123Reference",
-    createdAt: "2021-06-23T11:13:55.236+00:00",
-    updatedAt: "2021-06-23T11:13:55.238+00:00",
+    createdAt: new Date("2021-06-23T11:13:55.236+00:00"),
+    updatedAt: new Date("2021-06-23T11:13:55.238+00:00"),
     type: "covidTestProviders",
     countryId: 3,
     country: {
@@ -27,43 +27,42 @@ describe("List Model:", () => {
   };
 
   describe("findUserLists", () => {
+
+    const expectedQuery = {
+      where: {
+        jsonData: {
+          path: ['publishers'],
+          array_contains: ['test@gov.uk'],
+        },
+      },
+      orderBy: {
+        id: "asc"
+      },
+      include: {
+        country: true,
+      },
+    };
+
     test("query is correct", async () => {
-      prisma.$queryRawUnsafe.mockResolvedValue([sampleList]);
+      // @ts-ignore
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       await findUserLists("test@gov.uk");
 
-      const expectedQuery = `
-        SELECT *,
-        (
-          SELECT ROW_TO_JSON(c)
-          FROM (
-            SELECT name
-            FROM "Country"
-            WHERE "List"."countryId" = "Country"."id"
-          ) as c
-        ) as country
-        FROM public."List"
-        WHERE "jsonData"->'validators' @> '"test@gov.uk"'
-        OR "jsonData"->'publishers' @> '"test@gov.uk"'
-        OR "jsonData"->'administrators' @> '"test@gov.uk"'
-        ORDER BY id ASC
-      `.replace(/\s\s+/g, " ");
+      expect(prisma.list.findMany).toHaveBeenCalledWith(expectedQuery);
 
-      const query = (prisma.$queryRawUnsafe.mock.calls[0][0] as string).replace(/\s\s+/g, " ");
-
-      expect(query).toEqual(expectedQuery);
     });
 
     test("returned value is correct", async () => {
-      prisma.$queryRawUnsafe.mockResolvedValue([sampleList]);
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       const result = await findUserLists("test@gov.uk");
 
       expect(result).toMatchObject([sampleList]);
     });
 
-    test("it returns undefined when queryRawUnsafe fails", async () => {
-      prisma.$queryRawUnsafe.mockRejectedValue({ message: "queryRaw error message" });
+    test("it returns undefined when findMany fails", async () => {
+      prisma.list.findMany.mockRejectedValue({ message: "queryRaw error message" });
 
       const result = await findUserLists("test@gov.uk");
 

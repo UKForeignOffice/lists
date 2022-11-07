@@ -9,24 +9,20 @@ export async function findUserLists(email: string): Promise<List[] | undefined> 
   const emailAddress = pgescape.string(email.toLowerCase());
 
   try {
-    const query = `
-      SELECT *,
-      (
-        SELECT ROW_TO_JSON(c)
-        FROM (
-          SELECT name
-          FROM "Country"
-          WHERE "List"."countryId" = "Country"."id"
-        ) as c
-      ) as country
-      FROM public."List"
-      WHERE "jsonData"->'validators' @> '"${emailAddress}"'
-      OR "jsonData"->'publishers' @> '"${emailAddress}"'
-      OR "jsonData"->'administrators' @> '"${emailAddress}"'
-      ORDER BY id ASC
-    `;
-    // @ts-ignore
-    const lists: List[] = await prisma.$queryRawUnsafe(query);
+    const lists: List[] = await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ['publishers'],
+          array_contains: [emailAddress],
+        },
+      },
+      orderBy: {
+        id: "asc"
+      },
+      include: {
+        country: true,
+      },
+    }) as List[];
     return lists ?? undefined;
   } catch (error) {
     logger.error(`findUserLists Error: ${(error as Error).message}`);
