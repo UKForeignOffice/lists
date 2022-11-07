@@ -208,11 +208,6 @@ export async function listEditAddPublisher(req: Request,
     return next(err);
   }
 
-  if (publisher === user?.userData?.email) {
-    const err = new HttpException(401, "401", "You cannot add your own email address to a list");
-    return next(err);
-  }
-
   if (!publisher || !isGovUKEmailAddress(publisher)) {
     error = {
       field: "publisher",
@@ -230,7 +225,6 @@ export async function listEditAddPublisher(req: Request,
       text: "This user already exists",
       href: "#publisher",
     };
-
   }
 
   const errorExists = ("field" in error);
@@ -251,7 +245,7 @@ export async function listEditAddPublisher(req: Request,
     country: req.body.country,
     serviceType: req.body.serviceType,
     validators: [],
-    publishers: req.body.publishers,
+    publishers: req.body.publisher,
     administrators: [],
     createdBy: `${req.user?.userData.email}`,
   };
