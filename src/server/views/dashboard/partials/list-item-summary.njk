@@ -35,14 +35,11 @@
     </h2>
   </div>
   <div class="dashboard__list-item-tag-container">
-    {% for tag in [] %}
       {% include "./list-item-tag.njk" %}
-    {% endfor %}
   </div>
   <div class="dashboard__list-item-body">
     <p>
-      <span class="govuk-!-font-weight-bold">Activity Status:</span>
-      {{ dictionary[listItem.status] }}
+      {% include "./list-item-activity-status-tag.njk" %}
     </p>
     <div class="dashboard__list-item-dates">
       <p class="govuk-body">

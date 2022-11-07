@@ -1,4 +1,4 @@
-import { IndexListItem, ListIndexOptions, TAGS, Tags } from "server/models/listItem/types";
+import {ActivityStatusViewModel, IndexListItem, ListIndexOptions, Tags} from "server/models/listItem/types";
 import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import { calculatePagination, tagQueryFactory } from "server/models/listItem/queryFactory";
@@ -10,24 +10,37 @@ import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 
-// TODO: we should start implementing i18n.
-const dictionary: Record<Status, string> = {
-  NEW: 'check new entry',
-  OUT_WITH_PROVIDER: 'edits requested',
-  EDITED: 'check edits',
-  ANNUAL_REVIEW: '',
-  REVIEW_OVERDUE: 'annual review overdue',
-  REVIEWED: 'REVIEWED',
-  PUBLISHED: 'PUBLISHED',
-  UNPUBLISHED: 'UNPUBLISHED',
+const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
+  NEW: {
+    type: 'to_do',
+    text: 'Check new entry'
+  },
+  OUT_WITH_PROVIDER: {
+    type: 'out_with_provider',
+    text: 'edits requested'
+  },
+  EDITED: {
+    text: 'Check edits',
+    type: 'to_do'
+  },
+  CHECK_ANNUAL_REVIEW: {
+    text: 'Check annual review',
+    type: 'to_do'
+  },
+  ANNUAL_REVIEW_OVERDUE: {
+    text: 'Annual review overdue',
+    type: 'out_with_provider'
+  },
+  PUBLISHED: {
+    text: 'No action needed',
+    type: 'no_action_needed'
+  },
+  UNPUBLISHED: {
+    text: 'Removed by post',
+    type: 'to_do'
+  },
 }
 
-
-
-const publishingStatusDictionary: Record<string, string> = {
-  isPublished: 'live',
-  unpublished: 'unpublished',
-}
 
 enum PUBLISHING_STATUS {
   new = "new",
@@ -36,34 +49,53 @@ enum PUBLISHING_STATUS {
   archived = "archived"
 }
 
-function newestEventOfType(history: Event[], type: ListItemEvent): number {
+function newestEventOfTypeIndex(history: Event[], type: ListItemEvent): number {
   return history.findIndex(event => event.type === type)
 }
 
-
-
 function hasBeenUnpublishedSincePublishing(history: Event[]): boolean {
-  const newestPublishEvent = newestEventOfType(history, ListItemEvent.PUBLISHED)
-  const newestUnpublishEvent = newestEventOfType(history, ListItemEvent.UNPUBLISHED)
-  return newestUnpublishEvent !== -1 && newestUnpublishEvent < newestPublishEvent;
+  const newestPublishEvent = newestEventOfTypeIndex(history, ListItemEvent.PUBLISHED);
+  const newestUnpublishEvent = newestEventOfTypeIndex(history, ListItemEvent.UNPUBLISHED);
 
+  const hasUnpublishEvent = newestUnpublishEvent !== -1
+  return  hasUnpublishEvent && newestUnpublishEvent < newestPublishEvent;
 }
 
-function getPublishingStatus(item: ListItemWithHistory) {
+function getPublishingStatus(item: ListItemWithHistory): PUBLISHING_STATUS {
 
   if(item.isPublished) {
     return PUBLISHING_STATUS.live
-  }
-
-  if(item.status === Status.NEW) {
-    return PUBLISHING_STATUS.new
   }
 
   if(hasBeenUnpublishedSincePublishing(item.history)) {
       return PUBLISHING_STATUS.unpublished
   }
 
+  return PUBLISHING_STATUS.new
 
+}
+
+function wasUnpublishedByUser(history: Event[]): boolean {
+  const event = history.find(event => event.type === 'UNPUBLISHED')
+  const jsonData = event?.jsonData as Prisma.JsonObject;
+  return !!jsonData.userId;
+}
+
+function getActivityStatus(item: ListItemWithHistory): ActivityStatusViewModel {
+  const { history, status } = item;
+
+  if(status === 'UNPUBLISHED') {
+    if(wasUnpublishedByUser(history)) {
+      return statusToActivityVM.UNPUBLISHED
+    }
+    return statusToActivityVM.ANNUAL_REVIEW_OVERDUE
+  }
+
+  if(status === 'PUBLISHED' && !item.isAnnualReview) {
+    return statusToActivityVM.PUBLISHED
+  }
+
+  return statusToActivityVM[status]
 
 }
 
@@ -79,7 +111,7 @@ type ListItemWithHistory = ListItem & {
 
 function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
 
-  const { jsonData, createdAt, updatedAt, id, status } = item;
+  const { jsonData, createdAt, updatedAt, id } = item;
   const { organisationName, contactName } = jsonData as ListItemJsonData;
 
   return {
@@ -88,9 +120,8 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     organisationName,
     contactName,
     id,
-    activityStatus: dictionary[status],
+    activityStatus: getActivityStatus(item),
     publishingStatus: getPublishingStatus(item),
-    status,
   };
 }
 
@@ -121,72 +152,6 @@ function getActiveQueries(
       [tag]: tagQueryFactory[tag],
     };
   }, {});
-}
-
-export async function indexListItems(options: ListIndexOptions) {
-  const { listId } = options;
-  const { tags = [] } = options;
-
-  const activeQueries = getActiveQueries(tags, options);
-
-  return await prisma.listItem.findMany({
-    where: {
-      listId: 82,
-    }
-  })
-
-}
-class ListItemQueryBuilder {
-
-}
-
-class IndexQuery {
-  baseQuery: Prisma.ListItemFindManyArgs = {
-      select: {
-        history: true
-      },
-      where: {
-        AND: [],
-      },
-
-  }
-
-  constructor(options: ListIndexOptions) {
-
-  }
-
-  /**
-   *   if (activeQueries.out_with_provider) {
-   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider);
-   *   }
-   *
-   *   if (activeQueries.live) {
-   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.live);
-   *   }
-   *
-   *   if (activeQueries.to_do) {
-   *     itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do);
-   *   }
-   *
-   *   baseQuer
-   */
-
-
-  withProvider() {}
-
-  live() {
-
-  }
-
-  noActionNeeded() {
-
-  }
-
-  todo() {
-
-  }
-
-
 }
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
@@ -278,6 +243,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     throw new Error(`Failed to find ${listId}`);
   }
   const { type, country, items } = result;
+
   const pagination = await getPaginationValues({
     count: result.items?.length ?? 0,
     rows: 20,

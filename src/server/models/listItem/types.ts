@@ -36,6 +36,11 @@ export const ORDER_BY = {
 
 export type OrderBy = typeof ORDER_BY;
 
+export interface ActivityStatusViewModel {
+  type: "to_do" | "out_with_provider" | "no_action_needed",
+  text: string
+}
+
 export type IndexListItem = Pick<
   ListItemJsonData,
   | "organisationName"
@@ -44,8 +49,8 @@ export type IndexListItem = Pick<
 > & {
   createdAt: string;
   updatedAt: string;
-  status: string;
-  tags: string[];
+  publishingStatus: string;
+  activityStatus: ActivityStatusViewModel;
 };
 
 export interface PaginationOptions {

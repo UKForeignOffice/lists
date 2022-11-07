@@ -141,7 +141,7 @@ enum Status {
   OUT_WITH_PROVIDER
   EDITED
   PUBLISHED // "No action needed"
-  UNPUBLISHED // "Removed by post"?
+  UNPUBLISHED //
   CHECK_ANNUAL_REVIEW
   ANNUAL_REVIEW_OVERDUE
 }
