@@ -316,14 +316,11 @@ function formatAnnualReviewDate(list: List, field: string): string {
   return list.jsonData[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
-function getMaxDate(list: List): Date | string {
-  const { annualReviewStartDate } = list.jsonData;
-  if (!annualReviewStartDate) return "";
+function getMaxDate(date: number | Date): Date {
+  const annualReviewDate = isValid(date) ? date : new Date(date);
+  const maxDate = add(annualReviewDate, { months: 6 });
 
-  const annualReviewDate = new Date(annualReviewStartDate);
-  add(annualReviewDate, { months: 6 });
-
-  return annualReviewDate;
+  return maxDate;
 }
 
 // TODO: test
@@ -350,7 +347,9 @@ export async function listsEditAnnualReviewDateController(
     const { listId } = req.params;
     const list = await findListById(listId);
     const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const maxDate = getMaxDate(list as List);
+    const maxDate = list?.jsonData.annualReviewStartDate
+      ? getMaxDate(list?.jsonData.annualReviewStartDate as number)
+      : "";
     const formattedMaxDate = format(maxDate as Date, DATE_FORMAT);
 
     res.render("dashboard/lists-edit-annual-review-date", {
@@ -387,47 +386,94 @@ export async function listsEditAnnualReviewDatePostController(
 }
 
 async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
-  const todaysDate = new Date();
-
   const { listId } = req.params;
   const list = (await findListById(listId)) as List;
+  const { day, month } = req.body;
+  const annualReviewDate = getAnnualReviewDate({ day, month, list });
 
-  let annualReviewYear = todaysDate.getFullYear();
-  let maxDate = add(todaysDate, { months: 6 });
-
-  const { month, day } = req.body;
-  const { annualReviewStartDate } = list.jsonData;
-  const isLeapYear = (): boolean => month === "2" && day === "29";
-  const parsedDate = parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
-
-  if (annualReviewStartDate) {
-    const annualReviewDate = new Date(annualReviewStartDate);
-    annualReviewYear = annualReviewDate.getFullYear();
-    maxDate = add(annualReviewDate, { months: 6 });
-  }
-
-  if (!month || !day) {
-    req.flash("annualReviewError", "Enter a date for the annual review");
-    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", list.id.toString())}`);
-  }
-
-  if (isLeapYear() || !isValid(parsedDate)) {
-    req.flash("annualReviewError", "You cannot set the annual review to this date. Please choose another");
-    return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", list.id.toString())}`);
-  }
-
-  if (!isBefore(parsedDate, maxDate)) {
-    req.flash("annualReviewError", "You can only change the date up to 6 months after the current review date");
+  if (!annualReviewDate.isValid) {
+    req.flash("annualReviewError", annualReviewDate.errorMsg);
     return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", list.id.toString())}`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
-    newAnnualReviewDateFormatted: format(parsedDate, DATE_FORMAT),
-    newAnnualReviewDate: parsedDate,
+    newAnnualReviewDateFormatted: format(annualReviewDate.value as Date, DATE_FORMAT),
+    newAnnualReviewDate: annualReviewDate.value,
     list,
     csrfToken: getCSRFToken(req),
   });
+}
+
+function getAnnualReviewYear({
+  day,
+  month,
+  lastAnnualReview,
+}: {
+  day: string;
+  month: string;
+  lastAnnualReview: number;
+}): number {
+  const date = new Date(lastAnnualReview);
+  const userEnteredDate = new Date(`${day}/${month}/${date.getFullYear()}`);
+  if (isBefore(userEnteredDate, date)) {
+    return date.getFullYear() + 1;
+  }
+
+  return date.getFullYear();
+}
+
+interface IsDateValidInput {
+  day: string;
+  month: string;
+  list: List;
+}
+
+interface IsDateValidOutput {
+  isValid: boolean;
+  value: Date | null;
+  errorMsg: string;
+}
+
+export function getAnnualReviewDate({ day, month, list }: IsDateValidInput): IsDateValidOutput {
+  const lastAnnualReview = list.jsonData.lastAnnualReviewDate ?? list.createdAt;
+  const lastAnnualReviewPlusYear = add(lastAnnualReview as Date, { years: 1 });
+
+  const annualReviewYear = getAnnualReviewYear({
+    day,
+    month,
+    lastAnnualReview: (list.jsonData.annualReviewStartDate ?? lastAnnualReview) as number,
+  });
+  const parsedDate = parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
+
+  const maxDateFromLastAnnualReview = getMaxDate(lastAnnualReviewPlusYear);
+  const maxDateFromUserEnteredValues = getMaxDate(list.jsonData.annualReviewStartDate as number);
+  const maxDate = isBefore(maxDateFromUserEnteredValues, maxDateFromLastAnnualReview)
+    ? maxDateFromUserEnteredValues
+    : maxDateFromLastAnnualReview;
+
+  const invalidResult = { isValid: false, value: null };
+  const isLeapYear = (): boolean => month === "2" && day === "29";
+  let errorMsg = "";
+
+  if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
+
+  if (!month || !day) {
+    errorMsg = "Enter a date for the annual review";
+    return { ...invalidResult, errorMsg };
+  }
+
+  if (isLeapYear() || !isValid(parsedDate)) {
+    errorMsg = "You cannot set the annual review to this date. Please choose another";
+    return { ...invalidResult, errorMsg };
+  }
+
+  if (!isBefore(parsedDate, maxDate)) {
+    errorMsg = "You can only change the date up to 6 months after the current review date";
+    return { ...invalidResult, errorMsg };
+  }
+
+  return { isValid: true, value: parsedDate, errorMsg };
 }
 
 async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
@@ -448,5 +494,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
     });
   }
 
-  return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", listId)}?annualReviewDateUpdated=true`);
+  return res.redirect(
+    `${dashboardRoutes.listsEdit.replace(":listId", list.id.toString())}?annualReviewDateUpdated=true`
+  );
 }

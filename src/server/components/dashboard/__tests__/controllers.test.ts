@@ -11,6 +11,7 @@ import {
   usersEditController,
   usersEditPostController,
   usersListController,
+  getAnnualReviewDate,
 } from "../controllers";
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
@@ -461,4 +462,100 @@ describe("Dashboard Controllers", () => {
       expect(1).toBe(1);
     });
   });
+
+
+  describe("getAnnualReviewDate", () => {
+    const list = {
+      jsonData: {
+        lastAnnualReviewDate: new Date("1/1/2022"),
+        annualReviewStartDate: new Date("1/1/2023")
+      }
+    };
+
+    const annualReviewInNov = {
+      jsonData: {
+        lastAnnualReviewDate: new Date("11/1/2022"),
+        annualReviewStartDate: new Date("11/1/2023")
+      }
+    };
+
+    const annualReviewCloseToLast = {
+      jsonData: {
+        lastAnnualReviewDate: new Date("11/1/2022"),
+        annualReviewStartDate: new Date("4/1/2024")
+      }
+    }
+
+    it("returns valid date if within 6 months of last annual review", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "2",
+        list,
+      });
+
+      // then
+      expect(result.isValid).toBeTruthy();
+    });
+
+    it("returns invalid date if over 6 months of last annual review", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "8",
+        list,
+      });
+
+      // then
+      expect(result.isValid).toBeFalsy();
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+    });
+
+    it("returns invalid date if user enters Feb 29th", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "29",
+        month: "2",
+        list,
+      });
+
+      // then
+      expect(result.isValid).toBeFalsy();
+      expect(result.errorMsg).toEqual("You cannot set the annual review to this date. Please choose another");
+    });
+
+    it("returns a different year if the user select January within 6 months of annual review", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "1",
+        list: annualReviewInNov,
+      });
+
+      // then
+      expect(result.isValid).toBeTruthy();
+      expect(result.value).toEqual(new Date("1/1/2024"));
+    });
+
+    it("returns inValid if date exceeds max date from last annual review plus one year", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "6",
+        list: annualReviewCloseToLast,
+      });
+
+      // then
+      expect(result.isValid).toBeFalsy();
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+    });
+  });
+
+  function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
+    const next: NextFunction = (err) => {
+      expect(err.message).toBe(expectedMessage)
+      expect(err.status).toBe(expectedStatus)
+    };
+    return next;
+  }
 });
