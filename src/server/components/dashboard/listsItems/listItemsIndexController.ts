@@ -125,8 +125,6 @@ export async function listItemsIndexController(
       pagination: {
         page,
       },
-      activity,
-      publishing,
       reqQuery: sanitisedQueryParams,
     });
 

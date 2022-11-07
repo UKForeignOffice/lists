@@ -1,11 +1,11 @@
-import {ActivityStatusViewModel, IndexListItem, ListIndexOptions, Tags} from "server/models/listItem/types";
+import { ActivityStatusViewModel, IndexListItem, ListIndexOptions } from "server/models/listItem/types";
 import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
-import { calculatePagination, tagQueryFactory } from "server/models/listItem/queryFactory";
+import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { ListItem, Prisma, Status, Event, ListItemEvent } from "@prisma/client";
+import { ListItem, Prisma, Status, Event, ListItemEvent, Country } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -62,7 +62,6 @@ function hasBeenUnpublishedSincePublishing(history: Event[]): boolean {
 }
 
 function getPublishingStatus(item: ListItemWithHistory): PUBLISHING_STATUS {
-
   if(item.isPublished) {
     return PUBLISHING_STATUS.live
   }
@@ -72,7 +71,6 @@ function getPublishingStatus(item: ListItemWithHistory): PUBLISHING_STATUS {
   }
 
   return PUBLISHING_STATUS.new
-
 }
 
 function wasUnpublishedByUser(history: Event[]): boolean {
@@ -107,8 +105,6 @@ type ListItemWithHistory = ListItem & {
 /**
  * Use this as a viewmodel.
  */
-
-
 function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
 
   const { jsonData, createdAt, updatedAt, id } = item;
@@ -127,6 +123,9 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function findPinnedIndexListItems(options: ListIndexOptions) {
+  if(!options.userId) {
+    return []
+  }
   return prisma.user.findUnique({
     where: {
       id: options.userId,
@@ -135,24 +134,42 @@ function findPinnedIndexListItems(options: ListIndexOptions) {
       pinnedItems: {
         where: {
           listId: options.listId,
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
+          ...emailIsVerified,
         },
       },
     },
   });
 }
 
-function getActiveQueries(
-  tags: Array<keyof Tags>,
-  options: ListIndexOptions
-): { [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput[] } {
-  return tags.reduce((prev, tag) => {
-    return {
-      ...prev,
-      [tag]: tagQueryFactory[tag],
-    };
-  }, {});
+async function getListItemOverview(id: number): Promise<{id: number, type: string, country: Country } | null> {
+  return await prisma.list.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      type: true,
+      country: true,
+      jsonData: false,
+    }
+  })
 }
+
+function notPinnedByUser(userId?: number): Prisma.ListItemWhereInput {
+
+  if(userId ?? true) {
+    return {}
+  }
+
+  return {
+    pinnedBy: {
+      none: {
+        id: userId,
+      },
+    }
+  }
+}
+
+const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } }
+
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
@@ -172,90 +189,46 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
-  const activeQueries = getActiveQueries(reqQueries, options)
+  const OR = reqQueries.map(tag => queryToPrismaQueryMap[tag]).filter(Boolean)
 
-  const baseQuery = {
+  const query: Prisma.ListItemFindManyArgs = {
     where: {
-      id: options.listId,
-    },
-    select: {
-      type: true,
-      country: true,
-      jsonData: false,
-      items: {
-        where: {
-          AND: [],
-        },
+      listId,
+      AND: {
+        ...notPinnedByUser(options.userId),
+        ...emailIsVerified,
       },
+    ...(OR.length && { OR })
     },
-  };
-  let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
-
-  if (activeQueries.out_with_provider) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider);
-  }
-
-  if (activeQueries.live) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.live);
-  }
-
-  if (activeQueries.to_do) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do);
-  }
-
-  baseQuery.select.items = {
     include: {
       history: true
     },
     orderBy: {
       updatedAt: "desc",
-    },
-    where: {
-      AND: [
-        {
-          pinnedBy: {
-            none: {
-              // @ts-ignore
-              id: options.userId,
-            },
-          },
-          // @ts-ignore
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
-        },
-      ],
-    },
+    }
   };
 
-  if (itemsWhereOr.length > 0) {
-    const { AND } = baseQuery.select.items.where;
-    // @ts-ignore
-    baseQuery.select.items.where = {
-      AND,
-      // @ts-ignore
-      OR: itemsWhereOr,
-    };
-  }
-  const [result] = await prisma.$transaction([
-    prisma.list.findUnique(baseQuery),
-  ]);
+  const result = await prisma.listItem.findMany(query)
   if (!result) {
     logger.error(`Failed to find ${listId}`);
     throw new Error(`Failed to find ${listId}`);
   }
-  const { type, country, items } = result;
+  const list = await getListItemOverview(listId);
 
   const pagination = await getPaginationValues({
-    count: result.items?.length ?? 0,
+    count: result?.length ?? 0,
     rows: 20,
     route: "",
     page: options?.pagination?.page ?? 1,
     listRequestParams: options?.reqQuery,
   });
+
+  const pinnedItems = await findPinnedIndexListItems(options) ?? [];
+
   return {
-    id: listId,
-    type,
-    country,
-    items: items.map(listItemsWithIndexDetails),
+    ...list,
+    pinnedItems: pinnedItems.map(listItemsWithIndexDetails),
+    items: result.map(listItemsWithIndexDetails),
     ...pagination,
   };
 }
