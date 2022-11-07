@@ -107,7 +107,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   baseQuery.select.items = {
     orderBy: {
-      updatedAt: "asc",
+      updatedAt: "desc",
     },
     where: {
       AND: [
