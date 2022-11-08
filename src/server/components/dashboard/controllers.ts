@@ -317,7 +317,7 @@ function formatAnnualReviewDate(list: List, field: string): string {
 }
 
 function getMaxDate(date: number | string | Date): Date {
-  const annualReviewDate = isValid(date) ? date : new Date(date);
+  const annualReviewDate = typeof date === "string" ? new Date(date) : date;
   const maxDate = add(annualReviewDate as Date, { months: 6 });
 
   return maxDate;
