@@ -218,69 +218,6 @@ export async function togglerListItemIsPublished({
   }
 }
 
-export async function persistListItemChanges(
-  id: number,
-  userId: User["id"]
-): Promise<ListItem> {
-  if (userId === undefined) {
-    throw new Error("persistListItemChanges Error: userId is undefined");
-  }
-  const auditEvent = AuditEvent.PUBLISHED;
-  const listItemEvent = ListItemEvent.PUBLISHED;
-
-  try {
-    const listItem = await prisma.listItem.findUnique({
-      where: { id },
-      include: {
-        history: true,
-      },
-    });
-
-    const editEvent = listItem?.history
-      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
-      .filter((audit) => audit.type === "EDITED")
-      .pop();
-
-    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
-
-    const [updatedListItem] = await prisma.$transaction([
-      prisma.listItem.update({
-        where: {
-          id,
-        },
-        data: {
-          isApproved: true,
-          isPublished: true,
-          jsonData: eventJsonData?.updatedJsonData,
-        },
-      }),
-      recordListItemEvent(
-        {
-          eventName: "publish",
-          itemId: id,
-          userId,
-        },
-        auditEvent
-      ),
-
-      recordEvent(
-        {
-          eventName: "publish",
-          itemId: id,
-          userId,
-        },
-        id,
-        listItemEvent
-      ),
-    ]);
-
-    return updatedListItem;
-  } catch (e) {
-    logger.error(`persistListItemChanges Error ${e.message}`);
-
-    throw new Error("Failed to persist updates to list item");
-  }
-}
 
 interface SetEmailIsVerified {
   type?: ServiceType;
