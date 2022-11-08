@@ -15,7 +15,6 @@
     <form class="form"
           action="{{ dashboardRoutes.listsItemPin.replace(':listId', list.id).replace(':listItemId', listItem.id) }}"
           method="post">
-      {% set isPinned = false %}
       {% set action = "unpin" if isPinned else "pin" %}
       {% set fillStatus = "filled" if isPinned else "unfilled" %}
       <span class="govuk-caption-m dashboard__list-item-caption">

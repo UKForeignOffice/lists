@@ -30,9 +30,9 @@ import {
   Status,
   ListItem as PrismaListItem,
 } from "@prisma/client";
-import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
+import { EVENTS } from "./listItemEvent";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -113,7 +113,7 @@ export async function findListItemById(id: string | number): Promise<any> {
     return returnVal;
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
-    throw new Error("Failed to approve lawyer");
+    throw new Error(`failed to find ${id}`);
   }
 }
 
@@ -174,6 +174,8 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
+  const event = EVENTS[status](userId)
+
   const auditEvent = isPublished
     ? AuditEvent.PUBLISHED
     : AuditEvent.UNPUBLISHED;
@@ -186,6 +188,9 @@ export async function togglerListItemIsPublished({
           isApproved: true,
           isPublished,
           status,
+          history: {
+            create: [event]
+          }
         },
         include: {
           address: {
@@ -202,15 +207,6 @@ export async function togglerListItemIsPublished({
           userId,
         },
         auditEvent
-      ),
-      recordEvent(
-        {
-          eventName: isPublished ? "publish" : "unpublish",
-          userId,
-          itemId: id,
-        },
-        id,
-        isPublished ? ListItemEvent.PUBLISHED : ListItemEvent.UNPUBLISHED
       ),
     ]);
 
@@ -360,16 +356,6 @@ export async function createListItem(
       },
       AuditEvent.NEW
     );
-
-    await recordEvent(
-      {
-        eventName: "edit",
-        itemId: listItem.id,
-      },
-      listItem.id,
-      ListItemEvent.NEW
-    );
-
     return listItem;
   } catch (error) {
     logger.error(`create ListItem failed ${error.message}`);

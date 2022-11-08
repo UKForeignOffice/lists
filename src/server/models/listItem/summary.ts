@@ -37,7 +37,8 @@ const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
   },
   UNPUBLISHED: {
     text: 'Removed by post',
-    type: 'to_do'
+    type: 'to_do',
+    colour: 'red',
   },
 }
 
@@ -122,16 +123,19 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function findPinnedIndexListItems(options: ListIndexOptions) {
+async function findPinnedIndexListItems(options: ListIndexOptions) {
   if(!options.userId) {
     return []
   }
-  return prisma.user.findUnique({
+  const { pinnedItems } = await prisma.user.findUnique({
     where: {
       id: options.userId,
     },
     select: {
       pinnedItems: {
+        include: {
+          history: true
+        },
         where: {
           listId: options.listId,
           ...emailIsVerified,
@@ -139,6 +143,8 @@ function findPinnedIndexListItems(options: ListIndexOptions) {
       },
     },
   });
+
+  return pinnedItems;
 }
 
 
@@ -154,18 +160,13 @@ async function getListItemOverview(id: number): Promise<{id: number, type: strin
   })
 }
 
-function notPinnedByUser(userId?: number): Prisma.ListItemWhereInput {
-
-  if(userId ?? true) {
-    return {}
-  }
-
+function notPinnedByUser(userId: number): Prisma.ListItemWhereInput {
   return {
-    pinnedBy: {
-      none: {
-        id: userId,
-      },
-    }
+      pinnedBy: {
+        none: {
+          id: userId
+        }
+      }
   }
 }
 
@@ -181,10 +182,8 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     items: IndexListItem[];
   } & PaginationResults
 > {
-  const { listId } = options;
-  const { activity = [], publishing = [] } = options;
-  const reqQueries = [...activity, ...publishing]
-
+  const { listId, activity = [], publishing = [] } = options;
+  const reqQueries = [...activity, ...publishing];
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
   // note: we are applying take/skip on List (i.e. take 20 Lists) rather than take 20 Items
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -196,18 +195,20 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     where: {
       listId,
       AND: {
-        ...notPinnedByUser(options.userId),
         ...emailIsVerified,
+        ...notPinnedByUser(options.userId!),
       },
-    ...(OR.length && { OR })
+      ...(OR.length && { OR })
     },
     include: {
+      history: true,
+      pinnedBy: true
       history: true
     },
     orderBy: {
       updatedAt: "desc",
     }
-  };
+  }
 
   const result = await prisma.listItem.findMany(query)
   if (!result) {
@@ -228,7 +229,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   return {
     ...list,
-    pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails) ?? [],
+    pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails),
     items: result.map(listItemsWithIndexDetails),
     ...pagination,
   };

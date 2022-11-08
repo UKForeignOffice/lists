@@ -112,19 +112,20 @@ export async function listItemsIndexController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { listId } = req.params;
-
+    const { id: listId } = res.locals.list;
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { activity, publishing, page } = sanitisedQueryParams;
     const queryTag = [...activity, ...publishing];
     req.session.changeMessage = undefined;
 
     const list = await findIndexListItems({
-      listId: Number(listId),
-      userId: req.user?.userData.id,
+      listId,
+      userId: req.user?.userData?.id,
       pagination: {
         page,
       },
+      activity,
+      publishing,
       reqQuery: sanitisedQueryParams,
     });
 

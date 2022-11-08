@@ -75,7 +75,7 @@
     <h2 class="govuk-heading-m">Pinned items</h2>
     <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
       {% for listItem in list.pinnedItems %}
-        {% set list = list %}
+        {% set isPinned = true %}
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>
@@ -86,7 +86,7 @@
   {% else %}
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in list.items %}
-        {% set list = list %}
+        {% set isPinned = false %}
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>

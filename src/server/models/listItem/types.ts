@@ -38,7 +38,8 @@ export type OrderBy = typeof ORDER_BY;
 
 export interface ActivityStatusViewModel {
   type: "to_do" | "out_with_provider" | "no_action_needed",
-  text: string
+  text: string,
+  colour?: string
 }
 
 export type IndexListItem = Pick<
@@ -62,8 +63,8 @@ export interface PaginationOptions {
 export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
-  activity?: Array<keyof typeof ACTIVITY_TAGS>,
-  publishing?: Array<keyof typeof PUBLISHING_TAGS>,
+  activity?: Array<keyof Tags>,
+  publishing?: Array<keyof Tags>,
   sort?: keyof OrderBy;
   reqQuery?: { [query: string]: any };
 } & PaginationOptions;
