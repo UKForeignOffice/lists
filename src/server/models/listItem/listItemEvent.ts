@@ -1,13 +1,6 @@
-import { prisma } from "../db/prisma-client";
 import {Prisma, ListItemEvent} from "@prisma/client";
 
-import {
-  Event,
-  EventCreateInput,
-  EventJsonData,
-} from "./types";
-
-type EventCreate<E> = Prisma.EventCreateWithoutListItemInput & { type: E }
+type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E }
 
 export const EVENTS = {
 
@@ -20,7 +13,7 @@ export const EVENTS = {
   }),
 
 
-  [ListItemEvent.PUBLISHED]: (userId: number) => ({
+  [ListItemEvent.PUBLISHED]: (userId: number): EventCreate<"PUBLISHED"> => ({
     type: ListItemEvent.PUBLISHED,
     jsonData: {
       eventName: "publish",
@@ -28,7 +21,7 @@ export const EVENTS = {
     }
   }),
 
-  [ListItemEvent.UNPUBLISHED]: (userId?: number) => ({
+  [ListItemEvent.UNPUBLISHED]: (userId?: number): EventCreate<"UNPUBLISHED"> =>  ({
       type: ListItemEvent.UNPUBLISHED,
       jsonData: {
         eventName: "unpublish",
@@ -37,7 +30,7 @@ export const EVENTS = {
   }),
 
 
-  [ListItemEvent.PINNED]: (userId: number) => ({
+  [ListItemEvent.PINNED]: (userId: number): EventCreate<"PINNED"> =>  ({
       type: ListItemEvent.PINNED,
       jsonData: {
         eventName: "pin",
@@ -45,7 +38,7 @@ export const EVENTS = {
       },
   }),
 
-  [ListItemEvent.UNPINNED]: (userId: number) => {
+  [ListItemEvent.UNPINNED]: (userId: number): EventCreate<"UNPINNED"> =>  {
     return {
       type: ListItemEvent.UNPINNED,
       jsonData: {
@@ -55,7 +48,7 @@ export const EVENTS = {
     }
   },
 
-  [ListItemEvent.DELETED]: (userId: number) => ({
+  [ListItemEvent.DELETED]: (userId: number): EventCreate<"DELETED"> =>  ({
     type: ListItemEvent.DELETED,
     jsonData: {
       eventName: "deleted",
@@ -66,7 +59,7 @@ export const EVENTS = {
   /**
    * After post requests a change.
    */
-  [ListItemEvent.OUT_WITH_PROVIDER]: (userId: number, requestedChanges: string) => ({
+  [ListItemEvent.OUT_WITH_PROVIDER]: (userId: number, requestedChanges: string): EventCreate<"OUT_WITH_PROVIDER"> =>  ({
     type: ListItemEvent.OUT_WITH_PROVIDER,
     jsonData: {
       eventName: "requestChange",
@@ -78,7 +71,7 @@ export const EVENTS = {
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: () => ({
+  [ListItemEvent.EDITED]: (): EventCreate<"EDITED"> =>  ({
     type: ListItemEvent.EDITED,
     jsonData: {
       eventName: "edited"
@@ -86,15 +79,15 @@ export const EVENTS = {
   }),
 
 
-  [ListItemEvent.CHECK_ANNUAL_REVIEW]: () => ({
+  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (): EventCreate<"CHECK_ANNUAL_REVIEW"> =>  ({
     type: ListItemEvent.CHECK_ANNUAL_REVIEW,
     jsonData: {
       eventName: "check annual review"
     }
   }),
 
-  [ListItemEvent.ANNUAL_REVIEW_STARTED]: () => ({
-    type: ListItemEvent.CHECK_ANNUAL_REVIEW,
+  [ListItemEvent.ANNUAL_REVIEW_STARTED]: (): EventCreate<"ANNUAL_REVIEW_STARTED"> =>  ({
+    type: ListItemEvent.ANNUAL_REVIEW_STARTED,
     jsonData: {
       eventName: "annual review started"
     }

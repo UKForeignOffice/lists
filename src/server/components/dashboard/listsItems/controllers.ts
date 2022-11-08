@@ -144,14 +144,14 @@ export async function listItemPostController(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { listId, listItemId } = req.params;
+  const { listItemId } = req.params;
   const { message, action } = req.body;
-
+  const { list } = res.locals;
   try {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { listItemUrl } = getCurrentUrls(req);
 
-    const list = ((await findListById(listId)) ?? {}) as List;
+
     const listItem: ListItemGetObject = await findListItemById(listItemId);
     const listJson: ListItemJsonData = listItem.jsonData;
     listJson.country = list?.country?.name ?? "";
