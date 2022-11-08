@@ -266,6 +266,25 @@
       ],
       "next": [
         {
+          "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents"
+        }
+      ]
+    },
+    {
+      "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents",
+      "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+      "components": [
+        {
+          "name": "swornTranslations",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "This means that you are legally approved to provide translations of important legal documents into the official language of your country. You should be approved by either a government authority or the court.",
+          "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
           "path": "/have-you-provided-services-to-british-nationals-before"
         }
       ]
@@ -546,6 +565,25 @@
       ],
       "next": [
         {
+          "path": "/are-you-qualified-to-provide-interpretation-in-a-court"
+        }
+      ]
+    },
+    {
+      "path": "/are-you-qualified-to-provide-interpretation-in-a-court",
+      "title": "Are you qualified to provide interpretation in a court or other legal setting?",
+      "components": [
+        {
+          "name": "interpretationInACourt",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "This means that you are legally authorised to provide interpretation into the official language of your country. You should be approved by either a government authority or the court.",
+          "title": "Are you qualified to provide interpretation in a court or other legal setting?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
           "path": "/have-you-provided-services-to-british-nationals-before"
         }
       ]
@@ -601,7 +639,26 @@
       ],
       "next": [
         {
-          "path": "/have-you-provided-services-to-british-nationals-before"
+          "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents-interpreters"
+        }
+      ]
+    },
+    {
+      "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents-interpreters",
+      "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+      "components": [
+        {
+          "name": "swornTranslations",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "This means that you are legally approved to provide translations of important legal documents into the official language of your country. You should be approved by either a government authority or the court.",
+          "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/are-you-qualified-to-provide-interpretation-in-a-court"
         }
       ]
     },
