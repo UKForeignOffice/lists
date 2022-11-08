@@ -347,10 +347,8 @@ export async function listsEditAnnualReviewDateController(
     const { listId } = req.params;
     const list = await findListById(listId);
     const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const maxDate = list?.jsonData.annualReviewStartDate
-      ? getMaxDate(list?.jsonData.annualReviewStartDate as number)
-      : "";
-    const formattedMaxDate = format(maxDate as Date, DATE_FORMAT);
+    const maxDate = list?.jsonData.annualReviewStartDate ? getMaxDate(list?.jsonData.annualReviewStartDate) : "";
+    const formattedMaxDate = maxDate ? format(maxDate, DATE_FORMAT) : "";
 
     res.render("dashboard/lists-edit-annual-review-date", {
       ...DEFAULT_VIEW_PROPS,
