@@ -6,11 +6,13 @@
   {% endif %}
 
   {% if lists.length > 0 %}
-  <a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a>
+    <h1 class="govuk-table__caption govuk-table__caption--l">
+      Lists
+    </h1>
+    <div class="govuk-!-margin-bottom-1">
+      <a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a>
+    </div>
     <table class="govuk-table">
-      <caption class="govuk-table__caption govuk-table__caption--l">
-        Lists
-      </caption>
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th scope="col" class="govuk-table__header">Name</th>
