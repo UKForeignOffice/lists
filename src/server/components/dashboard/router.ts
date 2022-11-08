@@ -29,6 +29,7 @@ import { redirectIfUnauthorised } from "server/components/dashboard/listsItems/h
 
 export const dashboardRouter = express.Router();
 
+
 dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
@@ -49,8 +50,10 @@ dashboardRouter.all(
 
 // lists
 dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
+dashboardRouter.get(`${dashboardRoutes.lists}/*`, redirectIfUnauthorised, csrfRequestHandler, listsController);
 dashboardRouter.all(
   dashboardRoutes.listsEdit,
+  redirectIfUnauthorised,
   csrfRequestHandler,
   listsEditController
 );
@@ -61,8 +64,6 @@ dashboardRouter.get(
   // @ts-expect-error
   listsItemsController
 );
-
-
 
 // list items
 dashboardRouter.all('/dashboard/lists/:listId/items/*', csrfRequestHandler, listItemEditRequestValidation, redirectIfUnauthorised)

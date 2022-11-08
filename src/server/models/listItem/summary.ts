@@ -141,6 +141,7 @@ function findPinnedIndexListItems(options: ListIndexOptions) {
   });
 }
 
+
 async function getListItemOverview(id: number): Promise<{id: number, type: string, country: Country } | null> {
   return await prisma.list.findUnique({
     where: { id },
@@ -227,7 +228,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   return {
     ...list,
-    pinnedItems: pinnedItems.map(listItemsWithIndexDetails),
+    pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails) ?? [],
     items: result.map(listItemsWithIndexDetails),
     ...pagination,
   };

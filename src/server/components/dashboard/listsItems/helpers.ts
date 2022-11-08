@@ -12,27 +12,25 @@ import { dashboardRoutes } from "server/components/dashboard";
 
 export async function redirectIfUnauthorised(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { listId } = req.params;
+    const { listId: stringListId } = req.params;
 
-    if (!Number.isInteger(Number(listId))) throw new Error("listId is not a number");
+    const listId = Number(stringListId);
 
-    const listData = (await prisma.list.findUnique({
-      where: {
-        id: Number(listId),
-      },
-    })) as List;
+    if(!Number(listId)) {
+      throw new Error("listId is not a number");
+    }
 
-    const userCanPublishList = userIsListPublisher(req, listData);
+    const userCanPublishList = req.user?.isListPublisher(listId) ?? false;
 
     if (!userCanPublishList) {
-      const err = new HttpException(403, "403", "User is not authorized to access this list.");
+      const err = new HttpException(403, "403", "User is not authorised to access this list.");
       return next(err);
     }
 
     next();
   } catch (error) {
     logger.error(`redirectIfUnauthorised Error: ${(error as Error).message}`);
-    const err = new HttpException(403, "403", "Unable to validate this request.  Please try again.");
+    const err = new HttpException(403, "403", "Unable to validate this request Please try again.");
     return next(err);
   }
 }
