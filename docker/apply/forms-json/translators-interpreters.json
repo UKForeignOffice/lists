@@ -35,6 +35,12 @@
       "next": []
     },
     {
+      "title": "Update your information",
+      "path": "/update-your-information",
+      "controller": "./pages/summary.js",
+      "components": []
+    },
+    {
       "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
       "title": "Can you provide translation or interpretation services to customers in English?",
       "components": [

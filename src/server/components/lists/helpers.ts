@@ -240,6 +240,12 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
+  if (serviceType === "covidTestProviders") {
+    throw new Error(
+      "This service is not supported"
+    );
+  }
+
   return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${kebabCase(serviceType)}`;
 }
 
