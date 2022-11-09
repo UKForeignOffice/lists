@@ -1,13 +1,16 @@
 import {NextFunction, Request, Response} from "express";
 import {DEFAULT_VIEW_PROPS} from "server/components/lists/constants";
 import {findIndexListItems} from "server/models/listItem/listItem";
-import {ORDER_BY, TAGS, Tags} from "server/models/listItem/types";
+import {ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags} from "server/models/listItem/types";
 import {getCSRFToken} from "server/components/cookies/helpers";
+import {ListItemRes} from "server/components/dashboard/listsItems/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
 
+
+interface TagVM { text: string; value: ACTIVITY_TAGS | PUBLISHING_TAGS }
 const filtersViewModel = {
   activityStatus: [
     {
@@ -108,11 +111,13 @@ function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
 
 export async function listItemsIndexController(
   req: Request<IndexParams, {}, {}, IndexQuery>,
-  res: Response,
+  res: ListItemRes,
   next: NextFunction
 ): Promise<void> {
   try {
-    const { id: listId } = res.locals.list;
+    const { id: listId } = res.locals.list!;
+    const user = req.user!;
+
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { activity, publishing, page } = sanitisedQueryParams;
     const queryTag = [...activity, ...publishing];
@@ -120,7 +125,7 @@ export async function listItemsIndexController(
 
     const list = await findIndexListItems({
       listId,
-      userId: req.user?.userData?.id,
+      userId: user.userData.id,
       pagination: {
         page,
       },
@@ -129,11 +134,10 @@ export async function listItemsIndexController(
       reqQuery: sanitisedQueryParams,
     });
 
-    const withCheckedAttributeFromQuery = (tag) => ({
+    const withCheckedAttributeFromQuery = (tag: TagVM) => ({
       ...tag,
       checked: queryTag?.includes(tag.value),
     })
-
 
     if (list === undefined) {
       return next();
@@ -145,7 +149,7 @@ export async function listItemsIndexController(
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       // @ts-expect-error
-      csrfToken: getCSRFToken(req as Request),
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

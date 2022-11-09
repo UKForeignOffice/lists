@@ -1,6 +1,5 @@
 import { WebhookData } from "server/components/formRunner";
 import {
-  EventJsonData,
   List,
   Point,
   ServiceType,
@@ -86,9 +85,9 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
   }
 }
 
-export async function findListItemById(id: string | number): Promise<any> {
+export async function findListItemById(id: string | number) {
   try {
-    const returnVal = await prisma.listItem.findUnique({
+    return await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
         address: {
@@ -106,11 +105,15 @@ export async function findListItemById(id: string | number): Promise<any> {
             },
           },
         },
-        history: true,
+        history: {
+          orderBy: {
+            time: 'desc'
+          }
+        },
         pinnedBy: true,
       },
     });
-    return returnVal;
+
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error(`failed to find ${id}`);
@@ -130,10 +133,6 @@ export async function togglerListItemIsApproved({
     isApproved: boolean;
     isPublished?: boolean;
   } = { isApproved };
-
-  if (userId === undefined) {
-    throw new Error("togglerListItemIsApproved Error: userId is undefined");
-  }
 
   if (!isApproved) {
     data.isPublished = false;
@@ -252,9 +251,8 @@ export async function setEmailIsVerified({
     const updatedJsonData = {
       ...jsonData,
       metadata: { ...metadata, emailVerified: true },
-    };
+    }
 
-    // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
@@ -285,7 +283,6 @@ export async function createListItem(
         },
       },
     });
-
     await recordListItemEvent(
       {
         eventName: "edit",

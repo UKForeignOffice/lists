@@ -5,7 +5,7 @@ import { calculatePagination, queryToPrismaQueryMap } from "server/models/listIt
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { ListItem, Prisma, Status, Event, ListItemEvent, Country } from "@prisma/client";
+import { ListItem, Prisma, Status, Event, ListItemEvent } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -127,7 +127,7 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
   if(!options.userId) {
     return []
   }
-  const { pinnedItems } = await prisma.user.findUnique({
+  const result = await prisma.user.findUnique({
     where: {
       id: options.userId,
     },
@@ -144,11 +144,11 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
     },
   });
 
-  return pinnedItems;
+  return result?.pinnedItems;
 }
 
 
-async function getListItemOverview(id: number): Promise<{id: number, type: string, country: Country } | null> {
+async function getListItemOverview(id: number) {
   return await prisma.list.findUnique({
     where: { id },
     select: {
@@ -201,7 +201,11 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       ...(OR.length && { OR })
     },
     include: {
-      history: true,
+      history: {
+        orderBy: {
+          time: 'desc',
+        }
+      },
       pinnedBy: true
       history: true
     },
