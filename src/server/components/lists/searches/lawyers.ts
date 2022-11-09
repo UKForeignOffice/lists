@@ -13,7 +13,9 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { LawyerListItem } from "server/models/listItem/providers";
-import { CountryName } from "server/models/types";
+import { CountryName, LawyerListItemGetObject } from "server/models/types";
+import { cleanLegalPracticeAreas, validateCountry } from "server/models/listItem/providers/helpers";
+import { logger } from "server/services/logger";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -31,21 +33,31 @@ export async function searchLawyers(
   const { serviceType, country, region, print = "no" } = params;
   const countryName = formatCountryParam(country as string);
   params = { ...params, country: countryName as CountryName };
+  validateCountry(countryName);
+
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
-  let practiceArea = parseListValues("practiceArea", params);
-  if (practiceArea != null) {
-    practiceArea = practiceArea.map((area) => area.toLowerCase());
-  }
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
-  const allRows = await LawyerListItem.findPublishedLawyersPerCountry({
-    countryName,
-    region,
-    practiceArea,
-    offset: -1,
-  });
+  let allRows:LawyerListItemGetObject[] = [];
+  let practiceArea: string[] | undefined = [];
+  try {
+    practiceArea = parseListValues("practiceArea", params);
+    if (practiceArea != null) {
+      practiceArea = cleanLegalPracticeAreas(practiceArea);
+    }
+
+    allRows = await LawyerListItem.findPublishedLawyersPerCountry({
+      countryName,
+      region,
+      practiceArea,
+      offset: -1,
+    });
+  } catch (error) {
+    // continue processing with an empty allRows[]
+    logger.error(`Exception caught in searchLawyers`, error);
+  }
   const count = allRows.length;
 
   const { pagination } = await getPaginationValues({
@@ -58,13 +70,16 @@ export async function searchLawyers(
     ROWS_PER_PAGE * pagination.results.currentPage -
     ROWS_PER_PAGE;
 
-  const searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
-    countryName,
-    region,
-    practiceArea,
-    offset,
-  });
+  let searchResults:LawyerListItemGetObject[] = [];
 
+  if (allRows.length > 0) {
+    searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
+      countryName,
+      region,
+      practiceArea,
+      offset,
+    });
+  }
   const results = print === "yes" ? allRows : searchResults;
 
   res.render("lists/results-page", {

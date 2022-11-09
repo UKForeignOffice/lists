@@ -1,23 +1,16 @@
-import {
-  Address,
-  CountryName,
-  ListItem,
-  Point,
-  ServiceType,
-} from "server/models/types";
+import {Address, CountryName, ListItem, Point, ServiceType,} from "server/models/types";
 import pgescape from "pg-escape";
-import { geoPointIsValid } from "server/models/helpers";
-import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
-import { prisma } from "server/models/db/prisma-client";
-import { get, startCase } from "lodash";
-import { logger } from "server/services/logger";
-import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
-import {
-  DeserialisedWebhookData,
-  ListItemJsonData,
-} from "server/models/listItem/providers/deserialisers/types";
-import { languages } from "server/services/metadata";
-import { listsRoutes } from "server/components/lists";
+import {geoPointIsValid} from "server/models/helpers";
+import {ROWS_PER_PAGE} from "server/models/listItem/pagination";
+import {prisma} from "server/models/db/prisma-client";
+import {get, startCase} from "lodash";
+import {logger} from "server/services/logger";
+import {LanguageRow, LanguageRows, UpdatableAddressFields} from "server/models/listItem/providers/types";
+import {DeserialisedWebhookData, ListItemJsonData,} from "server/models/listItem/providers/deserialisers/types";
+import * as metaData from "server/services/metadata";
+import {countriesList, languages, legalPracticeAreasList} from "server/services/metadata";
+import {listsRoutes} from "server/components/lists";
+import {HttpException} from "server/middlewares/error-handlers";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -229,7 +222,7 @@ export function setLanguagesProvided(newLanguage: string, languagesProvided: str
   return languagesProvided === "" ? `${newLanguage}` : languagesProvided.concat(`,${newLanguage}`);
 }
 
-export function cleanLanguagesProvided(languagesProvided: string): string | undefined {
+export function getLanguageNames(languagesProvided: string): string | undefined {
 
   if (!languagesProvided) {
     return undefined;
@@ -278,4 +271,95 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
     rows: languagesJson
   }  || { rows: [] };
   return languageRows;
+}
+
+export function validateCountry(countryName: string): void {
+  const countryObj = countriesList.find((country) => {
+    return country.value === countryName;
+  });
+
+  if (!countryObj) {
+    throw new HttpException(403, "403", "Country could not be identified");
+  }
+}
+
+export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined): string[] {
+  let cleanedLegalPracticeAreas: string[] = [];
+  if (practiceAreas && practiceAreas.length > 0) {
+    if (practiceAreas.some((item) => item.toLowerCase() === "all")) {
+      cleanedLegalPracticeAreas= legalPracticeAreasList.map((area) => area.toLowerCase());
+
+    } else {
+      cleanedLegalPracticeAreas = practiceAreas
+        .filter((practiceAreaToValidate) => {
+          return metaData.legalPracticeAreasList.some((area) => {
+            return area.toLowerCase() === practiceAreaToValidate.toLowerCase();
+          });
+        })
+        .map((service) => service.toLowerCase());
+    }
+
+    if (cleanedLegalPracticeAreas.length === 0) {
+      throw new HttpException(403, "403", "Legal practice area could not be identified");
+    }
+  }
+  return cleanedLegalPracticeAreas;
+}
+
+export function cleanTranslatorInterpreterServices(servicesProvided: string[]): string[] {
+  const matchingServicesProvided = servicesProvided
+    .filter((service) => {
+      return metaData.translationInterpretationServices.some((translationInterpretationService) => {
+        return translationInterpretationService.value.toLowerCase() === service.toLowerCase();
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingServicesProvided.length === 0) {
+    throw new HttpException(403, "403", "Services could not be identified");
+  }
+  return matchingServicesProvided;
+}
+
+export function cleanTranslatorSpecialties(translationSpecialties: string[]): string[] {
+  const matchingTranslatorSpecialities = translationSpecialties
+    .filter((selectedTranslationSpecialty) => {
+      return metaData.translationSpecialties.some((translationSpecialty) => {
+        return translationSpecialty.value.toLowerCase() === selectedTranslationSpecialty.toLowerCase() || selectedTranslationSpecialty.toLowerCase() === "all";
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingTranslatorSpecialities.length === 0) {
+    throw new HttpException(403, "403", "Translation services could not be identified");
+  }
+  return matchingTranslatorSpecialities;
+}
+
+export function cleanInterpreterServices(interpreterServices: string[]): string[] {
+  const matchingInterpreterServices = interpreterServices
+    .filter((selectedInterpreterSpecialty) => {
+      return metaData.interpretationServices.some((interpreterSpecialty) => {
+        return interpreterSpecialty.value.toLowerCase() === selectedInterpreterSpecialty.toLowerCase() || selectedInterpreterSpecialty.toLowerCase() === "all";
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingInterpreterServices.length === 0) {
+    throw new HttpException(403, "403", "Interpreter services could not be identified");
+  }
+
+  return matchingInterpreterServices;
+}
+
+export function cleanLanguagesProvided(languagesProvided: string[]): string[] {
+  const matchingLanguages = languagesProvided
+    .filter(language => languages[language.toLowerCase()])
+    .map(language => language.toLowerCase());
+
+  if (matchingLanguages.length === 0) {
+    throw new HttpException(403, "403", "Languages could not be identified");
+  }
+
+  return matchingLanguages;
 }

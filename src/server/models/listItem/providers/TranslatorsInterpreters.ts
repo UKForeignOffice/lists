@@ -9,7 +9,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
   countryName?: string;
   region?: string | "";
   servicesProvided?: string[];
-  languagesProvided?: string | string[];
+  languagesProvided?: string[];
   interpreterServices?: string[];
   translationSpecialties?: string[];
   offset?: number;
@@ -22,31 +22,23 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
   const andWhere: string[] = [];
 
   if (props.languagesProvided) {
-    const languagesProvided = props.languagesProvided as string;
-    const languagesProvidedArray = languagesProvided?.split(",").map((language: string) => language.toLowerCase());
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'languagesProvided'))) && ARRAY ${JSON.stringify(
-        languagesProvidedArray
+        props.languagesProvided
       ).replace(/"/g, "'")}`
     );
   }
   if (props.servicesProvided && props.servicesProvided.length > 0 && !props.servicesProvided.includes("all")) {
-    let servicesProvided = props.servicesProvided;
-    servicesProvided = servicesProvided.map((service: string) => service.toLowerCase());
-
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'servicesProvided'))) && ARRAY ${JSON.stringify(
-        servicesProvided
+        props.servicesProvided
       ).replace(/"/g, "'")}`
     );
   }
   if (props.interpreterServices && props.interpreterServices.length > 0 && !props.interpreterServices.includes("all")) {
-    let interpreterServices = props.interpreterServices;
-    interpreterServices = interpreterServices.map((service: string) => service.toLowerCase());
-
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(
-        interpreterServices
+        props.interpreterServices
       ).replace(/"/g, "'")}`
     );
   }
@@ -55,12 +47,9 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
     props.translationSpecialties.length > 0 &&
     !props.translationSpecialties.includes("all")
   ) {
-    let translationSpecialties = props.translationSpecialties;
-    translationSpecialties = translationSpecialties.map((service: string) => service.toLowerCase());
-
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
-        translationSpecialties
+        props.translationSpecialties
       ).replace(/"/g, "'")}`
     );
   }
@@ -80,7 +69,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw`${query}`;
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedTranslatorsInterpreters ERROR: ", error);
     return [];

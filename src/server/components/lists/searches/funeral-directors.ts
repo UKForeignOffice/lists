@@ -13,6 +13,7 @@ import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
 import { CountryName } from "server/models/types";
+import { validateCountry } from "server/models/listItem/providers/helpers";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
@@ -31,6 +32,9 @@ export async function searchFuneralDirectors(
   let params = getAllRequestParams(req);
   const { serviceType, country, region, repatriation, print = "no" } = params;
   const countryName = formatCountryParam(country as string);
+
+  validateCountry(countryName);
+
   params = { ...params, country: countryName as CountryName };
 
   let { page = "1" } = params;
