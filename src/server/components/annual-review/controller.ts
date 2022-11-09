@@ -103,6 +103,7 @@ async function redirectToFormRunner(req: Request, res: Response): Promise<void> 
     listItem,
     message: "Correct your information and submit your details again.",
     isUnderTest: Boolean(underTest),
+    isAnnualReview: true,
   });
 
   return res.redirect(formRunnerEditUserUrl);
