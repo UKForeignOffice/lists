@@ -7,7 +7,7 @@ import {
 } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 
-import { logger as baseLogger } from "server/services/logger";
+import { logger } from "server/services/logger";
 import express from "express";
 import {getListOverview, redirectIfUnauthorised} from "server/components/dashboard/listsItems/helpers";
 import {ensureAuthenticated} from "server/components/auth";
@@ -15,7 +15,6 @@ import {findListItemById} from "server/models/listItem";
 import {HttpException} from "server/middlewares/error-handlers";
 
 export const listRouter = express.Router();
-export const logger = baseLogger.child({metadata: 'ListRouter'})
 
 listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
 listRouter.get('/', listsController);

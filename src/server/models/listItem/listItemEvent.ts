@@ -71,10 +71,11 @@ export const EVENTS = {
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: (): EventCreate<"EDITED"> =>  ({
+  [ListItemEvent.EDITED]: (updatedJsonData = {}): EventCreate<"EDITED"> =>  ({
     type: ListItemEvent.EDITED,
     jsonData: {
-      eventName: "edited"
+      eventName: "edited",
+      ...updatedJsonData,
     }
   }),
 
