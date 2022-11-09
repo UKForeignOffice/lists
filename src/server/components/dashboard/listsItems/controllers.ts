@@ -1,20 +1,14 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
-import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
-import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
+import { EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
-import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import { findListById, updateList } from "server/models/list";
-import {
-  createFormRunnerEditListItemLink,
-  createFormRunnerReturningUserLink,
-  createListSearchBaseLink,
-} from "server/components/lists/helpers";
+import { createListSearchBaseLink } from "server/components/lists/helpers";
 import { getChangedAddressFields, getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
@@ -348,7 +342,7 @@ async function handleListItemRequestChanges(
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
   logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
-  const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, message, isUnderTest);
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession({list, listItem, message, isUnderTest});
 
   // Email applicant
   logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
@@ -438,19 +432,6 @@ export async function handlePublishListItem(
       searchLink
     );
   }
-}
-
-async function initialiseFormRunnerSession(
-  list: List,
-  listItem: BaseListItemGetObject,
-  message: string,
-  isUnderTest: boolean
-): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
-  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
-  return createFormRunnerEditListItemLink(token);
 }
 
 export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {

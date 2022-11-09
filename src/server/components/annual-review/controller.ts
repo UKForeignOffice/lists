@@ -9,6 +9,8 @@ import { getDetailsViewModel } from "server/components/dashboard/listsItems/getV
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
+import { findListById } from "server/models/list";
+import initialiseFormRunnerSession from "server/utils/formRunnerSession";
 
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
@@ -78,21 +80,39 @@ function formatDataForSummaryRows(listItem: ListItemGetObject): Types.govukRow[]
   return mergedRows;
 }
 
-export function confirmPostController(req: Request, res: Response): void {
-  const chosenValue = req.body["is-your-information-correct"];
+export async function confirmPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const chosenValue = req.body["is-your-information-correct"];
 
-  if (!chosenValue) {
-    req.flash("annualReviewError", "Select if your information is correct or if you need to update it");
-    return res.redirect(`/annual-review/confirm/${req.body.reference}`);
-  }
+    if (!chosenValue) {
+      req.flash("annualReviewError", "Select if your information is correct or if you need to update it");
+      return res.redirect(`/annual-review/confirm/${req.body.reference}`);
+    }
 
-  if (chosenValue === "yes") {
-    return res.redirect(`/annual-review/declaration/${req.body.reference}`);
-  }
+    if (chosenValue === "yes") {
+      return res.redirect(`/annual-review/declaration/${req.body.reference}`);
+    }
 
-  if (chosenValue === "no") {
-    return res.redirect("/annual-review/summary-page");
+    if (chosenValue === "no") {
+      await redirectToFormRunner(req, res);
+    }
+  } catch(err) {
+    next(err);
   }
+}
+
+async function redirectToFormRunner(req: Request, res: Response): Promise<void> {
+  const { listItemRef, underTest } = req.params;
+  const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
+  const list = ((await findListById(listItem.listId)) ?? {}) as List;
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession({
+    list,
+    listItem,
+    message: "Correct your information and submit your details again.",
+    isUnderTest: Boolean(underTest),
+  });
+
+  return res.redirect(formRunnerEditUserUrl);
 }
 
 export function declarationGetController(req: Request, res: Response, next: NextFunction): void {
