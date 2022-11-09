@@ -137,7 +137,7 @@ export async function listsController(
   next: NextFunction
 ): Promise<void> {
   try {
-    if (req.user?.userData.email === undefined) {
+    if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 

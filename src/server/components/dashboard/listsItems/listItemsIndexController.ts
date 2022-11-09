@@ -38,11 +38,7 @@ const filtersViewModel = {
     {
       text: "Unpublished",
       value: TAGS.unpublished,
-    },
-    {
-      text: "Archived",
-      value: TAGS.archived,
-    },
+    }
   ]
 }
 

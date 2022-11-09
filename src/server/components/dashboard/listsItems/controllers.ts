@@ -49,7 +49,7 @@ function mapUpdatedAuditJsonDataToListItem(
   );
 }
 
-const serviceTypeDetailsHeading: Record<ServiceType, string> = {
+const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
   covidTestProviders: "Covid test provider",
   funeralDirectors: "Funeral director",
   lawyers: "Lawyer",
@@ -131,25 +131,14 @@ export async function listItemGetController(
     csrfToken: getCSRFToken(req),
   });
 }
-
-function getCurrentUrls(req: Request): {listItemUrl: string, listIndexUrl: string} {
-  const currentInSegments = req.path.split('/')
-
-  return {
-    listItemUrl: req.path,
-    listIndexUrl: currentInSegments.slice(-1).join('/')
-  }
-}
-
 export async function listItemPostController(
   req: Request,
   res: Response
 ): Promise<void> {
   const { message, action } = req.body;
-  const { list, listItem } = res.locals;
+  const { list, listItem, listItemUrl } = res.locals;
   try {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const { listItemUrl } = getCurrentUrls(req);
 
     const listJson: ListItemJsonData = listItem.jsonData;
     listJson.country = list?.country?.name ?? "";
@@ -201,7 +190,7 @@ export async function listItemPinController(
   const userId = req?.user?.userData?.id;
   const listItem = res.locals.listItem!;
   const isPinned = action === "pin";
-  const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+  const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
 
@@ -284,7 +273,7 @@ export async function listItemDeleteController(
 ): Promise<void> {
   const userId = req?.user?.userData?.id;
   const listItem = res.locals.listItem
-  const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+  const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
     await deleteListItem(listItem.id, userId!);
@@ -312,7 +301,7 @@ export async function listItemUpdateController(
 
   const userId = req?.user?.userData?.id;
   const listItem = res.locals.listItem;
-  const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+  const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
     await handleListItemUpdate(listItem.id, userId!);
@@ -373,7 +362,7 @@ export async function listItemRequestChangeController(
   const userId = req?.user?.userData?.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
   const { list, listItem } = res.locals;
-  const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+  const { listItemUrl, listIndexUrl } = res.locals;
 
   if (!changeMessage) {
     req.flash("errorMsg", "You must provide a message to request a change");
@@ -416,6 +405,7 @@ async function handleListItemRequestChanges(
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
+  logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
   const formRunnerEditUserUrl = await initialiseFormRunnerSession(
     list,
     listItem,
@@ -447,6 +437,8 @@ async function handleListItemRequestChanges(
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
+
+  logger.info(`user ${userId} is unpublishing ${listItem.id} and setting status ${status}`);
 
   try {
     await prisma.$transaction([
@@ -487,13 +479,12 @@ export async function listItemPublishController(
   const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
-  const list = res.locals.list;
   const listItem = res.locals.listItem;
-  const { listItemUrl, listIndexUrl } = getCurrentUrls(req);
+  const { listItemUrl, listIndexUrl } =  res.locals;
 
   try {
 
-    await handlePublishListItem(list.id, isPublished, userId!);
+    await handlePublishListItem(listItem.id, isPublished, userId!);
 
     const successBannerHeading = `${action}ed`;
     req.flash(

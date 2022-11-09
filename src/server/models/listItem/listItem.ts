@@ -160,6 +160,10 @@ export async function togglerListItemIsApproved({
   }
 }
 
+
+/**
+ * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
+ */
 export async function togglerListItemIsPublished({
   id,
   isPublished,
@@ -173,7 +177,8 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const event = EVENTS[status](userId)
+  const event = EVENTS[status](userId);
+  logger.info(`user ${userId} is setting ${id} isPublished to ${isPublished}`);
 
   const auditEvent = isPublished
     ? AuditEvent.PUBLISHED
@@ -185,7 +190,7 @@ export async function togglerListItemIsPublished({
         where: { id },
         data: {
           isApproved: true,
-          isPublished,
+          isPublished: isPublished,
           status,
           history: {
             create: [event]

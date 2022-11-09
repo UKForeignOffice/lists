@@ -29,10 +29,8 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   },
   new: {
     history: { // return if item has never been published
-      some: {
-        NOT: {
-          type: "PUBLISHED"
-        }
+      none:{
+        type: "PUBLISHED"
       }
     }
   },

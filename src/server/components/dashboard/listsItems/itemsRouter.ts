@@ -23,6 +23,7 @@ listRouter.param('listId',  async (req, res, next, listId) => {
   try {
     const listIdAsNumber = Number(listId)
     res.locals.list = await getListOverview(listIdAsNumber);
+    res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
 
     return next();
   } catch (e) {
@@ -39,6 +40,7 @@ listRouter.get("/:listId/items", listsItemsController);
 listRouter.param('listItemId', async (req, res, next, listItemId) => {
   try {
     res.locals.listItem = await findListItemById(listItemId);
+    res.locals.listItemUrl = `${res.locals.listIndexUrl}/${listItemId}`
     next()
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);
