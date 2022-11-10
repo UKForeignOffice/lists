@@ -111,7 +111,7 @@ export async function listItemGetController(
   const actionButtons: { [key: string]: string[] } = {
     NEW: ["publish", "request-changes", "remove"],
     OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
-    EDITED: ["update", "request-changes", "remove"],
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove"],
     // ANNUAL_REVIEW: ["update", "request-changes", "remove"],
     // REVIEW_OVERDUE: ["update", "request-changes", "remove"],
     // REVIEWED: ["update", "request-changes", "remove"],
@@ -476,7 +476,7 @@ async function handleListItemRequestChanges(
 
   logger.info(`Got list type [${listType}`);
 
-  await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl!);
+  await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);
   logger.info("Sent email, updating listItem");
 
 
