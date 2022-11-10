@@ -619,37 +619,32 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   const { listId, listItemId } = req.params;
   const userId = req.user?.userData?.id;
 
+  const list = await findListById(listId);
+  const listItem = await findListItemById(listItemId);
 
-    const list = await findListById(listId);
-    const listItem = await findListItemById(listItemId);
-
-    if (userId === undefined) {
-      return res.redirect(authRoutes.logout);
-    }
-
-    if (list === undefined) {
-      const err = new HttpException(404, `Could not find list ${listId}`);
-      return next(err);
-
-    } else if (listItem === undefined) {
-      const err = new HttpException(404, `Could not find list item ${listItemId}`);
-      return next(err);
-
-    } else if (list?.type !== listItem?.type) {
-      const err = new HttpException(400, `Trying to edit a list item which is a different service type to list ${listId}`);
-      return next(err);
-
-    } else if (list?.id !== listItem?.listId) {
-      const err = new HttpException(400, `Trying to edit a list item which does not belong to list ${listId}`);
-      return next(err);
-
-    } else if (!userIsListPublisher(req, list)) {
-      const err = new HttpException(403, "User does not have publishing rights on this list.");
-      return next(err);
-    }
-
-    return next();
-  } catch (error) {
-    logger.error(`listItemEditRequestValidation Error: ${(error as Error).message}`);
+  if (userId === undefined) {
+    return res.redirect(authRoutes.logout);
   }
+
+  if (list === undefined) {
+    const err = new HttpException(404, `Could not find list ${listId}`);
+    return next(err);
+  } else if (listItem === undefined) {
+    const err = new HttpException(404, `Could not find list item ${listItemId}`);
+    return next(err);
+  } else if (list?.type !== listItem?.type) {
+    const err = new HttpException(
+      400,
+      `Trying to edit a list item which is a different service type to list ${listId}`
+    );
+    return next(err);
+  } else if (list?.id !== listItem?.listId) {
+    const err = new HttpException(400, `Trying to edit a list item which does not belong to list ${listId}`);
+    return next(err);
+  } else if (!userIsListPublisher(req, list)) {
+    const err = new HttpException(403, "User does not have publishing rights on this list.");
+    return next(err);
+  }
+
+  return next();
 }
