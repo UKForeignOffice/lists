@@ -1,7 +1,10 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import { NextFunction, Request, Response } from "express";
-import { findListById } from "server/models/list";
-import { deleteListItem, findListItemById, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
+import {
+  deleteListItem,
+  togglerListItemIsPublished,
+  update,
+} from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
 import {
