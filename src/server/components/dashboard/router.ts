@@ -8,7 +8,6 @@ import {
     startRouteController,
   usersListController,
   usersEditController,
-  listsItemsController
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";

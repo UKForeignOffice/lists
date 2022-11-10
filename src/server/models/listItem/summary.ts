@@ -1,5 +1,4 @@
 import { ActivityStatusViewModel, IndexListItem, ListIndexOptions } from "server/models/listItem/types";
-import { List } from "server/models/types";
 import { PaginationResults } from "server/components/lists";
 import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
