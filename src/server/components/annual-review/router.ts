@@ -9,7 +9,7 @@ annualReviewRouter.get(
   csrfRequestHandler,
   AnnualReviewController.confirmGetController
 );
-annualReviewRouter.post("/annual-review/confirm/:listItemRef", AnnualReviewController.confirmPostController);
+annualReviewRouter.post("/annual-review/confirm/:listItemRef", csrfRequestHandler,AnnualReviewController.confirmPostController);
 annualReviewRouter.get(
   "/annual-review/declaration/:listItemRef",
   csrfRequestHandler,
