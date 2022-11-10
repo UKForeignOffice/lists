@@ -11,6 +11,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { findListById } from "server/models/list";
 import initialiseFormRunnerSession from "server/utils/formRunnerSession";
+import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
@@ -113,6 +114,7 @@ async function redirectToFormRunner(req: Request, res: Response): Promise<void> 
     isAnnualReview: true,
   });
 
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
   return res.redirect(formRunnerEditUserUrl);
 }
 
