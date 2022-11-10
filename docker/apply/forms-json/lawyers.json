@@ -28,14 +28,8 @@
       "controller": "./pages/start.js"
     },
     {
-      "title": "Check your answers",
-      "path": "/summary",
-      "controller": "./pages/summary.js",
-      "components": []
-    },
-    {
       "title": "Update your information",
-      "path": "/update-your-information",
+      "path": "/summary",
       "controller": "./pages/summary.js",
       "components": []
     },

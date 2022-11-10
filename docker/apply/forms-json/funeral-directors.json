@@ -35,12 +35,6 @@
       "next": []
     },
     {
-      "title": "Update your information",
-      "path": "/update-your-information",
-      "controller": "./pages/summary.js",
-      "components": []
-    },
-    {
       "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english",
       "title": "Can you provide funeral services and support to customers in English?",
       "components": [
