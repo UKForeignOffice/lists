@@ -13,15 +13,19 @@ import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 export function getNewSessionWebhookData(
   listType: string,
   listItemId: number,
   questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string,
+  isAnnualReview: boolean | undefined,
+  listItemRef: string,
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://host.docker.internal:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = '/summary';
+  const protocol = isLocalHost ? "http" : "https";
   const options = {
     message,
     customText: {
@@ -33,6 +37,7 @@ export function getNewSessionWebhookData(
     components: [],
     callbackUrl,
     redirectPath,
+    backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`
   };
 
   const newSessionData: FormRunner.NewSessionData = {
