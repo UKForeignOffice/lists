@@ -69,42 +69,44 @@ export enum UserRoles {
 
 type AsJsonObject<T> = T & JsonObject;
 
+type StringLike<T extends string> = T | `${T}` | string
+
 export interface LawyerListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.lawyers;
+  type: StringLike<ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface LawyerListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.lawyers;
+  type: StringLike<ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface FuneralDirectorListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.funeralDirectors;
+  type: StringLike<ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface FuneralDirectorListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.funeralDirectors;
+  type: StringLike<ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface CovidTestSupplierListItemCreateInput
   extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.covidTestProviders;
+  type: StringLike<ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
 export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.translatorsInterpreters;
+  type: StringLike<ServiceType.translatorsInterpreters>;
   jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
 }
 
 export interface CovidTestSupplierListItemGetObject
   extends BaseListItemGetObject {
-  type: ServiceType.covidTestProviders;
+  type: StringLike<ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 

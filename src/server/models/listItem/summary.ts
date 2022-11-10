@@ -147,19 +147,6 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
   return result?.pinnedItems;
 }
 
-
-async function getListItemOverview(id: number) {
-  return await prisma.list.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      type: true,
-      country: true,
-      jsonData: false,
-    }
-  })
-}
-
 function notPinnedByUser(userId: number): Prisma.ListItemWhereInput {
   return {
       pinnedBy: {
@@ -175,9 +162,6 @@ const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equal
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
-    id: number;
-    type: List["type"];
-    country: List["country"];
     pinnedItems: IndexListItem[];
     items: IndexListItem[];
   } & PaginationResults
@@ -191,7 +175,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
 
   const OR = reqQueries.map(tag => queryToPrismaQueryMap[tag]).filter(Boolean)
 
-  const query: Prisma.ListItemFindManyArgs = {
+  const result = await prisma.listItem.findMany({
     where: {
       listId,
       AND: {
@@ -212,14 +196,12 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     orderBy: {
       updatedAt: "desc",
     }
-  }
+  })
 
-  const result = await prisma.listItem.findMany(query)
   if (!result) {
     logger.error(`Failed to find ${listId}`);
     throw new Error(`Failed to find ${listId}`);
   }
-  const list = await getListItemOverview(listId);
 
   const pagination = await getPaginationValues({
     count: result?.length ?? 0,
@@ -232,9 +214,8 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   const pinnedItems = await findPinnedIndexListItems(options) ?? [];
 
   return {
-    ...list,
     pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails),
     items: result.map(listItemsWithIndexDetails),
-    ...pagination,
+    ...pagination
   };
 }

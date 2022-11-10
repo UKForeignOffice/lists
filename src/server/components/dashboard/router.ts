@@ -21,7 +21,6 @@ export const dashboardRouter = express.Router();
 dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
-dashboardRouter.get('/test/lists/:listId/items', csrfRequestHandler, listsItemsController)
 // Users
 dashboardRouter.get(
   dashboardRoutes.usersList,

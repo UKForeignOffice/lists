@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from "express";
+import {NextFunction, Request} from "express";
 import {DEFAULT_VIEW_PROPS} from "server/components/lists/constants";
 import {findIndexListItems} from "server/models/listItem/listItem";
 import {ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags} from "server/models/listItem/types";
@@ -8,8 +8,6 @@ import {ListItemRes} from "server/components/dashboard/listsItems/types";
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
-
-
 interface TagVM { text: string; value: ACTIVITY_TAGS | PUBLISHING_TAGS }
 const filtersViewModel = {
   activityStatus: [

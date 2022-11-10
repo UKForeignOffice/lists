@@ -40,13 +40,13 @@ import { HttpException } from "server/middlewares/error-handlers";
 import {ListItemRes} from "server/components/dashboard/listsItems/types";
 
 function mapUpdatedAuditJsonDataToListItem(
-  listItem: ListItemGetObject,
+  listItem: ListItemGetObject | ListItem,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys(listItem.jsonData).map(
+    ...Object.keys((listItem as ListItemGetObject).jsonData).map(
       (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
     )
   );

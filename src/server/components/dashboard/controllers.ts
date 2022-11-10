@@ -140,7 +140,9 @@ export async function listsController(
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    const email = req.user!.userData.email;
+
+    const lists = (await findUserLists(email)) ?? [];
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
