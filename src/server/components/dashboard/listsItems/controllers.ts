@@ -561,15 +561,15 @@ export async function listItemEditRequestValidation(
   next: NextFunction
 ): Promise<void> {
   logger.info("listItemEditRequestValidation")
-  const { listId, listItemId } = req.params;
   const userId = req.user?.userData?.id;
-
-  const list = await findListById(listId);
-  const listItem = await findListItemById(listItemId);
 
   if (userId === undefined) {
     return res.redirect(authRoutes.logout);
   }
+
+  const { list, listItem } = res.locals;
+  const listId = list?.id;
+  const listItemId = listItem?.id;
 
   if (list === undefined) {
     const err = new HttpException(404, "404", `Could not find list ${listId}`);

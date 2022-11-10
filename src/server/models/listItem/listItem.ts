@@ -120,46 +120,6 @@ export async function findListItemById(id: string | number) {
   }
 }
 
-export async function togglerListItemIsApproved({
-  id,
-  isApproved,
-  userId,
-}: {
-  id: number;
-  isApproved: boolean;
-  userId: User["id"];
-}): Promise<ListItem> {
-  const data: {
-    isApproved: boolean;
-    isPublished?: boolean;
-  } = { isApproved };
-
-  if (!isApproved) {
-    data.isPublished = false;
-  }
-
-  try {
-    const [listItem] = await prisma.$transaction([
-      prisma.listItem.update({
-        where: { id },
-        data,
-      }),
-      recordListItemEvent(
-        {
-          eventName: isApproved ? "approve" : "disapprove",
-          itemId: id,
-          userId,
-        },
-        AuditEvent.UNPUBLISHED
-      ),
-    ]);
-    return listItem;
-  } catch (error) {
-    logger.error(`togglerListItemIsApproved Error ${error.message}`);
-    throw error;
-  }
-}
-
 
 /**
  * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
