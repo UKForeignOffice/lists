@@ -233,7 +233,9 @@ export function createListSearchBaseLink(serviceType: string): string {
   return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${serviceType}`;
 }
 
-export function createFormRunnerReturningUserLink(serviceType: string): string {
+export function createFormRunnerReturningUserLink(serviceType: string, isAnnualReview: boolean): string {
+  let formName = kebabCase(serviceType);
+
   if (serviceType === undefined) {
     throw new Error(
       "createFormRunnerReturningUserLink serviceType is undefined"
@@ -246,7 +248,9 @@ export function createFormRunnerReturningUserLink(serviceType: string): string {
     );
   }
 
-  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${kebabCase(serviceType)}`;
+  if (isAnnualReview) formName = `annual-review-${kebabCase(serviceType)}`;
+
+  return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${formName}`;
 }
 
 export function createFormRunnerEditListItemLink(token: string): string {

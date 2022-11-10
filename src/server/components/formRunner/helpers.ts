@@ -19,10 +19,9 @@ export function getNewSessionWebhookData(
   listItemId: number,
   questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string,
-  isAnnualReview?: boolean
 ): FormRunner.NewSessionData {
   const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
-  const redirectPath = isAnnualReview ? '/update-your-information' : '/summary';
+  const redirectPath = '/summary';
   const options = {
     message,
     customText: {

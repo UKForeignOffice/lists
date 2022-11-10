@@ -18,9 +18,9 @@ export default async function initialiseFormRunnerSession({
   isUnderTest,
   isAnnualReview,
 }: InitaliseFormRunnerInput): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest, isAnnualReview!);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message, isAnnualReview);
-  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
 
   return createFormRunnerEditListItemLink(token);
