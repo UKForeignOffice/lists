@@ -12,7 +12,7 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
-import { CountryName } from "server/models/types";
+import {CountryName, FuneralDirectorListItemGetObject} from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 
 export const funeralDirectorsQuestionsSequence = [
@@ -31,9 +31,8 @@ export async function searchFuneralDirectors(
 ): Promise<void> {
   let params = getAllRequestParams(req);
   const { serviceType, country, region, repatriation, print = "no" } = params;
-  const countryName = formatCountryParam(country as string);
-
-  validateCountry(countryName);
+  let countryName: string | undefined = formatCountryParam(country as string);
+  countryName = validateCountry(countryName);
 
   params = { ...params, country: countryName as CountryName };
 
@@ -50,7 +49,10 @@ export async function searchFuneralDirectors(
     offset: -1,
   };
 
-  const allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
+  let allRows: FuneralDirectorListItemGetObject[] = [];
+  if (countryName) {
+     allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
+  }
   const count = allRows.length;
 
   const { pagination } = await getPaginationValues({
@@ -65,8 +67,10 @@ export async function searchFuneralDirectors(
 
   filterProps.offset = offset;
 
-  const searchResults = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
-
+  let searchResults: FuneralDirectorListItemGetObject[] = [];
+  if (allRows.length > 0) {
+    searchResults = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
+  }
   const results = print === "yes" ? allRows : searchResults;
 
   res.render("lists/results-page", {

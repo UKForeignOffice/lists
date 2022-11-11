@@ -31,9 +31,9 @@ export async function searchLawyers(
 ): Promise<void> {
   let params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no" } = params;
-  const countryName = formatCountryParam(country as string);
+  let countryName: string | undefined = formatCountryParam(country as string);
   params = { ...params, country: countryName as CountryName };
-  validateCountry(countryName);
+  countryName = validateCountry(countryName);
 
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
@@ -48,12 +48,14 @@ export async function searchLawyers(
       practiceArea = cleanLegalPracticeAreas(practiceArea);
     }
 
-    allRows = await LawyerListItem.findPublishedLawyersPerCountry({
-      countryName,
-      region,
-      practiceArea,
-      offset: -1,
-    });
+    if (countryName) {
+      allRows = await LawyerListItem.findPublishedLawyersPerCountry({
+        countryName,
+        region,
+        practiceArea,
+        offset: -1,
+      });
+    }
   } catch (error) {
     // continue processing with an empty allRows[]
     logger.error(`Exception caught in searchLawyers`, error);

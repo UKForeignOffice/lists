@@ -89,7 +89,7 @@ export async function searchTranslatorsInterpreters(
   }
 
   try {
-    validateCountry(country);
+    const countryName = validateCountry(country);
 
     servicesProvided = parseListValues("servicesProvided", params);
     if (servicesProvided != null) {
@@ -142,7 +142,9 @@ export async function searchTranslatorsInterpreters(
       offset: -1
     };
 
-    allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
+    if (countryName) {
+      allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
+    }
 
   } catch (e) {
     // continue with empty allRows[]

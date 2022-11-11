@@ -42,11 +42,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
       ).replace(/"/g, "'")}`
     );
   }
-  if (
-    props.translationSpecialties &&
-    props.translationSpecialties.length > 0 &&
-    !props.translationSpecialties.includes("all")
-  ) {
+  if (!props?.translationSpecialties?.includes("all")) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
         props.translationSpecialties

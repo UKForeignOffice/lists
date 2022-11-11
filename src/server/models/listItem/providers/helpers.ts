@@ -273,40 +273,32 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
   return languageRows;
 }
 
-export function validateCountry(countryName: string): void {
-  const countryObj = countriesList.find((country) => {
-    return country.value === countryName;
-  });
-
-  if (!countryObj) {
-    throw new HttpException(403, "403", "Country could not be identified");
-  }
+export function validateCountry(countryName: string): string | undefined {
+  const matchingCountryName = countriesList.find(country => country.value === countryName)?.value;
+  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
+  return matchingCountryName;
 }
 
-export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined): string[] {
-  let cleanedLegalPracticeAreas: string[] = [];
-  if (practiceAreas && practiceAreas.length > 0) {
-    if (practiceAreas.some((item) => item.toLowerCase() === "all")) {
-      cleanedLegalPracticeAreas= legalPracticeAreasList.map((area) => area.toLowerCase());
+export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined = []): string[] {
+  const lowercasedPracticeAreas = practiceAreas.map(area => area.toLowerCase());
+  const lowercasedAllLegalPracticeAreas: string[] = legalPracticeAreasList.map((area) => area.toLowerCase());
 
-    } else {
-      cleanedLegalPracticeAreas = practiceAreas
-        .filter((practiceAreaToValidate) => {
-          return metaData.legalPracticeAreasList.some((area) => {
-            return area.toLowerCase() === practiceAreaToValidate.toLowerCase();
-          });
-        })
-        .map((service) => service.toLowerCase());
-    }
-
-    if (cleanedLegalPracticeAreas.length === 0) {
-      throw new HttpException(403, "403", "Legal practice area could not be identified");
-    }
+  if (lowercasedPracticeAreas.find(area => area === "all")) {
+    return lowercasedAllLegalPracticeAreas;
   }
-  return cleanedLegalPracticeAreas;
+
+  const validatedPracticeAreas = lowercasedPracticeAreas.filter((areaToValidate) => {
+    return lowercasedAllLegalPracticeAreas.find(area => area === areaToValidate);
+  })
+
+  if (validatedPracticeAreas.length === 0) {
+    throw new HttpException(403, "403", "Legal practice area could not be identified");
+  }
+
+  return validatedPracticeAreas;
 }
 
-export function cleanTranslatorInterpreterServices(servicesProvided: string[]): string[] {
+export function cleanTranslatorInterpreterServices(servicesProvided: string[] = []): string[] {
   const matchingServicesProvided = servicesProvided
     .filter((service) => {
       return metaData.translationInterpretationServices.some((translationInterpretationService) => {
@@ -321,7 +313,7 @@ export function cleanTranslatorInterpreterServices(servicesProvided: string[]): 
   return matchingServicesProvided;
 }
 
-export function cleanTranslatorSpecialties(translationSpecialties: string[]): string[] {
+export function cleanTranslatorSpecialties(translationSpecialties: string[] = []): string[] {
   const matchingTranslatorSpecialities = translationSpecialties
     .filter((selectedTranslationSpecialty) => {
       return metaData.translationSpecialties.some((translationSpecialty) => {
@@ -336,7 +328,7 @@ export function cleanTranslatorSpecialties(translationSpecialties: string[]): st
   return matchingTranslatorSpecialities;
 }
 
-export function cleanInterpreterServices(interpreterServices: string[]): string[] {
+export function cleanInterpreterServices(interpreterServices: string[] = []): string[] {
   const matchingInterpreterServices = interpreterServices
     .filter((selectedInterpreterSpecialty) => {
       return metaData.interpretationServices.some((interpreterSpecialty) => {
@@ -352,7 +344,7 @@ export function cleanInterpreterServices(interpreterServices: string[]): string[
   return matchingInterpreterServices;
 }
 
-export function cleanLanguagesProvided(languagesProvided: string[]): string[] {
+export function cleanLanguagesProvided(languagesProvided: string[] = []): string[] {
   const matchingLanguages = languagesProvided
     .filter(language => languages[language.toLowerCase()])
     .map(language => language.toLowerCase());
