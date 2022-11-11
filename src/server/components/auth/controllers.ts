@@ -20,7 +20,7 @@ export function getLoginController(
   const { token } = req.params;
   const { invalidToken, token: tokenParam } = req.query;
 
-    if (token !== undefined) {
+  if (token !== undefined) {
     const redirectToLogin = `${authRoutes.login}?token=${token}`;
     return res.redirect(redirectToLogin);
   }
