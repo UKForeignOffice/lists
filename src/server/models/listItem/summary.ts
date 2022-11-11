@@ -61,12 +61,20 @@ function hasBeenUnpublishedSincePublishing(history: Event[]): boolean {
   return  hasUnpublishEvent && newestUnpublishEvent < newestPublishEvent;
 }
 
+function hasBeenArchived(history: Event[]) {
+  return history.find(event => event.type === "ARCHIVED")
+}
+
 function getPublishingStatus(item: ListItemWithHistory): PUBLISHING_STATUS {
   if(item.isPublished) {
     return PUBLISHING_STATUS.live
   }
 
-  if(hasBeenUnpublishedSincePublishing(item.history)) {
+  if(hasBeenArchived(item.history)) {
+    return PUBLISHING_STATUS.archived;
+  }
+
+  if(hasBeenUnpublishedSincePublishing(item.history) || item.status === "UNPUBLISHED") {
       return PUBLISHING_STATUS.unpublished
   }
 
@@ -76,17 +84,19 @@ function getPublishingStatus(item: ListItemWithHistory): PUBLISHING_STATUS {
 function wasUnpublishedByUser(history: Event[]): boolean {
   const event = history.find(event => event.type === 'UNPUBLISHED')
   const jsonData = event?.jsonData as Prisma.JsonObject;
-  return !!jsonData.userId;
+  return !!jsonData?.userId ?? false
 }
 
 function getActivityStatus(item: ListItemWithHistory): ActivityStatusViewModel {
-  const { history, status } = item;
+  const { history, status, isPublished } = item;
 
-  if(status === 'UNPUBLISHED') {
+  if(!isPublished) {
     if(wasUnpublishedByUser(history)) {
       return statusToActivityVM.UNPUBLISHED
     }
-    return statusToActivityVM.ANNUAL_REVIEW_OVERDUE
+    if(status === "ANNUAL_REVIEW_OVERDUE") {
+      return statusToActivityVM.ANNUAL_REVIEW_OVERDUE
+    }
   }
 
   if(status === 'PUBLISHED' && !item.isAnnualReview) {

@@ -1,7 +1,4 @@
-import {
-  PaginationOptions,
-  Tags,
-} from "server/models/listItem/types";
+import { PaginationOptions, Tags } from "server/models/listItem/types";
 import { Prisma } from "@prisma/client";
 
 /**
@@ -10,40 +7,55 @@ import { Prisma } from "@prisma/client";
 export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput> = {
   out_with_provider: {
     status: {
-      in: ["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"]
-    }
+      in: ["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"],
+    },
   },
   to_do: {
     status: {
-      in: ["NEW", "EDITED", "UNPUBLISHED", "CHECK_ANNUAL_REVIEW"]
-    }
+      in: ["NEW", "EDITED", "UNPUBLISHED", "CHECK_ANNUAL_REVIEW"],
+    },
   },
   no_action_needed: {
-    AND: [
-      { status: "PUBLISHED" },
-      { isAnnualReview: false }
-    ]
+    AND: [{ status: "PUBLISHED" }, { isAnnualReview: false }],
   },
   live: {
     isPublished: true,
   },
   new: {
-    history: { // return if item has never been published
-      none:{
-        type: "PUBLISHED"
-      }
-    }
+    history: {
+      none: {
+        type: "PUBLISHED",
+      },
+    },
+  },
+  archived: {
+    history: {
+      some: {
+        type: "ARCHIVED",
+      },
+    },
   },
   unpublished: {
-    status: "UNPUBLISHED"
+    AND: [
+      {
+        status: {
+          in: ["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"],
+        },
+      },
+      {
+        NOT: {
+          history: {
+            some: {
+              type: "ARCHIVED",
+            },
+          },
+        },
+      },
+    ],
   },
-  archived: {},
-}
+};
 
-
-export function calculatePagination(
-  paginationOptions: PaginationOptions
-): {} | { take: number; skip: number } {
+export function calculatePagination(paginationOptions: PaginationOptions): {} | { take: number; skip: number } {
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {

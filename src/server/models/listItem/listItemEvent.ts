@@ -2,6 +2,11 @@ import {Prisma, ListItemEvent} from "@prisma/client";
 
 type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E }
 
+/**
+ * These are intended to be used during a nested write via Prisma.EventCreateWithoutListItemInput.
+ * You do not need to pass "connect" or "date". Connections are done automatically when doing a nested write.
+ * Date is now a defaulted field.
+ */
 export const EVENTS = {
 
   // Completely new form
@@ -80,7 +85,7 @@ export const EVENTS = {
   }),
 
 
-  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (): EventCreate<"CHECK_ANNUAL_REVIEW"> =>  ({
+  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (): EventCreate<"CHECK_ANNUAL_REVIEW"> => ({
     type: ListItemEvent.CHECK_ANNUAL_REVIEW,
     jsonData: {
       eventName: "check annual review"

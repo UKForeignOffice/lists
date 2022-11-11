@@ -144,6 +144,7 @@ enum Status {
   UNPUBLISHED //
   CHECK_ANNUAL_REVIEW
   ANNUAL_REVIEW_OVERDUE
+
 }
 
 
@@ -169,6 +170,7 @@ enum ListItemEvent {
   UNDEFINED
   ANNUAL_REVIEW_STARTED
   CHECK_ANNUAL_REVIEW
+  ARCHIVED
 }
 
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported
