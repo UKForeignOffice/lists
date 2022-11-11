@@ -14,6 +14,11 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
     status: {
       in: ["NEW", "EDITED", "UNPUBLISHED", "CHECK_ANNUAL_REVIEW"],
     },
+    history: {
+      none: {
+        type: "ARCHIVED"
+      }
+    }
   },
   no_action_needed: {
     AND: [{ status: "PUBLISHED" }, { isAnnualReview: false }],
@@ -23,9 +28,11 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   },
   new: {
     history: {
-      none: {
-        type: "PUBLISHED",
-      },
+      every: {
+        type: {
+          notIn: ["PUBLISHED", "ARCHIVED"]
+        }
+      }
     },
   },
   archived: {
