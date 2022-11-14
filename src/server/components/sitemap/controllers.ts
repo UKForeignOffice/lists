@@ -3,12 +3,9 @@ import { ServiceType } from "server/models/types";
 import { countriesList } from "server/services/metadata";
 import { listsRoutes, getServiceLabel } from "server/components/lists";
 import { pageTitles } from "server/components/dashboard/helpers";
-import { sitemapRoute } from "server/components/sitemap/routes";
 
 export function sitemapController(_req: Request, res: Response): void {
-  const exclude: string[] = [
-    ServiceType.covidTestProviders,
-  ];
+  const exclude: string[] = [ServiceType.covidTestProviders];
   const sections = Object.keys(ServiceType)
     .filter((name) => !exclude.includes(name))
     .map((serviceType) => {
@@ -25,6 +22,6 @@ export function sitemapController(_req: Request, res: Response): void {
 
   res.render("sitemap", {
     sections,
-    pageTitle: pageTitles[sitemapRoute],
+    pageTitle: pageTitles.sitemapRoute,
   });
 }
