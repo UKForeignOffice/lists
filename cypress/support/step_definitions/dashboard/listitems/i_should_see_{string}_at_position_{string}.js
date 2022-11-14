@@ -1,10 +1,11 @@
 /* eslint-disable */
 Then(
-  "I should see {string} at position {string}",
-  (contactName, rowPosition) => {
-    const rowPos = Number(rowPosition) - 1;
-    const ROLE_FOR_LI_ELEM = "listitem";
+  "I should this order",
+  (table) => {
+    const rows = table.rows();
+    rows.forEach(([contactName, rowPos]) => {
+      cy.findAllByRole("listitem").eq(rowPos - 1).contains(contactName);
+    })
 
-    cy.findAllByRole(ROLE_FOR_LI_ELEM).eq(rowPos).contains(contactName);
   }
 );

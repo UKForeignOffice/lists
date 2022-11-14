@@ -170,7 +170,11 @@ function listItem(options) {
       emailVerified
     },
   }
+
+  const updatedAt = options.updatedAt && new Date(options.updatedAt)
+
   return {
+    ...(updatedAt && {updatedAt}),
     status,
     isPublished,
     type: service,

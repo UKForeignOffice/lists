@@ -14,12 +14,10 @@ Feature:
         Given I am viewing list item index for reference:SMOKE
 
 
-    Scenario Outline: Show providers based on last updated date first
-        Then I should see "<contactName>" at position "<rowPosition>"
-
-        Examples:
+    Scenario: Show providers based on oldest date first
+        Then I should this order
             | contactName | rowPosition |
-            | Julia       | 1           |
-            | Parsons     | 2           |
-            | Joker       | 3           |
-            | Winston     | 4           |
+            | Winston     | 1           |
+            | Julia       | 4           |
+            | Joker       | 2           |
+            | Parsons     | 3           |

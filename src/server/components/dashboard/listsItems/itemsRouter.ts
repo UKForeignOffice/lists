@@ -24,7 +24,6 @@ listRouter.param('listId',  async (req, res, next, listId) => {
     const listIdAsNumber = Number(listId)
     res.locals.list = await getListOverview(listIdAsNumber);
     res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
-
     return next();
   } catch (e) {
     logger.error(`${req.path} - Assigning listId ${listId} to req failed, ${e}`)
