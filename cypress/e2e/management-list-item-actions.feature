@@ -20,11 +20,10 @@ Feature: Dashboard filtering
     And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName | radioButtons                               | radioButtonsConfirm                         |
-      | Winston     | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Julia       | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Bruce       | Update live version,Request changes,Remove | Publish,Unpublish                           |
-      | Joker       | Publish,Request changes,Remove             | Update live version,Unpublish               |
+      | contactName | radioButtons                              | radioButtonsConfirm          |
+      | Winston     | Publish,Request changes,Remove            | Unpublish,Confirm and update |
+      | Julia       | Publish,Request changes,Remove            | Unpublish,Confirm and update |
+      | Joker       | Request changes,Confirm and update,Remove | Publish,Unpublish            |
 
 
   Scenario Outline: Request changes for list item
@@ -82,15 +81,6 @@ Feature: Dashboard filtering
     And I click the "Continue" button
     And I click the "Publish" button
     Then I see the notification text "Emmanuel Law has been updated and published"
-
-
-  Scenario: Confirm and update published  list item
-
-    When I am viewing the list item details for "Bruce"
-    And I click the "Update live version" radio button
-    And I click the "Continue" button
-    And I click the "Update" button
-    Then I see the notification text "Wayne Lawyers has been updated and published"
 
 
   Scenario: Unpublish list item
