@@ -1,7 +1,14 @@
 {% extends "./dashboard.njk" %}
 
+{% block aside %}
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="/dashboard/lists">Back</a>
+  </div>
+{% endblock %}
+
+
 {% block dashboard %}
-  <h2 class="govuk-heading-m" style="color: #b1b4b6;">{{list.country.name}}</h2>
+  <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
   <h1 class="govuk-heading-l">
     {% if listId === 'new' %}
       Create new list

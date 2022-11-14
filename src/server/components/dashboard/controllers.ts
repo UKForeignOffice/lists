@@ -316,13 +316,6 @@ function formatAnnualReviewDate(list: List, field: string): string {
   return list.jsonData[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
-function getMaxDate(date: number | string | Date): Date {
-  const annualReviewDate = typeof date === "string" ? new Date(date) : date;
-  const maxDate = add(annualReviewDate as Date, { months: 6 });
-
-  return maxDate;
-}
-
 // TODO: test
 export async function feedbackController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -347,7 +340,7 @@ export async function listsEditAnnualReviewDateController(
     const { listId } = req.params;
     const list = await findListById(listId);
     const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const maxDate = list?.jsonData.annualReviewStartDate ? getMaxDate(list?.jsonData.annualReviewStartDate) : "";
+    const maxDate = list?.jsonData.annualReviewStartDate ? getMaxDate(list) : "";
     const formattedMaxDate = maxDate ? format(maxDate, DATE_FORMAT) : "";
 
     res.render("dashboard/lists-edit-annual-review-date", {
@@ -366,6 +359,25 @@ export async function listsEditAnnualReviewDateController(
     logger.error(`listsEditAnnualReviewDateController Error: ${(error as Error).message}`);
     next(error);
   }
+}
+
+function getMaxDate(list: List): Date {
+  const lastAnnualReview = list.jsonData.lastAnnualReviewDate ?? list.createdAt;
+  const lastAnnualReviewPlusYear = add(lastAnnualReview as Date, { years: 1 });
+  const maxDateFromLastAnnualReview = addSixMonths(lastAnnualReviewPlusYear);
+  const maxDateFromUserEnteredValues = addSixMonths(list.jsonData.annualReviewStartDate as number);
+  const maxDate = isBefore(maxDateFromUserEnteredValues, maxDateFromLastAnnualReview)
+    ? maxDateFromUserEnteredValues
+    : maxDateFromLastAnnualReview;
+
+  return maxDate;
+}
+
+function addSixMonths(date: number | string | Date): Date {
+  const annualReviewDate = typeof date === "string" ? new Date(date) : date;
+  const newDate = add(annualReviewDate as Date, { months: 6 });
+
+  return newDate;
 }
 
 export async function listsEditAnnualReviewDatePostController(
@@ -403,24 +415,6 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   });
 }
 
-function getAnnualReviewYear({
-  day,
-  month,
-  lastAnnualReview,
-}: {
-  day: string;
-  month: string;
-  lastAnnualReview: number;
-}): number {
-  const date = new Date(lastAnnualReview);
-  const userEnteredDate = new Date(`${month}/${day}/${date.getFullYear()}`);
-  if (isBefore(userEnteredDate, date)) {
-    return date.getFullYear() + 1;
-  }
-
-  return date.getFullYear();
-}
-
 interface IsDateValidInput {
   day: string;
   month: string;
@@ -435,7 +429,6 @@ interface IsDateValidOutput {
 
 export function getAnnualReviewDate({ day, month, list }: IsDateValidInput): IsDateValidOutput {
   const lastAnnualReview = list.jsonData.lastAnnualReviewDate ?? list.createdAt;
-  const lastAnnualReviewPlusYear = add(lastAnnualReview as Date, { years: 1 });
 
   const annualReviewYear = getAnnualReviewYear({
     day,
@@ -444,11 +437,7 @@ export function getAnnualReviewDate({ day, month, list }: IsDateValidInput): IsD
   });
   const parsedDate = parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
 
-  const maxDateFromLastAnnualReview = getMaxDate(lastAnnualReviewPlusYear);
-  const maxDateFromUserEnteredValues = getMaxDate(list.jsonData.annualReviewStartDate as number);
-  const maxDate = isBefore(maxDateFromUserEnteredValues, maxDateFromLastAnnualReview)
-    ? maxDateFromUserEnteredValues
-    : maxDateFromLastAnnualReview;
+  const maxDate = getMaxDate(list);
 
   const invalidResult = { isValid: false, value: null };
   const isLeapYear = (): boolean => month === "2" && day === "29";
@@ -472,6 +461,24 @@ export function getAnnualReviewDate({ day, month, list }: IsDateValidInput): IsD
   }
 
   return { isValid: true, value: parsedDate, errorMsg };
+}
+
+function getAnnualReviewYear({
+  day,
+  month,
+  lastAnnualReview,
+}: {
+  day?: string;
+  month?: string;
+  lastAnnualReview: number;
+}): number {
+  const date = new Date(lastAnnualReview);
+
+  if (!day || !month) return date.getFullYear();
+
+  const userEnteredDate = new Date(`${month}/${day}/${date.getFullYear()}`);
+
+  return isBefore(userEnteredDate, date) ? date.getFullYear() + 1 : date.getFullYear();
 }
 
 async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
