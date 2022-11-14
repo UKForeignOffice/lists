@@ -4,7 +4,7 @@ INSERT INTO "List" ("reference", "updatedAt", type, "countryId", "jsonData")
 
 -- Add these values to the columns stated above
 
-SELECT gen_random_uuid(), NOW(), 'lawyers', missingCountries."id", '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk"]}'
+SELECT gen_random_uuid(), NOW(), 'lawyers', missingCountries."id", '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"]}'
 
 -- Get all the country ids for exiting lawyers in the Lists table
 
