@@ -199,8 +199,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
           time: 'desc',
         }
       },
-      pinnedBy: true
-      history: true
+      pinnedBy: true,
     },
     orderBy: {
       updatedAt: "desc",
