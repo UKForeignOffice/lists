@@ -91,17 +91,15 @@ Feature:
 		And I click the "Unpublish" button
 		Then I see the notification text "C & A Reed has been unpublished"
 
-	Scenario Outline: Show expected fields on list detail
+	Scenario: Show expected fields on list detail
 		When I am viewing the list item details for "Lola"
-		Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
-
-		Examples:
-			| rowLabel                                      | rowValue                                                 | rowPosition |
-			| Contact name                                  | Lola                                                     | 1           |
-			| Local services                                | Local burials, Flower arrangements, Exhumations          | 2           |
-			| Provided services to British nationals before | Yes                                                      | 3           |
-			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) | 4           |
-			| Contact name                                  | Lola                                                     | 5           |
-			| Email address for GOV.UK                      | smoke@cautionyourblast.com                               | 6           |
-			| Telephone                                     | 1234567                                                  | 7           |
-			| Email - private                               | smoke@cautionyourblast.com                               | 8           |
+		Then I should see these rows
+      | rowLabel                                      | rowValue                                                 |
+      | Regions                                       | France and UK                                            |
+			| Local services                                | Local burials, Flower arrangements, Exhumations          |
+			| Provided services to British nationals before | Yes                                                      |
+			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) |
+			| Contact name                                  | Lola                                                     |
+			| Email address for GOV.UK                      | smoke@cautionyourblast.com                               |
+			| Telephone                                     | 1234567                                                  |
+			| Email - private                               | smoke@cautionyourblast.com                               |
