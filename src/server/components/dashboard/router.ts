@@ -5,9 +5,9 @@ import {
   ensureUserIsSuperAdmin,
 } from "server/components/auth";
 import {
-    startRouteController,
+  startRouteController,
   usersListController,
-  usersEditController,
+  usersEditController, feedbackController,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -36,3 +36,10 @@ dashboardRouter.all(
 
 // lists
 dashboardRouter.use('/dashboard/lists', listRouter);
+
+dashboardRouter.get(
+  dashboardRoutes.feedback,
+  csrfRequestHandler,
+  ensureUserIsSuperAdmin,
+  feedbackController
+);

@@ -18,6 +18,6 @@ Feature:
         Then I should this order
             | contactName | rowPosition |
             | Winston     | 1           |
-            | Julia       | 4           |
-            | Joker       | 2           |
-            | Parsons     | 3           |
+            | Julia       | 2           |
+            | Joker       | 3           |
+            | Parsons     | 4           |
