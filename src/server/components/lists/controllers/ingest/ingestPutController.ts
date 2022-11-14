@@ -13,7 +13,9 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
-  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
+  const missingDeclarationData = req.body.name.includes("annual-review");
+  const bodyData = missingDeclarationData ? addDeclarationData(req.body) : req.body;
+  const { value, error } = formRunnerPostRequestSchema.validate(bodyData);
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
@@ -26,6 +28,7 @@ export async function ingestPutController(req: Request, res: Response) {
     res.status(422).json({ error: error.message });
     return;
   }
+
   if (value === undefined) {
     res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
     return;
@@ -94,4 +97,16 @@ export async function ingestPutController(req: Request, res: Response) {
 
     return res.status(422).send({ message: "List item failed to update" });
   }
+}
+
+function addDeclarationData(data: any): any {
+  const declaration = {
+    question: "Declaration",
+    index: 0,
+    fields: [{ key: "declaration", title: "Declaration", type: "boolean", answer: true }],
+  };
+  data.questions.pop();
+  data.questions.push(declaration);
+
+  return data;
 }
