@@ -10,11 +10,18 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
-export async function ingestPutController(req: Request, res: Response) {
+interface FormData {
+  name: string;
+  fees: string;
+  questions: Array<Record<string, string | number | Array<Record<string, string | boolean>>>>;
+  metadata: Record<string, string | boolean>;
+}
+
+export async function ingestPutController(req: Request, res: Response): Promise<void> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
-  const missingDeclarationData = req.body.name.includes("annual-review");
-  const bodyData = missingDeclarationData ? addDeclarationData(req.body) : req.body;
+  const fromAnnualReview = req.body.name.includes("annual-review");
+  const bodyData = fromAnnualReview ? addDeclarationData(req.body) : req.body;
   const { value, error } = formRunnerPostRequestSchema.validate(bodyData);
 
   if (!serviceType || !(serviceType in ServiceType)) {
@@ -51,15 +58,15 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     });
 
-    if (listItem === null) {
-      return res.status(404).send({
+    if (listItem === undefined) {
+      res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
         },
       });
     }
 
-    const jsonData = listItem.jsonData as Prisma.JsonObject;
+    const jsonData = listItem?.jsonData as Prisma.JsonObject;
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
       updatedJsonData: data,
@@ -99,7 +106,7 @@ export async function ingestPutController(req: Request, res: Response) {
   }
 }
 
-function addDeclarationData(data: any): any {
+function addDeclarationData(data: FormData): FormData {
   const declaration = {
     question: "Declaration",
     index: 0,
