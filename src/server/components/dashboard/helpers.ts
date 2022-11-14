@@ -7,7 +7,7 @@ import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
 
-type ListWithJsonData = Partial<List> & {
+export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
 };
 
