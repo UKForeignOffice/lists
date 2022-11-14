@@ -143,8 +143,6 @@ export async function listItemPostController(
   try {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 
-    const listJson: ListItemJsonData = listItem.jsonData;
-    listJson.country = list?.country?.name ?? "";
     const confirmationPages: { [key: string]: string } = {
       publish: "dashboard/list-item-confirm-publish",
       unpublish: "dashboard/list-item-confirm-unpublish",

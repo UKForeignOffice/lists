@@ -27,7 +27,7 @@ listRouter.param('listId',  async (req, res, next, listId) => {
     return next();
   } catch (e) {
     logger.error(`${req.path} - Assigning listId ${listId} to req failed, ${e}`)
-    next(e)
+    return next(e)
   }
 })
 
@@ -38,13 +38,14 @@ listRouter.get("/:listId/items", listsItemsController);
 
 listRouter.param('listItemId', async (req, res, next, listItemId) => {
   try {
-    res.locals.listItem = await findListItemById(listItemId);
+    const listItemIdAsNumber = Number(listItemId);
+    res.locals.listItem = await findListItemById(listItemIdAsNumber);
     res.locals.listItemUrl = `${res.locals.listIndexUrl}/${listItemId}`
-    next()
+    return next()
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);
     logger.error(error.message, {stack: e, route: `${req.path}`})
-    next()
+    return next(e)
   }
 })
 

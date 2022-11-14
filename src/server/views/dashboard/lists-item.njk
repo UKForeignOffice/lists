@@ -27,7 +27,7 @@
         action="{{ dashboardRoutes.listsItemPin.replace(':listId', list.id).replace(':listItemId', listItem.id) }}"
         method="post" required>
   </form>
-  <form id="mainForm" class="form" action="{{ dashboardRoutes.listsItem.replace(':listId', list.id).replace(':listItemId', listItem.id) }}" method="post" required>
+  <form id="mainForm" class="form" action="{{ listItemUrl }}" method="post" required>
 
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
       <div class="govuk-list dashboard__content-list">
