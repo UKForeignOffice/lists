@@ -12,7 +12,6 @@ Feature:
       | Emmanuel    | EDITED                | false       |                | true          |          |
       | Parsons     | PUBLISHED             | true        |                | true          |          |
       | Boxer       | UNPUBLISHED           | false       |                | true          | true     |
-      | Boxer       | UNPUBLISHED           | false       |                | true          | true     |
       | Jones       | CHECK_ANNUAL_REVIEW   | true        | true           | true          |          |
       | Napoleon    | ANNUAL_REVIEW_OVERDUE | false       | true           | true          |          |
     Given I am viewing list item index for reference:SMOKE

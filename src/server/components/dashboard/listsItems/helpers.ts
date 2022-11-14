@@ -8,7 +8,7 @@ import {ListItemRes} from "server/components/dashboard/listsItems/types";
 export async function redirectIfUnauthorised(req: Request, res: ListItemRes, next: NextFunction): Promise<void> {
   try {
     const { list } = res.locals;
-    const userCanPublishList = req.user?.isListPublisher(list!.id) ?? false;
+    const userCanPublishList = await req.user?.isListPublisher(list!.id) ?? false;
 
     if (!userCanPublishList) {
       const err = new HttpException(403, "403", "User is not authorised to access this list.");

@@ -84,8 +84,24 @@ Given("there are these list items", (table) => {
     items.forEach(item => {
       createListItem(item, listId)
     })
+  })
+
+  cy.task("db", {
+    operation: "list.findUnique",
+    variables: {
+      where: {
+        reference: "SMOKE"
+      },
+      include: {
+        items: true
+      }
+    }
+  }).then((list) => {
+    const listId = list.id;
+    const { items } = list;
     addPins(items);
   })
+
 });
 
 function setupPublishEvents(options) {
@@ -140,7 +156,6 @@ function listItem(options) {
   const { isArchived, emailVerified = true, isPublished, service = "lawyers", __smoke, ...rest } = options;
 
   const events = setupPublishEvents(options);
-  console.log("history", events)
   const history = {
     create: events
   }
@@ -182,13 +197,15 @@ function addPins(items) {
       id: item.id,
     }));
 
+  console.log("should pin", shouldPin)
+
   cy.task("db", {
     operation: "user.update",
     variables: {
       data: {
         pinnedItems: {
-          set: shouldPin,
-        },
+          set: shouldPin
+        }
       },
       where: {
         email: "smoke@cautionyourblast.com",

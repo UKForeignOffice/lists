@@ -104,7 +104,7 @@ export async function listItemGetController(
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
     const eventForRequestedChanges = listItem?.history?.find((event) => event.type === "OUT_WITH_PROVIDER")
     const jsonData = eventForRequestedChanges?.jsonData as Prisma.JsonObject;
-    requestedChanges = jsonData.requestedChanges;
+    requestedChanges = jsonData?.requestedChanges;
   }
 
   const actionButtons: Record<Status, string[]> = {
