@@ -6,7 +6,7 @@
 
 {% block dashboard %}
 
-  <form class="form" action="{{ listItemUrl }}/unpublish" method="post" required>
+  <form class="form" action="{{ listItemUrl }}/publish" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <input type="hidden" name="action" value="unpublish"/>
 
