@@ -880,15 +880,13 @@ describe("Dashboard Controllers", () => {
       userIsListPublisher.mockReturnValueOnce(false);
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
-      const next = jest.fn();
+
+      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
-      expect(mockRes.status).toHaveBeenLastCalledWith(403);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        error: {
-          message: "User doesn't have publishing right on this list",
-        },
-      });
+
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(spyFindListItemById).toHaveBeenCalledWith("2");
     });
 
     it("should call editListItem with the correct params", async () => {
@@ -1004,16 +1002,12 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemById.mockResolvedValueOnce(listItem);
 
-      const next = jest.fn();
+      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
 
-      expect(mockRes.status).toHaveBeenLastCalledWith(403);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        error: {
-          message: "User doesn't have publishing right on this list",
-        },
-      });
+      expect(spyFindListById).toHaveBeenCalledWith("1");
+      expect(spyFindListItemById).toHaveBeenCalledWith("2");
     });
 
     it.skip("should call editListItem with the correct params", async () => {
