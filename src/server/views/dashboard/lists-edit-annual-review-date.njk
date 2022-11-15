@@ -22,6 +22,7 @@
 
     <p class="govuk-body">The next {{_.startCase(list.type)}} list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
+<<<<<<< HEAD
     <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReviewDateForm">
         <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
         <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
@@ -60,6 +61,40 @@
           </div>
         </fieldset>
     </div>
+=======
+    {{ govukDateInput({
+      id: "annualReveiwDateForm",
+      fieldset: {
+        legend: {
+          text: "Enter a new start date",
+          isPageHeading: true,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: helpText
+      },
+      errorMessage: error if error.text else null,
+      items: [
+        {
+          classes: "govuk-input--width-2",
+          name: "day",
+          attributes: {
+            id: "day",
+            "data-testid": "day"
+          }
+        },
+        {
+          classes: "govuk-input--width-2",
+          name: "month",
+          attributes: {
+            id: "month",
+            "data-testid": "month"
+          }
+        }
+      ]
+    }) }}
+>>>>>>> 28f6bda0 (chore: address PR comments)
 
     <div class="govuk-button-group">
       <button class="govuk-button govuk-!-margin-bottom-2" data-module="govuk-button" name="action" value="confirmNewDate">

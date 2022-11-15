@@ -2,6 +2,7 @@ Feature: List management change annual review date
 
   Background:
     Given I am logged in as a "SuperAdmin"
+    And A "lawyers" list exists for Eurasia
     And I click the link "Lists"
     And I click the link "Settings"
     And I click the link "Change"

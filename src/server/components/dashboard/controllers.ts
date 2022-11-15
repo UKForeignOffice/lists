@@ -342,17 +342,20 @@ export async function listsEditAnnualReviewDateController(
     const annualReviewStartDate = formatAnnualReviewDate(list as List, "annualReviewStartDate");
     const maxDate = list?.jsonData.annualReviewStartDate ? getMaxDate(list) : "";
     const formattedMaxDate = maxDate ? format(maxDate, DATE_FORMAT) : "";
+    const helpText = maxDate
+      ? `The new date must be before ${formattedMaxDate}`
+      : "The new date must be within 6 months of today’s date";
 
     res.render("dashboard/lists-edit-annual-review-date", {
       ...DEFAULT_VIEW_PROPS,
       error: {
         text: req.flash("annualReviewError")[0],
-        href: "#annualReviewDateForm",
       },
       annualReviewStartDate,
       maxDate,
       formattedMaxDate,
       list,
+      helpText,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
@@ -415,19 +418,11 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   });
 }
 
-interface IsDateValidInput {
-  day: string;
-  month: string;
-  list: List;
-}
-
-interface IsDateValidOutput {
+export function getAnnualReviewDate({ day, month, list }: { day: string; month: string; list: List }): {
   isValid: boolean;
   value: Date | null;
   errorMsg: string;
-}
-
-export function getAnnualReviewDate({ day, month, list }: IsDateValidInput): IsDateValidOutput {
+} {
   const lastAnnualReview = list.jsonData.lastAnnualReviewDate ?? list.createdAt;
 
   const annualReviewYear = getAnnualReviewYear({
