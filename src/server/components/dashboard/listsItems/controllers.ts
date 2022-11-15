@@ -41,6 +41,7 @@ import {
   getListItemUrls,
   mapUpdatedAuditJsonDataToListItem,
 } from "server/components/dashboard/listsItems/helpers";
+import { lowerCase, startCase } from "lodash";
 
 const serviceTypeDetailsHeading: Record<ServiceType, string> = {
   covidTestProviders: "Covid test provider",
@@ -116,7 +117,7 @@ export async function listItemGetController(req: Request, res: Response): Promis
     actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
-    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
+    title: `${serviceTypeDetailsHeading[listItem.type] ?? "Provider"} details`,
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
@@ -157,6 +158,7 @@ export async function listItemPostController(req: Request, res: Response): Promi
       message,
       action,
       req,
+      title: `${serviceTypeDetailsHeading[listItem.type] ?? "Provider"} details - ${lowerCase(startCase(action))}`,
       postActionPageUrl: confirmationPage.postActionPageUrl,
       csrfToken: getCSRFToken(req),
     });

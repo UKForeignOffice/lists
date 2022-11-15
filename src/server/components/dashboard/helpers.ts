@@ -63,25 +63,17 @@ export async function getInitiateFormRunnerSessionToken(
 }
 
 export const pageTitles: { [key: string]: string } = {
-  [dashboardRoutes.usersEdit]: "list management - edit user",
-  [dashboardRoutes.usersList]: "list management - user list",
-  [dashboardRoutes.lists]: "list management - all provider lists",
-  [dashboardRoutes.listsEdit]: "list management - :serviceType in :country - edit provider list",
-  [dashboardRoutes.listsItems]: "list management - :serviceType in :country - provider list",
-  [dashboardRoutes.listsItem]: "list management - :serviceType in :country - provider details",
-  [dashboardRoutes.listsItemDelete]: "list management - :serviceType in :country - confirm delete provider",
-  [dashboardRoutes.listsItemPublish]: "list management - :serviceType in :country - confirm publish list item",
-  [dashboardRoutes.listsItemRequestChanges]: "list management - :serviceType in :country - confirm request changes to provider",
-  [dashboardRoutes.listsItemUpdate]: "list management - :serviceType in :country - confirm update provider",
+  [dashboardRoutes.usersEdit]: "edit user",
+  [dashboardRoutes.usersList]: "user list",
+  [dashboardRoutes.lists]: "all provider lists",
+  [dashboardRoutes.listsEdit]: "edit provider list",
+  [dashboardRoutes.listsItems]: "provider list",
+  [dashboardRoutes.listsItem]: "provider details",
+  [dashboardRoutes.listsItemDelete]: "confirm delete provider",
+  [dashboardRoutes.listsItemPublish]: "confirm publish list item",
+  [dashboardRoutes.listsItemRequestChanges]: "confirm request changes to provider",
+  [dashboardRoutes.listsItemUpdate]: "confirm update provider",
   [sitemapRoute]: "site map",
-  [authRoutes.login]: "list management - login",
-  [authRoutes.logout]: "list management - logout",
-}
-
-export function getPageTitle(pageTitle: string, serviceType?: string, country?: string): string {
-  let result = pageTitle;
-  if (serviceType) {
-    result = result.replace(":serviceType", serviceName(serviceType));
-  }
-  return result.replace(":country", country ?? "Undefined");
+  [authRoutes.login]: "login",
+  [authRoutes.logout]: "logout",
 }

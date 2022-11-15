@@ -11,7 +11,7 @@ import {
   UserRoles
 } from "server/models/types";
 import {
-  filterSuperAdminRole, getPageTitle, pageTitles,
+  filterSuperAdminRole, pageTitles,
   userIsListAdministrator,
   userIsListPublisher,
   userIsListValidator,
@@ -69,7 +69,7 @@ export async function usersListController(
     const users = await findUsers();
     res.render("dashboard/users-list", {
       ...DEFAULT_VIEW_PROPS,
-      pageTitle: pageTitles[dashboardRoutes.usersList],
+      title: pageTitles[dashboardRoutes.usersList],
       users,
       req,
       csrfToken: getCSRFToken(req),
@@ -121,7 +121,7 @@ export async function usersEditController(
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
-      pageTitle: pageTitles[dashboardRoutes.usersEdit],
+      title: pageTitles[dashboardRoutes.usersEdit],
       UserRoles,
       userSaved,
       user,
@@ -147,7 +147,7 @@ export async function listsController(
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
-      pageTitle: pageTitles[dashboardRoutes.lists],
+      title: pageTitles[dashboardRoutes.lists],
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -320,7 +320,7 @@ export async function listsEditController(
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      pageTitle: getPageTitle(pageTitles[dashboardRoutes.listsEdit], list?.type, list?.country?.name),
+      title: pageTitles[dashboardRoutes.listsEdit],
       listCreated,
       listUpdated,
       listId,

@@ -1,6 +1,11 @@
 {% extends "./dashboard.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
 
+{% set listTitle = (_.startCase(list.type) + ' in ' if list.country.name) + list.country.name %}
+{% block pageTitle %}
+  List management - {{ listTitle }} - {{ title }} - {{ SERVICE_NAME }}
+{% endblock %}
+
 {% block aside %}
   <div class="back-links__item">
     <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>

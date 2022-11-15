@@ -4,6 +4,11 @@
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 
+{% set listTitle = (_.startCase(list.type) + ' in ' if list.country.name) + list.country.name %}
+{% block pageTitle %}
+  List management - {{ listTitle }} - {{ title }} - {{ SERVICE_NAME }}
+{% endblock %}
+
 {% block aside %}
 <aside>
   <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">Back</a>

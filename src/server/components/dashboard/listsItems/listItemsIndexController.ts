@@ -3,7 +3,7 @@ import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { getPageTitle, pageTitles } from "server/components/dashboard/helpers";
+import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard";
 
 /**
@@ -117,7 +117,7 @@ export async function listItemsIndexController(
     }
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
-      pageTitle: getPageTitle(pageTitles[dashboardRoutes.listsItems], list.type, list?.country?.name),
+      title: pageTitles[dashboardRoutes.listsItems],
       req,
       list,
       tags: TagsViewModel.map((tag) => ({

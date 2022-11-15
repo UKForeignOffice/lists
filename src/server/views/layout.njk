@@ -46,7 +46,7 @@
 
 
 {% block pageTitle %}
-  {{ SERVICE_NAME }}{{ " - " + pageTitle if pageTitle }}
+  {{ title + " - " if title }}{{ SERVICE_NAME }}
 {% endblock %}
 
 {% block skipLink %}
