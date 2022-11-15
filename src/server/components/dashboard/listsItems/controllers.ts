@@ -149,9 +149,14 @@ export async function listItemPostController(
       unpublish: "dashboard/list-item-confirm-unpublish",
       requestChanges: "dashboard/list-item-confirm-changes",
       update: "dashboard/list-item-confirm-update",
+      updateLive: "dashboard/list-item-confirm-update",
       pin: "dashboard/list-item-confirm-pin",
       unpin: "dashboard/list-item-confirm-pin",
       remove: "dashboard/list-item-confirm-remove",
+    };
+
+    const customFormActions: { [key: string]: string } = {
+      updateNew: "update"
     };
 
     const confirmationPage = confirmationPages[action];
@@ -170,12 +175,19 @@ export async function listItemPostController(
       req.session.changeMessage = message;
     }
 
+    if(!confirmationPage) {
+      logger.error(`${action} was requested by ${req.user?.userData.id} but the confirmation page could not be found.`)
+      req.flash("errorMsg", "The action cannot be performed at this time");
+      return res.redirect(listItemUrl);
+    }
+
     res.render(confirmationPage, {
       ...DEFAULT_VIEW_PROPS,
       list,
       listItem,
       message,
       action,
+      formAction: customFormActions[action],
       req,
       csrfToken: getCSRFToken(req),
     });
