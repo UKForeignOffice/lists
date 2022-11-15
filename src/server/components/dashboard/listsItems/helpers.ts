@@ -18,7 +18,7 @@ export async function redirectIfUnauthorised(req: Request, res: ListItemRes, nex
     next();
   } catch (error) {
     logger.error(`redirectIfUnauthorised Error: ${(error as Error).message}`);
-    const err = new HttpException(403, "403", "Unable to validate this request Please try again.");
+    const err = new HttpException(403, "403", "Unable to validate this request. Please try again.");
     return next(err);
   }
 }
