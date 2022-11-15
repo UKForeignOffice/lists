@@ -150,7 +150,7 @@ export async function togglerListItemIsPublished({
         where: { id },
         data: {
           isApproved: true,
-          isPublished: isPublished,
+          isPublished,
           status,
           history: {
             create: [event]
