@@ -1,21 +1,18 @@
-import { ActivityStatusViewModel, IndexListItem, ListIndexOptions } from "server/models/listItem/types";
+import { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
 import { PaginationResults } from "server/components/lists";
 import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { ListItem, Prisma, Status, Event, ListItemEvent } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import {getActivityStatus, getPublishingStatus, ListItemWithHistory} from "server/models/listItem/summary.helpers";
-
-
+import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "server/models/listItem/summary.helpers";
 
 /**
  * Use this as a viewmodel.
  */
 function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
-
   const { jsonData, createdAt, updatedAt, id } = item;
   const { organisationName, contactName } = jsonData as ListItemJsonData;
 
