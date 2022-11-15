@@ -266,12 +266,12 @@
       ],
       "next": [
         {
-          "path": "f /are-you-a-sworn-translator-in-your-country"
+          "path": "/are-you-a-sworn-translator-in-your-country"
         }
       ]
     },
     {
-      "path": "f /are-you-a-sworn-translator-in-your-country",
+      "path": "/are-you-a-sworn-translator-in-your-country",
       "title": "Are you a certified or sworn translator in your country?",
       "components": [
         {
