@@ -6,7 +6,6 @@ import { NewSessionData } from "../formRunner/types";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
-import serviceName from "server/utils/service-name";
 
 export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
   return roles.filter((role) => {
