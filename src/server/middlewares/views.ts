@@ -44,6 +44,15 @@ export const configureViews = (server: Express): void => {
     return (rows ?? []).map((row) => {
       const macro = macroSet[row.type!];
 
+      const actions = {
+        items: [
+          {
+            href: "#",
+            html: "<strong class='govuk-tag'>Updated</strong>",
+          },
+        ],
+      };
+
       const value = row.value;
       if (value.text !== undefined) {
         value.text = macro(value.text);
@@ -51,9 +60,11 @@ export const configureViews = (server: Express): void => {
       if (value.html) {
         value.html = macro(value.html);
       }
+
       return {
         ...row,
         value,
+        actions
       };
     });
   });
