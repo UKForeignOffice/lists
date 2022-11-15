@@ -405,7 +405,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   const annualReviewDate = getAnnualReviewDate({ day, month, list });
 
   if (!annualReviewDate.value) {
-    req.flash('annualReviewError', annualReviewDate.errorMsg!);
+    req.flash("annualReviewError", annualReviewDate.errorMsg!);
     return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", list.id.toString())}`);
   }
 
@@ -434,7 +434,7 @@ export function getAnnualReviewDate({ day, month, list }: { day: string; month: 
   const maxDate = getMaxDate(list);
 
   const invalidResult = { value: null };
-  const isLeapYear = (): boolean => month === "2" && day === "29";
+  const isLeapYear = month === "2" && day === "29";
   let errorMsg = null;
 
   if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
@@ -444,7 +444,7 @@ export function getAnnualReviewDate({ day, month, list }: { day: string; month: 
     return { ...invalidResult, errorMsg };
   }
 
-  if (isLeapYear() || !isValid(parsedDate)) {
+  if (isLeapYear || !isValid(parsedDate)) {
     errorMsg = "You cannot set the annual review to this date. Please choose another";
     return { ...invalidResult, errorMsg };
   }

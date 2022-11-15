@@ -495,7 +495,7 @@ describe("Dashboard Controllers", () => {
       });
 
       // then
-      expect(result.isValid).toBeTruthy();
+      expect(result.value).toBeTruthy();
     });
 
     it("returns invalid date if over 6 months of last annual review", () => {
@@ -507,7 +507,7 @@ describe("Dashboard Controllers", () => {
       });
 
       // then
-      expect(result.isValid).toBeFalsy();
+      expect(result.value).toBeFalsy();
       expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
     });
 
@@ -520,7 +520,7 @@ describe("Dashboard Controllers", () => {
       });
 
       // then
-      expect(result.isValid).toBeFalsy();
+      expect(result.value).toBeFalsy();
       expect(result.errorMsg).toEqual("You cannot set the annual review to this date. Please choose another");
     });
 
@@ -533,7 +533,7 @@ describe("Dashboard Controllers", () => {
       });
 
       // then
-      expect(result.isValid).toBeTruthy();
+      expect(result.value).toBeTruthy();
       expect(result.value).toEqual(new Date("1/1/2024"));
     });
 
@@ -546,7 +546,7 @@ describe("Dashboard Controllers", () => {
       });
 
       // then
-      expect(result.isValid).toBeFalsy();
+      expect(result.value).toBeFalsy();
       expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
     });
   });
