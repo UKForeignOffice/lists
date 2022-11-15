@@ -404,14 +404,14 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   const { day, month } = req.body;
   const annualReviewDate = getAnnualReviewDate({ day, month, list });
 
-  if (!annualReviewDate.isValid) {
-    req.flash("annualReviewError", annualReviewDate.errorMsg);
+  if (!annualReviewDate.value) {
+    req.flash('annualReviewError', annualReviewDate.errorMsg!);
     return res.redirect(`${dashboardRoutes.listsEditAnnualReviewDate.replace(":listId", list.id.toString())}`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
-    newAnnualReviewDateFormatted: format(annualReviewDate.value as Date, DATE_FORMAT),
+    newAnnualReviewDateFormatted: format(annualReviewDate.value, DATE_FORMAT),
     newAnnualReviewDate: annualReviewDate.value,
     list,
     csrfToken: getCSRFToken(req),
@@ -419,9 +419,8 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 }
 
 export function getAnnualReviewDate({ day, month, list }: { day: string; month: string; list: List }): {
-  isValid: boolean;
   value: Date | null;
-  errorMsg: string;
+  errorMsg: string | null;
 } {
   const lastAnnualReview = list.jsonData.lastAnnualReviewDate ?? list.createdAt;
 
@@ -434,9 +433,9 @@ export function getAnnualReviewDate({ day, month, list }: { day: string; month: 
 
   const maxDate = getMaxDate(list);
 
-  const invalidResult = { isValid: false, value: null };
+  const invalidResult = { value: null };
   const isLeapYear = (): boolean => month === "2" && day === "29";
-  let errorMsg = "";
+  let errorMsg = null;
 
   if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
 
@@ -455,7 +454,7 @@ export function getAnnualReviewDate({ day, month, list }: { day: string; month: 
     return { ...invalidResult, errorMsg };
   }
 
-  return { isValid: true, value: parsedDate, errorMsg };
+  return { value: parsedDate, errorMsg };
 }
 
 function getAnnualReviewYear({
@@ -485,7 +484,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
 
   await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
 
-  for (const emailAddress of list.jsonData.publishers as string[]) {
+  for (const emailAddress of list.jsonData.users ?? []) {
     await sendAnnualReviewDateChangeEmail({
       emailAddress,
       serviceType: startCase(list.type),
