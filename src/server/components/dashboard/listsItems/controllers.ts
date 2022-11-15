@@ -145,6 +145,7 @@ export async function listItemPostController(
 
     const confirmationPages: { [key: string]: string } = {
       publish: "dashboard/list-item-confirm-publish",
+      updateNew: "dashboard/list-item-confirm-publish",
       unpublish: "dashboard/list-item-confirm-unpublish",
       requestChanges: "dashboard/list-item-confirm-changes",
       update: "dashboard/list-item-confirm-update",
@@ -479,8 +480,7 @@ export async function listItemPublishController(
   const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
-  const listItem = res.locals.listItem;
-  const { listItemUrl, listIndexUrl } =  res.locals;
+  const { listItem, listItemUrl, listIndexUrl } =  res.locals;
 
   try {
 
