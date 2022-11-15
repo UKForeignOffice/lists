@@ -50,6 +50,7 @@ describe("Dashboard Controllers", () => {
         isSuperAdmin: jest.fn(),
         isListsCreator: jest.fn(),
         getLists: jest.fn(),
+        isListPublisher: jest.fn(),
       },
       flash: jest.fn(),
       isUnauthenticated: jest.fn(),
