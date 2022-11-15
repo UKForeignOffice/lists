@@ -29,8 +29,8 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function findPinnedIndexListItems(options: ListIndexOptions) {
-  if(!options.userId) {
-    return []
+  if (!options.userId) {
+    return [];
   }
   const result = await prisma.user.findUnique({
     where: {
@@ -39,7 +39,7 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
     select: {
       pinnedItems: {
         include: {
-          history: true
+          history: true,
         },
         where: {
           listId: options.listId,
@@ -54,16 +54,15 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
 
 function notPinnedByUser(userId: number): Prisma.ListItemWhereInput {
   return {
-      pinnedBy: {
-        none: {
-          id: userId
-        }
-      }
-  }
+    pinnedBy: {
+      none: {
+        id: userId,
+      },
+    },
+  };
 }
 
-const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } }
-
+const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } };
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
@@ -78,7 +77,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
-  const OR = reqQueries.map(tag => queryToPrismaQueryMap[tag]).filter(Boolean)
+  const OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
 
   const result = await prisma.listItem.findMany({
     where: {
@@ -87,20 +86,20 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
         ...emailIsVerified,
         ...notPinnedByUser(options.userId!),
       },
-      ...(OR.length && { OR })
+      ...(OR.length && { OR }),
     },
     include: {
       history: {
         orderBy: {
-          time: 'desc',
-        }
+          time: "desc",
+        },
       },
       pinnedBy: true,
     },
     orderBy: {
       updatedAt: "desc",
-    }
-  })
+    },
+  });
 
   if (!result) {
     logger.error(`Failed to find ${listId}`);
@@ -115,11 +114,11 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     listRequestParams: options?.reqQuery,
   });
 
-  const pinnedItems = await findPinnedIndexListItems(options) ?? [];
+  const pinnedItems = (await findPinnedIndexListItems(options)) ?? [];
 
   return {
     pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails),
     items: result.map(listItemsWithIndexDetails),
-    ...pagination
+    ...pagination,
   };
 }

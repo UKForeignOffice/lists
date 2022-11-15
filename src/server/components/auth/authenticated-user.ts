@@ -1,5 +1,5 @@
 import { User, UserRoles } from "server/models/types";
-import {prisma} from "server/models/db/prisma-client";
+import { prisma } from "server/models/db/prisma-client";
 
 export class AuthenticatedUser {
   public readonly userData: User;
@@ -9,15 +9,11 @@ export class AuthenticatedUser {
   }
 
   isSuperAdmin(): boolean {
-    return (
-      this.userData.jsonData?.roles?.includes(UserRoles.SuperAdmin) === true
-    );
+    return this.userData.jsonData?.roles?.includes(UserRoles.SuperAdmin) === true;
   }
 
   isListsCreator(): boolean {
-    return (
-      this.userData.jsonData?.roles?.includes(UserRoles.ListsCreator) === true
-    );
+    return this.userData.jsonData?.roles?.includes(UserRoles.ListsCreator) === true;
   }
 
   async isListPublisher(listId: number): Promise<boolean> {
@@ -29,14 +25,13 @@ export class AuthenticatedUser {
         id: listId,
         AND: {
           jsonData: {
-            path: ['publishers'],
-            array_contains: this.userData.email
-          }
-        }
-      }
-    })
+            path: ["publishers"],
+            array_contains: this.userData.email,
+          },
+        },
+      },
+    });
 
     return !!result;
-
   }
 }

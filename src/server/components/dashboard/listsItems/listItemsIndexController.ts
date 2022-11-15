@@ -1,14 +1,17 @@
-import {NextFunction, Request} from "express";
-import {DEFAULT_VIEW_PROPS} from "server/components/lists/constants";
-import {findIndexListItems} from "server/models/listItem/listItem";
-import {ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags} from "server/models/listItem/types";
-import {getCSRFToken} from "server/components/cookies/helpers";
-import {ListItemRes} from "server/components/dashboard/listsItems/types";
+import { NextFunction, Request } from "express";
+import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
+import { findIndexListItems } from "server/models/listItem/listItem";
+import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
+import { getCSRFToken } from "server/components/cookies/helpers";
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
-interface TagVM { text: string; value: ACTIVITY_TAGS | PUBLISHING_TAGS }
+interface TagVM {
+  text: string;
+  value: ACTIVITY_TAGS | PUBLISHING_TAGS;
+}
 const filtersViewModel = {
   activityStatus: [
     {
@@ -40,9 +43,9 @@ const filtersViewModel = {
     {
       text: "Archived",
       value: TAGS.archived,
-    }
-  ]
-}
+    },
+  ],
+};
 
 // TODO:- for sorting
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -135,7 +138,7 @@ export async function listItemsIndexController(
     const withCheckedAttributeFromQuery = (tag: TagVM) => ({
       ...tag,
       checked: queryTag?.includes(tag.value),
-    })
+    });
 
     if (list === undefined) {
       return next();
@@ -153,5 +156,3 @@ export async function listItemsIndexController(
     next(error);
   }
 }
-
-
