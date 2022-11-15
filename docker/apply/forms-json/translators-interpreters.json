@@ -648,7 +648,7 @@
       "title": "Are you a certified or sworn translator in your country?",
       "components": [
         {
-          "name": "swornTranslations",
+          "name": "swornTranslationsForInterpreters",
           "options": {},
           "type": "YesNoField",
           "hint": "If sworn or certified translation is not used in your country, select 'No'.",
@@ -657,9 +657,8 @@
         }
       ],
       "next": [
-        {
-          "path": " /are-you-a-sworn-interpreter-in-your-country"
-        }
+        { "path": " /are-you-a-sworn-interpreter-in-your-country" },
+        { "path": "/are-you-a-sworn-interpreter-in-your-country" }
       ]
     },
     {
