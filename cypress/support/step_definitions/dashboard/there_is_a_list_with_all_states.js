@@ -202,8 +202,6 @@ function addPins(items) {
       id: item.id,
     }));
 
-  console.log("should pin", shouldPin)
-
   cy.task("db", {
     operation: "user.update",
     variables: {
