@@ -2,7 +2,7 @@
   "startPage": "/apply-to-the-find-an-english-speaking-translator-or-interpreter-abroad-service",
   "pages": [
     {
-      "title": "Apply to the ‘Find an English-speaking translator or interpreter abroad’ service",
+      "title": "Apply to the 'Find an English-speaking translator or interpreter abroad’ service",
       "path": "/apply-to-the-find-an-english-speaking-translator-or-interpreter-abroad-service",
       "components": [
         {
@@ -272,14 +272,14 @@
     },
     {
       "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents",
-      "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+      "title": "Are you a 'certified' or 'sworn' translator in your country?",
       "components": [
         {
           "name": "swornTranslations",
           "options": {},
           "type": "YesNoField",
-          "hint": "This means that you are legally approved to provide translations of important legal documents into the official language of your country. You should be approved by either a government authority or the court.",
-          "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+          "hint": "If 'sworn' or 'certified' translation is not used in your country, select 'No'.",
+          "title": "Are you a 'certified' or 'sworn' translator in your country?",
           "schema": {}
         }
       ],
@@ -571,14 +571,14 @@
     },
     {
       "path": "/are-you-qualified-to-provide-interpretation-in-a-court",
-      "title": "Are you qualified to provide interpretation in a court or other legal setting?",
+      "title": "Are you a 'certified' or 'sworn' interpreter in your country?",
       "components": [
         {
           "name": "interpretationInACourt",
           "options": {},
           "type": "YesNoField",
-          "hint": "This means that you are legally authorised to provide interpretation into the official language of your country. You should be approved by either a government authority or the court.",
-          "title": "Are you qualified to provide interpretation in a court or other legal setting?",
+          "hint": "If 'sworn' or 'certified' interpretation is not used in your country, select 'No'.",
+          "title": "Are you a 'certified' or 'sworn' interpreter in your country?",
           "schema": {}
         }
       ],
@@ -645,14 +645,14 @@
     },
     {
       "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents-interpreters",
-      "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+      "title": "Are you a 'certified' or 'sworn' translator in your country?",
       "components": [
         {
           "name": "swornTranslations",
           "options": {},
           "type": "YesNoField",
-          "hint": "This means that you are legally approved to provide translations of important legal documents into the official language of your country. You should be approved by either a government authority or the court.",
-          "title": "Are you authorised to carry out 'certified' or 'sworn' translations of official documents?",
+          "hint": "If 'sworn' or 'certified' translation is not used in your country, select 'No'.",
+          "title": "Are you a 'certified' or 'sworn' translator in your country?",
           "schema": {}
         }
       ],
