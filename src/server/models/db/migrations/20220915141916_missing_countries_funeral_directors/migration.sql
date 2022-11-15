@@ -2,7 +2,7 @@
 
 INSERT INTO "List" ("reference", "updatedAt", type, "countryId", "jsonData")
 
-SELECT gen_random_uuid(), NOW(), 'funeralDirectors', missingCountries."id", '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","ros.vaughan@fcdo.gov.uk"]}'
+SELECT gen_random_uuid(), NOW(), 'funeralDirectors', missingCountries."id", '{"publishers": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","rosalyn.vaughan@fcdo.gov.uk"], "validators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","rosalyn.vaughan@fcdo.gov.uk"], "administrators": ["ali@cautionyourblast.com","tom.evans@fcdo.gov.uk","rosalyn.vaughan@fcdo.gov.uk"]}'
 
 FROM (SELECT "Country"."id" FROM (SELECT * from "List" WHERE "type" = 'funeralDirectors') as countryIdsForFuneralDirectors
 
