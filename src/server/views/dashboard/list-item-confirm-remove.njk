@@ -6,7 +6,7 @@
 
 {% block dashboard %}
 
-  <form class="form" action="{{ listItemUrl }}/remove" method="post" required>
+  <form class="form" action="{{ listItemUrl }}/delete" method="post" required>
     <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <input type="hidden" name="action" value="remove"/>
 
