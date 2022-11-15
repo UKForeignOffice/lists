@@ -5,12 +5,12 @@ Feature:
 		Given I am logged in as a "SuperAdmin"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                      | hiddenRadioButtons                          | service          |
-			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
-			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
-			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Publish,Remove             | Unpublish,Update live version               | funeralDirectors |
-			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | false     | false      | true          | Request changes,Update live version,Remove | Publish,Unpublish                           | funeralDirectors |
-			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                          | Publish,Update live version,Request changes | funeralDirectors |
+			| contactName | organisationName       | emailAddress               | status    | isPublished |  service         |
+			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
+			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
+			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | funeralDirectors |
+			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | funeralDirectors |
+			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
 
 
