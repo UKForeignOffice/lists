@@ -273,8 +273,7 @@ export async function listItemDeleteController(
   res: Response
 ): Promise<void> {
   const userId = req?.user?.userData?.id;
-  const listItem = res.locals.listItem
-  const { listItemUrl, listIndexUrl } = res.locals;
+  const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
   try {
     await deleteListItem(listItem.id, userId!);
