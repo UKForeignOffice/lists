@@ -266,20 +266,20 @@
       ],
       "next": [
         {
-          "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents"
+          "path": "f /are-you-a-sworn-translator-in-your-country"
         }
       ]
     },
     {
-      "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents",
-      "title": "Are you a 'certified' or 'sworn' translator in your country?",
+      "path": "f /are-you-a-sworn-translator-in-your-country",
+      "title": "Are you a certified or sworn translator in your country?",
       "components": [
         {
           "name": "swornTranslations",
           "options": {},
           "type": "YesNoField",
-          "hint": "If 'sworn' or 'certified' translation is not used in your country, select 'No'.",
-          "title": "Are you a 'certified' or 'sworn' translator in your country?",
+          "hint": "If sworn or certified translation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn translator in your country?",
           "schema": {}
         }
       ],
@@ -565,20 +565,20 @@
       ],
       "next": [
         {
-          "path": "/are-you-qualified-to-provide-interpretation-in-a-court"
+          "path": "/are-you-a-sworn-interpreter-in-your-country"
         }
       ]
     },
     {
-      "path": "/are-you-qualified-to-provide-interpretation-in-a-court",
-      "title": "Are you a 'certified' or 'sworn' interpreter in your country?",
+      "path": "/are-you-a-sworn-interpreter-in-your-country",
+      "title": "Are you a certified or sworn interpreter in your country?",
       "components": [
         {
-          "name": "interpretationInACourt",
+          "name": "swornInterpretations",
           "options": {},
           "type": "YesNoField",
-          "hint": "If 'sworn' or 'certified' interpretation is not used in your country, select 'No'.",
-          "title": "Are you a 'certified' or 'sworn' interpreter in your country?",
+          "hint": "If sworn or certified interpretation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn interpreter in your country?",
           "schema": {}
         }
       ],
@@ -639,26 +639,26 @@
       ],
       "next": [
         {
-          "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents-interpreters"
+          "path": "/are-you-a-sworn-translator-and-interpreter-in-your-country"
         }
       ]
     },
     {
-      "path": "/are-you-authorised-to-carry-out-sworn-translations-of-official-documents-interpreters",
-      "title": "Are you a 'certified' or 'sworn' translator in your country?",
+      "path": "/are-you-a-sworn-translator-and-interpreter-in-your-country",
+      "title": "Are you a certified or sworn translator in your country?",
       "components": [
         {
           "name": "swornTranslations",
           "options": {},
           "type": "YesNoField",
-          "hint": "If 'sworn' or 'certified' translation is not used in your country, select 'No'.",
-          "title": "Are you a 'certified' or 'sworn' translator in your country?",
+          "hint": "If sworn or certified translation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn translator in your country?",
           "schema": {}
         }
       ],
       "next": [
         {
-          "path": "/are-you-qualified-to-provide-interpretation-in-a-court"
+          "path": " /are-you-a-sworn-interpreter-in-your-country"
         }
       ]
     },

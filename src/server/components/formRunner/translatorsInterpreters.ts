@@ -43,7 +43,7 @@ const FormRunnerFields: { [key: string]: string } = {
   interpreterServices: "jsonData.interpreterServices",
   languagesProvided: "jsonData.languagesProvided",
   swornTranslations: "jsonData.swornTranslations",
-  interpretationInACourt: "jsonData.interpretationInACourt",
+  swornInterpretations: "jsonData.swornInterpretations",
 };
 
 // TODO: use the SerialisedWebhookData as the return type
