@@ -24,6 +24,7 @@ import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItem
 import { getPublishingStatus, PUBLISHING_STATUS, getActivityStatus } from "server/models/listItem/summary.helpers";
 import { archiveListItem } from "server/models/listItem";
 import { isEmpty } from "lodash";
+import initialiseFormRunnerSession from "server/utils/formRunnerSession";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
