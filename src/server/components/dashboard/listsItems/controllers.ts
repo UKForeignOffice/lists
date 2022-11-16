@@ -3,9 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import { findListById } from "server/models/list";
 import { deleteListItem, findListItemById, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
-import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
+import { userIsListPublisher } from "server/components/dashboard/helpers";
 import {
-  BaseListItemGetObject,
   EventJsonData,
   List,
   ListItem,
@@ -19,10 +18,10 @@ import { AuditEvent, ListItemEvent, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
-import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import {
-  createFormRunnerEditListItemLink,
-  createFormRunnerReturningUserLink,
+  initialiseFormRunnerSession
+} from "server/components/formRunner/helpers";
+import {
   createListSearchBaseLink,
 } from "server/components/lists/helpers";
 import { getChangedAddressFields, getListItemContactInformation } from "server/models/listItem/providers/helpers";
@@ -503,19 +502,6 @@ async function getListItem(listItemId: string, list: List): Promise<ListItemGetO
   const listJson = listItem.jsonData;
   listJson.country = list?.country?.name ?? "";
   return listItem;
-}
-
-async function initialiseFormRunnerSession(
-  list: List,
-  listItem: BaseListItemGetObject,
-  message: string,
-  isUnderTest: boolean
-): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
-  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
-  return createFormRunnerEditListItemLink(token);
 }
 
 export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {

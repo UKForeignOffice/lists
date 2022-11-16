@@ -157,7 +157,8 @@ export type AuditListItemEventName =
   | "unpin"
   | "disapprove"
   | "publish"
-  | "unpublish";
+  | "unpublish"
+  | "startAnnualReview";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 

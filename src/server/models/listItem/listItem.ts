@@ -1,20 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
-import {
-  EventJsonData,
-  List,
-  Point,
-  ServiceType,
-  User,
-  ListItem,
-} from "server/models/types";
-import {
-  ListItemWithAddressCountry,
-  ListItemWithJsonData,
-} from "server/models/listItem/providers/types";
-import {
-  makeAddressGeoLocationString,
-  getCountryFromData,
-} from "server/models/listItem/geoHelpers";
+import { EventJsonData, List, ListItem, ListItemGetObject, Point, ServiceType, User } from "server/models/types";
+import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -23,16 +10,11 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import {
-  AuditEvent,
-  ListItemEvent,
-  Prisma,
-  Status,
-  ListItem as PrismaListItem,
-} from "@prisma/client";
+import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
+
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -114,6 +96,40 @@ export async function findListItemById(id: string | number): Promise<any> {
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error("Failed to approve lawyer");
+  }
+}
+
+export async function findListItemsForLists(listIds: number[], statuses: Status[]): Promise<any[]> {
+  try {
+    const returnVal = await prisma.listItem.findMany({
+      where: {
+        listId: { in: listIds },
+        status: { in: statuses}
+      },
+      include: {
+        address: {
+          select: {
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            geoLocationId: true,
+          },
+        },
+        pinnedBy: true,
+        history: true,
+      },
+    });
+    return returnVal;
+  } catch (error) {
+    logger.error(`findListItemsForLists Error ${(error as Error).message}`);
+    throw new Error("Unable to get list items");
   }
 }
 
@@ -505,6 +521,63 @@ export async function update(
     );
     throw err;
   }
+}
+
+export async function updateAnnualReview(listItems: ListItemGetObject[]): Promise<ListItemGetObject[]> {
+  const updatedListItems: ListItemGetObject[] = [];
+
+  if (listItems) {
+    for (const listItem of listItems) {
+      const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
+        where: {
+          id: listItem.id,
+        },
+        data: {
+          isAnnualReview: true,
+          status: Status.ANNUAL_REVIEW,
+        },
+      };
+      try {
+        logger.debug(`updating list item in transaction`);
+
+        const result = await prisma.$transaction([
+          prisma.listItem.update(updateListItemPrismaStatement),
+
+          recordListItemEvent(
+            {
+              eventName: "startAnnualReview",
+              itemId: listItem.id,
+              userId: -1,
+              // @ts-ignore
+              updatedJsonData: listItem.jsonData,
+            },
+            AuditEvent.ANNUAL_REVIEW
+          ),
+
+          recordEvent(
+            {
+              eventName: "startAnnualReview",
+              itemId: listItem.id,
+              userId: -1,
+            },
+            listItem.id,
+            ListItemEvent.ANNUAL_REVIEW_STARTED
+          ),
+        ]);
+        if (!result) {
+          logger.error(
+            `transaction listItem.update prisma update failed for listItem ${listItem.id} for annual review`
+          );
+        } else {
+          updatedListItems.push(listItem);
+        }
+      } catch (err) {
+        logger.error(`listItem.update transactional error - rolling back ${err.message}`);
+        throw err;
+      }
+    }
+  }
+  return updatedListItems;
 }
 
 export async function deleteListItem(
