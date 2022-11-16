@@ -42,6 +42,35 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
+export async function findListByAnnualReviewDate(
+  annualReviewFromDate: Date,
+  annualReviewToDate: Date
+): Promise<List[] | undefined> {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+
+  try {
+    const lists = (await prisma.list.findMany({
+      where: {
+        AND: [
+          {
+            nextAnnualReviewStartDate: {
+              gte: annualReviewFromDate,
+              lte: annualReviewToDate,
+            }
+          }]
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+    return lists ?? undefined;
+  } catch (error) {
+    logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
+  }
+  return undefined;
+}
+
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;

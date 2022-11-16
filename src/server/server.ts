@@ -1,14 +1,14 @@
 import express, { Express } from "express";
 import {
   configureAccessControl,
-  configureViews,
-  configureHelmet,
-  configureLogger,
   configureBodyParser,
   configureCompression,
-  configureStaticServer,
-  configureErrorHandlers,
   configureCookieParser,
+  configureErrorHandlers,
+  configureHelmet,
+  configureLogger,
+  configureStaticServer,
+  configureViews
 } from "./middlewares";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
@@ -22,12 +22,7 @@ import annualReviewRouter from "./components/annual-review/router";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware"
 
 
-import {
-  isSmokeTest,
-  isLocalHost,
-  NODE_ENV,
-  SERVICE_DOMAIN,
-} from "server/config";
+import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
 const server = express();
@@ -53,8 +48,6 @@ export async function getServer(): Promise<Express> {
   await initDashboard(server);
   await initDevelopment(server);
   await initHealthCheck(server);
-
-  server.use(annualReviewRouter);
 
   // error handlers
   configureErrorHandlers(server);

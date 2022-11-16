@@ -50,6 +50,20 @@ export function getNewSessionWebhookData(
   return newSessionData;
 }
 
+export async function initialiseFormRunnerSession(
+  list: List,
+  listItem: BaseListItemGetObject,
+  message: string,
+  isUnderTest: boolean
+): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+  return createFormRunnerEditListItemLink(token);
+}
+
+
 export async function generateFormRunnerWebhookData(
   list: Pick<List, "type">,
   listItem: ListItem,
@@ -84,6 +98,7 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
+
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from

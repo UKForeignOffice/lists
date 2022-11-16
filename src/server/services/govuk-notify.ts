@@ -2,7 +2,21 @@ import { NotifyClient } from "notifications-node-client";
 import pluralize from "pluralize";
 import * as config from "server/config";
 import { logger } from "./logger";
-import { isGovUKEmailAddress, throwIfConfigVarIsUndefined } from "server/utils/validation";
+import {
+  isGovUKEmailAddress,
+  throwIfConfigVarIsUndefined,
+} from "server/utils/validation";
+import {
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED,
+  GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE,
+  GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE, GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE,
+  GOVUK_NOTIFY_UNPUBLISH_PROVIDER_WEEKLY_NOTICE,
+  GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE, GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE
+} from "server/config";
 
 let notifyClient: any;
 
@@ -171,5 +185,171 @@ export async function sendAnnualReviewDateChangeEmail(options: {
     );
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
+  }
+}
+
+export async function sendAnnualReviewPostEmail(
+  daysBeforeAnnualReviewStart: number,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  annualReviewDate: string
+): Promise<void> {
+  try {
+
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      return;
+    }
+
+    if (emailAddress !== "ali@cautionyourblast.com") {
+      emailAddress = "ali@cautionyourblast.com";
+    }
+
+    const notifyTemplates: Record<number, string> = {
+      30: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE ?? "",
+      7: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE ?? "",
+      1: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE ?? "",
+      0: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED ?? "",
+    }
+
+    await getNotifyClient().sendEmail(
+      notifyTemplates[daysBeforeAnnualReviewStart],
+      emailAddress,
+      {
+        personalisation: {
+          typePlural,
+          country,
+          annualReviewDate,
+          typePluralCapitalised: typePlural.toUpperCase(),
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`Unable to send change request email: ${error.message}`);
+  }
+}
+
+export async function sendAnnualReviewProviderEmail(
+  daysBeforeAnnualReviewStart: number,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  contactName: string,
+  deletionDate: string,
+  changeLink: string
+): Promise<void> {
+  try {
+
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      return;
+    }
+
+    if (emailAddress !== "ali@cautionyourblast.com") {
+      emailAddress = "ali@cautionyourblast.com";
+    }
+
+    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`)
+
+    await getNotifyClient().sendEmail(
+      GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED,
+      emailAddress,
+      {
+        personalisation: {
+          contactName,
+          typePlural,
+          country,
+          deletionDate,
+          changeLink
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`Unable to send annual review provider email: ${error.message}`);
+  }
+}
+
+export async function sendUnpublishedPostEmail(
+  daysBeforeAnnualReviewStart: number,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  numberNotResponded: string
+): Promise<void> {
+  try {
+
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      return;
+    }
+
+    if (emailAddress !== "ali@cautionyourblast.com") {
+      emailAddress = "ali@cautionyourblast.com";
+    }
+
+    const notifyTemplates: Record<number, string> = {
+      7: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
+      1: GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE ?? "",
+      0: GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE ?? "",
+    }
+
+    await getNotifyClient().sendEmail(
+      notifyTemplates[daysBeforeAnnualReviewStart],
+      emailAddress,
+      {
+        personalisation: {
+          typePluralCapitalised: typePlural.toUpperCase(),
+          typePlural,
+          country,
+          numberNotResponded,
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`Unable to send change request email: ${error.message}`);
+  }
+}
+
+export async function sendUnpublishedProviderEmail(
+  daysUntilUnpublished: number,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  contactName: string,
+  changeLink: string
+): Promise<void> {
+  try {
+
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      return;
+    }
+
+    if (emailAddress !== "ali@cautionyourblast.com") {
+      emailAddress = "ali@cautionyourblast.com";
+    }
+
+    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, changeLink: ${changeLink}`)
+    const notifyTemplates: Record<number, string> = {
+      7: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_WEEKLY_NOTICE ?? "",
+      1: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE ?? "",
+      0: GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE ?? "",
+    }
+
+    await getNotifyClient().sendEmail(
+      notifyTemplates[daysUntilUnpublished],
+      emailAddress,
+      {
+        personalisation: {
+          contactName,
+          typePlural,
+          country,
+          changeLink
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`Unable to send annual review provider email: ${error.message}`);
   }
 }
