@@ -42,3 +42,9 @@ ENV CI_SMOKE_TEST=true
 
 CMD ["npm", "run", "start:prod"]
 
+FROM node:14.17-alpine3.13 AS scheduled
+WORKDIR /usr/src/scheduler
+COPY --from=runner /usr/src/app/dist ./dist/
+COPY --from=runner /usr/src/app/node_modules ./node_modules/
+COPY --from=runner /usr/src/app/package.json ./package.json
+
