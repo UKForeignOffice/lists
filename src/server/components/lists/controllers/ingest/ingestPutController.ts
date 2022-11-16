@@ -20,7 +20,7 @@ interface FormData {
 export async function ingestPutController(req: Request, res: Response): Promise<void> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
-  const fromAnnualReview = req.body.name.includes("annual-review");
+  const fromAnnualReview = req.body?.name?.includes("annual-review");
   const bodyData = fromAnnualReview ? addDeclarationData(req.body) : req.body;
   const { value, error } = formRunnerPostRequestSchema.validate(bodyData);
 
