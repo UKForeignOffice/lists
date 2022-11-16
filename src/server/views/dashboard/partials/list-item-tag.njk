@@ -1,21 +1,13 @@
 {% set colours = {
-  published: 'green',
-  approved: 'turquoise',
-  'to_do': 'blue',
-  'out_with_provider': 'yellow'
+  live: 'green',
+  'new': 'grey',
+  'unpublished': 'red',
+  'archived': 'grey'
   }
 %}
 
-{% set dictionary = {
-  to_do: 'To do',
-  published: 'Published',
-  'out_with_provider': "Out with provider",
-  'annual_review': "Annual review"
-  }
-%}
-
-{% set class = 'govuk-tag--' + colours[tag] %}
-
+{% set publishingStatus = listItem.publishingStatus %}
+{% set class = 'govuk-tag--' + colours[publishingStatus] %}
 <strong class="govuk-tag dashboard__list-item-tag {{ class }}">
-  {{ dictionary[tag] }}
+  {{ publishingStatus }}
 </strong>

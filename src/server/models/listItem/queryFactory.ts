@@ -1,34 +1,68 @@
-import {
-  ListIndexOptions,
-  PaginationOptions,
-  Tags,
-  TAGS,
-} from "server/models/listItem/types";
-import { Status, Prisma } from "@prisma/client";
+import { PaginationOptions, Tags } from "server/models/listItem/types";
+import { Prisma } from "@prisma/client";
 
-export const tagQueryFactory: Record<
-  keyof Tags,
-  (options: ListIndexOptions) => Partial<Prisma.ListItemWhereInput> | Prisma.Enumerable<Prisma.ListItemWhereInput>
-> = {
-  // TODO:- enable when ready
-  // [TAGS.annual_review]: () => ({ isPublished: false }),
-  [TAGS.out_with_provider]: () => ([{ status: Status.OUT_WITH_PROVIDER }]),
-  [TAGS.pinned]: (options: ListIndexOptions) => {
-    return {
-      pinnedBy: {
-        some: {
-          id: options.userId,
+/**
+ * covert TAGS to prisma query options object
+ */
+export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput> = {
+  out_with_provider: {
+    status: {
+      in: ["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"],
+    },
+  },
+  to_do: {
+    status: {
+      in: ["NEW", "EDITED", "UNPUBLISHED", "CHECK_ANNUAL_REVIEW"],
+    },
+    history: {
+      none: {
+        type: "ARCHIVED",
+      },
+    },
+  },
+  no_action_needed: {
+    AND: [{ status: "PUBLISHED" }, { isAnnualReview: false }],
+  },
+  live: {
+    isPublished: true,
+  },
+  new: {
+    history: {
+      every: {
+        type: {
+          notIn: ["PUBLISHED", "ARCHIVED"],
         },
       },
-    };
+    },
   },
-  [TAGS.published]: () => ([{ isPublished: true }]),
-  [TAGS.to_do]: () => ([{ status: Status.NEW },{ status: Status.EDITED },{ status: Status.UNPUBLISHED }]),
+  archived: {
+    history: {
+      some: {
+        type: "ARCHIVED",
+      },
+    },
+  },
+  unpublished: {
+    AND: [
+      {
+        status: {
+          in: ["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"],
+        },
+      },
+      {
+        NOT: {
+          history: {
+            some: {
+              type: "ARCHIVED",
+            },
+          },
+        },
+      },
+    ],
+  },
 };
 
-export function calculatePagination(
-  paginationOptions: PaginationOptions
-): {} | { take: number; skip: number } {
+export function calculatePagination(paginationOptions: PaginationOptions): {} | { take: number; skip: number } {
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {
