@@ -192,4 +192,56 @@ const server = {
   ],
 };
 
-module.exports = [client, server];
+function getScheduledFilePath(fileName) {
+  const scheduledProcessPath = path.resolve(__dirname, "src", "server", "components", "annualReview");
+  return path.join(scheduledProcessPath, fileName);
+}
+const scheduler = {
+  target: "node",
+  mode: environmentOptions[nodeEnv].mode,
+  watch: environmentOptions[nodeEnv].watch,
+  entry: {
+    nameOfProcess: getScheduledFilePath("annualReviewNoticeEmailScheduler.ts"),
+    sayHowdy: getScheduledFilePath("testProcess.ts"),
+  },
+  devtool: "cheap-module-source-map",
+  output: {
+    path: path.resolve(__dirname, "dist", "scheduler"),
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".json"],
+    modules: ["node_modules"],
+    plugins: [new TsconfigPathsPlugin()],
+  },
+  node: {
+    __dirname: false,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx|tsx|ts)$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  plugins: [
+    ...environmentOptions[nodeEnv].plugins,
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: "write-references",
+      },
+    }),
+  ],
+  externals: [
+    nodeExternals({
+      modulesDir: "node_modules",
+    }),
+  ],
+};
+
+module.exports = [client, server, scheduler];
