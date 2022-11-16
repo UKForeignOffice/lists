@@ -8,7 +8,7 @@ import {
   configureHelmet,
   configureLogger,
   configureStaticServer,
-  configureViews
+  configureViews,
 } from "./middlewares";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
@@ -20,12 +20,8 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-
 import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
-
-import schedule from "node-schedule";
-import { sendAllAdvancedNoticesToPosts } from "server/components/annualReview/annualReviewNoticeEmailScheduler";
 
 const server = express();
 
@@ -54,11 +50,11 @@ export async function getServer(): Promise<Express> {
   // error handlers
   configureErrorHandlers(server);
 
-  schedule.scheduleJob("*/20 * * * * *", async () => {
-    await sendAllAdvancedNoticesToPosts();
-  });
+  // schedule.scheduleJob("*/20 * * * * *", async () => {
+  //   await sendAllAdvancedNoticesToPosts();
+  // });
 
-   logger.info(
+  logger.info(
     `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
   );
   return server;

@@ -1,7 +1,5 @@
 import { findListByAnnualReviewDate } from "server/models/list";
-import {
-  List, ListItemGetObject,
-} from "server/models/types";
+import { List, ListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { findListItemsForLists, updateAnnualReview } from "server/models/listItem";
 import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "server/services/govuk-notify";
@@ -11,35 +9,49 @@ import { lowerCase, startCase } from "lodash";
 import { Status } from "@prisma/client";
 import { getAdjustedDateForDatePart } from "server/components/annualReview/helpers";
 
-async function sendAdvancedNoticeToPostsDaysBeforeStart(lists: List[], dateBeforeAnnualReviewStart: Date, daysBeforeAnnualReviewStart: number): Promise<void> {
+const ANNUALREVIEW = "ABCDEF";
+
+async function sendAdvancedNoticeToPostsDaysBeforeStart(
+  lists: List[],
+  dateBeforeAnnualReviewStart: Date,
+  daysBeforeAnnualReviewStart: number
+): Promise<void> {
   const filteredList: List[] = lists.filter((list) => {
     return list.nextAnnualReviewStartDate.getTime() === dateBeforeAnnualReviewStart.getTime();
   });
-  logger.info(`[${filteredList.length}] lists identied for ${dateBeforeAnnualReviewStart.toDateString()}, ${JSON.stringify(filteredList)}`);
+  logger.info(
+    `[${filteredList.length}] lists identied for ${dateBeforeAnnualReviewStart.toDateString()}, ${JSON.stringify(
+      filteredList
+    )}`
+  );
 
-  const listItemsForAllLists: ListItemGetObject[] = await findListItemsForLists(filteredList.map(list => list.id), [Status.PUBLISHED, Status.ANNUAL_REVIEW]);
+  const listItemsForAllLists: ListItemGetObject[] = await findListItemsForLists(
+    filteredList.map((list) => list.id),
+    [Status.PUBLISHED, Status.ANNUAL_REVIEW]
+  );
   const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() -1);
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
   oneMonthAgo.setHours(0, 0, 0, 0);
   const listItemsForListsMap = new Map<number, ListItemGetObject[]>();
 
   for (const list of filteredList) {
     // get list items eligible for annual review and assign to Map for use further down
-    const listItemsEligibleForAnnualReview = listItemsForAllLists.filter(listItem => {
+    const listItemsEligibleForAnnualReview = listItemsForAllLists.filter((listItem) => {
       const publishedHistory = listItem?.history
         ?.filter((event) => event.type === "PUBLISHED")
         .sort((a, b) => a.id - b.id)
         .pop();
-      publishedHistory?.time?.setHours(0,0,0,0);
-      return listItem.listId === list.id
-        && (publishedHistory?.time ?? new Date()) < oneMonthAgo
+      publishedHistory?.time?.setHours(0, 0, 0, 0);
+      return listItem.listId === list.id && (publishedHistory?.time ?? new Date()) < oneMonthAgo;
     });
     listItemsForListsMap.set(list.id, listItemsEligibleForAnnualReview);
 
     // email post only if there are list items eligible for annual review
     if (listItemsEligibleForAnnualReview) {
       for (let publisherEmail of list.jsonData.publishers) {
-        logger.info(`sending ${daysBeforeAnnualReviewStart} days before email to ${publisherEmail}, instead using ali@cautionyourblast.com`);
+        logger.info(
+          `sending ${daysBeforeAnnualReviewStart} days before email to ${publisherEmail}, instead using ali@cautionyourblast.com`
+        );
         publisherEmail = "ali@cautionyourblast.com";
         await sendAnnualReviewPostEmail(
           daysBeforeAnnualReviewStart,
@@ -56,18 +68,26 @@ async function sendAdvancedNoticeToPostsDaysBeforeStart(lists: List[], dateBefor
       if (daysBeforeAnnualReviewStart === 0) {
         // const oneMonthListItems = await findListItemsForLists(filteredList);
         const deletionDate = getAdjustedDateForDatePart("day", 49);
-        logger.debug(`******FOUND: ${listItemsEligibleForAnnualReview.length} list items for ${daysBeforeAnnualReviewStart} days before annual review`);
+        logger.debug(
+          `******FOUND: ${listItemsEligibleForAnnualReview.length} list items for ${daysBeforeAnnualReviewStart} days before annual review`
+        );
         const updatedListItem: ListItemGetObject[] = await updateAnnualReview(listItemsEligibleForAnnualReview);
 
-        for(const listItem of updatedListItem) {
-          const list = filteredList.find(list => list.id === listItem.listId);
+        for (const listItem of updatedListItem) {
+          const list = filteredList.find((list) => list.id === listItem.listId);
 
           if (list) {
             logger.debug(`initialising form runner session`);
-            const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, "update your annual review", false);
+            const formRunnerEditUserUrl = await initialiseFormRunnerSession(
+              list,
+              listItem,
+              "update your annual review",
+              false
+            );
 
             logger.debug(`sending provider email`);
-            await sendAnnualReviewProviderEmail(0,
+            await sendAnnualReviewProviderEmail(
+              0,
               (listItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
               lowerCase(startCase(listItem.type)),
               list?.country?.name ?? "",
@@ -105,3 +125,5 @@ export async function sendAllAdvancedNoticesToPosts(): Promise<void> {
     await sendAdvancedNoticeToPostsDaysBeforeStart(lists, today, 0);
   }
 }
+
+const ANNUALREVIEWEND = "ABCDEF";

@@ -2,10 +2,13 @@ export function getAdjustedDateForDatePart(datePart: string, adjustBy: number): 
   const date = new Date();
   if (datePart === "month") {
     date.setMonth(date.getMonth() + adjustBy);
-
   } else {
     date.setDate(date.getDate() + adjustBy);
   }
   date.setHours(0, 0, 0, 0);
   return date;
+}
+
+export function howdyHelper() {
+  console.log("Prepare to howdy!");
 }
