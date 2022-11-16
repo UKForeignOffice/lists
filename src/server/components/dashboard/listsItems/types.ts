@@ -25,6 +25,9 @@ export interface govukRow {
     text?: string;
     html?: string;
   };
+  actions?: {
+    items: Array<Record<string, string>>
+  } | null;
   type?: Macro;
 }
 
