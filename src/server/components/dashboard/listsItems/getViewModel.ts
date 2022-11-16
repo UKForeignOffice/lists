@@ -187,6 +187,7 @@ function calculateUpdatedFields(listItem: ListItemJsonData): string[] {
     if (!isEqual(updatedJsonData[key], value)) {
       return key;
     }
+    return null;
   }).filter(Boolean);
 
   return currentWithUpdatedFlag as string[];
