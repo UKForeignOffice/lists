@@ -2,8 +2,8 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import {ListItem} from "@prisma/client";
-
+import { ListItem, Status } from "@prisma/client";
+import { isEqual } from "lodash"
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
@@ -113,12 +113,27 @@ function parseValue<T extends KeyOfJsonData>(
 
 function rowFromField(
   field: KeyOfJsonData,
-  listItem: ListItemJsonData
+  listItem: ListItemJsonData,
+  updatedFields?: string[] | null,
 ): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
+  let actions = null;
+
+  if (updatedFields?.includes(field as string)) {
+
+    actions = {
+      items: [
+        {
+          href: "#",
+          html: "<strong class='govuk-tag'>Updated</strong>",
+        },
+      ],
+    };
+  }
+
   return {
     key: {
       text: fieldTitles[field] ?? "",
@@ -126,6 +141,7 @@ function rowFromField(
     value: {
       [valueKey]: value,
     },
+    actions,
     type: getValueMacroType(value, field),
   };
 }
@@ -137,14 +153,43 @@ function removeEmpty(row: Types.govukRow): string | boolean {
 
 function jsonDataAsRows(
   fields: KeyOfJsonData[] | KeyOfJsonData,
-  jsonData: ListItemJsonData
+  jsonData: ListItemJsonData,
+  status: Status
 ): Types.govukRow[] {
+
+  let updatedFields: string[] | null = null;
+
   if (!Array.isArray(fields)) {
     return [rowFromField(fields, jsonData)];
   }
+
+  const dataUpdatedForAnnualReview = status === Status.CHECK_ANNUAL_REVIEW && jsonData.updatedJsonData;
+
+  if (dataUpdatedForAnnualReview) {
+    updatedFields = calculateUpdatedFields(jsonData);
+  }
+
   return fields
-    .map((field) => rowFromField(field, jsonData))
+    .map((field) => rowFromField(field, jsonData, updatedFields))
     .filter(removeEmpty);
+}
+
+function calculateUpdatedFields(listItem: ListItemJsonData): string[] {
+  const { updatedJsonData, ...currentJsonData } = listItem;
+  delete currentJsonData.updatedJsonData;
+  delete currentJsonData.emailAddressToPublish;
+
+  const currentJsonEntries = Object.entries(currentJsonData);
+
+  const currentWithUpdatedFlag = currentJsonEntries.map((data) => {
+    const [key, value] = data;
+
+    if (!isEqual(updatedJsonData[key], value)) {
+      return key;
+    }
+  }).filter(Boolean);
+
+  return currentWithUpdatedFlag as string[];
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
@@ -167,11 +212,11 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
     listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
   }
-  return jsonDataAsRows(contactFields, listItem.jsonData);
+  return jsonDataAsRows(contactFields, listItem.jsonData, listItem.status);
 }
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const { jsonData } = listItem;
+  const { jsonData, status } = listItem;
   const type = listItem.type as ServiceType
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
@@ -216,7 +261,7 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     listItem.jsonData.languagesProvided = languagesArray;
   }
 
-  return jsonDataAsRows(fieldsForType, jsonData);
+  return jsonDataAsRows(fieldsForType, jsonData, status);
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
@@ -224,7 +269,7 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
     "regulators",
     "emailAddress",
   ];
-  return jsonDataAsRows(baseFields, listItem.jsonData);
+  return jsonDataAsRows(baseFields, listItem.jsonData, listItem.status);
 }
 
 export function getDetailsViewModel(
@@ -248,4 +293,3 @@ export function getDetailsViewModel(
     headerField,
   };
 }
-

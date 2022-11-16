@@ -63,6 +63,7 @@ export interface BaseDeserialisedWebhookData {
   emergencyPhoneNumber?: string;
   declaration: string[];
   type: ServiceType;
+  updatedJsonData?: Omit<BaseDeserialisedWebhookData, "updatedJsonData">
 
   /**
    * At time of deserialising the {@link WebhookData} to BaseDeserialisedWebhookData,

@@ -54,11 +54,10 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   const list = res.locals.list!;
   const listItem = res.locals.listItem!;
   const userId = req.user?.userData.id;
-
   let requestedChanges;
 
   if (listItem.status === Status.EDITED) {
-    // TODO: - check if neccessary for this sort?
+    // TODO: - check if necessary for this sort?
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
 
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
