@@ -25,6 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: main
       args:
         - BUILD_MODE=ci
     ports:

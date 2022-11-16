@@ -24,7 +24,8 @@ WORKDIR /usr/src/app
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
-FROM build AS runner
+# docker build --target main -t main --build-arg BUILD_MODE=ci .
+FROM build AS main
 WORKDIR /usr/src/app
 USER 1001
 ARG NODE_ENV
@@ -42,9 +43,10 @@ ENV CI_SMOKE_TEST=true
 
 CMD ["npm", "run", "start:prod"]
 
+# docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
 FROM node:14.17-alpine3.13 AS scheduled
 WORKDIR /usr/src/scheduler
-COPY --from=runner /usr/src/app/dist ./dist/
-COPY --from=runner /usr/src/app/node_modules ./node_modules/
-COPY --from=runner /usr/src/app/package.json ./package.json
+COPY --from=main /usr/src/app/dist ./dist/
+COPY --from=main /usr/src/app/node_modules ./node_modules/
+COPY docker/scheduler/package.json ./package.json
 
