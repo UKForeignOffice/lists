@@ -83,6 +83,15 @@ Feature: Dashboard filtering
     Then I see the notification text "Emmanuel Law has been updated and published"
 
 
+  Scenario: Confirm and update published  list item
+
+    When I am viewing the list item details for "Bruce"
+    And I click the "Update live version" radio button
+    And I click the "Continue" button
+    And I click the "Update" button
+    Then I see the notification text "Wayne Lawyers has been updated and published"
+
+
   Scenario: Unpublish list item
 
     When I am viewing the list item details for "Parsons"
