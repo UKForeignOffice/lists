@@ -14,6 +14,8 @@ model List {
   reference           String   @default(uuid()) @unique
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  nextAnnualReviewStartDate     DateTime @default(dbgenerated("NOW() + interval '1 year'"))
+  lastAnnualReviewStartDate     DateTime?
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
@@ -144,7 +146,6 @@ enum Status {
   UNPUBLISHED //
   CHECK_ANNUAL_REVIEW
   ANNUAL_REVIEW_OVERDUE
-
 }
 
 
@@ -157,7 +158,6 @@ model Event {
   jsonData            Json
 }
 
-// add any actions that can be performed on a list item.
 enum ListItemEvent {
   NEW
   OUT_WITH_PROVIDER // Requested changes

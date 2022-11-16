@@ -13,6 +13,8 @@ import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
+import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
+import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -42,6 +44,20 @@ export function getNewSessionWebhookData(
   };
   return newSessionData;
 }
+
+export async function initialiseFormRunnerSession(
+  list: List,
+  listItem: BaseListItemGetObject,
+  message: string,
+  isUnderTest: boolean
+): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+  return createFormRunnerEditListItemLink(token);
+}
+
 
 export async function generateFormRunnerWebhookData(
   list: List,

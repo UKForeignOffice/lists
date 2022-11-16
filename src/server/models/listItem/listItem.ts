@@ -1,19 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
-import {
-  List,
-  Point,
-  ServiceType,
-  User,
-  ListItem,
-} from "server/models/types";
-import {
-  ListItemWithAddressCountry,
-  ListItemWithJsonData,
-} from "server/models/listItem/providers/types";
-import {
-  makeAddressGeoLocationString,
-  getCountryFromData,
-} from "server/models/listItem/geoHelpers";
+import { EventJsonData, List, ListItem, ListItemGetObject, Point, ServiceType, User } from "server/models/types";
+import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
@@ -113,8 +101,8 @@ export async function findListItemById(id: string | number) {
         pinnedBy: true,
       },
     });
-
   } catch (error) {
+
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error(`failed to find ${id}`);
   }
@@ -216,8 +204,9 @@ export async function setEmailIsVerified({
     const updatedJsonData = {
       ...jsonData,
       metadata: { ...metadata, emailVerified: true },
-    }
+    };
 
+    // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
@@ -374,6 +363,54 @@ export async function update(
     );
     throw err;
   }
+}
+
+export async function updateAnnualReview(listItems: ListItemGetObject[]): Promise<ListItemGetObject[]> {
+  const updatedListItems: ListItemGetObject[] = [];
+
+  if (listItems) {
+    for (const listItem of listItems) {
+      const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
+        where: {
+          id: listItem.id,
+        },
+        data: {
+          isAnnualReview: true,
+          status: Status.ANNUAL_REVIEW,
+        },
+      };
+      try {
+        logger.debug(`updating list item in transaction`);
+
+        const result = await prisma.$transaction([
+          prisma.listItem.update(updateListItemPrismaStatement),
+
+          recordListItemEvent(
+            {
+              eventName: "startAnnualReview",
+              itemId: listItem.id,
+              userId: -1,
+              // @ts-ignore
+              updatedJsonData: listItem.jsonData,
+            },
+            AuditEvent.ANNUAL_REVIEW
+          ),
+
+        ]);
+        if (!result) {
+          logger.error(
+            `transaction listItem.update prisma update failed for listItem ${listItem.id} for annual review`
+          );
+        } else {
+          updatedListItems.push(listItem);
+        }
+      } catch (err) {
+        logger.error(`listItem.update transactional error - rolling back ${err.message}`);
+        throw err;
+      }
+    }
+  }
+  return updatedListItems;
 }
 
 export async function deleteListItem(
