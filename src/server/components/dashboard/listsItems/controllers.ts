@@ -1,10 +1,6 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import { NextFunction, Request, Response } from "express";
-import {
-  deleteListItem,
-  togglerListItemIsPublished,
-  update,
-} from "server/models/listItem/listItem";
+import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
 import {
@@ -17,7 +13,7 @@ import {
   User,
 } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import {AuditEvent, Prisma, Status} from "@prisma/client";
+import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -37,7 +33,7 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
-import {ListItemRes} from "server/components/dashboard/listsItems/types";
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -59,13 +55,9 @@ const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
   translatorsInterpreters: "Translator or interpreter",
 };
 
-export async function listItemGetController(
-  req: Request,
-  res: ListItemRes
-): Promise<void> {
+export async function listItemGetController(req: Request, res: ListItemRes): Promise<void> {
   let error;
   const errorMsg = req.flash("errorMsg");
-
 
   // @ts-expect-error
   if (errorMsg?.length > 0) {
@@ -83,16 +75,11 @@ export async function listItemGetController(
     // TODO: - check if neccessary for this sort?
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
 
-    const auditJsonData: EventJsonData =
-      auditForEdits?.jsonData as EventJsonData;
+    const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
     const updatedJsonData = auditJsonData?.updatedJsonData;
     if (updatedJsonData !== undefined) {
-      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(
-        listItem,
-        updatedJsonData
-      );
-      const updatedAddressFields: UpdatableAddressFields =
-        getChangedAddressFields(updatedJsonData, listItem.address);
+      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
+      const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
       // @ts-ignore
       listItem.address = {
         ...listItem.address,
@@ -102,7 +89,7 @@ export async function listItemGetController(
   }
 
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
-    const eventForRequestedChanges = listItem?.history?.find((event) => event.type === "OUT_WITH_PROVIDER")
+    const eventForRequestedChanges = listItem?.history?.find((event) => event.type === "OUT_WITH_PROVIDER");
     const jsonData = eventForRequestedChanges?.jsonData as Prisma.JsonObject;
     requestedChanges = jsonData?.requestedChanges;
   }
@@ -134,10 +121,7 @@ export async function listItemGetController(
     csrfToken: getCSRFToken(req),
   });
 }
-export async function listItemPostController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function listItemPostController(req: Request, res: Response): Promise<void> {
   const { message, action } = req.body;
   const { list, listItem, listItemUrl } = res.locals;
   try {
@@ -156,7 +140,7 @@ export async function listItemPostController(
     };
 
     const customFormActions: { [key: string]: string } = {
-      updateNew: "update"
+      updateNew: "update",
     };
 
     const confirmationPage = confirmationPages[action];
@@ -175,8 +159,8 @@ export async function listItemPostController(
       req.session.changeMessage = message;
     }
 
-    if(!confirmationPage) {
-      logger.error(`${action} was requested by ${req.user?.userData.id} but the confirmation page could not be found.`)
+    if (!confirmationPage) {
+      logger.error(`${action} was requested by ${req.user?.userData.id} but the confirmation page could not be found.`);
       req.flash("errorMsg", "The action cannot be performed at this time");
       return res.redirect(listItemUrl);
     }
@@ -196,27 +180,14 @@ export async function listItemPostController(
   }
 }
 
-export async function listItemPinController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function listItemPinController(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.userData.id;
   const listItem = res.locals.listItem!;
   const isPinned = action === "pin";
   const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
-
-    if (userId === undefined) {
-      // TODO: - this will never be hit due to middleware.
-      req.flash(
-        "errorMsg",
-        "Unable to perform action - user could not be identified"
-      );
-      return res.redirect(listItemUrl);
-    }
-
     await handlePinListItem(listItem.id, userId, isPinned);
 
     req.flash(
@@ -225,18 +196,15 @@ export async function listItemPinController(
     );
     req.flash("successBannerHeading", `${isPinned ? "Pinned" : "Unpinned"}`);
     req.flash("successBannerColour", "blue");
-    res.redirect(listIndexUrl);
+    return res.redirect(listIndexUrl);
   } catch (error) {
+    logger.error(`listItemPinController: ${userId} failed to ${action} user, ${error}`);
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${(error as Error).message}`);
-    res.redirect(listItemUrl)
+    return res.redirect(listItemUrl);
   }
 }
 
-export async function handlePinListItem(
-  id: number,
-  userId: User["id"],
-  isPinned: boolean
-): Promise<ListItem> {
+export async function handlePinListItem(id: number, userId: User["id"], isPinned: boolean): Promise<ListItem> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }
@@ -244,15 +212,15 @@ export async function handlePinListItem(
   try {
     const auditEvent = recordListItemEvent(
       {
-        eventName: isPinned ? "pin": "unpin",
+        eventName: isPinned ? "pin" : "unpin",
         itemId: id,
         userId,
       },
       isPinned ? AuditEvent.PINNED : AuditEvent.UNPINNED
-    )
+    );
 
     const connectOrDisconnect = isPinned ? "connect" : "disconnect";
-    const pinOrUnpinEvent = isPinned ? EVENTS.PINNED(userId) : EVENTS.PINNED(userId)
+    const pinOrUnpinEvent = isPinned ? EVENTS.PINNED(userId) : EVENTS.PINNED(userId);
 
     const [listItem] = await prisma.$transaction([
       prisma.listItem.update({
@@ -264,14 +232,12 @@ export async function handlePinListItem(
             [connectOrDisconnect]: [{ id: userId }],
           },
           history: {
-            create: [
-              pinOrUnpinEvent
-            ]
-          }
+            create: [pinOrUnpinEvent],
+          },
         },
       }),
-      auditEvent
-    ])
+      auditEvent,
+    ]);
 
     return listItem;
   } catch (e: any) {
@@ -281,37 +247,24 @@ export async function handlePinListItem(
   }
 }
 
-export async function listItemDeleteController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function listItemDeleteController(req: Request, res: Response): Promise<void> {
   const userId = req?.user?.userData?.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
   try {
     await deleteListItem(listItem.id, userId!);
 
-    req.flash(
-      "successBannerTitle",
-      `${listItem.jsonData.organisationName} has been removed`
-    );
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
     req.flash("successBannerHeading", "Removed");
     req.flash("successBannerColour", "red");
-    res.redirect(listIndexUrl);
+    return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash(
-      "errorMsg",
-      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
-    );
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
 
-export async function listItemUpdateController(
-  req: Request,
-  res: Response
-): Promise<void> {
-
+export async function listItemUpdateController(req: Request, res: Response): Promise<void> {
   const userId = req?.user?.userData?.id;
   const listItem = res.locals.listItem;
   const { listItemUrl, listIndexUrl } = res.locals;
@@ -327,28 +280,22 @@ export async function listItemUpdateController(
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been updated and published`);
     req.flash("successBannerHeading", "Updated and published");
     req.flash("successBannerColour", "green");
-    res.redirect(listIndexUrl);
+    return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash(
-      "errorMsg",
-      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
-    );
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
 
-export async function handleListItemUpdate(
-  id: number,
-  userId: User["id"]
-): Promise<void> {
+export async function handleListItemUpdate(id: number, userId: User["id"]): Promise<void> {
   const listItem = await prisma.listItem.findUnique({
     where: { id },
     include: {
       history: {
         orderBy: {
-          time: 'desc'
-        }
-      }
+          time: "desc",
+        },
+      },
     },
   });
   if (listItem === undefined) {
@@ -356,7 +303,6 @@ export async function handleListItemUpdate(
   }
 
   const editEvent = listItem?.history.find((event) => event.type === "EDITED");
-
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
@@ -366,10 +312,7 @@ export async function handleListItemUpdate(
   }
 }
 
-export async function listItemRequestChangeController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
   const userId = req?.user?.userData?.id;
@@ -383,27 +326,14 @@ export async function listItemRequestChangeController(
   }
 
   try {
+    await handleListItemRequestChanges(list, listItem, changeMessage, userId!, isUnderTest);
 
-    await handleListItemRequestChanges(
-      list,
-      listItem,
-      changeMessage,
-      userId!,
-      isUnderTest
-    );
-
-    req.flash(
-      "successBannerTitle",
-      `Change request sent to ${listItem.jsonData.organisationName}`
-    );
+    req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
-    res.redirect(listIndexUrl);
+    return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash(
-      "errorMsg",
-      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
-    );
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
@@ -419,33 +349,17 @@ async function handleListItemRequestChanges(
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
   logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
-  const formRunnerEditUserUrl = await initialiseFormRunnerSession(
-    list,
-    listItem,
-    message,
-    isUnderTest
-  );
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, message, isUnderTest);
 
   // Email applicant
-  logger.info(
-    `Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`
-  );
-  const { contactName, contactEmailAddress } =
-    getListItemContactInformation(listItem);
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
+  const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
 
-  logger.info(
-    `Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`
-  );
+  logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`);
   const listType = serviceName(list?.type ?? "");
 
   logger.info(`Got list type [${listType}`);
-  await sendEditDetailsEmail(
-    contactName,
-    contactEmailAddress,
-    listType,
-    message,
-    formRunnerEditUserUrl
-  );
+  await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);
   logger.info(`Sent email, updating listItem`);
 
   const status = Status.OUT_WITH_PROVIDER;
@@ -461,10 +375,8 @@ async function handleListItemRequestChanges(
           status,
           isPublished: false,
           history: {
-            create: [
-              EVENTS.OUT_WITH_PROVIDER(userId, message)
-            ]
-          }
+            create: [EVENTS.OUT_WITH_PROVIDER(userId, message)],
+          },
         },
       }),
       recordListItemEvent(
@@ -478,40 +390,29 @@ async function handleListItemRequestChanges(
       ),
     ]);
   } catch (error: any) {
-    throw new Error(
-      `handleListItemRequestChanges error: could not update listItem: ${error.message}`
-    );
+    logger.error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
+    throw new Error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
   }
 }
 
-export async function listItemPublishController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function listItemPublishController(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
   const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
-  const { listItem, listItemUrl, listIndexUrl } =  res.locals;
+  const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
   try {
-
     await handlePublishListItem(listItem.id, isPublished, userId!);
 
     const successBannerHeading = `${action}ed`;
-    req.flash(
-      "successBannerTitle",
-      `${listItem.jsonData.organisationName} has been ${successBannerHeading}`
-    );
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
     req.flash("successBannerHeading", successBannerHeading);
     req.flash("successBannerColour", "green");
-    res.redirect(listIndexUrl);
+    return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash(
-      "errorMsg",
-      `${listItem.jsonData.organisationName} could not be updated. ${error.message}`
-    );
-    return res.redirect(listItemUrl)
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(listItemUrl);
   }
 }
 
@@ -528,8 +429,7 @@ export async function handlePublishListItem(
 
   if (updatedListItem.isPublished) {
     const searchLink = createListSearchBaseLink(updatedListItem.type);
-    const { contactName, contactEmailAddress } =
-      getListItemContactInformation(updatedListItem);
+    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
     const typeName = serviceName(updatedListItem.type);
 
     await sendDataPublishedEmail(
@@ -548,31 +448,15 @@ async function initialiseFormRunnerSession(
   message: string,
   isUnderTest: boolean
 ): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(
-    list,
-    listItem,
-    isUnderTest
-  );
-  const formRunnerWebhookData = getNewSessionWebhookData(
-    list.type,
-    listItem.id,
-    questions,
-    message
-  );
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(
-    formRunnerNewSessionUrl,
-    formRunnerWebhookData
-  );
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
   return createFormRunnerEditListItemLink(token);
 }
 
-export async function listItemEditRequestValidation(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  logger.info("listItemEditRequestValidation")
+export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
+  logger.info("listItemEditRequestValidation");
   const userId = req.user?.userData?.id;
 
   if (userId === undefined) {
@@ -590,7 +474,11 @@ export async function listItemEditRequestValidation(
     const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
     return next(err);
   } else if (list?.type !== listItem?.type) {
-    const err = new HttpException(400, "400", `Trying to edit a list item which is a different service type to list ${listId}`);
+    const err = new HttpException(
+      400,
+      "400",
+      `Trying to edit a list item which is a different service type to list ${listId}`
+    );
     return next(err);
   } else if (list?.id !== listItem?.listId) {
     const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
