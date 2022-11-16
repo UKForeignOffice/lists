@@ -69,7 +69,7 @@ export async function ingestPostController(
     res.send({});
   } catch (error) {
     const typedError = error as { message: string };
-    logger.error(`listsDataIngestionController Error: ${typedError.message}`);
+    logger.error(`ingestPostController Error: ${typedError.message}`);
 
     res.status(422).send({
       error: "Unable to process form",

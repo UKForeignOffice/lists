@@ -89,7 +89,7 @@ export async function ingestPutController(
     res.status(204).send();
     return;
   } catch (e) {
-    logger.error(`listsDataIngestionController Error: ${e.message}`);
+    logger.error(`ingestPutController Error: ${e.message}`);
     /**
      * TODO:- Queue?
      */
