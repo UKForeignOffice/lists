@@ -39,7 +39,11 @@ async function findPinnedIndexListItems(options: ListIndexOptions) {
     select: {
       pinnedItems: {
         include: {
-          history: true,
+          history: {
+            orderBy: {
+              time: "desc",
+            },
+          },
         },
         where: {
           listId: options.listId,
