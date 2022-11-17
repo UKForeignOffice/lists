@@ -34,6 +34,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import { getPublishingStatus, PUBLISHING_STATUS, ListItemWithHistory } from "server/models/listItem/summary.helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -113,14 +114,24 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     list,
     listItem,
     isPinned,
-    actionButtons: actionButtonsForStatus ?? [],
+    actionButtons: addArchiveOption(listItem, actionButtonsForStatus) ?? [],
     requestedChanges,
     error,
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
-    details: getDetailsViewModel(listItem),
+  details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
 }
+
+function addArchiveOption(listItem: ListItemWithHistory, actionButtonsForStatus: string[]): string[] {
+  if (getPublishingStatus(listItem) === PUBLISHING_STATUS.live) {
+    return actionButtonsForStatus;
+  }
+
+  const updatedArr = [...actionButtonsForStatus, "archive"];
+  return updatedArr;
+}
+
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
   const { message, action } = req.body;
   const { list, listItem, listItemUrl } = res.locals;
@@ -157,6 +168,10 @@ export async function listItemPostController(req: Request, res: Response): Promi
       }
 
       req.session.changeMessage = message;
+    }
+
+    if (action === "archive") {
+      console.log("do something")
     }
 
     if (!confirmationPage) {
