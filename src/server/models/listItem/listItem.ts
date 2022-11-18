@@ -270,16 +270,6 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
     updatedJsonData.localServicesProvided = localServicesProvided;
   }
 
-  const updateEvent = {
-    time: new Date(),
-    type: ListItemEvent.PUBLISHED,
-    jsonData: {
-      eventName: "publish",
-      itemId: id,
-      userId,
-    },
-  };
-
   let geoLocationParams: Nullable<[number, Point]>;
 
   if (requiresAddressUpdate) {
@@ -302,7 +292,7 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
       isPublished: true,
       status: Status.PUBLISHED,
       history: {
-        create: [updateEvent],
+        create: EVENTS.PUBLISHED(userId),
       },
       ...(requiresAddressUpdate && {
         address: {
