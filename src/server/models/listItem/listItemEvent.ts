@@ -77,7 +77,7 @@ export const EVENTS = {
     type: ListItemEvent.EDITED,
     jsonData: {
       eventName: "edited",
-      ...updatedJsonData,
+      updatedJsonData,
     },
   }),
 

@@ -13,7 +13,7 @@ import {
   User,
 } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -288,6 +288,7 @@ export async function listItemUpdateController(req: Request, res: Response): Pro
 }
 
 export async function handleListItemUpdate(id: number, userId: User["id"]): Promise<void> {
+  logger.info(`${userId} looking for ${id} to update`);
   const listItem = await prisma.listItem.findUnique({
     where: { id },
     include: {
@@ -298,11 +299,17 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
       },
     },
   });
-  if (listItem === undefined) {
+  if (listItem === null) {
+    logger.error(`${userId} tried to look for ${id}, listItem could not be found`);
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 
-  const editEvent = listItem?.history.find((event) => event.type === "EDITED" && event.jsonData?.updatedJsonData);
+  const editEvent = listItem?.history.find((event) => {
+    // @ts-ignore
+    return event.type === ListItemEvent.EDITED && event.jsonData;
+  });
+  logger.info(`${userId} found ${JSON.stringify(listItem)}`);
+  logger.info(`found edit event ${JSON.stringify(editEvent)}`);
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
