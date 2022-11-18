@@ -236,10 +236,19 @@ export async function createListItem(webhookData: WebhookData): Promise<ListItem
 type Nullable<T> = T | undefined | null;
 
 /**
- * updates and PUBLISHES.
+ * updates and PUBLISHES!
  */
-export async function update(id: ListItem["id"], userId: User["id"], data: DeserialisedWebhookData): Promise<void> {
-  logger.info(`${userId} is attempting to update ${id} with ${data}`);
+export async function update(
+  id: ListItem["id"],
+  userId: User["id"],
+  legacyDataParameter?: DeserialisedWebhookData
+): Promise<void> {
+  logger.info(`user ${userId} is attempting to update ${id}`);
+  if (data) {
+    logger.info(
+      `legacy data parameter used. updating with ${legacyDataParameter} however ListItem.jsonData.updatedJsonData should be used`
+    );
+  }
   const listItemResult = await prisma.listItem
     .findFirst({
       where: { id },
@@ -250,6 +259,17 @@ export async function update(id: ListItem["id"], userId: User["id"], data: Deser
     .catch((e) => {
       throw Error(`list item ${id} not found - ${e}`);
     });
+
+  const jsonData = listItemResult?.jsonData as Prisma.JsonObject;
+  // @ts-ignore
+  const data: DeserialisedWebhookData | null | undefined = legacyDataParameter ?? jsonData?.updatedJsonData;
+
+  if (!data) {
+    logger.error(
+      "listItem.update cannot resolve any data to update the list item with jsonData.updatedJsonData and data parameter were empty"
+    );
+    throw Error(`${userId} attempted to update ${id} but no data was found`);
+  }
 
   const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
@@ -342,10 +362,8 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
 
   try {
     await prisma.$transaction([
-      prisma.event.deleteMany({
-        where: {
-          listItemId: id,
-        },
+      prisma.event.create({
+        data: EVENTS.DELETED(userId, id),
       }),
       prisma.listItem.delete({
         where: {

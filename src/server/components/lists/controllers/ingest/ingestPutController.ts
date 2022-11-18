@@ -8,25 +8,21 @@ import { DeserialisedWebhookData } from "server/models/listItem/providers/deseri
 import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
-import {EVENTS} from "server/models/listItem/listItemEvent";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 
-export async function ingestPutController(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
-      error:
-        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
     return;
   }
 
-  if (error !== undefined) {
+  if (!!error) {
     res.status(422).json({ error: error.message });
     return;
   }
@@ -39,21 +35,10 @@ export async function ingestPutController(
 
   try {
     data = deserialise(value);
-
   } catch (e) {
     res.status(422).json({ error: "questions could not be deserialised" });
     return;
   }
-
-  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
-    where: { id: Number(id) },
-    data: {
-      status: Status.EDITED,
-      history: {
-        create: EVENTS.EDITED(data)
-      }
-    },
-  };
 
   try {
     const listItem = await prisma.listItem.findUnique({
@@ -62,13 +47,32 @@ export async function ingestPutController(
         history: true,
       },
     });
-    if (listItem === undefined) {
-      res.status(404).send({
+
+    if (listItem === null) {
+      return res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
         },
       });
     }
+
+    const jsonData = listItem.jsonData as Prisma.JsonObject;
+    const jsonDataWithUpdatedJsonData = {
+      ...jsonData,
+      updatedJsonData: data,
+    };
+
+    const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
+      where: { id: Number(id) },
+      data: {
+        status: Status.EDITED,
+        history: {
+          create: EVENTS.EDITED(data),
+        },
+        jsonData: jsonDataWithUpdatedJsonData,
+      },
+    };
+
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
       recordListItemEvent(
@@ -88,6 +92,6 @@ export async function ingestPutController(
      * TODO:- Queue?
      */
 
-    res.status(422).send({ message: "List item failed to update" });
+    return res.status(422).send({ message: "List item failed to update" });
   }
 }
