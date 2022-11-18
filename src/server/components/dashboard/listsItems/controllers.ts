@@ -302,7 +302,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 
-  const editEvent = listItem?.history.find((event) => event.type === "EDITED");
+  const editEvent = listItem?.history.find((event) => event.type === "EDITED" && event.jsonData?.updatedJsonData);
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
