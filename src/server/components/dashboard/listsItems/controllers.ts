@@ -299,6 +299,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
       },
     },
   });
+
   if (listItem === null) {
     logger.error(`${userId} tried to look for ${id}, listItem could not be found`);
     throw new Error(`Unable to store updates - listItem could not be found`);
@@ -306,9 +307,9 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
 
   const editEvent = listItem?.history.find((event) => {
     // @ts-ignore
-    return event.type === ListItemEvent.EDITED && event.jsonData;
+    return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
   });
-  logger.info(`${userId} found ${JSON.stringify(listItem)}`);
+
   logger.info(`found edit event ${JSON.stringify(editEvent)}`);
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
@@ -316,6 +317,10 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
   if (auditJsonData?.updatedJsonData !== undefined) {
     // @ts-ignore
     await update(id, userId, auditJsonData.updatedJsonData);
+  }
+
+  if (!!auditJsonData?.updatedJsonData) {
+    await update(id, userId);
   }
 }
 
