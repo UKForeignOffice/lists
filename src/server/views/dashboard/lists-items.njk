@@ -51,21 +51,6 @@
     {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ list.country.name }}
   </h1>
 
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
-
-  <p class="govuk-body">
-    Check the
-    <a
-      class="govuk-link"
-      target="_blank"
-      rel="noopener noreferrer"
-      href="https://fcogovuk.sharepoint.com/sites/consular-guidance/SitePages/Find-a-professional-service-abroad-guidance.aspx"
-      >policy guidance</a
-    >
-     on diplohub for publishing guidance, email templates, and<br />
-    instructions on how to use list management
-  </p>
-
   {% if list.items.length > 1 %}
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <div class="govuk-body">The list is ordered with the most recent submissions and changes first</div>

@@ -116,7 +116,7 @@ export async function listItemsIndexController(
   next: NextFunction
 ): Promise<void> {
   try {
-    const { id: listId } = res.locals.list!;
+    const { id: listId, type, country } = res.locals.list!;
     const user = req.user!;
 
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
@@ -146,7 +146,11 @@ export async function listItemsIndexController(
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       req,
-      list,
+      list: {
+        ...list,
+        type,
+        country
+      },
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       // @ts-expect-error
