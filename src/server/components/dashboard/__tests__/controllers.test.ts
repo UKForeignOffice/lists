@@ -13,7 +13,6 @@ import {
   listsController,
   listsEditController,
   listsItemsController,
-  startRouteController,
   usersEditController,
   usersListController,
 } from "../controllers";
@@ -120,6 +119,7 @@ describe("Dashboard Controllers", () => {
       },
       listId: 1,
       status: Status.NEW,
+      history: [],
     };
   });
 
