@@ -153,8 +153,7 @@ function listsWithFormattedDates(lists: List[]): List[] {
     ...list,
     annualReviewStartDate: formatAnnualReviewDate((list), "annualReviewStartDate"),
     lastAnnualReviewStartDate: formatAnnualReviewDate((list), "lastAnnualReviewStartDate"),
-  })
-  );
+  }));
 }
 
 function formatAnnualReviewDate(list: List, field: string): string {
