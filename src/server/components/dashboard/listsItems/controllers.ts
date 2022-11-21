@@ -170,10 +170,6 @@ export async function listItemPostController(req: Request, res: Response): Promi
       req.session.changeMessage = message;
     }
 
-    if (action === "archive") {
-      console.log("do something")
-    }
-
     if (!confirmationPage) {
       logger.error(`${action} was requested by ${req.user?.userData.id} but the confirmation page could not be found.`);
       req.flash("errorMsg", "The action cannot be performed at this time");
