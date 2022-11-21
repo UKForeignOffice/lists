@@ -90,6 +90,7 @@ listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController
  * TODO: ref to /:listItemId/:action?
  */
 listRouter.post("/:listId/items/:listItemId/delete", controllers.listItemDeleteController);
+listRouter.post("/:listId/items/:listItemId/archive", controllers.listItemArchiveController);
 listRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPublishController);
 listRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
 listRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);

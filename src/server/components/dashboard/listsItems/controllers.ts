@@ -27,6 +27,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
+import { getPublishingStatus, PUBLISHING_STATUS } from "server/models/listItem/summary.helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -91,7 +92,15 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  const actionButtonsForStatus = actionButtons[listItem.status];
+  let actionButtonsForStatus = actionButtons[listItem.status];
+
+  if (getPublishingStatus(listItem) !== PUBLISHING_STATUS.live) {
+    actionButtonsForStatus = [...actionButtonsForStatus, "archive"]
+  }
+
+  if (getPublishingStatus(listItem) === PUBLISHING_STATUS.archived) {
+    actionButtonsForStatus = ["remove"];
+  }
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -125,6 +134,7 @@ export async function listItemPostController(req: Request, res: Response): Promi
       pin: "dashboard/list-item-confirm-pin",
       unpin: "dashboard/list-item-confirm-pin",
       remove: "dashboard/list-item-confirm-remove",
+      archive: "dashboard/list-item-confirm-archive",
     };
 
     const customFormActions: { [key: string]: string } = {
@@ -248,6 +258,22 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
     return res.redirect(listIndexUrl);
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    return res.redirect(listItemUrl);
+  }
+}
+
+export async function listItemArchiveController(req: Request, res: Response): Promise<void> {
+  const userId = req?.user?.userData?.id;
+  const { listItemUrl, listIndexUrl, listItem } = res.locals;
+
+  try {
+    await archiveListItem(listItem.id, userId!);
+
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been archived`);
+    req.flash("successBannerHeading", "Archived");
+    return res.redirect(listIndexUrl);
+  } catch (error: any) {
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be archived. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
