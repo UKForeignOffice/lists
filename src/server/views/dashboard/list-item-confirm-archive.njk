@@ -1,4 +1,5 @@
 {% from "button/macro.njk" import govukButton %}
+{% from "textarea/macro.njk" import govukTextarea %}
 {% extends "./dashboard.njk" %}
 
 {% block aside %}
@@ -31,6 +32,16 @@
     </p>
 
     <p class="govuk-body">Service provider details are stored in the archive for 1 year before being deleted.</p>
+
+    {{ govukTextarea({
+      name: "reason",
+      id: "reason",
+      label: {
+        text: "Reason for archiving (optional)",
+        classes: "govuk-label--m",
+        isPageHeading: true
+      }
+    }) }}
 
     <div class="govuk-button-group">
 

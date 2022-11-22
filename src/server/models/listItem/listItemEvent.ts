@@ -24,11 +24,12 @@ export const EVENTS = {
     },
   }),
 
-  [ListItemEvent.ARCHIVED]: (userId: number): EventCreate<"ARCHIVED"> => ({
+  [ListItemEvent.ARCHIVED]: (userId: number, reason: string): EventCreate<"ARCHIVED"> => ({
     type: ListItemEvent.ARCHIVED,
     jsonData: {
       eventName: "archived",
       userId,
+      reason,
     },
   }),
 

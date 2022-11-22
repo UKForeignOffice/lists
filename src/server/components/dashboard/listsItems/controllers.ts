@@ -265,9 +265,11 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
 export async function listItemArchiveController(req: Request, res: Response): Promise<void> {
   const userId = req?.user?.userData?.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
-
+  const { reason } = req.body;
+  console.log(reason, "reason")
+  debugger
   try {
-    await archiveListItem(listItem.id, userId!);
+    await archiveListItem(listItem.id, userId!, reason);
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been archived`);
     req.flash("successBannerHeading", "Archived");
