@@ -266,8 +266,7 @@ export async function listItemArchiveController(req: Request, res: Response): Pr
   const userId = req?.user?.userData?.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
   const { reason } = req.body;
-  console.log(reason, "reason")
-  debugger
+
   try {
     await archiveListItem(listItem.id, userId!, reason);
 
