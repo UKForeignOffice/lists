@@ -398,13 +398,13 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
   }
 }
 
-export async function archiveListItem(id: number, userId: User["id"]): Promise<void> {
+export async function archiveListItem(id: number, userId: User["id"], reason: string): Promise<void> {
   await prisma.listItem.update({
     where: { id: Number(id) },
     data: {
       status: Status.UNPUBLISHED,
       history: {
-        create: EVENTS.ARCHIVED(userId),
+        create: EVENTS.ARCHIVED(userId, reason),
       },
     },
   });
