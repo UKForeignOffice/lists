@@ -1,0 +1,23 @@
+{% set colours = {
+  PUBLISHED: 'green',
+  UNPUBLISHED: 'blue',
+  NEW: 'blue',
+  EDITED: 'blue',
+  'OUT_WITH_PROVIDER': 'yellow'
+}
+%}
+
+{% set dictionary = {
+  PUBLISHED: 'Published',
+  UNPUBLISHED: 'Unpublished',
+  NEW: 'New',
+  'OUT_WITH_PROVIDER': "Out with provider",
+  'EDITED': "Edited"
+}
+%}
+
+{% set class = 'govuk-tag--' + colours[item.status] %}
+
+<strong class="govuk-tag dashboard__list-item-tag govuk-!-margin-left-2 {{ class }}">
+  {{ dictionary[listItem.status] }}
+</strong>

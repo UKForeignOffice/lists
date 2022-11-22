@@ -5,12 +5,12 @@ Feature:
 		Given I am logged in as a "SuperAdmin"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status    | isPublished |  service         |
-			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
-			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
-			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | funeralDirectors |
-			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | funeralDirectors |
-			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | funeralDirectors |
+			| contactName | organisationName       | emailAddress               | status    | isPublished | isBlocked | isApproved | emailVerified | displayedRadioButtons                      | hiddenRadioButtons                          | service          |
+			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
+			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | false     | false      | true          | Publish,Publish,Remove                     | Unpublish,Update live version               | funeralDirectors |
+			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | false     | false      | true          | Request changes,Publish,Remove             | Unpublish,Update live version               | funeralDirectors |
+			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | false     | false      | true          | Request changes,Update live version,Remove | Publish,Unpublish                           | funeralDirectors |
+			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | false     | false      | true          | Unpublish, Remove                          | Publish,Update live version,Request changes | funeralDirectors |
 		Given I am viewing list item index for reference:SMOKE
 
 
@@ -91,15 +91,17 @@ Feature:
 		And I click the "Unpublish" button
 		Then I see the notification text "C & A Reed has been unpublished"
 
-	Scenario: Show expected fields on list detail
+	Scenario Outline: Show expected fields on list detail
 		When I am viewing the list item details for "Lola"
-		Then I should see these rows
-      | rowLabel                                      | rowValue                                                 |
-      | Regions                                       | France and UK                                            |
-			| Local services                                | Local burials, Flower arrangements, Exhumations          |
-			| Provided services to British nationals before | Yes                                                      |
-			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) |
-			| Contact name                                  | Lola                                                     |
-			| Email address for GOV.UK                      | smoke@cautionyourblast.com                               |
-			| Telephone                                     | 1234567                                                  |
-			| Email - private                               | smoke@cautionyourblast.com                               |
+		Then I should see "<rowLabel>" with a value of "<rowValue>" on row number "<rowPosition>"
+
+		Examples:
+			| rowLabel                                      | rowValue                                                 | rowPosition |
+			| Contact name                                  | Lola                                                     | 1           |
+			| Local services                                | Local burials, Flower arrangements, Exhumations          | 2           |
+			| Provided services to British nationals before | Yes                                                      | 3           |
+			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) | 4           |
+			| Contact name                                  | Lola                                                     | 5           |
+			| Email address for GOV.UK                      | smoke@cautionyourblast.com                               | 6           |
+			| Telephone                                     | 1234567                                                  | 7           |
+			| Email - private                               | smoke@cautionyourblast.com                               | 8           |
