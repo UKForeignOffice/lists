@@ -18,10 +18,6 @@ interface ListItemEventData {
   updatedJsonData?: ListItemJsonData;
 }
 
-/**
- * @deprecated
- * TODO: deprecate, this is handled by the history field
- */
 export function recordListItemEvent(
   eventData: ListItemEventData,
   auditEvent: AuditEvent

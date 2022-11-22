@@ -2,7 +2,6 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import {ListItem} from "@prisma/client";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
@@ -171,8 +170,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
 }
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const { jsonData } = listItem;
-  const type = listItem.type as ServiceType
+  const { jsonData, type } = listItem;
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
@@ -228,24 +226,22 @@ function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
 }
 
 export function getDetailsViewModel(
-  listItem: ListItemGetObject | ListItem
+  listItem: ListItemGetObject
 ): DetailsViewModel {
-  const item = listItem as ListItemGetObject;
-  const headerField = ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
+  const headerField = ServiceType.lawyers === listItem.type ? listItem.jsonData.contactName : listItem.jsonData.organisationName;
 
   return {
     organisation: {
-      rows: getOrganisationRows(item),
+      rows: getOrganisationRows(listItem),
     },
     contact: {
       title: "Contact details",
-      rows: getContactRows(item),
+      rows: getContactRows(listItem),
     },
     adminUseOnly: {
       title: "Admin use only",
-      rows: getAdminRows(item),
+      rows: getAdminRows(listItem),
     },
     headerField,
   };
 }
-

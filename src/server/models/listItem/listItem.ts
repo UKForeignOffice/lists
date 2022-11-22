@@ -1,5 +1,6 @@
 import { WebhookData } from "server/components/formRunner";
 import {
+  EventJsonData,
   List,
   Point,
   ServiceType,
@@ -29,9 +30,9 @@ import {
   Status,
   ListItem as PrismaListItem,
 } from "@prisma/client";
+import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
-import { EVENTS } from "./listItemEvent";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -85,9 +86,9 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
   }
 }
 
-export async function findListItemById(id: string | number) {
+export async function findListItemById(id: string | number): Promise<any> {
   try {
-    return await prisma.listItem.findUnique({
+    const returnVal = await prisma.listItem.findUnique({
       where: { id: Number(id) },
       include: {
         address: {
@@ -105,25 +106,61 @@ export async function findListItemById(id: string | number) {
             },
           },
         },
-        history: {
-          orderBy: {
-            time: 'desc'
-          }
-        },
+        history: true,
         pinnedBy: true,
       },
     });
-
+    return returnVal;
   } catch (error) {
     logger.error(`findListItemById Error ${error.message}`);
-    throw new Error(`failed to find ${id}`);
+    throw new Error("Failed to approve lawyer");
   }
 }
 
+export async function togglerListItemIsApproved({
+  id,
+  isApproved,
+  userId,
+}: {
+  id: number;
+  isApproved: boolean;
+  userId: User["id"];
+}): Promise<ListItem> {
+  const data: {
+    isApproved: boolean;
+    isPublished?: boolean;
+  } = { isApproved };
 
-/**
- * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
- */
+  if (userId === undefined) {
+    throw new Error("togglerListItemIsApproved Error: userId is undefined");
+  }
+
+  if (!isApproved) {
+    data.isPublished = false;
+  }
+
+  try {
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: { id },
+        data,
+      }),
+      recordListItemEvent(
+        {
+          eventName: isApproved ? "approve" : "disapprove",
+          itemId: id,
+          userId,
+        },
+        AuditEvent.UNPUBLISHED
+      ),
+    ]);
+    return listItem;
+  } catch (error) {
+    logger.error(`togglerListItemIsApproved Error ${error.message}`);
+    throw error;
+  }
+}
+
 export async function togglerListItemIsPublished({
   id,
   isPublished,
@@ -137,9 +174,6 @@ export async function togglerListItemIsPublished({
     throw new Error("togglerListItemIsPublished Error: userId is undefined");
   }
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
-  const event = EVENTS[status](userId);
-  logger.info(`user ${userId} is setting ${id} isPublished to ${isPublished}`);
-
   const auditEvent = isPublished
     ? AuditEvent.PUBLISHED
     : AuditEvent.UNPUBLISHED;
@@ -152,9 +186,6 @@ export async function togglerListItemIsPublished({
           isApproved: true,
           isPublished,
           status,
-          history: {
-            create: [event]
-          }
         },
         include: {
           address: {
@@ -172,6 +203,15 @@ export async function togglerListItemIsPublished({
         },
         auditEvent
       ),
+      recordEvent(
+        {
+          eventName: isPublished ? "publish" : "unpublish",
+          userId,
+          itemId: id,
+        },
+        id,
+        isPublished ? ListItemEvent.PUBLISHED : ListItemEvent.UNPUBLISHED
+      ),
     ]);
 
     return listItem;
@@ -182,6 +222,69 @@ export async function togglerListItemIsPublished({
   }
 }
 
+export async function persistListItemChanges(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("persistListItemChanges Error: userId is undefined");
+  }
+  const auditEvent = AuditEvent.PUBLISHED;
+  const listItemEvent = ListItemEvent.PUBLISHED;
+
+  try {
+    const listItem = await prisma.listItem.findUnique({
+      where: { id },
+      include: {
+        history: true,
+      },
+    });
+
+    const editEvent = listItem?.history
+      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
+      .filter((audit) => audit.type === "EDITED")
+      .pop();
+
+    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
+
+    const [updatedListItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: {
+          id,
+        },
+        data: {
+          isApproved: true,
+          isPublished: true,
+          jsonData: eventJsonData?.updatedJsonData,
+        },
+      }),
+      recordListItemEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        auditEvent
+      ),
+
+      recordEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        id,
+        listItemEvent
+      ),
+    ]);
+
+    return updatedListItem;
+  } catch (e) {
+    logger.error(`persistListItemChanges Error ${e.message}`);
+
+    throw new Error("Failed to persist updates to list item");
+  }
+}
 
 interface SetEmailIsVerified {
   type?: ServiceType;
@@ -216,8 +319,9 @@ export async function setEmailIsVerified({
     const updatedJsonData = {
       ...jsonData,
       metadata: { ...metadata, emailVerified: true },
-    }
+    };
 
+    // TODO: Make updatedJsonData without casting
     await prisma.listItem.update({
       where: { reference },
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
@@ -248,6 +352,7 @@ export async function createListItem(
         },
       },
     });
+
     await recordListItemEvent(
       {
         eventName: "edit",
@@ -255,6 +360,16 @@ export async function createListItem(
       },
       AuditEvent.NEW
     );
+
+    await recordEvent(
+      {
+        eventName: "edit",
+        itemId: listItem.id,
+      },
+      listItem.id,
+      ListItemEvent.NEW
+    );
+
     return listItem;
   } catch (error) {
     logger.error(`create ListItem failed ${error.message}`);
@@ -298,17 +413,17 @@ export async function update(
   if (localServicesProvided) {
     updatedJsonData.localServicesProvided = localServicesProvided;
   }
-
-  const updateEvent = {
-    time: new Date(),
-    type: ListItemEvent.PUBLISHED,
-    jsonData: {
-      eventName: "publish",
-      itemId: id,
-      userId,
+  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
+    where: { id },
+    data: {
+      jsonData: updatedJsonData,
+      isApproved: true,
+      isPublished: true,
+      status: Status.PUBLISHED,
     },
-  }
+  };
 
+  let addressPrismaQuery: Nullable<Prisma.AddressUpdateArgs>;
   let geoLocationParams: Nullable<[number, Point]>;
 
   if (requiresAddressUpdate) {
@@ -317,52 +432,68 @@ export async function update(
       const country = getCountryFromData(data);
       const point = await geoLocatePlaceByText(address, country);
 
+      addressPrismaQuery = {
+        where: {
+          id: currentAddress.id,
+        },
+        data: addressUpdates,
+      };
       geoLocationParams = [currentAddress.geoLocationId!, point];
     } catch (e) {
       throw Error("GeoLocation update failed");
     }
   }
 
-
-  const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
-    where: { id },
-    data: {
-      jsonData: updatedJsonData,
-      isApproved: true,
-      isPublished: true,
-      status: Status.PUBLISHED,
-      history: {
-        create: [ updateEvent ]
-      },
-      ...(requiresAddressUpdate && {
-        address: {
-          update: {
-            ...addressUpdates
-          }
-        }
-      })
-    },
-  };
-
   try {
     let result;
-
-    const updateItem = prisma.listItem.update(listItemPrismaQuery);
-    const updateAudit = recordListItemEvent(
-      {
-        eventName: "publish",
-        itemId: id,
-        userId,
-        // @ts-ignore
-        updatedJsonData,
-      },
-      AuditEvent.PUBLISHED
-    )
-
-    if(requiresAddressUpdate) {
-      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit])
+    if (requiresAddressUpdate) {
+      result = await prisma.$transaction([
+        prisma.listItem.update(listItemPrismaQuery),
+        prisma.address.update(addressPrismaQuery!),
+        rawUpdateGeoLocation(...geoLocationParams!),
+        recordListItemEvent(
+          {
+            eventName: "publish",
+            itemId: id,
+            userId,
+            // @ts-ignore
+            updatedJsonData,
+          },
+          AuditEvent.PUBLISHED
+        ),
+        recordEvent(
+          {
+            eventName: "publish",
+            itemId: id,
+            userId,
+          },
+          id,
+          ListItemEvent.PUBLISHED
+        ),
+      ]);
     } else {
-      result = await prisma.$transaction([updateItem, updateAudit])
+      result = await prisma.$transaction([
+        prisma.listItem.update(listItemPrismaQuery),
+        recordListItemEvent(
+          {
+            eventName: "publish",
+            itemId: id,
+            userId,
+            // @ts-ignore
+            updatedJsonData,
+          },
+          AuditEvent.PUBLISHED
+        ),
+        recordEvent(
+          {
+            eventName: "publish",
+            itemId: id,
+            userId,
+          },
+          id,
+          ListItemEvent.PUBLISHED
+        ),
+      ]);
     }
 
     if (!result) {
