@@ -4,7 +4,7 @@ Feature: List management actions
 		Given I am logged in as a "Administrator"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status    | isPublished |  service         |
+			| contactName | organisationName       | emailAddress               | status    | isPublished | service          |
 			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
 			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
 			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | funeralDirectors |
@@ -93,8 +93,8 @@ Feature: List management actions
 	Scenario: Show expected fields on list detail
 		When I am viewing the list item details for "Lola"
 		Then I should see these rows
-      | rowLabel                                      | rowValue                                                 |
-      | Regions                                       | France and UK                                            |
+			| rowLabel                                      | rowValue                                                 |
+			| Regions                                       | France and UK                                            |
 			| Local services                                | Local burials, Flower arrangements, Exhumations          |
 			| Provided services to British nationals before | Yes                                                      |
 			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) |

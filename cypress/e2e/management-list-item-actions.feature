@@ -20,11 +20,11 @@ Feature: Dashboard filtering
     And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName | radioButtons                               | radioButtonsConfirm                         |
-      | Winston     | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Julia       | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Bruce       | Update live version,Request changes,Remove | Publish,Unpublish                           |
-      | Joker       | Publish,Request changes,Remove             | Update live version,Unpublish               |
+      | contactName | radioButtons                               | radioButtonsConfirm           |
+      | Winston     | Publish,Request changes,Remove,Archive     | Unpublish,Update live version |
+      | Julia       | Publish,Request changes,Remove,Archive     | Unpublish,Update live version |
+      | Bruce       | Update live version,Request changes,Remove | Publish,Unpublish             |
+      | Joker       | Publish,Request changes,Remove,Archive     | Update live version,Unpublish |
 
 
   Scenario Outline: Request changes for list item
@@ -119,8 +119,18 @@ Feature: Dashboard filtering
       | Professional associations                     | Miniluv                                |
       | Email - private                               | smoke@cautionyourblast.com             |
 
-
   Scenario: Should not be able to view list if not publisher
     Given I am logged in as a ""
     When I visit a list that I am not a publisher of
     Then I should see an unauthorised page
+
+
+  Scenario: Archive list item
+
+    When I am viewing the list item details for "Julia"
+    And I click the "Archive" radio button
+    And I click the "Continue" button
+    And I see page with heading "Archive service provider"
+    And I click the "Archive" button
+    Then I see the notification text "Julia Law has been archived"
+    And I do not see "Julia" on the page
