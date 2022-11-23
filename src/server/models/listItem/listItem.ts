@@ -10,13 +10,8 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import {
-  AuditEvent,
-  ListItemEvent,
-  Prisma,
-  Status,
-  ListItem as PrismaListItem,
-} from "@prisma/client";
+import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
+import { recordEvent } from "./listItemEvent";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
@@ -102,12 +97,44 @@ export async function findListItemById(id: string | number) {
       },
     });
   } catch (error) {
-
     logger.error(`findListItemById Error ${error.message}`);
     throw new Error(`failed to find ${id}`);
   }
 }
 
+export async function findListItemsForLists(listIds: number[], statuses: Status[]): Promise<any[]> {
+  try {
+    const returnVal = await prisma.listItem.findMany({
+      where: {
+        listId: { in: listIds },
+        status: { in: statuses}
+      },
+      include: {
+        address: {
+          select: {
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            geoLocationId: true,
+          },
+        },
+        pinnedBy: true,
+        history: true,
+      },
+    });
+    return returnVal;
+  } catch (error) {
+    logger.error(`findListItemsForLists Error ${(error as Error).message}`);
+    throw new Error("Unable to get list items");
+  }
+}
 
 /**
  * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
@@ -170,6 +197,69 @@ export async function togglerListItemIsPublished({
   }
 }
 
+export async function persistListItemChanges(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("persistListItemChanges Error: userId is undefined");
+  }
+  const auditEvent = AuditEvent.PUBLISHED;
+  const listItemEvent = ListItemEvent.PUBLISHED;
+
+  try {
+    const listItem = await prisma.listItem.findUnique({
+      where: { id },
+      include: {
+        history: true,
+      },
+    });
+
+    const editEvent = listItem?.history
+      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
+      .filter((audit) => audit.type === "EDITED")
+      .pop();
+
+    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
+
+    const [updatedListItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: {
+          id,
+        },
+        data: {
+          isApproved: true,
+          isPublished: true,
+          jsonData: eventJsonData?.updatedJsonData,
+        },
+      }),
+      recordListItemEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        auditEvent
+      ),
+
+      recordEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        id,
+        listItemEvent
+      ),
+    ]);
+
+    return updatedListItem;
+  } catch (e) {
+    logger.error(`persistListItemChanges Error ${e.message}`);
+
+    throw new Error("Failed to persist updates to list item");
+  }
+}
 
 interface SetEmailIsVerified {
   type?: ServiceType;
@@ -365,7 +455,7 @@ export async function update(
   }
 }
 
-export async function updateAnnualReview(listItems: ListItemGetObject[]): Promise<ListItemGetObject[]> {
+export async function updateAnnualReview(listItems: ListItemGetObject[], status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject[]> {
   const updatedListItems: ListItemGetObject[] = [];
 
   if (listItems) {
@@ -376,7 +466,18 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
         },
         data: {
           isAnnualReview: true,
-          status: Status.ANNUAL_REVIEW,
+          status,
+          history: {
+            create: {
+              time: new Date(),
+              type: listItemEvent,
+              jsonData: {
+                eventName: "startAnnualReview",
+                itemId: listItem.id,
+                userId: -1,
+              },
+            },
+          },
         },
       };
       try {
@@ -393,9 +494,8 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
               // @ts-ignore
               updatedJsonData: listItem.jsonData,
             },
-            AuditEvent.ANNUAL_REVIEW
+            auditEvent
           ),
-
         ]);
         if (!result) {
           logger.error(
@@ -411,6 +511,13 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
     }
   }
   return updatedListItems;
+}
+
+export async function updateUnpublished(listItem: ListItemGetObject, status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject[]> {
+
+  const listItems: ListItemGetObject[] = [];
+  listItems.push(listItem);
+  return await updateAnnualReview(listItems, status, listItemEvent, auditEvent);
 }
 
 export async function deleteListItem(

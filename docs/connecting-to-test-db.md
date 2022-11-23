@@ -63,3 +63,57 @@ You must have gnupg (gpg) installed with at least the public key imported into y
 
 1. `cat pub.asc | base64 --decode | gpg --import`
 2. encrypt the database `gpg -o test_data.sql.zip.gpg -r BC6D45323BC3CB12EAB271379A2CC0D6099DA303 test_data.sql`
+
+Data needed to test the annual review process:
+
+-- update email addresses for lists
+```
+update "List" set "jsonData" = jsonb_set("jsonData", '{administrators}'::text[], '["ali@cautionyourblast.com","ali.salaman@fcdo.gov.uk"]'::jsonb);
+update "List" set "jsonData" = jsonb_set("jsonData", '{validators}'::text[], '["ali@cautionyourblast.com","ali.salaman@fcdo.gov.uk"]'::jsonb);
+update "List" set "jsonData" = jsonb_set("jsonData", '{publishers}'::text[], '["ali@cautionyourblast.com","ali.salaman@fcdo.gov.uk"]'::jsonb);
+```
+
+-- update annual review dates for lists
+```
+update "List" set "nextAnnualReviewStartDate" = current_date + INTERVAL '1 month' where "id" = 150;
+update "List" set "nextAnnualReviewStartDate" = current_date + INTERVAL '7 days' where "id" = 88;
+update "List" set "nextAnnualReviewStartDate" = current_date + INTERVAL '1 day' where "id" = 240;
+update "List" set "nextAnnualReviewStartDate" = current_date where "id" = 246;
+```
+
+-- update annual review dates for lists with upcoming annual review date
+```
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '42 days' where "id" = 157;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '41 days' where "id" = 151;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '35 days' where "id" = 203;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '28 days' where "id" = 216;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '21 days' where "id" = 345;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '14 days' where "id" = 162;
+update "List" set "nextAnnualReviewStartDate" = current_date - INTERVAL '7 days' where "id" = 156;
+```
+
+-- update statuses for associated list ids
+```
+update "ListItem" set "status" = 'ANNUAL_REVIEW', "isAnnualReview" = true where id in (
+  1546, 1825, 1774,
+  1527, 1514, 1522, 
+  1002, 1094, 1101,
+  1205, 1135, 1127,
+  1017, 918, 955,
+  1890, 900, 1847,
+  847, 953, 802
+);
+```
+
+-- diagnostics
+```
+select "id", "nextAnnualReviewStartDate", "lastAnnualReviewStartDate", "jsonData" ->> 'publishers' 
+from "List" 
+where "id" in (246,240,88,150, 157,151,203,216,345,162,156);
+
+select "listId", "id", "type", "status", "isAnnualReview", 
+"jsonData" ->> 'organisationName' as "organisationName", 
+"jsonData" ->> 'emailAddress' as "emailAddress", 
+"jsonData" ->> 'publicEmailAddress' as "publicEmailAddress" 
+from "ListItem" where "listId" in (246,240,88,150, 157,151,203,216,345,162,156) order by "listId" desc;
+

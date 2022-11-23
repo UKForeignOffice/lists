@@ -23,6 +23,9 @@ import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware
 import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 
+import schedule from "node-schedule";
+import { sendAllAdvancedNoticesToPosts } from "server/components/annualReview/annualReviewNoticeEmailScheduler";
+
 const server = express();
 
 export async function getServer(): Promise<Express> {
@@ -54,7 +57,7 @@ export async function getServer(): Promise<Express> {
   //   await sendAllAdvancedNoticesToPosts();
   // });
 
-  logger.info(
+   logger.info(
     `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
   );
   return server;
