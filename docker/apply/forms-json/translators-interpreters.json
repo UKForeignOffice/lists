@@ -284,8 +284,9 @@
         }
       ],
       "next": [
-        { "path": "/are-you-a-sworn-interpreter-in-your-country" },
-        { "path": "/have-you-provided-services-to-british-nationals-before", "condition": "tkpRoc" }
+        {
+          "path": "/have-you-provided-services-to-british-nationals-before"
+        }
       ]
     },
     {
@@ -638,8 +639,26 @@
       ],
       "next": [
         {
-          "path": "/are-you-a-sworn-translator-in-your-country"
+          "path": "/are-you-a-sworn-translator-and-interpreter-in-your-country"
         }
+      ]
+    },
+    {
+      "path": "/are-you-a-sworn-translator-and-interpreter-in-your-country",
+      "title": "Are you a certified or sworn translator in your country?",
+      "components": [
+        {
+          "name": "swornTranslationsForInterpreters",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "If sworn or certified translation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn translator in your country?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": " /are-you-a-sworn-interpreter-in-your-country" },
+        { "path": "/are-you-a-sworn-interpreter-in-your-country" }
       ]
     },
     {
