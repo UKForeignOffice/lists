@@ -2,6 +2,7 @@ export function getAdjustedDateForDatePart(datePart: string, adjustBy: number): 
   const date = new Date();
   if (datePart === "month") {
     date.setMonth(date.getMonth() + adjustBy);
+
   } else {
     date.setDate(date.getDate() + adjustBy);
   }

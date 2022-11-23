@@ -14,8 +14,8 @@ model List {
   reference           String   @default(uuid()) @unique
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  nextAnnualReviewStartDate     DateTime @default(dbgenerated("NOW() + interval '1 year'"))
-  lastAnnualReviewStartDate     DateTime?
+  nextAnnualReviewStartDate     DateTime @default(dbgenerated("NOW() + interval '1 year'")) @db.Date
+  lastAnnualReviewStartDate     DateTime? @db.Date
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
@@ -148,7 +148,6 @@ enum Status {
   ANNUAL_REVIEW_OVERDUE
 }
 
-
 model Event {
   id                  Int    @id @default(autoincrement())
   time                DateTime @default(now())
@@ -171,6 +170,13 @@ enum ListItemEvent {
   ANNUAL_REVIEW_STARTED
   CHECK_ANNUAL_REVIEW
   ARCHIVED
+  ANNUAL_REVIEW_START_ONE_DAY_REMINDER_EMAIL_SENT
+  ANNUAL_REVIEW_START_ONE_WEEK_REMINDER_EMAIL_SENT
+  ANNUAL_REVIEW_START_ONE_MONTH_REMINDER_EMAIL_SENT
+  UNPUBLISH_ONE_DAY_POST_REMINDER_EMAIL_SENT
+  UNPUBLISH_WEEKLY_POST_REMINDER_EMAIL_SENT
+  UNPUBLISH_ONE_DAY_PROVIDER_REMINDER_EMAIL_SENT
+  UNPUBLISH_WEEKLY_PROVIDER_REMINDER_EMAIL_SENT
 }
 
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported

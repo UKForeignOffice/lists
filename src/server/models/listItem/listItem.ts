@@ -1,5 +1,5 @@
 import { WebhookData } from "server/components/formRunner";
-import { List, ListItem, ListItemGetObject, Point, ServiceType, User } from "server/models/types";
+import { EventJsonData, List, ListItem, ListItemGetObject, Point, ServiceType, User } from "server/models/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
@@ -10,10 +10,10 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
+import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
-import { EVENTS } from "./listItemEvent";
+import { EVENTS, recordEvent } from "./listItemEvent";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -103,6 +103,39 @@ export async function findListItemById(id: string | number) {
   }
 }
 
+export async function findListItemsForLists(listIds: number[], statuses: Status[]): Promise<any[]> {
+  try {
+    const returnVal = await prisma.listItem.findMany({
+      where: {
+        listId: { in: listIds },
+        status: { in: statuses}
+      },
+      include: {
+        address: {
+          select: {
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            geoLocationId: true,
+          },
+        },
+        pinnedBy: true,
+        history: true,
+      },
+    });
+    return returnVal;
+  } catch (error) {
+    logger.error(`findListItemsForLists Error ${(error as Error).message}`);
+    throw new Error("Unable to get list items");
+  }
+}
 
 export async function findListItemByReference(ref: string) {
   try {
@@ -191,6 +224,70 @@ export async function togglerListItemIsPublished({
     logger.error(`publishLawyer Error ${error.message}`);
 
     throw new Error("Failed to publish lawyer");
+  }
+}
+
+export async function persistListItemChanges(
+  id: number,
+  userId: User["id"]
+): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("persistListItemChanges Error: userId is undefined");
+  }
+  const auditEvent = AuditEvent.PUBLISHED;
+  const listItemEvent = ListItemEvent.PUBLISHED;
+
+  try {
+    const listItem = await prisma.listItem.findUnique({
+      where: { id },
+      include: {
+        history: true,
+      },
+    });
+
+    const editEvent = listItem?.history
+      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
+      .filter((audit) => audit.type === "EDITED")
+      .pop();
+
+    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
+
+    const [updatedListItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: {
+          id,
+        },
+        data: {
+          isApproved: true,
+          isPublished: true,
+          jsonData: eventJsonData?.updatedJsonData,
+        },
+      }),
+      recordListItemEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        auditEvent
+      ),
+
+      recordEvent(
+        {
+          eventName: "publish",
+          itemId: id,
+          userId,
+        },
+        id,
+        listItemEvent
+      ),
+    ]);
+
+    return updatedListItem;
+  } catch (e) {
+    logger.error(`persistListItemChanges Error ${e.message}`);
+
+    throw new Error("Failed to persist updates to list item");
   }
 }
 
@@ -390,7 +487,7 @@ export async function update(
   }
 }
 
-export async function updateAnnualReview(listItems: ListItemGetObject[]): Promise<ListItemGetObject[]> {
+export async function updateAnnualReview(listItems: ListItemGetObject[], status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject[]> {
   const updatedListItems: ListItemGetObject[] = [];
 
   if (listItems) {
@@ -401,7 +498,18 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
         },
         data: {
           isAnnualReview: true,
-          status: Status.ANNUAL_REVIEW,
+          status,
+          history: {
+            create: {
+              time: new Date(),
+              type: listItemEvent,
+              jsonData: {
+                eventName: "startAnnualReview",
+                itemId: listItem.id,
+                userId: -1,
+              },
+            },
+          },
         },
       };
       try {
@@ -418,9 +526,8 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
               // @ts-ignore
               updatedJsonData: listItem.jsonData,
             },
-            AuditEvent.ANNUAL_REVIEW
+            auditEvent
           ),
-
         ]);
         if (!result) {
           logger.error(
@@ -436,6 +543,13 @@ export async function updateAnnualReview(listItems: ListItemGetObject[]): Promis
     }
   }
   return updatedListItems;
+}
+
+export async function updateUnpublished(listItem: ListItemGetObject, status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject[]> {
+
+  const listItems: ListItemGetObject[] = [];
+  listItems.push(listItem);
+  return await updateAnnualReview(listItems, status, listItemEvent, auditEvent);
 }
 
 export async function deleteListItem(

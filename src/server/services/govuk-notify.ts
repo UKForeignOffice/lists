@@ -145,17 +145,15 @@ export async function sendEditDetailsEmail(
       config.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
       emailAddress,
       {
-        personalisation: {
-          typeSingular,
-          typePlural,
-          contactName,
-          message,
-          changeLink,
-        },
-      }
-    );
+      personalisation: {
+        typeSingular,
+        typePlural,
+        contactName,
+        message,
+        changeLink,
+      },
+    });
   } catch (error) {
-    logger.error(`Unable to send change request email`);
     throw new Error(`Unable to send change request email: ${error.message}`);
   }
 }
@@ -196,9 +194,8 @@ export async function sendAnnualReviewPostEmail(
   annualReviewDate: string
 ): Promise<void> {
   try {
-
     if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
       return;
     }
 
@@ -211,20 +208,19 @@ export async function sendAnnualReviewPostEmail(
       7: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE ?? "",
       1: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED ?? "",
-    }
+    };
 
     await getNotifyClient().sendEmail(
       notifyTemplates[daysBeforeAnnualReviewStart],
       emailAddress,
       {
-        personalisation: {
-          typePlural,
-          country,
-          annualReviewDate,
-          typePluralCapitalised: typePlural.toUpperCase(),
-        },
-      }
-    );
+      personalisation: {
+        typePlural,
+        country,
+        annualReviewDate,
+        typePluralCapitalised: typePlural.toUpperCase(),
+      },
+    });
   } catch (error) {
     throw new Error(`Unable to send change request email: ${error.message}`);
   }
@@ -249,21 +245,22 @@ export async function sendAnnualReviewProviderEmail(
       emailAddress = "ali@cautionyourblast.com";
     }
 
-    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`)
+    logger.info(
+      `personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`
+    );
 
     await getNotifyClient().sendEmail(
       GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED,
       emailAddress,
       {
-        personalisation: {
-          contactName,
-          typePlural,
-          country,
-          deletionDate,
-          changeLink
-        },
-      }
-    );
+      personalisation: {
+        contactName,
+        typePlural,
+        country,
+        deletionDate,
+        changeLink,
+      },
+    });
   } catch (error) {
     throw new Error(`Unable to send annual review provider email: ${error.message}`);
   }
@@ -282,28 +279,31 @@ export async function sendUnpublishedPostEmail(
       return;
     }
 
+    // @TODO remove after testing
     if (emailAddress !== "ali@cautionyourblast.com") {
       emailAddress = "ali@cautionyourblast.com";
     }
 
     const notifyTemplates: Record<number, string> = {
+      35: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
+      28: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
+      21: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
+      14: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
       7: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
       1: GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE ?? "",
-    };
-
+    }
     await getNotifyClient().sendEmail(
       notifyTemplates[daysBeforeAnnualReviewStart],
       emailAddress,
       {
-        personalisation: {
-          typePluralCapitalised: typePlural.toUpperCase(),
-          typePlural,
-          country,
-          numberNotResponded,
-        },
-      }
-    );
+      personalisation: {
+        typePluralCapitalised: typePlural.toUpperCase(),
+        typePlural,
+        country,
+        numberNotResponded,
+      },
+    });
   } catch (error) {
     throw new Error(`Unable to send change request email: ${error.message}`);
   }
@@ -315,12 +315,12 @@ export async function sendUnpublishedProviderEmail(
   typePlural: string,
   country: string,
   contactName: string,
+  deletionDate: string,
   changeLink: string
 ): Promise<void> {
   try {
-
     if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`)
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
       return;
     }
 
@@ -328,23 +328,27 @@ export async function sendUnpublishedProviderEmail(
       emailAddress = "ali@cautionyourblast.com";
     }
 
-    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, changeLink: ${changeLink}`)
+    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`)
     const notifyTemplates: Record<number, string> = {
       7: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_WEEKLY_NOTICE ?? "",
       1: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE ?? "",
+    };
+    const basePersonalisation = {
+      contactName,
+      typePlural,
+      country,
+      changeLink,
     }
+    const personalisation = daysUntilUnpublished === 0
+      ? { ...basePersonalisation, deletionDate }
+      : basePersonalisation;
 
     await getNotifyClient().sendEmail(
       notifyTemplates[daysUntilUnpublished],
       emailAddress,
       {
-        personalisation: {
-          contactName,
-          typePlural,
-          country,
-          changeLink
-        },
+        personalisation
       }
     );
   } catch (error) {

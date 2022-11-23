@@ -43,27 +43,24 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
 }
 
 export async function findListByAnnualReviewDate(
-  annualReviewFromDate: Date,
-  annualReviewToDate: Date
+  annualReviewStartDates: Date[]
 ): Promise<List[] | undefined> {
-  const now = new Date();
-  now.setHours(0,0,0,0);
-
   try {
+    logger.debug(`searching for lists matching dates [${annualReviewStartDates}]`);
+
     const lists = (await prisma.list.findMany({
       where: {
-        AND: [
-          {
-            nextAnnualReviewStartDate: {
-              gte: annualReviewFromDate,
-              lte: annualReviewToDate,
-            }
-          }]
+        nextAnnualReviewStartDate: {
+          in: annualReviewStartDates,
+        }
       },
       include: {
         country: true,
       },
     })) as List[];
+
+    logger.debug(`direct from query, found [${lists.length}] lists`);
+
     return lists ?? undefined;
   } catch (error) {
     logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);

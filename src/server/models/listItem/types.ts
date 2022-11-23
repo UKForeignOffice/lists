@@ -79,9 +79,10 @@ export type EventName =
   | "disapprove"
   | "publish"
   | "unpublish"
+  | "sendAnnualReviewReminderEmail"
   | "startAnnualReview"
-  | "postUnpublishReminder"
-  | "providerUnpublishReminder";
+  | "sendPostUnpublishReminderEmail"
+  | "sendProviderUnpublishReminderEmail";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 

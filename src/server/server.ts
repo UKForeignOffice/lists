@@ -8,7 +8,7 @@ import {
   configureHelmet,
   configureLogger,
   configureStaticServer,
-  configureViews
+  configureViews,
 } from "./middlewares";
 import { initAuth } from "./components/auth";
 import { initLists } from "./components/lists";
