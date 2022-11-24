@@ -35,12 +35,15 @@ async function sendEmailBeforeUnpublished(lists: List[], unpublishedDateContext:
   const listItemsForAllLists: ListItemGetObject[] = await findListItemsForLists(lists.map(list => list.id), [Status.ANNUAL_REVIEW]);
 
   for (const list of lists) {
+
     // get list items eligible for annual review
     const listItemsEligibleForAnnualReview = listItemsForAllLists.filter(listItem => listItem.listId === list.id);
 
     // email post only if there are list items eligible for annual review 1 week
     // before, 1 day before and when unpublished
-    if (listItemsEligibleForAnnualReview && list.jsonData.publishers) {
+    if ([0,1,7].includes(unpublishedDateContext.daysBeforeUnpublished) &&
+      listItemsEligibleForAnnualReview &&
+      list.jsonData.publishers) {
 
       for (let publisherEmail of list.jsonData.publishers) {
         logger.info(`in dev, instead using ali@cautionyourblast.com]`);
@@ -57,7 +60,7 @@ async function sendEmailBeforeUnpublished(lists: List[], unpublishedDateContext:
           );
 
         } catch (e) {
-          logger.error(`unable to send post email ${daysBeforeUnpublishing} days before unpublishing: ${e.stack}`);
+          logger.error(`unable to send post email ${daysBeforeUnpublishing} days before unpublishing: ${(e).stack}`);
         }
 
         // @ todo REMOVE THIS break ONCE TESTED
@@ -149,7 +152,7 @@ async function sendEmailBeforeUnpublished(lists: List[], unpublishedDateContext:
             //   providerAuditEvents[daysBeforeUnpublishing]
             // );
           } catch (e) {
-            logger.error(`could not send provider email ${daysBeforeUnpublishing} days before unpublishing: \n\n${e.stack}`);
+            logger.error(`could not send provider email ${daysBeforeUnpublishing} days before unpublishing: \n\n${(e as Error).stack}`);
           }
 
           if (daysBeforeUnpublishing === 0) {
@@ -209,3 +212,13 @@ interface UnpublishedDateContext {
   daysBeforeUnpublished: number;
   unpublishDate: Date;
 }
+
+export async function main(): Promise<void> {
+  try {
+    await sendUnpublishedEmails();
+  } catch (e) {
+    logger.error(`Error encountered in scheduled process sending unpublished emails: ${(e as Error).stack}`);
+  }
+}
+
+main().then(r => logger.info(`Reason after scheduler: ${r}`)).catch(r => logger.error(`Error reason after scheduler: ${r}`));

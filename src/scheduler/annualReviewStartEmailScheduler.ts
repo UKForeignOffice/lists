@@ -11,7 +11,6 @@ import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/de
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { lowerCase, startCase } from "lodash";
 import { AuditEvent, ListItemEvent, Status } from "@prisma/client";
-import { recordEvent } from "server/models/listItem/listItemEvent";
 import { addDays, addMonths, startOfDay } from "date-fns";
 import { recordListItemEvent } from "server/models/audit";
 
@@ -58,15 +57,6 @@ async function sendEmails(lists: List[], context: AnnualReviewStartDateContext):
 
         const event = postAuditEvents[`${context.daysBeforeAnnualReviewStart}${context.datePart}`];
         logger.debug(`post audit event for ${context.daysBeforeAnnualReviewStart}, ${context.datePart} = ${event}`);
-        // await recordEvent(
-        //   {
-        //     eventName: "sendAnnualReviewReminderEmail",
-        //     itemId: list.id,
-        //     userId: -1,
-        //   },
-        //   list.id,
-        //   postAuditEvents[`${context.daysBeforeAnnualReviewStart}${context.datePart}`],
-        // );
 
         // @ todo REMOVE THIS break ONCE TESTED
         if (1 === 1) break;
