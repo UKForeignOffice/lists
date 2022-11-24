@@ -9,7 +9,6 @@
 <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
   <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
     Submitted: {{ listItem.createdAt | date }}
-    {% include "./list-item-status.njk" %}
   </p>
 
   <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" form="pinForm"/>
