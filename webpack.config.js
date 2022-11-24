@@ -193,7 +193,7 @@ const server = {
 };
 
 function getScheduledFilePath(fileName) {
-  const scheduledProcessPath = path.resolve(__dirname, "src", "server", "components", "annualReview");
+  const scheduledProcessPath = path.resolve(__dirname, "src", "scheduler");
   return path.join(scheduledProcessPath, fileName);
 }
 const scheduler = {
@@ -201,8 +201,8 @@ const scheduler = {
   mode: environmentOptions[nodeEnv].mode,
   watch: environmentOptions[nodeEnv].watch,
   entry: {
-    nameOfProcess: getScheduledFilePath("annualReviewNoticeEmailScheduler.ts"),
-    sayHowdy: getScheduledFilePath("testProcess.ts"),
+    startAnnualReview: getScheduledFilePath("annualReviewStartEmailScheduler.ts"),
+    unpublish: getScheduledFilePath("annualReviewUnpublishedEmailScheduler.ts"),
   },
   devtool: "cheap-module-source-map",
   output: {

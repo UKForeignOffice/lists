@@ -16,7 +16,8 @@
       "client/*": ["client/*"],
       "server/*": ["server/*"],
       "@jest/*": ["./../.jest/*"]
-    }
+    },
+    "useUnknownInCatchVariables": false,
   },
   "include": [
     ".jest/*",

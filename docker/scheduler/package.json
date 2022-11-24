@@ -6,7 +6,7 @@
       "node": ">=14"
     },
     "scripts": {
-      "howdy": "node dist/scheduler/sayHowdy.js"
+      "scheduler:start-annual-review": "node dist/scheduler/startAnnualReview.js",
+      "scheduler:unpublish": "node dist/scheduler/unpublish.js"
     }
 }
-  
