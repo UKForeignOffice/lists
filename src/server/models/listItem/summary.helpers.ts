@@ -117,16 +117,15 @@ export function getActivityStatus(item: ListItemWithHistory): ActivityStatusView
   }
 
   if (!isPublished) {
+    if (status === "OUT_WITH_PROVIDER") {
+      return statusToActivityVM.OUT_WITH_PROVIDER;
+    }
     if (wasUnpublishedByUser(history)) {
       return statusToActivityVM.UNPUBLISHED;
     }
     if (status === "ANNUAL_REVIEW_OVERDUE") {
       return statusToActivityVM.ANNUAL_REVIEW_OVERDUE;
     }
-  }
-
-  if (status === "PUBLISHED" && !item.isAnnualReview) {
-    return statusToActivityVM.PUBLISHED;
   }
 
   return statusToActivityVM[status];
