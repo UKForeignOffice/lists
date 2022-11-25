@@ -5,7 +5,11 @@ import * as controllers from "server/components/dashboard/listsItems/controllers
 
 import { logger } from "server/services/logger";
 import express from "express";
-import { getListOverview, redirectIfUnauthorised } from "server/components/dashboard/listsItems/helpers";
+import {
+  getListOverview,
+  redirectIfUnauthorised,
+  serviceTypeDetailsHeading,
+} from "server/components/dashboard/listsItems/helpers";
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
@@ -18,8 +22,15 @@ listRouter.get("/", listsController);
 listRouter.param("listId", async (req, res, next, listId) => {
   try {
     const listIdAsNumber = Number(listId);
-    res.locals.list = await getListOverview(listIdAsNumber);
+    const list = await getListOverview(listIdAsNumber);
+    if (!list) {
+      return res.status(404);
+    }
+
+    res.locals.list = list;
     res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
+    res.locals.title = `${serviceTypeDetailsHeading[list.type]}s in ${list.country.name}`;
+    console.log("title", res.locals.title);
     return next();
   } catch (e) {
     logger.error(`${req.path} - Assigning listId ${listId} to req failed, ${e}`);
@@ -37,6 +48,8 @@ listRouter.param("listItemId", async (req, res, next, listItemId) => {
     const listItemIdAsNumber = Number(listItemId);
     res.locals.listItem = await findListItemById(listItemIdAsNumber);
     res.locals.listItemUrl = `${res.locals.listIndexUrl}/${listItemId}`;
+    const list = res.locals.list;
+    res.locals.title = `${serviceTypeDetailsHeading[list.type]} in ${list.country.name} details`;
     return next();
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);

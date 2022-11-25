@@ -33,15 +33,21 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
-import { mapUpdatedAuditJsonDataToListItem } from "server/components/dashboard/listsItems/helpers";
 import { lowerCase, startCase } from "lodash";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
-const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
-  covidTestProviders: "Covid test provider",
-  funeralDirectors: "Funeral director",
-  lawyers: "Lawyer",
-  translatorsInterpreters: "Translator or interpreter",
-};
+function mapUpdatedAuditJsonDataToListItem(
+  listItem: ListItemGetObject | ListItem,
+  updatedJsonData: ListItemJsonData
+): ListItemJsonData {
+  return Object.assign(
+    {},
+    listItem.jsonData,
+    ...Object.keys((listItem as ListItemGetObject).jsonData).map(
+      (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
+    )
+  );
+}
 
 export async function listItemGetController(req: Request, res: ListItemRes): Promise<void> {
   let error;
@@ -54,7 +60,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem;
+  const listItem = res.locals.listItem!;
   const userId = req.user?.userData.id;
 
   let requestedChanges;
@@ -104,7 +110,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons: actionButtonsForStatus ?? [],
     requestedChanges,
     error,
-    title: `${serviceTypeDetailsHeading[listItem.type] ?? "Provider"} details`,
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
@@ -161,7 +166,6 @@ export async function listItemPostController(req: Request, res: Response): Promi
       action,
       formAction: customFormActions[action],
       req,
-      title: `${serviceTypeDetailsHeading[listItem.type] ?? "Provider"} details - ${lowerCase(startCase(action))}`,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {

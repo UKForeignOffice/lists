@@ -147,7 +147,6 @@ export async function listItemsIndexController(
     }
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
-      title: pageTitles[dashboardRoutes.listsItems],
       req,
       list,
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),

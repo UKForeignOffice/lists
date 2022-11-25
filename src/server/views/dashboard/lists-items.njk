@@ -4,9 +4,8 @@
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 
-{% set listTitle = (_.startCase(list.type) + ' in ' if list.country.name) + list.country.name %}
 {% block pageTitle %}
-  List management - {{ listTitle }} - {{ title }} - {{ SERVICE_NAME }}
+  List management - {{ title }} - {{ SERVICE_NAME }}
 {% endblock %}
 
 {% block aside %}
@@ -53,7 +52,7 @@
   {% endif %}
 
   <h1 class="govuk-heading-l">
-    {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ list.country.name }}
+    {{ title }}
   </h1>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
