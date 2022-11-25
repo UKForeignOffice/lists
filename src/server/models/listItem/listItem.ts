@@ -244,7 +244,7 @@ export async function update(
   legacyDataParameter?: DeserialisedWebhookData
 ): Promise<void> {
   logger.info(`user ${userId} is attempting to update ${id}`);
-  if (data) {
+  if (legacyDataParameter) {
     logger.info(
       `legacy data parameter used. updating with ${legacyDataParameter} however ListItem.jsonData.updatedJsonData should be used`
     );
