@@ -22,7 +22,7 @@ export async function ingestPutController(req: Request, res: Response) {
     return;
   }
 
-  if (!!error) {
+  if (error) {
     res.status(422).json({ error: error.message });
     return;
   }
