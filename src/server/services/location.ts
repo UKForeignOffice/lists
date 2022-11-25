@@ -27,16 +27,13 @@ export function getAWSLocationService(): Location {
   return location;
 }
 
-export async function checkIfPlaceIndexExists(
-  placeIndexName: string
-): Promise<boolean> {
+export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<boolean> {
   try {
     const location = getAWSLocationService();
     const result = await location.listPlaceIndexes().promise();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
-    const typedError = error as Error;
-    logger.error(`checkIfPlaceIndexExists Error: ${typedError.message}`);
+    logger.error(`checkIfPlaceIndexExists Error: ${error.message}`);
     return false;
   }
 }
@@ -59,21 +56,15 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 }
 
-export async function geoLocatePlaceByText(
-  region: string,
-  country: string
-): Promise<Location.Types.Position> {
+export async function geoLocatePlaceByText(region: string, country: string): Promise<Location.Types.Position> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
 
   const location = getAWSLocationService();
-  const countryCode = region.toLowerCase().includes("vatican")
-    ? "VAT"
-    : getCountryCodeFromCountryName(country);
+  const countryCode = region.toLowerCase().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
 
-  if (!countryCode)
-    throw new Error(`A country code for ${country} could not be found.`);
+  if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
 
   const { Results } = await location
     .searchPlaceIndexForText({
