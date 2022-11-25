@@ -319,7 +319,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     await update(id, userId, auditJsonData.updatedJsonData);
   }
 
-  if (!!auditJsonData?.updatedJsonData) {
+  if (auditJsonData?.updatedJsonData) {
     await update(id, userId);
   }
 }
