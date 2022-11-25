@@ -10,7 +10,7 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
+import { AuditEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
@@ -246,7 +246,7 @@ export async function update(
   logger.info(`user ${userId} is attempting to update ${id}`);
   if (legacyDataParameter) {
     logger.info(
-      `legacy data parameter used. updating with ${legacyDataParameter} however ListItem.jsonData.updatedJsonData should be used`
+      "legacy data parameter used. updating with legacy data parameter however ListItem.jsonData.updatedJsonData should be used"
     );
   }
   const listItemResult = await prisma.listItem
