@@ -162,7 +162,6 @@ export async function listItemPostController(req: Request, res: Response): Promi
       formAction: customFormActions[action],
       req,
       title: `${serviceTypeDetailsHeading[listItem.type] ?? "Provider"} details - ${lowerCase(startCase(action))}`,
-      postActionPageUrl: confirmationPage.postActionPageUrl,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
