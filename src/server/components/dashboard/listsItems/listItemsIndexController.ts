@@ -5,7 +5,7 @@ import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/mod
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard";
-
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
