@@ -30,17 +30,11 @@ import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
-import { ListItemConfirmationPages, ListItemUrls } from "server/components/dashboard/listsItems/types";
-import {
-  getConfirmationPages,
-  getListItemUrls,
-  mapUpdatedAuditJsonDataToListItem,
-} from "server/components/dashboard/listsItems/helpers";
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import { mapUpdatedAuditJsonDataToListItem } from "server/components/dashboard/listsItems/helpers";
 import { lowerCase, startCase } from "lodash";
-
 
 const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
   covidTestProviders: "Covid test provider",
@@ -60,7 +54,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem!;
+  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
 
   let requestedChanges;
