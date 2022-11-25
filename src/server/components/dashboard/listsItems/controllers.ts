@@ -3,15 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
-import {
-  BaseListItemGetObject,
-  EventJsonData,
-  List,
-  ListItem,
-  ListItemGetObject,
-  ServiceType,
-  User,
-} from "server/models/types";
+import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
@@ -33,7 +25,6 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
-import { lowerCase, startCase } from "lodash";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 function mapUpdatedAuditJsonDataToListItem(

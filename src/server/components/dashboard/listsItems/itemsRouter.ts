@@ -30,7 +30,6 @@ listRouter.param("listId", async (req, res, next, listId) => {
     res.locals.list = list;
     res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]}s in ${list.country.name}`;
-    console.log("title", res.locals.title);
     return next();
   } catch (e) {
     logger.error(`${req.path} - Assigning listId ${listId} to req failed, ${e}`);
