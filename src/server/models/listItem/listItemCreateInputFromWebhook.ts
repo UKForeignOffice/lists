@@ -10,6 +10,7 @@ import {
 import { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import { EVENTS } from "./listItemEvent";
 
 export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
   const baseDeserialised = baseDeserialiser(webhook);
@@ -54,12 +55,13 @@ export async function listItemCreateInputFromWebhook(
 
   return {
     type,
-    isApproved: false,
-    isPublished: false,
     list: {
       connect: {
         id: listId,
       },
+    },
+    history: {
+      create: [EVENTS.NEW()]
     },
     jsonData: {
       ...deserialised,

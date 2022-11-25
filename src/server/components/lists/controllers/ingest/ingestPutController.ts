@@ -3,12 +3,12 @@ import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { recordEvent } from "server/models/listItem/listItemEvent";
+import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
+import {EVENTS} from "server/models/listItem/listItemEvent";
 
 export async function ingestPutController(
   req: Request,
@@ -49,6 +49,9 @@ export async function ingestPutController(
     where: { id: Number(id) },
     data: {
       status: Status.EDITED,
+      history: {
+        create: EVENTS.EDITED(data)
+      }
     },
   };
 
@@ -75,21 +78,12 @@ export async function ingestPutController(
         },
         AuditEvent.EDITED
       ),
-      recordEvent(
-        {
-          eventName: "edit",
-          itemId: Number(id),
-          updatedJsonData: data,
-        },
-        Number(id),
-        ListItemEvent.EDITED
-      ),
     ]);
 
     res.status(204).send();
     return;
   } catch (e) {
-    logger.error(`listsDataIngestionController Error: ${e.message}`);
+    logger.error(`ingestPutController Error: ${e.message}`);
     /**
      * TODO:- Queue?
      */

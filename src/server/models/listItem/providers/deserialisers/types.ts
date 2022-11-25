@@ -127,6 +127,8 @@ export interface TranslatorInterpreterFormWebhookData extends BaseDeserialisedWe
   representedBritishNationals: boolean;
   addressDisplay: string;
   memberOfProfessionalAssociations: boolean;
+  swornTranslations: boolean;
+  interpretationInACourt: boolean;
 }
 
 export type DeserialisedWebhookData =

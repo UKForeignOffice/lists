@@ -14,13 +14,23 @@
   <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">Back</a>
   <form class="govuk-!-margin-top-4">
     {{ govukCheckboxes({
-      name: "tag",
+      name: "activity",
       fieldset: {
         legend: {
-          text: "Filter"
+          text: "Activity status"
         }
       },
-      items: tags
+      items: activityStatus
+    }) }}
+
+     {{ govukCheckboxes({
+      name: "publishing",
+      fieldset: {
+        legend: {
+          text: "Publishing status"
+        }
+      },
+      items: publishingStatus
     }) }}
     <button class="govuk-button">Apply filters</button>
   </form>
@@ -70,7 +80,7 @@
     <h2 class="govuk-heading-m">Pinned items</h2>
     <ul class="govuk-list dashboard__content-list dashboard__content-list--pinned">
       {% for listItem in list.pinnedItems %}
-        {% set list = list %}
+        {% set isPinned = true %}
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>
@@ -81,7 +91,7 @@
   {% else %}
     <ul class="govuk-list dashboard__content-list">
       {% for listItem in list.items %}
-        {% set list = list %}
+        {% set isPinned = false %}
         {% include "./partials/list-item-summary.njk" %}
       {% endfor %}
     </ul>

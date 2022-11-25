@@ -83,7 +83,7 @@ export async function usersEditController(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> {
+) {
   try {
     const { userEmail } = req.params;
 
@@ -98,8 +98,7 @@ export async function usersEditController(
       isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
       if (isEditingSuperAdminUser) {
         // disallow editing of SuperAdmins
-        res.status(405).send("Not allowed to edit super admin account");
-        return;
+        return res.status(405).send("Not allowed to edit super admin account");
       }
     } catch (error) {
       return next(error);
@@ -139,11 +138,13 @@ export async function listsController(
   next: NextFunction
 ): Promise<void> {
   try {
-    if (req.user?.userData.email === undefined) {
+    if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = (await findUserLists(req.user?.userData.email)) ?? [];
+    const email = req.user!.userData.email;
+
+    const lists = (await findUserLists(email)) ?? [];
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
