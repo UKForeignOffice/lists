@@ -50,8 +50,9 @@ export const EVENTS = {
     };
   },
 
-  [ListItemEvent.DELETED]: (userId: number): EventCreate<"DELETED"> => ({
+  [ListItemEvent.DELETED]: (userId: number, id?: number): EventCreate<"DELETED"> => ({
     type: ListItemEvent.DELETED,
+    ...(id && { listItemId: id }),
     jsonData: {
       eventName: "deleted",
       userId,
@@ -76,8 +77,9 @@ export const EVENTS = {
   [ListItemEvent.EDITED]: (updatedJsonData = {}): EventCreate<"EDITED"> => ({
     type: ListItemEvent.EDITED,
     jsonData: {
+      notes: ["user resubmitted with this data"],
       eventName: "edited",
-      ...updatedJsonData,
+      updatedJsonData,
     },
   }),
 

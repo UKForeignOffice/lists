@@ -1,6 +1,10 @@
 {% extends "layout.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
 
+{% block pageTitle %}
+  List management - {{ title + " - " if title }}{{ SERVICE_NAME }}
+{% endblock %}
+
 {% block content %}
   <div class="dashboard__logout">
     <a href="/logout" class="govuk-link">Logout</a>
