@@ -164,7 +164,7 @@ export async function listItemPostController(req: Request, res: Response): Promi
   }
 }
 
-export async function listItemPinController(req: Request, res: Response): Promise<void> {
+export async function listItemPinController(req: Request, res: Response) {
   const { action } = req.body;
   const userId = req.user!.userData.id;
   const listItem = res.locals.listItem!;
