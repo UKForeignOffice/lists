@@ -5,29 +5,26 @@ import {
   ListItemJsonData,
 } from "server/models/listItem/providers/deserialisers/types";
 
-/**
- * These are INCLUSIVE tags. Any combination of inclusive tags and one `ACTIVITY_TAG` is allowed.
- */
-export enum INCLUSIVE_TAGS {
-  pinned = "pinned",
-  published = "published",
-  // TODO: enable when ready
-  // annual_review = "annual_review",
-}
 
-/**
- * These are EXCLUSIVE to each other. An application must be one or the other.
- */
+
 export enum ACTIVITY_TAGS {
   to_do = "to_do",
   out_with_provider = "out_with_provider",
+  no_action_needed = "no_action_needed",
+}
+
+export enum PUBLISHING_TAGS {
+  new = "new",
+  live = "live",
+  unpublished = "unpublished",
+  archived = "archived"
 }
 
 export type Tags = typeof TAGS;
 
 export const TAGS = {
   ...ACTIVITY_TAGS,
-  ...INCLUSIVE_TAGS,
+  ...PUBLISHING_TAGS,
 };
 
 export const ORDER_BY = {
@@ -39,19 +36,22 @@ export const ORDER_BY = {
 
 export type OrderBy = typeof ORDER_BY;
 
+export interface ActivityStatusViewModel {
+  type: "to_do" | "out_with_provider" | "no_action_needed",
+  text: string,
+  colour?: string
+}
+
 export type IndexListItem = Pick<
   ListItemJsonData,
   | "organisationName"
   | "contactName"
-  | "publishers"
-  | "validators"
-  | "administrators"
   | "id"
 > & {
   createdAt: string;
   updatedAt: string;
-  status: string;
-  tags: string[];
+  publishingStatus: string;
+  activityStatus: ActivityStatusViewModel;
 };
 
 export interface PaginationOptions {
@@ -63,7 +63,8 @@ export interface PaginationOptions {
 export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
-  tags?: Array<keyof Tags>;
+  activity?: Array<keyof Tags>,
+  publishing?: Array<keyof Tags>,
   sort?: keyof OrderBy;
   reqQuery?: { [query: string]: any };
 } & PaginationOptions;

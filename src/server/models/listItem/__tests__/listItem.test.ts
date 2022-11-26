@@ -9,7 +9,6 @@ import { findPublishedLawyersPerCountry } from "../providers/Lawyers";
 import { checkListItemExists, getListItemContactInformation, some } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import {
-  togglerListItemIsApproved,
   togglerListItemIsPublished,
   setEmailIsVerified,
   findListItemsForList,
@@ -528,66 +527,6 @@ describe("ListItem Model:", () => {
 
       expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.includes(`AND "ListItem"."jsonData" @>`)).toEqual(false);
-    });
-  });
-
-  describe("togglerListItemIsApproved", () => {
-    test.skip("update command is correct when approving", async () => {
-      const spyUpdate = spyListItemUpdate();
-      const spyTransaction = spyPrismaTransaction();
-      const spyAudit = spyAuditRecordListItemEvent();
-
-      const result = await togglerListItemIsApproved({
-        id: 123,
-        isApproved: true,
-        userId: 1,
-      });
-
-      expect(spyUpdate).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isApproved: true },
-      });
-
-      expect(result).toBe(sampleListItem);
-      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
-      expect(spyAudit).toHaveBeenCalledWith({
-        eventName: "approve",
-        itemId: 123,
-        userId: 1,
-      });
-    });
-
-    test.skip("update command is correct when disapproving ", async () => {
-      const spyUpdate = spyListItemUpdate();
-      const spyTransaction = spyPrismaTransaction();
-      const spyAudit = spyAuditRecordListItemEvent();
-
-      const result = await togglerListItemIsApproved({
-        id: 123,
-        isApproved: false,
-        userId: 1,
-      });
-
-      expect(result).toBe(sampleListItem);
-      expect(spyUpdate).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isApproved: false, isPublished: false },
-      });
-      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
-      expect(spyAudit).toHaveBeenCalledWith({
-        eventName: "disapprove",
-        itemId: 123,
-        userId: 1,
-      });
-    });
-
-    test("it rejects if userId is undefined", async () => {
-      await expect(
-        togglerListItemIsApproved({
-          id: 123,
-          isApproved: false,
-        } as any)
-      ).rejects.toEqual(new Error("togglerListItemIsApproved Error: userId is undefined"));
     });
   });
 
