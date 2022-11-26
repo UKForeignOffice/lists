@@ -11,7 +11,7 @@
   </li>
 {% endmacro %}
 
-{% macro successBanner(bannerHeading = "Success", title = "Saved successfully", colourClass = ".govuk-tag--green") %}
+{% macro successBanner(bannerHeading = "Success", bannerTitle = "Saved successfully", colourClass = ".govuk-tag--green") %}
   <div class="govuk-notification-banner {{ colourClass }}" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
     <div class="govuk-notification-banner__header">
       <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -20,7 +20,7 @@
     </div>
     <div class="govuk-notification-banner__content">
       <h3 class="govuk-notification-banner__heading">
-        {{ title }}
+        {{ bannerTitle }}
       </h3>
     </div>
   </div>

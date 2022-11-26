@@ -3,15 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
-import {
-  BaseListItemGetObject,
-  EventJsonData,
-  List,
-  ListItem,
-  ListItemGetObject,
-  ServiceType,
-  User,
-} from "server/models/types";
+import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
@@ -30,10 +22,10 @@ import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getDetailsViewModel } from "./getViewModel";
 import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -47,13 +39,6 @@ function mapUpdatedAuditJsonDataToListItem(
     )
   );
 }
-
-const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
-  covidTestProviders: "Covid test provider",
-  funeralDirectors: "Funeral director",
-  lawyers: "Lawyer",
-  translatorsInterpreters: "Translator or interpreter",
-};
 
 export async function listItemGetController(req: Request, res: ListItemRes): Promise<void> {
   let error;
@@ -116,7 +101,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons: actionButtonsForStatus ?? [],
     requestedChanges,
     error,
-    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
@@ -180,7 +164,7 @@ export async function listItemPostController(req: Request, res: Response): Promi
   }
 }
 
-export async function listItemPinController(req: Request, res: Response): Promise<void> {
+export async function listItemPinController(req: Request, res: Response) {
   const { action } = req.body;
   const userId = req.user!.userData.id;
   const listItem = res.locals.listItem!;

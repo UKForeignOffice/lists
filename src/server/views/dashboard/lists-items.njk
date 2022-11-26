@@ -4,6 +4,10 @@
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 
+{% block pageTitle %}
+  List management - {{ title }} - {{ SERVICE_NAME }}
+{% endblock %}
+
 {% block aside %}
 <aside>
   <a class="govuk-back-link" href="{{ dashboardRoutes.lists }}">Back</a>
@@ -37,18 +41,18 @@
 
   {% if messages.successBannerTitle %}
     {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
-    {% set title = messages.successBannerTitle %}
+    {% set bannerTitle = messages.successBannerTitle %}
     {% set colourClass = ".govuk-tag--blue" %}
     {% if messages.successBannerColour === "green" %}
       {% set colourClass = ".govuk-tag--green" %}
     {% elseif messages.successBannerColour === "red" %}
       {% set colourClass = ".govuk-tag--red" %}
     {% endif %}
-    {{ dashboardMacros.successBanner(bannerHeading, title, colourClass) }}
+    {{ dashboardMacros.successBanner(bannerHeading, bannerTitle, colourClass) }}
   {% endif %}
 
   <h1 class="govuk-heading-l">
-    {{ _.startCase(list.type) }} {{ 'in' if list.country.name }} {{ list.country.name }}
+    {{ title }}
   </h1>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
