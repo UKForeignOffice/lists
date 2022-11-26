@@ -12,7 +12,6 @@ import {
   GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE,
   GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE,
   GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE,
-  GOVUK_NOTIFY_UNPUBLISH_PROVIDER_WEEKLY_NOTICE,
   GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE,
   GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE,
 } from "server/config";
@@ -176,14 +175,19 @@ export async function sendAnnualReviewPostEmail(
     }
 
     const notifyTemplates: Record<number, string> = {
-      30: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE ?? "",
+      28: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE ?? "",
       7: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE ?? "",
       1: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED ?? "",
     };
 
+
+    const notifyTemplate = notifyTemplates[daysBeforeAnnualReviewStart];
+    logger.info(
+      `personalisation - template ${notifyTemplate}, typePlural: ${typePlural}, country: ${country}, annualReviewDate: ${annualReviewDate}, daysBeforeAnnualReviewStart: ${daysBeforeAnnualReviewStart}`
+    );
     await getNotifyClient().sendEmail(
-      notifyTemplates[daysBeforeAnnualReviewStart],
+      notifyTemplate,
       emailAddress,
       {
       personalisation: {
@@ -255,6 +259,7 @@ export async function sendUnpublishedPostEmail(
     if (emailAddress !== "ali@cautionyourblast.com") {
       emailAddress = "ali@cautionyourblast.com";
     }
+    logger.info(`sending sendUnpublishedPostEmail for ${daysBeforeAnnualReviewStart} days before annual review start [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
 
     const notifyTemplates: Record<number, string> = {
       35: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
@@ -300,9 +305,8 @@ export async function sendUnpublishedProviderEmail(
       emailAddress = "ali@cautionyourblast.com";
     }
 
-    logger.info(`personalisation -  contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`)
+    logger.info(`sending sendUnpublishedProviderEmail for ${daysUntilUnpublished} days untill unpublished [contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}]`)
     const notifyTemplates: Record<number, string> = {
-      7: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_WEEKLY_NOTICE ?? "",
       1: GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE ?? "",
     };
@@ -323,6 +327,7 @@ export async function sendUnpublishedProviderEmail(
         personalisation
       }
     );
+    logger.debug(`Sent email to ${emailAddress} with template ${notifyTemplates[daysUntilUnpublished]} for ${daysUntilUnpublished} days before unpublishing`);
   } catch (error) {
     throw new Error(`Unable to send annual review provider email: ${error.message}`);
   }

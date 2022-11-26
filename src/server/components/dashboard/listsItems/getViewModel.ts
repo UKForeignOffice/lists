@@ -209,7 +209,8 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const fieldsForType = fields[type] ?? baseFields;
 
   if (type === ServiceType.translatorsInterpreters && listItem.jsonData.deliveryOfServices) {
-    listItem.jsonData.deliveryOfServices = DeliveryOfServices[listItem.jsonData.deliveryOfServices];
+    const deliveryOfServices: string[] = listItem.jsonData.deliveryOfServices;
+    listItem.jsonData.deliveryOfServices = deliveryOfServices.map(service => DeliveryOfServices[service]);
   }
   if (type === ServiceType.translatorsInterpreters && listItem.jsonData.languagesProvided) {
     const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);

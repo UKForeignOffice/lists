@@ -9,6 +9,7 @@ import {
   User,
 } from "./types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { logger } from "server/services/logger";
 
 interface ListItemEventData {
   userId?: User["id"];
@@ -32,5 +33,6 @@ export function recordListItemEvent(
     jsonData: { ...eventData },
   };
 
+  logger.debug(`creating Audit record with data [${JSON.stringify(data)}`);
   return prisma.audit.create({ data }) as Prisma.Prisma__AuditClient<Audit>;
 }

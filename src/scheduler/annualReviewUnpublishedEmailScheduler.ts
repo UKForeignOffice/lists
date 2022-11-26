@@ -32,7 +32,7 @@ async function sendEmailBeforeUnpublished(lists: List[], unpublishedDateContext:
    annual review start date ${unpublishedDateContext.annualReviewStartDate}
    data [${JSON.stringify(lists)}]`);
 
-  const listItemsForAllLists: ListItemGetObject[] = await findListItemsForLists(lists.map(list => list.id), [Status.ANNUAL_REVIEW]);
+  const listItemsForAllLists: ListItemGetObject[] = await findListItemsForLists(lists.map(list => list.id), [Status.CHECK_ANNUAL_REVIEW]);
 
   for (const list of lists) {
 
@@ -88,79 +88,73 @@ async function sendEmailBeforeUnpublished(lists: List[], unpublishedDateContext:
     }
     // update list items and email providers to confirm annual review start
     for (const listItem of listItemsEligibleForAnnualReview) {
+      let updatedListItem;
 
       if (daysBeforeUnpublishing === 0) {
-        const updatedListItems: ListItemGetObject[] = await updateUnpublished(
+        updatedListItem = await updateUnpublished(
           listItem,
           Status.UNPUBLISHED,
           ListItemEvent.UNPUBLISHED,
           AuditEvent.UNPUBLISHED);
-        const listItemsNotUpdated = listItemsEligibleForAnnualReview.filter(listItem => {
-          return updatedListItems.map(updatedListItem => updatedListItem.id).includes(listItem.id);
-        })
 
-        if (listItemsNotUpdated) {
-          logger.info(`List items ${listItemsNotUpdated.map(listItem => listItem.id)} could not be updated`);
+        if (!updatedListItem) {
+          logger.info(`List items ${listItem.id} could not be updated`);
         }
+      }
+      if (daysBeforeUnpublishing !== 0 || (daysBeforeUnpublishing === 0 && updatedListItem)) {
 
-        for (const updatedListItem of updatedListItems) {
+        logger.debug(`initialising form runner session`);
+        // @TODO update correct landing page once latest annual review changes are merged in
+        const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, "update your annual review", false);
 
-          logger.debug(`initialising form runner session`);
-          // @TODO update correct landing page once latest annual review changes are merged in
-          const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, updatedListItem, "update your annual review", false);
-
-          logger.debug(`sending provider email`);
-          try {
-            if ([0,1].includes(daysBeforeUnpublishing)) {
-              await sendUnpublishedProviderEmail(daysBeforeUnpublishing,
-                (updatedListItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
-                lowerCase(startCase(updatedListItem.type)),
-                list?.country?.name ?? "",
-                (updatedListItem.jsonData as BaseDeserialisedWebhookData).contactName,
-                unpublishedDateContext.unpublishDate.toDateString(),
-                formRunnerEditUserUrl
-              );
-
-            } else {
-              await sendAnnualReviewProviderEmail(0,
-                (updatedListItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
-                lowerCase(startCase(updatedListItem.type)),
-                list?.country?.name ?? "",
-                (updatedListItem.jsonData as BaseDeserialisedWebhookData).contactName,
-                unpublishedDateContext.annualReviewStartDate.toDateString(),
-                formRunnerEditUserUrl
-              );
-            }
-
-            await recordListItemEvent(
-              {
-                eventName: "sendAnnualReviewUnpublishWeeklyReminderEmail",
-                itemId: updatedListItem.id,
-                userId: -1,
-                // @ts-ignore
-              },
-              AuditEvent.UNPUBLISHED
+        logger.debug(`sending provider email`);
+        try {
+          if ([0,1].includes(daysBeforeUnpublishing)) {
+            await sendUnpublishedProviderEmail(daysBeforeUnpublishing,
+              (listItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
+              lowerCase(startCase(listItem.type)),
+              list?.country?.name ?? "",
+              (listItem.jsonData as BaseDeserialisedWebhookData).contactName,
+              unpublishedDateContext.unpublishDate.toDateString(),
+              formRunnerEditUserUrl
             );
 
-            // await recordEvent(
-            //   {
-            //     eventName: "sendProviderUnpublishReminderEmail",
-            //     itemId: updatedListItem.id,
-            //     userId: -1
-            //   },
-            //   listItem.id,
-            //   providerAuditEvents[daysBeforeUnpublishing]
-            // );
-          } catch (e) {
-            logger.error(`could not send provider email ${daysBeforeUnpublishing} days before unpublishing: \n\n${(e as Error).stack}`);
+          } else {
+            await sendAnnualReviewProviderEmail(0,
+              (listItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
+              lowerCase(startCase(listItem.type)),
+              list?.country?.name ?? "",
+              (listItem.jsonData as BaseDeserialisedWebhookData).contactName,
+              unpublishedDateContext.unpublishDate.toDateString(),
+              formRunnerEditUserUrl
+            );
           }
 
-          if (daysBeforeUnpublishing === 0) {
+          await recordListItemEvent(
+            {
+              eventName: "sendAnnualReviewUnpublishWeeklyReminderEmail",
+              itemId: listItem.id,
+              userId: -1,
+              // @ts-ignore
+            },
+            AuditEvent.UNPUBLISHED
+          );
 
-            // @todo REMOVE THIS break ONCE TESTED
-            break;
-          }
+          // await recordEvent(
+          //   {
+          //     eventName: "sendProviderUnpublishReminderEmail",
+          //     itemId: updatedListItem.id,
+          //     userId: -1
+          //   },
+          //   listItem.id,
+          //   providerAuditEvents[daysBeforeUnpublishing]
+          // );
+        } catch (e) {
+          logger.error(`could not send provider email ${daysBeforeUnpublishing} days before unpublishing: \n\n${(e as Error).stack}`);
         }
+
+        // @todo REMOVE THIS break ONCE TESTED
+        break;
       }
     }
   }
@@ -213,12 +207,8 @@ interface UnpublishedDateContext {
   unpublishDate: Date;
 }
 
-export async function main(): Promise<void> {
-  try {
-    await sendUnpublishedEmails();
-  } catch (e) {
-    logger.error(`Error encountered in scheduled process sending unpublished emails: ${(e as Error).stack}`);
-  }
-}
+sendUnpublishedEmails().then(r => {
+  logger.info(`Reason after scheduler: ${r}`);
+  process.exit(0);
 
-main().then(r => logger.info(`Reason after scheduler: ${r}`)).catch(r => logger.error(`Error reason after scheduler: ${r}`));
+}).catch(r => logger.error(`Error reason after scheduler: ${r}`));
