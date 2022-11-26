@@ -6,7 +6,8 @@
       "node": ">=14"
     },
     "scripts": {
-      "scheduler:start-annual-review": "node dist/scheduler/startAnnualReview.js",
-      "scheduler:unpublish": "node dist/scheduler/unpublish.js"
+      "scheduler:start-annual-review": "npm run prisma:deploy && node dist/scheduler/startAnnualReview.js",
+      "scheduler:unpublish": "npm run prisma:deploy && node dist/scheduler/unpublish.js",
+      "prisma:deploy": "npx prisma migrate deploy --schema src/server/models/db/schema.prisma"
     }
 }

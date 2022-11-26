@@ -545,11 +545,12 @@ export async function updateAnnualReview(listItems: ListItemGetObject[], status:
   return updatedListItems;
 }
 
-export async function updateUnpublished(listItem: ListItemGetObject, status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject[]> {
+export async function updateUnpublished(listItem: ListItemGetObject, status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItemGetObject> {
 
   const listItems: ListItemGetObject[] = [];
   listItems.push(listItem);
-  return await updateAnnualReview(listItems, status, listItemEvent, auditEvent);
+  const updatedListItems = await updateAnnualReview(listItems, status, listItemEvent, auditEvent);
+  return updatedListItems[0] || undefined;
 }
 
 export async function deleteListItem(
