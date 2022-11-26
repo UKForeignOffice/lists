@@ -10,8 +10,7 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
-import { recordEvent } from "./listItemEvent";
+import { AuditEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
 import { merge } from "lodash";
 import { DeserialisedWebhookData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
@@ -162,7 +161,6 @@ export async function togglerListItemIsPublished({
   }
 }
 
-
 interface SetEmailIsVerified {
   type?: ServiceType;
 }
@@ -238,7 +236,6 @@ export async function createListItem(webhookData: WebhookData): Promise<ListItem
 }
 
 type Nullable<T> = T | undefined | null;
-
 
 /**
  * updates and PUBLISHES!
