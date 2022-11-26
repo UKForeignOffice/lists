@@ -22,10 +22,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
     let andWhere: string = "";
 
     if (props.turnaroundTime > 0) {
-      andWhere = pgescape(
-        `AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= %s`,
-        props.turnaroundTime
-      );
+      andWhere = pgescape(`AND ("ListItem"."jsonData"->>'fastestTurnaround')::int <= %s`, props.turnaroundTime);
     }
 
     const countryName = props.countryName;
@@ -44,7 +41,7 @@ export async function findPublishedCovidTestSupplierPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query);
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedCovidTestSupplierPerCountry ERROR: ", error);
     return [];

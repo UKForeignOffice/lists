@@ -22,7 +22,8 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
     /**
      * TODO:- should this be using prisma.listItem.findMany(..)?
      */
-    return await prisma.$queryRaw(`SELECT
+    return await prisma.$queryRaw(
+      `SELECT
         "ListItem".*,
         (
           SELECT ROW_TO_JSON(a)
@@ -60,9 +61,10 @@ export async function findListItemsForList(list: List): Promise<ListItem[]> {
       AND ("ListItem"."jsonData"->'metadata'->>'emailVerified')::boolean
       AND "Country".id = ${list.countryId}
 
-      ORDER BY "ListItem"."createdAt" DESC`);
+      ORDER BY "ListItem"."createdAt" DESC` as unknown as TemplateStringsArray
+    );
   } catch (error) {
-    logger.error(`approveLawyer Error ${error.message}`);
+    logger.error(`approveLawyer Error ${(error as Error).message}`);
     throw new Error("Failed to approve lawyer");
   }
 }
@@ -119,7 +121,6 @@ export async function togglerListItemIsPublished({
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
   const event = EVENTS[status](userId);
   logger.info(`user ${userId} is setting ${id} isPublished to ${isPublished}`);
-
   const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
 
   try {
@@ -193,6 +194,7 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
 
     await prisma.listItem.update({
       where: { reference },
+      // @ts-ignore
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 

@@ -11,11 +11,17 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
-import { languages, translationInterpretationServices } from "server/services/metadata";
+import * as metaData from "server/services/metadata";
 import { TranslatorInterpreterListItemGetObject } from "server/models/types";
-import { cleanLanguagesProvided } from "server/models/listItem/providers/helpers";
+import {
+  getLanguageNames,
+  cleanTranslatorInterpreterServices,
+  cleanTranslatorSpecialties, cleanInterpreterServices, cleanLanguagesProvided, validateCountry
+} from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
 import { listsRoutes } from "../routes";
+import { logger } from "server/services/logger";
+import { countriesList } from "server/services/metadata";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -31,7 +37,7 @@ export const translatorsInterpretersQuestionsSequence = [
 ];
 
 const serviceTypeToNoun: {[key: string]: string} = {
-  translation: "translator", 
+  translation: "translator",
   interpretation: "interpreter"
 };
 
@@ -48,71 +54,109 @@ export async function searchTranslatorsInterpreters(
   res: Response
 ): Promise<void> {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region, print = "no", languagesProvided } = params;
-
-  if(!country) { 
-    const query = new URLSearchParams(req.query as Record<string, string>);
-    return res.redirect(`${listsRoutes.finder}?${query.toString()}`)
-  }
-
-  let languageNamesProvided, serviceNamesProvided;
-  let servicesProvided = parseListValues("servicesProvided", params);
-  if (servicesProvided != null) {
-    servicesProvided = servicesProvided.map((service) => service.toLowerCase());
-  }
-  let translationSpecialties = parseListValues("translationSpecialties", params);
-  if (translationSpecialties != null) {
-    translationSpecialties = translationSpecialties.map((service) => service.toLowerCase());
-  }
-  let interpreterServices = parseListValues("interpreterServices", params);
-  if (interpreterServices != null) {
-    interpreterServices = interpreterServices.map((service) => service.toLowerCase());
-  }
-
+  const { serviceType, country, region, print = "no" } = params;
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
 
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
-  if (languagesProvided) {
-    const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
-    params.languagesProvided = cleanedLanguagesProvided ?? undefined;
-
-    // populate filtered language names
-    languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
-      // @ts-ignore
-      return languages[language];
-    }).join(", ");
+  if(!country) {
+    const query = new URLSearchParams(req.query as Record<string, string>);
+    return res.redirect(`${listsRoutes.finder}?${query.toString()}`)
+  }
+  let languageNamesProvided;
+  let serviceNamesProvided;
+  let servicesProvided;
+  let allRows: TranslatorInterpreterListItemGetObject[] = [];
+  let searchResults: TranslatorInterpreterListItemGetObject[] = [];
+  let filterProps: {
+    countryName: typeof countriesList[number]["value"] | undefined,
+    region?: string,
+    servicesProvided: string[] | undefined,
+    languagesProvided: string[] | undefined,
+    interpreterServices: string[] | undefined,
+    translationSpecialties: string[] | undefined,
+    offset: number,
+  } = {
+    countryName: undefined,
+    region: "",
+    servicesProvided: [],
+    languagesProvided: [],
+    interpreterServices: [],
+    translationSpecialties: [],
+    offset: -1
   }
 
-  if (servicesProvided) {
-    serviceNamesProvided = servicesProvided.map((service) => {
-      if (service.includes("all")) {
-        return camelCase(service);
-      }
-      const serviceName = translationInterpretationServices.find((metaDataService) => metaDataService.value.toLowerCase() === service)?.value;
-      return camelCase(serviceName);
-    });
+  try {
+    const countryName = validateCountry(country);
+
+    servicesProvided = parseListValues("servicesProvided", params);
+    if (servicesProvided != null) {
+      servicesProvided = cleanTranslatorInterpreterServices(servicesProvided);
+    }
+
+    let translationSpecialties = parseListValues("translationSpecialties", params);
+    if (translationSpecialties != null) {
+      translationSpecialties = cleanTranslatorSpecialties(translationSpecialties);
+    }
+
+    let interpreterServices = parseListValues("interpreterServices", params);
+    if (interpreterServices != null) {
+      interpreterServices = cleanInterpreterServices(interpreterServices);
+    }
+
+    let languagesProvidedArray = parseListValues("languagesProvided", params);
+    if (languagesProvidedArray != null) {
+      languagesProvidedArray = cleanLanguagesProvided(languagesProvidedArray);
+    }
+
+    if (languagesProvidedArray) {
+      const cleanedLanguagesProvided = getLanguageNames(languagesProvidedArray.join(","));
+      params.languagesProvided = cleanedLanguagesProvided ?? undefined;
+
+      // populate filtered language names
+      languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
+        // @ts-ignore
+        return metaData.languages[language];
+      }).join(", ");
+    }
+
+    if (servicesProvided) {
+      serviceNamesProvided = servicesProvided.map((service) => {
+        if (service.includes("all")) {
+          return camelCase(service);
+        }
+        const serviceName = metaData.translationInterpretationServices.find((metaDataService) => metaDataService.value.toLowerCase() === service)?.value;
+        return camelCase(serviceName);
+      });
+    }
+
+    filterProps = {
+      countryName: country,
+      region,
+      servicesProvided,
+      languagesProvided: languagesProvidedArray,
+      interpreterServices,
+      translationSpecialties,
+      offset: -1
+    };
+
+    if (countryName) {
+      allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
+    }
+
+  } catch (e) {
+    // continue with empty allRows[]
+    logger.error(`Exception searching for translators or interpreters`, e);
   }
 
-  const filterProps = {
-    countryName: country,
-    region,
-    servicesProvided,
-    languagesProvided,
-    interpreterServices,
-    translationSpecialties,
-    offset: -1,
-  };
-
-  const allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
   const count = allRows.length;
 
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
-    listRequestParams: params,
+    listRequestParams: params
   });
 
   const offset =
@@ -121,17 +165,18 @@ export async function searchTranslatorsInterpreters(
 
   filterProps.offset = offset;
 
-  let searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
-  searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
-    if (listItem.jsonData.languagesProvided) {
-      listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map((language: string) => {
-        // @ts-ignore
-        return languages[language];
-      });
-    }
-    return listItem;
-  });
-
+  if (allRows.length > 0) {
+    searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
+    searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
+      if (listItem.jsonData.languagesProvided) {
+        listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map((language: string) => {
+          // @ts-ignore
+          return metaData.languages[language];
+        });
+      }
+      return listItem;
+    });
+  }
   const results = print === "yes" ? allRows : searchResults;
 
   res.render("lists/results-page", {

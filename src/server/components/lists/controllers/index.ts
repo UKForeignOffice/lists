@@ -26,7 +26,7 @@ import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
 import { covidTestProviderQuestionsSequence, searchCovidTestProvider } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import {
-  cleanLanguagesProvided,
+  getLanguageNames,
   getLanguagesRows,
   setLanguagesProvided,
   some,
@@ -36,8 +36,8 @@ import {
   searchFuneralDirectors,
 } from "server/components/lists/searches/funeral-directors";
 import {
-  translatorsInterpretersQuestionsSequence,
   searchTranslatorsInterpreters,
+  translatorsInterpretersQuestionsSequence,
 } from "server/components/lists/searches/translators-interpreters";
 import { LanguageRows } from "server/models/listItem/providers/types";
 import serviceName from "server/utils/service-name";
@@ -131,7 +131,7 @@ export function listsGetController(req: Request, res: Response): void {
   let questionsSequence: QuestionName[], partialData: QuestionDataSet[] | QuestionData[];
 
   if (languagesProvided) {
-    const cleanedLanguagesProvided = cleanLanguagesProvided(languagesProvided as string);
+    const cleanedLanguagesProvided = getLanguageNames(languagesProvided as string);
     languagesProvided = cleanedLanguagesProvided;
     params.languagesProvided = cleanedLanguagesProvided;
     languagesRows = getLanguagesRows(languagesProvided as string, queryString);
@@ -280,11 +280,11 @@ export function listsResultsController(req: Request, res: Response, next: NextFu
       );
       break;
     case ServiceType.translatorsInterpreters:
-      searchTranslatorsInterpreters(req, res).catch((error) =>
+      searchTranslatorsInterpreters(req, res).catch((error) => {
         logger.error("Find a translator or interpreter result controller", {
           error,
-        })
-      );
+        });
+      });
       break;
     default:
       next();
