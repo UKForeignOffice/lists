@@ -151,7 +151,7 @@ enum Status {
 model Event {
   id                  Int    @id @default(autoincrement())
   time                DateTime @default(now())
-  listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
   jsonData            Json
