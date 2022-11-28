@@ -235,7 +235,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
           const list = await findListById(listId);
           if (list !== undefined && (userIsListAdministrator(req, list) || req.user?.isSuperAdmin())) {
             await updateList(Number(listId), pick(data, ["validators", "publishers", "administrators"]));
-            return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}?listUpdated=true`);
+            return res.redirect(`${res.locals.listsEditUrl}?listUpdated=true`);
           }
         }
       } else {
