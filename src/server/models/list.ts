@@ -1,35 +1,9 @@
-import pgescape from "pg-escape";
 import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
+
 import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput } from "./types";
-
-export async function findUserLists(email: string): Promise<List[] | undefined> {
-  const emailAddress = pgescape.string(email.toLowerCase());
-  const isSuperAdmin = authenticatedUser.isSuperAdmin();
-
-  try {
-    const lists: List[] = await prisma.list.findMany({
-      where: {
-        jsonData: {
-          path: ['publishers'],
-          array_contains: [emailAddress],
-        },
-      },
-      orderBy: {
-        id: "asc"
-      },
-      include: {
-        country: true,
-      },
-    }) as List[];
-    return lists ?? undefined;
-  } catch (error) {
-    logger.error(`findUserLists Error: ${(error as Error).message}`);
-    return undefined;
-  }
-}
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
