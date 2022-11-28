@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, updateUser } from "server/models/user";
+import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
 import { createList, findListByCountryAndType, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
