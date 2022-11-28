@@ -2,6 +2,7 @@ export default {
   chromeWebSecurity: false,
   video: true,
   projectId: "fo4z8h",
+  failOnStatusCode: false,
   env: {
     TAGS: "not @wip",
   },

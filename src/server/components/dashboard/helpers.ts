@@ -1,17 +1,11 @@
 import { Request } from "express";
 import { logger } from "server/services/logger";
 import axios from "axios";
-import { List, ListJsonData, UserRoles } from "server/models/types";
+import { List, ListJsonData } from "server/models/types";
 import { NewSessionData } from "../formRunner/types";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
-
-export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
-  return roles.filter((role) => {
-    return role in UserRoles && role !== UserRoles.SuperAdmin;
-  });
-}
 
 type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;

@@ -1,4 +1,4 @@
-import { findUserLists, findListById, findListByCountryAndType, createList, updateList } from "../list";
+import { findListById, findListByCountryAndType, createList, updateList } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { List, ServiceType } from "../types";
 import { compact } from "lodash";
@@ -25,51 +25,6 @@ describe("List Model:", () => {
       administrators: ["test@gov.uk"],
     },
   };
-
-  describe("findUserLists", () => {
-
-    const expectedQuery = {
-      where: {
-        jsonData: {
-          path: ['publishers'],
-          array_contains: ['test@gov.uk'],
-        },
-      },
-      orderBy: {
-        id: "asc"
-      },
-      include: {
-        country: true,
-      },
-    };
-
-    test("query is correct", async () => {
-      // @ts-ignore
-      prisma.list.findMany.mockResolvedValue([sampleList]);
-
-      await findUserLists("test@gov.uk");
-
-      expect(prisma.list.findMany).toHaveBeenCalledWith(expectedQuery);
-
-    });
-
-    test("returned value is correct", async () => {
-      prisma.list.findMany.mockResolvedValue([sampleList]);
-
-      const result = await findUserLists("test@gov.uk");
-
-      expect(result).toMatchObject([sampleList]);
-    });
-
-    test("it returns undefined when findMany fails", async () => {
-      prisma.list.findMany.mockRejectedValue({ message: "queryRaw error message" });
-
-      const result = await findUserLists("test@gov.uk");
-
-      expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith("findUserLists Error: queryRaw error message");
-    });
-  });
 
   describe("findListById", () => {
     test("findUnique call is correct", async () => {

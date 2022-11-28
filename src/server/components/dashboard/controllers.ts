@@ -1,27 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { compact, get, pick, startCase, toLower, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
-import { createList, findListByCountryAndType, findListById, findUserLists, updateList, } from "server/models/list";
+import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
+import { createList, findListByCountryAndType, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import {
-  CountryName,
-  List,
-  ServiceType,
-  UserRoles
-} from "server/models/types";
-import {
-  filterSuperAdminRole, pageTitles,
-  userIsListAdministrator,
-  userIsListPublisher,
-  userIsListValidator,
-} from "./helpers";
-import { isCountryNameValid, isGovUKEmailAddress, } from "server/utils/validation";
-import { QuestionError, } from "server/components/lists";
+import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
+import { pageTitles, userIsListAdministrator, userIsListPublisher, userIsListValidator } from "./helpers";
+import { isCountryNameValid, isGovUKEmailAddress } from "server/utils/validation";
+import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
+import { logger } from "server/services/logger";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -34,21 +25,14 @@ export const DEFAULT_VIEW_PROPS = {
   userIsListAdministrator,
 };
 
-export async function startRouteController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function startRouteController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user === undefined) {
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await findUserLists(req.user?.userData.email);
-    const isNewUser =
-      !req.user?.isSuperAdmin() &&
-      !req.user?.isListsCreator() &&
-      get(lists ?? [], "length") === 0;
+    const lists = await req.user.getLists();
+    const isNewUser = !req.user?.isSuperAdmin() && !req.user?.isListsCreator() && get(lists ?? [], "length") === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
@@ -60,11 +44,7 @@ export async function startRouteController(
   }
 }
 
-export async function usersListController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function usersListController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const users = await findUsers();
     res.render("dashboard/users-list", {
@@ -79,11 +59,7 @@ export async function usersListController(
   }
 }
 
-export async function usersEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
     const { userEmail } = req.params;
 
@@ -98,25 +74,33 @@ export async function usersEditController(
       isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
       if (isEditingSuperAdminUser) {
         // disallow editing of SuperAdmins
-        return res.status(405).send("Not allowed to edit super admin account");
+        logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
+        return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
       }
     } catch (error) {
       return next(error);
     }
 
     if (req.method === "POST") {
-      const roles = (req.body.roles ?? "").split(",").map(trim);
+      let roles: UserRoles[];
+      const usersRoles: UserRoles | UserRoles[] = req.body.roles;
+
+      if (Array.isArray(usersRoles)) {
+        roles = usersRoles;
+      } else {
+        roles = (usersRoles ?? "").split(",").map(trim) as UserRoles[];
+      }
 
       await updateUser(userEmail, {
         jsonData: {
-          roles: filterSuperAdminRole(roles),
+          roles,
         },
       });
 
       userSaved = true;
     }
 
-    const user = await findUserByEmail(`${userEmail}`);
+    const user = await findUserByEmail(userEmail);
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
@@ -132,19 +116,13 @@ export async function usersEditController(
   }
 }
 
-export async function listsController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listsController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 
-    const email = req.user!.userData.email;
-
-    const lists = (await findUserLists(email)) ?? [];
+    const lists = await req.user?.getLists();
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
@@ -159,11 +137,7 @@ export async function listsController(
 }
 
 // TODO: test
-export async function listsEditController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
     const { listCreated, listUpdated } = req.query;
@@ -173,29 +147,22 @@ export async function listsEditController(
     let error: QuestionError | {} = {};
 
     if (isPost) {
-      const validators: string[] = compact(
-        req.body.validators.split(",").map(trim).map(toLower)
-      );
-      const publishers: string[] = compact(
-        req.body.publishers.split(",").map(trim).map(toLower)
-      );
-      const administrators: string[] = compact(
-        req.body.administrators.split(",").map(trim).map(toLower)
-      );
+      const validators: string[] = compact(req.body.validators.split(",").map(trim).map(toLower));
+      const publishers: string[] = compact(req.body.publishers.split(",").map(trim).map(toLower));
+      const administrators: string[] = compact(req.body.administrators.split(",").map(trim).map(toLower));
 
       const user = req.user;
-      if (!user?.isSuperAdmin() &&
-        (!user?.userData?.email || !publishers.includes(user?.userData?.email) ||
+      if (
+        !user?.isSuperAdmin() &&
+        (!user?.userData?.email ||
+          !publishers.includes(user?.userData?.email) ||
           (listId === "new" && !user?.isSuperAdmin()))
       ) {
         const err = new HttpException(403, "403", "You are not authorized to access this list.");
         return next(err);
       }
 
-      if (
-        validators.length === 0 ||
-        validators.some((email) => !isGovUKEmailAddress(email))
-      ) {
+      if (validators.length === 0 || validators.some((email) => !isGovUKEmailAddress(email))) {
         error = {
           field: "validators",
           text:
@@ -204,10 +171,7 @@ export async function listsEditController(
               : "Validators contain an invalid email address",
           href: "#validators",
         };
-      } else if (
-        publishers.length === 0 ||
-        publishers.some((email) => !isGovUKEmailAddress(email))
-      ) {
+      } else if (publishers.length === 0 || publishers.some((email) => !isGovUKEmailAddress(email))) {
         error = {
           field: "publishers",
           text:
@@ -216,10 +180,7 @@ export async function listsEditController(
               : "Publishers contain an invalid email address",
           href: "#publishers",
         };
-      } else if (
-        administrators.length === 0 ||
-        administrators.some((email) => !isGovUKEmailAddress(email))
-      ) {
+      } else if (administrators.length === 0 || administrators.some((email) => !isGovUKEmailAddress(email))) {
         error = {
           field: "administrators",
           text:
@@ -245,17 +206,12 @@ export async function listsEditController(
             href: "#country",
           };
         } else {
-          const existingLists = await findListByCountryAndType(
-            req.body.country as CountryName,
-            req.body.serviceType
-          );
+          const existingLists = await findListByCountryAndType(req.body.country as CountryName, req.body.serviceType);
 
           if (existingLists !== undefined && existingLists?.length > 0) {
             error = {
               field: "serviceType",
-              text: `A ${startCase(req.body.serviceType)} list for ${
-                req.body.country
-              } already exists`,
+              text: `A ${startCase(req.body.serviceType)} list for ${req.body.country} already exists`,
               href: "#serviceType",
             };
           }
@@ -275,26 +231,13 @@ export async function listsEditController(
         if (listId === "new") {
           const list = await createList(data);
           if (list?.id !== undefined) {
-            return res.redirect(
-              `${dashboardRoutes.listsEdit.replace(
-                ":listId",
-                `${list.id}`
-              )}?listCreated=true`
-            );
+            return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${list.id}`)}?listCreated=true`);
           }
         } else {
           const list = await findListById(listId);
-          if (list !== undefined && userIsListAdministrator(req, list)) {
-            await updateList(
-              Number(listId),
-              pick(data, ["validators", "publishers", "administrators"])
-            );
-            return res.redirect(
-              `${dashboardRoutes.listsEdit.replace(
-                ":listId",
-                `${listId}`
-              )}?listUpdated=true`
-            );
+          if (list !== undefined && (userIsListAdministrator(req, list) || req.user?.isSuperAdmin())) {
+            await updateList(Number(listId), pick(data, ["validators", "publishers", "administrators"]));
+            return res.redirect(`${res.locals.listsEditUrl}?listUpdated=true`);
           }
         }
       } else {
@@ -337,11 +280,7 @@ export async function listsEditController(
 }
 
 // TODO: test
-export async function feedbackController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function feedbackController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const feedbacksList = await findFeedbackByType("serviceFeedback");
     res.render("dashboard/feedbacks-list", {

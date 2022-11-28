@@ -28,6 +28,7 @@ listRouter.param("listId", async (req, res, next, listId) => {
     }
 
     res.locals.list = list;
+    res.locals.listsEditUrl = `${req.baseUrl}/${listId}`;
     res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]}s in ${list.country.name}`;
     return next();
