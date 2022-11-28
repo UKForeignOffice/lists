@@ -1,10 +1,12 @@
 import { AuthenticatedUser } from "../authenticated-user";
 import { List, UserRoles } from "server/models/types";
 import { prisma } from "../../../models/db/__mocks__/prisma-client";
+jest.mock("./../../../models/db/prisma-client");
 
 describe("AuthenticatedUser", () => {
   function createUser({ roles }: { roles: UserRoles[] }): AuthenticatedUser {
     return new AuthenticatedUser({
+      email: "test@gov.uk",
       jsonData: {
         roles: [...roles],
       },
@@ -34,47 +36,36 @@ describe("AuthenticatedUser", () => {
   });
 
   describe("getLists", () => {
-    const expectedQuery = {
-      where: {
-        jsonData: {
-          path: ["publishers"],
-          array_contains: ["test@gov.uk"],
-        },
-      },
-      orderBy: {
-        id: "asc",
-      },
-      include: {
-        country: true,
-      },
-    };
-
-    const sampleList: List = {
-      id: 1,
-      reference: "123Reference",
-      createdAt: new Date("2021-06-23T11:13:55.236+00:00"),
-      updatedAt: new Date("2021-06-23T11:13:55.238+00:00"),
-      type: "covidTestProviders",
-      countryId: 3,
-      country: {
-        name: "United Kingdom",
-      },
-      jsonData: {
-        createdBy: "test@gov.uk",
-        publishers: ["test@gov.uk"],
-        validators: ["test@gov.uk"],
-        administrators: ["test@gov.uk"],
-      },
-    };
-
     test("query is correct for superAdmin", async () => {
       const superAdmin = createUser({
         roles: [UserRoles.SuperAdmin],
       });
 
-      expect(superAdmin.getLists());
+      await superAdmin.getLists();
 
       expect(prisma.list.findMany).toHaveBeenCalledWith({
+        orderBy: {
+          id: "asc",
+        },
+        include: {
+          country: true,
+        },
+      });
+    });
+
+    test("query is correct for listCreator", async () => {
+      const listsCreator = createUser({
+        roles: [UserRoles.ListsCreator],
+      });
+
+      await listsCreator.getLists();
+      expect(prisma.list.findMany).toHaveBeenCalledWith({
+        where: {
+          jsonData: {
+            path: ["publishers"],
+            array_contains: ["test@gov.uk"],
+          },
+        },
         orderBy: {
           id: "asc",
         },
