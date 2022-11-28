@@ -28,7 +28,4 @@ Feature: List management role changing for super Admins
 
     Scenario: Remove SuperAdmin role from another SuperAdmin
         When I click the edit link for user with email "super.admin@cautionyourblast.com"
-        And uncheck the "Super Admin" checkbox
-        And I click the "Save" button
-        And go back to the users page
-        Then I should see nothing assiged to "super.admin@cautionyourblast.com"
+        Then I see "Not allowed to edit super admin account"
