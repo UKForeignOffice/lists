@@ -273,31 +273,19 @@ describe("Dashboard Controllers", () => {
 
     test("it renders correct template with found lists", async () => {
       const lists = [{ id: 1 }];
-      const spy = jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
+      mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
 
-      expect(spy).toHaveBeenCalledWith(mockReq.user.userData);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
       expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
     });
 
     test("it renders correct with empty list when findUserLists result is undefined", async () => {
-      const lists: any = undefined;
-      jest.spyOn(listModel, "findUserLists").mockResolvedValueOnce(lists);
-
+      mockReq.user.getLists.mockResolvedValueOnce([]);
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].lists).toBeArrayOfSize(0);
-    });
-
-    test("it invokes next with findUserLists error", async () => {
-      const error = { message: "error" };
-      jest.spyOn(listModel, "findUserLists").mockRejectedValueOnce(error);
-
-      await listsController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(error);
     });
   });
 

@@ -30,7 +30,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = req.user.getLists();
+    const lists = await req.user.getLists();
     const isNewUser = !req.user?.isSuperAdmin() && !req.user?.isListsCreator() && get(lists ?? [], "length") === 0;
 
     res.render("dashboard/dashboard", {
@@ -120,7 +120,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = req.user?.getLists();
+    const lists = await req.user?.getLists();
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
