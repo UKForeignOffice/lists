@@ -218,9 +218,10 @@ describe("Dashboard Controllers", () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    test("it renders correct template with correct user value", async () => {
+    test.only("it renders correct template with correct user value", async () => {
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(userBeingEdited);
+      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
+      const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(userBeingEdited);
 
       await usersEditController(mockReq, mockRes, mockNext);
 
@@ -252,8 +253,8 @@ describe("Dashboard Controllers", () => {
 
     test("next is invoked with updateUser error", async () => {
       const error = { message: "error" };
+      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
-
       mockReq.method = "POST";
       mockReq.body = { roles: "" };
 
@@ -281,7 +282,7 @@ describe("Dashboard Controllers", () => {
       expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
     });
 
-    test("it renders correct with empty list when findUserLists result is undefined", async () => {
+    test("it renders correct with empty list when user.getLists result is empty", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
       await listsController(mockReq, mockRes, mockNext);
 
