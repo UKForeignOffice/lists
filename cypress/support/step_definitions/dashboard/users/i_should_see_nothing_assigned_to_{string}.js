@@ -1,5 +1,5 @@
 /* eslint-disable */
-Then("I should see nothing assiged to {string}", (email) => {
+Then("I should see nothing assigned to {string}", (email) => {
   cy.findByRole("rowheader", { name: email })
     .parent()
     .within(() => {

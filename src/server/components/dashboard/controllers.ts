@@ -12,6 +12,7 @@ import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
+import { logger } from "server/services/logger";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -73,7 +74,8 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
       if (isEditingSuperAdminUser) {
         // disallow editing of SuperAdmins
-        return res.status(405).send("Not allowed to edit super admin account");
+        logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
+        return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
       }
     } catch (error) {
       return next(error);

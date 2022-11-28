@@ -1,5 +1,4 @@
 Feature: List management role changing for super Admins
-
     Background:
         Given I am logged in as a "SuperAdmin"
         And the following users exist
@@ -15,7 +14,7 @@ Feature: List management role changing for super Admins
         And check the "Super Admin" checkbox
         And I click the "Save" button
         And go back to the users page
-        Then I should see the "SuperAdmin" role assiged to "no.role@cautionyourblast.com"
+        Then I should see the "SuperAdmin" role assigned to "no.role@cautionyourblast.com"
 
 
     Scenario: Change ListsCreator to SuperAdmin
@@ -24,7 +23,7 @@ Feature: List management role changing for super Admins
         And check the "Super Admin" checkbox
         And I click the "Save" button
         And go back to the users page
-        Then I should see the "SuperAdmin" role assiged to "list.creator@cautionyourblast.com"
+        Then I should see the "SuperAdmin" role assigned to "list.creator@cautionyourblast.com"
 
 
     Scenario: Remove SuperAdmin role from another SuperAdmin
