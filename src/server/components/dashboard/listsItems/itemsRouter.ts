@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { csrfRequestHandler } from "server/components/cookies/helpers";
-import { listsController, listsEditController, listsItemsController } from "server/components/dashboard/controllers";
+import {
+  listPublisherDelete,
+  listsController,
+  listsEditController,
+  listsItemsController,
+} from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 
 import { logger } from "server/services/logger";
@@ -13,6 +18,8 @@ import {
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
+import { dashboardRoutes } from "server/components/dashboard";
+import { dashboardRouter } from "server/components/dashboard/router";
 
 export const listRouter = express.Router();
 
@@ -40,6 +47,8 @@ listRouter.param("listId", async (req, res, next, listId) => {
 
 listRouter.all("/:listId", listsEditController);
 listRouter.all("/:listId/*", redirectIfUnauthorised);
+
+listRouter.post("/:listId/publisher-delete", listPublisherDelete);
 
 listRouter.get("/:listId/items", listsItemsController);
 

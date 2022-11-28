@@ -10,8 +10,9 @@
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
 
-  <form class="form" action="{{ dashboardRoutes.listsPublisherDelete.replace(':listId', list.id) }}" method="post" required>
-    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+  <form class="form" method="post" required>
+
+  <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
     <input type="hidden" name="userEmail" value="{{ userEmail }}" />
 
     <h1 class="govuk-heading-l">
