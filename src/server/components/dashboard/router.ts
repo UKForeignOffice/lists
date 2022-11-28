@@ -1,53 +1,23 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import {
-  ensureAuthenticated,
-  ensureUserIsSuperAdmin,
-} from "server/components/auth";
-import {
-  startRouteController,
-  usersListController,
-  usersEditController, feedbackController,
-} from "./controllers";
+import { ensureAuthenticated, ensureUserIsSuperAdmin } from "server/components/auth";
+import { startRouteController, usersListController, usersEditController, feedbackController } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 
-import {listRouter} from "server/components/dashboard/listsItems/itemsRouter";
+import { listRouter } from "server/components/dashboard/listsItems/itemsRouter";
 
 export const dashboardRouter = express.Router();
-
 
 dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
 // Users
-dashboardRouter.get(
-  dashboardRoutes.usersList,
-  csrfRequestHandler,
-  ensureUserIsSuperAdmin,
-  usersListController
-);
-dashboardRouter.all(
-  dashboardRoutes.usersEdit,
-  csrfRequestHandler,
-  ensureUserIsSuperAdmin,
-  usersEditController
-);
+dashboardRouter.get(dashboardRoutes.usersList, csrfRequestHandler, ensureUserIsSuperAdmin, usersListController);
+dashboardRouter.all(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsSuperAdmin, usersEditController);
 
 // lists
-dashboardRouter.use('/dashboard/lists', listRouter);
-
-dashboardRouter.post(
-  dashboardRoutes.listsPublisherDelete,
-  csrfRequestHandler,
-  redirectIfUnauthorised,
-  listPublisherDelete
-);
+dashboardRouter.use("/dashboard/lists", listRouter);
 
 // feedback
-dashboardRouter.get(
-  dashboardRoutes.feedback,
-  csrfRequestHandler,
-  ensureUserIsSuperAdmin,
-  feedbackController
-);
+dashboardRouter.get(dashboardRoutes.feedback, csrfRequestHandler, ensureUserIsSuperAdmin, feedbackController);
