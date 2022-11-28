@@ -14,9 +14,7 @@ function isValidPoint(point: Point): Boolean {
   return isNumber(point[0]) || isNumber(point[1]);
 }
 
-export const rawInsertGeoLocation = async (
-  point: Point | number[]
-): Promise<number> => {
+export const rawInsertGeoLocation = async (point: Point | number[]): Promise<number> => {
   if (!isValidPoint(point)) {
     throw new Error("Invalid points entered");
   }
@@ -33,17 +31,14 @@ export const rawInsertGeoLocation = async (
   return result.rows[0].id;
 };
 
-export const rawUpdateGeoLocation = (
-  id: number,
-  point: Point
-): PrismaPromise<number> => {
+export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> => {
   if (!isValidPoint(point)) {
     throw new Error("Invalid points entered");
   }
 
-  return prisma.$queryRaw(`
+  return prisma.$queryRaw`
     UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id
-  `);
+  `;
 };
 
 export function geoPointIsValid(geoPoint: any): boolean {

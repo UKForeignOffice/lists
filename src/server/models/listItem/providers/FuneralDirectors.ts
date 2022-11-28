@@ -25,9 +25,7 @@ export async function findPublishedFuneralDirectorsPerCountry(props: {
   }
 
   if (Object.keys(jsonQuery).length > 0) {
-    andWhere.push(
-      `AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`
-    );
+    andWhere.push(`AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`);
   }
 
   try {
@@ -45,7 +43,7 @@ export async function findPublishedFuneralDirectorsPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query);
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedFuneralDirectors ERROR: ", error);
     return [];

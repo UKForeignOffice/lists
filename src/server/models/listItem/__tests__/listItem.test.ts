@@ -6,14 +6,9 @@ import { ServiceType } from "./../../types";
 import * as helpers from "./../../helpers";
 import { logger } from "server/services/logger";
 import { findPublishedLawyersPerCountry } from "../providers/Lawyers";
-import {
-  checkListItemExists,
-  getListItemContactInformation,
-  some,
-} from "server/models/listItem/providers/helpers";
+import { checkListItemExists, getListItemContactInformation, some } from "server/models/listItem/providers/helpers";
 import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
 import {
-  togglerListItemIsApproved,
   togglerListItemIsPublished,
   setEmailIsVerified,
   findListItemsForList,
@@ -115,8 +110,7 @@ const covidTestProviderWebhookData = {
       fields: [
         {
           key: "isQualified",
-          title:
-            "Are you qualified to provide  Covid-19 tests in your country?",
+          title: "Are you qualified to provide  Covid-19 tests in your country?",
           type: "text",
           answer: true,
         },
@@ -128,8 +122,7 @@ const covidTestProviderWebhookData = {
       fields: [
         {
           key: "memberOfRegulatoryAuthority",
-          title:
-            "Are you a member of a local bar association or other regulatory authority/body?",
+          title: "Are you a member of a local bar association or other regulatory authority/body?",
           type: "text",
           answer: true,
         },
@@ -316,31 +309,19 @@ describe("ListItem Model:", () => {
   let sampleCountry: any;
   let sampleLocation: any;
 
-  const spyListItemFindUnique = (
-    returnValue = sampleListItem
-  ): jest.SpyInstance => {
+  const spyListItemFindUnique = (returnValue = sampleListItem): jest.SpyInstance => {
     return prisma.listItem.findUnique.mockResolvedValueOnce(returnValue);
   };
 
-  const spyListItemCreate = (
-    returnValue = sampleListItem
-  ): jest.SpyInstance => {
-    return prisma.listItem.create.mockResolvedValueOnce(
-      returnValue ?? sampleListItem
-    );
+  const spyListItemCreate = (returnValue = sampleListItem): jest.SpyInstance => {
+    return prisma.listItem.create.mockResolvedValueOnce(returnValue ?? sampleListItem);
   };
 
-  const spyListItemDelete = (
-    returnValue = sampleListItem
-  ): jest.SpyInstance => {
-    return prisma.listItem.delete.mockResolvedValueOnce(
-      returnValue ?? sampleListItem
-    );
+  const spyListItemDelete = (returnValue = sampleListItem): jest.SpyInstance => {
+    return prisma.listItem.delete.mockResolvedValueOnce(returnValue ?? sampleListItem);
   };
 
-  const spyListItemUpdate = (
-    returnValue = sampleListItem
-  ): jest.SpyInstance => {
+  const spyListItemUpdate = (returnValue = sampleListItem): jest.SpyInstance => {
     return prisma.listItem.update.mockResolvedValueOnce(returnValue);
   };
 
@@ -348,12 +329,8 @@ describe("ListItem Model:", () => {
     return prisma.country.upsert.mockResolvedValue(returnValue);
   };
 
-  const spyLocationService = (
-    returnValue = sampleLocation
-  ): jest.SpyInstance => {
-    return jest
-      .spyOn(locationService, "geoLocatePlaceByText")
-      .mockResolvedValue(returnValue);
+  const spyLocationService = (returnValue = sampleLocation): jest.SpyInstance => {
+    return jest.spyOn(locationService, "geoLocatePlaceByText").mockResolvedValue(returnValue);
   };
 
   const spyListItemCount = (returnValue: any): jest.SpyInstance => {
@@ -361,17 +338,11 @@ describe("ListItem Model:", () => {
   };
 
   const spyPrismaTransaction = (): jest.SpyInstance => {
-    return prisma.$transaction.mockImplementation(
-      (values) => Promise.all(values) as never
-    );
+    return prisma.$transaction.mockImplementation((values) => Promise.all(values) as never);
   };
 
-  const spyAuditRecordListItemEvent = (
-    returnValue: any = {}
-  ): jest.SpyInstance => {
-    return jest
-      .spyOn(audit, "recordListItemEvent")
-      .mockResolvedValue(returnValue);
+  const spyAuditRecordListItemEvent = (returnValue: any = {}): jest.SpyInstance => {
+    return jest.spyOn(audit, "recordListItemEvent").mockResolvedValue(returnValue);
   };
 
   beforeEach(() => {
@@ -393,9 +364,7 @@ describe("ListItem Model:", () => {
       const spyCount = spyListItemCount(1);
       const spyCountry = spyCountryUpsert();
 
-      await expect(createListItem(lawyerWebhookData)).rejects.toThrow(
-        "lawyers record already exists"
-      );
+      await expect(createListItem(lawyerWebhookData)).rejects.toThrow("lawyers record already exists");
       expect(spyCountry).not.toHaveBeenCalled();
     });
 
@@ -486,7 +455,7 @@ describe("ListItem Model:", () => {
 
     test("query is correct", async () => {
       const spyLocation = spyLocationService();
-      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRawUnsafe").mockResolvedValue([]);
 
       await findPublishedLawyersPerCountry({
         countryName: "france",
@@ -505,7 +474,7 @@ describe("ListItem Model:", () => {
 
     test("query without legalAid is correct", async () => {
       const spyLocation = spyLocationService();
-      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRawUnsafe").mockResolvedValue([]);
 
       await findPublishedLawyersPerCountry({
         countryName: "france",
@@ -519,14 +488,12 @@ describe("ListItem Model:", () => {
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
       expect(spyLocation).toHaveBeenCalledWith("paris", "france");
-      expect(query.replace(/\s\s+/g, " ")).toEqual(
-        expectedQuery.replace('"legalAid":true,', "")
-      );
+      expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery.replace('"legalAid":true,', ""));
     });
 
     test("query without proBono is correct", async () => {
       const spyLocation = spyLocationService();
-      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRawUnsafe").mockResolvedValue([]);
 
       await findPublishedLawyersPerCountry({
         countryName: "france",
@@ -540,14 +507,12 @@ describe("ListItem Model:", () => {
       const query = spyQueryRaw.mock.calls[0][0] as string;
 
       expect(spyLocation).toHaveBeenCalledWith("paris", "france");
-      expect(query.replace(/\s\s+/g, " ")).toEqual(
-        expectedQuery.replace(',"proBono":true', "")
-      );
+      expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery.replace(',"proBono":true', ""));
     });
 
     test("query without legalAid and proBono is correct", async () => {
       const spyLocation = spyLocationService();
-      const spyQueryRaw = jest.spyOn(prisma, "$queryRaw").mockResolvedValue([]);
+      const spyQueryRaw = jest.spyOn(prisma, "$queryRawUnsafe").mockResolvedValue([]);
 
       await findPublishedLawyersPerCountry({
         countryName: "france",
@@ -562,68 +527,6 @@ describe("ListItem Model:", () => {
 
       expect(spyLocation).toHaveBeenCalledWith("paris", "france");
       expect(query.includes(`AND "ListItem"."jsonData" @>`)).toEqual(false);
-    });
-  });
-
-  describe("togglerListItemIsApproved", () => {
-    test.skip("update command is correct when approving", async () => {
-      const spyUpdate = spyListItemUpdate();
-      const spyTransaction = spyPrismaTransaction();
-      const spyAudit = spyAuditRecordListItemEvent();
-
-      const result = await togglerListItemIsApproved({
-        id: 123,
-        isApproved: true,
-        userId: 1,
-      });
-
-      expect(spyUpdate).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isApproved: true },
-      });
-
-      expect(result).toBe(sampleListItem);
-      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
-      expect(spyAudit).toHaveBeenCalledWith({
-        eventName: "approve",
-        itemId: 123,
-        userId: 1,
-      });
-    });
-
-    test.skip("update command is correct when disapproving ", async () => {
-      const spyUpdate = spyListItemUpdate();
-      const spyTransaction = spyPrismaTransaction();
-      const spyAudit = spyAuditRecordListItemEvent();
-
-      const result = await togglerListItemIsApproved({
-        id: 123,
-        isApproved: false,
-        userId: 1,
-      });
-
-      expect(result).toBe(sampleListItem);
-      expect(spyUpdate).toHaveBeenCalledWith({
-        where: { id: 123 },
-        data: { isApproved: false, isPublished: false },
-      });
-      expect(spyTransaction.mock.calls[0][0]).toHaveLength(2);
-      expect(spyAudit).toHaveBeenCalledWith({
-        eventName: "disapprove",
-        itemId: 123,
-        userId: 1,
-      });
-    });
-
-    test("it rejects if userId is undefined", async () => {
-      await expect(
-        togglerListItemIsApproved({
-          id: 123,
-          isApproved: false,
-        } as any)
-      ).rejects.toEqual(
-        new Error("togglerListItemIsApproved Error: userId is undefined")
-      );
     });
   });
 
@@ -696,9 +599,7 @@ describe("ListItem Model:", () => {
           id: 123,
           isApproved: false,
         } as any)
-      ).rejects.toEqual(
-        new Error("togglerListItemIsPublished Error: userId is undefined")
-      );
+      ).rejects.toEqual(new Error("togglerListItemIsPublished Error: userId is undefined"));
     });
   });
 
@@ -976,10 +877,7 @@ describe("ListItem Model:", () => {
     test("it returns true when findMany finds listItems", async () => {
       prisma.listItem.findMany.mockResolvedValue([sampleListItem]);
 
-      const result = await some(
-        "united kingdom" as any,
-        ServiceType.covidTestProviders
-      );
+      const result = await some("united kingdom" as any, ServiceType.covidTestProviders);
 
       expect(result).toEqual(true);
     });
@@ -987,10 +885,7 @@ describe("ListItem Model:", () => {
     test("it returns false when findMany does not find listItems", async () => {
       prisma.listItem.findMany.mockResolvedValue([]);
 
-      const result = await some(
-        "united kingdom" as any,
-        ServiceType.covidTestProviders
-      );
+      const result = await some("united kingdom" as any, ServiceType.covidTestProviders);
 
       expect(result).toEqual(false);
     });
@@ -998,10 +893,7 @@ describe("ListItem Model:", () => {
     test("it returns false when findMany rejects", async () => {
       prisma.listItem.findMany.mockRejectedValue("");
 
-      const result = await some(
-        "united kingdom" as any,
-        ServiceType.covidTestProviders
-      );
+      const result = await some("united kingdom" as any, ServiceType.covidTestProviders);
 
       expect(result).toEqual(false);
     });
@@ -1009,14 +901,14 @@ describe("ListItem Model:", () => {
 
   describe("findPublishedCovidTestSupplierPerCountry", () => {
     test("it throws when countryName is undefined", async () => {
-      await expect(
-        findPublishedCovidTestSupplierPerCountry({} as any)
-      ).rejects.toEqual(new Error("Country name is missing"));
+      await expect(findPublishedCovidTestSupplierPerCountry({} as any)).rejects.toEqual(
+        new Error("Country name is missing")
+      );
     });
 
     test("queryRaw command is correct", async () => {
       spyLocationService();
-      const spyQueryRaw = prisma.$queryRaw.mockResolvedValue([]);
+      const spyQueryRaw = prisma.$queryRawUnsafe.mockResolvedValue([]);
 
       await findPublishedCovidTestSupplierPerCountry({
         countryName: "ghana",
@@ -1068,13 +960,13 @@ describe("ListItem Model:", () => {
         AND "ListItem"."isBlocked" = false
         ORDER BY distanceInMeters ASC
         LIMIT 10 OFFSET 0
-    `.replace(/\s\s+/g, " ");
+      `.replace(/\s\s+/g, " ");
       expect(query.replace(/\s\s+/g, " ")).toEqual(expectedQuery);
     });
 
     test("result is correct", async () => {
       spyLocationService();
-      prisma.$queryRaw.mockResolvedValue([sampleListItem]);
+      prisma.$queryRawUnsafe.mockResolvedValue([sampleListItem]);
 
       const result = await findPublishedCovidTestSupplierPerCountry({
         countryName: "Ghana",
@@ -1087,7 +979,7 @@ describe("ListItem Model:", () => {
 
     test("it returns an empty list when queryRaw rejects", async () => {
       spyLocationService();
-      prisma.$queryRaw.mockRejectedValue("");
+      prisma.$queryRawUnsafe.mockRejectedValue("");
 
       const result = await findPublishedCovidTestSupplierPerCountry({
         countryName: "Ghana",
@@ -1103,9 +995,9 @@ describe("ListItem Model:", () => {
     test("it rejects when listItem already exists", async () => {
       spyListItemCount(1);
 
-      await expect(
-        listItemCreateInputFromWebhook(covidTestProviderWebhookData)
-      ).rejects.toEqual(new Error("covidTestProviders record already exists"));
+      await expect(listItemCreateInputFromWebhook(covidTestProviderWebhookData)).rejects.toEqual(
+        new Error("covidTestProviders record already exists")
+      );
     });
 
     test.skip("listItem create command is correct", async () => {
@@ -1192,9 +1084,7 @@ describe("ListItem Model:", () => {
       const error = { message: "Create Error" };
       prisma.listItem.create.mockRejectedValue(error);
 
-      await expect(
-        createListItem(covidTestProviderWebhookData)
-      ).rejects.toEqual(error);
+      await expect(createListItem(covidTestProviderWebhookData)).rejects.toEqual(error);
     });
   });
 
@@ -1237,9 +1127,9 @@ describe("ListItem Model:", () => {
 
   describe("deleteListItem", () => {
     it("should throw an error if user id is not set", async () => {
-      await expect(
-        deleteListItem(0, undefined as unknown as number)
-      ).rejects.toThrow("deleteListItem Error: userId is undefined");
+      await expect(deleteListItem(0, undefined as unknown as number)).rejects.toThrow(
+        "deleteListItem Error: userId is undefined"
+      );
     });
 
     it.skip("should run the correct transaction", async () => {
@@ -1264,17 +1154,11 @@ describe("ListItem Model:", () => {
     it("should throw the correct error if the transaction fails and log the error", async () => {
       const spyTransaction = spyPrismaTransaction();
 
-      spyTransaction.mockRejectedValueOnce(
-        new Error("Something has gone wrong")
-      );
+      spyTransaction.mockRejectedValueOnce(new Error("Something has gone wrong"));
 
-      await expect(deleteListItem(1, 2)).rejects.toThrow(
-        "Failed to delete item"
-      );
+      await expect(deleteListItem(1, 2)).rejects.toThrow("Failed to delete item");
 
-      expect(logger.error).toHaveBeenCalledWith(
-        "deleteListItem Error Something has gone wrong"
-      );
+      expect(logger.error).toHaveBeenCalledWith("deleteListItem Error Something has gone wrong");
     });
   });
 });

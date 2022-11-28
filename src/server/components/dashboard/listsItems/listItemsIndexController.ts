@@ -1,33 +1,51 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import { TAGS, ORDER_BY, Tags } from "server/models/listItem/types";
+import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
 
 /**
  * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
  */
-
-const TagsViewModel = [
-  {
-    text: "To do",
-    value: TAGS.to_do,
-  },
-  {
-    text: "Out with provider",
-    value: TAGS.out_with_provider,
-  },
-  /**
-   * TODO:- restore when ready
+interface TagVM {
+  text: string;
+  value: ACTIVITY_TAGS | PUBLISHING_TAGS;
+}
+const filtersViewModel = {
+  activityStatus: [
     {
-    text: "Annual review",
-    value: TAGS.annual_review,
-  }, */
-  {
-    text: "Published",
-    value: TAGS.published,
-  },
-];
+      text: "To do",
+      value: TAGS.to_do,
+    },
+    {
+      text: "With provider",
+      value: TAGS.out_with_provider,
+    },
+    {
+      text: "No action needed",
+      value: TAGS.no_action_needed,
+    },
+  ],
+  publishingStatus: [
+    {
+      text: "New",
+      value: TAGS.new,
+    },
+    {
+      text: "Live",
+      value: TAGS.live,
+    },
+    {
+      text: "Unpublished",
+      value: TAGS.unpublished,
+    },
+    {
+      text: "Archived",
+      value: TAGS.archived,
+    },
+  ],
+};
 
 // TODO:- for sorting
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,13 +74,15 @@ interface IndexParams {
 
 interface IndexQuery {
   page: string | number;
-  tag: Array<keyof Tags> | keyof Tags;
+  activity: Array<keyof Tags> | keyof Tags;
+  publishing: Array<keyof Tags> | keyof Tags;
   // TODO:- sorting
   sort?: string;
 }
 
 interface SanitisedIndexQuery extends IndexQuery {
-  tag: Array<keyof Tags>;
+  activity: Array<keyof Tags>;
+  publishing: Array<keyof Tags>;
   page: number;
 }
 
@@ -79,35 +99,45 @@ function normalisePageQueryParam(pageParam: any): number {
 }
 
 function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
-  const { page, tag } = query;
-  const tagsAsArray = Array.isArray(tag) ? tag : [tag];
+  const { page, activity, publishing } = query;
+  const activityAsArray = Array.isArray(activity) ? activity : [activity];
+  const publishingAsArray = Array.isArray(publishing) ? publishing : [publishing];
 
   return {
-    tag: stripUnknownTags(tagsAsArray),
+    activity: stripUnknownTags(activityAsArray),
+    publishing: stripUnknownTags(publishingAsArray),
     page: normalisePageQueryParam(page),
   };
 }
 
 export async function listItemsIndexController(
   req: Request<IndexParams, {}, {}, IndexQuery>,
-  res: Response,
+  res: ListItemRes,
   next: NextFunction
 ): Promise<void> {
   try {
-    const { listId } = req.params;
+    const { id: listId } = res.locals.list!;
+    const user = req.user!;
 
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
-    const { tag: queryTag, page } = sanitisedQueryParams;
+    const { activity, publishing, page } = sanitisedQueryParams;
+    const queryTag = [...activity, ...publishing];
     req.session.changeMessage = undefined;
 
     const list = await findIndexListItems({
-      listId: Number(listId),
-      userId: req.user?.userData.id,
+      listId,
+      userId: user.userData.id,
       pagination: {
         page,
       },
-      tags: queryTag,
+      activity,
+      publishing,
       reqQuery: sanitisedQueryParams,
+    });
+
+    const withCheckedAttributeFromQuery = (tag: TagVM) => ({
+      ...tag,
+      checked: queryTag?.includes(tag.value),
     });
 
     if (list === undefined) {
@@ -115,14 +145,11 @@ export async function listItemsIndexController(
     }
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
-      req,
       list,
-      tags: TagsViewModel.map((tag) => ({
-        ...tag,
-        checked: queryTag?.includes(tag.value),
-      })),
+      activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
+      publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       // @ts-expect-error
-      csrfToken: getCSRFToken(req as Request),
+      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

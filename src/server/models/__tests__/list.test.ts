@@ -1,24 +1,18 @@
-import {
-  findUserLists,
-  findListById,
-  findListByCountryAndType,
-  createList,
-  updateList,
-} from "../list";
+import { findUserLists, findListById, findListByCountryAndType, createList, updateList } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
-import { logger } from "server/services/logger";
-import { ServiceType } from "../types";
+import { List, ServiceType } from "../types";
 import { compact } from "lodash";
+import { logger } from "../../services/logger";
 
 jest.mock("../db/prisma-client");
 jest.mock("server/services/logger");
 
 describe("List Model:", () => {
-  const sampleList: any = {
+  const sampleList: List = {
     id: 1,
     reference: "123Reference",
-    createdAt: "2021-06-23T11:13:55.236+00:00",
-    updatedAt: "2021-06-23T11:13:55.238+00:00",
+    createdAt: new Date("2021-06-23T11:13:55.236+00:00"),
+    updatedAt: new Date("2021-06-23T11:13:55.238+00:00"),
     type: "covidTestProviders",
     countryId: 3,
     country: {
@@ -33,53 +27,47 @@ describe("List Model:", () => {
   };
 
   describe("findUserLists", () => {
+
+    const expectedQuery = {
+      where: {
+        jsonData: {
+          path: ['publishers'],
+          array_contains: ['test@gov.uk'],
+        },
+      },
+      orderBy: {
+        id: "asc"
+      },
+      include: {
+        country: true,
+      },
+    };
+
     test("query is correct", async () => {
-      prisma.$queryRaw.mockResolvedValue([sampleList]);
+      // @ts-ignore
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       await findUserLists({ email: "test@gov.uk" });
 
-      const expectedQuery = `
-        SELECT *,
-        (
-          SELECT ROW_TO_JSON(c)
-          FROM (
-            SELECT name
-            FROM "Country"
-            WHERE "List"."countryId" = "Country"."id"
-          ) as c
-        ) as country
-        FROM public."List"
-        WHERE "jsonData"->'validators' @> '"test@gov.uk"'
-        OR "jsonData"->'publishers' @> '"test@gov.uk"'
-        OR "jsonData"->'administrators' @> '"test@gov.uk"'
-        ORDER BY id ASC
-      `.replace(/\s\s+/g, " ");
+      expect(prisma.list.findMany).toHaveBeenCalledWith(expectedQuery);
 
-      const query = (prisma.$queryRaw.mock.calls[0][0] as string).replace(
-        /\s\s+/g,
-        " "
-      );
-
-      expect(query).toEqual(expectedQuery);
     });
 
     test("returned value is correct", async () => {
-      prisma.$queryRaw.mockResolvedValue([sampleList]);
+      prisma.list.findMany.mockResolvedValue([sampleList]);
 
       const result = await findUserLists({ email: "test@gov.uk" });
 
       expect(result).toMatchObject([sampleList]);
     });
 
-    test("it returns undefined when queryRaw fails", async () => {
-      prisma.$queryRaw.mockRejectedValue({ message: "queryRaw error message" });
+    test("it returns undefined when findMany fails", async () => {
+      prisma.list.findMany.mockRejectedValue({ message: "queryRaw error message" });
 
       const result = await findUserLists({ email: "test@gov.uk" });
 
       expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith(
-        "findUserLists Error: queryRaw error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("findUserLists Error: queryRaw error message");
     });
   });
 
@@ -115,9 +103,7 @@ describe("List Model:", () => {
       const result = await findListById(1);
 
       expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith(
-        "findListById Error: findUnique error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("findListById Error: findUnique error message");
     });
   });
 
@@ -125,10 +111,7 @@ describe("List Model:", () => {
     test("findMany call is correct", async () => {
       prisma.list.findMany.mockResolvedValue([sampleList]);
 
-      await findListByCountryAndType(
-        "United Kingdom",
-        ServiceType.covidTestProviders
-      );
+      await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
 
       expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: {
@@ -146,10 +129,7 @@ describe("List Model:", () => {
     test("returned value is correct", async () => {
       prisma.list.findMany.mockResolvedValue([sampleList]);
 
-      const result = await findListByCountryAndType(
-        "United Kingdom",
-        ServiceType.covidTestProviders
-      );
+      const result = await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
 
       expect(result).toMatchObject([sampleList]);
     });
@@ -159,15 +139,10 @@ describe("List Model:", () => {
         message: "findMany error message",
       });
 
-      const result = await findListByCountryAndType(
-        "United Kingdom",
-        ServiceType.covidTestProviders
-      );
+      const result = await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
 
       expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith(
-        "findListByCountryAndType Error: findMany error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("findListByCountryAndType Error: findMany error message");
     });
   });
 
@@ -216,9 +191,7 @@ describe("List Model:", () => {
         message: "Create error message",
       });
 
-      expect(logger.error).toHaveBeenCalledWith(
-        "createList Error: Create error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("createList Error: Create error message");
     });
 
     test("it throws when validators contains a non GOV.UK email address", async () => {
@@ -227,9 +200,7 @@ describe("List Model:", () => {
           ...listData,
           validators: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Validators contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Validators contain a non GOV UK email address"));
     });
 
     test("it throws when publishers contains a non GOV.UK email address", async () => {
@@ -238,9 +209,7 @@ describe("List Model:", () => {
           ...listData,
           publishers: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Publishers contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Publishers contain a non GOV UK email address"));
     });
 
     test("it throws when administrators contains a non GOV.UK email address", async () => {
@@ -249,9 +218,7 @@ describe("List Model:", () => {
           ...listData,
           administrators: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Administrators contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Administrators contain a non GOV UK email address"));
     });
 
     test("it throws when createdBy is a non GOV.UK email address", async () => {
@@ -260,9 +227,7 @@ describe("List Model:", () => {
           ...listData,
           createdBy: "invalid@email.com",
         })
-      ).rejects.toEqual(
-        new Error("CreatedBy is not a valid GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("CreatedBy is not a valid GOV UK email address"));
     });
   });
 
@@ -304,9 +269,7 @@ describe("List Model:", () => {
         message: "Update error message",
       });
 
-      expect(logger.error).toHaveBeenCalledWith(
-        "updateList Error: Update error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("updateList Error: Update error message");
     });
 
     test("it throws when validators contains a non GOV.UK email address", async () => {
@@ -315,9 +278,7 @@ describe("List Model:", () => {
           ...listData,
           validators: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Validators contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Validators contain a non GOV UK email address"));
     });
 
     test("it throws when publishers contains a non GOV.UK email address", async () => {
@@ -326,9 +287,7 @@ describe("List Model:", () => {
           ...listData,
           publishers: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Publishers contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Publishers contain a non GOV UK email address"));
     });
 
     test("it throws when administrators contains a non GOV.UK email address", async () => {
@@ -337,9 +296,7 @@ describe("List Model:", () => {
           ...listData,
           administrators: ["invalid@email.com"],
         })
-      ).rejects.toEqual(
-        new Error("Administrators contain a non GOV UK email address")
-      );
+      ).rejects.toEqual(new Error("Administrators contain a non GOV UK email address"));
     });
   });
 });

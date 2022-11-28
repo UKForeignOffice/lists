@@ -3,71 +3,35 @@ import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { AuthenticatedUser } from "server/components/auth/authenticated-user";
-import type { User } from "server/models/types";
+import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput } from "./types";
 
-import {
-  List,
-  CountryName,
-  ServiceType,
-  ListCreateInput,
-  ListUpdateInput,
-} from "./types";
-
-export async function findUserLists(
-  userData: User
-): Promise<List[] | undefined> {
-  const email = userData.email;
-  const authenticatedUser = new AuthenticatedUser(userData);
+export async function findUserLists(email: string): Promise<List[] | undefined> {
   const emailAddress = pgescape.string(email.toLowerCase());
   const isSuperAdmin = authenticatedUser.isSuperAdmin();
 
   try {
-    const getListsForEmail = `
-      SELECT *,
-      (
-        SELECT ROW_TO_JSON(c)
-        FROM (
-          SELECT name
-          FROM "Country"
-          WHERE "List"."countryId" = "Country"."id"
-        ) as c
-      ) as country
-      FROM public."List"
-      WHERE "jsonData"->'validators' @> '"${emailAddress}"'
-      OR "jsonData"->'publishers' @> '"${emailAddress}"'
-      OR "jsonData"->'administrators' @> '"${emailAddress}"'
-      ORDER BY id ASC
-    `;
-
-    const getAllLists = `
-      SELECT *,
-      (
-        SELECT ROW_TO_JSON(c)
-        FROM (
-          SELECT name
-          FROM "Country"
-          WHERE "List"."countryId" = "Country"."id"
-        ) as c
-      ) as country
-      FROM public."List"
-      ORDER BY id ASC
-    `;
-
-    const lists = await prisma.$queryRaw(
-      isSuperAdmin ? getAllLists : getListsForEmail
-    );
-
+    const lists: List[] = await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ['publishers'],
+          array_contains: [emailAddress],
+        },
+      },
+      orderBy: {
+        id: "asc"
+      },
+      include: {
+        country: true,
+      },
+    }) as List[];
     return lists ?? undefined;
-  } catch (error: any) {
-    logger.error(`findUserLists Error: ${error.message}`);
+  } catch (error) {
+    logger.error(`findUserLists Error: ${(error as Error).message}`);
     return undefined;
   }
 }
 
-export async function findListById(
-  listId: string | number
-): Promise<List | undefined> {
+export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
     const lists = (await prisma.list.findUnique({
       where: {
@@ -78,16 +42,13 @@ export async function findListById(
       },
     })) as List;
     return lists ?? undefined;
-  } catch (error: any) {
-    logger.error(`findListById Error: ${error.message}`);
+  } catch (error) {
+    logger.error(`findListById Error: ${(error as Error).message}`);
     return undefined;
   }
 }
 
-export async function findListByCountryAndType(
-  country: CountryName,
-  type: ServiceType
-): Promise<List[] | undefined> {
+export async function findListByCountryAndType(country: CountryName, type: ServiceType): Promise<List[] | undefined> {
   try {
     const lists = (await prisma.list.findMany({
       where: {
@@ -101,8 +62,8 @@ export async function findListByCountryAndType(
       },
     })) as List[];
     return lists ?? undefined;
-  } catch (error: any) {
-    logger.error(`findListByCountryAndType Error: ${error.message}`);
+  } catch (error) {
+    logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
     return undefined;
   }
 }
@@ -126,9 +87,7 @@ export async function createList(listData: {
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
-    const administrators = compact(
-      listData.administrators.map(trim).map(toLower)
-    );
+    const administrators = compact(listData.administrators.map(trim).map(toLower));
 
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
@@ -160,8 +119,8 @@ export async function createList(listData: {
 
     const list = (await prisma.list.create({ data })) as List;
     return list ?? undefined;
-  } catch (error: any) {
-    logger.error(`createList Error: ${error.message}`);
+  } catch (error) {
+    logger.error(`createList Error: ${(error as Error).message}`);
     throw error;
   }
 }
@@ -185,9 +144,7 @@ export async function updateList(
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
-    const administrators = compact(
-      listData.administrators.map(trim).map(toLower)
-    );
+    const administrators = compact(listData.administrators.map(trim).map(toLower));
     if (administrators.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Administrators contain a non GOV UK email address");
     }
@@ -207,8 +164,8 @@ export async function updateList(
       data,
     })) as List;
     return list ?? undefined;
-  } catch (error: any) {
-    logger.error(`updateList Error: ${error.message}`);
+  } catch (error) {
+    logger.error(`updateList Error: ${(error as Error).message}`);
     throw error;
   }
 }

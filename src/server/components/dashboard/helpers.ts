@@ -3,6 +3,9 @@ import { logger } from "server/services/logger";
 import axios from "axios";
 import { List, ListJsonData } from "server/models/types";
 import { NewSessionData } from "../formRunner/types";
+import { dashboardRoutes } from "server/components/dashboard/routes";
+import { sitemapRoute } from "server/components/sitemap/routes";
+import { authRoutes } from "server/components/auth";
 
 type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
@@ -50,4 +53,20 @@ export async function getInitiateFormRunnerSessionToken(
 
   logger.info(`token: ${token}`);
   return token;
+}
+
+export const pageTitles: { [key: string]: string } = {
+  [dashboardRoutes.usersEdit]: "edit user",
+  [dashboardRoutes.usersList]: "user list",
+  [dashboardRoutes.lists]: "all provider lists",
+  [dashboardRoutes.listsEdit]: "edit provider list",
+  [dashboardRoutes.listsItems]: "provider list",
+  [dashboardRoutes.listsItem]: "provider details",
+  [dashboardRoutes.listsItemDelete]: "confirm delete provider",
+  [dashboardRoutes.listsItemPublish]: "confirm publish list item",
+  [dashboardRoutes.listsItemRequestChanges]: "confirm request changes to provider",
+  [dashboardRoutes.listsItemUpdate]: "confirm update provider",
+  [sitemapRoute]: "site map",
+  [authRoutes.login]: "login",
+  [authRoutes.logout]: "logout",
 }

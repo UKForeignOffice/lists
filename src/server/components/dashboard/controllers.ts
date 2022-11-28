@@ -12,6 +12,7 @@ import {
 import { findFeedbackByType } from "server/models/feedback";
 import { CountryName, List, ServiceType, UserRoles } from "server/models/types";
 import {
+  filterSuperAdminRole, pageTitles,
   userIsListAdministrator,
   userIsListPublisher,
   userIsListValidator,
@@ -72,6 +73,7 @@ export async function usersListController(
     const users = await findUsers();
     res.render("dashboard/users-list", {
       ...DEFAULT_VIEW_PROPS,
+      title: pageTitles[dashboardRoutes.usersList],
       users,
       req,
       csrfToken: getCSRFToken(req),
@@ -85,7 +87,7 @@ export async function usersEditController(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> {
+) {
   try {
     const { userEmail } = req.params;
 
@@ -94,6 +96,17 @@ export async function usersEditController(
     }
 
     let userSaved = false;
+    let isEditingSuperAdminUser = false;
+
+    try {
+      isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
+      if (isEditingSuperAdminUser) {
+        // disallow editing of SuperAdmins
+        return res.status(405).send("Not allowed to edit super admin account");
+      }
+    } catch (error) {
+      return next(error);
+    }
 
     if (req.method === "POST") {
       let roles: UserRoles[];
@@ -118,6 +131,7 @@ export async function usersEditController(
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
+      title: pageTitles[dashboardRoutes.usersEdit],
       UserRoles,
       userSaved,
       user,
@@ -135,14 +149,18 @@ export async function listsController(
   next: NextFunction
 ): Promise<void> {
   try {
-    if (req.user?.userData.email === undefined) {
+    if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = (await findUserLists(req.user?.userData)) ?? [];
+    const email = req.user!.userData.email;
+
+    const lists = (await findUserLists(email)) ?? [];
+
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
+      title: pageTitles[dashboardRoutes.lists],
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -318,6 +336,7 @@ export async function listsEditController(
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
+      title: pageTitles[dashboardRoutes.listsEdit],
       listCreated,
       listUpdated,
       listId,

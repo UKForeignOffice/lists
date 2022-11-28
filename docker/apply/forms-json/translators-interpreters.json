@@ -2,7 +2,7 @@
   "startPage": "/apply-to-the-find-an-english-speaking-translator-or-interpreter-abroad-service",
   "pages": [
     {
-      "title": "Apply to the ‘Find an English-speaking translator or interpreter abroad’ service",
+      "title": "Apply to the 'Find an English-speaking translator or interpreter abroad’ service",
       "path": "/apply-to-the-find-an-english-speaking-translator-or-interpreter-abroad-service",
       "components": [
         {
@@ -266,8 +266,26 @@
       ],
       "next": [
         {
-          "path": "/have-you-provided-services-to-british-nationals-before"
+          "path": "/are-you-a-sworn-translator-in-your-country"
         }
+      ]
+    },
+    {
+      "path": "/are-you-a-sworn-translator-in-your-country",
+      "title": "Are you a certified or sworn translator in your country?",
+      "components": [
+        {
+          "name": "swornTranslations",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "If sworn or certified translation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn translator in your country?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        { "path": "/are-you-a-sworn-interpreter-in-your-country" },
+        { "path": "/have-you-provided-services-to-british-nationals-before", "condition": "tkpRoc" }
       ]
     },
     {
@@ -546,6 +564,25 @@
       ],
       "next": [
         {
+          "path": "/are-you-a-sworn-interpreter-in-your-country"
+        }
+      ]
+    },
+    {
+      "path": "/are-you-a-sworn-interpreter-in-your-country",
+      "title": "Are you a certified or sworn interpreter in your country?",
+      "components": [
+        {
+          "name": "swornInterpretations",
+          "options": {},
+          "type": "YesNoField",
+          "hint": "If sworn or certified interpretation is not used in your country, select 'No'.",
+          "title": "Are you a certified or sworn interpreter in your country?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
           "path": "/have-you-provided-services-to-british-nationals-before"
         }
       ]
@@ -601,7 +638,7 @@
       ],
       "next": [
         {
-          "path": "/have-you-provided-services-to-british-nationals-before"
+          "path": "/are-you-a-sworn-translator-in-your-country"
         }
       ]
     },
