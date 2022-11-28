@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from "../authenticated-user";
-import { List, UserRoles } from "server/models/types";
+import { UserRoles } from "server/models/types";
 import { prisma } from "../../../models/db/__mocks__/prisma-client";
 jest.mock("./../../../models/db/prisma-client");
 

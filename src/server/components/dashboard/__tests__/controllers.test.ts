@@ -218,7 +218,7 @@ describe("Dashboard Controllers", () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    test.only("it renders correct template with correct user value", async () => {
+    test("it renders correct template with correct user value", async () => {
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
       const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(userBeingEdited);

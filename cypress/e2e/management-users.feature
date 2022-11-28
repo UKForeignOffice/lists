@@ -13,7 +13,7 @@ Feature: List management role changing for super Admins
     Scenario: Make a role-less user a SuperAdmin
         When I click the edit link for user with email "no.role@cautionyourblast.com"
         And check the "Super Admin" checkbox
-        And click on the save button
+        And I click the "Save" button
         And go back to the users page
         Then I should see the "SuperAdmin" role assiged to "no.role@cautionyourblast.com"
 
@@ -22,7 +22,7 @@ Feature: List management role changing for super Admins
         When I click the edit link for user with email "list.creator@cautionyourblast.com"
         And uncheck the "Lists Creator" checkbox
         And check the "Super Admin" checkbox
-        And click on the save button
+        And I click the "Save" button
         And go back to the users page
         Then I should see the "SuperAdmin" role assiged to "list.creator@cautionyourblast.com"
 
@@ -30,6 +30,6 @@ Feature: List management role changing for super Admins
     Scenario: Remove SuperAdmin role from another SuperAdmin
         When I click the edit link for user with email "super.admin@cautionyourblast.com"
         And uncheck the "Super Admin" checkbox
-        And click on the save button
+        And I click the "Save" button
         And go back to the users page
         Then I should see nothing assiged to "super.admin@cautionyourblast.com"
