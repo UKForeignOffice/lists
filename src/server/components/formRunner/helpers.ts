@@ -16,6 +16,7 @@ import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
+import { logger } from "server/services/logger";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -107,9 +108,21 @@ export async function parseJsonFormData(
    * I have tried doing a babel/tsc/webpack/jest moduleNameMapping change but it is still causing errors.
    * Giving up. Enjoy
    */
-  const baseDir = isUnderTest
-    ? __dirname.replace("src/server/components/formRunner", "docker/apply")
-    : __dirname.replace("dist", "docker/apply");
+  logger.debug(`Getting json file.  Current directory is ${__dirname}`);
+  // let baseDir;
+  // if (isUnderTest) {
+  //   baseDir = __dirname.replace("src/server/components/formRunner", "docker/apply");
+  // } else {
+  //   baseDir = __dirname.replace("dist/scheduler", "docker/apply");
+  //   logger.debug(`baseDir after replacing dist/scheduler: ${baseDir}`);
+  //   baseDir = __dirname.replace("dist", "docker/apply");
+  //   logger.debug(`baseDir after replacing scheduler: ${baseDir}`);
+  // }
+  // const baseDir = __dirname.replace("src/server/components/formRunner", "docker/apply");
+  let baseDir = __dirname.replace("src/server/components/formRunner", "../../src/server/components/formRunner");
+  logger.debug(`baseDir after replacing src/server/components/formRunner: ${baseDir}`);
+  baseDir = __dirname.replace("dist/scheduler", "dist/src/server/components/formRunner");
+  logger.debug(`baseDir after replacing dist/scheduler: ${baseDir}`);
   const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
   const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");

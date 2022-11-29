@@ -191,11 +191,11 @@ export async function sendAnnualReviewPostEmail(
   typePlural: string,
   country: string,
   annualReviewDate: string
-): Promise<void> {
+): Promise<{ result?: boolean, error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return;
+      return { result: true };
     }
 
     if (emailAddress !== "ali@cautionyourblast.com") {
@@ -208,7 +208,6 @@ export async function sendAnnualReviewPostEmail(
       1: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED ?? "",
     };
-
 
     const notifyTemplate = notifyTemplates[daysBeforeAnnualReviewStart];
     logger.info(
@@ -226,8 +225,9 @@ export async function sendAnnualReviewPostEmail(
       },
     });
   } catch (error) {
-    throw new Error(`Unable to send change request email: ${error.message}`);
+    return { error: new Error(`Unable to send change request email: ${error.message}`) };
   }
+  return { result: true };
 }
 
 export async function sendAnnualReviewProviderEmail(
@@ -238,11 +238,11 @@ export async function sendAnnualReviewProviderEmail(
   contactName: string,
   deletionDate: string,
   changeLink: string
-): Promise<void> {
+): Promise<{ result?: boolean, error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return;
+      return { result: true };
     }
 
     if (emailAddress !== "ali@cautionyourblast.com") {
@@ -266,28 +266,25 @@ export async function sendAnnualReviewProviderEmail(
       },
     });
   } catch (error) {
-    throw new Error(`Unable to send annual review provider email: ${error.message}`);
+    return { error: new Error(`Unable to send annual review provider email: ${error.message}`) };
   }
+  return { result: true };
 }
 
 export async function sendUnpublishedPostEmail(
-  daysBeforeAnnualReviewStart: number,
+  daysBeforeUnpublished: number,
   emailAddress: string,
   typePlural: string,
   country: string,
   numberNotResponded: string
-): Promise<void> {
+): Promise<{ result?: boolean, error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return;
+      return { result: true };
     }
-
-    // @TODO remove after testing
-    if (emailAddress !== "ali@cautionyourblast.com") {
-      emailAddress = "ali@cautionyourblast.com";
-    }
-    logger.info(`sending sendUnpublishedPostEmail for ${daysBeforeAnnualReviewStart} days before annual review start [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
+    logger.info(`sending sendUnpublishedPostEmail for ${daysBeforeUnpublished} days before being unpublished
+    [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
 
     const notifyTemplates: Record<number, string> = {
       35: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
@@ -297,9 +294,9 @@ export async function sendUnpublishedPostEmail(
       7: GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE ?? "",
       1: GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE ?? "",
       0: GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE ?? "",
-    }
+    };
     await getNotifyClient().sendEmail(
-      notifyTemplates[daysBeforeAnnualReviewStart],
+      notifyTemplates[daysBeforeUnpublished],
       emailAddress,
       {
       personalisation: {
@@ -310,8 +307,10 @@ export async function sendUnpublishedPostEmail(
       },
     });
   } catch (error) {
-    throw new Error(`Unable to send change request email: ${error.message}`);
+    logger.error(`unable to send post email ${daysBeforeUnpublished} days before unpublishing: ${error.stack}`);
+    return { error: Error(`Unable to send change request email: ${error.message}`) };
   }
+  return { result: true };
 }
 
 export async function sendUnpublishedProviderEmail(
@@ -322,11 +321,11 @@ export async function sendUnpublishedProviderEmail(
   contactName: string,
   deletionDate: string,
   changeLink: string
-): Promise<void> {
+): Promise<{ result?: boolean, error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return;
+      return { result: true };
     }
 
     if (emailAddress !== "ali@cautionyourblast.com") {
@@ -351,12 +350,14 @@ export async function sendUnpublishedProviderEmail(
     await getNotifyClient().sendEmail(
       notifyTemplates[daysUntilUnpublished],
       emailAddress,
-      {
-        personalisation
-      }
+      { personalisation }
     );
     logger.debug(`Sent email to ${emailAddress} with template ${notifyTemplates[daysUntilUnpublished]} for ${daysUntilUnpublished} days before unpublishing`);
+
   } catch (error) {
-    throw new Error(`Unable to send annual review provider email: ${error.message}`);
+    const errorMsg = `Unable to send annual review provider email: ${error.message}`;
+    logger.error(errorMsg);
+    return { error: new Error(errorMsg) };
   }
+  return { result: true };
 }

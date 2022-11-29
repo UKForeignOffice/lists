@@ -47,6 +47,11 @@ export const {
   GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE,
 } = process.env;
 
+// Scheduled process
+const defaultTodayDateString = new Date().toLocaleString('default',{year: 'numeric', month: 'long', day: 'numeric'});
+export const SCHEDULED_PROCESS_TODAY_DATE = process.env.SCHEDULED_PROCESS_TODAY_DATE ?? defaultTodayDateString;
+
+
 // Form runner
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
 export const FORM_RUNNER_PUBLIC_URL = `${SERVICE_DOMAIN}/application`;

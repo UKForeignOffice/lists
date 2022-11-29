@@ -160,7 +160,18 @@ export type AuditListItemEventName =
   | "disapprove"
   | "publish"
   | "unpublish"
-  | "startAnnualReview";
+  | "startAnnualReview"
+  | 'sendAnnualReviewOneMonthReminderPostEmail'
+  | 'sendAnnualReviewOneWeekReminderPostEmail'
+  | 'sendAnnualReviewOneDayReminderPostEmail'
+  | 'sendAnnualReviewStartedPostEmail'
+  | 'sendAnnualReviewStartedProviderEmail'
+  | 'sendUnpublishedProviderEmail'
+  | 'sendOneDayUnpublishedReminderProviderEmail'
+  | 'sendWeeklyUnpublishedReminderProviderEmail'
+  | 'sendUnpublishedPostEmail'
+  | 'sendOneDayUnpublishedReminderPostEmail'
+  | 'sendWeeklyUnpublishedReminderPostEmail'
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
