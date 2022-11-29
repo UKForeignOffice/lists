@@ -1,9 +1,6 @@
 import { User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import type {
-  ListWithJsonData
-} from "server/components/dashboard/helpers";
 
 export default class AuthenticatedUser {
   readonly userData: User;

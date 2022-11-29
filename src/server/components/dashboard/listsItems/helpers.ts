@@ -5,7 +5,6 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ServiceType } from "server/models/types";
-import type { List } from "server/models/types";
 
 export async function redirectIfUnauthorised(req: Request, res: ListItemRes, next: NextFunction): Promise<void> {
   try {

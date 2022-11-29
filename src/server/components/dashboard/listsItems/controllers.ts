@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { authRoutes } from "server/components/auth";
-import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
+import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";

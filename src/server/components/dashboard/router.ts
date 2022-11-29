@@ -7,7 +7,7 @@ import {
 import {
   startRouteController,
   usersListController,
-  usersEditController, feedbackController, listPublisherDelete
+  usersEditController, feedbackController
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
