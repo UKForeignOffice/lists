@@ -4,6 +4,7 @@ import {
   listPublisherDelete,
   listsController,
   listsEditController,
+  listsEditPostController,
   listsItemsController,
 } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
@@ -18,9 +19,6 @@ import {
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
-import { dashboardRoutes } from "server/components/dashboard";
-import { dashboardRouter } from "server/components/dashboard/router";
-
 export const listRouter = express.Router();
 
 listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
@@ -45,7 +43,10 @@ listRouter.param("listId", async (req, res, next, listId) => {
   }
 });
 
-listRouter.all("/:listId", listsEditController);
+listRouter.get("/:listId", listsEditController);
+listRouter.post("/:listId", listsEditPostController);
+listRouter.get("/:listId/users/:userEmail", listsEditPostController);
+listRouter.post("/:listId/users/:userEmail", listsEditPostController);
 listRouter.all("/:listId/*", redirectIfUnauthorised);
 
 listRouter.post("/:listId/publisher-delete", listPublisherDelete);

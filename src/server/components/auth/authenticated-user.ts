@@ -1,11 +1,11 @@
 import { User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export class AuthenticatedUser {
   public readonly userData: User;
-
+  readonly emailAddress: User["email"];
+  readonly roles: User["jsonData"]["roles"];
   constructor(userData: User) {
     this.userData = userData;
     this.emailAddress = userData.email;
@@ -43,6 +43,8 @@ export class AuthenticatedUser {
   }
 
   async getLists() {
+    console.log("get lists");
+    console.log("me", this.userData);
     const notSuperAdmin = !this.isSuperAdmin();
     const publisherWhere = {
       where: {
@@ -52,9 +54,17 @@ export class AuthenticatedUser {
         },
       },
     };
-
-    const lists = await prisma.list.findMany({
+    console.log("not super", notSuperAdmin);
+    console.log("query", {
       ...(notSuperAdmin && publisherWhere),
+    });
+    const lists = await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ["publishers"],
+          array_contains: [this.emailAddress],
+        },
+      },
       orderBy: {
         id: "asc",
       },
@@ -68,13 +78,5 @@ export class AuthenticatedUser {
     }
 
     return lists ?? [];
-  }
-
-  isListPublisher(list: ListWithJsonData): boolean {
-    const email = this.userData.email;
-
-    return email !== undefined
-      ? Boolean(list?.jsonData?.publishers?.includes(email))
-      : false;
   }
 }
