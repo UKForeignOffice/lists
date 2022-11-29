@@ -3,7 +3,7 @@ Feature: List management users
   Background:
     Given I am logged in as a "SuperAdmin"
     And I click the link "Lists"
-    And I click the link "Settings"
+    And I click the link "Settings" for "Eurasia"
 
 
   Scenario Outline: Add emails to list of users

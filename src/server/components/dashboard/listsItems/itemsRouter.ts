@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { csrfRequestHandler } from "server/components/cookies/helpers";
-import { listsController, listsEditController, listsItemsController, listPublisherDelete } from "server/components/dashboard/controllers";
+import { listsController, listsEditController, listsItemsController, listPublisherDelete, listsEditPostController } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 
 import { logger } from "server/services/logger";
@@ -38,7 +38,9 @@ listRouter.param("listId", async (req, res, next, listId) => {
   }
 });
 
-listRouter.all("/:listId", listsEditController);
+listRouter.get("/:listId", listsEditController);
+listRouter.post("/:listId", listsEditPostController);
+
 listRouter.all("/:listId/*", redirectIfUnauthorised);
 
 listRouter.get("/:listId/items", listsItemsController);

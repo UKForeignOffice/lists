@@ -14,7 +14,7 @@ export async function redirectIfUnauthorised(req: Request, res: ListItemRes, nex
     if (!Number.isInteger(Number(list!.id))) throw new Error("listId is not a number");
 
     if (!userCanPublishList) {
-      const err = new HttpException(403, "403", "User is not authorized to access this list.");
+      const err = new HttpException(403, "403", "User is not authorised to access this list.");
       return next(err);
     }
 

@@ -134,6 +134,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
+      isListPublisher: checkUserCanPublishList,
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -141,6 +142,11 @@ export async function listsController(req: Request, res: Response, next: NextFun
   } catch (error) {
     next(error);
   }
+}
+
+function checkUserCanPublishList(req: Request, list: List) {
+  const { emailAddress } = req.user!;
+  return emailAddress !== undefined ? Boolean(list?.jsonData?.publishers?.includes(emailAddress)) : false;
 }
 
 // TODO: test
