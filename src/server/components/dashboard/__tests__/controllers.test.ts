@@ -40,7 +40,6 @@ describe("Dashboard Controllers", () => {
       method: "GET",
       params: {
         userEmail: "user@gov.uk",
-        publisherEmail: "user@gov.uk",
       },
       query: {},
       user: {
@@ -49,8 +48,8 @@ describe("Dashboard Controllers", () => {
         },
         isSuperAdmin: jest.fn(),
         isListsCreator: jest.fn(),
-        getLists: jest.fn(),
         isListPublisher: jest.fn(),
+        getLists: jest.fn(),
       },
       flash: jest.fn(),
       isUnauthenticated: jest.fn(),
@@ -220,29 +219,6 @@ describe("Dashboard Controllers", () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    test("it returns 405 when trying to edit a SuperAdmin", async () => {
-      const spyIsSuperAdmin = jest
-        .spyOn(userModel, "isSuperAdminUser")
-        .mockResolvedValueOnce(true);
-
-      await usersEditController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.status).toHaveBeenCalledWith(405);
-      expect(mockRes.send).toHaveBeenCalledWith(
-        "Not allowed to edit super admin account"
-      );
-      expect(spyIsSuperAdmin).toHaveBeenCalledWith(mockReq.params.userEmail);
-    });
-
-    test("it invokes next with isSuperAdmin rejected error", async () => {
-      const error = new Error("isSuperAdmin rejected");
-      jest.spyOn(userModel, "isSuperAdminUser").mockRejectedValueOnce(error);
-
-      await usersEditController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(error);
-    });
-
     test("it renders correct template with correct user value", async () => {
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
@@ -268,7 +244,6 @@ describe("Dashboard Controllers", () => {
       };
 
       await usersEditController(mockReq, mockRes, mockNext);
-
       expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
         jsonData: {
           roles: [UserRoles.SuperAdmin, UserRoles.ListsCreator],
@@ -409,6 +384,8 @@ describe("Dashboard Controllers", () => {
         "dashboardRoutes",
         "countriesList",
         "ServiceType",
+        "userIsListPublisher",
+        "userIsListPublisher",
         "userIsListValidator",
         "userIsListAdministrator",
         "req",
@@ -661,6 +638,7 @@ describe("Dashboard Controllers", () => {
 
   // @todo change to listitemDeleteController
   describe.skip("listItemsDeleteController", () => {
+    let userIsListPublisher: jest.SpyInstance;
     let deleteListItem: jest.SpyInstance;
 
     beforeEach(() => {
@@ -669,6 +647,7 @@ describe("Dashboard Controllers", () => {
         listItemId: "2",
       };
       mockReq.user.userData.id = 3;
+      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
 
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,
@@ -711,6 +690,7 @@ describe("Dashboard Controllers", () => {
     });
 
     it.skip("should return a 403 if user is not permitted to make changes to the list", async () => {
+      userIsListPublisher.mockReturnValueOnce(false);
 
       await listItemDeleteController(mockReq, mockRes);
 
@@ -749,6 +729,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("listItemsEditGetController", () => {
+    let userIsListPublisher: jest.SpyInstance;
     let next: NextFunction;
 
     beforeEach(() => {
@@ -762,6 +743,7 @@ describe("Dashboard Controllers", () => {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
+      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
@@ -802,9 +784,8 @@ describe("Dashboard Controllers", () => {
     });
 
     it("should return a 403 if user is not permitted to make changes to the list", async () => {
-      spyFindListById.mockResolvedValueOnce(list);
-      spyFindListItemById.mockResolvedValueOnce(listItem);
-      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
+      userIsListPublisher.mockReturnValueOnce(false);
+      const next = jest.fn();
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
       const err = next.mock.calls[0][0];
@@ -822,6 +803,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("listItemsEditPostController", () => {
+    let userIsListPublisher: jest.SpyInstance;
     let next: NextFunction;
 
     beforeEach(() => {
@@ -833,6 +815,7 @@ describe("Dashboard Controllers", () => {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
+      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
@@ -915,10 +898,8 @@ describe("Dashboard Controllers", () => {
 
     //TODO: this is tested 3 times..?
     it("should return a 403 if user is not permitted to make changes to the list", async () => {
-      spyFindListById.mockResolvedValueOnce(list);
-      spyFindListItemById.mockResolvedValueOnce(listItem);
-
-      const next = mockNextFunction(403, "User does not have publishing rights on this list.");
+      userIsListPublisher.mockReturnValueOnce(false);
+      const next = jest.fn();
 
       await listItemEditRequestValidation(mockReq, mockRes, next);
 

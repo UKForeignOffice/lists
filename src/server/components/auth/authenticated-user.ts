@@ -1,13 +1,11 @@
 import { User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import {
+import type {
   ListWithJsonData
 } from "server/components/dashboard/helpers";
 
-import type { Request } from "express";
-
-export class AuthenticatedUser {
+export default class AuthenticatedUser {
   readonly userData: User;
   readonly emailAddress: User["email"];
   readonly roles: UserRoles[];
@@ -29,6 +27,9 @@ export class AuthenticatedUser {
     return this.roles.includes(UserRoles.ListsCreator);
   }
 
+  /**
+   * TODO: refactor to `email !== undefined ? Boolean(list?.jsonData?.publishers?.includes(email)) : false;`?
+   */
   async isListPublisher(listId: number): Promise<boolean> {
     const result = await prisma.list.findFirst({
       select: {
@@ -74,13 +75,5 @@ export class AuthenticatedUser {
     }
 
     return lists ?? [];
-  }
-
-  oldIsListPublisher(list: ListWithJsonData): boolean {
-    const email = this.userData.email;
-
-    return email !== undefined
-      ? Boolean(list?.jsonData?.publishers?.includes(email))
-      : false;
   }
 }

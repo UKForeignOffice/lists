@@ -7,10 +7,7 @@ import {
 import {
   startRouteController,
   usersListController,
-  usersEditController,
-  listsItemsController,
-  listsEditPostController,
-  listPublisherDelete,
+  usersEditController, feedbackController, listPublisherDelete
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -38,32 +35,7 @@ dashboardRouter.all(
 );
 
 // lists
-dashboardRouter.get(dashboardRoutes.lists, csrfRequestHandler, listsController);
-dashboardRouter.get(
-  dashboardRoutes.listsEdit,
-  csrfRequestHandler,
-  redirectIfUnauthorised,
-  listsEditController
-);
-dashboardRouter.post(
-  dashboardRoutes.listsEdit,
-  csrfRequestHandler,
-  redirectIfUnauthorised,
-  listsEditPostController
-);
-dashboardRouter.post(
-  dashboardRoutes.listsPublisherDelete,
-  csrfRequestHandler,
-  redirectIfUnauthorised,
-  listPublisherDelete
-);
-dashboardRouter.get(
-  dashboardRoutes.listsItems,
-  csrfRequestHandler,
-  redirectIfUnauthorised,
-  // @ts-expect-error
-  listsItemsController
-);
+dashboardRouter.use('/dashboard/lists', listRouter);
 
 dashboardRouter.get(
   dashboardRoutes.feedback,

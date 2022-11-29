@@ -462,6 +462,7 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   const { list, listItem } = res.locals;
   const listId = list?.id;
   const listItemId = listItem?.id;
+  const userCanPublishList = (await req.user?.isListPublisher(listId)) ?? false;
 
   if (list === undefined) {
     const err = new HttpException(404, "404", `Could not find list ${listId}`);
@@ -479,7 +480,7 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   } else if (list?.id !== listItem?.listId) {
     const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
     return next(err);
-  } else if (!req?.user?.isListPublisher(list)) {
+  } else if (!userCanPublishList) {
     const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
     return next(err);
   }

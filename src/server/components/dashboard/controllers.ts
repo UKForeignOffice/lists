@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { get, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
-import { createList, findListById, findUserLists, updateList, } from "server/models/list";
+import { createList, findListById, updateList, } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import {
   List,
@@ -10,7 +10,6 @@ import {
   UserRoles
 } from "server/models/types";
 import {
-  filterSuperAdminRole,
   userIsListAdministrator,
   userIsListValidator,
 } from "./helpers";
@@ -21,6 +20,7 @@ import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
+import { pageTitles } from "server/components/dashboard/helpers"
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 

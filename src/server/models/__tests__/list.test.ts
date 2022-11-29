@@ -26,57 +26,6 @@ describe("List Model:", () => {
     },
   };
 
-  describe("findUserLists", () => {
-    test("query is correct", async () => {
-      prisma.$queryRaw.mockResolvedValue([sampleList]);
-
-      await findUserLists("test@gov.uk");
-
-      const expectedQuery = `
-        SELECT *,
-        (
-          SELECT ROW_TO_JSON(c)
-          FROM (
-            SELECT name
-            FROM "Country"
-            WHERE "List"."countryId" = "Country"."id"
-          ) as c
-        ) as country
-        FROM public."List"
-        WHERE "jsonData"->'validators' @> '"test@gov.uk"'
-        OR "jsonData"->'publishers' @> '"test@gov.uk"'
-        OR "jsonData"->'administrators' @> '"test@gov.uk"'
-        ORDER BY id ASC
-      `.replace(/\s\s+/g, " ");
-
-      const query = (prisma.$queryRaw.mock.calls[0][0] as string).replace(
-        /\s\s+/g,
-        " "
-      );
-
-      expect(query).toEqual(expectedQuery);
-    });
-
-    test("returned value is correct", async () => {
-      prisma.$queryRaw.mockResolvedValue([sampleList]);
-
-      const result = await findUserLists("test@gov.uk");
-
-      expect(result).toMatchObject([sampleList]);
-    });
-
-    test("it returns undefined when queryRaw fails", async () => {
-      prisma.$queryRaw.mockRejectedValue({ message: "queryRaw error message" });
-
-      const result = await findUserLists("test@gov.uk");
-
-      expect(result).toBeUndefined();
-      expect(logger.error).toHaveBeenCalledWith(
-        "findUserLists Error: queryRaw error message"
-      );
-    });
-  });
-
   describe("findListById", () => {
     test("findUnique call is correct", async () => {
       prisma.list.findUnique.mockResolvedValue(sampleList);
