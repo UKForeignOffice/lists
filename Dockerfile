@@ -1,3 +1,4 @@
+# if you are on Mac M1 please add --platform=linux/amd64 after FROM below
 FROM node:14.17-alpine3.13 AS base
 RUN mkdir -p /usr/src/app && \
     addgroup -g 1001 appuser && \
@@ -44,9 +45,12 @@ ENV CI_SMOKE_TEST=true
 CMD ["npm", "run", "start:prod"]
 
 # docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
+# if you are on Mac M1 please add --platform=linux/amd64 after FROM below
 FROM node:14.17-alpine3.13 AS scheduled
 WORKDIR /usr/src/scheduler
 COPY --from=main /usr/src/app/dist ./dist/
 COPY --from=main /usr/src/app/node_modules ./node_modules/
+COPY --from=main /usr/src/app/docker/apply/forms-json ./docker/apply/forms-json/
+COPY --from=main /usr/src/app/src/server/models/db/schema.prisma ./src/server/models/db/
+COPY --from=main /usr/src/app/src/server/models/db/migrations ./src/server/models/db/migrations
 COPY docker/scheduler/package.json ./package.json
-

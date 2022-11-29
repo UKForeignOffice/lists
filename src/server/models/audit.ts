@@ -25,11 +25,13 @@ interface ListItemEventData {
  */
 export function recordListItemEvent(
   eventData: ListItemEventData,
-  auditEvent: AuditEvent
+  auditEvent: AuditEvent,
+  type?: "user" | "list" | "listItem"
 ): Prisma.Prisma__AuditClient<Audit> {
+  type = type ?? "listItem";
   const data: AuditCreateInput = {
     auditEvent,
-    type: "listItem",
+    type,
     jsonData: { ...eventData },
   };
 
