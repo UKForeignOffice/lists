@@ -236,7 +236,7 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
   try {
-    await deleteListItem(listItem.id, userId!);
+    await deleteListItem(listItem.id, userId);
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
     req.flash("successBannerHeading", "Removed");
@@ -254,7 +254,7 @@ export async function listItemUpdateController(req: Request, res: Response): Pro
   const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handleListItemUpdate(listItem.id, userId!);
+    await handleListItemUpdate(listItem.id, userId);
 
     if (userId === undefined) {
       req.flash("errorMsg", "Unable to perform action - user could not be identified");
@@ -322,7 +322,7 @@ export async function listItemRequestChangeController(req: Request, res: Respons
   }
 
   try {
-    await handleListItemRequestChanges(list, listItem, changeMessage, userId!, isUnderTest);
+    await handleListItemRequestChanges(list, listItem, changeMessage, userId, isUnderTest);
 
     req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
     req.flash("successBannerHeading", "Requested");
@@ -399,7 +399,7 @@ export async function listItemPublishController(req: Request, res: Response): Pr
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handlePublishListItem(listItem.id, isPublished, userId!);
+    await handlePublishListItem(listItem.id, isPublished, userId);
 
     const successBannerHeading = `${action}ed`;
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
@@ -462,7 +462,6 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   const { list, listItem } = res.locals;
   const listId = list?.id;
   const listItemId = listItem?.id;
-  const userCanPublishList = (await req.user?.isListPublisher(listId)) ?? false;
 
   if (list === undefined) {
     const err = new HttpException(404, "404", `Could not find list ${listId}`);
@@ -479,9 +478,6 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
     return next(err);
   } else if (list?.id !== listItem?.listId) {
     const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
-    return next(err);
-  } else if (!userCanPublishList) {
-    const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
     return next(err);
   }
   return next();

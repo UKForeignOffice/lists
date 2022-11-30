@@ -21,11 +21,6 @@ export function userIsListPublisher(req: Request, list: ListWithJsonData): boole
   return !!email && (list?.jsonData?.publishers?.includes?.(email) ?? false);
 }
 
-export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return !!email && (list?.jsonData?.validators?.includes?.(email) ?? false);
-}
-
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,
   formRunnerWebhookData: NewSessionData
@@ -69,4 +64,4 @@ export const pageTitles: { [key: string]: string } = {
   [sitemapRoute]: "site map",
   [authRoutes.login]: "login",
   [authRoutes.logout]: "logout",
-}
+};

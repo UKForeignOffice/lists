@@ -1,26 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import { get, trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser, } from "server/models/user";
-import { createList, findListById, updateList, } from "server/models/list";
+import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
+import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import {
-  List,
-  ServiceType,
-  UserRoles
-} from "server/models/types";
-import {
-  userIsListAdministrator,
-  userIsListValidator,
-} from "./helpers";
-import { isGovUKEmailAddress, } from "server/utils/validation";
-import { QuestionError, } from "server/components/lists";
+import { List, ServiceType, UserRoles } from "server/models/types";
+import { userIsListAdministrator, userIsListValidator } from "./helpers";
+import { isGovUKEmailAddress } from "server/utils/validation";
+import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
-import { pageTitles } from "server/components/dashboard/helpers"
+import { pageTitles } from "server/components/dashboard/helpers";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -28,7 +21,6 @@ export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,
-  userIsListValidator,
   userIsListAdministrator,
 };
 
@@ -134,7 +126,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
-      isListPublisher: checkUserCanPublishList,
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -142,11 +133,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
   } catch (error) {
     next(error);
   }
-}
-
-function checkUserCanPublishList(req: Request, list: List) {
-  const { emailAddress } = req.user!;
-  return emailAddress !== undefined ? Boolean(list?.jsonData?.publishers?.includes(emailAddress)) : false;
 }
 
 // TODO: test
@@ -179,27 +165,18 @@ export async function listsEditController(req: Request, res: Response, next: Nex
   }
 }
 
-export async function listsEditPostController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listsEditPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const removeButtonClicked = "userEmail" in req.body;
 
-    return removeButtonClicked
-      ? await listEditRemovePublisher(req, res)
-      : await listEditAddPublisher(req, res, next);
-
+    return removeButtonClicked ? await listEditRemovePublisher(req, res) : await listEditAddPublisher(req, res, next);
   } catch (error) {
     logger.error(`listsEditPostController error: ${(error as Error).message}`);
     next(error);
   }
 }
 
-export async function listEditAddPublisher(req: Request,
-  res: Response, next: NextFunction): Promise<void> {
-
+export async function listEditAddPublisher(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { listId } = req.params;
   let error: Partial<QuestionError> = {};
 
@@ -209,7 +186,7 @@ export async function listEditAddPublisher(req: Request,
   const user = req.user;
   const userIsSuperAdmin = user?.isSuperAdmin();
 
-  if (!userIsSuperAdmin || (listId === "new" && !userIsSuperAdmin))  {
+  if (!userIsSuperAdmin || (listId === "new" && !userIsSuperAdmin)) {
     const err = new HttpException(403, "403", "You are not authorized to access this list.");
     return next(err);
   }
@@ -217,10 +194,9 @@ export async function listEditAddPublisher(req: Request,
   if (!publisher || !isGovUKEmailAddress(publisher)) {
     error = {
       field: "publisher",
-      text:
-        !publisher
-          ? "You must indicated a publisher"
-          : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
+      text: !publisher
+        ? "You must indicated a publisher"
+        : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
       href: "#publisher",
     };
   }
@@ -233,7 +209,7 @@ export async function listEditAddPublisher(req: Request,
     };
   }
 
-  const errorExists = ("field" in error);
+  const errorExists = "field" in error;
 
   if (errorExists) {
     return res.render("dashboard/lists-edit", {
@@ -262,36 +238,19 @@ export async function listEditAddPublisher(req: Request,
     const newList = await createList(data);
 
     if (newList?.id !== undefined) {
-      return res.redirect(
-        `${dashboardRoutes.listsEdit.replace(
-          ":listId",
-          `${newList.id}`
-        )}`
-      );
+      return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
     }
   }
 
   const publishersListWithNewEmail = [...(list as List).jsonData.publishers, publisher];
 
   if (list !== undefined) {
-    await updateList(
-      Number(listId),
-      {publishers: publishersListWithNewEmail}
-    );
-    return res.redirect(
-      `${dashboardRoutes.listsEdit.replace(
-        ":listId",
-        `${listId}`
-      )}`
-    );
+    await updateList(Number(listId), { publishers: publishersListWithNewEmail });
+    return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}`);
   }
 }
 
-export async function listEditRemovePublisher(
-  req: Request,
-  res: Response
-): Promise<void> {
-
+export async function listEditRemovePublisher(req: Request, res: Response): Promise<void> {
   const { listId } = req.params;
   const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
@@ -306,11 +265,7 @@ export async function listEditRemovePublisher(
   });
 }
 
-export async function listPublisherDelete(
-  req: Request,
-  res: Response
-): Promise<void> {
-
+export async function listPublisherDelete(req: Request, res: Response): Promise<void> {
   const { listId } = req.params;
   const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
@@ -334,21 +289,13 @@ export async function listPublisherDelete(
     });
   }
 
-  const updatedPublishers = (list as List).jsonData.publishers.filter(publisher => publisher !== userEmail);
+  const updatedPublishers = (list as List).jsonData.publishers.filter((publisher) => publisher !== userEmail);
 
-  await updateList(
-    Number(listId),
-    { publishers: updatedPublishers }
-  );
+  await updateList(Number(listId), { publishers: updatedPublishers });
 
   req.flash("changeMsg", `User ${userEmail} has been removed`);
 
-  return res.redirect(
-    `${dashboardRoutes.listsEdit.replace(
-      ":listId",
-      `${listId}`
-    )}`
-  );
+  return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}`);
 }
 
 // TODO: test

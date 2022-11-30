@@ -9,14 +9,8 @@ import { ServiceType } from "server/models/types";
 export async function redirectIfUnauthorised(req: Request, res: ListItemRes, next: NextFunction): Promise<void> {
   try {
     const { list } = res.locals;
-    const userCanPublishList = (await req.user?.isListPublisher(list!.id)) ?? false;
 
     if (!Number.isInteger(Number(list!.id))) throw new Error("listId is not a number");
-
-    if (!userCanPublishList) {
-      const err = new HttpException(403, "403", "User is not authorised to access this list.");
-      return next(err);
-    }
 
     next();
   } catch (error) {

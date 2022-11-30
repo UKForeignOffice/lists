@@ -24,28 +24,6 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.ListsCreator);
   }
 
-  /**
-   * TODO: refactor to `email !== undefined ? Boolean(list?.jsonData?.publishers?.includes(email)) : false;`?
-   */
-  async isListPublisher(listId: number): Promise<boolean> {
-    const result = await prisma.list.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        id: listId,
-        AND: {
-          jsonData: {
-            path: ["publishers"],
-            array_contains: this.userData.email,
-          },
-        },
-      },
-    });
-
-    return !!result;
-  }
-
   async getLists() {
     const notSuperAdmin = !this.isSuperAdmin();
     const publisherWhere = {
