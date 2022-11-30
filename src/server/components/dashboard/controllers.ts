@@ -31,7 +31,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
     }
 
     const lists = await req.user.getLists();
-    const isNewUser = !req.user?.isSuperAdmin() && !req.user?.isListsCreator() && get(lists ?? [], "length") === 0;
+    const isNewUser = !req.user?.isSuperAdmin() && get(lists ?? [], "length") === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,

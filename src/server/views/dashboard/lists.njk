@@ -1,7 +1,7 @@
 {% extends "./dashboard.njk" %}
 
 {% block dashboard %}
-  {% if req.user.isSuperAdmin() or req.user.isListsCreator() %}
+  {% if req.user.isSuperAdmin() %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
         <p><a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a></p>

@@ -20,10 +20,6 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.SuperAdmin);
   }
 
-  isListsCreator(): boolean {
-    return this.roles.includes(UserRoles.ListsCreator);
-  }
-
   async getLists() {
     const notSuperAdmin = !this.isSuperAdmin();
     const publisherWhere = {

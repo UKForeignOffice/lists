@@ -25,16 +25,6 @@ describe("AuthenticatedUser", () => {
     expect(notSuperAdmin.isSuperAdmin()).toBeFalsy();
   });
 
-  test("isListsCreator evaluation is correct", () => {
-    const listsCreator = createUser({
-      roles: [UserRoles.ListsCreator],
-    });
-    const notListCreator = createUser({ roles: [UserRoles.SuperAdmin] });
-
-    expect(listsCreator.isListsCreator()).toBeTruthy();
-    expect(notListCreator.isListsCreator()).toBeFalsy();
-  });
-
   describe("getLists", () => {
     test("query is correct for superAdmin", async () => {
       const superAdmin = createUser({
