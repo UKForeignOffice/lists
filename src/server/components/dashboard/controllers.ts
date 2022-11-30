@@ -5,7 +5,7 @@ import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import { List, ServiceType, UserRoles } from "server/models/types";
-import { userIsListAdministrator, userIsListValidator } from "./helpers";
+import { userIsListAdministrator } from "./helpers";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
