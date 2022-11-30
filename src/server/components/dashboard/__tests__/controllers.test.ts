@@ -384,9 +384,6 @@ describe("Dashboard Controllers", () => {
         "dashboardRoutes",
         "countriesList",
         "ServiceType",
-        "userIsListPublisher",
-        "userIsListPublisher",
-        "userIsListValidator",
         "userIsListAdministrator",
         "req",
       ]);
@@ -647,7 +644,6 @@ describe("Dashboard Controllers", () => {
         listItemId: "2",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
 
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,
@@ -743,7 +739,6 @@ describe("Dashboard Controllers", () => {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
@@ -815,7 +810,6 @@ describe("Dashboard Controllers", () => {
         message: "change the text",
       };
       mockReq.user.userData.id = 3;
-      userIsListPublisher = jest.spyOn(helpers, "userIsListPublisher").mockReturnValue(true);
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 

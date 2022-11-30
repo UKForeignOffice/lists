@@ -16,11 +16,6 @@ export function userIsListAdministrator(req: Request, list: ListWithJsonData): b
   return !!email && (list?.jsonData?.administrators?.includes?.(email) ?? false);
 }
 
-export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return !!email && (list?.jsonData?.publishers?.includes?.(email) ?? false);
-}
-
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,
   formRunnerWebhookData: NewSessionData
