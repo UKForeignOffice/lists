@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { get, trim } from "lodash";
+import { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import { List, ServiceType, UserRoles } from "server/models/types";
-import { userIsListAdministrator } from "./helpers";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
@@ -21,17 +20,16 @@ export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
   ServiceType,
-  userIsListAdministrator,
 };
 
 export async function startRouteController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    if (req.user === undefined) {
+    if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await req.user.getLists();
-    const isNewUser = !req.user?.isSuperAdmin() && get(lists ?? [], "length") === 0;
+    const lists = await req.user!.getLists();
+    const isNewUser = !req.user?.isSuperAdmin() && lists.length === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,

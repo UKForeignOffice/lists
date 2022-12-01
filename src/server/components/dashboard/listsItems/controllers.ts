@@ -232,7 +232,7 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
 }
 
 export async function listItemDeleteController(req: Request, res: Response): Promise<void> {
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
   try {
@@ -249,7 +249,7 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
 }
 
 export async function listItemUpdateController(req: Request, res: Response): Promise<void> {
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const listItem = res.locals.listItem;
   const { listItemUrl, listIndexUrl } = res.locals;
 
@@ -311,7 +311,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
   const { list, listItem } = res.locals;
   const { listItemUrl, listIndexUrl } = res.locals;
@@ -393,13 +393,12 @@ async function handleListItemRequestChanges(
 
 export async function listItemPublishController(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
-  const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handlePublishListItem(listItem.id, isPublished, userId);
+    await handlePublishListItem(listItem.id, isPublished, req.user!.id);
 
     const successBannerHeading = `${action}ed`;
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
@@ -452,10 +451,7 @@ async function initialiseFormRunnerSession(
 }
 
 export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
-  logger.info("listItemEditRequestValidation");
-  const userId = req.user?.userData?.id;
-
-  if (userId === undefined) {
+  if (req.isUnauthenticated()) {
     return res.redirect(authRoutes.logout);
   }
 
@@ -463,20 +459,32 @@ export async function listItemEditRequestValidation(req: Request, res: Response,
   const listId = list?.id;
   const listItemId = listItem?.id;
 
-  if (list === undefined) {
+  const userHasAccessToList = await req.user?.hasAccessToList(listId);
+
+  if (!userHasAccessToList) {
+    logger.warn(`${req.user?.userData.id} attempted to change ${listId}/${listItemId} but does not have access`);
+    return next(new HttpException(403, "403", "Not permitted to make changes to this list"));
+  }
+
+  if (!list) {
+    // TODO: should be handled by router.param
     const err = new HttpException(404, "404", `Could not find list ${listId}`);
     return next(err);
-  } else if (listItem === undefined) {
+  }
+
+  if (!listItem) {
+    // TODO: should be handled by router.param
     const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
     return next(err);
-  } else if (list?.type !== listItem?.type) {
-    const err = new HttpException(
-      400,
-      "400",
-      `Trying to edit a list item which is a different service type to list ${listId}`
+  }
+
+  if (list.type !== listItem.type) {
+    return next(
+      new HttpException(400, "400", `Trying to edit a list item which is a different service type to list ${listId}`)
     );
-    return next(err);
-  } else if (list?.id !== listItem?.listId) {
+  }
+
+  if (list.id !== listItem.listId) {
     const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
     return next(err);
   }

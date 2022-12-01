@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { logger } from "server/services/logger";
 import axios from "axios";
 import { List, ListJsonData } from "server/models/types";
@@ -10,11 +9,6 @@ import { authRoutes } from "server/components/auth";
 export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
 };
-
-export function userIsListAdministrator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return !!email && (list?.jsonData?.administrators?.includes?.(email) ?? false);
-}
 
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,

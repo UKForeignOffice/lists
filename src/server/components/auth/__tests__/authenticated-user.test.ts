@@ -52,7 +52,7 @@ describe("AuthenticatedUser", () => {
       expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: {
           jsonData: {
-            path: ["publishers"],
+            path: ["users"],
             array_contains: ["test@gov.uk"],
           },
         },
