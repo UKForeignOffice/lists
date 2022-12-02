@@ -20,7 +20,7 @@ describe("List Model:", () => {
     },
     jsonData: {
       createdBy: "test@gov.uk",
-      publishers: ["test@gov.uk"],
+      users: ["test@gov.uk"],
       validators: ["test@gov.uk"],
       administrators: ["test@gov.uk"],
     },
@@ -105,9 +105,7 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.covidTestProviders,
-      validators: ["test@gov.uk", "validator@gov.uk", undefined],
-      publishers: ["test@gov.uk", "publisher@gov.uk", undefined],
-      administrators: ["test@gov.uk", "admin@gov.uk", undefined],
+      users: ["test@gov.uk", "publisher@gov.uk", undefined],
       createdBy: "test@gov.uk",
     };
 
@@ -130,9 +128,7 @@ describe("List Model:", () => {
             },
           },
           jsonData: {
-            validators: compact(listData.validators),
-            publishers: compact(listData.publishers),
-            administrators: compact(listData.administrators),
+            users: compact(listData.users),
             createdBy: listData.createdBy,
           },
         },
@@ -149,31 +145,13 @@ describe("List Model:", () => {
       expect(logger.error).toHaveBeenCalledWith("createList Error: Create error message");
     });
 
-    test("it throws when validators contains a non GOV.UK email address", async () => {
+    test("it throws when users contains a non GOV.UK email address", async () => {
       await expect(
         createList({
           ...listData,
-          validators: ["invalid@email.com"],
+          users: ["invalid@email.com"],
         })
-      ).rejects.toEqual(new Error("Validators contain a non GOV UK email address"));
-    });
-
-    test("it throws when publishers contains a non GOV.UK email address", async () => {
-      await expect(
-        createList({
-          ...listData,
-          publishers: ["invalid@email.com"],
-        })
-      ).rejects.toEqual(new Error("Publishers contain a non GOV UK email address"));
-    });
-
-    test("it throws when administrators contains a non GOV.UK email address", async () => {
-      await expect(
-        createList({
-          ...listData,
-          administrators: ["invalid@email.com"],
-        })
-      ).rejects.toEqual(new Error("Administrators contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
     });
 
     test("it throws when createdBy is a non GOV.UK email address", async () => {
@@ -192,9 +170,7 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.covidTestProviders,
-      validators: ["test@gov.uk", "validator@gov.uk", undefined],
-      publishers: ["test@gov.uk", "publisher@gov.uk", undefined],
-      administrators: ["test@gov.uk", "admin@gov.uk", undefined],
+      users: ["test@gov.uk", "publisher@gov.uk", undefined],
       createdBy: "test@gov.uk",
     };
 
@@ -209,7 +185,7 @@ describe("List Model:", () => {
         },
         data: {
           jsonData: {
-            publishers: compact(listData.publishers),
+            users: compact(listData.users),
           },
         },
       });
@@ -225,14 +201,13 @@ describe("List Model:", () => {
       expect(logger.error).toHaveBeenCalledWith("updateList Error: Update error message");
     });
 
-
-    test("it throws when publishers contains a non GOV.UK email address", async () => {
+    test("it throws when users contains a non GOV.UK email address", async () => {
       await expect(
         updateList(listId, {
           ...listData,
-          publishers: ["invalid@email.com"],
+          users: ["invalid@email.com"],
         })
-      ).rejects.toEqual(new Error("Publishers contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
     });
   });
 });
