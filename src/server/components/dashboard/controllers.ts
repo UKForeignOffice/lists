@@ -186,7 +186,6 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   }
 
   const user = req.user;
-  const userIsSuperAdmin = user?.isSuperAdmin();
 
   // TODO: rename to "newUser"
   const publisher: string = req.body.publisher;
@@ -265,7 +264,8 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
 
 export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
   const userEmail = req.body.userEmail;
-  const list = await findListById(res.locals.list?.id!);
+  const listId = res.locals.list?.id as number;
+  const list = await findListById(listId);
   const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
 
   if (!list) {
