@@ -225,9 +225,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const data = {
     country: req.body.country,
     serviceType: req.body.serviceType,
-    validators: [],
-    publishers: req.body.publisher,
-    administrators: [],
+    users: req.body.publisher,
     createdBy: `${req.user?.userData.email}`,
   };
 
