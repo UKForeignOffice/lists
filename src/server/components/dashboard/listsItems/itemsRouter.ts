@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { csrfRequestHandler } from "server/components/cookies/helpers";
-import { listsController, listsEditController, listsItemsController, listPublisherDelete, listsEditPostController } from "server/components/dashboard/controllers";
+import {
+  listsController,
+  listsEditController,
+  listsItemsController,
+  listPublisherDelete,
+  listsEditPostController,
+} from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 
 import { logger } from "server/services/logger";
@@ -13,12 +19,12 @@ import {
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
+import { listItemEditRequestValidation } from "server/components/dashboard/listsItems/controllers";
 
 export const listRouter = express.Router();
 
 listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
 listRouter.get("/", listsController);
-
 listRouter.param("listId", async (req, res, next, listId) => {
   try {
     const listIdAsNumber = Number(listId);
@@ -59,6 +65,8 @@ listRouter.param("listItemId", async (req, res, next, listItemId) => {
     return next(e);
   }
 });
+
+listRouter.get("/:listId/items/*", listItemEditRequestValidation);
 
 listRouter.get("/:listId/items/:listItemId", controllers.listItemGetController);
 listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController);
