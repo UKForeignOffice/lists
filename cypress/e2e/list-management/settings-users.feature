@@ -1,34 +1,20 @@
 Feature: List management users
 
   Background:
-    Given I am logged in as a "SuperAdmin"
+    Given I am logged in as a "user"
+    And a list exists with users
     And I click the link "Lists"
     And I click the link "Settings" for "Eurasia"
 
 
-  Scenario Outline: Add emails to list of users
-    Given I enter "<emailAddress>" in the email input
-    Then I should see "<emailAddress>"
+  Scenario: Add emails to list of users
+    When I add "julia@cautionyourblast.com" as a user
+    Then I should see "julia@cautionyourblast.com"
 
-    Examples:
-      | emailAddress                 |
-      | julia@cautionyourblast.com   |
-      | winston@cautionyourblast.com |
-      | joker@cautionyourblast.com   |
-
-
-  Scenario Outline: Remove email from list of users
-    Given I remove the user "<emailAddress>"
-    And I see page with heading "Confirm the removal of this user"
+  Scenario: Add emails to list of users
+    When I remove the user "smoke+1@cautionyourblast.com"
     And I click the "Remove" button
-    Then I should not see "<emailAddress>"
-
-    Examples:
-      | emailAddress                 |
-      | julia@cautionyourblast.com   |
-      | winston@cautionyourblast.com |
-      | joker@cautionyourblast.com   |
-
+    Then I should not see "smoke+1@cautionyourblast.com"
 
   Scenario: User cannot delete themselves
     Given I remove the user "smoke@cautionyourblast.com"
@@ -38,5 +24,5 @@ Feature: List management users
 
 
   Scenario: Prevent adding duplicate user
-    Given I enter "smoke@cautionyourblast.com" in the email input
+    When I add "smoke@cautionyourblast.com" as a user
     Then I should see the error "This user already exists"

@@ -102,19 +102,18 @@ export async function createList(listData: {
 export async function updateList(
   listId: number,
   listData: {
-    publishers: string[];
+    users: string[];
   }
 ): Promise<List | undefined> {
   try {
-
-    const publishers = compact(listData.publishers.map(trim).map(toLower));
-    if (publishers.some((email) => !isGovUKEmailAddress(email))) {
+    const users = compact(listData.users.map(trim).map(toLower));
+    if (users.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Publishers contain a non GOV UK email address");
     }
 
     const data: ListUpdateInput = {
       jsonData: {
-        publishers,
+        users,
       },
     };
 

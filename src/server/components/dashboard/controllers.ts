@@ -13,6 +13,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
+import { ListIndexRes } from "server/components/dashboard/listsItems/types";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -177,17 +178,18 @@ export async function listsEditPostController(req: Request, res: Response, next:
 export async function listEditAddPublisher(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { listId } = req.params;
   let error: Partial<QuestionError> = {};
+  const list = await findListById(listId);
 
-  const list: List | undefined = await findListById(listId);
-  const publisher: string = req.body.publisher;
+  if (!list) {
+    const err = new HttpException(404, "404", "List could not be found.");
+    return next(err);
+  }
 
   const user = req.user;
   const userIsSuperAdmin = user?.isSuperAdmin();
 
-  if (!userIsSuperAdmin || (listId === "new" && !userIsSuperAdmin)) {
-    const err = new HttpException(403, "403", "You are not authorized to access this list.");
-    return next(err);
-  }
+  // TODO: rename to "newUser"
+  const publisher: string = req.body.publisher;
 
   if (!publisher || !isGovUKEmailAddress(publisher)) {
     error = {
@@ -199,10 +201,10 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     };
   }
 
-  if (list?.jsonData.publishers.includes(publisher)) {
+  if (list?.jsonData.users?.includes?.(publisher)) {
     error = {
       field: "publisher",
-      text: "This user already exists",
+      text: "This user already exists on this list",
       href: "#publisher",
     };
   }
@@ -240,12 +242,10 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     }
   }
 
-  const publishersListWithNewEmail = [...(list as List).jsonData.publishers, publisher];
+  const newUsers = [...(list.jsonData.users ?? []), publisher];
 
-  if (list !== undefined) {
-    await updateList(Number(listId), { publishers: publishersListWithNewEmail });
-    return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}`);
-  }
+  await updateList(Number(listId), { users: newUsers });
+  return res.redirect(res.locals.listsEditUrl);
 }
 
 export async function listEditRemovePublisher(req: Request, res: Response): Promise<void> {
@@ -263,11 +263,16 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
   });
 }
 
-export async function listPublisherDelete(req: Request, res: Response): Promise<void> {
-  const { listId } = req.params;
+export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
   const userEmail = req.body.userEmail;
-  const list: List | undefined = await findListById(listId);
+  const list = await findListById(res.locals.list?.id!);
   const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
+
+  if (!list) {
+    // TODO: this should never happen. findByListId should probably throw.
+    const err = new HttpException(404, "404", "List could not be found.");
+    return next(err);
+  }
 
   if (userHasRemovedOwnEmail) {
     const error = {
@@ -278,7 +283,7 @@ export async function listPublisherDelete(req: Request, res: Response): Promise<
 
     return res.render("dashboard/list-edit-confirm-delete-user", {
       ...DEFAULT_VIEW_PROPS,
-      listId,
+      listId: list.id,
       userEmail,
       error,
       list,
@@ -287,13 +292,13 @@ export async function listPublisherDelete(req: Request, res: Response): Promise<
     });
   }
 
-  const updatedPublishers = (list as List).jsonData.publishers.filter((publisher) => publisher !== userEmail);
+  const updatedUsers = list.jsonData?.users?.filter((u) => u !== userEmail) ?? [];
 
-  await updateList(Number(listId), { publishers: updatedPublishers });
+  await updateList(list.id, { users: updatedUsers });
 
   req.flash("changeMsg", `User ${userEmail} has been removed`);
 
-  return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${listId}`)}`);
+  return res.redirect(res.locals.listsEditUrl);
 }
 
 // TODO: test

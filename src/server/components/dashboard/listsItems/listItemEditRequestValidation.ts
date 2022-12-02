@@ -10,7 +10,7 @@ export async function validateAccessToList(req: Request, res: ListIndexRes, next
 
   if (!userHasAccessToList) {
     logger.warn(`${req.user?.userData.id} attempted to change ${list!.id} but does not have access`);
-    return next(new HttpException(403, "403", "Not permitted to make changes to this list"));
+    return next(new HttpException(403, "403", "User is not authorised to access this list."));
   }
   next();
 }

@@ -24,9 +24,7 @@ export type Country = PrismaClient.Country;
 
 // List
 export interface ListJsonData extends JsonObject {
-  validators?: string[];
-  publishers: string[];
-  administrators?: string[];
+  users?: string[];
 }
 
 export interface List extends PrismaClient.List {

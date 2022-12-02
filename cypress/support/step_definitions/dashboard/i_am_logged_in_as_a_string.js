@@ -1,6 +1,14 @@
 /* eslint-disable */
 Given("I am logged in as a {string}", (role) => {
-  const roles = role ? { roles: [role] } : { roles: [] };
+  const roles = role === "SuperAdmin" ? { roles: [role] } : { roles: [] };
+  cy.task("db", {
+    operation: "user.deleteMany",
+    variables: {
+      where: {
+        email: "smoke@cautionyourblast.com",
+      },
+    },
+  });
   cy.task("db", {
     operation: "user.upsert",
     variables: {
@@ -20,7 +28,3 @@ Given("I am logged in as a {string}", (role) => {
   cy.visit("/login");
   cy.get("#email-address").type(`smoke@cautionyourblast.com{enter}`);
 });
-
-const roleEmails = {
-  SuperAdmin: "smoke@cautionyourblast.com",
-};
