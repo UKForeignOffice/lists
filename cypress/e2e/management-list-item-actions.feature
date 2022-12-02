@@ -121,5 +121,6 @@ Feature: Dashboard filtering
 #
 
   Scenario: Should not be able to view list if not publisher
+    Given I am logged in as a ""
     When I visit a list that I am not a publisher of
     Then I should see an unauthorised page

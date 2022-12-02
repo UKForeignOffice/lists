@@ -1,7 +1,6 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
-import { authRoutes } from "server/components/auth";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -23,7 +22,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
-import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -448,45 +446,4 @@ async function initialiseFormRunnerSession(
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
   return createFormRunnerEditListItemLink(token);
-}
-
-export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
-  if (req.isUnauthenticated()) {
-    return res.redirect(authRoutes.logout);
-  }
-
-  const { list, listItem } = res.locals;
-  const listId = list?.id;
-  const listItemId = listItem?.id;
-
-  const userHasAccessToList = await req.user?.hasAccessToList(listId);
-
-  if (!userHasAccessToList) {
-    logger.warn(`${req.user?.userData.id} attempted to change ${listId}/${listItemId} but does not have access`);
-    return next(new HttpException(403, "403", "Not permitted to make changes to this list"));
-  }
-
-  if (!list) {
-    // TODO: should be handled by router.param
-    const err = new HttpException(404, "404", `Could not find list ${listId}`);
-    return next(err);
-  }
-
-  if (!listItem) {
-    // TODO: should be handled by router.param
-    const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
-    return next(err);
-  }
-
-  if (list.type !== listItem.type) {
-    return next(
-      new HttpException(400, "400", `Trying to edit a list item which is a different service type to list ${listId}`)
-    );
-  }
-
-  if (list.id !== listItem.listId) {
-    const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
-    return next(err);
-  }
-  return next();
 }

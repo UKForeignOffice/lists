@@ -1,26 +1,26 @@
 /* eslint-disable */
 Given("I am logged in as a {string}", (role) => {
+  const roles = role ? { roles: [role] } : { roles: [] };
   cy.task("db", {
     operation: "user.upsert",
     variables: {
       create: {
-        email: roleEmails[role],
-        jsonData: { roles: [role] },
+        email: "smoke@cautionyourblast.com",
+        jsonData: roles,
       },
       update: {
-        jsonData: { roles: [role] },
+        jsonData: roles,
       },
       where: {
-        email: roleEmails[role],
+        email: "smoke@cautionyourblast.com",
       },
     },
   });
 
   cy.visit("/login");
-  cy.get("#email-address").type(`${roleEmails[role]}{enter}`);
+  cy.get("#email-address").type(`smoke@cautionyourblast.com{enter}`);
 });
 
 const roleEmails = {
   SuperAdmin: "smoke@cautionyourblast.com",
-  ListsCreator: "reptile@cautionyourblast.com",
 };

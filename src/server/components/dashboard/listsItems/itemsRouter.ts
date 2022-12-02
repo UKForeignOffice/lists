@@ -19,18 +19,21 @@ import {
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
-import { listItemEditRequestValidation } from "server/components/dashboard/listsItems/controllers";
+import { validateAccessToList } from "server/components/dashboard/listsItems/listItemEditRequestValidation";
 
 export const listRouter = express.Router();
 
 listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
 listRouter.get("/", listsController);
+
 listRouter.param("listId", async (req, res, next, listId) => {
   try {
     const listIdAsNumber = Number(listId);
     const list = await getListOverview(listIdAsNumber);
+
     if (!list) {
-      return res.status(404);
+      const err = new HttpException(404, "404", `Could not find list ${listId}`);
+      return next(err);
     }
 
     res.locals.list = list;
@@ -44,6 +47,8 @@ listRouter.param("listId", async (req, res, next, listId) => {
   }
 });
 
+listRouter.all("/:listId*", validateAccessToList);
+
 listRouter.get("/:listId", listsEditController);
 listRouter.post("/:listId", listsEditPostController);
 
@@ -54,10 +59,19 @@ listRouter.get("/:listId/items", listsItemsController);
 listRouter.param("listItemId", async (req, res, next, listItemId) => {
   try {
     const listItemIdAsNumber = Number(listItemId);
-    res.locals.listItem = await findListItemById(listItemIdAsNumber);
+    const listItem = await findListItemById(listItemIdAsNumber);
+
+    if (!listItem) {
+      // TODO: should be handled by router.param
+      const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
+      return next(err);
+    }
+
+    res.locals.listItem = listItem;
     res.locals.listItemUrl = `${res.locals.listIndexUrl}/${listItemId}`;
     const list = res.locals.list;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]} in ${list.country.name} details`;
+
     return next();
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);
@@ -65,8 +79,6 @@ listRouter.param("listItemId", async (req, res, next, listItemId) => {
     return next(e);
   }
 });
-
-listRouter.get("/:listId/items/*", listItemEditRequestValidation);
 
 listRouter.get("/:listId/items/:listItemId", controllers.listItemGetController);
 listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController);

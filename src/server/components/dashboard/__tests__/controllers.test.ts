@@ -14,11 +14,9 @@ import {
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
 import { NextFunction } from "express";
-import {
-  listItemEditRequestValidation,
-  listItemGetController,
-} from "server/components/dashboard/listsItems/controllers";
+import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
+import { listItemEditRequestValidation } from "../listsItems/listItemEditRequestValidation";
 
 jest.useFakeTimers("modern");
 
@@ -371,40 +369,6 @@ describe("Dashboard Controllers", () => {
       next = jest.fn();
     });
 
-    it("should redirect if user is undefined", async () => {
-      mockReq.isUnauthenticated.mockReturnValue(true);
-
-      await listItemEditRequestValidation(mockReq, mockRes, next);
-
-      expect(mockRes.redirect).toHaveBeenCalledWith("/logout");
-    });
-
-    it("should return a 404 if list is not found", async () => {
-      const mockedNext = jest.fn();
-      mockReq.isUnauthenticated.mockReturnValue(false);
-      mockReq.user.hasAccessToList.mockResolvedValueOnce(true);
-      mockRes.locals = {
-        list: undefined,
-      };
-
-      await listItemEditRequestValidation(mockReq, mockRes, mockedNext);
-      const err = mockedNext.mock.calls[0][0];
-
-      expect(err.status).toBe(404);
-      expect(err.code).toBe("404");
-    });
-
-    it("should return a 403 if user is not permitted to make changes to the list", async () => {
-      mockReq.user.hasAccessToList.mockResolvedValueOnce(false);
-      const next = jest.fn();
-
-      await listItemEditRequestValidation(mockReq, mockRes, next);
-      const err = next.mock.calls[0][0];
-
-      expect(err.status).toBe(403);
-      expect(err.message).toContain("Not permitted to make changes to this list");
-    });
-
     it("should call editListItem with the correct params", async () => {
       await listItemGetController(mockReq, mockRes);
 
@@ -444,40 +408,6 @@ describe("Dashboard Controllers", () => {
       next = jest.fn();
     });
 
-    it("should redirect if user is undefined", async () => {
-      mockReq.isUnauthenticated.mockReturnValue(true);
-
-      await listItemEditRequestValidation(mockReq, mockRes, next);
-
-      expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
-    });
-
-    it("should return a 404 if list is not found", async () => {
-      mockReq.user.hasAccessToList.mockResolvedValueOnce(true);
-      const mockedNext = jest.fn();
-      mockRes.locals = {
-        list: undefined,
-      };
-      await listItemEditRequestValidation(mockReq, mockRes, mockedNext);
-      const err = mockedNext.mock.calls[0][0];
-
-      expect(err.status).toBe(404);
-      expect(err.code).toBe("404");
-    });
-
-    it("should return a 404 if list item is not found", async () => {
-      mockReq.user.hasAccessToList.mockResolvedValueOnce(true);
-
-      const mockedNext = jest.fn();
-      mockRes.locals.listItem = undefined;
-      await listItemEditRequestValidation(mockReq, mockRes, mockedNext);
-      const err = mockedNext.mock.calls[0][0];
-
-      expect(err.status).toBe(404);
-      expect(err.code).toBe("404");
-      expect(err.message).toContain("list item");
-    });
-
     it("should return a 400 if list service type differs to list item service type", async () => {
       mockReq.user.hasAccessToList.mockResolvedValueOnce(true);
       mockRes.locals.listItem = { type: "lawyers" };
@@ -508,18 +438,6 @@ describe("Dashboard Controllers", () => {
 
       expect(err.status).toBe(400);
       expect(err.message).toContain("Trying to edit a list item which does not belong to list 1");
-    });
-
-    //TODO: this is tested 3 times..?
-    it("should return a 403 if user is not permitted to make changes to the list", async () => {
-      mockReq.user.hasAccessToList.mockResolvedValueOnce(false);
-      const next = jest.fn();
-
-      await listItemEditRequestValidation(mockReq, mockRes, next);
-
-      const err = next.mock.calls[0][0];
-      expect(err.status).toBe(403);
-      expect(err.message).toContain("Not permitted to make changes to this list");
     });
 
     it.skip("should call editListItem with the correct params", async () => {
