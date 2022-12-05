@@ -55,8 +55,8 @@ export default class AuthenticatedUser {
       return true;
     }
 
-    if (id === "new") {
-      return true;
+    if (!this.isSuperAdmin() && id === "new") {
+      return false;
     }
 
     const result = await prisma.list.findFirst({

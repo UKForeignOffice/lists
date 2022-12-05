@@ -7,7 +7,7 @@ export async function validateAccessToList(req: Request, res: ListIndexRes, next
   try {
     const { list } = res.locals;
 
-    const userHasAccessToList = await req.user?.hasAccessToList(list.id);
+    const userHasAccessToList = await req.user?.hasAccessToList(list!.id);
 
     if (!userHasAccessToList) {
       logger.warn(`user ${req.user?.id} attempted to change list ${list!.id} but does not have access`);

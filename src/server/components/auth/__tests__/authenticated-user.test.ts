@@ -60,11 +60,11 @@ test("hasAccessToList always returns true when super admin", async () => {
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
-test("hasAccessToList always returns true when listId is 'new'", async () => {
+test("only superAdmins can create new lists", async () => {
   expect(superAdmin.hasAccessToList("new")).toBeTruthy();
   expect(prisma.list).not.toHaveBeenCalled();
 
-  expect(user.hasAccessToList("new")).toBeTruthy();
+  expect(user.hasAccessToList("new")).toBeFalsy();
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
