@@ -65,46 +65,12 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       return next();
     }
 
-    let userSaved = false;
-    let isEditingSuperAdminUser = false;
-
-    try {
-      isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
-      if (isEditingSuperAdminUser) {
-        // disallow editing of SuperAdmins
-        logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
-        return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
-      }
-    } catch (error) {
-      return next(error);
-    }
-
-    if (req.method === "POST") {
-      let roles: UserRoles[];
-      const usersRoles: UserRoles | UserRoles[] = req.body.roles;
-
-      if (Array.isArray(usersRoles)) {
-        roles = usersRoles;
-      } else {
-        roles = (usersRoles ?? "").split(",").map(trim) as UserRoles[];
-      }
-
-      await updateUser(userEmail, {
-        jsonData: {
-          roles,
-        },
-      });
-
-      userSaved = true;
-    }
-
     const user = await findUserByEmail(`${userEmail}`);
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.usersEdit],
       UserRoles,
-      userSaved,
       user,
       req,
       csrfToken: getCSRFToken(req),
@@ -112,6 +78,40 @@ export async function usersEditController(req: Request, res: Response, next: Nex
   } catch (error) {
     next(error);
   }
+}
+
+export async function usersEditPostController(req, res, next) {
+  let roles: UserRoles[];
+  const usersRoles: UserRoles | UserRoles[] = req.body.roles;
+  const { userEmail } = req.params;
+
+  const isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
+  if (isEditingSuperAdminUser) {
+    // disallow editing of SuperAdmins
+    logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
+    return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
+  }
+
+  if (Array.isArray(usersRoles)) {
+    roles = usersRoles;
+  } else {
+    roles = (usersRoles ?? "").split(",").map(trim) as UserRoles[];
+  }
+
+  const update = await updateUser(userEmail, {
+    jsonData: {
+      roles,
+    },
+  });
+
+  req.flash("userUpdatedEmail", userEmail);
+
+  const updateSuccessful = !!update;
+
+  req.flash("userUpdatedSuccessful", updateSuccessful);
+  req.flash("userUpdatedNotificationColour", updateSuccessful ? "green" : "red");
+
+  return res.redirect("/dashboard/users");
 }
 
 export async function listsController(req: Request, res: Response, next: NextFunction): Promise<void> {

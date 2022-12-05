@@ -8,10 +8,6 @@
   <h1 class="govuk-heading-l">Editing User</h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
-  {% if userSaved %}
-    {{ dashboardMacros.successBanner("User updated successfully") }}
-  {% endif %}
-
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}

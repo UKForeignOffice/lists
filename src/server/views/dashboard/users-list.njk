@@ -1,6 +1,12 @@
 {% extends "./dashboard.njk" %}
 
 {% block dashboard %}
+  {% set emailUpdated = messages.userUpdatedEmail %}
+  {% set successBannerTitle = "Success" if messages.userUpdatedSuccessful else "Error" %}
+  {% set notificationMessage = " updated successfully" if messages.userUpdatedSuccessful else " failed to update" %}
+  {% if messages.userUpdatedEmail %}
+    {{ dashboardMacros.successBanner(successBannerTitle, messages.userUpdatedEmail + notificationMessage, messages.userUpdatedNotificationColour) }}
+  {% endif %}
   <table class="govuk-table">
     <caption class="govuk-table__caption govuk-table__caption--l">Users</caption>
     <thead class="govuk-table__head">
@@ -16,7 +22,9 @@
           <th scope="row" class="govuk-table__header">{{ user.email }}</th>
           <td class="govuk-table__cell">{{ user.jsonData.roles.join(", ") }}</td>
           <td class="govuk-table__cell govuk-table__cell--numeric">
+            {% if not user.jsonData.roles.includes('SuperAdmin') %}
             <a href="{{ dashboardRoutes.usersEdit.replace(':userEmail', user.email) }}" class="govuk-link">Edit</a>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}

@@ -239,3 +239,13 @@ $two-thirds: $one-third * 2;
     width: 100%;
   }
 }
+
+.govuk-notification-banner {
+  &--green {
+    @extend .govuk-notification-banner--success;
+  }
+  &--red {
+    border-color: govuk-colour("red");
+    background-color: govuk-colour("red");
+  }
+}
