@@ -16,7 +16,7 @@ import * as helpers from "server/components/dashboard/helpers";
 import { NextFunction } from "express";
 import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
-import { listItemEditRequestValidation } from "../listsItems/listItemEditRequestValidation";
+import { requestValidation } from "../listsItems/listItemEditRequestValidation";
 
 jest.useFakeTimers("modern");
 
@@ -415,7 +415,7 @@ describe("Dashboard Controllers", () => {
 
       const next = jest.fn();
 
-      await listItemEditRequestValidation(mockReq, mockRes, next);
+      await requestValidation(mockReq, mockRes, next);
       const err = next.mock.calls[0][0];
       expect(err.status).toBe(400);
       expect(err.message).toContain("Trying to edit a list item which is a different service type");
@@ -432,7 +432,7 @@ describe("Dashboard Controllers", () => {
 
       const next = jest.fn();
 
-      await listItemEditRequestValidation(mockReq, mockRes, next);
+      await requestValidation(mockReq, mockRes, next);
 
       const err = next.mock.calls[0][0];
 

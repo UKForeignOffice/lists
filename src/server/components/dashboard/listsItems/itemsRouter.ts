@@ -19,7 +19,7 @@ import {
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
-import { validateAccessToList } from "server/components/dashboard/listsItems/listItemEditRequestValidation";
+import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 
 export const listRouter = express.Router();
 
