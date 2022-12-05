@@ -11,11 +11,7 @@ import * as controllers from "server/components/dashboard/listsItems/controllers
 
 import { logger } from "server/services/logger";
 import express from "express";
-import {
-  getListOverview,
-  redirectIfUnauthorised,
-  serviceTypeDetailsHeading,
-} from "server/components/dashboard/listsItems/helpers";
+import { getListOverview, serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
@@ -27,6 +23,13 @@ listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
 listRouter.get("/", listsController);
 
 listRouter.param("listId", async (req, res, next, listId) => {
+  if (listId === "new") {
+    res.locals.list = {
+      id: "new",
+    };
+    return next();
+  }
+
   try {
     const listIdAsNumber = Number(listId);
     const list = await getListOverview(listIdAsNumber);
@@ -52,7 +55,7 @@ listRouter.all("/:listId*", validateAccessToList);
 listRouter.get("/:listId", listsEditController);
 listRouter.post("/:listId", listsEditPostController);
 
-listRouter.all("/:listId/*", redirectIfUnauthorised);
+listRouter.all("/:listId/*", validateAccessToList);
 
 listRouter.get("/:listId/items", listsItemsController);
 

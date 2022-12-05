@@ -50,8 +50,12 @@ export default class AuthenticatedUser {
     return lists ?? [];
   }
 
-  async hasAccessToList(id: List["id"]) {
+  async hasAccessToList(id: List["id"] | "new") {
     if (this.isSuperAdmin()) {
+      return true;
+    }
+
+    if (id === "new") {
       return true;
     }
 

@@ -175,14 +175,26 @@ export async function listsEditPostController(req: Request, res: Response, next:
   }
 }
 
-export async function listEditAddPublisher(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { listId } = req.params;
+/**
+ * TODO: rename - confusing controller name. this is also used to create new lists.
+ */
+export async function listEditAddPublisher(req: Request, res: Response, next: NextFunction) {
+  const listId = res.locals.list.id;
   let error: Partial<QuestionError> = {};
-  const list = await findListById(listId);
 
-  if (!list) {
-    const err = new HttpException(404, "404", "List could not be found.");
-    return next(err);
+  const data = {
+    country: req.body.country,
+    serviceType: req.body.serviceType,
+    users: req.body.publisher,
+    createdBy: `${req.user?.userData.email}`,
+  };
+
+  if (listId === "new") {
+    const newList = await createList(data);
+
+    if (newList?.id !== undefined) {
+      return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
+    }
   }
 
   const user = req.user;
@@ -200,6 +212,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     };
   }
 
+  const list = await findListById(listId);
+
   if (list?.jsonData.users?.includes?.(publisher)) {
     error = {
       field: "publisher",
@@ -209,7 +223,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   }
 
   const errorExists = "field" in error;
-
+  // TODO:- implement post redirect get.
   if (errorExists) {
     return res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
@@ -222,22 +236,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     });
   }
 
-  const data = {
-    country: req.body.country,
-    serviceType: req.body.serviceType,
-    users: req.body.publisher,
-    createdBy: `${req.user?.userData.email}`,
-  };
-
   req.flash("changeMsg", `User ${publisher} has been created`);
-
-  if (listId === "new") {
-    const newList = await createList(data);
-
-    if (newList?.id !== undefined) {
-      return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
-    }
-  }
 
   const newUsers = [...(list.jsonData.users ?? []), publisher];
 

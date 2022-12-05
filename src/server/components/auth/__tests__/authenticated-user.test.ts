@@ -60,6 +60,14 @@ test("hasAccessToList always returns true when super admin", async () => {
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
+test("hasAccessToList always returns true when listId is 'new'", async () => {
+  expect(superAdmin.hasAccessToList("new")).toBeTruthy();
+  expect(prisma.list).not.toHaveBeenCalled();
+
+  expect(user.hasAccessToList("new")).toBeTruthy();
+  expect(prisma.list).not.toHaveBeenCalled();
+});
+
 test("hasAccessToList returns correct value", async () => {
   prisma.list.findFirst.mockResolvedValue(null);
   expect(await user.hasAccessToList(1)).toBe(false);
