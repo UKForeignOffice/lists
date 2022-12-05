@@ -56,15 +56,15 @@ test("getLists query is correct for user", async () => {
 });
 
 test("hasAccessToList always returns true when super admin", async () => {
-  expect(superAdmin.hasAccessToList(1)).toBeTruthy();
+  expect(await superAdmin.hasAccessToList(1)).toBeTruthy();
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
 test("only superAdmins can create new lists", async () => {
-  expect(superAdmin.hasAccessToList("new")).toBeTruthy();
+  expect(await superAdmin.hasAccessToList("new")).toBeTruthy();
   expect(prisma.list).not.toHaveBeenCalled();
 
-  expect(user.hasAccessToList("new")).toBeFalsy();
+  expect(await user.hasAccessToList("new")).toBe(false);
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
