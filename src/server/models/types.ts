@@ -62,7 +62,6 @@ export interface BaseListItemGetObject extends PrismaClient.ListItem {
 export enum UserRoles {
   // Application Level Roles
   SuperAdmin = "SuperAdmin",
-  ListsCreator = "ListsCreator",
 }
 
 type AsJsonObject<T> = T & JsonObject;

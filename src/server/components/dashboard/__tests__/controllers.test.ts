@@ -16,7 +16,7 @@ import * as helpers from "server/components/dashboard/helpers";
 import { NextFunction } from "express";
 import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
-import { requestValidation } from "../listsItems/listItemEditRequestValidation";
+import { requestValidation } from "../listsItems/requestValidation";
 
 jest.useFakeTimers("modern");
 
@@ -205,13 +205,13 @@ describe("Dashboard Controllers", () => {
 
       mockReq.method = "POST";
       mockReq.body = {
-        roles: `${UserRoles.SuperAdmin},${UserRoles.ListsCreator}`,
+        roles: `${UserRoles.SuperAdmin}`,
       };
 
       await usersEditController(mockReq, mockRes, mockNext);
       expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
         jsonData: {
-          roles: [UserRoles.SuperAdmin, UserRoles.ListsCreator],
+          roles: [UserRoles.SuperAdmin],
         },
       });
       expect(mockRes.render.mock.calls[0][1].userSaved).toBe(true);

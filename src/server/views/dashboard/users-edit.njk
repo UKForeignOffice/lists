@@ -49,9 +49,6 @@
                   {{ _.startCase(role) }}
                 </label>
                 <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
-                  {% if role === UserRoles.ListsCreator %}
-                    A Lists Creator can create new lists
-                  {% endif %}
                   {% if role === UserRoles.SuperAdmin %}
                     Set user roles, create new lists and assign users to lists
                   {% endif %}
