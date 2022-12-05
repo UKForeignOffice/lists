@@ -214,6 +214,10 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
 
   const list = await findListById(listId);
 
+  if(!list) {
+    return next( new HttpException(404, "404", "List could not be found.");
+  }
+
   if (list?.jsonData.users?.includes?.(publisher)) {
     error = {
       field: "publisher",
