@@ -80,7 +80,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
   }
 }
 
-export async function usersEditPostController(req, res, next) {
+export async function usersEditPostController(req: Request, res: Response, next: NextFunction) {
   let roles: UserRoles[];
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
