@@ -9,6 +9,7 @@ import {
   listsItemsController,
   startRouteController,
   usersEditController,
+  usersEditPostController,
   usersListController,
 } from "../controllers";
 import * as govukNotify from "../../../services/govuk-notify";
@@ -17,6 +18,7 @@ import { NextFunction } from "express";
 import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
+import { HttpException } from "../../../middlewares/error-handlers";
 
 jest.useFakeTimers("modern");
 
@@ -195,7 +197,9 @@ describe("Dashboard Controllers", () => {
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-edit");
       expect(mockRes.render.mock.calls[0][1].user).toBe(userBeingEdited);
     });
+  });
 
+  describe("usersEditPostController", () => {
     test("it correctly updates user removing SuperAdmin role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
@@ -208,25 +212,25 @@ describe("Dashboard Controllers", () => {
         roles: `${UserRoles.SuperAdmin}`,
       };
 
-      await usersEditController(mockReq, mockRes, mockNext);
+      await usersEditPostController(mockReq, mockRes, mockNext);
       expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
         jsonData: {
           roles: [UserRoles.SuperAdmin],
         },
       });
-      expect(mockRes.render.mock.calls[0][1].userSaved).toBe(true);
+      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/users");
     });
 
     test("next is invoked with updateUser error", async () => {
       const error = { message: "error" };
-      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
+      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
       mockReq.body = { roles: "" };
 
-      await usersEditController(mockReq, mockRes, mockNext);
+      await usersEditPostController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "Not allowed to edit super admin account"));
     });
   });
 
