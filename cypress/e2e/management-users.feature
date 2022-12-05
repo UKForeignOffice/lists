@@ -16,16 +16,6 @@ Feature: List management role changing for super Admins
         And go back to the users page
         Then I should see the "SuperAdmin" role assigned to "no.role@cautionyourblast.com"
 
-
-    Scenario: Change ListsCreator to SuperAdmin
-        When I click the edit link for user with email "list.creator@cautionyourblast.com"
-        And uncheck the "Lists Creator" checkbox
-        And check the "Super Admin" checkbox
-        And I click the "Save" button
-        And go back to the users page
-        Then I should see the "SuperAdmin" role assigned to "list.creator@cautionyourblast.com"
-
-
     Scenario: Remove SuperAdmin role from another SuperAdmin
         When I click the edit link for user with email "super.admin@cautionyourblast.com"
         Then I see "Not allowed to edit super admin account"
