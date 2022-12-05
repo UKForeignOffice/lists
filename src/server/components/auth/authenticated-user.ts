@@ -55,7 +55,7 @@ export default class AuthenticatedUser {
       return true;
     }
 
-    if (!this.isSuperAdmin() && id === "new") {
+    if (id === "new") {
       return false;
     }
 
