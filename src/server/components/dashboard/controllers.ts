@@ -108,7 +108,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
 
   const updateSuccessful = !!update;
 
-  req.flash("userUpdatedSuccessful", updateSuccessful);
+  req.flash("userUpdatedSuccessful", `${updateSuccessful}`);
   req.flash("userUpdatedNotificationColour", updateSuccessful ? "green" : "red");
 
   return res.redirect("/dashboard/users");

@@ -2,6 +2,7 @@
 
 {% block dashboard %}
   {% set emailUpdated = messages.userUpdatedEmail %}
+  {% set userUpdatedSuccessful = messages.userUpdatedSuccessful == 'true' %}
   {% set successBannerTitle = "Success" if messages.userUpdatedSuccessful else "Error" %}
   {% set notificationMessage = " updated successfully" if messages.userUpdatedSuccessful else " failed to update" %}
   {% if messages.userUpdatedEmail %}
