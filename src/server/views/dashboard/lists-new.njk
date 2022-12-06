@@ -10,124 +10,134 @@
 {% endblock %}
 
 
-{% block dashboard %}
-  <div>
-    {% if messages.successBannerHeading %}
-      {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
-    {% endif %}
-
-    {% if error.field %}
-      {{ dashboardMacros.errorBanner(error) }}
-    {% endif %}
-
-    <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
-    <h1 class="govuk-heading-l">
-        Create new list
-    </h1>
-    <h4 class="govuk-heading-s">{{ user.email }}</h4>
-
-    <form class="form" action="{{ listsEditUrl }}" method="post" required>
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-      <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h3 class="govuk-fieldset__heading govuk-heading-m">
-              Service Type?
-            </h3>
-          </legend>
-          {% if error.field === 'serviceType' %}
-            <span class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-            </span>
-          {% endif %}
-          <div class="govuk-radios">
-            {% for prop, serviceType in ServiceType %}
-              <div class="govuk-radios__item">
-                <input
-                  class="govuk-radios__input"
-                  id="serviceType-{{ serviceType }}"
-                  name="serviceType"
-                  type="radio"
-                  value="{{ serviceType }}"
-                  {{-" checked" if list.type === serviceType }}
-                >
-                <label class="govuk-label govuk-radios__label" for="serviceType">
-                  {{ _.startCase(serviceType) }}
-                </label>
-              </div>
-            {% endfor %}
-          </div>
-        </fieldset>
+{% block content %}
+  <div class="govuk-grid-row back-links__container">
+    <aside class="govuk-grid-column-one-quarter back-links__aside">
+      <div class="back-links__item">
+        <a class="govuk-link govuk-back-link" href="/dashboard/lists">Back</a>
       </div>
-
-      <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
-        <h3 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--m" for="country-autocomplete">
-            Which country is this list for?
-          </label>
-        </h3>
-        {% if error.field === 'country' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
-        <select id="country-autocomplete" name="country" className="govuk-input--error">
-          <option value=""></option>
-          {% for country in countriesList %}
-            <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name === country.value}}>{{ country.text }}</option>
-          {% endfor %}
-        </select>
-
+      <div class="back-links__item">
+        <a class="govuk-link govuk-back-link" href="/dashboard/lists">Back</a>
       </div>
+    </aside>
+    <div class="govuk-grid-column-three-quarters">
+      {% if messages.successBannerHeading %}
+        {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
+      {% endif %}
 
-        <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publisher' }}">
+      {% if error.field %}
+        {{ dashboardMacros.errorBanner(error) }}
+      {% endif %}
+
+      <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
+      <h1 class="govuk-heading-l">
+          Create new list
+      </h1>
+      <h4 class="govuk-heading-s">{{ user.email }}</h4>
+
+      <form class="form" action="{{ listsEditUrl }}" method="post" required>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'serviceType' }}">
           <fieldset class="govuk-fieldset">
-            <h3 class="govuk-label-wrapper">
-              <label class="govuk-label govuk-label--m" for="publisher">
-                Users
-              </label>
-            </h3>
-            {% if error.field === 'publisher' %}
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+              <h3 class="govuk-fieldset__heading govuk-heading-m">
+                Service Type?
+              </h3>
+            </legend>
+            {% if error.field === 'serviceType' %}
               <span class="govuk-error-message">
                 <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
               </span>
             {% endif %}
-            <div id="publisher-hint" class="govuk-body">
-              All users can accept and publish service providers on the {{ _.startCase(list.type)}} list in {{list.country.name}}.
+            <div class="govuk-radios">
+              {% for prop, serviceType in ServiceType %}
+                <div class="govuk-radios__item">
+                  <input
+                    class="govuk-radios__input"
+                    id="serviceType-{{ serviceType }}"
+                    name="serviceType"
+                    type="radio"
+                    value="{{ serviceType }}"
+                    {{-" checked" if list.type === serviceType }}
+                  >
+                  <label class="govuk-label govuk-radios__label" for="serviceType">
+                    {{ _.startCase(serviceType) }}
+                  </label>
+                </div>
+              {% endfor %}
             </div>
-              <label class="govuk-label" for="publisher">
-                Enter an email address
-              </label>
-              <input class="govuk-input" id="publisher" name="publisher" type="email" aria-describedby="publisher-hint">
           </fieldset>
         </div>
 
-        <button class="govuk-button" data-module="govuk-button">
-            Create
-        </button>
+        <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
+          <h3 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--m" for="country-autocomplete">
+              Which country is this list for?
+            </label>
+          </h3>
+          {% if error.field === 'country' %}
+            <span class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+            </span>
+          {% endif %}
+          <select id="country-autocomplete" name="country" className="govuk-input--error">
+            <option value=""></option>
+            {% for country in countriesList %}
+              <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name === country.value}}>{{ country.text }}</option>
+            {% endfor %}
+          </select>
 
-        {% if error.field === 'publisherList' %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-          </span>
-        {% endif %}
+        </div>
 
-        <dl class="govuk-summary-list {{ "govuk-form-group--error" if error.field === 'publisherList' }}">
-          {% for user in _.reverse(list.jsonData.users) %}
-            <div class="govuk-summary-list__row">
-              <dt class="govuk-summary-list__key">
-                {{ user }}
-              </dt>
-              <dd class="govuk-summary-list__actions">
-                  <button class="govuk-button govuk-button--secondary govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user }}">
-                    Remove<span class="govuk-visually-hidden"> publisher</span>
-                  </button>
-              </dd>
-            </div>
-          {% endfor %}
-        </dl>
-    </form>
+          <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publisher' }}">
+            <fieldset class="govuk-fieldset">
+              <h3 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--m" for="publisher">
+                  Users
+                </label>
+              </h3>
+              {% if error.field === 'publisher' %}
+                <span class="govuk-error-message">
+                  <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+                </span>
+              {% endif %}
+              <div id="publisher-hint" class="govuk-body">
+                All users can accept and publish service providers on the {{ _.startCase(list.type)}} list in {{list.country.name}}.
+              </div>
+                <label class="govuk-label" for="publisher">
+                  Enter an email address
+                </label>
+                <input class="govuk-input" id="publisher" name="publisher" type="email" aria-describedby="publisher-hint">
+            </fieldset>
+          </div>
+
+          <button class="govuk-button" data-module="govuk-button">
+              Create
+          </button>
+
+          {% if error.field === 'publisherList' %}
+            <span class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+            </span>
+          {% endif %}
+
+          <dl class="govuk-summary-list {{ "govuk-form-group--error" if error.field === 'publisherList' }}">
+            {% for user in _.reverse(list.jsonData.users) %}
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  {{ user }}
+                </dt>
+                <dd class="govuk-summary-list__actions">
+                    <button class="govuk-button govuk-button--secondary govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user }}">
+                      Remove<span class="govuk-visually-hidden"> publisher</span>
+                    </button>
+                </dd>
+              </div>
+            {% endfor %}
+          </dl>
+      </form>
+    </div>
   </div>
 
   <script nonce="{{cspNonce}}">

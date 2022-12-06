@@ -2,8 +2,7 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import {ListItem} from "@prisma/client";
-
+import { ListItem } from "@prisma/client";
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
@@ -15,7 +14,7 @@ interface DetailsViewModel {
 /**
  * TODO: implement i18n
  */
-const fieldTitles: { [prop: string]: string } = {
+export const fieldTitles: { [prop: string]: string } = {
   /**
    * used to convert fieldNames to a user-facing string
    */
@@ -91,10 +90,7 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   return "string";
 }
 
-function parseValue<T extends KeyOfJsonData>(
-  field: T,
-  jsonData: ListItemJsonData
-): ListItemJsonData[T] {
+function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonData): ListItemJsonData[T] {
   /**
    * if a field needs to be parsed differently, add a statement here.
    * TODO: if there are a lot of cases, refactor into an object!
@@ -105,20 +101,44 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
       jsonData.city?.trim() ?? "",
-    ].filter((line) => line)
+    ]
+      .filter((line) => line)
       .join(`\n`);
   }
   return jsonData?.[field];
+}
+
+function hasUpdate(field: KeyOfJsonData, listItem: ListItemJsonData) {
+  const updatedJsonData = listItem?.updatedJsonData;
+  if (!updatedJsonData) {
+    return false;
+  }
+  if (field === "address") {
+    const addressFields = ["address.firstLine", "address.secondLine", "postCode", "city"];
+    const addressFieldsHasChange =
+      addressFields.findIndex((addressField) => {
+        // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+        // eslint-disable-next-line no-prototype-builtins
+        return updatedJsonData?.hasOwnProperty?.(addressField) ?? false;
+      }) !== -1;
+    return addressFieldsHasChange;
   }
 
-function rowFromField(
-  field: KeyOfJsonData,
-  listItem: ListItemJsonData
-): Types.govukRow {
+  // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+  // eslint-disable-next-line no-prototype-builtins
+  return updatedJsonData?.hasOwnProperty?.(field);
+}
+
+function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
+
+  const fieldHasUpdate = hasUpdate(field, listItem);
+
+  const updateTag = { html: "<strong class='govuk-tag'>Updated</strong>" };
+
   return {
     key: {
       text: fieldTitles[field] ?? "",
@@ -126,6 +146,10 @@ function rowFromField(
     value: {
       [valueKey]: value,
     },
+    ...(fieldHasUpdate && {
+      actions: { items: [updateTag] },
+      hasUpdate: fieldHasUpdate,
+    }),
     type: getValueMacroType(value, field),
   };
 }
@@ -135,22 +159,16 @@ function removeEmpty(row: Types.govukRow): string | boolean {
   return row.value.text ?? row.value.html ?? false;
 }
 
-function jsonDataAsRows(
-  fields: KeyOfJsonData[] | KeyOfJsonData,
-  jsonData: ListItemJsonData
-): Types.govukRow[] {
+function jsonDataAsRows(fields: KeyOfJsonData[] | KeyOfJsonData, jsonData: ListItemJsonData): Types.govukRow[] {
   if (!Array.isArray(fields)) {
     return [rowFromField(fields, jsonData)];
   }
-  return fields
-    .map((field) => rowFromField(field, jsonData))
-    .filter(removeEmpty);
+  return fields.map((field) => rowFromField(field, jsonData)).filter(removeEmpty);
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.jsonData.publicEmailAddress) {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.publicEmailAddress;
-
   } else {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.emailAddress;
   }
@@ -167,12 +185,13 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
     listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
   }
+
   return jsonDataAsRows(contactFields, listItem.jsonData);
 }
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const { jsonData } = listItem;
-  const type = listItem.type as ServiceType
+  const type = listItem.type as ServiceType;
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
@@ -215,23 +234,18 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);
     listItem.jsonData.languagesProvided = languagesArray;
   }
-
   return jsonDataAsRows(fieldsForType, jsonData);
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const baseFields: KeyOfJsonData[] = [
-    "regulators",
-    "emailAddress",
-  ];
+  const baseFields: KeyOfJsonData[] = ["regulators", "emailAddress"];
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
-export function getDetailsViewModel(
-  listItem: ListItemGetObject | ListItem
-): DetailsViewModel {
+export function getDetailsViewModel(listItem: ListItemGetObject | ListItem): DetailsViewModel {
   const item = listItem as ListItemGetObject;
-  const headerField = ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
+  const headerField =
+    ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
 
   return {
     organisation: {
@@ -248,4 +262,3 @@ export function getDetailsViewModel(
     headerField,
   };
 }
-

@@ -1,29 +1,72 @@
-{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "./details-list.njk" import detailsSummaryList %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set status %}
   {{ listItem.status | replace('_', ' ') }}
 {% endset %}
 
-
-
 <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
-  <p class="govuk-caption-m govuk-!-text-align-right govuk-!-margin-bottom-0">
-    Submitted: {{ listItem.createdAt | date }}
-  </p>
+  <div class="flex-space-between govuk-!-margin-bottom-6">
+    {% include "./list-item-tag.njk" %}
+    {% include "./list-item-activity-status-tag.njk" %}
+  </div>
+
+{% if annualReview.providerResponded %}
+
+  {% if annualReview.fieldsUpdated %}
+      {% set html %}
+        <p class="govuk-notification-banner__heading">This service provider has updated their details</p>
+        <p class="govuk-body">Check the updated sections for spelling and style, and complete checks on this service provider as detailed in the <a
+      class="govuk-link"
+      target="_blank"
+      rel="noopener noreferrer"
+      href="https://fcogovuk.sharepoint.com/sites/consular-guidance/SitePages/Find-a-professional-service-abroad-guidance.aspx"
+      >policy guidance
+    </a> before republishing it.</p>
+      {% endset %}
+
+      {{ govukNotificationBanner({
+        html: html,
+        titleText: "Updated application",
+        classes: "govuk-!-margin-bottom-0"
+      }) }}
+
+    {% else %}
+
+      {% set html %}
+        <p class="govuk-notification-banner__heading">This service provider has confirmed their details are up to date</p>
+        <p class="govuk-body">The service provider has not changed any of their details. Complete the usual checks on this service provider as detailed in the <a
+      class="govuk-link"
+      target="_blank"
+      rel="noopener noreferrer"
+      href="https://fcogovuk.sharepoint.com/sites/consular-guidance/SitePages/Find-a-professional-service-abroad-guidance.aspx"
+      >policy guidance
+    </a>before republishing it.</p>
+      {% endset %}
+
+      {{ govukNotificationBanner({
+        html: html,
+        titleText: "Unchanged application",
+        type: 'success',
+        classes: "govuk-!-margin-bottom-0"
+      }) }}
+  {% endif %}
+
+{% endif %}
 
   <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" form="pinForm"/>
 
   {% if isPinned %}
     <input type="hidden" name="action" value="unpin" form="pinForm"/>
 
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4 grey-border-bottom">
       {{ _.startCase(_.toLower(details.headerField)) }}
       <input type="image" src="/assets/images/unpin.png" width="24px" height="24px" form="pinForm"/>
     </h2>
   {% else %}
     <input type="hidden" name="action" value="pin" form="pinForm"/>
 
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4">
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-4 govuk-!-margin-top-4 grey-border-bottom">
       {{ _.startCase(_.toLower(details.headerField)) }}
       <input type="image" src="/assets/images/pin.png" width="24px" height="24px" form="pinForm"/>
     </h2>
@@ -37,7 +80,7 @@
     <h3 class="govuk-heading-m govuk-!-margin-bottom-4">{{ item.title }}</h3>
   {% endif %}
   {% set rows = item.rows | renderRowValues(rowMacros, item.rows) %}
-  {{ govukSummaryList({
+  {{ detailsSummaryList({
     rows: rows
   }) }}
 {% endfor %}
@@ -46,6 +89,6 @@
 {% if requestedChanges %}
   <h3 class="govuk-heading-m govuk-!-margin-bottom-4">Changes requested to provider</h3>
   <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-2">
-    <p class=govuk-body">{{ requestedChanges | striptags(true) | escape | nl2br }}</p>
+    <p class="govuk-body">{{ requestedChanges | striptags(true) | escape | nl2br }}</p>
   </div>
 {% endif %}

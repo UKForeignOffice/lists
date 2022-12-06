@@ -51,6 +51,7 @@ export const configureViews = (server: Express): void => {
       if (value.html) {
         value.html = macro(value.html);
       }
+
       return {
         ...row,
         value,

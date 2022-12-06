@@ -29,8 +29,7 @@ const successJson = {
       ],
     },
     {
-      question:
-        "Can you provide legal services and support to customers in English?",
+      question: "Can you provide legal services and support to customers in English?",
       fields: [
         {
           key: "speakEnglish",
@@ -41,8 +40,7 @@ const successJson = {
       ],
     },
     {
-      question:
-        "Which legal regulator or local bar associations are you registered with?",
+      question: "Which legal regulator or local bar associations are you registered with?",
       fields: [
         {
           key: "regulators",
@@ -260,14 +258,13 @@ test("responds with 422 for schema validation error", async () => {
 
   const schemaErrorReq = {
     params: { id: 1, serviceType: "lawyers" },
+    body: {},
   };
   // @ts-expect-error
   await ingestPutController(schemaErrorReq, response);
   const schemaError = spiedSend.mock.calls[0][0];
   expect(spiedStatus).toBeCalledWith(422);
-  expect(schemaError.error).toBe(
-    "request could not be processed - post data could not be parsed"
-  );
+  expect(schemaError.error).toBe("request could not be processed - post data could not be parsed");
 });
 
 test("responds with 422 for update error", async () => {

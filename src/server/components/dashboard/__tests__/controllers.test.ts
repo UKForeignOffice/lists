@@ -103,6 +103,11 @@ describe("Dashboard Controllers", () => {
       isApproved: true,
       isBlocked: false,
       isPublished: true,
+      publishingStatus: "live",
+      activityStatus: {
+        text: "Check new entry",
+        type: "to_do",
+      },
       reference: "TEST-UUID",
       type: "lawyers",
       createdAt: new Date(),
@@ -112,6 +117,7 @@ describe("Dashboard Controllers", () => {
       },
       listId: 1,
       status: Status.NEW,
+      history: [],
     };
   });
 
@@ -122,39 +128,6 @@ describe("Dashboard Controllers", () => {
       await startRouteController(mockReq, mockRes, mockNext);
 
       expect(mockRes.redirect).toHaveBeenCalledWith(authRoutes.logout);
-    });
-
-    test("it identifies a new user correctly", async () => {
-      mockReq.user.getLists.mockResolvedValue([]);
-      mockReq.user.isAdministrator = false;
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
-    });
-
-    test("a SuperAdmin is not a new user", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator = true;
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
-    });
-
-    test("a user with access to existing lists is not a new user", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([{ id: 1 }]);
-
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
-    });
-
-    test("a new user is correctly indicated via isNewUser view prop", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([]);
-      await startRouteController(mockReq, mockRes, mockNext);
-
-      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
     });
   });
 
@@ -244,13 +217,13 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists = [{ id: 1 }];
+      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "" }];
       mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
-      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
+      expect(mockRes.render.mock.calls[0][1].lists).toStrictEqual(lists);
     });
 
     test("it renders correct with empty list when user.getLists result is empty", async () => {
@@ -258,6 +231,39 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].lists).toBeArrayOfSize(0);
+    });
+
+    test("it identifies a new user correctly", async () => {
+      mockReq.user.getLists.mockResolvedValueOnce([]);
+      mockReq.user.isAdministrator = false;
+
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
+    });
+
+    test("a SuperAdmin is not a new user", async () => {
+      mockReq.user.getLists.mockResolvedValueOnce([]);
+      mockReq.user.isAdministrator = true;
+
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
+    });
+
+    test("a user with access to existing lists is not a new user", async () => {
+      mockReq.user.getLists.mockResolvedValueOnce([{ id: 1 }]);
+
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeFalsy();
+    });
+
+    test("a new user is correctly indicated via isNewUser view prop", async () => {
+      mockReq.user.getLists.mockResolvedValueOnce([]);
+      await listsController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
     });
   });
 
@@ -358,6 +364,8 @@ describe("Dashboard Controllers", () => {
       mockReq.user.userData.id = 3;
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
+
+      mockRes.locals = { list, listItem };
 
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,

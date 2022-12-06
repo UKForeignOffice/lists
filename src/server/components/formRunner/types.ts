@@ -29,6 +29,9 @@ export interface NewSessionData {
     callbackUrl: string;
     redirectPath: string;
   };
+  metadata: {
+    [additionalProps: string]: any;
+  };
   name: string;
 }
 
@@ -41,6 +44,7 @@ export interface WebhookData {
    */
   metadata: {
     type: ServiceType;
+    isAnnualReview?: boolean;
     [additionalProps: string]: any;
   };
 }

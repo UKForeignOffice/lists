@@ -24,6 +24,14 @@ export const EVENTS = {
     },
   }),
 
+  [ListItemEvent.ARCHIVED]: (userId: number): EventCreate<"ARCHIVED"> => ({
+    type: ListItemEvent.ARCHIVED,
+    jsonData: {
+      eventName: "archived",
+      userId,
+    },
+  }),
+
   [ListItemEvent.UNPUBLISHED]: (userId?: number): EventCreate<"UNPUBLISHED"> => ({
     type: ListItemEvent.UNPUBLISHED,
     jsonData: {
@@ -77,16 +85,18 @@ export const EVENTS = {
   [ListItemEvent.EDITED]: (updatedJsonData = {}): EventCreate<"EDITED"> => ({
     type: ListItemEvent.EDITED,
     jsonData: {
-      notes: ["user resubmitted with this data"],
+      notes: ["user resubmitted with these updates"],
       eventName: "edited",
       updatedJsonData,
     },
   }),
 
-  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (): EventCreate<"CHECK_ANNUAL_REVIEW"> => ({
+  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (updatedJsonData = {}): EventCreate<"CHECK_ANNUAL_REVIEW"> => ({
     type: ListItemEvent.CHECK_ANNUAL_REVIEW,
     jsonData: {
+      notes: ["user submitted annual review with these updates"],
       eventName: "check annual review",
+      updatedJsonData,
     },
   }),
 

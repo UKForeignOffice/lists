@@ -4,12 +4,13 @@ import { ensureAuthenticated, ensureUserIsAdministrator } from "server/component
 import {
   startRouteController,
   usersListController,
-  usersEditController,
   feedbackController,
+  usersEditController,
+  helpPageController,
   usersEditPostController,
 } from "./controllers";
 import { dashboardRoutes } from "./routes";
-import { csrfRequestHandler } from "server/components/cookies/helpers";
+import { csrfRequestHandler, addUrlToSession } from "server/components/cookies/helpers";
 
 import { listRouter } from "server/components/dashboard/listsItems/itemsRouter";
 
@@ -18,12 +19,22 @@ export const dashboardRouter = express.Router();
 dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
+// help
+dashboardRouter.get(dashboardRoutes.listsHelp, helpPageController);
+
 // Users
-dashboardRouter.get(dashboardRoutes.usersList, csrfRequestHandler, ensureUserIsAdministrator, usersListController);
-dashboardRouter.post(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsAdministrator, usersEditPostController);
-dashboardRouter.get(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsAdministrator, usersEditController);
+dashboardRouter.all(`${dashboardRoutes.usersList}*`, csrfRequestHandler, ensureUserIsAdministrator, addUrlToSession);
+dashboardRouter.get(dashboardRoutes.usersList, usersListController);
+dashboardRouter.post(dashboardRoutes.usersEdit, usersEditPostController);
+dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
 
 // lists
 dashboardRouter.use("/dashboard/lists", listRouter);
 
-dashboardRouter.get(dashboardRoutes.feedback, csrfRequestHandler, ensureUserIsAdministrator, feedbackController);
+dashboardRouter.get(
+  dashboardRoutes.feedback,
+  csrfRequestHandler,
+  ensureUserIsAdministrator,
+  addUrlToSession,
+  feedbackController
+);

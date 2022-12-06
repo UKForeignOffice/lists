@@ -1,24 +1,17 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
-import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
-import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
+import { EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
-import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
 import { findListById, updateList } from "server/models/list";
-import {
-  createFormRunnerEditListItemLink,
-  createFormRunnerReturningUserLink,
-  createListSearchBaseLink,
-} from "server/components/lists/helpers";
-import { getChangedAddressFields, getListItemContactInformation } from "server/models/listItem/providers/helpers";
+import { createListSearchBaseLink } from "server/components/lists/helpers";
+import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
-import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
@@ -26,6 +19,9 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
+import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
+import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
+import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -51,26 +47,26 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem!;
+  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
-
   let requestedChanges;
 
-  if (listItem.status === Status.EDITED) {
-    // TODO: - check if neccessary for this sort?
-    const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
+  const hasPendingUpdate = listItem.status === Status.EDITED;
 
+  // @ts-ignore
+  const isLegacyUpdate = hasPendingUpdate && !listItem.jsonData?.updatedJsonData;
+
+  // @ts-ignore
+  let updatedJsonData = listItem.jsonData?.updatedJsonData;
+
+  if (hasPendingUpdate && isLegacyUpdate) {
+    const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
-    const updatedJsonData = auditJsonData?.updatedJsonData;
-    if (updatedJsonData !== undefined) {
-      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
-      const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
-      // @ts-ignore
-      listItem.address = {
-        ...listItem.address,
-        ...updatedAddressFields,
-      };
-    }
+    updatedJsonData = auditJsonData?.updatedJsonData;
+  }
+
+  if (hasPendingUpdate && !isLegacyUpdate) {
+    listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
   }
 
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
@@ -80,31 +76,41 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "remove"],
-    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove"],
+    NEW: ["publish", "request-changes", "remove", "archive"],
+    OUT_WITH_PROVIDER: ["publish", "request-changes", "remove", "archive"],
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
     PUBLISHED: ["unpublish", "remove"],
-    UNPUBLISHED: ["publish", "request-changes", "remove"],
-    CHECK_ANNUAL_REVIEW: ["unpublish", "remove"],
-    ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove"],
+    UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
+    CHECK_ANNUAL_REVIEW: ["update-live", "unpublish", "remove", "archive"],
+    ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove", "archive"],
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
-
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
     changeMessage: req.session?.changeMessage,
     list,
-    listItem,
+    req,
+    listItem: {
+      ...listItem,
+      activityStatus: getActivityStatus(listItem),
+      publishingStatus: getPublishingStatus(listItem),
+    },
+    annualReview: {
+      providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
+      fieldsUpdated: !isEmpty((listItem.jsonData as ListItemJsonData).updatedJsonData),
+    },
     isPinned,
-    actionButtons: actionButtonsForStatus ?? [],
+    actionButtons: actionButtonsForStatus,
     requestedChanges,
     error,
+    title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
     csrfToken: getCSRFToken(req),
   });
 }
+
 export async function listItemPostController(req: Request, res: Response): Promise<void> {
   const { message, action } = req.body;
   const { list, listItem, listItemUrl } = res.locals;
@@ -298,13 +304,20 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
-  if (auditJsonData?.updatedJsonData !== undefined) {
-    // @ts-ignore
-    await update(id, userId, auditJsonData.updatedJsonData);
+  // @ts-ignore
+  if (listItem.jsonData?.updatedJsonData) {
+    await update(id, userId);
+    return;
   }
 
   if (auditJsonData?.updatedJsonData) {
     await update(id, userId);
+    return;
+  }
+
+  if (auditJsonData?.updatedJsonData !== undefined) {
+    // @ts-ignore
+    await update(id, userId, auditJsonData.updatedJsonData);
   }
 }
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
@@ -344,7 +357,7 @@ async function handleListItemRequestChanges(
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
   logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
-  const formRunnerEditUserUrl = await initialiseFormRunnerSession(list, listItem, message, isUnderTest);
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isUnderTest });
 
   // Email applicant
   logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
@@ -434,19 +447,6 @@ export async function handlePublishListItem(
       searchLink
     );
   }
-}
-
-async function initialiseFormRunnerSession(
-  list: List,
-  listItem: BaseListItemGetObject,
-  message: string,
-  isUnderTest: boolean
-): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
-  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
-  return createFormRunnerEditListItemLink(token);
 }
 
 export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {

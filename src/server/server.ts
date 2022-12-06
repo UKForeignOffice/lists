@@ -18,6 +18,7 @@ import { initFeedback } from "./components/feedback";
 import { initDashboard } from "./components/dashboard";
 import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
+import annualReviewRouter from "./components/annual-review/router";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware"
 
 
@@ -52,6 +53,8 @@ export async function getServer(): Promise<Express> {
   await initDashboard(server);
   await initDevelopment(server);
   await initHealthCheck(server);
+
+  server.use(annualReviewRouter);
 
   // error handlers
   configureErrorHandlers(server);

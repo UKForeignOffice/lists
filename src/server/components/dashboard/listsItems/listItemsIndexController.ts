@@ -146,6 +146,7 @@ export async function listItemsIndexController(
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
+      req,
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       // @ts-expect-error

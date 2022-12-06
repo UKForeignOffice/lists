@@ -17,6 +17,7 @@ declare module "express-session" {
   export interface SessionData {
     returnTo?: string;
     changeMessage?: string;
+    currentUrl?: string;
   }
 }
 

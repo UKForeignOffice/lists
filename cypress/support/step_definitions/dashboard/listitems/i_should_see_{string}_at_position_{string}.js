@@ -4,7 +4,7 @@ Then(
   (table) => {
     const rows = table.rows();
     rows.forEach(([contactName, rowPos]) => {
-      cy.findAllByRole("listitem").eq(rowPos - 1).contains(contactName);
+      cy.findAllByTestId("list-item-row").eq(rowPos - 1).contains(contactName);
     })
 
   }
