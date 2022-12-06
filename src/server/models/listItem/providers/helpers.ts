@@ -167,10 +167,9 @@ export function getListItemContactInformation(listItem: ListItem): {
   contactEmailAddress: string;
   contactPhoneNumber: string;
 } {
-  const contactName = get(listItem?.jsonData, "contactName") ?? "";
-  const contactEmailAddress = get(listItem?.jsonData, "emailAddress") ?? "";
-  const contactPhoneNumber =
-    get(listItem?.jsonData, "contactPhoneNumber") ?? get(listItem?.jsonData, "phoneNumber") ?? "";
+  const contactName = get(listItem?.jsonData, "contactName")!;
+  const contactEmailAddress = get(listItem?.jsonData, "emailAddress")!;
+  const contactPhoneNumber = get(listItem?.jsonData, "contactPhoneNumber") ?? get(listItem?.jsonData, "phoneNumber")!;
   return { contactName, contactEmailAddress, contactPhoneNumber };
 }
 
