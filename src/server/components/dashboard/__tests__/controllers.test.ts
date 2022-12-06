@@ -44,7 +44,7 @@ describe("Dashboard Controllers", () => {
         userData: {
           email: "authemail@gov.uk",
         },
-        isSuperAdmin: jest.fn(),
+        isAdministrator: jest.fn(),
         getLists: jest.fn(),
         hasAccessToList: jest.fn(),
       },
@@ -125,7 +125,7 @@ describe("Dashboard Controllers", () => {
 
     test("it identifies a new user correctly", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isSuperAdmin.mockReturnValueOnce(false);
+      mockReq.user.isAdministrator.mockReturnValueOnce(false);
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -134,7 +134,7 @@ describe("Dashboard Controllers", () => {
 
     test("a SuperAdmin is not a new user", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isSuperAdmin.mockReturnValueOnce(true);
+      mockReq.user.isAdministrator.mockReturnValueOnce(true);
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -188,7 +188,7 @@ describe("Dashboard Controllers", () => {
 
     test("it renders correct template with correct user value", async () => {
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(false);
+      jest.spyOn(userModel, "isAdministrator").mockResolvedValue(false);
       const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(userBeingEdited);
 
       await usersEditController(mockReq, mockRes, mockNext);
@@ -202,20 +202,20 @@ describe("Dashboard Controllers", () => {
   describe("usersEditPostController", () => {
     test("it correctly updates user removing SuperAdmin role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
-      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValueOnce(false);
+      jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
 
       const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
       const spyUpdateUser = jest.spyOn(userModel, "updateUser").mockResolvedValueOnce(userBeingEdited);
 
       mockReq.method = "POST";
       mockReq.body = {
-        roles: `${UserRoles.SuperAdmin}`,
+        roles: `${UserRoles.Administrator}`,
       };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
       expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
         jsonData: {
-          roles: [UserRoles.SuperAdmin],
+          roles: [UserRoles.Administrator],
         },
       });
       expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/users");
@@ -223,7 +223,7 @@ describe("Dashboard Controllers", () => {
 
     test("next is invoked with updateUser error", async () => {
       const error = { message: "error" };
-      jest.spyOn(userModel, "isSuperAdminUser").mockResolvedValue(true);
+      jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
       mockReq.body = { roles: "" };

@@ -1,6 +1,6 @@
 /* eslint-disable */
 Given("I am logged in as a {string}", (role) => {
-  const roles = role === "SuperAdmin" ? { roles: [role] } : { roles: [] };
+  const roles = role === "Administrator" ? { roles: [role] } : { roles: [] };
   cy.task("db", {
     operation: "user.deleteMany",
     variables: {

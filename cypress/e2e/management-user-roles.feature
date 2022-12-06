@@ -3,7 +3,7 @@ Feature: List management actions for lists creators
     Background:
         Given the following users exist
             | email                             | roles        |
-            | super.admin@cautionyourblast.com  | SuperAdmin   |
+            | super.admin@cautionyourblast.com  | Administrator   |
             | no.role@cautionyourblast.com      |              |
 
     Scenario: user should not be able to view links to Users page
@@ -17,6 +17,6 @@ Feature: List management actions for lists creators
         Then I should be denied permission
 
     Scenario: super user should be able to access
-      Given I am logged in as a "SuperAdmin"
+      Given I am logged in as a "Administrator"
       When I visit the "/dashboard/users" url
       Then I should see the table "Users"

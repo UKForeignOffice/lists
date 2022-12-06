@@ -1,7 +1,7 @@
 Feature: List management actions
 
 	Background:
-		Given I am logged in as a "SuperAdmin"
+		Given I am logged in as a "Administrator"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
 			| contactName | organisationName       | emailAddress               | status    | isPublished |  service         |

@@ -12,7 +12,7 @@ describe("User Model:", () => {
     updatedAt: "2021-06-08 13:00:29.633",
     email: "test@depto.gov.uk",
     jsonData: {
-      roles: [UserRoles.SuperAdmin],
+      roles: [UserRoles.Administrator],
     },
   };
 

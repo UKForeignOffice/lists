@@ -45,7 +45,7 @@
                   {{ _.startCase(role) }}
                 </label>
                 <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
-                  {% if role === UserRoles.SuperAdmin %}
+                  {% if role === UserRoles.Administrator %}
                     Set user roles, create new lists and assign users to lists
                   {% endif %}
                 </div>

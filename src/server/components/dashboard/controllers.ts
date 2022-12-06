@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
-import { findUserByEmail, findUsers, isSuperAdminUser, updateUser } from "server/models/user";
+import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 import { List, ServiceType, UserRoles } from "server/models/types";
@@ -30,7 +30,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
     }
 
     const lists = await req.user!.getLists();
-    const isNewUser = !req.user?.isSuperAdmin() && lists.length === 0;
+    const isNewUser = !req.user?.isAdministrator() && lists.length === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
@@ -85,7 +85,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
 
-  const isEditingSuperAdminUser = await isSuperAdminUser(userEmail);
+  const isEditingSuperAdminUser = await isAdministrator(userEmail);
   if (isEditingSuperAdminUser) {
     // disallow editing of SuperAdmins
     logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
@@ -193,6 +193,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     const newList = await createList(data);
 
     if (newList?.id !== undefined) {
+      req.flash("successBannerHeading", "Success");
+      req.flash("successBannerMessage", "List created successfully");
       return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
     }
   }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { ensureAuthenticated, ensureUserIsSuperAdmin } from "server/components/auth";
+import { ensureAuthenticated, ensureUserIsAdministrator } from "server/components/auth";
 import {
   startRouteController,
   usersListController,
@@ -19,11 +19,11 @@ dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
 // Users
-dashboardRouter.get(dashboardRoutes.usersList, csrfRequestHandler, ensureUserIsSuperAdmin, usersListController);
-dashboardRouter.post(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsSuperAdmin, usersEditPostController);
-dashboardRouter.get(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsSuperAdmin, usersEditController);
+dashboardRouter.get(dashboardRoutes.usersList, csrfRequestHandler, ensureUserIsAdministrator, usersListController);
+dashboardRouter.post(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsAdministrator, usersEditPostController);
+dashboardRouter.get(dashboardRoutes.usersEdit, csrfRequestHandler, ensureUserIsAdministrator, usersEditController);
 
 // lists
 dashboardRouter.use("/dashboard/lists", listRouter);
 
-dashboardRouter.get(dashboardRoutes.feedback, csrfRequestHandler, ensureUserIsSuperAdmin, feedbackController);
+dashboardRouter.get(dashboardRoutes.feedback, csrfRequestHandler, ensureUserIsAdministrator, feedbackController);

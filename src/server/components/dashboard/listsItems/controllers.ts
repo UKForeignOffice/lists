@@ -305,7 +305,6 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     await update(id, userId);
   }
 }
-
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";

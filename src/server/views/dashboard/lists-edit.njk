@@ -9,16 +9,19 @@
     {% endif %}
   </h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
-
   {% if publisher.change %}
     {{ dashboardMacros.successBanner("Success", publisher.change) }}
+  {% endif %}
+
+  {% if messages.successBannerHeading %}
+    {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
   {% endif %}
 
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
 
-  <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
+  <form class="form" action="{{ listsEditUrl }}" method="post" required>
 
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

@@ -3,7 +3,7 @@ import { prisma } from "../../../models/db/__mocks__/prisma-client";
 jest.mock("./../../../models/db/prisma-client");
 
 let user;
-let superAdmin;
+let administrator;
 
 beforeEach(() => {
   user = new AuthenticatedUser({
@@ -12,20 +12,20 @@ beforeEach(() => {
     email: "test@gov.uk",
   });
 
-  superAdmin = new AuthenticatedUser({
+  administrator = new AuthenticatedUser({
     id: 71,
-    jsonData: { roles: ["SuperAdmin"] },
+    jsonData: { roles: ["Administrator"] },
     email: "test@gov.uk",
   });
 });
 
-test("isSuperAdmin evaluation is correct", () => {
-  expect(superAdmin.isSuperAdmin()).toBeTruthy();
-  expect(user.isSuperAdmin()).toBeFalsy();
+test("isAdministrator evaluation is correct", () => {
+  expect(administrator.isAdministrator()).toBeTruthy();
+  expect(user.isAdministrator()).toBeFalsy();
 });
 
-test("getLists query is correct for superAdmin", async () => {
-  await superAdmin.getLists();
+test("getLists query is correct for administrator", async () => {
+  await administrator.getLists();
 
   expect(prisma.list.findMany).toHaveBeenCalledWith({
     orderBy: {
@@ -56,12 +56,12 @@ test("getLists query is correct for user", async () => {
 });
 
 test("hasAccessToList always returns true when super admin", async () => {
-  expect(await superAdmin.hasAccessToList(1)).toBeTruthy();
+  expect(await administrator.hasAccessToList(1)).toBeTruthy();
   expect(prisma.list).not.toHaveBeenCalled();
 });
 
 test("only superAdmins can create new lists", async () => {
-  expect(await superAdmin.hasAccessToList("new")).toBeTruthy();
+  expect(await administrator.hasAccessToList("new")).toBeTruthy();
   expect(prisma.list).not.toHaveBeenCalled();
 
   expect(await user.hasAccessToList("new")).toBe(false);

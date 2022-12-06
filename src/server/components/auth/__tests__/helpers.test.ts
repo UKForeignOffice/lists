@@ -1,4 +1,4 @@
-import { ensureAuthenticated, ensureUserIsSuperAdmin } from "../helpers";
+import { ensureAuthenticated, ensureUserIsAdministrator } from "../helpers";
 import { NextFunction } from "express";
 
 describe("Auth Service", () => {
@@ -36,21 +36,21 @@ describe("Auth Service", () => {
     });
   });
 
-  describe("ensureUserIsSuperAdmin", () => {
+  describe("ensureUserisAdministrator", () => {
     test("next function is called when user is a SuperAdmin", () => {
       const next = jest.fn();
       const res: any = {};
       const req: any = {
         isAuthenticated: jest.fn().mockReturnValue(true),
         user: {
-          isSuperAdmin: jest.fn().mockReturnValue(true),
+          isAdministrator: jest.fn().mockReturnValue(true),
         },
       };
 
-      ensureUserIsSuperAdmin(req, res, next);
+      ensureUserIsAdministrator(req, res, next);
 
       expect(req.isAuthenticated).toHaveBeenCalled();
-      expect(req.user.isSuperAdmin).toHaveBeenCalled();
+      expect(req.user.isAdministrator).toHaveBeenCalled();
       expect(next).toHaveBeenCalled();
     });
 
@@ -63,23 +63,22 @@ describe("Auth Service", () => {
       const req: any = {
         isAuthenticated: jest.fn().mockReturnValue(true),
         user: {
-          isSuperAdmin: jest.fn().mockReturnValue(false),
+          isAdministrator: jest.fn().mockReturnValue(false),
         },
       };
 
-      ensureUserIsSuperAdmin(req, res, next);
+      ensureUserIsAdministrator(req, res, next);
 
       expect(req.isAuthenticated).toHaveBeenCalled();
-      expect(req.user.isSuperAdmin).toHaveBeenCalled();
+      expect(req.user.isAdministrator).toHaveBeenCalled();
     });
   });
 
   function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
     const next: NextFunction = (err) => {
-      expect(err.message).toBe(expectedMessage)
-      expect(err.status).toBe(expectedStatus)
+      expect(err.message).toBe(expectedMessage);
+      expect(err.status).toBe(expectedStatus);
     };
     return next;
   }
-
 });
