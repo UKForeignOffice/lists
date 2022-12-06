@@ -1,52 +1,65 @@
-{% extends "./dashboard.njk" %} {% import "./macros.njk" as dashboardMacros %} {% block pageTitle %} List management -
-{{ title }} - {{ SERVICE_NAME }} {% endblock %} {% block aside %}
-<div class="back-links__item">
-  <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
-</div>
-<div class="back-links__item">
-  <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
-</div>
-{% endblock %} {% block dashboard %} {% if error and error.text %} {{ dashboardMacros.errorBanner(error) }} {% endif %}
+{% extends "./dashboard.njk" %}
+{% import "./macros.njk" as dashboardMacros %}
 
-<h1 class="govuk-heading-l">{{ title }}</h1>
+{% block pageTitle %}
+  List management - {{ title }} - {{ SERVICE_NAME }}
+{% endblock %}
 
-{% if not listItem %}
-<p class="govuk-body">Details could not be found</p>
-{% else %}
-<form id="pinForm" class="form" method="post" required>
-  <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-</form>
-<form id="mainForm" class="form" method="post" required>
-  <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
-  <div class="govuk-list dashboard__content-list">
-    <div id="item-{{ listItem.id }}">
-      {% include "./partials/details.njk" %} {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes,
-      listItem.jsonData.contactName, isPinned, actionButtons, changeMessage) }}
-    </div>
+{% block aside %}
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
   </div>
-</form>
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}">Back</a>
+  </div>
+{% endblock %}
 
-<script nonce="{{cspNonce}}">
-  const hiddenClass = "govuk-radios__conditional--hidden";
-  const radios = document.querySelectorAll('input[type=radio][name="action"]');
-  const radiosArray = Array.from(radios);
-  const requestChangesRadioBtn = radiosArray.find((radio) => radio.value === "requestChanges");
+{% block dashboard %}
+  {% if error and error.text %}
+  {{ dashboardMacros.errorBanner(error) }}
+  {% endif %}
 
-  if (requestChangesRadioBtn && !requestChangesRadioBtn.checked) {
-    document.getElementById("conditional-action-requestChanges").classList.add(hiddenClass);
-  }
+  <h1 class="govuk-heading-l">
+    {{ title }}
+  </h1>
 
-  radios.forEach((radio) =>
-    radio.addEventListener("change", () => {
-      const isRequestingChanges = radio.value === "requestChanges" && radio.checked;
-      const requestChangesTextarea = document.getElementById("conditional-action-requestChanges");
+  {% if not listItem %}
+    <p class="govuk-body">Details could not be found</p>
+  {% else %}
+  <form id="pinForm" class="form" method="post" required>
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+  </form>
+  <form id="mainForm" class="form" method="post" required>
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+      <div class="govuk-list dashboard__content-list">
+          <div id="item-{{ listItem.id }}">
+            {% include "./partials/details.njk" %}
+            {{ dashboardMacros.listItemEditActionBar(list, listItem, dashboardRoutes, listItem.jsonData.contactName, isPinned, actionButtons, changeMessage) }}
+          </div>
+      </div>
+    </form>
 
-      if (isRequestingChanges) {
-        requestChangesTextarea.classList.remove(hiddenClass);
-      } else {
-        requestChangesTextarea.classList.add(hiddenClass);
+    <script nonce="{{cspNonce}}">
+      const hiddenClass = "govuk-radios__conditional--hidden";
+      const radios = document.querySelectorAll('input[type=radio][name="action"]');
+      const radiosArray = Array.from(radios);
+      const requestChangesRadioBtn = radiosArray.find(radio => radio.value === "requestChanges");
+
+      if (requestChangesRadioBtn && !requestChangesRadioBtn.checked) {
+        document.getElementById("conditional-action-requestChanges").classList.add(hiddenClass);
       }
-    })
-  );
-</script>
-{% endif %} {% endblock %}
+
+      radios.forEach(radio => radio.addEventListener('change', () => {
+        const isRequestingChanges = radio.value === "requestChanges" && radio.checked;
+        const requestChangesTextarea = document.getElementById("conditional-action-requestChanges");
+
+        if (isRequestingChanges) {
+          requestChangesTextarea.classList.remove(hiddenClass);
+        } else {
+          requestChangesTextarea.classList.add(hiddenClass);
+        }
+      }));
+
+    </script>
+  {% endif %}
+{% endblock %}
