@@ -6,12 +6,15 @@ import { prisma } from "server/models/db/prisma-client";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ServiceType } from "server/models/types";
 
+/**
+ * TODO:- this does not redirect, just next(err) which renders
+ */
 export async function redirectIfUnauthorised(req: Request, res: ListItemRes, next: NextFunction): Promise<void> {
   try {
     const { list } = res.locals;
-    const userCanPublishList = (await req.user?.isListPublisher(list!.id)) ?? false;
+    const userHasAccessToList = await req.user?.hasAccessToList(list!.id);
 
-    if (!userCanPublishList) {
+    if (!userHasAccessToList) {
       const err = new HttpException(403, "403", "User is not authorised to access this list.");
       return next(err);
     }

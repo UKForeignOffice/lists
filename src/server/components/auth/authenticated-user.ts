@@ -1,61 +1,40 @@
-import { User, UserRoles } from "server/models/types";
+import { List, User, UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
-export class AuthenticatedUser {
+export default class AuthenticatedUser {
   readonly userData: User;
   readonly emailAddress: User["email"];
   readonly roles: UserRoles[];
+  readonly id: User["id"];
 
   constructor(userData: User) {
     this.userData = userData;
     this.emailAddress = userData.email;
     this.roles = userData.jsonData.roles ?? [];
+    this.id = userData.id;
   }
 
   /**
-   * TODO: should really be a native getter, so the User API would be like `user.isSuperAdmin` rather than user.isSuperAdmin().
+   * TODO: should really be a native getter, so the User API would be like `user.isAdministrator` rather than user.isAdministrator().
    */
-  isSuperAdmin(): boolean {
-    return this.roles.includes(UserRoles.SuperAdmin);
-  }
-
-  isListsCreator(): boolean {
-    return this.roles.includes(UserRoles.ListsCreator);
-  }
-
-  async isListPublisher(listId: number): Promise<boolean> {
-    const result = await prisma.list.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        id: listId,
-        AND: {
-          jsonData: {
-            path: ["publishers"],
-            array_contains: this.userData.email,
-          },
-        },
-      },
-    });
-
-    return !!result;
+  isAdministrator(): boolean {
+    return this.roles.includes(UserRoles.Administrator);
   }
 
   async getLists() {
-    const notSuperAdmin = !this.isSuperAdmin();
-    const publisherWhere = {
+    const notSuperAdmin = !this.isAdministrator();
+    const whereInputForUser = {
       where: {
         jsonData: {
-          path: ["publishers"],
+          path: ["users"],
           array_contains: [this.emailAddress],
         },
       },
     };
 
     const lists = await prisma.list.findMany({
-      ...(notSuperAdmin && publisherWhere),
+      ...(notSuperAdmin && whereInputForUser),
       orderBy: {
         id: "asc",
       },
@@ -69,5 +48,27 @@ export class AuthenticatedUser {
     }
 
     return lists ?? [];
+  }
+
+  async hasAccessToList(id: List["id"] | "new") {
+    if (this.isAdministrator()) {
+      return true;
+    }
+
+    if (id === "new") {
+      return false;
+    }
+
+    const result = await prisma.list.findFirst({
+      where: {
+        id,
+        jsonData: {
+          path: ["users"],
+          array_contains: [this.emailAddress],
+        },
+      },
+    });
+
+    return !!result;
   }
 }

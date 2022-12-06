@@ -79,12 +79,12 @@ export async function findUsers(): Promise<User[]> {
   }
 }
 
-export async function isSuperAdminUser(email: string): Promise<boolean> {
+export async function isAdministrator(email: string): Promise<boolean> {
   try {
     const user = await findUserByEmail(email);
-    return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
+    return user?.jsonData.roles?.includes(UserRoles.Administrator) === true;
   } catch (error) {
-    logger.error(`isSuperAdminUser Error: ${error.message}`);
+    logger.error(`isAdministratorUser Error: ${error.message}`);
     throw error;
   }
 }

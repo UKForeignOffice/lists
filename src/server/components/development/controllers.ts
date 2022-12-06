@@ -5,10 +5,9 @@ import { UserRoles } from "server/models/types";
 import { GOVUK_NOTIFY_API_KEY } from "server/config";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";
 
-
 export function deployDb(req: Request, res: Response): void {
   req.setTimeout(5 * 60 * 1000);
-  
+
   exec("npm run prisma:deploy", (error, stdout, stderr) => {
     res.send({ error, stdout, stderr });
   });
@@ -36,7 +35,7 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
       if (user !== undefined) {
         await updateUser(email, {
           jsonData: {
-            roles: [UserRoles.SuperAdmin],
+            roles: [UserRoles.Administrator],
           },
         });
         res.send("Update OK");
@@ -44,7 +43,7 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
         await createUser({
           email: `${email}`,
           jsonData: {
-            roles: [UserRoles.SuperAdmin],
+            roles: [UserRoles.Administrator],
           },
         });
         res.send("Create OK");
@@ -53,10 +52,6 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
       res.status(500).send(error.message);
     }
   } else {
-    res.send(
-      `Got email: ${email} and key is valid ${(
-        GOVUK_NOTIFY_API_KEY ?? ""
-      ).includes(`${key}`)}`
-    );
+    res.send(`Got email: ${email} and key is valid ${(GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)}`);
   }
 }

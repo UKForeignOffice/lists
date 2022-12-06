@@ -45,28 +45,16 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  validators: string[];
-  publishers: string[];
-  administrators: string[];
+  users: string | string[];
   createdBy: string;
 }): Promise<List | undefined> {
   try {
-    const validators = compact(listData.validators.map(trim).map(toLower));
-    if (validators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Validators contain a non GOV UK email address");
+    const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
+
+    const users = compact(usersAsArray.map(trim).map(toLower));
+    if (users.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Users contain a non GOV UK email address");
     }
-
-    const publishers = compact(listData.publishers.map(trim).map(toLower));
-    if (publishers.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Publishers contain a non GOV UK email address");
-    }
-
-    const administrators = compact(listData.administrators.map(trim).map(toLower));
-
-    if (administrators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Administrators contain a non GOV UK email address");
-    }
-
     if (!isGovUKEmailAddress(listData.createdBy)) {
       throw new Error("CreatedBy is not a valid GOV UK email address");
     }
@@ -84,9 +72,7 @@ export async function createList(listData: {
         },
       },
       jsonData: {
-        validators,
-        publishers,
-        administrators,
+        users,
         createdBy: listData.createdBy,
       },
     };
@@ -102,32 +88,18 @@ export async function createList(listData: {
 export async function updateList(
   listId: number,
   listData: {
-    validators: string[];
-    publishers: string[];
-    administrators: string[];
+    users: string[];
   }
 ): Promise<List | undefined> {
   try {
-    const validators = compact(listData.validators.map(trim).map(toLower));
-    if (validators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Validators contain a non GOV UK email address");
-    }
-
-    const publishers = compact(listData.publishers.map(trim).map(toLower));
-    if (publishers.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Publishers contain a non GOV UK email address");
-    }
-
-    const administrators = compact(listData.administrators.map(trim).map(toLower));
-    if (administrators.some((email) => !isGovUKEmailAddress(email))) {
-      throw new Error("Administrators contain a non GOV UK email address");
+    const users = compact(listData.users.map(trim).map(toLower));
+    if (users.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Users contain a non GOV UK email address");
     }
 
     const data: ListUpdateInput = {
       jsonData: {
-        validators,
-        publishers,
-        administrators,
+        users,
       },
     };
 

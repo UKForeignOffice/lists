@@ -2,7 +2,7 @@ Feature:
     Dashboard sorting
 
     Background:
-        Given I am logged in as a "SuperAdmin"
+        Given I am logged in as a "Administrator"
         And A "lawyers" list exists for Eurasia
         And there are these list items
             | contactName | organisationName | status            | isPublished | isBlocked | isApproved | emailVerified | updatedAt   |

@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { csrfRequestHandler } from "server/components/cookies/helpers";
-import { listsController, listsEditController, listsItemsController } from "server/components/dashboard/controllers";
+import {
+  listsController,
+  listsEditController,
+  listsItemsController,
+  listPublisherDelete,
+  listsEditPostController,
+} from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 
 import { logger } from "server/services/logger";
 import express from "express";
-import {
-  getListOverview,
-  redirectIfUnauthorised,
-  serviceTypeDetailsHeading,
-} from "server/components/dashboard/listsItems/helpers";
+import { getListOverview, serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
+import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 
 export const listRouter = express.Router();
 
@@ -20,11 +23,20 @@ listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
 listRouter.get("/", listsController);
 
 listRouter.param("listId", async (req, res, next, listId) => {
+  if (listId === "new") {
+    res.locals.list = {
+      id: "new",
+    };
+    return next();
+  }
+
   try {
     const listIdAsNumber = Number(listId);
     const list = await getListOverview(listIdAsNumber);
+
     if (!list) {
-      return res.status(404);
+      const err = new HttpException(404, "404", `Could not find list ${listId}`);
+      return next(err);
     }
 
     res.locals.list = list;
@@ -38,18 +50,31 @@ listRouter.param("listId", async (req, res, next, listId) => {
   }
 });
 
-listRouter.all("/:listId", listsEditController);
-listRouter.all("/:listId/*", redirectIfUnauthorised);
+listRouter.all("/:listId*", validateAccessToList);
+
+listRouter.get("/:listId", listsEditController);
+listRouter.post("/:listId", listsEditPostController);
+
+listRouter.all("/:listId/*", validateAccessToList);
 
 listRouter.get("/:listId/items", listsItemsController);
 
 listRouter.param("listItemId", async (req, res, next, listItemId) => {
   try {
     const listItemIdAsNumber = Number(listItemId);
-    res.locals.listItem = await findListItemById(listItemIdAsNumber);
+    const listItem = await findListItemById(listItemIdAsNumber);
+
+    if (!listItem) {
+      // TODO: should be handled by router.param
+      const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
+      return next(err);
+    }
+
+    res.locals.listItem = listItem;
     res.locals.listItemUrl = `${res.locals.listIndexUrl}/${listItemId}`;
     const list = res.locals.list;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]} in ${list.country.name} details`;
+
     return next();
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);
@@ -69,3 +94,4 @@ listRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPublis
 listRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
 listRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);
 listRouter.post("/:listId/items/:listItemId/pin", controllers.listItemPinController);
+listRouter.post("/:listId/publisher-delete", listPublisherDelete);

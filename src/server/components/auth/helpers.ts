@@ -7,11 +7,7 @@ import { isSmokeTest } from "server/config";
 import { HttpException } from "server/middlewares/error-handlers";
 import { configureRateLimit } from "server/middlewares";
 
-export function ensureAuthenticated(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function ensureAuthenticated(req: Request, res: Response, next: NextFunction): void {
   if (req.isAuthenticated() || isSmokeTest) {
     next();
   } else {
@@ -20,12 +16,8 @@ export function ensureAuthenticated(
   }
 }
 
-export function ensureUserIsSuperAdmin(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  if (req.isAuthenticated() && req.user.isSuperAdmin()) {
+export function ensureUserIsAdministrator(req: Request, res: Response, next: NextFunction): void {
+  if (req.isAuthenticated() && req.user.isAdministrator()) {
     next();
   } else {
     const err = new HttpException(405, "405", "Not allowed");

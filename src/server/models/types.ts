@@ -24,9 +24,7 @@ export type Country = PrismaClient.Country;
 
 // List
 export interface ListJsonData extends JsonObject {
-  validators: string[];
-  publishers: string[];
-  administrators: string[];
+  users?: string[];
 }
 
 export interface List extends PrismaClient.List {
@@ -63,8 +61,7 @@ export interface BaseListItemGetObject extends PrismaClient.ListItem {
 
 export enum UserRoles {
   // Application Level Roles
-  SuperAdmin = "SuperAdmin",
-  ListsCreator = "ListsCreator",
+  Administrator = "Administrator",
 }
 
 type AsJsonObject<T> = T & JsonObject;

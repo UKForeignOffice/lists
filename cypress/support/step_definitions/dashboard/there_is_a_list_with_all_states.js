@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { rand, randCompanyName, randEmail, randFullName } from "@ngneat/falso";
-import {ListItemEvent} from "@prisma/client";
+import { ListItemEvent } from "@prisma/client";
 
 Given("A {string} list exists for Eurasia", (providerType) => {
   createListForService(providerType);
@@ -8,9 +8,7 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 
 function createListForService(service) {
   const jsonData = {
-    administrators: ["smoke@cautionyourblast.com"],
-    publishers: ["smoke@cautionyourblast.com"],
-    validators: ["smoke@cautionyourblast.com"],
+    users: ["smoke@cautionyourblast.com", "smoke+1@cautionyourblast.com", "smoke+2@cautionyourblast.com"],
   };
   cy.task("db", {
     operation: "country.upsert",
@@ -75,33 +73,32 @@ Given("there are these list items", (table) => {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference: "SMOKE"
-      }
-    }
+        reference: "SMOKE",
+      },
+    },
   }).then((list) => {
     const listId = list.id;
     const items = itemsFromRows(rows);
-    items.forEach(item => {
-      createListItem(item, listId)
-    })
-  })
+    items.forEach((item) => {
+      createListItem(item, listId);
+    });
+  });
 
   cy.task("db", {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference: "SMOKE"
+        reference: "SMOKE",
       },
       include: {
-        items: true
-      }
-    }
+        items: true,
+      },
+    },
   }).then((list) => {
     const listId = list.id;
     const { items } = list;
     addPins(items);
-  })
-
+  });
 });
 
 function setupPublishEvents(options) {
@@ -109,44 +106,44 @@ function setupPublishEvents(options) {
 
   const publishEvent = {
     type: ListItemEvent.PUBLISHED,
-    time: new Date('2022-01-01'),
+    time: new Date("2022-01-01"),
     jsonData: {
       eventName: "publish",
       userId: "smoke",
-    }
+    },
+  };
+
+  if (options.isPublished) {
+    events.push(publishEvent);
   }
 
-  if(options.isPublished) {
-    events.push(publishEvent)
-  }
-
-  if(options.isArchived) {
+  if (options.isArchived) {
     events.push({
       type: ListItemEvent.ARCHIVED,
       jsonData: {
         eventName: "archived",
         userId: "smoke",
-      }
-    })
+      },
+    });
   }
 
-  if(options.__smoke.isUnpublishedByUser === true) {
+  if (options.__smoke.isUnpublishedByUser === true) {
     events.push(publishEvent, {
       type: ListItemEvent.UNPUBLISHED,
       jsonData: {
         eventName: "unpublish",
         userId: "smoke",
-      }
-    })
+      },
+    });
   }
 
-  if(options.status === "ANNUAL_REVIEW_OVERDUE") {
+  if (options.status === "ANNUAL_REVIEW_OVERDUE") {
     events.push(publishEvent, {
       type: ListItemEvent.UNPUBLISHED,
       jsonData: {
-        eventName: "unpublish"
-      }
-    })
+        eventName: "unpublish",
+      },
+    });
   }
 
   return events;
@@ -157,8 +154,8 @@ function listItem(options) {
 
   const events = setupPublishEvents(options);
   const history = {
-    create: events
-  }
+    create: events,
+  };
 
   let status = options.status;
 
@@ -167,14 +164,14 @@ function listItem(options) {
     ...rest,
     __smoke,
     metadata: {
-      emailVerified
+      emailVerified,
     },
-  }
+  };
 
-  const updatedAt = options.updatedAt && new Date(options.updatedAt)
+  const updatedAt = options.updatedAt && new Date(options.updatedAt);
 
   return {
-    ...(updatedAt && {updatedAt}),
+    ...(updatedAt && { updatedAt }),
     status,
     isPublished,
     type: service,
@@ -207,8 +204,8 @@ function addPins(items) {
     variables: {
       data: {
         pinnedItems: {
-          set: shouldPin
-        }
+          set: shouldPin,
+        },
       },
       where: {
         email: "smoke@cautionyourblast.com",
@@ -219,7 +216,8 @@ function addPins(items) {
 
 function itemsFromRows(rows) {
   return rows.map((row) => {
-    const { // ONLY destructure here so you can cast booleans. The ...REST of the parameters will be passed to list items.
+    const {
+      // ONLY destructure here so you can cast booleans. The ...REST of the parameters will be passed to list items.
       isPublished: isPublishedString,
       isArchived: isArchivedString,
       isAnnualReview: isAnnualReviewString,
@@ -232,14 +230,13 @@ function itemsFromRows(rows) {
     const isAnnualReview = isAnnualReviewString === "true";
     const isPinned = isPinnedString === "true";
 
-
     const __smoke = {
       isPinned,
-      isUnpublishedByUser: row.isUnpublishedByUser === "true"
-    }
+      isUnpublishedByUser: row.isUnpublishedByUser === "true",
+    };
 
-    if(row.status === "ANNUAL_REVIEW_OVERDUE") {
-      isPublished = false
+    if (row.status === "ANNUAL_REVIEW_OVERDUE") {
+      isPublished = false;
     }
 
     return listItem({
@@ -250,8 +247,6 @@ function itemsFromRows(rows) {
       __smoke,
     });
   });
-
-
 }
 
 function createListItem(listItem, listId) {
@@ -260,10 +255,10 @@ function createListItem(listItem, listId) {
     variables: {
       data: {
         ...listItem,
-        listId
-      }
-    }
-  })
+        listId,
+      },
+    },
+  });
 }
 
 //DO NOT CHANGE so this accepts parameters.
@@ -287,7 +282,7 @@ const baseJsonData = () => ({
   },
   __smoke: {
     isPinned: false,
-  }
+  },
 });
 
 const jsonDataLawyers = () => ({

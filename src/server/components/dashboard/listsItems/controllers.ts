@@ -1,8 +1,7 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
-import { authRoutes } from "server/components/auth";
-import { getInitiateFormRunnerSessionToken, userIsListPublisher } from "server/components/dashboard/helpers";
+import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
@@ -23,7 +22,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
-import { HttpException } from "server/middlewares/error-handlers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -232,11 +230,11 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
 }
 
 export async function listItemDeleteController(req: Request, res: Response): Promise<void> {
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
   try {
-    await deleteListItem(listItem.id, userId!);
+    await deleteListItem(listItem.id, userId);
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
     req.flash("successBannerHeading", "Removed");
@@ -249,12 +247,12 @@ export async function listItemDeleteController(req: Request, res: Response): Pro
 }
 
 export async function listItemUpdateController(req: Request, res: Response): Promise<void> {
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const listItem = res.locals.listItem;
   const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handleListItemUpdate(listItem.id, userId!);
+    await handleListItemUpdate(listItem.id, userId);
 
     if (userId === undefined) {
       req.flash("errorMsg", "Unable to perform action - user could not be identified");
@@ -307,11 +305,10 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     await update(id, userId);
   }
 }
-
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
-  const userId = req?.user?.userData?.id;
+  const userId = req.user!.id;
   const changeMessage: string = req.session?.changeMessage ?? "";
   const { list, listItem } = res.locals;
   const { listItemUrl, listIndexUrl } = res.locals;
@@ -322,7 +319,7 @@ export async function listItemRequestChangeController(req: Request, res: Respons
   }
 
   try {
-    await handleListItemRequestChanges(list, listItem, changeMessage, userId!, isUnderTest);
+    await handleListItemRequestChanges(list, listItem, changeMessage, userId, isUnderTest);
 
     req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
     req.flash("successBannerHeading", "Requested");
@@ -393,13 +390,12 @@ async function handleListItemRequestChanges(
 
 export async function listItemPublishController(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
-  const userId = req?.user?.userData?.id;
   const isPublished = action === "publish";
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handlePublishListItem(listItem.id, isPublished, userId!);
+    await handlePublishListItem(listItem.id, isPublished, req.user!.id);
 
     const successBannerHeading = `${action}ed`;
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
@@ -449,39 +445,4 @@ async function initialiseFormRunnerSession(
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
   return createFormRunnerEditListItemLink(token);
-}
-
-export async function listItemEditRequestValidation(req: Request, res: Response, next: NextFunction): Promise<void> {
-  logger.info("listItemEditRequestValidation");
-  const userId = req.user?.userData?.id;
-
-  if (userId === undefined) {
-    return res.redirect(authRoutes.logout);
-  }
-
-  const { list, listItem } = res.locals;
-  const listId = list?.id;
-  const listItemId = listItem?.id;
-
-  if (list === undefined) {
-    const err = new HttpException(404, "404", `Could not find list ${listId}`);
-    return next(err);
-  } else if (listItem === undefined) {
-    const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
-    return next(err);
-  } else if (list?.type !== listItem?.type) {
-    const err = new HttpException(
-      400,
-      "400",
-      `Trying to edit a list item which is a different service type to list ${listId}`
-    );
-    return next(err);
-  } else if (list?.id !== listItem?.listId) {
-    const err = new HttpException(400, "400", `Trying to edit a list item which does not belong to list ${listId}`);
-    return next(err);
-  } else if (!userIsListPublisher(req, list)) {
-    const err = new HttpException(403, "403", "User does not have publishing rights on this list.");
-    return next(err);
-  }
-  return next();
 }

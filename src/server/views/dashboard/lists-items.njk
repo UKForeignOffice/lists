@@ -42,13 +42,7 @@
   {% if messages.successBannerTitle %}
     {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
     {% set bannerTitle = messages.successBannerTitle %}
-    {% set colourClass = ".govuk-tag--blue" %}
-    {% if messages.successBannerColour === "green" %}
-      {% set colourClass = ".govuk-tag--green" %}
-    {% elseif messages.successBannerColour === "red" %}
-      {% set colourClass = ".govuk-tag--red" %}
-    {% endif %}
-    {{ dashboardMacros.successBanner(bannerHeading, bannerTitle, colourClass) }}
+    {{ dashboardMacros.successBanner(bannerHeading, bannerTitle, messages.successBannerColour) }}
   {% endif %}
 
   <h1 class="govuk-heading-l">

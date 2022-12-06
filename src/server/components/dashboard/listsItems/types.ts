@@ -64,6 +64,7 @@ type Unwrap<T> = T extends PromiseLike<infer U> ? U : T;
 interface ListLocals {
   list: Unwrap<ReturnType<typeof getListOverview>>;
   listIndexUrl: string;
+  listEditUrl: string;
   title: string;
   [key: string]: any;
 }

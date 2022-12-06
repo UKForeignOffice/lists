@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { logger } from "server/services/logger";
 import axios from "axios";
 import { List, ListJsonData } from "server/models/types";
@@ -7,24 +6,9 @@ import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
 
-type ListWithJsonData = Partial<List> & {
+export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
 };
-
-export function userIsListAdministrator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.administrators?.includes(email) : false;
-}
-
-export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.publishers?.includes(email) : false;
-}
-
-export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.validators?.includes(email) : false;
-}
 
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,
@@ -69,4 +53,4 @@ export const pageTitles: { [key: string]: string } = {
   [sitemapRoute]: "site map",
   [authRoutes.login]: "login",
   [authRoutes.logout]: "logout",
-}
+};

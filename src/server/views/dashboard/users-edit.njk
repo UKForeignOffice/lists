@@ -8,10 +8,6 @@
   <h1 class="govuk-heading-l">Editing User</h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
-  {% if userSaved %}
-    {{ dashboardMacros.successBanner("User updated successfully") }}
-  {% endif %}
-
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
@@ -49,10 +45,7 @@
                   {{ _.startCase(role) }}
                 </label>
                 <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
-                  {% if role === UserRoles.ListsCreator %}
-                    A Lists Creator can create new lists
-                  {% endif %}
-                  {% if role === UserRoles.SuperAdmin %}
+                  {% if role === UserRoles.Administrator %}
                     Set user roles, create new lists and assign users to lists
                   {% endif %}
                 </div>
