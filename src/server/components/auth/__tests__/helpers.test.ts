@@ -1,5 +1,5 @@
 import { ensureAuthenticated, ensureUserIsAdministrator } from "../helpers";
-import { NextFunction } from "express";
+import { HttpException } from "server/middlewares/error-handlers";
 
 describe("Auth Service", () => {
   describe("ensureAuthenticated", () => {
@@ -36,7 +36,7 @@ describe("Auth Service", () => {
     });
   });
 
-  describe("ensureUserisAdministrator", () => {
+  describe("ensureUserIsAdministrator", () => {
     test("next function is called when user is a SuperAdmin", () => {
       const next = jest.fn();
       const res: any = {};
@@ -50,12 +50,13 @@ describe("Auth Service", () => {
       ensureUserIsAdministrator(req, res, next);
 
       expect(req.isAuthenticated).toHaveBeenCalled();
-      expect(req.user.isAdministrator).toHaveBeenCalled();
+      expect(req.user.isAdministrator).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });
 
     test("response is 405 Not allowed when user is not a SuperAdmin", () => {
-      const next: NextFunction = mockNextFunction(405, "Not allowed");
+      const next = jest.fn();
+      const err = new HttpException(405, "405", "Not allowed");
       const res: any = {
         status: jest.fn().mockReturnThis(),
         send: jest.fn(),
@@ -63,22 +64,13 @@ describe("Auth Service", () => {
       const req: any = {
         isAuthenticated: jest.fn().mockReturnValue(true),
         user: {
-          isAdministrator: jest.fn().mockReturnValue(false),
+          isAdministrator: false,
         },
       };
 
       ensureUserIsAdministrator(req, res, next);
 
-      expect(req.isAuthenticated).toHaveBeenCalled();
-      expect(req.user.isAdministrator).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(err);
     });
   });
-
-  function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
-    const next: NextFunction = (err) => {
-      expect(err.message).toBe(expectedMessage);
-      expect(err.status).toBe(expectedStatus);
-    };
-    return next;
-  }
 });
