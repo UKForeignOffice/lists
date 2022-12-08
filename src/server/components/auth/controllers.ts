@@ -68,7 +68,7 @@ export async function postLoginController(
   }
 }
 
-export function getLogoutController(req: Request, res: Response): void {
-  req.logout();
-  res.redirect("/login");
+export function getLogoutController(req: Request, res: Response, next: NextFunction): void {
+  const logoutCallback = (err: Error) => (err ? next(err) : res.redirect("/login"));
+  req.logout(logoutCallback);
 }
