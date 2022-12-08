@@ -1,7 +1,7 @@
 Feature: List management change annual review date
 
   Background:
-    And I am logged in as a "Administrator"
+    Given I am logged in as a "Administrator"
     And A "lawyers" list exists for Eurasia
     And I click the link "Lists"
     And I click the link "Settings" for "Eurasia"

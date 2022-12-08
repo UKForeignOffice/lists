@@ -17,8 +17,11 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
+<<<<<<< HEAD
 import { format, parseISO } from "date-fns";
 import { DATE_FORMAT } from "./annualReview/controllers";
+=======
+>>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -167,7 +170,17 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
+<<<<<<< HEAD
     res.render(templateUrl, {
+=======
+    const annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+    const lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(
+      list as List,
+      "lastAnnualReviewStartDate"
+    );
+
+    res.render("dashboard/lists-edit", {
+>>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
       ...DEFAULT_VIEW_PROPS,
       annualReviewStartDate,
       lastAnnualReviewStartDate,
@@ -299,6 +312,7 @@ export async function feedbackController(req: Request, res: Response, next: Next
     next(error);
   }
 }
+<<<<<<< HEAD
 
 export function helpPageController(req: Request, res: Response): void {
   res.render("dashboard/help", {
@@ -481,3 +495,5 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   );
 }
 >>>>>>> 6bd2e263 (chore: address PR comments)
+=======
+>>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
