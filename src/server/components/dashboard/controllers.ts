@@ -127,6 +127,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
+      canViewSettings: (list: List) => checkEmailExistsInUsers(list, req),
       req,
       isNewUser,
       lists: listsWithFormattedDates(lists as List[]),
@@ -147,6 +148,10 @@ function listsWithFormattedDates(lists: List[]): List[] {
 
 function formatAnnualReviewDate(list: List, field: string): string {
   return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
+}
+
+function checkEmailExistsInUsers(list: List, req: Request) {
+  return list.jsonData?.users?.includes(req.user?.emailAddress as string);
 }
 
 // TODO: test
