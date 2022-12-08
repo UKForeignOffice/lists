@@ -11,7 +11,6 @@ import {
   usersEditController,
   usersEditPostController,
   usersListController,
-  getAnnualReviewDate,
 } from "../controllers";
 import * as govukNotify from "../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
@@ -20,6 +19,7 @@ import { listItemGetController } from "server/components/dashboard/listsItems/co
 import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
 import { HttpException } from "../../../middlewares/error-handlers";
+import { getAnnualReviewDate } from "server/components/dashboard/annualReview/Helpers";
 
 jest.useFakeTimers("modern");
 
@@ -464,24 +464,24 @@ describe("Dashboard Controllers", () => {
   });
 
 
-  describe("getAnnualReviewDate", () => {
+  describe.only("getAnnualReviewDate", () => {
     const list = {
       jsonData: {
-        lastAnnualReviewDate: new Date("1/1/2022"),
+        lastAnnualReviewStartDate: new Date("1/1/2022"),
         annualReviewStartDate: new Date("1/1/2023")
       }
     };
 
     const annualReviewInNov = {
       jsonData: {
-        lastAnnualReviewDate: new Date("11/1/2022"),
+        lastAnnualReviewStartDate: new Date("11/1/2022"),
         annualReviewStartDate: new Date("11/1/2023")
       }
     };
 
     const annualReviewCloseToLast = {
       jsonData: {
-        lastAnnualReviewDate: new Date("11/1/2022"),
+        lastAnnualReviewStartDate: new Date("11/1/2022"),
         annualReviewStartDate: new Date("4/1/2024")
       }
     }
@@ -531,6 +531,7 @@ describe("Dashboard Controllers", () => {
         month: "1",
         list: annualReviewInNov,
       });
+
 
       // then
       expect(result.value).toBeTruthy();

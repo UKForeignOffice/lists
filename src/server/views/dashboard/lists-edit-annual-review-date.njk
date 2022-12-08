@@ -22,46 +22,6 @@
 
     <p class="govuk-body">The next {{_.startCase(list.type)}} list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
-<<<<<<< HEAD
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error.text }}" id="annualReviewDateForm">
-        <h2 class="govuk-heading-m govuk-!-margin-0">Enter a new start date</h2>
-        <fieldset class="govuk-fieldset" role="group" aria-describedby="annual-review-date">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-          </legend>
-          <div id="annual-review-date" class="govuk-hint">
-            {% if maxDate %}
-              The new date must be before {{formattedMaxDate}}
-            {% else %}
-              The new date must be within 6 months of today’s date
-            {% endif %}
-          </div>
-
-          {% if error.text %}
-            <span class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
-            </span>
-          {% endif %}
-          <div class="govuk-date-input" id="annual-review-date">
-            <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label" for="day">
-                    Day
-                </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" data-testid="day" id="day" name="day" type="text" inputmode="numeric">
-              </div>
-            </div>
-            <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label" for="month">
-                    Month
-                </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2 {{ "govuk-input--error" if error.text }}" data-testid="month" id="month" name="month" type="text" inputmode="numeric">
-              </div>
-            </div>
-          </div>
-        </fieldset>
-    </div>
-=======
     {{ govukDateInput({
       id: "annualReveiwDateForm",
       fieldset: {
@@ -94,7 +54,6 @@
         }
       ]
     }) }}
->>>>>>> 28f6bda0 (chore: address PR comments)
 
     <div class="govuk-button-group">
       <button class="govuk-button govuk-!-margin-bottom-2" data-module="govuk-button" name="action" value="confirmNewDate">

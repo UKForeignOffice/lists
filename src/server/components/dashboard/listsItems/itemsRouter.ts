@@ -4,10 +4,10 @@ import {
   listsController,
   listsEditController,
   listsItemsController,
-  listPublisherDelete,
   listsEditPostController,
 } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
+import * as annualReview from "server/components/dashboard/annualReview/controllers";
 
 import { logger } from "server/services/logger";
 import express from "express";
@@ -94,4 +94,7 @@ listRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPublis
 listRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
 listRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);
 listRouter.post("/:listId/items/:listItemId/pin", controllers.listItemPinController);
-listRouter.post("/:listId/publisher-delete", listPublisherDelete);
+listRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
+
+listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
+listRouter.post("/:listId/annual-review-date", annualReview.editDatePostController);
