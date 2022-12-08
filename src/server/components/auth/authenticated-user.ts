@@ -15,15 +15,12 @@ export default class AuthenticatedUser {
     this.id = userData.id;
   }
 
-  /**
-   * TODO: should really be a native getter, so the User API would be like `user.isAdministrator` rather than user.isAdministrator().
-   */
-  isAdministrator(): boolean {
+  get isAdministrator() {
     return this.roles.includes(UserRoles.Administrator);
   }
 
   async getLists() {
-    const notSuperAdmin = !this.isAdministrator();
+    const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
         jsonData: {
@@ -51,7 +48,7 @@ export default class AuthenticatedUser {
   }
 
   async hasAccessToList(id: List["id"] | "new") {
-    if (this.isAdministrator()) {
+    if (this.isAdministrator) {
       return true;
     }
 

@@ -33,7 +33,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
     }
 
     const lists = await req.user!.getLists();
-    const isNewUser = !req.user?.isAdministrator() && lists.length === 0;
+    const isNewUser = !req.user?.isAdministrator && lists.length === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
@@ -128,6 +128,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
+      canViewSettings: (list: List) => checkEmailExistsInUsers(list, req),
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -135,6 +136,11 @@ export async function listsController(req: Request, res: Response, next: NextFun
   } catch (error) {
     next(error);
   }
+}
+
+function checkEmailExistsInUsers(list: List, req: Request) {
+  return true;
+  // return list.jsonData?.users?.includes(req.user?.emailAddress as string);
 }
 
 // TODO: test

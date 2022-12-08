@@ -16,7 +16,7 @@
         <nav class="govuk-!-padding-top-7 govuk-!-padding-bottom-7">
           <ul class="govuk-list">
             {{ dashboardMacros.navMenu("Lists", dashboardRoutes.lists, req) }}
-            {% if req.user.isAdministrator() %}
+            {% if req.user.isAdministrator %}
               {{ dashboardMacros.navMenu("Feedbacks", dashboardRoutes.feedback, req) }}
               {{ dashboardMacros.navMenu("Users", dashboardRoutes.usersList, req) }}
             {% endif %}

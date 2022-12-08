@@ -12,6 +12,18 @@
 
 {% block dashboard %}
   <div>
+    {% if publisher.change %}
+      {{ dashboardMacros.successBanner("Success", publisher.change) }}
+    {% endif %}
+
+    {% if messages.successBannerHeading %}
+      {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
+    {% endif %}
+
+    {% if error.field %}
+      {{ dashboardMacros.errorBanner(error) }}
+    {% endif %}
+
     <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
     <h1 class="govuk-heading-l">
       {% if listId === 'new' %}
@@ -21,21 +33,6 @@
       {% endif %}
     </h1>
     <h4 class="govuk-heading-s">{{ user.email }}</h4>
-    {% if publisher.change %}
-      {{ dashboardMacros.successBanner("Success", publisher.change) }}
-    {% endif %}
-
-    {% if messages.successBannerHeading %}
-      {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
-    {% endif %}
-
-    {% if annualReviewDateUpdated %}
-      {{ dashboardMacros.successBanner("Updated successfully", "Annual review date updated successfully") }}
-    {% endif %}
-
-    {% if error.field %}
-      {{ dashboardMacros.errorBanner(error) }}
-    {% endif %}
 
     <div>
       <h2 class="govuk-heading-m">Annual review</h2>

@@ -91,6 +91,8 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
     });
   }
 
+  req.flash("changeMsg", "Annual review date updated successfully");
+
   return res.redirect(
     `${dashboardRoutes.listsEdit.replace(":listId", list.id.toString())}?annualReviewDateUpdated=true`
   );

@@ -1,7 +1,7 @@
 {% extends "./dashboard.njk" %}
 
 {% block dashboard %}
-  {% if req.user.isAdministrator() %}
+  {% if req.user.isAdministrator %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
         <p><a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a></p>
@@ -26,7 +26,7 @@
         {% for list in lists %}
           <tr class="govuk-table__row">
             <td scope="row" class="govuk-table__header">
-              {% if req.user.isAdministrator() %}
+              {% if req.user.isAdministrator %}
                 <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.id) }}" class="govuk-link">{{ _.startCase(list.type) }}</a>
               {% else %}
                 {{ _.startCase(list.type) }}
@@ -37,7 +37,9 @@
             <td class="govuk-table__cell govuk-table__cell--numeric"></td>
 
             <td class="govuk-table__cell govuk-table__cell--numeric">
+              {% if canViewSettings(list) %}
                 <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
