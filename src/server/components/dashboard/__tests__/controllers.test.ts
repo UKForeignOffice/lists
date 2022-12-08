@@ -19,7 +19,7 @@ import { listItemGetController } from "server/components/dashboard/listsItems/co
 import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
 import { HttpException } from "../../../middlewares/error-handlers";
-import { getAnnualReviewDate } from "server/components/dashboard/annualReview/Helpers";
+import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
 
 jest.useFakeTimers("modern");
 
