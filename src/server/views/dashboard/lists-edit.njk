@@ -54,7 +54,7 @@
       </dl>
     </div>
 
-    <form class="form" action="{{ req.originalUrl.replace('listUpdated=true', '') }}" method="post" required>
+    <form class="form" action="{{ listsEditUrl }}" method="post" required>
       <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'publisher' }}">
