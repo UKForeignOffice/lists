@@ -463,28 +463,27 @@ describe("Dashboard Controllers", () => {
     });
   });
 
-
-  describe.only("getAnnualReviewDate", () => {
+  describe("getAnnualReviewDate", () => {
     const list = {
       jsonData: {
         lastAnnualReviewStartDate: new Date("1/1/2022"),
-        annualReviewStartDate: new Date("1/1/2023")
-      }
+        annualReviewStartDate: new Date("1/1/2023"),
+      },
     };
 
     const annualReviewInNov = {
       jsonData: {
         lastAnnualReviewStartDate: new Date("11/1/2022"),
-        annualReviewStartDate: new Date("11/1/2023")
-      }
+        annualReviewStartDate: new Date("11/1/2023"),
+      },
     };
 
     const annualReviewCloseToLast = {
       jsonData: {
         lastAnnualReviewStartDate: new Date("11/1/2022"),
-        annualReviewStartDate: new Date("4/1/2024")
-      }
-    }
+        annualReviewStartDate: new Date("4/1/2024"),
+      },
+    };
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
@@ -532,7 +531,6 @@ describe("Dashboard Controllers", () => {
         list: annualReviewInNov,
       });
 
-
       // then
       expect(result.value).toBeTruthy();
       expect(result.value).toEqual(new Date("1/1/2024"));
@@ -554,8 +552,8 @@ describe("Dashboard Controllers", () => {
 
   function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
     const next: NextFunction = (err) => {
-      expect(err.message).toBe(expectedMessage)
-      expect(err.status).toBe(expectedStatus)
+      expect(err.message).toBe(expectedMessage);
+      expect(err.status).toBe(expectedStatus);
     };
     return next;
   }
