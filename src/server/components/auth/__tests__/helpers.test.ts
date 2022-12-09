@@ -43,14 +43,18 @@ describe("Auth Service", () => {
       const req: any = {
         isAuthenticated: jest.fn().mockReturnValue(true),
         user: {
-          isAdministrator: jest.fn().mockReturnValue(true),
+          get isAdministrator() {
+            return true;
+          },
         },
       };
+
+      const isAdministratorSpy = jest.spyOn(req.user, "isAdministrator", "get");
 
       ensureUserIsAdministrator(req, res, next);
 
       expect(req.isAuthenticated).toHaveBeenCalled();
-      expect(req.user.isAdministrator).toBeTruthy();
+      expect(isAdministratorSpy).toHaveBeenCalled();
       expect(next).toHaveBeenCalled();
     });
 

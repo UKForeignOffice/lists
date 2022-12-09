@@ -45,7 +45,7 @@ describe("Dashboard Controllers", () => {
         userData: {
           email: "authemail@gov.uk",
         },
-        isAdministrator: jest.fn(),
+        isAdministrator: false,
         getLists: jest.fn(),
         hasAccessToList: jest.fn(),
       },
@@ -125,8 +125,8 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it identifies a new user correctly", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(false);
+      mockReq.user.getLists.mockResolvedValue([]);
+      mockReq.user.isAdministrator = false;
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -135,7 +135,7 @@ describe("Dashboard Controllers", () => {
 
     test("a SuperAdmin is not a new user", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(true);
+      mockReq.user.isAdministrator = true;
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -466,7 +466,7 @@ describe("Dashboard Controllers", () => {
   describe("getAnnualReviewDate", () => {
     const list = {
       jsonData: {
-        lastAnnualReviewStartDate: new Date("1/1/2022"),
+        lastAnnualReviewStartDate: new Date("2022-01-01"),
         annualReviewStartDate: new Date("1/1/2023"),
       },
     };
@@ -549,12 +549,4 @@ describe("Dashboard Controllers", () => {
       expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
     });
   });
-
-  function mockNextFunction(expectedStatus: number, expectedMessage: string): NextFunction {
-    const next: NextFunction = (err) => {
-      expect(err.message).toBe(expectedMessage);
-      expect(err.status).toBe(expectedStatus);
-    };
-    return next;
-  }
 });
