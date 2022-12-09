@@ -467,21 +467,21 @@ describe("Dashboard Controllers", () => {
     const list = {
       jsonData: {
         lastAnnualReviewStartDate: new Date("2022-01-01"),
-        annualReviewStartDate: new Date("1/1/2023"),
+        annualReviewStartDate: new Date("2023-01-01"),
       },
     };
 
     const annualReviewInNov = {
       jsonData: {
-        lastAnnualReviewStartDate: new Date("11/1/2022"),
-        annualReviewStartDate: new Date("11/1/2023"),
+        lastAnnualReviewStartDate: new Date("2022-11-01"),
+        annualReviewStartDate: new Date("2023-11-01"),
       },
     };
 
     const annualReviewCloseToLast = {
       jsonData: {
-        lastAnnualReviewStartDate: new Date("11/1/2022"),
-        annualReviewStartDate: new Date("4/1/2024"),
+        lastAnnualReviewStartDate: new Date("2022-11-01"),
+        annualReviewStartDate: new Date("2024-04-01"),
       },
     };
 
@@ -533,7 +533,7 @@ describe("Dashboard Controllers", () => {
 
       // then
       expect(result.value).toBeTruthy();
-      expect(result.value).toEqual(new Date("1/1/2024"));
+      expect(result.value).toEqual(new Date("2024-01-01"));
     });
 
     it("returns inValid if date exceeds max date from last annual review plus one year", () => {
