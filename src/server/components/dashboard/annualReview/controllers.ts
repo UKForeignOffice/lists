@@ -60,7 +60,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   if (!annualReviewDate.value) {
     req.flash("annualReviewError", annualReviewDate.errorMsg!);
-    return res.redirect(`/dashboard/lists/${res.locals.list.id}/annual-review-date`);
+    return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
