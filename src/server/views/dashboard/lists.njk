@@ -37,9 +37,7 @@
             <td class="govuk-table__cell govuk-table__cell--numeric"></td>
 
             <td class="govuk-table__cell govuk-table__cell--numeric">
-              {% if canViewSettings(list) %}
-                <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
-              {% endif %}
+              <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
             </td>
           </tr>
         {% endfor %}

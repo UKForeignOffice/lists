@@ -12,10 +12,6 @@
 
 {% block dashboard %}
   <div>
-    {% if publisher.change %}
-      {{ dashboardMacros.successBanner("Success", publisher.change) }}
-    {% endif %}
-
     {% if messages.successBannerHeading %}
       {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
     {% endif %}

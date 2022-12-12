@@ -128,7 +128,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
-      canViewSettings: (list: List) => checkEmailExistsInUsers(list, req),
       req,
       lists,
       csrfToken: getCSRFToken(req),
@@ -136,11 +135,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
   } catch (error) {
     next(error);
   }
-}
-
-function checkEmailExistsInUsers(list: List, req: Request) {
-  return true;
-  // return list.jsonData?.users?.includes(req.user?.emailAddress as string);
 }
 
 // TODO: test
@@ -166,7 +160,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      publisher: { change: changeMsg },
+      messages: { successBannerMessage: changeMsg, successBannerHeading: Boolean(changeMsg) },
       annualReviewStartDate,
       lastAnnualReviewStartDate,
       listId,

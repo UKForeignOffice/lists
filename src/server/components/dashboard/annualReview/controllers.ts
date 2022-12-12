@@ -6,7 +6,6 @@ import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import * as Helpers from "server/components/dashboard/annualReview/helpers";
 import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
-import { dashboardRoutes } from "server/components/dashboard/routes";
 
 import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
@@ -61,7 +60,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   if (!annualReviewDate.value) {
     req.flash("annualReviewError", annualReviewDate.errorMsg!);
-    return res.redirect(res.locals.listsEditUrl);
+    return res.redirect(`/dashboard/lists/${res.locals.list.id}/annual-review-date`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
@@ -82,18 +81,16 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
 
   await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
 
-  for (const emailAddress of list.jsonData.users ?? []) {
-    await sendAnnualReviewDateChangeEmail({
-      emailAddress,
-      serviceType: startCase(list.type),
-      country: list.country!.name!,
-      annualReviewDate,
-    });
-  }
+  // for (const emailAddress of list.jsonData.users ?? []) {
+  //   await sendAnnualReviewDateChangeEmail({
+  //     emailAddress,
+  //     serviceType: startCase(list.type),
+  //     country: list.country!.name!,
+  //     annualReviewDate,
+  //   });
+  // }
 
   req.flash("changeMsg", "Annual review date updated successfully");
 
-  return res.redirect(
-    `${dashboardRoutes.listsEdit.replace(":listId", list.id.toString())}?annualReviewDateUpdated=true`
-  );
+  return res.redirect(res.locals.listsEditUrl);
 }
