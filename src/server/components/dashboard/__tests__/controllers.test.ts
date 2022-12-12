@@ -224,7 +224,7 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists");
-      expect(mockRes.render.mock.calls[0][1].lists).toBe(lists);
+      expect(mockRes.render.mock.calls[0][1].lists).toStrictEqual(lists);
     });
 
     test("it renders correct with empty list when user.getLists result is empty", async () => {
