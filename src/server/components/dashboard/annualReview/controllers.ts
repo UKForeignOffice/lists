@@ -14,8 +14,7 @@ export const DATE_FORMAT = "d MMMM yyyy";
 
 export async function editDateGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { listId } = req.params;
-    const list = await findListById(listId);
+    const list = await findListById(res.locals.list.id);
     const annualReviewStartDate = Helpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
     const maxDate = list?.jsonData.annualReviewStartDate ? Helpers.getMaxDate(list) : "";
     const formattedMaxDate = maxDate ? DateFns.format(maxDate, DATE_FORMAT) : "";
@@ -60,7 +59,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 
   if (!annualReviewDate.value) {
     req.flash("annualReviewError", annualReviewDate.errorMsg!);
-    return res.redirect(`${res.locals.listEditUrl}/annual-review-date`);
+    return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
   }
 
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
