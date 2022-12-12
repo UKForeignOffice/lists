@@ -143,21 +143,22 @@ export async function listsEditController(req: Request, res: Response, next: Nex
     const { listId } = req.params;
 
     let list: List | undefined;
+    let annualReviewStartDate = "";
+    let lastAnnualReviewStartDate = "";
+    let templateUrl = "dashboard/lists-new";
 
     if (listId !== "new") {
       list = await findListById(listId);
+      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+      lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
+      templateUrl = "dashboard/lists-edit";
+
       if (list === undefined) {
         return next();
       }
     }
 
-    const annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(
-      list as List,
-      "lastAnnualReviewStartDate"
-    );
-
-    res.render("dashboard/lists-edit", {
+    res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
       annualReviewStartDate,
       lastAnnualReviewStartDate,
