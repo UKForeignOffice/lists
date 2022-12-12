@@ -375,8 +375,8 @@ workflows:
             - VPN
             - AWS
           requires:
-            - publish-lists
-            - publish-lists-apply
+#            - publish-lists
+#            - publish-lists-apply
 #            - publish-lists-postgres
           filters:
             branches:
