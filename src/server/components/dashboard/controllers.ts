@@ -17,11 +17,8 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
-<<<<<<< HEAD
 import { format, parseISO } from "date-fns";
 import { DATE_FORMAT } from "./annualReview/controllers";
-=======
->>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -127,7 +124,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
-      canViewSettings: (list: List) => checkEmailExistsInUsers(list, req),
       req,
       isNewUser,
       lists: listsWithFormattedDates(lists as List[]),
@@ -148,10 +144,6 @@ function listsWithFormattedDates(lists: List[]): List[] {
 
 function formatAnnualReviewDate(list: List, field: string): string {
   return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
-}
-
-function checkEmailExistsInUsers(list: List, req: Request) {
-  return list.jsonData?.users?.includes(req.user?.emailAddress as string);
 }
 
 // TODO: test
@@ -175,17 +167,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
-<<<<<<< HEAD
     res.render(templateUrl, {
-=======
-    const annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(
-      list as List,
-      "lastAnnualReviewStartDate"
-    );
-
-    res.render("dashboard/lists-edit", {
->>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
       ...DEFAULT_VIEW_PROPS,
       annualReviewStartDate,
       lastAnnualReviewStartDate,
@@ -317,15 +299,12 @@ export async function feedbackController(req: Request, res: Response, next: Next
     next(error);
   }
 }
-<<<<<<< HEAD
 
 export function helpPageController(req: Request, res: Response): void {
   res.render("dashboard/help", {
     backUrl: req.session.currentUrl ?? "/dashboard/lists",
   });
 }
-<<<<<<< HEAD
-=======
 
 export async function listsEditAnnualReviewDateController(
   req: Request,
@@ -499,6 +478,3 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
     `${dashboardRoutes.listsEdit.replace(":listId", list.id.toString())}?annualReviewDateUpdated=true`
   );
 }
->>>>>>> 6bd2e263 (chore: address PR comments)
-=======
->>>>>>> 8c3f9fe8 (refactor: create annual review route and...)
