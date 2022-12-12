@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: setup-cron
+spec:
+#  schedule: "50 10 * * *" # 10:50 UTC
+  schedule: "* * * * *" # every minute (to test)
+  jobTemplate:
+    spec:
+      suspend: false # set to true to pause further execs of this job
+      concurrencyPolicy: Forbid # there is no job splitting so concurrency wont help
+      template:
+        spec:
+          containers:
+            - name: scheduler
+              image: scheduled:latest
+              imagePullPolicy: Never
+              command:
+                - npm
+                - run
+                - scheduler:batch
+          restartPolicy: OnFailure

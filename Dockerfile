@@ -44,7 +44,7 @@ ENV CI_SMOKE_TEST=true
 
 CMD ["npm", "run", "start:prod"]
 
-# docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
+# docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
 # if you are on Mac M1 please add --platform=linux/amd64 after FROM below
 FROM node:14.17-alpine3.13 AS scheduled
 WORKDIR /usr/src/scheduler

@@ -8,6 +8,8 @@
     "scripts": {
       "scheduler:start-annual-review": "npm run prisma:generate && npm run prisma:deploy && node dist/scheduler/startAnnualReview.js",
       "scheduler:unpublish": "npm run prisma:deploy && node dist/scheduler/unpublish.js",
+      "scheduler:batch": "node dist/scheduler/batchCronTest.js",
+      "scheduler:worker": "node dist/scheduler/WorkerCronTest.js",
       "prisma:deploy": "npx prisma migrate deploy --schema src/server/models/db/schema.prisma",
       "prisma:generate": "npx prisma generate --schema src/server/models/db/schema.prisma"
     }
