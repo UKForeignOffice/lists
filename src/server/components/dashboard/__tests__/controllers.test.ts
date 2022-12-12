@@ -117,6 +117,7 @@ describe("Dashboard Controllers", () => {
       },
       listId: 1,
       status: Status.NEW,
+      history: [],
     };
   });
 
