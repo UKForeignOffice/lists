@@ -42,7 +42,7 @@ export function getAnnualReviewYear({
 
   if (!day || !month) return date.getFullYear();
 
-  const userEnteredDate = new Date(`${month}/${day}/${date.getFullYear()}`);
+  const userEnteredDate = new Date(date.getFullYear(), Number(month) + 1, Number(day));
 
   return DateFns.isBefore(userEnteredDate, date) ? date.getFullYear() + 1 : date.getFullYear();
 }

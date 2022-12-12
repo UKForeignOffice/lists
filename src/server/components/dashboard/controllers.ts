@@ -141,7 +141,6 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const changeMsg = req.flash("changeMsg")[0];
 
     let list: List | undefined;
 
@@ -160,7 +159,6 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render("dashboard/lists-edit", {
       ...DEFAULT_VIEW_PROPS,
-      messages: { successBannerMessage: changeMsg, successBannerHeading: Boolean(changeMsg) },
       annualReviewStartDate,
       lastAnnualReviewStartDate,
       listId,
@@ -253,7 +251,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     });
   }
 
-  req.flash("changeMsg", `User ${publisher} has been created`);
+  req.flash("successBannerHeading", "Success");
+  req.flash("successBannerMessage", `User ${publisher} has been created`);
 
   const newUsers = [...(list.jsonData.users ?? []), publisher];
 

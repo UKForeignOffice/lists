@@ -483,7 +483,8 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 
   await updateList(list.id, { users: updatedUsers });
 
-  req.flash("changeMsg", `User ${userEmail} has been removed`);
+  req.flash("successBannerHeading", "Success");
+  req.flash("successBannerMessage", `User ${userEmail} has been removed`);
 
   return res.redirect(res.locals.listsEditUrl);
 }
