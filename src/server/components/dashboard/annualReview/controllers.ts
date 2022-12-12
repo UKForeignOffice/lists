@@ -81,14 +81,14 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
 
   await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
 
-  // for (const emailAddress of list.jsonData.users ?? []) {
-  //   await sendAnnualReviewDateChangeEmail({
-  //     emailAddress,
-  //     serviceType: startCase(list.type),
-  //     country: list.country!.name!,
-  //     annualReviewDate,
-  //   });
-  // }
+  for (const emailAddress of list.jsonData.users ?? []) {
+    await sendAnnualReviewDateChangeEmail({
+      emailAddress,
+      serviceType: startCase(list.type),
+      country: list.country!.name!,
+      annualReviewDate,
+    });
+  }
 
   req.flash("changeMsg", "Annual review date updated successfully");
 
