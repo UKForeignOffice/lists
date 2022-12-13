@@ -6,6 +6,8 @@
       "node": ">=14"
     },
     "scripts": {
+      "scheduler:batch": "npm run prisma:generate && npm run prisma:deploy && node dist/scheduler/batch.js",
+      "scheduler:annual-review-worker": "npm run prisma:generate && npm run prisma:deploy && node dist/scheduler/annualReview.js",
       "scheduler:start-annual-review": "npm run prisma:generate && npm run prisma:deploy && node dist/scheduler/startAnnualReview.js",
       "scheduler:unpublish": "npm run prisma:deploy && node dist/scheduler/unpublish.js",
       "prisma:deploy": "npx prisma migrate deploy --schema src/server/models/db/schema.prisma",

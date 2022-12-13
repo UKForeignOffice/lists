@@ -24,6 +24,30 @@ export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME ?? "fcdo-professional-service-finder";
 
 // GOVUK Notify
+export const NOTIFY = {
+  apiKey: process.env.GOVUK_NOTIFY_API_KEY?.trim(),
+  templates: {
+    auth: process.env.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
+    emailConfirmation: process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
+    published: process.env.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim(),
+    edit: process.env.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
+    annualReviewNotices: {
+      postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim(),
+      postOneWeek: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE?.trim(),
+      postOneDay: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE?.trim(),
+      postStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED?.trim(),
+      providerStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED?.trim(),
+    },
+    unpublishNotice: {
+      postWeekly: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE?.trim(),
+      postOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE?.trim(),
+      postUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE?.trim(),
+      providerOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE?.trim(),
+      providerUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE?.trim(),
+    }
+  }
+};
+
 export const {
   GOVUK_NOTIFY_API_KEY,
   GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
@@ -31,24 +55,12 @@ export const {
   GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
   GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
-  GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID,
-
-  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE,
-  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
-  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
-  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
-  GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED,
-
-  GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE,
-  GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE,
-  GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE,
-
-  GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE,
-  GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE,
+  GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID
 } = process.env;
 
 // Scheduled process
-const defaultTodayDateString = new Date().toLocaleString('default',{year: 'numeric', month: 'long', day: 'numeric'});
+const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
+const defaultTodayDateString = new Date().toLocaleString('en-gb', options);
 export const SCHEDULED_PROCESS_TODAY_DATE = process.env.SCHEDULED_PROCESS_TODAY_DATE ?? defaultTodayDateString;
 
 

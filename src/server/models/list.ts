@@ -3,7 +3,7 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 
-import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput } from "./types";
+import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput, CurrentAnnualReview } from "./types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -42,30 +42,49 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(
-  annualReviewStartDates: Date[]
-): Promise<List[] | undefined> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date): Promise<Result<List[]>> {
   try {
-    logger.debug(`searching for lists matching dates [${annualReviewStartDates}]`);
+    logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
-    const lists = (await prisma.list.findMany({
+    const result = (await prisma.list.findMany({
       where: {
-        nextAnnualReviewStartDate: {
-          in: annualReviewStartDates,
-        }
+        nextAnnualReviewStartDate: annualReviewStartDate,
+        isAnnualReview: false,
       },
       include: {
         country: true,
       },
     })) as List[];
 
-    logger.debug(`direct from query, found [${lists.length}] lists`);
+    logger.debug(`direct from query, found [${result.length}] lists`);
 
-    return lists ?? undefined;
+    return { result };
   } catch (error) {
     logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
+    return { error: Error("Unable to get lists") };
   }
-  return undefined;
+}
+
+export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>> {
+  try {
+    const result = (await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ["currentAnnualReview"],
+          not: "",
+        },
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+    return { result };
+  } catch (error) {
+    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
+    return { error: new Error("Unable to get lists in annual review") };
+  }
 }
 
 export async function createList(listData: {
@@ -154,4 +173,33 @@ export async function updateAnnualReviewDate(listId: string, annualReviewStartDa
       jsonData,
     },
   });
+}
+
+export async function updateListForAnnualReview(
+  list: List,
+  listData: {
+    currentAnnualReview?: CurrentAnnualReview;
+  }
+): Promise<Result<List>> {
+  try {
+    const data: ListUpdateInput = {
+      isAnnualReview: true,
+      jsonData: {
+        ...list.jsonData,
+        currentAnnualReview: listData.currentAnnualReview,
+      },
+    };
+
+    const result = (await prisma.list.update({
+      where: {
+        id: list.id,
+      },
+      data,
+    })) as List;
+    return { result };
+  } catch (error) {
+    const errorMessage = `Unable to update list for annual review: ${(error as Error).message}`;
+    logger.error(errorMessage);
+    return { error: new Error(errorMessage) };
+  }
 }

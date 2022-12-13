@@ -11,12 +11,14 @@ datasource db {
 }
 
 model List {
-  id                  Int      @id @default(autoincrement())
-  reference           String   @default(uuid()) @unique
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                            Int      @id @default(autoincrement())
+  reference                     String   @default(uuid()) @unique
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
   nextAnnualReviewStartDate     DateTime @default(dbgenerated("NOW() + interval '1 year'")) @db.Date
   lastAnnualReviewStartDate     DateTime? @db.Date
+  isAnnualReview                Boolean @default(false)
+
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
@@ -136,17 +138,7 @@ enum AuditEvent {
   PINNED // TODO: deprecate
   UNPINNED // TODO: deprecate
   DELETED
-  ANNUAL_REVIEW_START_ONE_DAY_REMINDER_POST_EMAIL_SENT
-  ANNUAL_REVIEW_START_ONE_WEEK_REMINDER_POST_EMAIL_SENT
-  ANNUAL_REVIEW_START_ONE_MONTH_REMINDER_POST_EMAIL_SENT
-  ANNUAL_REVIEW_STARTED_POST_EMAIL_SENT
-  ANNUAL_REVIEW_STARTED_PROVIDER_EMAIL_SENT
-  UNPUBLISHED_POST_EMAIL_SENT
-  UNPUBLISH_ONE_DAY_REMINDER_POST_EMAIL_SENT
-  UNPUBLISH_WEEKLY_REMINDER_POST_EMAIL_SENT
-  UNPUBLISHED_PROVIDER_EMAIL_SENT
-  UNPUBLISH_ONE_DAY_REMINDER_PROVIDER_EMAIL_SENT
-  UNPUBLISH_WEEKLY_REMINDER_PROVIDER_EMAIL_SENT
+  REMINDER
 
   UNDEFINED
 }
@@ -183,8 +175,7 @@ enum ListItemEvent {
   ANNUAL_REVIEW_STARTED
   CHECK_ANNUAL_REVIEW
   ARCHIVED
-  UNPUBLISH_ONE_DAY_REMINDER_PROVIDER_EMAIL_SENT
-  UNPUBLISH_WEEKLY_REMINDER_PROVIDER_EMAIL_SENT
+  REMINDER
 }
 
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported

@@ -1,5 +1,12 @@
 import { WebhookData } from "server/components/formRunner";
-import { AuditListItemEventName, EventJsonData, List, ListItem, Point, ServiceType, User } from "server/models/types";
+import {
+  AuditListItemEventName,
+  List,
+  ListItem,
+  Point,
+  ServiceType,
+  User
+} from "server/models/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
@@ -12,8 +19,9 @@ import { prisma } from "../db/prisma-client";
 import { logger } from "server/services/logger";
 import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { merge } from "lodash";
-import { DeserialisedWebhookData } from "./providers/deserialisers/types";
-import { EVENTS, recordEvent } from "./listItemEvent";
+import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
+import { EVENTS } from "./listItemEvent";
+import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -103,36 +111,35 @@ export async function findListItemById(id: string | number) {
   }
 }
 
-export async function findListItemsForLists(listIds: number[], statuses: Status[], isAnnualReview: boolean): Promise<{ result?: ListItem[], error?: Error }> {
+export async function findListItems(options: {
+    listIds?: number[],
+    listItemIds?: number[],
+    statuses?: Status[],
+    isAnnualReview?: boolean
+}) {
   try {
-    const returnVal = await prisma.listItem.findMany({
+    const { listIds, listItemIds, statuses, isAnnualReview } = options;
+    if ((!listIds || !listIds.length) && (!listItemIds || !listItemIds?.length)) {
+      const message = "List ids or list item ids must be specified to find list items";
+      logger.error(message);
+      return { error: Error(message) };
+    }
+    const result = await prisma.listItem.findMany({
       where: {
-        listId: { in: listIds },
-        status: { in: statuses},
-        isAnnualReview
+        ...(listIds != null && { listId: { in: listIds }}),
+        ...(listItemIds != null && { id: { in: listItemIds }}),
+        ...(statuses != null && { status: { in: statuses }}),
+        ...(isAnnualReview != null && { isAnnualReview }),
       },
       include: {
-        address: {
-          select: {
-            firstLine: true,
-            secondLine: true,
-            city: true,
-            postCode: true,
-            country: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-            geoLocationId: true,
+        history: {
+          orderBy: {
+            time: "desc",
           },
         },
-        pinnedBy: true,
-        history: true,
       },
     });
-    return { result: returnVal };
-
+    return { result };
   } catch (error) {
     logger.error(`findListItemsForLists Error ${(error as Error).message}`);
     return { error: Error("Unable to get list items") };
@@ -226,70 +233,6 @@ export async function togglerListItemIsPublished({
     logger.error(`publishLawyer Error ${error.message}`);
 
     throw new Error("Failed to publish lawyer");
-  }
-}
-
-export async function persistListItemChanges(
-  id: number,
-  userId: User["id"]
-): Promise<ListItem> {
-  if (userId === undefined) {
-    throw new Error("persistListItemChanges Error: userId is undefined");
-  }
-  const auditEvent = AuditEvent.PUBLISHED;
-  const listItemEvent = ListItemEvent.PUBLISHED;
-
-  try {
-    const listItem = await prisma.listItem.findUnique({
-      where: { id },
-      include: {
-        history: true,
-      },
-    });
-
-    const editEvent = listItem?.history
-      .sort((a, b) => b.time.getMilliseconds() - a.time.getMilliseconds())
-      .filter((audit) => audit.type === "EDITED")
-      .pop();
-
-    const eventJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
-
-    const [updatedListItem] = await prisma.$transaction([
-      prisma.listItem.update({
-        where: {
-          id,
-        },
-        data: {
-          isApproved: true,
-          isPublished: true,
-          jsonData: eventJsonData?.updatedJsonData,
-        },
-      }),
-      recordListItemEvent(
-        {
-          eventName: "publish",
-          itemId: id,
-          userId,
-        },
-        auditEvent
-      ),
-
-      recordEvent(
-        {
-          eventName: "publish",
-          itemId: id,
-          userId,
-        },
-        id,
-        listItemEvent
-      ),
-    ]);
-
-    return updatedListItem;
-  } catch (e) {
-    logger.error(`persistListItemChanges Error ${e.message}`);
-
-    throw new Error("Failed to persist updates to list item");
   }
 }
 
@@ -411,7 +354,7 @@ export async function update(
   const areasOfLaw = data?.areasOfLaw;
   const repatriationServicesProvided = data?.repatriationServicesProvided;
   const localServicesProvided = data?.localServicesProvided;
-  const updatedJsonData = merge(listItem.jsonData, data);
+  const updatedJsonData = merge(listItem.jsonData, data) as ListItemJsonData;
 
   // @todo this will need restructuring to accommodate array field types for other providers
   if (areasOfLaw) {
@@ -468,7 +411,6 @@ export async function update(
         eventName: "publish",
         itemId: id,
         userId,
-        // @ts-ignore
         updatedJsonData,
       },
       AuditEvent.PUBLISHED
@@ -490,94 +432,76 @@ export async function update(
 }
 
 /**
- * Updates list items for the annual review and annual review unpublish scheduled processes setting the status,
- * isAnnualReview flag and adding a ListItemEvent record.
+ * Updates the isAnnualReview flag for list items and adds a ListItemEvent record.
  * @param listItems
  * @param status
  * @param eventName
  * @param auditEvent
  */
-export async function updateAnnualReview(listItems: ListItem[],
-                                         status: Status,
-                                         listItemEvent: ListItemEvent,
-                                         eventName: AuditListItemEventName,
-                                         auditEvent: AuditEvent): Promise<ListItem[]> {
-  const updatedListItems: ListItem[] = [];
+export async function updateIsAnnualReview(
+  list: List,
+  listItems: ListItemWithHistory[],
+  listItemEvent: ListItemEvent,
+  eventName: AuditListItemEventName,
+  auditEvent: AuditEvent
+): Promise<Result<ListItemWithHistory[]>> {
+  const updatedListItems: ListItemWithHistory[] = [];
 
   if (!listItems) {
-    logger.info(`Unable to update list items - no ids specified`);
-
-  } else {
-    for (const listItem of listItems) {
-      const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
-        where: {
-          id: listItem.id,
-        },
-        data: {
-          isAnnualReview: status !== Status.UNPUBLISHED,
-          status,
-          history: {
-            create: {
-              time: new Date(),
-              type: listItemEvent,
-              jsonData: {
-                eventName: eventName,
-                itemId: listItem.id,
-              },
+    const message = `List ids must be provided to update list items`;
+    logger.error(message);
+    return { error: new Error(message) };
+  }
+  for (const listItem of listItems) {
+    const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
+      where: {
+        id: listItem.id,
+      },
+      data: {
+        isAnnualReview: listItem.status !== Status.UNPUBLISHED,
+        // history: EVENTS[listItemEvent](),
+        history: {
+          create: {
+            type: listItemEvent,
+            jsonData: {
+              eventName: eventName,
+              itemId: listItem.id,
             },
           },
         },
-      };
-      try {
-        logger.debug(`updating list item in transaction`);
+      },
+    };
+    try {
+      logger.debug(`updating list item in transaction`);
+      const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
 
-        const result = await prisma.$transaction([
-          prisma.listItem.update(updateListItemPrismaStatement),
-
-          recordListItemEvent(
-            {
-              eventName: eventName,
-              itemId: listItem.id,
-              // @ts-ignore
-              updatedJsonData: listItem.jsonData,
-            },
-            auditEvent
-          ),
-        ]);
-        if (!result) {
-          logger.error(
-            `transaction listItem.update prisma update failed for listItem ${listItem.id} for annual review`
-          );
-        } else {
-          updatedListItems.push(listItem);
-        }
-      } catch (err) {
-        logger.error(`listItem.update transactional error - rolling back ${err.message}`);
-        throw err;
+      const result = await prisma.$transaction([
+        prisma.listItem.update(updateListItemPrismaStatement),
+        recordListItemEvent(
+          {
+            annualReviewRef: annualReviewRef,
+            eventName: "reminder",
+            itemId: listItem.id,
+            reminderType: "sendStartedProviderEmail",
+          },
+          auditEvent
+        ),
+      ]);
+      if (!result) {
+        const message = `transaction update failed for listItem ${listItem.id} update for annual review`;
+        logger.error(message);
+      } else {
+        updatedListItems.push(listItem);
       }
+    } catch (err) {
+      const message = `listItem.update transaction error occurred updating list item ${listItem.id} due to ${err.message}.  Rolling back transaction.`;
+      logger.error(message);
     }
   }
-  return updatedListItems;
+  return { result: updatedListItems };
 }
 
-/**
- * Utilise the overloaded function updateUnpublished that accepts an array of ListItemGetObjects
- * @param listItem
- * @param status
- * @param listItemEvent
- * @param auditEvent
- */
-export async function updateUnpublished(listItem: ListItem, status: Status, listItemEvent: ListItemEvent, auditEvent: AuditEvent): Promise<ListItem> {
-  const listItems: ListItem[] = [];
-  listItems.push(listItem);
-  const updatedListItems = await updateAnnualReview(listItems, status, listItemEvent, "unpublish", auditEvent);
-  return updatedListItems[0] || undefined;
-}
-
-export async function deleteListItem(
-  id: number,
-  userId: User["id"]
-): Promise<void> {
+export async function deleteListItem(id: number, userId: User["id"]): Promise<void> {
   if (userId === undefined) {
     throw new Error("deleteListItem Error: userId is undefined");
   }

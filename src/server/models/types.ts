@@ -23,18 +23,36 @@ export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
 
 // List
+export interface AnnualReviewKeyDates extends JsonObject {
+  POST_ONE_MONTH: string;
+  POST_ONE_WEEK: string;
+  POST_ONE_DAY: string;
+  START: string;
+}
+export interface UnpublishedKeyDates extends JsonObject {
+  PROVIDER_FIVE_WEEKS: string;
+  PROVIDER_FOUR_WEEKS: string;
+  PROVIDER_THREE_WEEKS: string;
+  PROVIDER_TWO_WEEKS: string;
+  PROVIDER_ONE_WEEK: string;
+  ONE_DAY_UNTIL_UNPUBLISH: string;
+  UNPUBLISH: string;
+}
+export interface ScheduledProcessKeyDates extends JsonObject {
+  annualReview: AnnualReviewKeyDates;
+  unpublished: UnpublishedKeyDates;
+}
+export interface CurrentAnnualReview extends JsonObject {
+  reference: string;
+  eligibleListItems: number[];
+  keyDates: ScheduledProcessKeyDates;
+}
 export interface ListJsonData extends JsonObject {
   users?: string[];
-  annualReviewStartDate?: string | number;
-  lastAnnualReviewStartDate?: string;
+  currentAnnualReview?: CurrentAnnualReview;
 }
+
 export interface List extends PrismaClient.List {
-  id: number;
-  reference: string;
-  createdAt: Date;
-  updatedAt: Date;
-  type: string;
-  countryId: number;
   jsonData: ListJsonData;
   country?: Partial<Country>;
 }
@@ -149,7 +167,9 @@ export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
 }
 
 // Audit
-export type AuditListItemEventName =
+export type AuditEventName = "edit" | "new";
+
+export type AuditListItemEventName = "edit"
   | "new"
   | "requestChange"
   | "edit"
@@ -161,39 +181,78 @@ export type AuditListItemEventName =
   | "publish"
   | "unpublish"
   | "startAnnualReview"
-  | 'sendAnnualReviewOneMonthReminderPostEmail'
-  | 'sendAnnualReviewOneWeekReminderPostEmail'
-  | 'sendAnnualReviewOneDayReminderPostEmail'
-  | 'sendAnnualReviewStartedPostEmail'
-  | 'sendAnnualReviewStartedProviderEmail'
-  | 'sendUnpublishedProviderEmail'
-  | 'sendOneDayUnpublishedReminderProviderEmail'
-  | 'sendWeeklyUnpublishedReminderProviderEmail'
-  | 'sendUnpublishedPostEmail'
-  | 'sendOneDayUnpublishedReminderPostEmail'
-  | 'sendWeeklyUnpublishedReminderPostEmail'
+  | "reminder";
+
+export type AuditListEventName = "edit" | "new" | "reminder";
+
+export type ListAnnualReviewPostReminderType =
+  | "sendOneMonthPostEmail"
+  | "sendOneWeekPostEmail"
+  | "sendOneDayPostEmail"
+  | "sendStartedPostEmail";
+
+export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";
+
+export type ListItemUnpublishedPostReminderType =
+  | "sendUnpublishedPostEmail"
+  | "sendUnpublishOneDayPostEmail"
+  | "sendUnpublishWeeklyPostEmail";
+
+export type ListItemUnpublishedProviderReminderType =
+  | "sendUnpublishedProviderEmail"
+  | "sendUnpublishOneDayProviderEmail"
+  | "sendUnpublishWeeklyProviderEmail";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
 export interface EventJsonData extends JsonObject {
-  eventName: AuditListItemEventName;
+  eventName: AuditListItemEventName | AuditListEventName;
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
   updatedJsonData?: ListItemJsonData;
+  reminderType?:
+    | ListAnnualReviewPostReminderType
+    | ListItemAnnualReviewProviderReminderType
+    | ListItemUnpublishedPostReminderType
+    | ListItemUnpublishedProviderReminderType;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
+interface BaseAuditEventJsonData extends JsonObject {
+  userId?: User["id"];
+  itemId: ListItem["id"];
+}
+
+export interface ListItemEventJsonData extends BaseAuditEventJsonData {
+  eventName: AuditListItemEventName;
+  requestedChanges?: string;
+  updatedJsonData?: ListItemJsonData;
+  annualReviewRef?: string;
+  reminderType?:
+    | ListItemAnnualReviewProviderReminderType
+    | ListItemUnpublishedPostReminderType
+    | ListItemUnpublishedProviderReminderType;
+}
+
+export interface ListEventJsonData extends BaseAuditEventJsonData {
+  eventName: AuditListEventName;
+  annualReviewRef?: string;
+  reminderType?: ListAnnualReviewPostReminderType;
+}
+
+export type AuditEventJsonData = ListItemEventJsonData | ListEventJsonData;
+
 export interface Audit extends PrismaClient.Audit {
-  jsonData: EventJsonData;
+  jsonData: AuditEventJsonData;
 }
 
 export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
   type: "user" | "list" | "listItem";
-  jsonData: EventJsonData;
+  jsonData: AuditEventJsonData;
 }
 
 export interface AuditUpdateInput extends PrismaClient.Prisma.AuditUpdateInput {
-  jsonData: EventJsonData;
+  jsonData: AuditEventJsonData;
 }
 
 // Feedback

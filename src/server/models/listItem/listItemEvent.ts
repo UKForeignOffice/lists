@@ -111,6 +111,14 @@ export const EVENTS = {
       eventName: "annual review started",
     },
   }),
+
+  [ListItemEvent.REMINDER]: (updatedJsonData = {}): EventCreate<"REMINDER"> => ({
+    type: ListItemEvent.REMINDER,
+    jsonData: {
+      eventName: "reminder",
+      updatedJsonData,
+    },
+  }),
 };
 
 export function recordEvent(
