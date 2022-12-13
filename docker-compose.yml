@@ -16,11 +16,13 @@ services:
       start_period: 30s
     ports:
       - "5432:5432"
+
   redis:
     image: "redis:alpine"
     command: redis-server --requirepass redispassword
     ports:
       - 6379:6379
+
   lists:
     build:
       context: .
@@ -63,27 +65,24 @@ services:
         condition: service_started
       apply:
         condition: service_started
-  scheduler-start-annual-review:
+
+  scheduler-batch:
     build:
       context: .
       dockerfile: Dockerfile
       target: scheduled
       args:
         - BUILD_MODE=ci
-    command: npm run scheduler:start-annual-review
+    command: npm run scheduler:batch
     environment:
       DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
       FORM_RUNNER_URL: "apply:3001"
       DEBUG: "true"
       LOG_LEVEL: "debug"
-      CI_SMOKE_TEST: "true"
       LOCATION_SERVICE_INDEX_NAME: fcdo-professional-service-finder
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       GOVUK_NOTIFY_API_KEY: "${GOVUK_NOTIFY_API_KEY}"
-      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID: "${GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID}"
-      GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID: "${GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID}"
-      GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID: "${GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID}"
-      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID: "${GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID}"
-      GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID: "${GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID}"
       GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE": "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE}"
       GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE}"
       GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE}"
@@ -94,6 +93,38 @@ services:
       GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE: "${GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE}"
       GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE}"
       GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE: "${GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE}"
+      sandbox: "false"
+#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
+#    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      apply:
+        condition: service_started
+
+  scheduler-annual-review-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: scheduled
+      args:
+        - BUILD_MODE=ci
+    command: npm run scheduler:annual-review-worker
+    environment:
+      DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
+      FORM_RUNNER_URL: "apply:3001"
+      DEBUG: "true"
+      LOG_LEVEL: "debug"
+      LOCATION_SERVICE_INDEX_NAME: fcdo-professional-service-finder
+      GOVUK_NOTIFY_API_KEY: "${GOVUK_NOTIFY_API_KEY}"
+      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID: "${GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID}"
+      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID: "${GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID}"
+      GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID: "${GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID}"
+      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE}"
+      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE}"
+      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE}"
+      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED}"
+      GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED}"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       sandbox: "false"
@@ -104,6 +135,7 @@ services:
         condition: service_healthy
       apply:
         condition: service_started
+
   scheduler-unpublish:
     build:
       context: .
@@ -117,7 +149,6 @@ services:
       FORM_RUNNER_URL: "apply:3001"
       DEBUG: "true"
       LOG_LEVEL: "info"
-      CI_SMOKE_TEST: "true"
       LOCATION_SERVICE_INDEX_NAME: fcdo-professional-service-finder
       GOVUK_NOTIFY_API_KEY: "${GOVUK_NOTIFY_API_KEY}"
       GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID: "${GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID}"
