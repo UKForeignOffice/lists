@@ -11,10 +11,10 @@ let notifyClient: any;
 export function getNotifyClient(): any {
   if (notifyClient === undefined) {
     const requiredTemplateIds = [
-      "GOVUK_NOTIFY_API_KEY",
-      "GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID",
-      "GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID",
-      "GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID",
+      NOTIFY.apiKey,
+      NOTIFY.templates.published,
+      NOTIFY.templates.auth,
+      NOTIFY.templates.emailConfirmation,
     ];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
@@ -37,7 +37,7 @@ export async function sendAuthenticationEmail(email: string, authenticationLink:
 
   try {
     const result = await getNotifyClient().sendEmail(
-      config.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
+      NOTIFY.templates.auth?.trim(),
       emailAddress,
       {
         personalisation: {
@@ -62,7 +62,7 @@ export async function sendApplicationConfirmationEmail(
 ): Promise<boolean> {
   try {
     const { statusText } = await getNotifyClient().sendEmail(
-      config.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
+      NOTIFY.templates.emailConfirmation?.trim(),
       emailAddress,
       {
         personalisation: {

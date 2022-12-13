@@ -25,16 +25,18 @@ async function processPostEmailsForList(
 ) {
   // Check if sent before
   let emailSent = false;
-  for (const publisherEmail of list.jsonData.publishers) {
-    const { result } = await sendAnnualReviewPostEmail(
-      milestoneTillAnnualReview,
-      publisherEmail,
-      lowerCase(startCase(list.type)),
-      list?.country?.name ?? "",
-      formatDate(list.nextAnnualReviewStartDate)
-    );
-    if (!emailSent && result) {
-      emailSent = result;
+  if (list.jsonData.users) {
+    for (const publisherEmail of list.jsonData.users) {
+      const { result } = await sendAnnualReviewPostEmail(
+        milestoneTillAnnualReview,
+        publisherEmail,
+        lowerCase(startCase(list.type)),
+        list?.country?.name ?? "",
+        formatDate(list.nextAnnualReviewStartDate)
+      );
+      if (!emailSent && result) {
+        emailSent = result;
+      }
     }
   }
   // @todo the following code would be used if using Promise.allSettled

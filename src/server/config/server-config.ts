@@ -25,38 +25,30 @@ export const LOCATION_SERVICE_INDEX_NAME =
 
 // GOVUK Notify
 export const NOTIFY = {
-  apiKey: process.env.GOVUK_NOTIFY_API_KEY?.trim(),
+  apiKey: process.env.GOVUK_NOTIFY_API_KEY?.trim() ?? "",
   templates: {
-    auth: process.env.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim(),
-    emailConfirmation: process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim(),
-    published: process.env.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim(),
-    edit: process.env.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim(),
+    auth: process.env.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim() ?? "",
+    emailConfirmation: process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim() ?? "",
+    published: process.env.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim() ?? "",
+    edit: process.env.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim() ?? "",
     annualReviewNotices: {
-      postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim(),
-      postOneWeek: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE?.trim(),
-      postOneDay: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE?.trim(),
-      postStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED?.trim(),
-      providerStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED?.trim(),
+      postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim() ?? "",
+      postOneWeek: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE?.trim() ?? "",
+      postOneDay: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE?.trim() ?? "",
+      postStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED?.trim() ?? "",
+      providerStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED?.trim() ?? "",
     },
     unpublishNotice: {
-      postWeekly: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE?.trim(),
-      postOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE?.trim(),
-      postUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE?.trim(),
-      providerOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE?.trim(),
-      providerUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE?.trim(),
-    }
-  }
+      postWeekly: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE?.trim() ?? "",
+      postOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE?.trim() ?? "",
+      postUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE?.trim() ?? "",
+      providerOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE?.trim() ?? "",
+      providerUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE?.trim() ?? "",
+    },
+  },
 };
 
-export const {
-  GOVUK_NOTIFY_API_KEY,
-  GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
-  GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID,
-  GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
-  GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
-  GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
-  GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID
-} = process.env;
+export const { GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID } = process.env;
 
 // Scheduled process
 const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
