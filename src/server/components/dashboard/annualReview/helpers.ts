@@ -12,7 +12,6 @@ export function formatAnnualReviewDate(
 
 export function getMaxDate(): Date {
   const todaysDate = Date.now();
-  console.log(todaysDate, "todaysDate")
   return addSixMonths(todaysDate);
 }
 
