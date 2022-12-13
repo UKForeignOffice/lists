@@ -4,7 +4,7 @@
   {% if isNewUser %}
     {% include "./partials/new-user-banner.njk" %}
   {% endif %}
-  {% if req.user.isAdministrator() %}
+  {% if req.user.isAdministrator %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
         <p><a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a></p>

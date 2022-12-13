@@ -230,7 +230,7 @@ describe("Dashboard Controllers", () => {
 
     test("it identifies a new user correctly", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(false);
+      mockReq.user.isAdministrator = false;
 
       await listsController(mockReq, mockRes, mockNext);
 
@@ -239,7 +239,7 @@ describe("Dashboard Controllers", () => {
 
     test("a SuperAdmin is not a new user", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(true);
+      mockReq.user.isAdministrator = true;
 
       await listsController(mockReq, mockRes, mockNext);
 
