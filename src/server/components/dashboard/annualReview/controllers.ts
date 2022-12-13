@@ -16,7 +16,7 @@ export async function editDateGetController(req: Request, res: Response, next: N
   try {
     const list = await findListById(res.locals.list.id);
     const annualReviewStartDate = Helpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
-    const maxDate = list?.jsonData.annualReviewStartDate ? Helpers.getMaxDate(list) : "";
+    const maxDate = list?.jsonData.annualReviewStartDate ? Helpers.getMaxDate() : "";
     const formattedMaxDate = maxDate ? DateFns.format(maxDate, DATE_FORMAT) : "";
     const helpText = maxDate
       ? `The new date must be before ${formattedMaxDate}`
