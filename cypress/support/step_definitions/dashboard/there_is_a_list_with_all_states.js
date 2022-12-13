@@ -8,7 +8,8 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 
 function createListForService(service) {
   const jsonData = {
-    users: ["smoke@cautionyourblast.com", "smoke+1@cautionyourblast.com", "smoke+2@cautionyourblast.com"],
+    users: ["smoke@cautionyourblast.com"],
+    annualReviewStartDate: "2022-01-01T00:00:00.000Z",
   };
   cy.task("db", {
     operation: "country.upsert",

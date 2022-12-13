@@ -145,3 +145,31 @@ export async function sendEditDetailsEmail(
     throw new Error(`Unable to send change request email: ${error.message}`);
   }
 }
+
+export async function sendAnnualReviewDateChangeEmail(options: {
+  emailAddress: string;
+  serviceType: string;
+  country: string;
+  annualReviewDate: string;
+}): Promise<void> {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    await getNotifyClient().sendEmail(
+      config.GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID?.trim(),
+      options.emailAddress,
+      {
+        personalisation: {
+          typePlural: options.serviceType,
+          country: options.country,
+          annualReviewDate: options.annualReviewDate,
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
+  }
+}

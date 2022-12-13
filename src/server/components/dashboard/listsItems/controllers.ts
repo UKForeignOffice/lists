@@ -1,5 +1,5 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
-import { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
@@ -9,6 +9,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
 import { generateFormRunnerWebhookData, getNewSessionWebhookData } from "server/components/formRunner/helpers";
+import { findListById, updateList } from "server/models/list";
 import {
   createFormRunnerEditListItemLink,
   createFormRunnerReturningUserLink,
@@ -18,12 +19,13 @@ import { getChangedAddressFields, getListItemContactInformation } from "server/m
 import serviceName from "server/utils/service-name";
 import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
 import { UpdatableAddressFields } from "server/models/listItem/providers/types";
+import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
-import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -445,4 +447,44 @@ async function initialiseFormRunnerSession(
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
   return createFormRunnerEditListItemLink(token);
+}
+
+export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
+  const userEmail = req.body.userEmail;
+  const listId = res.locals.list?.id as number;
+  const list = await findListById(listId);
+  const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
+
+  if (!list) {
+    // TODO: this should never happen. findByListId should probably throw.
+    const err = new HttpException(404, "404", "List could not be found.");
+    return next(err);
+  }
+
+  if (userHasRemovedOwnEmail) {
+    const error = {
+      field: "publisherList",
+      text: "You cannot remove your own email address from a list",
+      href: "#publishers",
+    };
+
+    return res.render("dashboard/list-edit-confirm-delete-user", {
+      ...DEFAULT_VIEW_PROPS,
+      listId: list.id,
+      userEmail,
+      error,
+      list,
+      req,
+      csrfToken: getCSRFToken(req),
+    });
+  }
+
+  const updatedUsers = list.jsonData?.users?.filter((u) => u !== userEmail) ?? [];
+
+  await updateList(list.id, { users: updatedUsers });
+
+  req.flash("successBannerHeading", "Success");
+  req.flash("successBannerMessage", `User ${userEmail} has been removed`);
+
+  return res.redirect(res.locals.listsEditUrl);
 }

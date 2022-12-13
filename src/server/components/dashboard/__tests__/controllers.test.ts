@@ -19,6 +19,7 @@ import { listItemGetController } from "server/components/dashboard/listsItems/co
 import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
 import { HttpException } from "../../../middlewares/error-handlers";
+import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
 
 jest.useFakeTimers("modern");
 
@@ -44,7 +45,7 @@ describe("Dashboard Controllers", () => {
         userData: {
           email: "authemail@gov.uk",
         },
-        isAdministrator: jest.fn(),
+        isAdministrator: false,
         getLists: jest.fn(),
         hasAccessToList: jest.fn(),
       },
@@ -124,8 +125,8 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it identifies a new user correctly", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(false);
+      mockReq.user.getLists.mockResolvedValue([]);
+      mockReq.user.isAdministrator = false;
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -134,7 +135,7 @@ describe("Dashboard Controllers", () => {
 
     test("a SuperAdmin is not a new user", async () => {
       mockReq.user.getLists.mockResolvedValueOnce([]);
-      mockReq.user.isAdministrator.mockReturnValueOnce(true);
+      mockReq.user.isAdministrator = true;
 
       await startRouteController(mockReq, mockRes, mockNext);
 
@@ -454,11 +455,79 @@ describe("Dashboard Controllers", () => {
 
       const spySendEditDetailsEmail = jest.spyOn(govukNotify, "sendEditDetailsEmail");
 
-      // await dashboardControllers.listItemPostConfirmationController(mockReq, mockRes);
-
       expect(spyGetInitiateFormRunnerSessionToken).toHaveBeenCalledTimes(1);
       expect(spySendEditDetailsEmail).toHaveBeenCalledTimes(1);
       expect(1).toBe(1);
+    });
+  });
+
+  describe("getAnnualReviewDate", () => {
+    const list = {
+      jsonData: {
+        lastAnnualReviewStartDate: new Date("2022-01-01"),
+        annualReviewStartDate: new Date("2023-01-01"),
+      },
+    };
+
+    const annualReviewInNov = {
+      jsonData: {
+        lastAnnualReviewStartDate: new Date("2022-11-01"),
+        annualReviewStartDate: new Date("2023-11-01"),
+      },
+    };
+
+    global.Date.now = jest.fn(() => new Date(1670944983729).getTime()); // Current date to 2022-12-13
+
+    it("returns valid date if within 6 months of last annual review", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "2",
+        list,
+      });
+
+      // then
+      expect(result.value).toBeTruthy();
+    });
+
+    it("returns invalid date if over 6 months of last annual review", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "8",
+        list,
+      });
+
+      // then
+      expect(result.value).toBeFalsy();
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+    });
+
+    it("returns invalid date if user enters Feb 29th", () => {
+      // when
+      const result = getAnnualReviewDate({
+        day: "29",
+        month: "2",
+        list,
+      });
+
+      // then
+      expect(result.value).toBeFalsy();
+      expect(result.errorMsg).toEqual("You cannot set the annual review to this date. Please choose another");
+    });
+
+    it("returns a different year if the user select January within 6 months of annual review", () => {
+      // when
+      global.Date.now = jest.fn(() => new Date(1698796800000).getTime()); // Current date to 2023-11-01
+      const result = getAnnualReviewDate({
+        day: "1",
+        month: "1",
+        list: annualReviewInNov,
+      });
+
+      // then
+      expect(result.value).toBeTruthy();
+      expect(result.value).toEqual(new Date("2024-01-01"));
     });
   });
 });

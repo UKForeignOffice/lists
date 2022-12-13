@@ -4,7 +4,7 @@ import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
-import { List, ServiceType, UserRoles } from "server/models/types";
+
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
@@ -13,7 +13,10 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
-import { ListIndexRes } from "server/components/dashboard/listsItems/types";
+import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
+import { UserRoles, ServiceType } from "server/models/types";
+
+import type { List } from "server/models/types";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -30,7 +33,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
     }
 
     const lists = await req.user!.getLists();
-    const isNewUser = !req.user?.isAdministrator() && lists.length === 0;
+    const isNewUser = !req.user?.isAdministrator && lists.length === 0;
 
     res.render("dashboard/dashboard", {
       ...DEFAULT_VIEW_PROPS,
@@ -138,20 +141,27 @@ export async function listsController(req: Request, res: Response, next: NextFun
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listId } = req.params;
-    const changeMsg = req.flash("changeMsg")[0];
 
     let list: List | undefined;
+    let annualReviewStartDate = "";
+    let lastAnnualReviewStartDate = "";
+    let templateUrl = "dashboard/lists-new";
 
     if (listId !== "new") {
       list = await findListById(listId);
+      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+      lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
+      templateUrl = "dashboard/lists-edit";
+
       if (list === undefined) {
         return next();
       }
     }
 
-    res.render("dashboard/lists-edit", {
+    res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
-      publisher: { change: changeMsg },
+      annualReviewStartDate,
+      lastAnnualReviewStartDate,
       listId,
       user: req.user?.userData,
       list,
@@ -242,7 +252,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     });
   }
 
-  req.flash("changeMsg", `User ${publisher} has been created`);
+  req.flash("successBannerHeading", "Success");
+  req.flash("successBannerMessage", `User ${publisher} has been created`);
 
   const newUsers = [...(list.jsonData.users ?? []), publisher];
 
@@ -263,45 +274,6 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
     req,
     csrfToken: getCSRFToken(req),
   });
-}
-
-export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
-  const userEmail = req.body.userEmail;
-  const listId = res.locals.list?.id as number;
-  const list = await findListById(listId);
-  const userHasRemovedOwnEmail = userEmail === req.user?.userData.email;
-
-  if (!list) {
-    // TODO: this should never happen. findByListId should probably throw.
-    const err = new HttpException(404, "404", "List could not be found.");
-    return next(err);
-  }
-
-  if (userHasRemovedOwnEmail) {
-    const error = {
-      field: "publisherList",
-      text: "You cannot remove your own email address from a list",
-      href: "#publishers",
-    };
-
-    return res.render("dashboard/list-edit-confirm-delete-user", {
-      ...DEFAULT_VIEW_PROPS,
-      listId: list.id,
-      userEmail,
-      error,
-      list,
-      req,
-      csrfToken: getCSRFToken(req),
-    });
-  }
-
-  const updatedUsers = list.jsonData?.users?.filter((u) => u !== userEmail) ?? [];
-
-  await updateList(list.id, { users: updatedUsers });
-
-  req.flash("changeMsg", `User ${userEmail} has been removed`);
-
-  return res.redirect(res.locals.listsEditUrl);
 }
 
 // TODO: test

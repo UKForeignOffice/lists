@@ -20,8 +20,8 @@ beforeEach(() => {
 });
 
 test("isAdministrator evaluation is correct", () => {
-  expect(administrator.isAdministrator()).toBeTruthy();
-  expect(user.isAdministrator()).toBeFalsy();
+  expect(administrator.isAdministrator).toBeTruthy();
+  expect(user.isAdministrator).toBeFalsy();
 });
 
 test("getLists query is correct for administrator", async () => {

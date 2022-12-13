@@ -115,3 +115,17 @@ export async function updateList(
     throw error;
   }
 }
+
+export async function updateAnnualReviewDate(listId: string, annualReviewStartDate: string): Promise<void> {
+  const list = await findListById(listId);
+  const jsonData = { ...(list as List).jsonData, annualReviewStartDate };
+
+  await prisma.list.update({
+    where: {
+      id: Number(listId),
+    },
+    data: {
+      jsonData,
+    },
+  });
+}

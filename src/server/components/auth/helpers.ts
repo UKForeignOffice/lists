@@ -17,7 +17,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
 }
 
 export function ensureUserIsAdministrator(req: Request, res: Response, next: NextFunction): void {
-  if (req.isAuthenticated() && req.user.isAdministrator()) {
+  if (req.isAuthenticated() && req.user.isAdministrator) {
     next();
   } else {
     const err = new HttpException(405, "405", "Not allowed");
