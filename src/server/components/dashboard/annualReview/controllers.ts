@@ -52,7 +52,7 @@ export async function editDatePostController(req: Request, res: Response, next: 
 }
 
 async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
-  const { listId } = req.params;
+  const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { day, month } = req.body;
   const annualReviewDate = Helpers.getAnnualReviewDate({ day, month, list });
@@ -72,7 +72,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
 }
 
 async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
-  const { listId } = req.params;
+  const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { newAnnualReviewDate } = req.body;
   const newAnnualReviewDateFormatted = new Date(newAnnualReviewDate as string);
@@ -80,14 +80,14 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
 
   await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
 
-  for (const emailAddress of list.jsonData.users ?? []) {
-    await sendAnnualReviewDateChangeEmail({
-      emailAddress,
-      serviceType: startCase(list.type),
-      country: list.country!.name!,
-      annualReviewDate,
-    });
-  }
+  // for (const emailAddress of list.jsonData.users ?? []) {
+  //   await sendAnnualReviewDateChangeEmail({
+  //     emailAddress,
+  //     serviceType: startCase(list.type),
+  //     country: list.country!.name!,
+  //     annualReviewDate,
+  //   });
+  // }
 
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", "Annual review date updated successfully");

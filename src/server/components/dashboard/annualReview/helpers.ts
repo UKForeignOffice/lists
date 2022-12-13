@@ -10,16 +10,10 @@ export function formatAnnualReviewDate(
   return list.jsonData[field] ? DateFns.format(DateFns.parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
 }
 
-export function getMaxDate(list: List): Date {
-  const lastAnnualReview = list.jsonData.lastAnnualReviewStartDate ?? list.createdAt;
-  const lastAnnualReviewPlusYear = DateFns.add(lastAnnualReview as Date, { years: 1 });
-  const maxDateFromLastAnnualReview = addSixMonths(lastAnnualReviewPlusYear);
-  const maxDateFromUserEnteredValues = addSixMonths(list.jsonData.annualReviewStartDate as number);
-  const maxDate = DateFns.isBefore(maxDateFromUserEnteredValues, maxDateFromLastAnnualReview)
-    ? maxDateFromUserEnteredValues
-    : maxDateFromLastAnnualReview;
-
-  return maxDate;
+export function getMaxDate(): Date {
+  const todaysDate = Date.now();
+  console.log(todaysDate, "todaysDate")
+  return addSixMonths(todaysDate);
 }
 
 function addSixMonths(date: number | string | Date): Date {
@@ -58,7 +52,7 @@ export function getAnnualReviewDate({ day, month, list }: { day: string; month: 
     lastAnnualReview: (list.jsonData.annualReviewStartDate ?? lastAnnualReview) as number,
   });
   const parsedDate = DateFns.parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
-  const maxDate = getMaxDate(list);
+  const maxDate = getMaxDate();
   const invalidResult = { value: null };
   const isLeapYear = month === "2" && day === "29";
 

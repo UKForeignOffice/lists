@@ -455,8 +455,6 @@ describe("Dashboard Controllers", () => {
 
       const spySendEditDetailsEmail = jest.spyOn(govukNotify, "sendEditDetailsEmail");
 
-      // await dashboardControllers.listItemPostConfirmationController(mockReq, mockRes);
-
       expect(spyGetInitiateFormRunnerSessionToken).toHaveBeenCalledTimes(1);
       expect(spySendEditDetailsEmail).toHaveBeenCalledTimes(1);
       expect(1).toBe(1);
@@ -478,12 +476,7 @@ describe("Dashboard Controllers", () => {
       },
     };
 
-    const annualReviewCloseToLast = {
-      jsonData: {
-        lastAnnualReviewStartDate: new Date("2022-11-01"),
-        annualReviewStartDate: new Date("2024-04-01"),
-      },
-    };
+    global.Date.now = jest.fn(() => new Date(1670944983729).getTime()); // Current date to 2022-12-13
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
@@ -525,6 +518,7 @@ describe("Dashboard Controllers", () => {
 
     it("returns a different year if the user select January within 6 months of annual review", () => {
       // when
+      global.Date.now = jest.fn(() => new Date(1698796800000).getTime()); // Current date to 2023-11-01
       const result = getAnnualReviewDate({
         day: "1",
         month: "1",
@@ -534,19 +528,6 @@ describe("Dashboard Controllers", () => {
       // then
       expect(result.value).toBeTruthy();
       expect(result.value).toEqual(new Date("2024-01-01"));
-    });
-
-    it("returns inValid if date exceeds max date from last annual review plus one year", () => {
-      // when
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "6",
-        list: annualReviewCloseToLast,
-      });
-
-      // then
-      expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
     });
   });
 });
