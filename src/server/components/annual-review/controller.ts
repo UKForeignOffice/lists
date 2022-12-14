@@ -11,6 +11,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 
 import type { ListItemGetObject, List } from "server/models/types";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -18,7 +19,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
-    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW
+    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
     if (await dateHasExpired(listItem.id)) {
@@ -121,7 +122,10 @@ export async function declarationPostController(req: Request, res: Response, nex
     await prisma.listItem.update({
       where: { id: listItem.id },
       data: {
-        status: Status.CHECK_ANNUAL_REVIEW
+        status: Status.CHECK_ANNUAL_REVIEW,
+        history: {
+          create: EVENTS.CHECK_ANNUAL_REVIEW(),
+        },
       },
     });
 
