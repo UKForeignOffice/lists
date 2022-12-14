@@ -14,6 +14,7 @@ import initialiseFormRunnerSession from "server/utils/formRunnerSession";
 import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List } from "server/models/types";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -144,6 +145,9 @@ export async function declarationPostController(req: Request, res: Response, nex
       where: { id: listItem.id },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
+        history: {
+          create: EVENTS.CHECK_ANNUAL_REVIEW(),
+        },
       },
     });
 
