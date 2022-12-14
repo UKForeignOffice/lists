@@ -477,7 +477,7 @@ describe("Dashboard Controllers", () => {
       },
     };
 
-    global.Date.now = jest.fn(() => new Date(1670944983729).getTime()); // Current date to 2022-12-13
+    jest.useFakeTimers().setSystemTime(new Date(1670944983729));  // Current date to 2022-12-13
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
@@ -501,7 +501,7 @@ describe("Dashboard Controllers", () => {
 
       // then
       expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+      expect(result.errorMsg).toEqual("You cannot set the annual review to this date. Please choose another");
     });
 
     it("returns invalid date if user enters Feb 29th", () => {
@@ -519,7 +519,7 @@ describe("Dashboard Controllers", () => {
 
     it("returns a different year if the user select January within 6 months of annual review", () => {
       // when
-      global.Date.now = jest.fn(() => new Date(1698796800000).getTime()); // Current date to 2023-11-01
+      jest.useFakeTimers().setSystemTime(new Date(1698796800000));  // Current date to 2023-11-01
       const result = getAnnualReviewDate({
         day: "1",
         month: "1",
