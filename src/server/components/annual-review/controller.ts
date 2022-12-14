@@ -25,7 +25,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
-    if (await dateHasExpired(listItem.id)) {
+    if (await dateHasExpired(listItem.listId)) {
       return res.render("annual-review/error", {
         text: { title: "This link has expired", body: "This link has expired" },
       });
@@ -97,7 +97,7 @@ export async function confirmPostController(req: Request, res: Response, next: N
     if (chosenValue === "no") {
       await redirectToFormRunner(req, res);
     }
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 }
