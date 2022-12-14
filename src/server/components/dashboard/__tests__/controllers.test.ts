@@ -217,10 +217,8 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "",}];
-      const spy = jest
-        .spyOn(listModel, "findUserLists")
-        .mockResolvedValueOnce(lists);
+      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "" }];
+      mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
 
