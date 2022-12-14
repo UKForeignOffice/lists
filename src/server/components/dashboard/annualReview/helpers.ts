@@ -22,57 +22,58 @@ function addSixMonths(date: number | string | Date): Date {
   return newDate;
 }
 
-export function getAnnualReviewYear({
+export function calculateValidDate({
   day,
   month,
-  lastAnnualReview,
+  maxDate,
 }: {
-  day?: string;
-  month?: string;
-  lastAnnualReview: number;
-}): number {
-  const date = new Date(lastAnnualReview);
+  day: string;
+  month: string;
+  maxDate: Date;
+}): Date | null {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
-  if (!day || !month) return date.getFullYear();
+  const userEnteredDate = new Date(currentYear, Number(month) - 1, Number(day));
+  const userEnteredDateNextYear = new Date(currentYear + 1, Number(month) - 1, Number(day));
 
-  const userEnteredDate = new Date(date.getFullYear(), Number(month) + 1, Number(day));
+  const possibleDates = [userEnteredDate, userEnteredDateNextYear];
 
-  return DateFns.isBefore(userEnteredDate, date) ? date.getFullYear() + 1 : date.getFullYear();
+  const [validDate] = possibleDates.filter(
+    (possibleDate) => DateFns.isBefore(possibleDate, maxDate) && DateFns.isAfter(possibleDate, currentDate)
+  );
+
+  return validDate;
 }
 
-export function getAnnualReviewDate({ day, month, list }: { day: string; month: string; list: List }): {
+export function getAnnualReviewDate({ day, month }: { day: string; month: string }): {
   value: Date | null;
   errorMsg: string | null;
 } {
-  const lastAnnualReview = list.jsonData.lastAnnualReviewStartDate ?? list.createdAt;
-  const annualReviewYear = getAnnualReviewYear({
-    day,
-    month,
-    lastAnnualReview: (list.jsonData.annualReviewStartDate ?? lastAnnualReview) as number,
-  });
-  const parsedDate = DateFns.parse(`${month}/${day}/${annualReviewYear}`, "P", new Date());
   const maxDate = getMaxDate();
+
+  if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
+
   const invalidResult = { value: null };
   const isLeapYear = month === "2" && day === "29";
 
   let errorMsg = null;
-
-  if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
 
   if (!month || !day) {
     errorMsg = "Enter a date for the annual review";
     return { ...invalidResult, errorMsg };
   }
 
-  if (isLeapYear || !DateFns.isValid(parsedDate)) {
+  const validDate = calculateValidDate({
+    day,
+    month,
+    maxDate,
+  });
+
+  if (isLeapYear || !validDate) {
     errorMsg = "You cannot set the annual review to this date. Please choose another";
     return { ...invalidResult, errorMsg };
   }
 
-  if (!DateFns.isBefore(parsedDate, maxDate)) {
-    errorMsg = "You can only change the date up to 6 months after the current review date";
-    return { ...invalidResult, errorMsg };
-  }
-
-  return { value: parsedDate, errorMsg };
+  return { value: validDate, errorMsg };
 }
