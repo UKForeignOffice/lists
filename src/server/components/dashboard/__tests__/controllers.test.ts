@@ -501,7 +501,7 @@ describe("Dashboard Controllers", () => {
 
       // then
       expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You cannot set the annual review to this date. Please choose another");
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
     });
 
     it("returns invalid date if user enters Feb 29th", () => {
