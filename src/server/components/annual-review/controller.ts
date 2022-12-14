@@ -22,7 +22,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
-    if (await dateHasExpired(listItem.id)) {
+    if (await dateHasExpired(listItem.listId)) {
       return res.render("annual-review/error", {
         text: { title: "This link has expired", body: "This link has expired" },
       });
@@ -91,7 +91,6 @@ export function confirmPostController(req: Request, res: Response): void {
   }
 
   if (chosenValue === "no") {
-    // To be completed by this ticket https://trello.com/c/RtLpclva/1499-annual-review-list-items-apply-provider-makes-changes-for-annual-review
     return res.redirect("/annual-review/summary-page");
   }
 }

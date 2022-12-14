@@ -2,7 +2,13 @@ Feature: Provider annual review confirmation
 
 
     Background:
-        Given I click on the link from the confirmation email
+        Given A "lawyers" list exists for Eurasia
+        And there are these list items
+            | contactName | organisationName | emailAddress               | status    | isPublished |
+            | Winston     | Winston Law      | smoke@cautionyourblast.com | PUBLISHED | true        |
+            | O'brien     | Brien Law        | smoke@cautionyourblast.com | PUBLISHED | true        |
+            | Julia       | Julia Law        | smoke@cautionyourblast.com | PUBLISHED | true        |
+        And I click on the link from the confirmation email
 
     Scenario: Show error if no option is selected
         And I see page with heading "Check that your information is still correct"
@@ -32,4 +38,9 @@ Feature: Provider annual review confirmation
 
 
     Scenario: Show error page after visitng same page
+        When I click the "Yes, I confirm my information is still correct" radio button
+        And I click the "Continue" button
+        And I check the "Confirmed" checkbox
+        And I click the "Submit" button
+         And I go back to confirmation page
         Then I see page with heading "You have already submitted your annual review"
