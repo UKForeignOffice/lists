@@ -67,6 +67,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
     newAnnualReviewDateFormatted: DateFns.format(annualReviewDate.value, DATE_FORMAT),
     newAnnualReviewDate: annualReviewDate.value,
     list,
+    serviceType: startCase(list.type).toLowerCase(),
     csrfToken: getCSRFToken(req),
   });
 }
