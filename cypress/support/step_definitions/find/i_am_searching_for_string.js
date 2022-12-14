@@ -1,4 +1,3 @@
-const { Given } = require("cucumber");
 const base = "/find?serviceType=";
 const urls = {
   lawyers: `${base}lawyers`,

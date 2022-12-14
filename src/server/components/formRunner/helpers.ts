@@ -109,21 +109,9 @@ export async function parseJsonFormData(
    * Giving up. Enjoy
    */
   logger.debug(`Getting json file.  Current directory is ${__dirname}`);
-  // let baseDir;
-  // if (isUnderTest) {
-  //   baseDir = __dirname.replace("src/server/components/formRunner", "docker/apply");
-  // } else {
-  //   baseDir = __dirname.replace("dist/scheduler", "docker/apply");
-  //   logger.debug(`baseDir after replacing dist/scheduler: ${baseDir}`);
-  //   baseDir = __dirname.replace("dist", "docker/apply");
-  //   logger.debug(`baseDir after replacing scheduler: ${baseDir}`);
-  // }
-  // const baseDir = __dirname.replace("src/server/components/formRunner", "docker/apply");
-  let baseDir = __dirname.replace("src/server/components/formRunner", "../../src/server/components/formRunner");
+  const baseDir = __dirname.replace("/dist", "/dist/src/server/components/formRunner/forms-json");
   logger.debug(`baseDir after replacing src/server/components/formRunner: ${baseDir}`);
-  baseDir = __dirname.replace("dist/scheduler", "dist/src/server/components/formRunner");
-  logger.debug(`baseDir after replacing dist/scheduler: ${baseDir}`);
-  const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
+  const formsJsonFile = `/${kebabCase(listType)}.json`;
 
   const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");
   const formJsonData = JSON.parse(fileContents);
