@@ -23,24 +23,17 @@ function addSixMonths(date: number | string | Date): Date {
 }
 
 export function calculateValidDate({
-  day,
-  month,
+  userEnteredDate,
   maxDate,
 }: {
-  day: string;
-  month: string;
+  userEnteredDate: Date;
   maxDate: Date;
 }): Date | null {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-
-  const userEnteredDate = new Date(currentYear, Number(month) - 1, Number(day));
-  const userEnteredDateNextYear = new Date(currentYear + 1, Number(month) - 1, Number(day));
-
+  const userEnteredDateNextYear = DateFns.add(userEnteredDate, { years: 1 });
   const possibleDates = [userEnteredDate, userEnteredDateNextYear];
 
   const [validDate] = possibleDates.filter(
-    (possibleDate) => DateFns.isBefore(possibleDate, maxDate) && DateFns.isAfter(possibleDate, currentDate)
+    (possibleDate) => DateFns.isBefore(possibleDate, maxDate) && DateFns.isAfter(possibleDate, new Date())
   );
 
   return validDate;
@@ -64,14 +57,22 @@ export function getAnnualReviewDate({ day, month }: { day: string; month: string
     return { ...invalidResult, errorMsg };
   }
 
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const dateValues: [number, number, number] = [currentYear, Number(month) - 1, Number(day)];
+  const userEnteredDate = new Date(...dateValues);
   const validDate = calculateValidDate({
-    day,
-    month,
+    userEnteredDate,
     maxDate,
   });
 
-  if (isLeapYear || !validDate) {
+  if (isLeapYear || !DateFns.isExists(...dateValues)) {
     errorMsg = "You cannot set the annual review to this date. Please choose another";
+    return { ...invalidResult, errorMsg };
+  }
+
+  if (!validDate) {
+    errorMsg = "You can only change the date up to 6 months after the current review date";
     return { ...invalidResult, errorMsg };
   }
 
