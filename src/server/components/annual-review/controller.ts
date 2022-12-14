@@ -23,11 +23,18 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     let error = null;
 
     if (await dateHasExpired(listItem.id)) {
-      return res.redirect("/annual-review/error?expired=true");
+      return res.render("annual-review/error", {
+        text: { title: "This link has expired", body: "This link has expired" },
+      });
     }
 
     if (userHasConfirmed) {
-      return res.redirect("/annual-review/error?confirmed=true");
+      return res.render("annual-review/error", {
+        text: {
+          title: "You have already submitted your annual review",
+          body: "The annual review for your business has already been submitted.",
+        },
+      });
     }
 
     if (errorMsg) {
@@ -54,10 +61,9 @@ async function dateHasExpired(listId: number): Promise<boolean | undefined> {
     },
   })) as List;
 
-  // TODO: uncomment after annual review stuff merged in
-  // if (!listData?.jsonData?.annualReviewStartDate) {
-  //   throw new Error("An annual review start date does not exist");
-  // }
+  if (!listData?.jsonData?.annualReviewStartDate) {
+    throw new Error("An annual review start date does not exist");
+  }
 
   const annualReviewStartDate = new Date(listData?.jsonData?.annualReviewStartDate as number);
   const maxDate = add(annualReviewStartDate, { weeks: 6 });
@@ -137,13 +143,4 @@ export async function declarationPostController(req: Request, res: Response, nex
 
 export function submittedGetController(_: Request, res: Response): void {
   res.render("annual-review/submitted");
-}
-
-export function errorGetController(req: Request, res: Response): void {
-  const { expired, confirmed } = req.query;
-
-  res.render("annual-review/error", {
-    expired,
-    confirmed,
-  });
 }
