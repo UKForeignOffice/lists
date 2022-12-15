@@ -1,11 +1,22 @@
 /* eslint-disable */
 Given("I click on the link from the confirmation email", () => {
   cy.task("db", {
-    operation: "listItem.findFirst",
+    operation: "list.findUnique",
     variables: {
-      take: 1,
+      where: {
+        reference: "SMOKE",
+      },
     },
-  }).then(resp => {
-    cy.visit(`/annual-review/confirm/${resp.reference}`)
+  }).then((result) => {
+    cy.task("db", {
+      operation: "listItem.findFirst",
+      variables: {
+        where: {
+          listId: result.id,
+        },
+      },
+    }).then((resp) => {
+      cy.visit(`/annual-review/confirm/${resp.reference}`);
+    });
   });
 });
