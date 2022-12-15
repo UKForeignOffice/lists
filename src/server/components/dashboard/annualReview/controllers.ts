@@ -55,7 +55,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { day, month } = req.body;
-  const annualReviewDate = Helpers.getAnnualReviewDate({ day, month });
+  const annualReviewDate = Helpers.getAnnualReviewDate(day, month);
 
   if (!annualReviewDate.value) {
     req.flash("annualReviewError", annualReviewDate.errorMsg!);
