@@ -21,10 +21,10 @@ export function getNewSessionWebhookData(
   questions: Array<Partial<FormRunner.Question>> | undefined,
   message: string,
   isAnnualReview: boolean | undefined,
-  listItemRef: string,
+  listItemRef: string
 ): FormRunner.NewSessionData {
   const callbackUrl = `http://lists/ingest/${listType}/${listItemId}`;
-  const redirectPath = '/summary';
+  const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {
     message,
@@ -37,7 +37,7 @@ export function getNewSessionWebhookData(
     components: [],
     callbackUrl,
     redirectPath,
-    backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`
+    backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`,
   };
 
   const newSessionData: FormRunner.NewSessionData = {
@@ -57,10 +57,7 @@ export async function generateFormRunnerWebhookData(
 
   switch (list.type) {
     case ServiceType.lawyers:
-      questions = await lawyers.generateFormRunnerWebhookData(
-        listItem as LawyerListItemGetObject,
-        isUnderTest
-      );
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
       break;
     case ServiceType.funeralDirectors:
       questions = await funeralDirectors.generateFormRunnerWebhookData(
@@ -85,7 +82,6 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
-
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
@@ -99,10 +95,7 @@ export async function parseJsonFormData(
     : __dirname.replace("dist", "docker/apply");
   const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
-  const fileContents = await fs.promises.readFile(
-    path.join(baseDir, formsJsonFile),
-    "utf8"
-  );
+  const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<FormRunner.Question>> = formJsonData.pages
     .map((page: FormRunner.Page) => {

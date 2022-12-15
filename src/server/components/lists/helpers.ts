@@ -237,15 +237,11 @@ export function createFormRunnerReturningUserLink(serviceType: string, isAnnualR
   let formName = kebabCase(serviceType);
 
   if (serviceType === undefined) {
-    throw new Error(
-      "createFormRunnerReturningUserLink serviceType is undefined"
-    );
+    throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
   }
 
   if (serviceType === "covidTestProviders") {
-    throw new Error(
-      "This service is not supported"
-    );
+    throw new Error("This service is not supported");
   }
 
   if (isAnnualReview) formName = `annual-review-${kebabCase(serviceType)}`;
