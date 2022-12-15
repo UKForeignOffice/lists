@@ -21,14 +21,7 @@ function addSixMonths(date: number | string | Date): Date {
 
   return newDate;
 }
-
-export function calculateValidDate({
-  userEnteredDate,
-  maxDate,
-}: {
-  userEnteredDate: Date;
-  maxDate: Date;
-}): Date | null {
+export function calculateValidDate(userEnteredDate: Date, maxDate: Date): Date | null {
   const userEnteredDateNextYear = DateFns.add(userEnteredDate, { years: 1 });
   const possibleDates = [userEnteredDate, userEnteredDateNextYear];
 
@@ -39,13 +32,14 @@ export function calculateValidDate({
   return validDate;
 }
 
-export function getAnnualReviewDate({ day, month }: { day: string; month: string }): {
+export function getAnnualReviewDate(
+  day: string,
+  month: string
+): {
   value: Date | null;
   errorMsg: string | null;
 } {
   const maxDate = getMaxDate();
-
-  if (!maxDate) throw new Error("confirmNewAnnualReviewDate Error: Max date could not be calculated");
 
   const invalidResult = { value: null };
   const isLeapYear = month === "2" && day === "29";
@@ -61,10 +55,7 @@ export function getAnnualReviewDate({ day, month }: { day: string; month: string
   const currentYear = currentDate.getFullYear();
   const dateValues: [number, number, number] = [currentYear, Number(month) - 1, Number(day)];
   const userEnteredDate = new Date(...dateValues);
-  const validDate = calculateValidDate({
-    userEnteredDate,
-    maxDate,
-  });
+  const validDate = calculateValidDate(userEnteredDate, maxDate);
 
   if (isLeapYear || !DateFns.isExists(...dateValues)) {
     errorMsg = "You cannot set the annual review to this date. Please choose another";
