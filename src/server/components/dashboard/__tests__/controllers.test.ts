@@ -463,29 +463,12 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("getAnnualReviewDate", () => {
-    const list = {
-      jsonData: {
-        lastAnnualReviewStartDate: new Date("2022-01-01"),
-        annualReviewStartDate: new Date("2023-01-01"),
-      },
-    };
-
-    const annualReviewInNov = {
-      jsonData: {
-        lastAnnualReviewStartDate: new Date("2022-11-01"),
-        annualReviewStartDate: new Date("2023-11-01"),
-      },
-    };
 
     jest.useFakeTimers().setSystemTime(new Date(1670944983729));  // Current date to 2022-12-13
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "2",
-        list,
-      });
+      const result = getAnnualReviewDate("1", "2");
 
       // then
       expect(result.value).toBeTruthy();
@@ -493,12 +476,7 @@ describe("Dashboard Controllers", () => {
 
     it("returns invalid date if over 6 months of last annual review", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "8",
-        list,
-      });
-
+      const result = getAnnualReviewDate("1", "8");
       // then
       expect(result.value).toBeFalsy();
       expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
@@ -506,11 +484,7 @@ describe("Dashboard Controllers", () => {
 
     it("returns invalid date if user enters Feb 29th", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "29",
-        month: "2",
-        list,
-      });
+      const result = getAnnualReviewDate("29", "2");
 
       // then
       expect(result.value).toBeFalsy();
@@ -520,11 +494,7 @@ describe("Dashboard Controllers", () => {
     it("returns a different year if the user select January within 6 months of annual review", () => {
       // when
       jest.useFakeTimers().setSystemTime(new Date(1698796800000));  // Current date to 2023-11-01
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "1",
-        list: annualReviewInNov,
-      });
+      const result = getAnnualReviewDate("1", "1");
 
       // then
       expect(result.value).toBeTruthy();
