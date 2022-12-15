@@ -103,6 +103,11 @@ describe("Dashboard Controllers", () => {
       isApproved: true,
       isBlocked: false,
       isPublished: true,
+      publishingStatus: "live",
+      activityStatus: {
+        text: "Check new entry",
+        type: "to_do",
+      },
       reference: "TEST-UUID",
       type: "lawyers",
       createdAt: new Date(),
