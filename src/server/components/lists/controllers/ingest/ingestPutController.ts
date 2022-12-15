@@ -10,7 +10,10 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
-export async function ingestPutController(req: Request, res: Response): Promise<void> {
+export async function ingestPutController(
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>> | undefined> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
