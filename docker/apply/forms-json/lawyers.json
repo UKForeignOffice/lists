@@ -28,7 +28,7 @@
       "controller": "./pages/start.js"
     },
     {
-      "title": "Update your information",
+      "title": "Check your answers",
       "path": "/summary",
       "controller": "./pages/summary.js",
       "components": []

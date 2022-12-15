@@ -10,19 +10,10 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
-interface FormData {
-  name: string;
-  fees: string;
-  questions: Array<Record<string, string | number | Array<Record<string, string | boolean>>>>;
-  metadata: Record<string, string | boolean>;
-}
-
 export async function ingestPutController(req: Request, res: Response): Promise<void> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
-  const fromAnnualReview = req.body?.name?.includes("annual-review");
-  const bodyData = fromAnnualReview ? addDeclarationData(req.body) : req.body;
-  const { value, error } = formRunnerPostRequestSchema.validate(bodyData);
+  const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).json({
@@ -104,16 +95,4 @@ export async function ingestPutController(req: Request, res: Response): Promise<
 
     return res.status(422).send({ message: "List item failed to update" });
   }
-}
-
-function addDeclarationData(data: FormData): FormData {
-  const declaration = {
-    question: "Declaration",
-    index: 0,
-    fields: [{ key: "declaration", title: "Declaration", type: "boolean", answer: true }],
-  };
-  data.questions.pop();
-  data.questions.push(declaration);
-
-  return data;
 }
