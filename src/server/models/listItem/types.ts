@@ -42,12 +42,7 @@ export interface ActivityStatusViewModel {
   colour?: string
 }
 
-export type IndexListItem = Pick<
-  ListItemJsonData,
-  | "organisationName"
-  | "contactName"
-  | "id"
-> & {
+export type IndexListItem = Pick<ListItemJsonData, "organisationName" | "contactName" | "id"> & {
   createdAt: string;
   updatedAt: string;
   publishingStatus: string;

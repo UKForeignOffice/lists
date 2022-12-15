@@ -27,8 +27,9 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
-import { getPublishingStatus, PUBLISHING_STATUS } from "server/models/listItem/summary.helpers";
+import { getPublishingStatus, PUBLISHING_STATUS, getActivityStatus } from "server/models/listItem/summary.helpers";
 import { archiveListItem } from "server/models/listItem";
+import { isEmpty } from "lodash";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -107,7 +108,15 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     changeMessage: req.session?.changeMessage,
     list,
     req,
-    listItem,
+    listItem: {
+      ...listItem,
+      activityStatus: getActivityStatus(listItem),
+      publishingStatus: getPublishingStatus(listItem),
+    },
+    annualReview: {
+      providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
+      fieldsUpdated: !isEmpty((listItem.jsonData as ListItemJsonData).updatedJsonData),
+    },
     isPinned,
     actionButtons: actionButtonsForStatus,
     requestedChanges,
