@@ -1,17 +1,18 @@
 import { NotifyClient } from "notifications-node-client";
-import {
-  getNotifyClient,
-  sendApplicationConfirmationEmail,
-  sendAuthenticationEmail,
-  sendDataPublishedEmail,
-} from "../govuk-notify";
+import * as GovUKNotify from "../govuk-notify";
 import { logger } from "server/services/logger";
+import { NOTIFY } from "../../config";
 
 const {
   GOVUK_NOTIFY_API_KEY,
   GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
   GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+  GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
 } = process.env;
 
 const mocks: { [name: string]: undefined | string } = {
@@ -19,71 +20,122 @@ const mocks: { [name: string]: undefined | string } = {
   GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
   GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
   GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+  GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
+  GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
 };
 
-jest.mock("server/config", () => ({
-  get GOVUK_NOTIFY_API_KEY() {
-    return mocks.GOVUK_NOTIFY_API_KEY;
-  },
-  get GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID() {
-    return mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
-  },
-  get GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID() {
-    return mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
-  },
-  get GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID() {
-    return mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
-  },
-}));
+const mockNotify = NOTIFY;
+
+jest.mock("server/config", () => {
+  return ({
+    get GOVUK_NOTIFY_API_KEY() {
+      return mocks.GOVUK_NOTIFY_API_KEY;
+    },
+    get GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID() {
+      return mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
+    },
+    get GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID() {
+      return mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
+    },
+    get GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID() {
+      return mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
+    },
+    get GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID() {
+      return mocks.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID;
+    },
+    get GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE() {
+      return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE;
+    },
+    get GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE() {
+      return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE;
+    },
+    get GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE() {
+      return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE;
+    },
+    get GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED() {
+      return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED;
+    },
+    NOTIFY: {
+      apiKey() {
+        return mocks.GOVUK_NOTIFY_API_KEY;
+      },
+      templates: {
+        auth() {
+          return mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
+        },
+        published() {
+          return mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
+        },
+        emailConfirmation() {
+          return mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
+        },
+        annualReviewNotices: {
+          postOneMonth() {
+            return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE;
+          },
+          postOneWeek() {
+            return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE;
+          },
+          postOneDay() {
+            return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE;
+          },
+          postStart() {
+            return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED;
+          }
+        }
+      },
+    },
+  });
+});
 
 describe("GOVUK Notify service:", () => {
   describe("getNotifyClient", () => {
-    test("it throws when environment variable GOVUK_NOTIFY_API_KEY is missing", () => {
-      mocks.GOVUK_NOTIFY_API_KEY = undefined;
+    test("it throws when Server config variable NOTIFY.apiKey is missing", () => {
+      mockNotify.apiKey = "";
 
-      expect(() => getNotifyClient()).toThrowError(
-        "Environment variable GOVUK_NOTIFY_API_KEY is missing"
+      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
+        "Server config variable NOTIFY.apiKey is missing"
       );
 
-      mocks.GOVUK_NOTIFY_API_KEY = GOVUK_NOTIFY_API_KEY;
+      mockNotify.apiKey = mocks.GOVUK_NOTIFY_API_KEY ?? "";
     });
 
-    test("it throws when environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing", () => {
-      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID = undefined;
-      expect(() => getNotifyClient()).toThrowError(
-        "Environment variable GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID is missing"
+    test("it throws when Server config variable NOTIFY.templates.auth is missing", () => {
+      mockNotify.templates.auth = "";
+
+      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
+        "Server config variable NOTIFY.templates.auth is missing"
       );
-      mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID =
-        GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID;
+      mockNotify.templates.auth = mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID ?? "";
     });
 
-    test("it throws when environment variable GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID is missing", () => {
-      mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID =
-        undefined;
+    test("it throws when Server config variable NOTIFY.templates.emailConfirmation is missing", () => {
+      mockNotify.templates.emailConfirmation = "";
 
-      expect(() => getNotifyClient()).toThrowError(
-        "Environment variable GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID is missing"
+      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
+        "Server config variable NOTIFY.templates.emailConfirmation is missing"
       );
 
-      mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID =
-        GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID;
+      mockNotify.templates.emailConfirmation = mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID ?? "";
     });
 
-    test("it throws when environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing", () => {
-      mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID = undefined;
+    test("it throws when server config variable NOTIFY.templates.published is missing", () => {
+      mockNotify.templates.published = "";
 
-      expect(() => getNotifyClient()).toThrowError(
-        "Environment variable GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID is missing"
+      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
+        "Server config variable NOTIFY.templates.published is missing"
       );
 
-      mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID =
-        GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID;
+      mockNotify.templates.published = mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID ?? "";
     });
   });
 
   describe("sendAuthenticationEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -92,7 +144,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await sendAuthenticationEmail(
+      const result = await GovUKNotify.sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -110,7 +162,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@google.com";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await sendAuthenticationEmail(
+      const result = await GovUKNotify.sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -120,7 +172,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -128,7 +180,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await sendAuthenticationEmail(
+      const result = await GovUKNotify.sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -142,7 +194,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendApplicationConfirmationEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -154,7 +206,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Italy";
       const type = "lawyers";
 
-      const result = await sendApplicationConfirmationEmail(
+      const result = await GovUKNotify.sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
         type,
@@ -178,7 +230,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -189,7 +241,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Italy";
       const type = "lawyers";
 
-      const result = await sendApplicationConfirmationEmail(
+      const result = await GovUKNotify.sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
         type,
@@ -206,7 +258,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendDataPublishedEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -219,7 +271,7 @@ describe("GOVUK Notify service:", () => {
       const searchLink =
         "http://localhost:3000/find?serviceType=covidTestProviders";
 
-      const result = await sendDataPublishedEmail(
+      const result = await GovUKNotify.sendDataPublishedEmail(
         contactName,
         emailAddress,
         type,
@@ -245,7 +297,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = getNotifyClient();
+      const notifyClient = GovUKNotify.getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -256,7 +308,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Germany";
       const searchLink = "http://localhost:3000/find?serviceType=lawyers";
 
-      const result = await sendDataPublishedEmail(
+      const result = await GovUKNotify.sendDataPublishedEmail(
         contactName,
         emailAddress,
         type,
@@ -267,6 +319,310 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(false);
       expect(logger.error).toHaveBeenCalledWith(
         "sendDataPublishedEmail Error: sendEmail error message"
+      );
+    });
+  });
+
+  describe("sendRequestEditsEmail", () => {
+    test("notify.sendEmail command is correct", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const message = "Please correct the address";
+      const changeLink =
+        "http://localhost:3001/session/TOKEN-ABC123";
+
+      const { result } = await GovUKNotify.sendEditDetailsEmail(
+        contactName,
+        emailAddress,
+        typePlural,
+        message,
+        changeLink
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            typeSingular: "Lawyer",
+            typePlural,
+            contactName,
+            message,
+            changeLink,
+          },
+        }
+      );
+    });
+
+    test("it returns false when sendEmail rejects", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+      const error = new Error("sendEmail error message");
+
+      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
+
+      const contactName = "Ada Lovelace";
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const message = "Please correct the address";
+      const changeLink =
+        "http://localhost:3001/session/TOKEN-ABC123";
+
+      const result = await GovUKNotify.sendEditDetailsEmail(
+        contactName,
+        emailAddress,
+        typePlural,
+        message,
+        changeLink
+      );
+
+      expect(result.error?.message).toBe("Unable to send change request email: sendEmail error message");
+      expect(logger.error).toHaveBeenCalledWith(
+        "Unable to send change request email: sendEmail error message"
+      );
+    });
+  });
+
+  describe("sendAnnualReviewPostEmail", () => {
+    test("notify.sendEmail command is correct for POST_ONE_MONTH milestone", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const annualReviewDate = "01-Jan-2023";
+
+      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+        "POST_ONE_MONTH",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        mockNotify.templates.annualReviewNotices.postOneMonth,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            typePlural,
+            country,
+            annualReviewDate,
+            typePluralCapitalised: typePlural.toUpperCase(),
+          },
+        },
+      );
+    });
+
+    test("notify.sendEmail command is correct for POST_ONE_WEEK milestone", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const annualReviewDate = "01-Jan-2023";
+
+      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+        "POST_ONE_WEEK",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        mockNotify.templates.annualReviewNotices.postOneWeek,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            typePlural,
+            country,
+            annualReviewDate,
+            typePluralCapitalised: typePlural.toUpperCase(),
+          },
+        },
+      );
+    });
+
+    test("notify.sendEmail command is correct for POST_ONE_DAY milestone", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const annualReviewDate = "01-Jan-2023";
+
+      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+        "POST_ONE_DAY",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        mockNotify.templates.annualReviewNotices.postOneDay,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            typePlural,
+            country,
+            annualReviewDate,
+            typePluralCapitalised: typePlural.toUpperCase(),
+          },
+        },
+      );
+    });
+
+    test("notify.sendEmail command is correct for START milestone", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const annualReviewDate = "01-Jan-2023";
+
+      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+        "START",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        mockNotify.templates.annualReviewNotices.postStart,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            typePlural,
+            country,
+            annualReviewDate,
+            typePluralCapitalised: typePlural.toUpperCase(),
+          },
+        },
+      );
+    });
+
+    test("it returns false when sendEmail rejects", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+      const error = new Error("sendEmail error message");
+
+      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const annualReviewDate = "01-Jan-2023";
+
+      const result = await GovUKNotify.sendAnnualReviewPostEmail(
+        "POST_ONE_MONTH",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
+
+      expect(result.error?.message).toBe("Unable to send annual review post email: sendEmail error message");
+      expect(logger.error).toHaveBeenCalledWith(
+        "Unable to send annual review post email: sendEmail error message"
+      );
+    });
+  });
+
+  describe("sendAnnualReviewProviderEmail", () => {
+
+    test("notify.sendEmail command is correct for START milestone", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const contactName = "Ada Lovelace";
+      const deletionDate = "01-Mar-2023";
+      const changeLink = "http://localhost:3000/annualReview/check/TOKENABC123";
+
+      const { result } = await GovUKNotify.sendAnnualReviewProviderEmail(
+        emailAddress,
+        typePlural,
+        country,
+        contactName,
+        deletionDate,
+        changeLink
+      );
+
+      expect(result).toBe(true );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        mockNotify.templates.annualReviewNotices.providerStart,
+        "testemail@gov.uk",
+        {
+          personalisation: {
+            contactName,
+            typePlural,
+            country,
+            deletionDate,
+            changeLink,
+          },
+        },
+      );
+    });
+
+    test("it returns false when sendEmail rejects", async () => {
+      const notifyClient = GovUKNotify.getNotifyClient();
+      const error = new Error("sendEmail error message");
+
+      jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
+
+      const emailAddress = "testemail@gov.uk";
+      const typePlural = "Lawyers";
+      const country = "France";
+      const contactName = "Ada Lovelace";
+      const deletionDate = "01-Mar-2023";
+      const changeLink = "http://localhost:3000/annualReview/check/TOKENABC123";
+
+      const result = await GovUKNotify.sendAnnualReviewProviderEmail(
+        emailAddress,
+        typePlural,
+        country,
+        contactName,
+        deletionDate,
+        changeLink
+      );
+
+      expect(result.error?.message).toBe("Unable to send annual review provider email: sendEmail error message");
+      expect(logger.error).toHaveBeenCalledWith(
+        "Unable to send annual review provider email: sendEmail error message"
       );
     });
   });

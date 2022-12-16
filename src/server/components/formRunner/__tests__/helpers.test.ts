@@ -318,6 +318,7 @@ describe("Form Runner Service:", () => {
       isBlocked: false,
       listId: 1,
       status: Status.NEW,
+      isAnnualReview: false
     };
 
     const expectedListOutput: Array<Partial<FormRunner.Question>> = [

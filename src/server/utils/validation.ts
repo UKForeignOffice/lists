@@ -31,8 +31,8 @@ export function isCountryNameValid(countryName: string): boolean {
 }
 
 export function throwIfConfigVarIsUndefined(varName: string): void {
-  if (get(config, varName) === undefined) {
-    throw new Error(`Environment variable ${varName} is missing`);
+  if (!get(config, varName)) {
+    throw new Error(`Server config variable ${varName} is missing`);
   }
 }
 

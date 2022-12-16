@@ -108,10 +108,11 @@ export async function parseJsonFormData(
    * I have tried doing a babel/tsc/webpack/jest moduleNameMapping change but it is still causing errors.
    * Giving up. Enjoy
    */
-  logger.debug(`Getting json file.  Current directory is ${__dirname}`);
-  const baseDir = __dirname.replace("/dist", "/dist/src/server/components/formRunner/forms-json");
-  logger.debug(`baseDir after replacing src/server/components/formRunner: ${baseDir}`);
-  const formsJsonFile = `/${kebabCase(listType)}.json`;
+  let baseDir = __dirname.replace("dist", "dist/src/server/components/formRunner");
+  if (!baseDir.includes("dist")) {
+    baseDir = baseDir.replace("/src/server/components/formRunner", "/dist/src/server/components/formRunner");
+  }
+  const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
   const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");
   const formJsonData = JSON.parse(fileContents);

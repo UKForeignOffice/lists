@@ -11,10 +11,10 @@ let notifyClient: any;
 export function getNotifyClient(): any {
   if (notifyClient === undefined) {
     const requiredTemplateIds = [
-      NOTIFY.apiKey,
-      NOTIFY.templates.published,
-      NOTIFY.templates.auth,
-      NOTIFY.templates.emailConfirmation,
+      "NOTIFY.apiKey",
+      "NOTIFY.templates.published",
+      "NOTIFY.templates.auth",
+      "NOTIFY.templates.emailConfirmation",
     ];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
@@ -115,11 +115,11 @@ export async function sendEditDetailsEmail(
   typePlural: string,
   message: string,
   changeLink: string
-): Promise<void> {
+): Promise<{ result?: boolean; error?: Error }> {
   try {
     logger.info(`isSmokeTest[${config.isSmokeTest}]`);
     if (config.isSmokeTest) {
-      return;
+      return { result: true };
     }
 
     const typeSingular = typePlural
@@ -131,7 +131,7 @@ export async function sendEditDetailsEmail(
 
     message = message.replace(/(?:\r\n)/g, "\n^");
 
-    await getNotifyClient().sendEmail(
+    const { statusText } = await getNotifyClient().sendEmail(
       NOTIFY.templates.edit,
       emailAddress, {
         personalisation: {
@@ -142,8 +142,11 @@ export async function sendEditDetailsEmail(
           changeLink,
         },
       });
+    return { result: statusText === "Created" };
   } catch (error) {
-    throw new Error(`Unable to send change request email: ${error.message}`);
+    const message = `Unable to send change request email: ${error.message}`;
+    logger.error(message);
+    return { error: new Error(message) };
   }
 }
 

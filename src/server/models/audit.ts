@@ -4,7 +4,6 @@ import { AuditEvent } from "@prisma/client";
 import {
   AuditCreateInput, ListEventJsonData, ListItemEventJsonData
 } from "./types";
-import { logger } from "server/services/logger";
 
 /**
  * @deprecated
@@ -22,7 +21,6 @@ export function recordListItemEvent(
     jsonData: { ...eventData },
   };
 
-  logger.debug(`creating Audit record with data [${JSON.stringify(data)}`);
   return prisma.audit.create({ data });
 }
 
