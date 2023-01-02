@@ -1,4 +1,3 @@
-import { parseDate } from "../helpers";
 import { addDays, subDays } from "date-fns";
 import { CurrentAnnualReview } from "server/models/types";
 import crypto from "crypto";
@@ -53,8 +52,7 @@ export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEE
  * @param todayDateString
  * @returns UnpublishedDateContext[]
  */
-function getUnpublishedDateContexts(todayDateString: string): DateContext[] {
-  const today = parseDate(todayDateString);
+function getUnpublishedDateContexts(today: Date): DateContext[] {
   const unpublishedDateSixWeeksAway = addDays(today, schedulerMilestoneDays.provider.SIX_WEEKS);
   const unpublishedDateOneDayAway = subDays(unpublishedDateSixWeeksAway, 1);
 
@@ -76,14 +74,8 @@ function getUnpublishedDateContexts(todayDateString: string): DateContext[] {
     daysBeforeEvent += 7
   ) {
     const localUnpublishDate = subDays(unpublishedDateSixWeeksAway, daysBeforeEvent);
-    const unpublishDate = new Date(
-      Date.UTC(localUnpublishDate.getFullYear(), localUnpublishDate.getMonth(), localUnpublishDate.getDate(), 0, 0, 0)
-    );
-
-    const eventDate = new Date(
-      Date.UTC(unpublishDate.getFullYear(), unpublishDate.getMonth(), unpublishDate.getDate(), 0, 0, 0)
-    );
-
+    const unpublishDate = new Date(localUnpublishDate.getFullYear(), localUnpublishDate.getMonth(), localUnpublishDate.getDate(), 0, 0, 0);
+    const eventDate = new Date(unpublishDate.getFullYear(), unpublishDate.getMonth(), unpublishDate.getDate(), 0, 0, 0);
     unpublishedDateContextsForFiltering.push({
       eventDate,
       eventMilestone: daysBeforeEvent,
@@ -92,8 +84,7 @@ function getUnpublishedDateContexts(todayDateString: string): DateContext[] {
   return unpublishedDateContextsForFiltering;
 }
 
-function getAnnualReviewDateContexts(todayDateString: string): DateContext[] {
-  const today = parseDate(todayDateString);
+function getAnnualReviewDateContexts(today: Date): DateContext[] {
   const annualReviewStart = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
 
   const annualReview: DateContext[] = [
@@ -117,10 +108,10 @@ function getAnnualReviewDateContexts(todayDateString: string): DateContext[] {
   return annualReview;
 }
 
-export function getDateContexts(todayDateString: string): SchedulerDateContexts {
+export function getDateContexts(today: Date): SchedulerDateContexts {
   return {
-    annualReview: getAnnualReviewDateContexts(todayDateString),
-    unpublish: getUnpublishedDateContexts(todayDateString),
+    annualReview: getAnnualReviewDateContexts(today),
+    unpublish: getUnpublishedDateContexts(today),
   };
 }
 
@@ -128,7 +119,6 @@ export function getCurrentAnnualReviewData(
   listItemIdsForAnnualReview: any[],
   contexts: SchedulerDateContexts
 ) {
-  const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
   const currentAnnualReview: CurrentAnnualReview = {
     reference: crypto.randomUUID(),
     eligibleListItems: listItemIdsForAnnualReview,
@@ -138,59 +128,59 @@ export function getCurrentAnnualReviewData(
           contexts,
           "annualReview",
           schedulerMilestoneDays.post.ONE_MONTH
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         POST_ONE_WEEK: getDateForContext(
           contexts,
           "annualReview",
           schedulerMilestoneDays.post.ONE_WEEK
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         POST_ONE_DAY: getDateForContext(
           contexts,
           "annualReview",
           schedulerMilestoneDays.post.ONE_DAY
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         START: getDateForContext(
           contexts,
           "annualReview",
           schedulerMilestoneDays.both.START
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
       },
       unpublished: {
         PROVIDER_FIVE_WEEKS: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.FIVE_WEEKS
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         PROVIDER_FOUR_WEEKS: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.FOUR_WEEKS
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         PROVIDER_THREE_WEEKS: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.THREE_WEEKS
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         PROVIDER_TWO_WEEKS: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.TWO_WEEKS
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         PROVIDER_ONE_WEEK: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.ONE_WEEK
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         ONE_DAY_UNTIL_UNPUBLISH: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.provider.ONE_DAY
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
         UNPUBLISH: getDateForContext(
           contexts,
           "unpublish",
           schedulerMilestoneDays.both.UNPUBLISH
-        ).eventDate.toLocaleDateString("en-gb", options),
+        ).eventDate.toISOString(),
       },
     },
   };

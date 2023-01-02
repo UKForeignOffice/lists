@@ -14,8 +14,8 @@ import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/de
 import { findListItems, updateIsAnnualReview } from "server/models/listItem";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { MilestoneTillAnnualReview } from "../batch/helpers";
-import { addDays, subDays } from "date-fns";
-import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore, parseDate } from "../helpers";
+import { addDays } from "date-fns";
+import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "../helpers";
 import { SCHEDULED_PROCESS_TODAY_DATE } from "server/config";
 
 async function processPostEmailsForList(
@@ -25,18 +25,19 @@ async function processPostEmailsForList(
 ) {
   // Check if sent before
   let emailSent = false;
-  if (list.jsonData.users) {
-    for (const publisherEmail of list.jsonData.users) {
-      const { result } = await sendAnnualReviewPostEmail(
-        milestoneTillAnnualReview,
-        publisherEmail,
-        lowerCase(startCase(list.type)),
-        list?.country?.name ?? "",
-        formatDate(list.nextAnnualReviewStartDate)
-      );
-      if (!emailSent && result) {
-        emailSent = result;
-      }
+  if (!list.jsonData.users) {
+    return;
+  }
+  for (const publisherEmail of list.jsonData.users) {
+    const { result } = await sendAnnualReviewPostEmail(
+      milestoneTillAnnualReview,
+      publisherEmail,
+      lowerCase(startCase(list.type)),
+      list?.country?.name ?? "",
+      formatDate(list.nextAnnualReviewStartDate)
+    );
+    if (!emailSent && result) {
+      emailSent = result;
     }
   }
   // @todo the following code would be used if using Promise.allSettled
@@ -142,9 +143,10 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
     const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
     // todayDateString = formatDate(subDays(new Date(), 28)); // today is annual review start date
     // todayDateString = formatDate(subDays(new Date(), 27)); // today is day before annual review start date
+    const today = new Date(todayDateString);
 
     // email the posts and providers if today = one of the annual review milestone date
-    switch (todayDateString) {
+    switch (today.toISOString()) {
       case annualReviewKeyDates?.POST_ONE_MONTH:
         isEmailSent = isEmailSentBefore(audit, "sendOneMonthPostEmail");
         if (!isEmailSent) {
@@ -175,7 +177,7 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
         isEmailSent = isEmailSentBefore(listItemAudit as Audit, "sendStartedProviderEmail");
         if (!isEmailSent) {
           const updatedListItems = await updateIsAnnualReviewForListItems(listItemsForList, list);
-          const currentDateString = formatDate(addDays(parseDate(todayDateString), 42));
+          const currentDateString = formatDate(addDays(today, 42));
           await processProviderEmailsForListItems(list, updatedListItems, "START", currentDateString);
         }
         break;
@@ -228,12 +230,11 @@ async function processAnnualReview(): Promise<void> {
     return;
   }
   const listsWithCurrentAnnualReview = listResult.result;
-  const listItemIds: number[] = [];
-  listsWithCurrentAnnualReview.forEach((list: List) => {
-    if (list.jsonData?.currentAnnualReview?.eligibleListItems.length) {
-      list.jsonData?.currentAnnualReview?.eligibleListItems.map((listItemId) => listItemIds.push(listItemId));
-    }
+  const listItemIds = listsWithCurrentAnnualReview.flatMap(list => {
+    const listItemIds = list?.jsonData?.currentAnnualReview?.eligibleListItems;
+    return !listItemIds ? [] : listItemIds.map(itemId => itemId);
   });
+
   const listIds = listsWithCurrentAnnualReview.map(list => list.id);
   if (!listItemIds?.length) {
     logger.info(`No list item ids eligible for annual review found for lists ${listIds}`);

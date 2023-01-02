@@ -31,12 +31,10 @@ export async function populateCurrentAnnualReview(
   for (const list of lists) {
     // exclude list items published in the last month from annual review
     const listItemsEligibleForAnnualReview = listItemsForAllLists.filter((listItem) => {
-      const publishedEvent = listItem.history.find((event) => event.type === "PUBLISHED");
-      const oneMonthEarlier = subMonths(Date.now(), 1);
-      if (!publishedEvent?.time || isBefore(publishedEvent?.time, oneMonthEarlier)) {
-        return listItem.listId === list.id;
+      if (!listItem.history.length) {
+        return false;
       }
-      return false;
+      return listItem.listId === list.id;
     });
     if (!listItemsEligibleForAnnualReview.length) {
       logger.info(`No list items identified for list ${list.id}, excluding from sending annual review emails`);
@@ -49,7 +47,8 @@ export async function populateCurrentAnnualReview(
 }
 
 export async function updateListsForAnnualReview(todayDateString: string): Promise<void> {
-  const contexts = helpers.getDateContexts(todayDateString);
+  const today = new Date(todayDateString);
+  const contexts = helpers.getDateContexts(today);
   const annualReviewStartContext = getDateForContext(
     contexts,
     "annualReview",

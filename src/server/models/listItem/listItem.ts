@@ -22,6 +22,7 @@ import { merge } from "lodash";
 import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
+import { subMonths } from "date-fns";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -130,6 +131,14 @@ export async function findListItems(options: {
         ...(listItemIds != null && { id: { in: listItemIds }}),
         ...(statuses != null && { status: { in: statuses }}),
         ...(isAnnualReview != null && { isAnnualReview }),
+        history: {
+          some: {
+            type: "PUBLISHED",
+            time: {
+              lte: subMonths(Date.now(), 1)
+            },
+          },
+        },
       },
       include: {
         history: {

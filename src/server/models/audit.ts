@@ -33,22 +33,23 @@ export async function findAuditEvents(
 
   try {
     const result = await prisma.audit.findMany({
+      take: 1,
       orderBy: {
-        createdAt: "desc"
+        createdAt: "desc",
       },
       where: {
         AND: [
           {
-            type
+            type,
           },
           {
             jsonData: {
               path: ["annualReviewRef"],
-              equals: annualReviewReference
-            }
-          }
-        ]
-      }
+              equals: annualReviewReference,
+            },
+          },
+        ],
+      },
     });
     return { result };
   } catch (e) {
