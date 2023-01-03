@@ -84,6 +84,9 @@ describe("Dashboard Controllers", () => {
         users: [mockReq.user.userData.email],
       },
       countryId: 1,
+      nextAnnualReviewStartDate: new Date("01-Jan-2023"),
+      lastAnnualReviewStartDate: new Date("01-Jan-2022"),
+      isAnnualReview: false,
     };
 
     listItem = {
@@ -113,6 +116,7 @@ describe("Dashboard Controllers", () => {
       listId: 1,
       status: Status.NEW,
       history: [],
+      isAnnualReview: false,
     };
   });
 
@@ -212,7 +216,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "" }];
+      const lists: any = [{ id: 1, nextAnnualReviewStartDate: null, lastAnnualReviewStartDate: null }];
       mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);

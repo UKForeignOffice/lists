@@ -53,6 +53,12 @@ export interface ListJsonData extends JsonObject {
 }
 
 export interface List extends PrismaClient.List {
+  id: number;
+  reference: string;
+  createdAt: Date;
+  updatedAt: Date;
+  type: string;
+  countryId: number;
   jsonData: ListJsonData;
   country?: Partial<Country>;
 }

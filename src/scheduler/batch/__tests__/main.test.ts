@@ -1,6 +1,6 @@
 import { DateContext, getDateContexts, schedulerMilestoneDays, SchedulerDateContexts } from "../helpers";
 import * as listItem from "../../../server/models/listItem";
-import { List, ListItem } from "../../../server/models/types";
+import { List, ListItem, ListItemGetObject } from "../../../server/models/types";
 import { populateCurrentAnnualReview } from "../main";
 import { logger } from "server/services/logger";
 
@@ -97,8 +97,8 @@ describe("Date Contexts", () => {
     });
   });
 
-  // function spyFindListItemsForLists(listItemRecord: ListItem, shouldReject?: boolean): any {
-  //   const spy = jest.spyOn(listItem, "findListItemsForLists");
+  // function spyFindListItemsById(listItemRecord: ListItemGetObject, shouldReject?: boolean): any {
+  //   const spy = jest.spyOn(listItem, "findListItemById");
   //
   //   if (shouldReject === true) {
   //     spy.mockRejectedValue({ error: new Error("error"), });
@@ -132,7 +132,6 @@ describe("Date Contexts", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       nextAnnualReviewStartDate: new Date(),
-      lastAnnualReviewStartDate: null,
       isAnnualReview: false,
       type: "lawyers",
       countryId: 1,
@@ -149,11 +148,11 @@ describe("Date Contexts", () => {
     };
 
     // @todo FIX THIS BROKEN TEST
-    // test("no list items found", () => {
-    //   spyFindListItemsForLists(listItem,false);
-    //   populateCurrentAnnualReview([list], dateContexts)
-    //
-    //   expect(logger.error).toHaveBeenCalledWith(`Unable to retrieve List Items for Lists ${list.id}: error`);
-    // });
+  //   test("no list items found", () => {
+  //     spyFindListItemsForLists(listItem,false);
+  //     populateCurrentAnnualReview([list], dateContexts)
+  //
+  //     expect(logger.error).toHaveBeenCalledWith(`Unable to retrieve List Items for Lists ${list.id}: error`);
+  //   });
   });
 });

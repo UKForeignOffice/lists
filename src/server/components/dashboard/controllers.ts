@@ -136,15 +136,34 @@ export async function listsController(req: Request, res: Response, next: NextFun
 }
 
 function listsWithFormattedDates(lists: List[]): List[] {
-  return lists.map((list) => ({
-    ...list,
-    annualReviewStartDate: formatAnnualReviewDate(list, "annualReviewStartDate"),
-    lastAnnualReviewStartDate: formatAnnualReviewDate(list, "lastAnnualReviewStartDate"),
-  }));
+  return lists.map((list) => {
+    const nextAnnualReviewStartDateString = formatAnnualReviewDate(list, "nextAnnualReviewStartDate");
+    const lastAnnualReviewStartDateString = formatAnnualReviewDate(list, "lastAnnualReviewStartDate");
+    let returnObj = {
+      ...list,
+    };
+    if (nextAnnualReviewStartDateString) {
+      returnObj = {
+        ...returnObj,
+        nextAnnualReviewStartDate: new Date(nextAnnualReviewStartDateString),
+      };
+    }
+    if (lastAnnualReviewStartDateString) {
+      returnObj = {
+        ...returnObj,
+        lastAnnualReviewStartDate: new Date(lastAnnualReviewStartDateString),
+      };
+    }
+    return returnObj;
+  });
 }
 
-function formatAnnualReviewDate(list: List, field: string): string {
-  return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH) : "";
+function formatAnnualReviewDate(list: List, field: string): Date | null {
+  if (["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"].includes(field)) {
+    // @ts-ignore
+    return list[field];
+  }
+  return null;
 }
 
 // TODO: test
