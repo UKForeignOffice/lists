@@ -81,20 +81,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
-  let OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
-
-  if (!reqQueries.includes("archived")) {
-    const removeArchived: Prisma.ListItemWhereInput = {
-      NOT: {
-        history: {
-          some: {
-            type: "ARCHIVED",
-          },
-        },
-      },
-    };
-    OR = [...OR, removeArchived];
-  }
+  const OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
 
   const result = await prisma.listItem.findMany({
     where: {
@@ -102,6 +89,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       AND: {
         ...emailIsVerified,
         ...notPinnedByUser(options.userId!),
+        ...(!reqQueries.includes("archived") && { NOT: queryToPrismaQueryMap.archived }),
       },
       ...(OR.length && { OR }),
     },
