@@ -103,6 +103,16 @@ export async function findListItemById(id: string | number) {
   }
 }
 
+export async function findListItemByReference(ref: string): Promise<ListItem | null> {
+  try {
+    return await prisma.listItem.findUnique({
+      where: { reference: ref },
+    });
+  } catch (error) {
+    throw new Error(`findListItemByReference Error ${(error as Error).message}`);
+  }
+}
+
 /**
  * deceptive method... toggle[r]ListItemIsPublished assumedly should toggle (i.e. invert the current isPublished status).
  */

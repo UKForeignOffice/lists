@@ -220,6 +220,7 @@ $two-thirds: $one-third * 2;
 .govuk-summary-list__row--hidden-titles {
   display: none;
 }
+
 .back-links {
   &__container {
     display: flex;
@@ -267,4 +268,8 @@ $two-thirds: $one-third * 2;
   .govuk-header__content {
     max-width: 33.66%;
   }
+}
+
+.govuk-notification-banner__full-width {
+  max-width: 100%;
 }
