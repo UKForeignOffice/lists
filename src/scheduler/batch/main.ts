@@ -6,8 +6,6 @@ import { SCHEDULED_PROCESS_TODAY_DATE } from "server/config";
 import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, getDateForContext } from "./helpers";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { formatDate } from "../helpers";
-import { isBefore, subDays, subMonths } from "date-fns";
 
 export async function populateCurrentAnnualReview(
   lists: List[],

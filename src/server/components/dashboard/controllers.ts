@@ -17,9 +17,6 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
-import { format, parseISO } from "date-fns";
-
-const DATE_FORMAT_SHORT_MONTH = "d MMM yyyy";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 

@@ -16,7 +16,6 @@ import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
-import { logger } from "server/services/logger";
 
 export function getNewSessionWebhookData(
   listType: string,

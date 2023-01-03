@@ -191,10 +191,10 @@ export async function sendAnnualReviewPostEmail(
   }
 
   const notifyTemplates: Record<MilestoneTillAnnualReview, string> = {
-    POST_ONE_MONTH: NOTIFY.templates.annualReviewNotices.postOneMonth ?? "",
-    POST_ONE_WEEK: NOTIFY.templates.annualReviewNotices.postOneWeek ?? "",
-    POST_ONE_DAY: NOTIFY.templates.annualReviewNotices.postOneDay ?? "",
-    START: NOTIFY.templates.annualReviewNotices.postStart ?? "",
+    POST_ONE_MONTH: NOTIFY.templates.annualReviewNotices.postOneMonth,
+    POST_ONE_WEEK: NOTIFY.templates.annualReviewNotices.postOneWeek,
+    POST_ONE_DAY: NOTIFY.templates.annualReviewNotices.postOneDay,
+    START: NOTIFY.templates.annualReviewNotices.postStart,
   };
 
   const notifyTemplate = notifyTemplates[milestoneTillAnnualReviewStart];
