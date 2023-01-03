@@ -28,6 +28,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { getPublishingStatus, PUBLISHING_STATUS } from "server/models/listItem/summary.helpers";
+import { archiveListItem } from "server/models/listItem";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -95,7 +96,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   let actionButtonsForStatus = actionButtons[listItem.status];
 
   if (getPublishingStatus(listItem) !== PUBLISHING_STATUS.live) {
-    actionButtonsForStatus = [...actionButtonsForStatus, "archive"]
+    actionButtonsForStatus = [...actionButtonsForStatus, "archive"];
   }
 
   if (getPublishingStatus(listItem) === PUBLISHING_STATUS.archived) {
