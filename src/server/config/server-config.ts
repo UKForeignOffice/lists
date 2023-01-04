@@ -13,8 +13,7 @@ export const NODE_ENV = process.env.NODE_ENV;
 export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";
 export const isTest = NODE_ENV === "test";
-export const isLocalHost =
-  process.env.LOCAL_HOST === "true" || SERVICE_DOMAIN.includes("localhost");
+export const isLocalHost = process.env.LOCAL_HOST === "true" || SERVICE_DOMAIN.includes("localhost");
 export const isCybDev = process.env.CYB_DEV === "true" || isDev;
 export const isSmokeTest = process.env.CI_SMOKE_TEST === "true";
 
@@ -31,6 +30,7 @@ export const NOTIFY = {
     emailConfirmation: process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim() ?? "",
     published: process.env.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim() ?? "",
     edit: process.env.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim() ?? "",
+    editAnnualReviewDate: process.env.GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID?.trim() ?? "",
     annualReviewNotices: {
       postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim() ?? "",
       postOneWeek: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE?.trim() ?? "",
@@ -48,13 +48,10 @@ export const NOTIFY = {
   },
 };
 
-export const { GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID } = process.env;
-
 // Scheduled process
 const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
-const defaultTodayDateString = new Date().toLocaleString('en-gb', options);
+const defaultTodayDateString = new Date().toLocaleString("en-gb", options);
 export const SCHEDULED_PROCESS_TODAY_DATE = process.env.SCHEDULED_PROCESS_TODAY_DATE ?? defaultTodayDateString;
-
 
 // Form runner
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";

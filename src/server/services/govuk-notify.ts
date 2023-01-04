@@ -30,21 +30,18 @@ export function getNotifyClient(): any {
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
+  const isGovEmailAddress = isGovUKEmailAddress(emailAddress);
 
-  if (!isGovUKEmailAddress(emailAddress)) {
+  if (!isGovEmailAddress) {
     return false;
   }
 
   try {
-    const result = await getNotifyClient().sendEmail(
-      NOTIFY.templates.auth?.trim(),
-      emailAddress,
-      {
-        personalisation: {
-          authenticationLink,
-        },
-      }
-    );
+    const result = await getNotifyClient().sendEmail(NOTIFY.templates.auth, emailAddress, {
+      personalisation: {
+        authenticationLink,
+      },
+    });
 
     return result.statusText === "Created";
   } catch (error) {
@@ -61,18 +58,14 @@ export async function sendApplicationConfirmationEmail(
   confirmationLink: string
 ): Promise<boolean> {
   try {
-    const { statusText } = await getNotifyClient().sendEmail(
-      NOTIFY.templates.emailConfirmation?.trim(),
-      emailAddress,
-      {
-        personalisation: {
-          confirmationLink,
-          contactName,
-          country,
-          type,
-        },
-      }
-    );
+    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.emailConfirmation, emailAddress, {
+      personalisation: {
+        confirmationLink,
+        contactName,
+        country,
+        type,
+      },
+    });
 
     return statusText === "Created";
   } catch (error) {
@@ -90,17 +83,15 @@ export async function sendDataPublishedEmail(
 ): Promise<boolean> {
   try {
     const type = pluralize.singular(typePlural);
-    const { statusText } = await getNotifyClient().sendEmail(
-      NOTIFY.templates.published,
-      emailAddress, {
-        personalisation: {
-          country,
-          contactName,
-          searchLink,
-          type,
-          typePlural,
-        },
-      });
+    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.published, emailAddress, {
+      personalisation: {
+        country,
+        contactName,
+        searchLink,
+        type,
+        typePlural,
+      },
+    });
 
     return statusText === "Created";
   } catch (error) {
@@ -131,17 +122,15 @@ export async function sendEditDetailsEmail(
 
     message = message.replace(/(?:\r\n)/g, "\n^");
 
-    const { statusText } = await getNotifyClient().sendEmail(
-      NOTIFY.templates.edit,
-      emailAddress, {
-        personalisation: {
-          typeSingular,
-          typePlural,
-          contactName,
-          message,
-          changeLink,
-        },
-      });
+    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.edit, emailAddress, {
+      personalisation: {
+        typeSingular,
+        typePlural,
+        contactName,
+        message,
+        changeLink,
+      },
+    });
     return { result: statusText === "Created" };
   } catch (error) {
     const message = `Unable to send change request email: ${error.message}`;
@@ -162,17 +151,13 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       return;
     }
 
-    await getNotifyClient().sendEmail(
-      config.GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID?.trim(),
-      options.emailAddress,
-      {
-        personalisation: {
-          typePlural: options.serviceType,
-          country: options.country,
-          annualReviewDate: options.annualReviewDate,
-        },
-      }
-    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, {
+      personalisation: {
+        typePlural: options.serviceType,
+        country: options.country,
+        annualReviewDate: options.annualReviewDate,
+      },
+    });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
   }
@@ -202,16 +187,14 @@ export async function sendAnnualReviewPostEmail(
     `personalisation - template ${notifyTemplate}, typePlural: ${typePlural}, country: ${country}, annualReviewDate: ${annualReviewDate}, daysBeforeAnnualReviewStart: ${milestoneTillAnnualReviewStart}`
   );
   try {
-    const result = await getNotifyClient().sendEmail(
-      notifyTemplate,
-      emailAddress, {
-        personalisation: {
-          typePlural,
-          country,
-          annualReviewDate,
-          typePluralCapitalised: typePlural.toUpperCase(),
-        },
-      });
+    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, {
+      personalisation: {
+        typePlural,
+        country,
+        annualReviewDate,
+        typePluralCapitalised: typePlural.toUpperCase(),
+      },
+    });
     return { result: result.statusText === "Created" };
   } catch (error) {
     const message = `Unable to send annual review post email: ${error.message}`;
@@ -238,17 +221,15 @@ export async function sendAnnualReviewProviderEmail(
       `personalisation - contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`
     );
 
-    await getNotifyClient().sendEmail(
-      NOTIFY.templates.annualReviewNotices.providerStart,
-      emailAddress, {
-        personalisation: {
-          contactName,
-          typePlural,
-          country,
-          deletionDate,
-          changeLink,
-        },
-      });
+    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
+      personalisation: {
+        contactName,
+        typePlural,
+        country,
+        deletionDate,
+        changeLink,
+      },
+    });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
     logger.error(message);
