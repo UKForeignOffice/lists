@@ -50,8 +50,6 @@ export type IndexListItem = Pick<
 > & {
   createdAt: string;
   updatedAt: string;
-  publishingStatus: string;
-  activityStatus: ActivityStatusViewModel;
   status: string;
   activityStatus: Array<Record<string, string>>;
   publishingStatus?: Array<Record<string, string>>;

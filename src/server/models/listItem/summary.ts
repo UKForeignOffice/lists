@@ -40,7 +40,7 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     id,
     status,
     activityStatus: tags.map(addClassToTag),
-    publishingStatus: ['live'].map(addClassToTag),
+    publishingStatus: ["live"].map(addClassToTag),
     lastPublished: getLastPublished(item.history),
   };
 }
