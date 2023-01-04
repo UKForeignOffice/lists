@@ -346,9 +346,9 @@ describe("GOVUK Notify service:", () => {
         changeLink
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID,
+        NOTIFY.templates.edit,
         "testemail@gov.uk",
         {
           personalisation: {
