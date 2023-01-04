@@ -2,7 +2,7 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import {ListItem} from "@prisma/client";
+import { ListItem } from "@prisma/client";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
@@ -47,6 +47,8 @@ export const fieldTitles: { [prop: string]: string } = {
   translationSpecialties: "Translation services",
   interpreterServices: "Interpretation services",
   deliveryOfServices: "How services are carried out",
+  swornTranslations: "Sworn interpreter",
+  swornInterpretations: "Sworn or certified translator",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
@@ -172,7 +174,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const { jsonData } = listItem;
-  const type = listItem.type as ServiceType
+  const type = listItem.type as ServiceType;
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
@@ -203,6 +205,8 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
       "interpreterServices",
       "deliveryOfServices",
       "representedBritishNationals",
+      "swornTranslations",
+      "swornInterpretations",
     ],
   };
 
@@ -215,7 +219,6 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);
     listItem.jsonData.languagesProvided = languagesArray;
   }
-
   return jsonDataAsRows(fieldsForType, jsonData);
 }
 
@@ -248,4 +251,3 @@ export function getDetailsViewModel(
     headerField,
   };
 }
-

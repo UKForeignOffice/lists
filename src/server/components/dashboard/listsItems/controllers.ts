@@ -32,10 +32,12 @@ function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
+  const swornTranslatorFields =
+    listItem.type === "translatorsInterpreters" ? ["swornInterpretations", "swornTranslations"] : [];
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys((listItem as ListItemGetObject).jsonData).map(
+    ...[...Object.keys((listItem as ListItemGetObject).jsonData), ...swornTranslatorFields].map(
       (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
     )
   );
@@ -92,6 +94,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
+
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
