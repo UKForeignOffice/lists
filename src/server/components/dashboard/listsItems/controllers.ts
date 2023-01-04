@@ -4,7 +4,7 @@ import { deleteListItem, togglerListItemIsPublished, update } from "server/model
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
