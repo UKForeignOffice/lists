@@ -500,10 +500,10 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
  * Moves data in listItem.jsonData.updatedJsonData to listItem.jsonData if it exists
  */
 export async function moveUpdatedDataToListItem(_req: Request, res: ListIndexRes, next: NextFunction) {
-  const { listItem } = res.locals;
+  const listItem = res.locals.listItem!;
 
-  if (isEmpty(listItem.jsonData.updatedJsonData)) {
-    next();
+  if (!("updatedJsonData" in listItem.jsonData) || isEmpty(listItem.jsonData.updatedJsonData)) {
+    return next();
   }
 
   try {
