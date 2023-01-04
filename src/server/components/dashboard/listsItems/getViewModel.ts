@@ -213,7 +213,7 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const fieldsForType = fields[type] ?? baseFields;
 
   if (type === ServiceType.translatorsInterpreters) {
-    return formatRowsForTranslators(fields[type], listItem);
+    return formatRowsForTranslators(fieldsForType, listItem);
   }
   return jsonDataAsRows(fieldsForType, jsonData);
 }
@@ -222,26 +222,26 @@ function formatRowsForTranslators(
   fields: string[] | Array<string | number>,
   listItem: ListItemGetObject
 ): Types.govukRow[] {
-  if (listItem.jsonData.deliveryOfServices) {
-    listItem.jsonData.deliveryOfServices = DeliveryOfServices[listItem.jsonData.deliveryOfServices];
+  const { jsonData } = listItem;
+
+  if (jsonData.deliveryOfServices) {
+    jsonData.deliveryOfServices = DeliveryOfServices[jsonData.deliveryOfServices];
   }
 
-  if (listItem.jsonData.languagesProvided) {
-    const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);
-    listItem.jsonData.languagesProvided = languagesArray;
+  if (jsonData.languagesProvided) {
+    const languagesArray = jsonData.languagesProvided.map((item: string) => languages[item] ?? item);
+    jsonData.languagesProvided = languagesArray;
   }
 
-  if (listItem.jsonData.updatedJsonData?.swornInterpretations) {
-    listItem.jsonData.swornInterpretations =
-      listItem.jsonData.swornInterpretations ?? listItem.jsonData.updatedJsonData.swornInterpretations;
+  if (jsonData.updatedJsonData?.swornInterpretations) {
+    jsonData.swornInterpretations = jsonData.swornInterpretations ?? jsonData.updatedJsonData.swornInterpretations;
   }
 
-  if (listItem.jsonData.updatedJsonData?.swornTranslations) {
-    listItem.jsonData.swornTranslations =
-      listItem.jsonData.swornTranslations ?? listItem.jsonData.updatedJsonData.swornTranslations;
+  if (jsonData.updatedJsonData?.swornTranslations) {
+    jsonData.swornTranslations = jsonData.swornTranslations ?? jsonData.updatedJsonData.swornTranslations;
   }
 
-  return jsonDataAsRows(fields, listItem.jsonData);
+  return jsonDataAsRows(fields, jsonData);
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
