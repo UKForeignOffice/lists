@@ -89,11 +89,14 @@ listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController
 /**
  * TODO: ref to /:listItemId/:action?
  */
+listRouter.post("/:listId/items/:listItemId/*", controllers.moveUpdatedDataToListItem);
+
 listRouter.post("/:listId/items/:listItemId/delete", controllers.listItemDeleteController);
 listRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPublishController);
 listRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
 listRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);
 listRouter.post("/:listId/items/:listItemId/pin", controllers.listItemPinController);
+
 listRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
 
 listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);

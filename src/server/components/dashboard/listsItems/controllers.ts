@@ -4,7 +4,7 @@ import { deleteListItem, togglerListItemIsPublished, update } from "server/model
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { BaseListItemGetObject, EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, ListItemEvent, Prisma, Status, ListItem as PrismaListItem } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -27,6 +27,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
+import { isEmpty } from "lodash";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -94,7 +95,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
-
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -494,4 +494,28 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);
 
   return res.redirect(res.locals.listsEditUrl);
+}
+
+/**
+ * Moves data in listItem.jsonData.updatedJsonData to listItem.jsonData if it exists
+ */
+export async function moveUpdatedDataToListItem(_req: Request, res: ListIndexRes, next: NextFunction) {
+  const { listItem } = res.locals;
+
+  if (isEmpty(listItem.jsonData.updatedJsonData)) {
+    next();
+  }
+
+  try {
+    const newJsonData = mapUpdatedAuditJsonDataToListItem(listItem, listItem.jsonData.updatedJsonData);
+
+    await prisma.listItem.update({
+      where: { id: listItem.id },
+      data: { jsonData: newJsonData },
+    });
+
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
