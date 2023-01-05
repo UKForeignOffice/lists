@@ -78,10 +78,17 @@ export function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
+  /**
+   * Cherry-picked from origin/feat/1541-sworn-list-fix
+   */
+  const swornTranslatorFields =
+    listItem.type === "translatorsInterpreters" ? ["swornInterpretations", "swornTranslations"] : [];
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys(listItem.jsonData).map((k) => k in updatedJsonData && { [k]: updatedJsonData[k] })
+    ...[...Object.keys(listItem.jsonData), ...swornTranslatorFields].map(
+      (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
+    )
   );
 }
 
