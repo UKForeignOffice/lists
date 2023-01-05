@@ -222,13 +222,8 @@ function formatRowsForTranslators(
     jsonData.languagesProvided = languagesArray;
   }
 
-  if (jsonData.updatedJsonData?.swornInterpretations) {
-    jsonData.swornInterpretations = jsonData.swornInterpretations ?? jsonData.updatedJsonData.swornInterpretations;
-  }
-
-  if (jsonData.updatedJsonData?.swornTranslations) {
-    jsonData.swornTranslations = jsonData.swornTranslations ?? jsonData.updatedJsonData.swornTranslations;
-  }
+  jsonData.swornInterpretations ??= jsonData.updatedJsonData?.swornInterpretations;
+  jsonData.swornTranslations ??= jsonData.updatedJsonData?.swornTranslations;
 
   return jsonDataAsRows(fields, jsonData);
 }
