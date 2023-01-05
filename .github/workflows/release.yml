@@ -2,8 +2,7 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
+    branches: ['master', '[0-9].*.*']
 
 jobs:
   release:
