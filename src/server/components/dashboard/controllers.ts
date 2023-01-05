@@ -175,7 +175,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     if (listId !== "new") {
       list = await findListById(listId);
-      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "nextAnnualReviewStartDate");
       lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
       templateUrl = "dashboard/lists-edit";
 

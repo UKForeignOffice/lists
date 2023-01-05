@@ -61,6 +61,9 @@ export interface List extends PrismaClient.List {
   countryId: number;
   jsonData: ListJsonData;
   country?: Partial<Country>;
+  isAnnualReview: boolean;
+  nextAnnualReviewStartDate: Date;
+  lastAnnualReviewStartDate: Date | null;
 }
 
 export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {

@@ -15,7 +15,7 @@ export const DATE_FORMAT = "d MMMM yyyy";
 export async function editDateGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const list = await findListById(res.locals.list.id);
-    const annualReviewStartDate = Helpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+    const annualReviewStartDate = Helpers.formatAnnualReviewDate(list as List, "nextAnnualReviewStartDate");
     const maxDate = list?.jsonData.annualReviewStartDate ? Helpers.getMaxDate() : "";
     const formattedMaxDate = maxDate ? DateFns.format(maxDate, DATE_FORMAT) : "";
     const helpText = maxDate

@@ -4,6 +4,8 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 
 import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput, CurrentAnnualReview } from "./types";
+import { subMonths } from "date-fns";
+import { Status } from "@prisma/client";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -42,7 +44,7 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date, listItemStatuses?: Status[], isAnnualReview?: boolean): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
@@ -53,6 +55,33 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
       },
       include: {
         country: true,
+        items: {
+          where: {
+            list: {
+              jsonData: {
+                path: ["currentAnnualReview", "eligibleListItems"],
+                array_contains: [],
+              },
+            },
+            ...(listItemStatuses != null && { status: { in: listItemStatuses }}),
+            ...(isAnnualReview != null && { isAnnualReview }),
+            history: {
+              some: {
+                type: "PUBLISHED",
+                time: {
+                  lte: subMonths(Date.now(), 1)
+                },
+              },
+            },
+          },
+          include: {
+            history: {
+              orderBy: {
+                time: "desc",
+              },
+            },
+          },
+        },
       },
     })) as List[];
 

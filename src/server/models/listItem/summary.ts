@@ -7,13 +7,14 @@ import { getPaginationValues } from "server/models/listItem/pagination";
 import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "server/models/listItem/summary.helpers";
+import type { ListItemWithHistory } from "server/models/listItem/summary.helpers";
+import * as SummaryHelpers from "server/models/listItem/summary.helpers";
 
 /**
  * Use this as a viewmodel.
  */
 function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
-  const { jsonData, createdAt, updatedAt, id } = item;
+  const { jsonData, createdAt, updatedAt, id, isAnnualReview, history, status } = item;
   const { organisationName, contactName } = jsonData as ListItemJsonData;
 
   return {
@@ -22,8 +23,12 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
     organisationName,
     contactName,
     id,
-    activityStatus: getActivityStatus(item),
-    publishingStatus: getPublishingStatus(item),
+    status,
+    isAnnualReview,
+    history,
+    activityStatus: SummaryHelpers.getActivityStatus(item),
+    publishingStatus: SummaryHelpers.getPublishingStatus(item),
+    lastPublished: SummaryHelpers.getLastPublished(item.history),
   };
 }
 
@@ -105,9 +110,8 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
     },
   });
 
-  if (!result) {
-    logger.error(`Failed to find ${listId}`);
-    throw new Error(`Failed to find ${listId}`);
+  if (result?.length === 0) {
+    logger.error(`Failed to find list items for list ${listId}`);
   }
 
   const pagination = await getPaginationValues({
