@@ -20,23 +20,22 @@
       {{ listItem.contactName }}
     </h2>
   </div>
-  <div class="dashboard__list-item-tag-container">
-      {% include "./list-item-tag.njk" %}
-  </div>
+
   <div class="dashboard__list-item-body">
-    <p>
-      {% include "./list-item-activity-status-tag.njk" %}
-    </p>
-    <div class="dashboard__list-item-dates">
-      <p class="govuk-body">
-        <span class="govuk-!-font-weight-bold">Created</span>
-        {{ listItem.createdAt }}
-      </p>
-      <p class="govuk-body">
-        <span class="govuk-!-font-weight-bold">Updated</span>
-        {{ listItem.updatedAt }}
-      </p>
+    <div>
+      {% include "./list-item-tag.njk" %}
+      <div class="dashboard__list-item-tag-container">
+        {% include "./list-item-activity-status-tag.njk" %}
+      </div>
     </div>
-    <a class="govuk-button govuk-button--secondary" href="items/{{ listItem.id }}">Review</a>
+    <p>
+      <span class="govuk-!-font-weight-bold">Last updated</span>
+      {{ listItem.updatedAt }}
+    </p>
+    <p>
+      <span class="govuk-!-font-weight-bold">Last published</span>
+      {{ listItem.lastPublished }}
+    </p>
+    <a class="govuk-button govuk-button--secondary" href="items/{{ listItem.id }}">View</a>
   </div>
 </li>

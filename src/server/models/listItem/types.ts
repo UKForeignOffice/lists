@@ -52,6 +52,7 @@ export type IndexListItem = Pick<
   updatedAt: string;
   publishingStatus: string;
   activityStatus: ActivityStatusViewModel;
+  lastPublished?: string;
 };
 
 export interface PaginationOptions {

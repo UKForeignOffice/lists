@@ -4,9 +4,11 @@ import { findIndexListItems } from "server/models/listItem/listItem";
 import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
+import { ListWithJsonData } from "../helpers";
 
 /**
- * TODO:- rename file to listItems. Currently listsitems for parity with existing code.
+ * TODO:- rename file to listItems. Currently lists items for parity with existing code.
  */
 interface TagVM {
   text: string;
@@ -143,16 +145,34 @@ export async function listItemsIndexController(
     if (list === undefined) {
       return next();
     }
+
+    const annualReviewDate = AnnualReviewHelpers.formatAnnualReviewDate(
+      res.locals.list as ListWithJsonData,
+      "annualReviewStartDate"
+    );
+    const unpublishDate = AnnualReviewHelpers.calculateNewDateAfterPeriod(annualReviewDate, { weeks: 6 });
+
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
       req,
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
+      annualReviewDate,
+      unpublishDate: AnnualReviewHelpers.formatDate(unpublishDate),
+      bannerToggles: annualReviewBannerToggles(),
       // @ts-expect-error
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
   }
+}
+
+function annualReviewBannerToggles() {
+  return {
+    onMonthWarning: true,
+    emailsSent: false,
+    unpublishWarning: false,
+  };
 }

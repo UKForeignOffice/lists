@@ -1,5 +1,6 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { ActivityStatusViewModel } from "server/models/listItem/types";
+import * as DateFns from "date-fns";
 
 export const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
   NEW: {
@@ -129,4 +130,13 @@ export function getActivityStatus(item: ListItemWithHistory): ActivityStatusView
   }
 
   return statusToActivityVM[status];
+}
+
+export function getLastPublished(events: Array<{ type: string; time: Date }> | undefined): string {
+  if (!events || events.length === 0) return "Not applicable";
+
+  const publishedEvents = events.filter((event) => event.type === "PUBLISHED");
+  const sortedByDate = publishedEvents.sort((a, b) => a.time.getTime() - b.time.getTime());
+
+  return sortedByDate.length > 0 ? DateFns.format(sortedByDate[0].time, "dd MMMM yyyy") : "Not applicable";
 }

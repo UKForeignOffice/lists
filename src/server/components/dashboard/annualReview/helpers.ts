@@ -2,12 +2,20 @@ import * as DateFns from "date-fns";
 import { DATE_FORMAT } from "server/components/dashboard/annualReview/controllers";
 
 import type { List } from "server/models/types";
+import { ListWithJsonData } from "../helpers";
 
 export function formatAnnualReviewDate(
-  list: List,
-  field: "annualReviewStartDate" | "lastAnnualReviewStartDate"
+  list: ListWithJsonData,
+  field: "annualReviewStartDate" | "lastAnnualReviewStartDate",
+  dateFormat?: string
 ): string {
-  return list.jsonData[field] ? DateFns.format(DateFns.parseISO(list.jsonData[field] as string), DATE_FORMAT) : "";
+  return list.jsonData[field] ? formatDate(list.jsonData[field] as string, dateFormat) : "";
+}
+
+export function formatDate(date: Date | string, formatOptions?: string) {
+  const formattedDate: Date = typeof date === "string" ? DateFns.parseISO(date) : date;
+
+  return DateFns.format(formattedDate, formatOptions ?? DATE_FORMAT);
 }
 
 export function getMaxDate(): Date {
@@ -15,11 +23,15 @@ export function getMaxDate(): Date {
   return addSixMonths(todaysDate);
 }
 
-function addSixMonths(date: number | string | Date): Date {
-  const annualReviewDate = typeof date === "string" ? new Date(date) : date;
-  const newDate = DateFns.add(annualReviewDate as Date, { months: 6 });
+export function calculateNewDateAfterPeriod(date: number | string | Date, period: Record<string, number>) {
+  const formattedDate = typeof date === "string" ? new Date(date) : date;
+  const newDate = DateFns.add(formattedDate as Date, period);
 
   return newDate;
+}
+
+function addSixMonths(date: number | string | Date): Date {
+  return calculateNewDateAfterPeriod(date, { months: 6 });
 }
 
 export function getAnnualReviewYear({
