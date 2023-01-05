@@ -47,8 +47,8 @@ export const fieldTitles: { [prop: string]: string } = {
   translationSpecialties: "Translation services",
   interpreterServices: "Interpretation services",
   deliveryOfServices: "How services are carried out",
-  swornTranslations: "Provides sworn interpretation",
-  swornInterpretations: "Provides sworn or certified translation",
+  swornTranslations: "Provides sworn or certified translation",
+  swornInterpretations: "Provides sworn interpretation",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
