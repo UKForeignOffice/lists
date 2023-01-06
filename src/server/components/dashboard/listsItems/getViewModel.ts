@@ -15,7 +15,7 @@ interface DetailsViewModel {
 /**
  * TODO: implement i18n
  */
-export const fieldTitles: { [prop: string]: string } = {
+const fieldTitles: { [prop: string]: string } = {
   /**
    * used to convert fieldNames to a user-facing string
    */
