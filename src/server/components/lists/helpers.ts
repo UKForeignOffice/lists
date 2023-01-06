@@ -234,7 +234,7 @@ export function createListSearchBaseLink(serviceType: string): string {
 }
 
 export function createFormRunnerReturningUserLink(serviceType: string, isAnnualReview: boolean): string {
-  let formName = kebabCase(serviceType);
+  const formName = kebabCase(serviceType);
 
   if (serviceType === undefined) {
     throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
