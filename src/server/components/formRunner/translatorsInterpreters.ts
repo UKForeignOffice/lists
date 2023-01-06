@@ -1,7 +1,4 @@
-import {
-  ServiceType,
-  TranslatorInterpreterListItemGetObject
-} from "server/models/types";
+import { ServiceType, TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { Field, Question } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 import { get } from "lodash";
@@ -18,11 +15,11 @@ const FormRunnerFields: { [key: string]: string } = {
   speakEnglish: "jsonData.speakEnglish",
   contactName: "jsonData.contactName",
   organisationName: "jsonData.organisationName",
-  "address.firstLine": "jsonData.['address.firstLine']",
-  "address.secondLine": "jsonData.['address.secondLine']",
-  city: "jsonData.city",
-  postCode: "jsonData.postCode",
-  addressCountry: "jsonData.addressCountry",
+  "address.firstLine": "address.firstLine",
+  "address.secondLine": "address.secondLine",
+  city: "address.city",
+  postCode: "address.postCode",
+  addressCountry: "address.country.name",
   websiteAddress: "jsonData.websiteAddress",
   emailAddress: "jsonData.emailAddress",
   publishEmail: "jsonData.publishEmail",
