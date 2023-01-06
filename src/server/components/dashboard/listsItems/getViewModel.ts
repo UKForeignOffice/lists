@@ -188,14 +188,14 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     [ServiceType.translatorsInterpreters]: [
       ...baseFields,
       "servicesProvided",
+      "swornTranslations",
+      "swornInterpretations",
       "languagesProvided",
       "languagesSummary",
       "translationSpecialties",
       "interpreterServices",
       "deliveryOfServices",
       "representedBritishNationals",
-      "swornTranslations",
-      "swornInterpretations",
     ],
   };
 
