@@ -337,7 +337,7 @@ jobs:
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-            container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
+          container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
           resource-name: deployment/lists-scheduler-batch
 
       - kubernetes/update-container-image:
@@ -406,14 +406,14 @@ workflows:
 
 
       - publish:
-          name: publish-lists-scheduled-batch
+          name: publish-lists-scheduler-batch
           app: lists-scheduler-batch
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - feat/annual-review-scheduled-process
+                - feat/annual-review-scheduler-process
           context:
             - VPN
             - AWS
