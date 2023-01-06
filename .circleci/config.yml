@@ -190,25 +190,25 @@ jobs:
 
       - when:
           condition:
-            equal: [lists-scheduler-batch, <<parameters.app>>]
+            equal: [lists-scheduled-batch, <<parameters.app>>]
           steps:
             - run:
-                name: Publish docker image - annual review scheduler batch process
+                name: Publish docker image - annual review scheduled batch process
                 command: |
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG docker/scheduler-batch
-                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduled-batch:$DOCKER_TAG docker/scheduler
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduled-batch:$DOCKER_TAG
 
       - when:
           condition:
-            equal: [lists-scheduler-worker, <<parameters.app>>]
+            equal: [lists-scheduled-worker, <<parameters.app>>]
           steps:
             - run:
-                name: Publish docker image - annual review scheduler worker process
+                name: Publish docker image - annual review scheduled worker process
                 command: |
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG docker/scheduler-worker
-                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduled-worker:$DOCKER_TAG docker/scheduler
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduled-worker:$DOCKER_TAG
 
   deploy:
     <<: *defaults
@@ -337,8 +337,8 @@ jobs:
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
-          resource-name: deployment/lists-scheduler-batch
+          container-image-updates: lists-scheduled-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduled-batch:$CIRCLE_SHA1
+          resource-name: deployment/lists-scheduled-batch
 
       - run:
           name: Disconnect from OpenVPN
@@ -401,7 +401,7 @@ workflows:
 
 
       - publish:
-          name: publish-lists-scheduler-batch
+          name: publish-lists-scheduled-batch
           app: lists-scheduler-batch
           filters:
             tags:
