@@ -413,7 +413,7 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - feat/annual-review-scheduler-process
+                - feat/annual-review-scheduled-process
           context:
             - VPN
             - AWS
