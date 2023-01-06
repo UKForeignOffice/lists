@@ -244,8 +244,6 @@ export function createFormRunnerReturningUserLink(serviceType: string, isAnnualR
     throw new Error("This service is not supported");
   }
 
-  if (isAnnualReview) formName = `annual-review-${kebabCase(serviceType)}`;
-
   return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${formName}`;
 }
 
