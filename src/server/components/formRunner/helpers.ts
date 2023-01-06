@@ -14,6 +14,7 @@ import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { ListItem } from "@prisma/client";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -23,7 +24,7 @@ export function getNewSessionWebhookData(
   isAnnualReview: boolean | undefined,
   listItemRef: string
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://host.docker.internal:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {
@@ -49,8 +50,8 @@ export function getNewSessionWebhookData(
 }
 
 export async function generateFormRunnerWebhookData(
-  list: List,
-  listItem: BaseListItemGetObject,
+  list: Pick<List, "type">,
+  listItem: ListItem,
   isUnderTest: boolean
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;

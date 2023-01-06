@@ -9,7 +9,6 @@ import { getDetailsViewModel } from "server/components/dashboard/listsItems/getV
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
-import { findListById } from "server/models/list";
 import initialiseFormRunnerSession from "server/utils/formRunnerSession";
 import { logger } from "server/services/logger";
 
@@ -19,7 +18,14 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listItemRef } = req.params;
-    const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
+    const result = await findListItemByReference(listItemRef);
+
+    if (!result) {
+      return next(new HttpException(404, "404", "The list item cannot be found"));
+    }
+
+    const listItem = result as unknown as ListItemGetObject;
+
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
     const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
@@ -95,17 +101,23 @@ export async function confirmPostController(req: Request, res: Response, next: N
     }
 
     if (chosenValue === "no") {
-      await redirectToFormRunner(req, res);
+      await redirectToFormRunner(req, res, next);
     }
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 }
 
-async function redirectToFormRunner(req: Request, res: Response): Promise<void> {
+async function redirectToFormRunner(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { listItemRef, underTest } = req.params;
-  const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
-  const list = ((await findListById(listItem.listId)) ?? {}) as List;
+  const result = await findListItemByReference(listItemRef);
+
+  if (!result) {
+    return next(new HttpException(404, "404", "The list item cannot be found"));
+  }
+
+  const { list, ...listItem } = result;
+
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({
     list,
     listItem,
@@ -145,10 +157,8 @@ export async function declarationPostController(req: Request, res: Response, nex
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
-    const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
-
     await prisma.listItem.update({
-      where: { id: listItem.id },
+      where: { reference: listItemRef },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
         history: {
