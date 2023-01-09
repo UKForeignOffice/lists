@@ -280,3 +280,7 @@ $two-thirds: $one-third * 2;
   border-bottom: 1px solid grey;
   padding-bottom: 1rem;
 }
+
+.govuk-notification-banner__full-width {
+  max-width: 100%;
+}

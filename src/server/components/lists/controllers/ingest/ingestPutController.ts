@@ -10,7 +10,10 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
-export async function ingestPutController(req: Request, res: Response) {
+export async function ingestPutController(
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>> | undefined> {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
@@ -26,6 +29,7 @@ export async function ingestPutController(req: Request, res: Response) {
     res.status(422).json({ error: error.message });
     return;
   }
+
   if (value === undefined) {
     res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
     return;
@@ -36,8 +40,7 @@ export async function ingestPutController(req: Request, res: Response) {
   try {
     data = deserialise(value);
   } catch (e) {
-    res.status(422).json({ error: "questions could not be deserialised" });
-    return;
+    return res.status(422).json({ error: "questions could not be deserialised" });
   }
 
   try {
@@ -48,7 +51,7 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     });
 
-    if (listItem === null) {
+    if (listItem === undefined) {
       return res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
@@ -56,7 +59,7 @@ export async function ingestPutController(req: Request, res: Response) {
       });
     }
 
-    const jsonData = listItem.jsonData as Prisma.JsonObject;
+    const jsonData = listItem?.jsonData as Prisma.JsonObject;
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
       updatedJsonData: data,
@@ -84,8 +87,7 @@ export async function ingestPutController(req: Request, res: Response) {
       ),
     ]);
 
-    res.status(204).send();
-    return;
+    return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
     /**

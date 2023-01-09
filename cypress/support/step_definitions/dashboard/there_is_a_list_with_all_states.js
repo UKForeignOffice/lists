@@ -6,10 +6,11 @@ Given("A {string} list exists for Eurasia", (providerType) => {
   createListForService(providerType);
 });
 
+const todaysDate = new Date();
 function createListForService(service) {
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
-    annualReviewStartDate: "2022-01-01T00:00:00.000Z",
+    annualReviewStartDate: todaysDate,
   };
   cy.task("db", {
     operation: "country.upsert",
