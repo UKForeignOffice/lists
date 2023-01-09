@@ -6,7 +6,6 @@ import {
   FuneralDirectorListItemGetObject,
   TranslatorInterpreterListItemGetObject,
   List,
-  BaseListItemGetObject,
   ServiceType,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
