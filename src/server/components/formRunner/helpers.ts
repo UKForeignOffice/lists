@@ -2,26 +2,32 @@ import * as FormRunner from "./types";
 import path from "path";
 import fs from "fs";
 import {
-  LawyerListItemGetObject,
   FuneralDirectorListItemGetObject,
-  TranslatorInterpreterListItemGetObject,
+  LawyerListItemGetObject,
   List,
-  BaseListItemGetObject,
+  ListItem,
   ServiceType,
+  TranslatorInterpreterListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
+import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
+import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 
 export function getNewSessionWebhookData(
   listType: string,
   listItemId: number,
   questions: Array<Partial<FormRunner.Question>> | undefined,
-  message: string
+  message: string,
+  isAnnualReview: boolean | undefined,
+  listItemRef: string
 ): FormRunner.NewSessionData {
   const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
-  const redirectPath = `/summary`;
+  const redirectPath = "/summary";
+  const protocol = isLocalHost ? "http" : "https";
   const options = {
     message,
     customText: {
@@ -33,6 +39,7 @@ export function getNewSessionWebhookData(
     components: [],
     callbackUrl,
     redirectPath,
+    backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`,
   };
 
   const newSessionData: FormRunner.NewSessionData = {
@@ -44,18 +51,15 @@ export function getNewSessionWebhookData(
 }
 
 export async function generateFormRunnerWebhookData(
-  list: List,
-  listItem: BaseListItemGetObject,
+  list: Pick<List, "type">,
+  listItem: ListItem,
   isUnderTest: boolean
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
 
   switch (list.type) {
     case ServiceType.lawyers:
-      questions = await lawyers.generateFormRunnerWebhookData(
-        listItem as LawyerListItemGetObject,
-        isUnderTest
-      );
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
       break;
     case ServiceType.funeralDirectors:
       questions = await funeralDirectors.generateFormRunnerWebhookData(
@@ -80,7 +84,6 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
-
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
@@ -94,10 +97,7 @@ export async function parseJsonFormData(
     : __dirname.replace("dist", "docker/apply");
   const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
-  const fileContents = await fs.promises.readFile(
-    path.join(baseDir, formsJsonFile),
-    "utf8"
-  );
+  const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");
   const formJsonData = JSON.parse(fileContents);
   const questions: Array<Partial<FormRunner.Question>> = formJsonData.pages
     .map((page: FormRunner.Page) => {
@@ -119,4 +119,34 @@ export async function parseJsonFormData(
     .filter((question: FormRunner.Question) => question.fields.length > 0);
 
   return questions;
+}
+
+interface initialiseFormRunnerInput {
+  list: Pick<List, "type"> | Pick<ListItem, "type">;
+  listItem: ListItem;
+  message: string;
+  isUnderTest: boolean;
+  isAnnualReview?: boolean;
+}
+
+export async function initialiseFormRunnerSession({
+  list,
+  listItem,
+  message,
+  isUnderTest,
+  isAnnualReview,
+}: initialiseFormRunnerInput): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(
+    listItem.type,
+    listItem.id,
+    questions,
+    message,
+    isAnnualReview,
+    listItem.reference
+  );
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+
+  return createFormRunnerEditListItemLink(token);
 }

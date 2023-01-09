@@ -9,14 +9,23 @@ import { getDetailsViewModel } from "server/components/dashboard/listsItems/getV
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
+import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
+import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listItemRef } = req.params;
-    const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
+    const result = await findListItemByReference(listItemRef);
+
+    if (!result) {
+      return next(new HttpException(404, "404", "The list item cannot be found"));
+    }
+
+    const listItem = result as unknown as ListItemGetObject;
+
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
     const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
@@ -78,21 +87,47 @@ function formatDataForSummaryRows(listItem: ListItemGetObject): Types.govukRow[]
   return mergedRows;
 }
 
-export function confirmPostController(req: Request, res: Response): void {
-  const chosenValue = req.body["is-your-information-correct"];
+export async function confirmPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const chosenValue = req.body["is-your-information-correct"];
 
-  if (!chosenValue) {
-    req.flash("annualReviewError", "Select if your information is correct or if you need to update it");
-    return res.redirect(`/annual-review/confirm/${req.body.reference}`);
+    if (!chosenValue) {
+      req.flash("annualReviewError", "Select if your information is correct or if you need to update it");
+      return res.redirect(`/annual-review/confirm/${req.body.reference}`);
+    }
+
+    if (chosenValue === "yes") {
+      return res.redirect(`/annual-review/declaration/${req.body.reference}`);
+    }
+
+    if (chosenValue === "no") {
+      await redirectToFormRunner(req, res, next);
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function redirectToFormRunner(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const { listItemRef, underTest } = req.params;
+  const result = await findListItemByReference(listItemRef);
+
+  if (!result) {
+    return next(new HttpException(404, "404", "The list item cannot be found"));
   }
 
-  if (chosenValue === "yes") {
-    return res.redirect(`/annual-review/declaration/${req.body.reference}`);
-  }
+  const { list, ...listItem } = result;
 
-  if (chosenValue === "no") {
-    return res.redirect("/annual-review/summary-page");
-  }
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession({
+    list,
+    listItem,
+    message: "Correct your information and submit your details again.",
+    isUnderTest: Boolean(underTest),
+    isAnnualReview: true,
+  });
+
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
+  return res.redirect(formRunnerEditUserUrl);
 }
 
 export function declarationGetController(req: Request, res: Response, next: NextFunction): void {
@@ -122,10 +157,8 @@ export async function declarationPostController(req: Request, res: Response, nex
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
-    const listItem = (await findListItemByReference(listItemRef)) as ListItemGetObject;
-
     await prisma.listItem.update({
-      where: { id: listItem.id },
+      where: { reference: listItemRef },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
         history: {

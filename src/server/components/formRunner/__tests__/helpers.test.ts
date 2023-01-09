@@ -1,4 +1,3 @@
-import supertest from "supertest";
 import { getNewSessionWebhookData } from "../helpers";
 import {
   LawyerListItemGetObject,
@@ -261,8 +260,9 @@ describe("Form Runner Service:", () => {
 
   describe("generateFormRunnerWebhookObject", () => {
     const listJson: LawyerJsonData = {
-      "address.firstLine": "", addressCountry: "",
-      city: "",
+      "address.firstLine": "1 Plaza De Centro",
+      addressCountry: "Italy",
+      city: "Milan",
       type: ServiceType.lawyers,
       size: "Medium (16-350 legal professionals)",
       country: "Italy",
@@ -295,7 +295,8 @@ describe("Form Runner Service:", () => {
       speakEnglish: true,
       websiteAddress: "https://www.alassistenzalegale.it/?lang=en",
       organisationName: "AL Assistenza Legale",
-      representedBritishNationals: true
+      representedBritishNationals: true,
+      postCode: "999999"
     };
 
     const getObject: BaseListItemGetObject = {

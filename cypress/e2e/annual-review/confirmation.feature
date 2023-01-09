@@ -42,5 +42,5 @@ Feature: Provider annual review confirmation
         And I click the "Continue" button
         And I check the "Confirmed" checkbox
         And I click the "Submit" button
-         And I go back to confirmation page
+        And I go back to confirmation page
         Then I see page with heading "You have already submitted your annual review"

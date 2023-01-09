@@ -103,10 +103,32 @@ export async function findListItemById(id: string | number) {
   }
 }
 
-export async function findListItemByReference(ref: string): Promise<ListItem | null> {
+export async function findListItemByReference(ref: string) {
   try {
     return await prisma.listItem.findUnique({
       where: { reference: ref },
+      include: {
+        list: {
+          select: {
+            type: true,
+          },
+        },
+        address: {
+          select: {
+            id: true,
+            firstLine: true,
+            secondLine: true,
+            city: true,
+            postCode: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
   } catch (error) {
     throw new Error(`findListItemByReference Error ${(error as Error).message}`);
