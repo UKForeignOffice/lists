@@ -23,7 +23,7 @@ export function getNewSessionWebhookData(
   isAnnualReview: boolean | undefined,
   listItemRef: string
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://host.docker.internal:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {
