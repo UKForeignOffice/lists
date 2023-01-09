@@ -21,7 +21,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
-import initialiseFormRunnerSession from "server/components/formRunner/helpers";
+import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
