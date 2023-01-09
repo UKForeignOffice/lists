@@ -40,8 +40,7 @@ export async function ingestPutController(
   try {
     data = deserialise(value);
   } catch (e) {
-    res.status(422).json({ error: "questions could not be deserialised" });
-    return;
+    return res.status(422).json({ error: "questions could not be deserialised" });
   }
 
   try {
@@ -53,7 +52,7 @@ export async function ingestPutController(
     });
 
     if (listItem === undefined) {
-      res.status(404).send({
+      return res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
         },
@@ -88,8 +87,7 @@ export async function ingestPutController(
       ),
     ]);
 
-    res.status(204).send();
-    return;
+    return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
     /**
