@@ -9,11 +9,11 @@ import { getDetailsViewModel } from "server/components/dashboard/listsItems/getV
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
-import initialiseFormRunnerSession from "server/utils/formRunnerSession";
 import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
+import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {

@@ -2,18 +2,20 @@ import * as FormRunner from "./types";
 import path from "path";
 import fs from "fs";
 import {
-  LawyerListItemGetObject,
   FuneralDirectorListItemGetObject,
-  TranslatorInterpreterListItemGetObject,
+  LawyerListItemGetObject,
   List,
+  ListItem,
   ServiceType,
+  TranslatorInterpreterListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
 import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
-import { ListItem } from "@prisma/client";
+import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
+import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -117,4 +119,34 @@ export async function parseJsonFormData(
     .filter((question: FormRunner.Question) => question.fields.length > 0);
 
   return questions;
+}
+
+interface initialiseFormRunnerInput {
+  list: Pick<List, "type"> | Pick<ListItem, "type">;
+  listItem: ListItem;
+  message: string;
+  isUnderTest: boolean;
+  isAnnualReview?: boolean;
+}
+
+export async function initialiseFormRunnerSession({
+  list,
+  listItem,
+  message,
+  isUnderTest,
+  isAnnualReview,
+}: initialiseFormRunnerInput): Promise<string> {
+  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const formRunnerWebhookData = getNewSessionWebhookData(
+    listItem.type,
+    listItem.id,
+    questions,
+    message,
+    isAnnualReview,
+    listItem.reference
+  );
+  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
+  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+
+  return createFormRunnerEditListItemLink(token);
 }

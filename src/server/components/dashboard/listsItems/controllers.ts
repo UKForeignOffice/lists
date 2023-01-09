@@ -21,7 +21,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
-import initialiseFormRunnerSession from "server/utils/formRunnerSession";
+import initialiseFormRunnerSession from "server/components/formRunner/helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -343,7 +343,7 @@ async function handleListItemRequestChanges(
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
   logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
-  const formRunnerEditUserUrl = await initialiseFormRunnerSession({list, listItem, message, isUnderTest});
+  const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isUnderTest });
 
   // Email applicant
   logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
