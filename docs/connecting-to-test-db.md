@@ -61,5 +61,7 @@ You must have access to `keybase://team/cautionyourblast.fcdo/config` to access 
 
 You must have gnupg (gpg) installed with at least the public key imported into your keychain.
 
-1. `cat pub.asc | base64 --decode | gpg --import`
-2. encrypt the database `gpg -o test_data.sql.zip.gpg -r BC6D45323BC3CB12EAB271379A2CC0D6099DA303 test_data.sql`
+1. For mac `brew install gnupg`
+1. `cat pub.asc | base64 --decode | gpg --import` or `gpg --import pubic.asc`
+1. Use `gpg -k` to get the recipient number
+1. encrypt the database `gpg -e[ncypt] -o[utput file name] filename.zip.gpg -r[ecipient] 15E44D74231F2A6ED9981C78D9A575DB77C087CC file-to-encrypt` for example `gpg -o test_data.sql.zip.gpg -r BC6D45323BC3CB12EAB271379A2CC0D6099DA303 test_data.sql`

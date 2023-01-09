@@ -301,7 +301,6 @@ export const countriesList = [
   { text: "Uruguay", value: "Uruguay", code: "URY" },
   { text: "Uzbekistan", value: "Uzbekistan", code: "UZB" },
   { text: "Vanuatu", value: "Vanuatu", code: "VUT" },
-  { text: "Vatican City", value: "Vatican City", code: "VAT" },
   { text: "Venezuela", value: "Venezuela", code: "VEN" },
   { text: "Vietnam", value: "Vietnam", code: "VNM" },
   {
