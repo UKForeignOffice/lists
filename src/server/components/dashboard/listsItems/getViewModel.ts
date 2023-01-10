@@ -2,8 +2,7 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import { ListItem, Status } from "@prisma/client";
-import { isEqual } from "lodash";
+import { ListItem } from "@prisma/client";
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;

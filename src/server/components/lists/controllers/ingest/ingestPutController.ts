@@ -10,60 +10,6 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
-interface getObjectDiffOptions {
-  ignore?: string[]; // keys to ignore
-}
-
-const defaultOptions: getObjectDiffOptions = {
-  ignore: ["metadata", "declaration"],
-};
-
-/**
- * Array comparison. Returns a boolean if the array('s values) are unchanged.
- */
-function arrayHasChanges(beforeArray: string[], afterArray: string[]) {
-  if (beforeArray.length !== afterArray.length) {
-    return true;
-  }
-
-  return afterArray.every((item) => !beforeArray.includes(item));
-}
-
-/**
- * Recursive object comparison, returns the key/value pairs which have changed from beforeObject to afterObject.
- */
-function getObjectDiff<T extends { [key: string]: any }>(
-  beforeObject: T,
-  afterObject: T,
-  options = defaultOptions
-): Partial<T> {
-  const allKeys = Object.keys({ ...beforeObject, ...afterObject }).filter((key) => !options.ignore?.includes?.(key));
-
-  return allKeys.reduce((prev, key) => {
-    const beforeValue = beforeObject?.[key];
-    const newValue = afterObject?.[key];
-
-    const isObject = typeof beforeValue === "object" && !Array.isArray(beforeValue);
-    const isArray = Array.isArray(beforeValue);
-    let nestedDiff;
-
-    if (isObject) {
-      nestedDiff = getObjectDiff(beforeValue, newValue);
-    }
-
-    if (isArray) {
-      nestedDiff = arrayHasChanges(beforeValue, newValue) ? newValue : beforeValue;
-    }
-
-    const valueDidChange = newValue && beforeValue !== newValue;
-
-    return {
-      ...prev,
-      ...(valueDidChange && { [key]: nestedDiff ?? newValue }),
-    };
-  }, {});
-}
-
 export async function ingestPutController(
   req: Request,
   res: Response
@@ -79,7 +25,7 @@ export async function ingestPutController(
   }
 
   if (error) {
-    logger.error(`request could not be processed - post data could not be parsed ${error}`);
+    logger.error(`request could not be processed - post data could not be parsed ${error.message}`);
     return res.status(422).json({ error: error.message });
   }
 
