@@ -9,11 +9,9 @@ import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
+import { getObjectDiff } from "./helpers";
 
-export async function ingestPutController(
-  req: Request,
-  res: Response
-): Promise<Response<any, Record<string, any>> | undefined> {
+export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
@@ -24,9 +22,9 @@ export async function ingestPutController(
     });
   }
 
-  if (error) {
-    logger.error(`request could not be processed - post data could not be parsed ${error.message}`);
-    return res.status(422).json({ error: error.message });
+  if (error?.message) {
+    logger.error(`ingestPutController. Validating schema failed ${error.message}`);
+    return res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
   }
 
   let data: DeserialisedWebhookData;
