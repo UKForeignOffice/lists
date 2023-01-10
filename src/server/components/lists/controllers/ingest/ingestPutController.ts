@@ -10,6 +10,60 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
+interface getObjectDiffOptions {
+  ignore?: string[]; // keys to ignore
+}
+
+const defaultOptions: getObjectDiffOptions = {
+  ignore: ["metadata", "declaration"],
+};
+
+/**
+ * Array comparison. Returns a boolean if the array('s values) are unchanged.
+ */
+function arrayHasChanges(beforeArray: string[], afterArray: string[]) {
+  if (beforeArray.length !== afterArray.length) {
+    return true;
+  }
+
+  return afterArray.every((item) => !beforeArray.includes(item));
+}
+
+/**
+ * Recursive object comparison, returns the key/value pairs which have changed from beforeObject to afterObject.
+ */
+function getObjectDiff<T extends { [key: string]: any }>(
+  beforeObject: T,
+  afterObject: T,
+  options = defaultOptions
+): Partial<T> {
+  const allKeys = Object.keys({ ...beforeObject, ...afterObject }).filter((key) => !options.ignore?.includes?.(key));
+
+  return allKeys.reduce((prev, key) => {
+    const beforeValue = beforeObject?.[key];
+    const newValue = afterObject?.[key];
+
+    const isObject = typeof beforeValue === "object" && !Array.isArray(beforeValue);
+    const isArray = Array.isArray(beforeValue);
+    let nestedDiff;
+
+    if (isObject) {
+      nestedDiff = getObjectDiff(beforeValue, newValue);
+    }
+
+    if (isArray) {
+      nestedDiff = arrayHasChanges(beforeValue, newValue) ? newValue : beforeValue;
+    }
+
+    const valueDidChange = newValue && beforeValue !== newValue;
+
+    return {
+      ...prev,
+      ...(valueDidChange && { [key]: nestedDiff ?? newValue }),
+    };
+  }, {});
+}
+
 export async function ingestPutController(
   req: Request,
   res: Response
@@ -19,20 +73,14 @@ export async function ingestPutController(
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
-    res.status(500).json({
+    return res.status(500).json({
       error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
-    return;
   }
 
   if (error) {
-    res.status(422).json({ error: error.message });
-    return;
-  }
-
-  if (value === undefined) {
-    res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
-    return;
+    logger.error(`request could not be processed - post data could not be parsed ${error}`);
+    return res.status(422).json({ error: error.message });
   }
 
   let data: DeserialisedWebhookData;
@@ -46,12 +94,9 @@ export async function ingestPutController(
   try {
     const listItem = await prisma.listItem.findUnique({
       where: { id: Number(id) },
-      include: {
-        history: true,
-      },
     });
 
-    if (listItem === undefined) {
+    if (!listItem) {
       return res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
@@ -59,18 +104,25 @@ export async function ingestPutController(
       });
     }
 
-    const jsonData = listItem?.jsonData as Prisma.JsonObject;
+    const jsonData = listItem.jsonData as Prisma.JsonObject;
+
+    const diff = getObjectDiff(jsonData, data);
+
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
-      updatedJsonData: data,
+      updatedJsonData: diff,
     };
+
+    const { isAnnualReview = false } = value.metadata;
+    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff) : EVENTS.EDITED(diff);
+    const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
 
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
-        status: Status.EDITED,
+        status,
         history: {
-          create: EVENTS.EDITED(data),
+          create: event,
         },
         jsonData: jsonDataWithUpdatedJsonData,
       },

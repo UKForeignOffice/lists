@@ -25,7 +25,7 @@ export function getNewSessionWebhookData(
   isAnnualReview: boolean | undefined,
   listItemRef: string
 ): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://localhost:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {
@@ -46,6 +46,9 @@ export function getNewSessionWebhookData(
     questions,
     options,
     name: "Changes required",
+    metadata: {
+      isAnnualReview,
+    },
   };
   return newSessionData;
 }

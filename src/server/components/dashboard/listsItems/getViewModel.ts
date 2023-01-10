@@ -3,7 +3,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
 import { ListItem, Status } from "@prisma/client";
-import { isEqual } from "lodash"
+import { isEqual } from "lodash";
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
@@ -91,10 +91,7 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   return "string";
 }
 
-function parseValue<T extends KeyOfJsonData>(
-  field: T,
-  jsonData: ListItemJsonData
-): ListItemJsonData[T] {
+function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonData): ListItemJsonData[T] {
   /**
    * if a field needs to be parsed differently, add a statement here.
    * TODO: if there are a lot of cases, refactor into an object!
@@ -105,34 +102,21 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
       jsonData.city?.trim() ?? "",
-    ].filter((line) => line)
+    ]
+      .filter((line) => line)
       .join(`\n`);
   }
   return jsonData?.[field];
-  }
+}
 
-function rowFromField(
-  field: KeyOfJsonData,
-  listItem: ListItemJsonData,
-  updatedFields?: string[] | null,
-): Types.govukRow {
+function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
-  let actions = null;
+  const hasUpdate = listItem.updatedJsonData?.[field];
 
-  if (updatedFields?.includes(field as string)) {
-
-    actions = {
-      items: [
-        {
-          href: "#",
-          html: "<strong class='govuk-tag'>Updated</strong>",
-        },
-      ],
-    };
-  }
+  const updateTag = { html: "<strong class='govuk-tag'>Updated</strong>" };
 
   return {
     key: {
@@ -141,7 +125,7 @@ function rowFromField(
     value: {
       [valueKey]: value,
     },
-    actions,
+    ...(hasUpdate && { actions: { items: [updateTag] } }),
     type: getValueMacroType(value, field),
   };
 }
@@ -151,52 +135,16 @@ function removeEmpty(row: Types.govukRow): string | boolean {
   return row.value.text ?? row.value.html ?? false;
 }
 
-function jsonDataAsRows(
-  fields: KeyOfJsonData[] | KeyOfJsonData,
-  jsonData: ListItemJsonData,
-  status: Status
-): Types.govukRow[] {
-
-  let updatedFields: string[] | null = null;
-
+function jsonDataAsRows(fields: KeyOfJsonData[] | KeyOfJsonData, jsonData: ListItemJsonData): Types.govukRow[] {
   if (!Array.isArray(fields)) {
     return [rowFromField(fields, jsonData)];
   }
-
-  const dataUpdatedForAnnualReview = status === Status.CHECK_ANNUAL_REVIEW && jsonData.updatedJsonData;
-
-  if (dataUpdatedForAnnualReview) {
-    updatedFields = calculateUpdatedFields(jsonData);
-  }
-
-  return fields
-    .map((field) => rowFromField(field, jsonData, updatedFields))
-    .filter(removeEmpty);
-}
-
-function calculateUpdatedFields(listItem: ListItemJsonData): string[] {
-  const { updatedJsonData, ...currentJsonData } = listItem;
-  delete currentJsonData.updatedJsonData;
-  delete currentJsonData.emailAddressToPublish;
-
-  const currentJsonEntries = Object.entries(currentJsonData);
-
-  const currentWithUpdatedFlag = currentJsonEntries.map((data) => {
-    const [key, value] = data;
-
-    if (!isEqual(updatedJsonData[key], value)) {
-      return key;
-    }
-    return null;
-  }).filter(Boolean);
-
-  return currentWithUpdatedFlag as string[];
+  return fields.map((field) => rowFromField(field, jsonData)).filter(removeEmpty);
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.jsonData.publicEmailAddress) {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.publicEmailAddress;
-
   } else {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.emailAddress;
   }
@@ -213,12 +161,12 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
     listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
   }
-  return jsonDataAsRows(contactFields, listItem.jsonData, listItem.status);
+  return jsonDataAsRows(contactFields, listItem.jsonData);
 }
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const { jsonData, status } = listItem;
-  const type = listItem.type as ServiceType
+  const { jsonData } = listItem;
+  const type = listItem.type as ServiceType;
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
@@ -262,22 +210,18 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     listItem.jsonData.languagesProvided = languagesArray;
   }
 
-  return jsonDataAsRows(fieldsForType, jsonData, status);
+  return jsonDataAsRows(fieldsForType, jsonData);
 }
 
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const baseFields: KeyOfJsonData[] = [
-    "regulators",
-    "emailAddress",
-  ];
-  return jsonDataAsRows(baseFields, listItem.jsonData, listItem.status);
+  const baseFields: KeyOfJsonData[] = ["regulators", "emailAddress"];
+  return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
-export function getDetailsViewModel(
-  listItem: ListItemGetObject | ListItem
-): DetailsViewModel {
+export function getDetailsViewModel(listItem: ListItemGetObject | ListItem): DetailsViewModel {
   const item = listItem as ListItemGetObject;
-  const headerField = ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
+  const headerField =
+    ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
 
   return {
     organisation: {
