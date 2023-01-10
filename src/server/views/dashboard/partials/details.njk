@@ -1,4 +1,4 @@
-{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "./details-list.njk" import detailsSummaryList %}
 {% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set status %}
@@ -80,7 +80,7 @@
     <h3 class="govuk-heading-m govuk-!-margin-bottom-4">{{ item.title }}</h3>
   {% endif %}
   {% set rows = item.rows | renderRowValues(rowMacros, item.rows) %}
-  {{ govukSummaryList({
+  {{ detailsSummaryList({
     rows: rows
   }) }}
 {% endfor %}

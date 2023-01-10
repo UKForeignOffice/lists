@@ -106,7 +106,9 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
       .filter((line) => line)
       .join(`\n`);
   }
-  return jsonData?.[field];
+
+  const answer = jsonData?.[field];
+  return Array.isArray(answer) ? answer.join(", ") : answer;
 }
 
 function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
@@ -127,6 +129,7 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
     },
     ...(hasUpdate && { actions: { items: [updateTag] } }),
     type: getValueMacroType(value, field),
+    hasUpdate,
   };
 }
 
