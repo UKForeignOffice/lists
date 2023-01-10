@@ -172,7 +172,8 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
  * @param listItems
  */
 export function displayUnpublishWarning(list: ListWithJsonData, listItems: IndexListItem[]) {
-  let unpublishWarning = false;
+  let display = false;
+  let countOfListItems = 0;
   const fiveWeeksBeforeUnpublishDateString = list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
   if (fiveWeeksBeforeUnpublishDateString) {
     const fiveWeeksBeforeUnpublishDate = new Date(fiveWeeksBeforeUnpublishDateString);
@@ -181,10 +182,14 @@ export function displayUnpublishWarning(list: ListWithJsonData, listItems: Index
       const listItemsToBeUnpublished = listItems.filter((listItem) => {
         return listItem.isAnnualReview && listItem.status === Status.OUT_WITH_PROVIDER;
       });
-      unpublishWarning = listItemsToBeUnpublished.length > 0;
+      countOfListItems = listItemsToBeUnpublished.length;
+      display = countOfListItems > 0;
     }
   }
-  return unpublishWarning;
+  return {
+    display,
+    countOfListItems,
+  };
 }
 
 /**
