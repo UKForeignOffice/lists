@@ -334,12 +334,12 @@ jobs:
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
           container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
-          resource-name: deployment/lists-scheduler-batch
+          resource-name: cronjob/lists-scheduler-batch
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
           container-image-updates: lists-scheduler-worker=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$CIRCLE_SHA1
-          resource-name: deployment/lists-scheduler-worker
+          resource-name: cronjob/lists-scheduler-worker
 
       - run:
           name: Disconnect from OpenVPN
@@ -442,7 +442,7 @@ workflows:
             - publish-lists-apply
             - publish-lists-scheduler-batch
             - publish-lists-scheduler-worker
-#            - publish-lists-postgres 
+#            - publish-lists-postgres
           filters:
             branches:
               only:
