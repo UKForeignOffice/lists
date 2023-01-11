@@ -19,7 +19,7 @@ export function formatDate(date: Date = todayDateString) {
 export function createAnnualReviewProviderUrl(listItem: ListItemWithHistory): string {
   const protocol = isLocalHost ? "http" : "https";
   const host = `${protocol}://${SERVICE_DOMAIN}`;
-  const path = `/${listItem.listId}/items/${listItem.id}/annual-review`;
+  const path = `/annual-review/confirm/${listItem.reference}`;
 
   return `${host}${path}`;
 }

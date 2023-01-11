@@ -121,7 +121,6 @@ jobs:
 #         destination: videos
 
 
-
   publish:
     <<: *defaults
 
@@ -146,7 +145,6 @@ jobs:
           command:
             | # set $DOCKER_TAG as either the git tag that triggered the build, or the git sha (for deploy-test branch)
             if [ "<<pipeline.git.tag>>" == "" ]; then echo 'export DOCKER_TAG="<<pipeline.git.revision>>"' >> $BASH_ENV; else echo 'export DOCKER_TAG="<<pipeline.git.tag>>"' >> $BASH_ENV; fi
-
 
       - when:
           condition:
@@ -323,12 +321,10 @@ jobs:
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
-
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
           container-image-updates: lists-apply=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$CIRCLE_SHA1
           resource-name: deployment/lists-apply
-
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
@@ -414,6 +410,7 @@ workflows:
             branches:
               only:
                 - feat/annual-review-scheduled-process
+                - deploy-test
           context:
             - VPN
             - AWS
@@ -428,6 +425,7 @@ workflows:
             branches:
               only:
                 - feat/annual-review-scheduled-process
+                - deploy-test
           context:
             - VPN
             - AWS
@@ -442,6 +440,8 @@ workflows:
           requires:
             - publish-lists
             - publish-lists-apply
+            - publish-lists-scheduler-batch
+            - publish-lists-scheduler-worker
 #            - publish-lists-postgres
           filters:
             branches:
