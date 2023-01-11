@@ -1,5 +1,5 @@
 {
-  "safelist": ["lists", "localhost", "host.docker.internal"],
+  "safelist": ["lists"],
   "logPrettyPrint": false,
   "env": "test"
 }
