@@ -113,7 +113,9 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
-  const hasUpdate = listItem.updatedJsonData?.[field];
+  // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+  // eslint-disable-next-line no-prototype-builtins
+  const hasUpdate = listItem.updatedJsonData?.hasOwnProperty?.(field);
 
   const updateTag = { html: "<strong class='govuk-tag'>Updated</strong>" };
 
