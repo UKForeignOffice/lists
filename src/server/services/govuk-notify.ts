@@ -12,9 +12,6 @@ export function getNotifyClient(): any {
   if (notifyClient === undefined) {
     const requiredTemplateIds = [
       "NOTIFY.apiKey",
-      "NOTIFY.templates.published",
-      "NOTIFY.templates.auth",
-      "NOTIFY.templates.emailConfirmation",
     ];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
