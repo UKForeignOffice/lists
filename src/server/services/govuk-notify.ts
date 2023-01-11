@@ -151,13 +151,13 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       return;
     }
 
-    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, {
-      personalisation: {
-        typePlural: options.serviceType,
-        country: options.country,
-        annualReviewDate: options.annualReviewDate,
-      },
-    });
+    const personalisation = {
+      typePlural: options.serviceType,
+      country: options.country,
+      annualReviewDate: options.annualReviewDate,
+    };
+    logger.info(`personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${options.emailAddress}`);
+    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
   }
