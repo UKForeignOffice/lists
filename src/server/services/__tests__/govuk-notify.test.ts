@@ -102,35 +102,6 @@ describe("GOVUK Notify service:", () => {
 
       mockNotify.apiKey = mocks.GOVUK_NOTIFY_API_KEY ?? "";
     });
-
-    test("it throws when Server config variable NOTIFY.templates.auth is missing", () => {
-      mockNotify.templates.auth = "";
-
-      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
-        "Server config variable NOTIFY.templates.auth is missing"
-      );
-      mockNotify.templates.auth = mocks.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID ?? "";
-    });
-
-    test("it throws when Server config variable NOTIFY.templates.emailConfirmation is missing", () => {
-      mockNotify.templates.emailConfirmation = "";
-
-      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
-        "Server config variable NOTIFY.templates.emailConfirmation is missing"
-      );
-
-      mockNotify.templates.emailConfirmation = mocks.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID ?? "";
-    });
-
-    test("it throws when server config variable NOTIFY.templates.published is missing", () => {
-      mockNotify.templates.published = "";
-
-      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
-        "Server config variable NOTIFY.templates.published is missing"
-      );
-
-      mockNotify.templates.published = mocks.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID ?? "";
-    });
   });
 
   describe("sendAuthenticationEmail", () => {
@@ -151,7 +122,7 @@ describe("GOVUK Notify service:", () => {
 
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID,
+        NOTIFY.templates.auth,
         emailAddress,
         { personalisation: { authenticationLink } }
       );
@@ -216,7 +187,7 @@ describe("GOVUK Notify service:", () => {
 
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID,
+        NOTIFY.templates.emailConfirmation,
         emailAddress,
         {
           personalisation: {
@@ -281,7 +252,7 @@ describe("GOVUK Notify service:", () => {
 
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID,
+        NOTIFY.templates.published,
         "testemail@gov.uk",
         {
           personalisation: {
