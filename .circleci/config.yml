@@ -442,7 +442,7 @@ workflows:
             - publish-lists-apply
             - publish-lists-scheduler-batch
             - publish-lists-scheduler-worker
-#            - publish-lists-postgres
+#            - publish-lists-postgres 
           filters:
             branches:
               only:
