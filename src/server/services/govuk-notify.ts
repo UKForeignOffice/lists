@@ -180,21 +180,18 @@ export async function sendAnnualReviewPostEmail(
   };
 
   const notifyTemplate = notifyTemplates[milestoneTillAnnualReviewStart];
-  logger.info(
-    `personalisation - template ${notifyTemplate}, typePlural: ${typePlural}, country: ${country}, annualReviewDate: ${annualReviewDate}, daysBeforeAnnualReviewStart: ${milestoneTillAnnualReviewStart}`
-  );
   try {
-    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, {
-      personalisation: {
-        typePlural,
-        country,
-        annualReviewDate,
-        typePluralCapitalised: typePlural.toUpperCase(),
-      },
-    });
+    const personalisation = {
+      typePlural,
+      country,
+      annualReviewDate,
+      typePluralCapitalised: typePlural.toUpperCase(),
+    };
+    logger.info(`template - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`);
+    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation });
     return { result: result.statusText === "Created" };
   } catch (error) {
-    const message = `Unable to send annual review post email: ${error.message}`;
+    const message = `Unable to send annual review post email: ${error.message}, stacktrace: ${error.stack}`;
     logger.error(message);
     return { error: new Error(message) };
   }
@@ -214,18 +211,17 @@ export async function sendAnnualReviewProviderEmail(
       return { result: true };
     }
 
+    const personalisation = {
+      contactName,
+      typePlural,
+      country,
+      deletionDate,
+      changeLink,
+    };
     logger.info(
-      `personalisation - contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}`
+      `template ${NOTIFY.templates.annualReviewNotices.providerStart}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-
     await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
-      personalisation: {
-        contactName,
-        typePlural,
-        country,
-        deletionDate,
-        changeLink,
-      },
     });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;

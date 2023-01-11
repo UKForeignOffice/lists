@@ -80,12 +80,18 @@ export async function usersEditPostController(req: Request, res: Response, next:
   let roles: UserRoles[];
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
+  const emailAddress = req?.user?.emailAddress;
 
-  const isEditingSuperAdminUser = await isAdministrator(userEmail);
-  if (isEditingSuperAdminUser) {
+  const isAdminUser = await isAdministrator(emailAddress);
+  if (!isAdminUser) {
     // disallow editing of SuperAdmins
-    logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
-    return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
+    logger.warn(`non-admin user ${req.user?.userData.id} attempted to edit user ${userEmail}`);
+    return next(new HttpException(405, "405", "You do not have access to edit users"));
+  }
+  if (emailAddress === userEmail) {
+    // disallow editing of SuperAdmins
+    logger.warn(`user ${req.user?.userData.id} attempted to change their own permissions`);
+    return next(new HttpException(405, "405", "You cannot change your own permissions"));
   }
 
   if (Array.isArray(usersRoles)) {

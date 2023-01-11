@@ -173,7 +173,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("usersEditPostController", () => {
-    test("it correctly updates user removing SuperAdmin role", async () => {
+    test("next invoked when user updated but they do not have Administrator role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
 
@@ -186,12 +186,7 @@ describe("Dashboard Controllers", () => {
       };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-      expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
-        jsonData: {
-          roles: [UserRoles.Administrator],
-        },
-      });
-      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/users");
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You do not have access to edit users"));
     });
 
     test("next is invoked with updateUser error", async () => {
@@ -203,7 +198,7 @@ describe("Dashboard Controllers", () => {
 
       await usersEditPostController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "Not allowed to edit super admin account"));
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You cannot change your own permissions"));
     });
   });
 
