@@ -50,20 +50,6 @@ export function getNewSessionWebhookData(
   return newSessionData;
 }
 
-export async function initialiseFormRunnerSession(
-  list: List,
-  listItem: BaseListItemGetObject,
-  message: string,
-  isUnderTest: boolean
-): Promise<string> {
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
-  const formRunnerWebhookData = getNewSessionWebhookData(list.type, listItem.id, questions, message);
-  const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(list.type);
-  const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
-  return createFormRunnerEditListItemLink(token);
-}
-
-
 export async function generateFormRunnerWebhookData(
   list: Pick<List, "type">,
   listItem: ListItem,
