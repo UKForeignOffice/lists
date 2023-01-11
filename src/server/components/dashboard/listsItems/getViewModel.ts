@@ -105,9 +105,7 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
       .filter((line) => line)
       .join(`\n`);
   }
-
-  const answer = jsonData?.[field];
-  return Array.isArray(answer) ? answer.join(", ") : answer;
+  return jsonData?.[field];
 }
 
 function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
@@ -126,9 +124,11 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
     value: {
       [valueKey]: value,
     },
-    ...(hasUpdate && { actions: { items: [updateTag] } }),
+    ...(hasUpdate && {
+      actions: { items: [updateTag] },
+      hasUpdate,
+    }),
     type: getValueMacroType(value, field),
-    hasUpdate,
   };
 }
 
@@ -163,6 +163,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
     listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
   }
+
   return jsonDataAsRows(contactFields, listItem.jsonData);
 }
 
@@ -211,7 +212,6 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);
     listItem.jsonData.languagesProvided = languagesArray;
   }
-
   return jsonDataAsRows(fieldsForType, jsonData);
 }
 
