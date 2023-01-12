@@ -10,7 +10,7 @@ set "jsonData" = jsonb_set(cast("jsonData" as jsonb), '{users}',
 
 
 -- Remove any duplicates in list.jsonData.users
-update "list"
+update "List"
 set "jsonData" =  jsonb_set(cast("jsonData" as jsonb), '{users}', to_jsonb(array((select distinct jsonb_array_elements_text("jsonData"->'users')))), true);
 
 
@@ -18,7 +18,3 @@ set "jsonData" =  jsonb_set(cast("jsonData" as jsonb), '{users}', to_jsonb(array
 
 update "User"
 set "jsonData" =  jsonb_set(cast("jsonData" as jsonb), '{roles}', '["Administrator"]'::jsonb, true) where "jsonData"->'roles' ?| array['SuperAdmin'];
-
-
-update "list"
-set "jsonData" =  jsonb_set(cast("jsonData" as jsonb), '{users}', to_jsonb(array((select distinct jsonb_array_elements_text("jsonData"->'users')))), true);
