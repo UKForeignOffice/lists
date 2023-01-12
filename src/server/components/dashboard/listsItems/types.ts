@@ -26,7 +26,7 @@ export interface govukRow {
     html?: string;
   };
   actions?: {
-    items: Array<Record<string, string>>
+    items: Array<Record<string, string>>;
   } | null;
   type?: Macro;
 }
@@ -63,6 +63,7 @@ export interface ListItemConfirmationPages {
 }
 
 type Unwrap<T> = T extends PromiseLike<infer U> ? U : T;
+type UnwrapNull<T> = Exclude<T, null>;
 
 interface ListLocals {
   list: Unwrap<ReturnType<typeof getListOverview>>;
@@ -77,6 +78,6 @@ export type ListIndexRes = Response<any, ListLocals>;
 export type ListItemRes = Response<
   any,
   ListLocals & {
-    listItem: Unwrap<ReturnType<typeof findListItemById>>;
+    listItem: UnwrapNull<Unwrap<ReturnType<typeof findListItemById>>>;
   }
 >;

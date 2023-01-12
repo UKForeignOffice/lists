@@ -49,11 +49,17 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem!;
+  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
   let requestedChanges;
 
-  if (listItem.status === Status.EDITED) {
+  // @ts-ignore
+  const updatedJsonData = listItem.jsonData?.updatedJsonData;
+
+  // @ts-ignore
+  const isLegacyUpdate = listItem.status === Status.EDITED && !!updatedJsonData;
+
+  if (isLegacyUpdate) {
     // TODO: - check if necessary for this sort?
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
 
@@ -305,13 +311,20 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
-  if (auditJsonData?.updatedJsonData !== undefined) {
-    // @ts-ignore
-    await update(id, userId, auditJsonData.updatedJsonData);
+  // @ts-ignore
+  if (listItem.jsonData?.updatedJsonData) {
+    await update(id, userId);
+    return;
   }
 
   if (auditJsonData?.updatedJsonData) {
     await update(id, userId);
+    return;
+  }
+
+  if (auditJsonData?.updatedJsonData !== undefined) {
+    // @ts-ignore
+    await update(id, userId, auditJsonData.updatedJsonData);
   }
 }
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
