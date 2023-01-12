@@ -1,7 +1,5 @@
 import * as DateFns from "date-fns";
 import { DATE_FORMAT } from "server/components/dashboard/annualReview/controllers";
-
-import type { List } from "server/models/types";
 import { ListWithJsonData } from "../helpers";
 
 export function formatAnnualReviewDate(
