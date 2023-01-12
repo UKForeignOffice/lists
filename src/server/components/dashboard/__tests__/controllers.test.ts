@@ -182,7 +182,7 @@ describe("Dashboard Controllers", () => {
 
       mockReq.method = "POST";
       mockReq.body = {
-        roles: `${UserRoles.Administrator}`,
+        roles: ``,
       };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
@@ -194,7 +194,8 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
-      mockReq.body = { roles: "" };
+      mockReq.user.userData.email = "user@gov.uk"
+      mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
 

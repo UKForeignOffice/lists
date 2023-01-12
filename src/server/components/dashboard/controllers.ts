@@ -80,7 +80,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
   let roles: UserRoles[];
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
-  const emailAddress = req?.user?.emailAddress;
+  const emailAddress = req?.user?.userData?.email;
 
   const isAdminUser = await isAdministrator(emailAddress);
   if (!isAdminUser) {

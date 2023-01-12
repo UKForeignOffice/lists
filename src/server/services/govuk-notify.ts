@@ -191,7 +191,7 @@ export async function sendAnnualReviewPostEmail(
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation });
     return { result: result.statusText === "Created" };
   } catch (error) {
-    const message = `Unable to send annual review post email: ${error.message}, stacktrace: ${error.stack}`;
+    const message = `Unable to send annual review post email: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }
@@ -221,8 +221,7 @@ export async function sendAnnualReviewProviderEmail(
     logger.info(
       `template ${NOTIFY.templates.annualReviewNotices.providerStart}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
-    });
+    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, { personalisation });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
     logger.error(message);
