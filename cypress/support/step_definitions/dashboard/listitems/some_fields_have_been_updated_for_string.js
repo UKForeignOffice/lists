@@ -10,7 +10,6 @@ Given("Some fields have been updated for {string}", (contactName) => {
       },
     },
   }).then((result) => {
-    cy.log(result.jsonData, "lol")
     cy.task("db", {
       operation: "listItem.update",
       variables: {
@@ -21,7 +20,6 @@ Given("Some fields have been updated for {string}", (contactName) => {
           jsonData: {
             ...result.jsonData,
             updatedJsonData: {
-              ...result.jsonData,
               proBono: false,
               organisationName: "Oldman Law",
             },
