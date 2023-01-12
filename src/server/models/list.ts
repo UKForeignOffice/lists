@@ -190,16 +190,13 @@ export async function updateList(
   }
 }
 
-export async function updateAnnualReviewDate(listId: string, annualReviewStartDate: string): Promise<void> {
-  const list = await findListById(listId);
-  const jsonData = { ...(list as List).jsonData, annualReviewStartDate };
-
+export async function updateAnnualReviewDate(listId: string, nextAnnualReviewStartDate: string): Promise<void> {
   await prisma.list.update({
     where: {
       id: Number(listId),
     },
     data: {
-      jsonData,
+      nextAnnualReviewStartDate,
     },
   });
 }

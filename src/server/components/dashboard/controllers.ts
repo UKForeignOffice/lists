@@ -148,13 +148,13 @@ function listsWithFormattedDates(lists: List[]): List[] {
     if (nextAnnualReviewStartDateString) {
       returnObj = {
         ...returnObj,
-        nextAnnualReviewStartDate: new Date(nextAnnualReviewStartDateString),
+        nextAnnualReviewStartDate: nextAnnualReviewStartDateString,
       };
     }
     if (lastAnnualReviewStartDateString) {
       returnObj = {
         ...returnObj,
-        lastAnnualReviewStartDate: new Date(lastAnnualReviewStartDateString),
+        lastAnnualReviewStartDate: lastAnnualReviewStartDateString,
       };
     }
     return returnObj;
