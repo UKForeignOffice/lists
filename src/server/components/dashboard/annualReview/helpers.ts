@@ -80,7 +80,7 @@ export function getAnnualReviewDate(
   }
 
   if (!validDate) {
-    errorMsg = "You can only change the date up to 6 months after the current review date";
+    errorMsg = "You can only change the date up to 6 months after the current date";
     return { ...invalidResult, errorMsg };
   }
 
