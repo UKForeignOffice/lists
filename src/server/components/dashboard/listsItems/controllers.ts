@@ -54,27 +54,17 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   let requestedChanges;
 
   // @ts-ignore
-  const updatedJsonData = listItem.jsonData?.updatedJsonData;
+  const isLegacyUpdate = listItem.status === Status.EDITED && !listItem.jsonData?.updatedJsonData;
 
   // @ts-ignore
-  const isLegacyUpdate = listItem.status === Status.EDITED && !!updatedJsonData;
+  let updatedJsonData = listItem.jsonData?.updatedJsonData;
 
   if (isLegacyUpdate) {
-    // TODO: - check if necessary for this sort?
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
-
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
-    const updatedJsonData = auditJsonData?.updatedJsonData;
-    if (updatedJsonData !== undefined) {
-      listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
-      const updatedAddressFields: UpdatableAddressFields = getChangedAddressFields(updatedJsonData, listItem.address);
-      // @ts-ignore
-      listItem.address = {
-        ...listItem.address,
-        ...updatedAddressFields,
-      };
-    }
+    updatedJsonData = auditJsonData?.updatedJsonData;
   }
+  listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
 
   if (listItem.status === "EDITED" || listItem.status === "OUT_WITH_PROVIDER") {
     const eventForRequestedChanges = listItem?.history?.find((event) => event.type === "OUT_WITH_PROVIDER");

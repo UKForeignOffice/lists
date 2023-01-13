@@ -34,10 +34,9 @@ export function getObjectDiff<T extends { [key: string]: any }>(
 
   return allKeys.reduce((prev, key) => {
     const beforeValue = beforeObject?.[key];
-    const newValue = afterObject?.[key];
-
-    const isObject = typeof beforeValue === "object" && !Array.isArray(beforeValue);
     const isArray = Array.isArray(beforeValue);
+    const newValue = afterObject?.[key];
+    const isObject = beforeValue && typeof beforeValue === "object" && !isArray;
     let nestedDiff;
 
     if (isObject) {
@@ -47,7 +46,7 @@ export function getObjectDiff<T extends { [key: string]: any }>(
     const valueDidChange = !isArray ? beforeValue !== newValue : arrayHasChanges(beforeValue, newValue);
 
     if (isArray && valueDidChange) {
-      nestedDiff = arrayHasChanges(beforeValue, newValue) && newValue;
+      nestedDiff = newValue;
     }
 
     return {

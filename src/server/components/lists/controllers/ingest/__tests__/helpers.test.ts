@@ -45,6 +45,37 @@ describe("getObjectDiff", () => {
     });
   });
 
+  test("null to defined creates correct diff", () => {
+    const beforeObject = {
+      "favourite.egg": null,
+    };
+    const afterObject = {
+      "favourite.egg": "scrambled",
+    };
+
+    expect(getObjectDiff(beforeObject, afterObject)).toStrictEqual({
+      "favourite.egg": "scrambled",
+    });
+  });
+
+  test("null to defined object creates correct diff", () => {
+    const beforeObject = {
+      favourite: {
+        egg: null,
+      },
+    };
+    const afterObject = {
+      favourite: {
+        egg: "scrambled",
+      },
+    };
+    expect(getObjectDiff(beforeObject, afterObject)).toStrictEqual({
+      favourite: {
+        egg: "scrambled",
+      },
+    });
+  });
+
   test("change in array order does not create a diff", () => {
     const beforeObject = {
       eggs: ["scrambled", "fried"],
