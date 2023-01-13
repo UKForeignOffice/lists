@@ -1,161 +1,128 @@
-import { IndexListItem, ListIndexOptions, TAGS, Tags } from "server/models/listItem/types";
-import { List } from "server/models/types";
+import { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
 import { PaginationResults } from "server/components/lists";
-import { calculatePagination, tagQueryFactory } from "server/models/listItem/queryFactory";
+import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { ListItem, Prisma, Status } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { getActivityStatus, getPublishingStatus, ListItemWithHistory } from "server/models/listItem/summary.helpers";
 
-function listItemsWithIndexDetails(item: ListItem): IndexListItem {
-  const { jsonData, createdAt, updatedAt, id, status } = item;
-  const { organisationName, contactName, publishers, validators, administrators } = jsonData as ListItemJsonData;
-  const isPublished = item.isPublished && TAGS.published;
-  const isNew =
-    (item.status === Status.NEW || item.status === Status.EDITED || item.status === Status.UNPUBLISHED) && TAGS.to_do;
-  const isOutWithProvider = item.status === Status.OUT_WITH_PROVIDER && TAGS.out_with_provider;
+/**
+ * Use this as a viewmodel.
+ */
+function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
+  const { jsonData, createdAt, updatedAt, id } = item;
+  const { organisationName, contactName } = jsonData as ListItemJsonData;
+
   return {
     createdAt: format(createdAt, "dd MMMM yyyy"),
     updatedAt: format(updatedAt, "dd MMMM yyyy"),
     organisationName,
     contactName,
-    publishers,
-    validators,
-    administrators,
     id,
-    status,
-    tags: [isPublished, isNew, isOutWithProvider].filter(Boolean) as string[],
+    activityStatus: getActivityStatus(item),
+    publishingStatus: getPublishingStatus(item),
   };
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function findPinnedIndexListItems(options: ListIndexOptions) {
-  return prisma.user.findUnique({
+async function findPinnedIndexListItems(options: ListIndexOptions) {
+  if (!options.userId) {
+    return [];
+  }
+  const result = await prisma.user.findUnique({
     where: {
       id: options.userId,
     },
     select: {
       pinnedItems: {
+        include: {
+          history: {
+            orderBy: {
+              time: "desc",
+            },
+          },
+        },
         where: {
           listId: options.listId,
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
+          ...emailIsVerified,
         },
       },
     },
   });
+
+  return result?.pinnedItems;
 }
 
-function getActiveQueries(
-  tags: Array<keyof Tags>,
-  options: ListIndexOptions
-): { [prop in keyof Partial<Tags>]: Prisma.ListItemWhereInput } {
-  return tags.reduce((prev, tag) => {
-    return {
-      ...prev,
-      [tag]: tagQueryFactory[tag](options),
-    };
-  }, {});
+function notPinnedByUser(userId: number): Prisma.ListItemWhereInput {
+  return {
+    pinnedBy: {
+      none: {
+        id: userId,
+      },
+    },
+  };
 }
+
+const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } };
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {
-    id: number;
-    type: List["type"];
-    country: List["country"];
     pinnedItems: IndexListItem[];
     items: IndexListItem[];
   } & PaginationResults
 > {
-  const { listId } = options;
-  const { tags = [] } = options;
-
+  const { listId, activity = [], publishing = [] } = options;
+  const reqQueries = [...activity, ...publishing];
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
+  // note: we are applying take/skip on List (i.e. take 20 Lists) rather than take 20 Items
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
 
-  const activeQueries = getActiveQueries(tags, options);
+  const OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
 
-  const baseQuery = {
+  const result = await prisma.listItem.findMany({
     where: {
-      id: options.listId,
+      listId,
+      AND: {
+        ...emailIsVerified,
+        ...notPinnedByUser(options.userId!),
+      },
+      ...(OR.length && { OR }),
     },
-    select: {
-      type: true,
-      country: true,
-      items: {
-        where: {
-          AND: [],
+    include: {
+      history: {
+        orderBy: {
+          time: "desc",
         },
       },
+      pinnedBy: true,
     },
-  };
-  let itemsWhereOr: Prisma.Enumerable<Prisma.ListItemWhereInput> = [];
-
-  if (activeQueries.out_with_provider) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.out_with_provider as Prisma.ListItemWhereInput[]);
-  }
-
-  if (activeQueries.published) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.published as Prisma.ListItemWhereInput[]);
-  }
-
-  if (activeQueries.to_do) {
-    itemsWhereOr = itemsWhereOr.concat(activeQueries.to_do as Prisma.ListItemWhereInput[]);
-  }
-
-  baseQuery.select.items = {
     orderBy: {
       updatedAt: "desc",
     },
-    where: {
-      AND: [
-        {
-          pinnedBy: {
-            none: {
-              // @ts-ignore
-              id: options.userId,
-            },
-          },
-          // @ts-ignore
-          jsonData: { path: ["metadata", "emailVerified"], equals: true },
-        },
-      ],
-    },
-  };
+  });
 
-  if (itemsWhereOr.length > 0) {
-    const { AND } = baseQuery.select.items.where;
-    // @ts-ignore
-    baseQuery.select.items.where = {
-      AND,
-      // @ts-ignore
-      OR: itemsWhereOr,
-    };
-  }
-  const [pinned, result] = await prisma.$transaction([
-    findPinnedIndexListItems(options),
-    prisma.list.findUnique(baseQuery),
-  ]);
   if (!result) {
     logger.error(`Failed to find ${listId}`);
     throw new Error(`Failed to find ${listId}`);
   }
-  const { type, country, items } = result;
+
   const pagination = await getPaginationValues({
-    count: result.items?.length ?? 0,
+    count: result?.length ?? 0,
     rows: 20,
     route: "",
     page: options?.pagination?.page ?? 1,
     listRequestParams: options?.reqQuery,
   });
+
+  const pinnedItems = (await findPinnedIndexListItems(options)) ?? [];
+
   return {
-    id: listId,
-    type,
-    country,
-    pinnedItems: (pinned?.pinnedItems ?? []).map(listItemsWithIndexDetails),
-    items: items.map(listItemsWithIndexDetails),
+    pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails),
+    items: result.map(listItemsWithIndexDetails),
     ...pagination,
   };
 }

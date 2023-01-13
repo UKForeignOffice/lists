@@ -203,9 +203,6 @@ $two-thirds: $one-third * 2;
   &__list-item-pin {
     border: none;
     background: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     cursor: pointer;
     &:focus {
       @include govuk-focused-text;
@@ -223,6 +220,7 @@ $two-thirds: $one-third * 2;
 .govuk-summary-list__row--hidden-titles {
   display: none;
 }
+
 .back-links {
   &__container {
     display: flex;
@@ -238,4 +236,40 @@ $two-thirds: $one-third * 2;
   &__item {
     width: 100%;
   }
+}
+
+.govuk-notification-banner {
+  &--green {
+    @extend .govuk-notification-banner--success;
+  }
+  &--red {
+    border-color: govuk-colour("red");
+    background-color: govuk-colour("red");
+  }
+}
+
+.grey-text {
+  color:  #868D91;
+}
+
+.list-mgmt {
+  .govuk-header__logo {
+    width: 38.33%;
+  }
+
+  .govuk-header__navigation {
+    float: right
+  }
+
+  .govuk-header__navigation-list {
+    margin: 0
+  }
+
+  .govuk-header__content {
+    max-width: 33.66%;
+  }
+}
+
+.govuk-notification-banner__full-width {
+  max-width: 100%;
 }

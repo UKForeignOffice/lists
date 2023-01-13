@@ -1,33 +1,14 @@
-import { Request } from "express";
 import { logger } from "server/services/logger";
 import axios from "axios";
-import { List, ListJsonData, UserRoles } from "server/models/types";
+import { List, ListJsonData } from "server/models/types";
 import { NewSessionData } from "../formRunner/types";
+import { dashboardRoutes } from "server/components/dashboard/routes";
+import { sitemapRoute } from "server/components/sitemap/routes";
+import { authRoutes } from "server/components/auth";
 
-export function filterSuperAdminRole(roles: UserRoles[]): UserRoles[] {
-  return roles.filter((role) => {
-    return role in UserRoles && role !== UserRoles.SuperAdmin;
-  });
-}
-
-type ListWithJsonData = Partial<List> & {
+export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
 };
-
-export function userIsListAdministrator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.administrators?.includes(email) : false;
-}
-
-export function userIsListPublisher(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.publishers?.includes(email) : false;
-}
-
-export function userIsListValidator(req: Request, list: ListWithJsonData): boolean {
-  const email = req.user?.userData.email;
-  return email !== undefined ? list?.jsonData?.validators?.includes(email) : false;
-}
 
 export async function getInitiateFormRunnerSessionToken(
   formRunnerNewSessionUrl: string,
@@ -50,10 +31,26 @@ export async function getInitiateFormRunnerSessionToken(
       return response?.data?.token;
     })
     .catch((error) => {
-      logger.info(`Error received after calling formRunnerNewSessionUrl ${error}`);
+      logger.error(`Error received after calling formRunnerNewSessionUrl ${error}`);
       throw new Error("Unable to initiate form runner session");
     });
 
   logger.info(`token: ${token}`);
   return token;
 }
+
+export const pageTitles: { [key: string]: string } = {
+  [dashboardRoutes.usersEdit]: "edit user",
+  [dashboardRoutes.usersList]: "user list",
+  [dashboardRoutes.lists]: "all provider lists",
+  [dashboardRoutes.listsEdit]: "edit provider list",
+  [dashboardRoutes.listsItems]: "provider list",
+  [dashboardRoutes.listsItem]: "provider details",
+  [dashboardRoutes.listsItemDelete]: "confirm delete provider",
+  [dashboardRoutes.listsItemPublish]: "confirm publish list item",
+  [dashboardRoutes.listsItemRequestChanges]: "confirm request changes to provider",
+  [dashboardRoutes.listsItemUpdate]: "confirm update provider",
+  [sitemapRoute]: "site map",
+  [authRoutes.login]: "login",
+  [authRoutes.logout]: "logout",
+};

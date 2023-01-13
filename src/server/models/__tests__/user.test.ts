@@ -1,13 +1,7 @@
 import { omit, pick } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { UserRoles } from "../types";
-import {
-  findUserByEmail,
-  createUser,
-  updateUser,
-  findUsers,
-  isSuperAdminUser,
-} from "../user";
+import { findUserByEmail, createUser, updateUser, findUsers } from "../user";
 
 jest.mock("../db/prisma-client");
 
@@ -18,7 +12,7 @@ describe("User Model:", () => {
     updatedAt: "2021-06-08 13:00:29.633",
     email: "test@depto.gov.uk",
     jsonData: {
-      roles: [UserRoles.SuperAdmin],
+      roles: [UserRoles.Administrator],
     },
   };
 
@@ -67,7 +61,7 @@ describe("User Model:", () => {
 
     test("create command is correct", async () => {
       prisma.user.create.mockResolvedValue(sampleUser);
-      
+
       await createUser({
         email: sampleUser.email.toUpperCase(),
         jsonData: sampleUser.jsonData,
@@ -113,9 +107,12 @@ describe("User Model:", () => {
       expect(result).toBe(sampleUser);
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { email: sampleUser.email },
-        data: omit({
-          ...user,
-        }, ["email"]),
+        data: omit(
+          {
+            ...user,
+          },
+          ["email"]
+        ),
       });
     });
 
@@ -165,29 +162,6 @@ describe("User Model:", () => {
       const result = await findUsers();
 
       expect(result).toMatchObject([]);
-    });
-  });
-
-  describe("isSuperAdminUser", () => {
-    test("it returns true when user is a SuperAdmin", async () => {
-      prisma.user.findUnique.mockResolvedValue(sampleUser);
-
-      const result = await isSuperAdminUser(sampleUser.email);
-
-      expect(result).toBeTruthy();
-    });
-
-    test("it returns false when user is not a SuperAdmin", async () => {
-      prisma.user.findUnique.mockResolvedValue({
-        ...sampleUser,
-        jsonData: {
-          roles: [],
-        },
-      });
-
-      const result = await isSuperAdminUser(sampleUser.email);
-
-      expect(result).toBeFalsy();
     });
   });
 });

@@ -1,6 +1,10 @@
 /**
  * Field(s) must be specified for non primitive macros, since they cannot be type checked for.
  */
+import { Response } from "express";
+import { findListItemById } from "server/models/listItem";
+import { getListOverview } from "server/components/dashboard/listsItems/helpers";
+
 export type NonPrimitiveMacros = "link" | "emailAddress" | "phoneNumber" | "multiLineText";
 
 /**
@@ -54,3 +58,22 @@ export interface ListItemConfirmationPages {
   unpin: ListItemConfirmationPage;
   remove: ListItemConfirmationPage;
 }
+
+type Unwrap<T> = T extends PromiseLike<infer U> ? U : T;
+
+interface ListLocals {
+  list: Unwrap<ReturnType<typeof getListOverview>>;
+  listIndexUrl: string;
+  listEditUrl: string;
+  title: string;
+  [key: string]: any;
+}
+
+export type ListIndexRes = Response<any, ListLocals>;
+
+export type ListItemRes = Response<
+  any,
+  ListLocals & {
+    listItem: Unwrap<ReturnType<typeof findListItemById>>;
+  }
+>;

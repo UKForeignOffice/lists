@@ -112,6 +112,12 @@ jobs:
             - ~/.cache
 
 
+#      - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
+#         path: ~/repo/cypress/videos
+#         destination: videos
+
+
+
   publish:
     <<: *defaults
 

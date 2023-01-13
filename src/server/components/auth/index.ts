@@ -1,7 +1,3 @@
 export { authRoutes } from "./routes";
-export {
-  initAuth,
-  ensureAuthenticated,
-  ensureUserIsSuperAdmin,
-} from "./helpers";
+export { initAuth, ensureAuthenticated, ensureUserIsAdministrator } from "./helpers";
 export { authRouter } from "./router";

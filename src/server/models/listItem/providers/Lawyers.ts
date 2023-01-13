@@ -2,7 +2,6 @@ import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { legalPracticeAreasList } from "server/services/metadata";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
 export async function findPublishedLawyersPerCountry(props: {
@@ -33,21 +32,13 @@ export async function findPublishedLawyersPerCountry(props: {
   }
 
   if (Object.keys(jsonQuery).length > 0) {
-    andWhere.push(
-      `AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`
-    );
+    andWhere.push(`AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`);
   }
 
   if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
-    let legalPracticeAreas = props.practiceArea;
-    if (legalPracticeAreas.some((item) => item === "all")) {
-      legalPracticeAreas = legalPracticeAreasList.map((area) =>
-        area.toLowerCase()
-      );
-    }
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
-        legalPracticeAreas
+        props.practiceArea
       ).replace(/"/g, "'")}`
     );
   }
@@ -67,7 +58,7 @@ export async function findPublishedLawyersPerCountry(props: {
       offset,
     });
 
-    return await prisma.$queryRaw(query);
+    return await prisma.$queryRawUnsafe(query);
   } catch (error) {
     logger.error("findPublishedLawyers ERROR: ", error);
     return [];

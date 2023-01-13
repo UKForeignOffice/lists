@@ -4,9 +4,7 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
 
-export async function findUserByEmail(
-  email: string
-): Promise<User | undefined> {
+export async function findUserByEmail(email: string): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
@@ -19,9 +17,7 @@ export async function findUserByEmail(
   }
 }
 
-export async function findUserById(
-  id: number
-): Promise<User | undefined> {
+export async function findUserById(id: number): Promise<User | undefined> {
   try {
     const user = (await prisma.user.findUnique({
       where: { id },
@@ -34,9 +30,7 @@ export async function findUserById(
   }
 }
 
-export async function createUser(
-  data: UserCreateInput
-): Promise<User | undefined> {
+export async function createUser(data: UserCreateInput): Promise<User | undefined> {
   if (!isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to create non GOV.UK user ${data.email}`);
     return undefined;
@@ -55,10 +49,7 @@ export async function createUser(
   }
 }
 
-export async function updateUser(
-  email: string,
-  data: UserUpdateInput
-): Promise<User | undefined> {
+export async function updateUser(email: string, data: UserUpdateInput): Promise<User | undefined> {
   if (typeof data.email === "string" && !isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to update non GOV.UK user ${data.email}`);
     return undefined;
@@ -88,12 +79,12 @@ export async function findUsers(): Promise<User[]> {
   }
 }
 
-export async function isSuperAdminUser(email: string): Promise<boolean> {
+export async function isAdministrator(email: string): Promise<boolean> {
   try {
     const user = await findUserByEmail(email);
-    return user?.jsonData.roles?.includes(UserRoles.SuperAdmin) === true;
+    return user?.jsonData.roles?.includes(UserRoles.Administrator) === true;
   } catch (error) {
-    logger.error(`isSuperAdminUser Error: ${error.message}`);
+    logger.error(`isAdministratorUser Error: ${error.message}`);
     throw error;
   }
 }

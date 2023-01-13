@@ -5,7 +5,7 @@ import {
   LawyerJsonData,
   CovidTestSupplierJsonData,
   FuneralDirectorJsonData,
-  TranslatorInterpreterJsonData
+  TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
 
@@ -24,12 +24,17 @@ export type Country = PrismaClient.Country;
 
 // List
 export interface ListJsonData extends JsonObject {
-  validators: string[];
-  publishers: string[];
-  administrators: string[];
+  users?: string[];
+  annualReviewStartDate?: string | number;
+  lastAnnualReviewStartDate?: string;
 }
-
 export interface List extends PrismaClient.List {
+  id: number;
+  reference: string;
+  createdAt: Date;
+  updatedAt: Date;
+  type: string;
+  countryId: number;
   jsonData: ListJsonData;
   country?: Partial<Country>;
 }
@@ -63,48 +68,45 @@ export interface BaseListItemGetObject extends PrismaClient.ListItem {
 
 export enum UserRoles {
   // Application Level Roles
-  SuperAdmin = "SuperAdmin",
-  ListsCreator = "ListsCreator",
+  Administrator = "Administrator",
 }
 
 type AsJsonObject<T> = T & JsonObject;
 
-export interface LawyerListItemCreateInput
-  extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.lawyers;
+type StringLike<T extends string> = T | `${T}` | string;
+
+export interface LawyerListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
+  type: StringLike<ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface LawyerListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.lawyers;
+  type: StringLike<ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
-export interface FuneralDirectorListItemCreateInput
-  extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.funeralDirectors;
+export interface FuneralDirectorListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
+  type: StringLike<ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface FuneralDirectorListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.funeralDirectors;
+  type: StringLike<ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
-export interface CovidTestSupplierListItemCreateInput
-  extends PrismaClient.Prisma.ListItemCreateInput {
-  type: ServiceType.covidTestProviders;
+export interface CovidTestSupplierListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
+  type: StringLike<ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
 export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetObject {
-  type: ServiceType.translatorsInterpreters;
+  type: StringLike<ServiceType.translatorsInterpreters>;
   jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
 }
 
-export interface CovidTestSupplierListItemGetObject
-  extends BaseListItemGetObject {
-  type: ServiceType.covidTestProviders;
+export interface CovidTestSupplierListItemGetObject extends BaseListItemGetObject {
+  type: StringLike<ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
@@ -193,12 +195,10 @@ export interface FeedbackJsonData extends JsonObject {
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
-export interface FeedbackCreateInput
-  extends PrismaClient.Prisma.FeedbackCreateInput {
+export interface FeedbackCreateInput extends PrismaClient.Prisma.FeedbackCreateInput {
   jsonData: FeedbackJsonData;
 }
 
-export interface FeedbackUpdateInput
-  extends PrismaClient.Prisma.FeedbackUpdateInput {
+export interface FeedbackUpdateInput extends PrismaClient.Prisma.FeedbackUpdateInput {
   jsonData: FeedbackJsonData;
 }

@@ -1,10 +1,4 @@
-import {
-  Address,
-  CountryName,
-  ListItem,
-  Point,
-  ServiceType,
-} from "server/models/types";
+import { Address, CountryName, ListItem, Point, ServiceType } from "server/models/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
@@ -12,12 +6,11 @@ import { prisma } from "server/models/db/prisma-client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
-import {
-  DeserialisedWebhookData,
-  ListItemJsonData,
-} from "server/models/listItem/providers/deserialisers/types";
-import { languages } from "server/services/metadata";
+import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import * as metaData from "server/services/metadata";
+import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
 import { listsRoutes } from "server/components/lists";
+import { HttpException } from "server/middlewares/error-handlers";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -40,12 +33,7 @@ export function fetchPublishedListItemQuery(props: {
   let withDistance = "";
   let orderBy = `ORDER BY "ListItem"."jsonData"->>'organisationName' ASC`;
 
-  if (
-    geoPointIsValid(fromGeoPoint) &&
-    region !== undefined &&
-    region !== "" &&
-    region !== "Not set"
-  ) {
+  if (geoPointIsValid(fromGeoPoint) && region !== undefined && region !== "" && region !== "Not set") {
     withDistance = `,
     ST_Distance(
         "GeoLocation".location,
@@ -144,10 +132,7 @@ export async function checkListItemExists({
   return total > 0;
 }
 
-export async function some(
-  countryName: CountryName,
-  serviceType: ServiceType
-): Promise<boolean> {
+export async function some(countryName: CountryName, serviceType: ServiceType): Promise<boolean> {
   try {
     const result = await prisma.listItem.findMany({
       where: {
@@ -182,11 +167,9 @@ export function getListItemContactInformation(listItem: ListItem): {
   contactEmailAddress: string;
   contactPhoneNumber: string;
 } {
-  const contactName = get(listItem?.jsonData, "contactName");
-  const contactEmailAddress = get(listItem?.jsonData, "emailAddress");
-  const contactPhoneNumber =
-    get(listItem?.jsonData, "contactPhoneNumber") ??
-    get(listItem?.jsonData, "phoneNumber");
+  const contactName = get(listItem?.jsonData, "contactName")!;
+  const contactEmailAddress = get(listItem?.jsonData, "emailAddress")!;
+  const contactPhoneNumber = get(listItem?.jsonData, "contactPhoneNumber") ?? get(listItem?.jsonData, "phoneNumber")!;
   return { contactName, contactEmailAddress, contactPhoneNumber };
 }
 
@@ -229,21 +212,22 @@ export function setLanguagesProvided(newLanguage: string, languagesProvided: str
   return languagesProvided === "" ? `${newLanguage}` : languagesProvided.concat(`,${newLanguage}`);
 }
 
-export function cleanLanguagesProvided(languagesProvided: string): string | undefined {
-
+export function getLanguageNames(languagesProvided: string): string | undefined {
   if (!languagesProvided) {
     return undefined;
   }
-  languagesProvided = languagesProvided?.split(",").filter((language: string) => {
-    // @ts-ignore
-    const languageName: string = languages[language];
-    return languageName;
-  }).join(",");
+  languagesProvided = languagesProvided
+    ?.split(",")
+    .filter((language: string) => {
+      // @ts-ignore
+      const languageName: string = languages[language];
+      return languageName;
+    })
+    .join(",");
   return languagesProvided;
 }
 
 export function getLanguagesRows(languagesProvided: string, queryString: string): LanguageRows {
-
   if (!languagesProvided) {
     const languageRows: LanguageRows = { rows: [] };
     return languageRows;
@@ -264,18 +248,109 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
         classes: "govuk-summary-list__key--hidden-titles",
       },
       actions: {
-        items: [{
-          href: `${removeLanguageUrl}?${queryString}`,
-          text: "Remove",
-          visuallyHiddenText: language
-        }]
-      }
+        items: [
+          {
+            href: `${removeLanguageUrl}?${queryString}`,
+            text: "Remove",
+            visuallyHiddenText: language,
+          },
+        ],
+      },
     };
     return languageRow;
   });
 
   const languageRows: LanguageRows = {
-    rows: languagesJson
-  }  || { rows: [] };
+    rows: languagesJson,
+  } || { rows: [] };
   return languageRows;
+}
+
+export function validateCountry(countryName: string): string | undefined {
+  const matchingCountryName = countriesList.find((country) => country.value === countryName)?.value;
+  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
+  return matchingCountryName;
+}
+
+export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined = []): string[] {
+  const lowercasedPracticeAreas = practiceAreas.map((area) => area.toLowerCase());
+  const lowercasedAllLegalPracticeAreas: string[] = legalPracticeAreasList.map((area) => area.toLowerCase());
+
+  if (lowercasedPracticeAreas.find((area) => area === "all")) {
+    return lowercasedAllLegalPracticeAreas;
+  }
+
+  const validatedPracticeAreas = lowercasedPracticeAreas.filter((areaToValidate) => {
+    return lowercasedAllLegalPracticeAreas.find((area) => area === areaToValidate);
+  });
+
+  if (validatedPracticeAreas.length === 0) {
+    throw new HttpException(403, "403", "Legal practice area could not be identified");
+  }
+
+  return validatedPracticeAreas;
+}
+
+export function cleanTranslatorInterpreterServices(servicesProvided: string[] = []): string[] {
+  const matchingServicesProvided = servicesProvided
+    .filter((service) => {
+      return metaData.translationInterpretationServices.some((translationInterpretationService) => {
+        return translationInterpretationService.value.toLowerCase() === service.toLowerCase();
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingServicesProvided.length === 0) {
+    throw new HttpException(403, "403", "Services could not be identified");
+  }
+  return matchingServicesProvided;
+}
+
+export function cleanTranslatorSpecialties(translationSpecialties: string[] = []): string[] {
+  const matchingTranslatorSpecialities = translationSpecialties
+    .filter((selectedTranslationSpecialty) => {
+      return metaData.translationSpecialties.some((translationSpecialty) => {
+        return (
+          translationSpecialty.value.toLowerCase() === selectedTranslationSpecialty.toLowerCase() ||
+          selectedTranslationSpecialty.toLowerCase() === "all"
+        );
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingTranslatorSpecialities.length === 0) {
+    throw new HttpException(403, "403", "Translation services could not be identified");
+  }
+  return matchingTranslatorSpecialities;
+}
+
+export function cleanInterpreterServices(interpreterServices: string[] = []): string[] {
+  const matchingInterpreterServices = interpreterServices
+    .filter((selectedInterpreterSpecialty) => {
+      return metaData.interpretationServices.some((interpreterSpecialty) => {
+        return (
+          interpreterSpecialty.value.toLowerCase() === selectedInterpreterSpecialty.toLowerCase() ||
+          selectedInterpreterSpecialty.toLowerCase() === "all"
+        );
+      });
+    })
+    .map((service) => service.toLowerCase());
+
+  if (matchingInterpreterServices.length === 0) {
+    throw new HttpException(403, "403", "Interpreter services could not be identified");
+  }
+
+  return matchingInterpreterServices;
+}
+
+export function cleanLanguagesProvided(languagesProvided: string[] = []): string[] {
+  const matchingLanguages = languagesProvided
+    .filter((language) => languages[language.toLowerCase()])
+    .map((language) => language.toLowerCase());
+
+  if (matchingLanguages.length === 0) {
+    throw new HttpException(403, "403", "Languages could not be identified");
+  }
+
+  return matchingLanguages;
 }
