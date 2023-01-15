@@ -20,7 +20,7 @@ Feature: List management users
     Given I remove the user "smoke@cautionyourblast.com"
     And I see page with heading "Confirm the removal of this user"
     And I click the "Remove" button
-    Then I should see the error "You cannot remove your own email address from a list"
+    Then I should see the error "You cannot remove yourself as a user. Contact an administrator to remove your email address from this list."
 
 
   Scenario: Prevent adding duplicate user
