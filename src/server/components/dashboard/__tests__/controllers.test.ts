@@ -199,7 +199,7 @@ describe("Dashboard Controllers", () => {
 
       await usersEditPostController(mockReq, mockRes, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You cannot change your own permissions"));
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You cannot change your own permissions. You need to ask another administrator to change this for you."));
     });
   });
 
@@ -479,7 +479,7 @@ describe("Dashboard Controllers", () => {
       const result = getAnnualReviewDate("1", "8");
       // then
       expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current date");
     });
 
     it("returns invalid date if user enters Feb 29th", () => {

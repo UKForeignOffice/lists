@@ -457,7 +457,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   if (userHasRemovedOwnEmail) {
     const error = {
       field: "publisherList",
-      text: "You cannot remove your own email address from a list",
+      text: "You cannot remove yourself as a user. Contact an administrator to remove your email address from this list.",
       href: "#publishers",
     };
 

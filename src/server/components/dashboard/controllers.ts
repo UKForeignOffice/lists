@@ -91,7 +91,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
   if (emailAddress === userEmail) {
     // disallow editing of SuperAdmins
     logger.warn(`user ${req.user?.userData.id} attempted to change their own permissions`);
-    return next(new HttpException(405, "405", "You cannot change your own permissions"));
+    return next(new HttpException(405, "405", "You cannot change your own permissions. You need to ask another administrator to change this for you."));
   }
 
   if (Array.isArray(usersRoles)) {
@@ -250,8 +250,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     error = {
       field: "publisher",
       text: !publisher
-        ? "You must indicated a publisher"
-        : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
+        ? "Enter an FCO or FCDO email address to add a user, e.g. 'example@fco.gov.uk or example@fcdo.gov.uk'"
+        : "New users must have an FCO or FCDO email address, e.g. 'example@fco.gov.uk, or example@fcdo.gov.uk'",
       href: "#publisher",
     };
   }
