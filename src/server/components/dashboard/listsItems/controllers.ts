@@ -9,10 +9,9 @@ import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
 import { findListById, updateList } from "server/models/list";
 import { createListSearchBaseLink } from "server/components/lists/helpers";
-import { getChangedAddressFields, getListItemContactInformation } from "server/models/listItem/providers/helpers";
+import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
-import { UpdatableAddressFields } from "server/models/listItem/providers/types";
 import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 
