@@ -19,7 +19,8 @@ describe("arrayHasChanges", () => {
     expect(arrayHasChanges([1], [1, 2])).toBeTruthy();
     expect(arrayHasChanges([1, 2], [1])).toBeTruthy();
     expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
-    expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
+    expect(arrayHasChanges(["a", "b", "c"], ["a", "b", "d"])).toBeTruthy();
+    expect(arrayHasChanges([true, true, true], [true, true, false])).toBeTruthy();
   });
 });
 

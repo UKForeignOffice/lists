@@ -18,7 +18,17 @@ export function arrayHasChanges(beforeArray: any[] = [], afterArray: any[] = [])
     return false;
   }
 
-  return afterArray.every((item) => !beforeArray.includes(item));
+  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+  beforeArray.sort();
+  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+  afterArray.sort();
+
+  return afterArray.reduce((hasChanges, curr, index, arr) => {
+    if (hasChanges) {
+      return true;
+    }
+    return beforeArray[index] !== curr;
+  }, false);
 }
 
 /**
