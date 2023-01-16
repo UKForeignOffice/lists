@@ -54,7 +54,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem;
+  const listItem = res.locals.listItem!;
   const userId = req.user?.userData.id;
 
   let requestedChanges;
