@@ -2,7 +2,7 @@ import { ListItemGetObject, ServiceType } from "server/models/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import {ListItem} from "@prisma/client";
+import { ListItem } from "@prisma/client";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
@@ -15,7 +15,7 @@ interface DetailsViewModel {
 /**
  * TODO: implement i18n
  */
-export const fieldTitles: { [prop: string]: string } = {
+const fieldTitles: { [prop: string]: string } = {
   /**
    * used to convert fieldNames to a user-facing string
    */
@@ -47,6 +47,8 @@ export const fieldTitles: { [prop: string]: string } = {
   translationSpecialties: "Translation services",
   interpreterServices: "Interpretation services",
   deliveryOfServices: "How services are carried out",
+  swornTranslations: "Provides sworn or certified translation",
+  swornInterpretations: "Provides sworn interpretation",
 };
 
 type KeyOfJsonData = keyof ListItemJsonData;
@@ -91,10 +93,7 @@ function getValueMacroType(value: any, field: KeyOfJsonData): Types.Macro {
   return "string";
 }
 
-function parseValue<T extends KeyOfJsonData>(
-  field: T,
-  jsonData: ListItemJsonData
-): ListItemJsonData[T] {
+function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonData): ListItemJsonData[T] {
   /**
    * if a field needs to be parsed differently, add a statement here.
    * TODO: if there are a lot of cases, refactor into an object!
@@ -105,16 +104,14 @@ function parseValue<T extends KeyOfJsonData>(
       jsonData["address.secondLine"]?.trim() ?? "",
       jsonData.postCode?.trim() ?? "",
       jsonData.city?.trim() ?? "",
-    ].filter((line) => line)
+    ]
+      .filter((line) => line)
       .join(`\n`);
   }
   return jsonData?.[field];
-  }
+}
 
-function rowFromField(
-  field: KeyOfJsonData,
-  listItem: ListItemJsonData
-): Types.govukRow {
+function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
@@ -135,22 +132,16 @@ function removeEmpty(row: Types.govukRow): string | boolean {
   return row.value.text ?? row.value.html ?? false;
 }
 
-function jsonDataAsRows(
-  fields: KeyOfJsonData[] | KeyOfJsonData,
-  jsonData: ListItemJsonData
-): Types.govukRow[] {
+function jsonDataAsRows(fields: KeyOfJsonData[] | KeyOfJsonData, jsonData: ListItemJsonData): Types.govukRow[] {
   if (!Array.isArray(fields)) {
     return [rowFromField(fields, jsonData)];
   }
-  return fields
-    .map((field) => rowFromField(field, jsonData))
-    .filter(removeEmpty);
+  return fields.map((field) => rowFromField(field, jsonData)).filter(removeEmpty);
 }
 
 function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.jsonData.publicEmailAddress) {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.publicEmailAddress;
-
   } else {
     listItem.jsonData.emailAddressToPublish = listItem.jsonData.emailAddress;
   }
@@ -172,7 +163,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
 
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const { jsonData } = listItem;
-  const type = listItem.type as ServiceType
+  const type = listItem.type as ServiceType;
   const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [
@@ -197,6 +188,8 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
     [ServiceType.translatorsInterpreters]: [
       ...baseFields,
       "servicesProvided",
+      "swornTranslations",
+      "swornInterpretations",
       "languagesProvided",
       "languagesSummary",
       "translationSpecialties",
@@ -208,30 +201,42 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
 
   const fieldsForType = fields[type] ?? baseFields;
 
-  if (type === ServiceType.translatorsInterpreters && listItem.jsonData.deliveryOfServices) {
-    listItem.jsonData.deliveryOfServices = DeliveryOfServices[listItem.jsonData.deliveryOfServices];
+  if (type === ServiceType.translatorsInterpreters) {
+    return formatRowsForTranslators(fieldsForType, listItem);
   }
-  if (type === ServiceType.translatorsInterpreters && listItem.jsonData.languagesProvided) {
-    const languagesArray = listItem.jsonData.languagesProvided.map((item: string) => languages[item] || item);
-    listItem.jsonData.languagesProvided = languagesArray;
-  }
-
   return jsonDataAsRows(fieldsForType, jsonData);
 }
 
+function formatRowsForTranslators(
+  fields: string[] | Array<string | number>,
+  listItem: ListItemGetObject
+): Types.govukRow[] {
+  const { jsonData } = listItem;
+
+  if (jsonData.deliveryOfServices) {
+    jsonData.deliveryOfServices = DeliveryOfServices[jsonData.deliveryOfServices];
+  }
+
+  if (jsonData.languagesProvided) {
+    const languagesArray = jsonData.languagesProvided.map((item: string) => languages[item] ?? item);
+    jsonData.languagesProvided = languagesArray;
+  }
+
+  jsonData.swornInterpretations ??= jsonData.updatedJsonData?.swornInterpretations;
+  jsonData.swornTranslations ??= jsonData.updatedJsonData?.swornTranslations;
+
+  return jsonDataAsRows(fields, jsonData);
+}
+
 function getAdminRows(listItem: ListItemGetObject): Types.govukRow[] {
-  const baseFields: KeyOfJsonData[] = [
-    "regulators",
-    "emailAddress",
-  ];
+  const baseFields: KeyOfJsonData[] = ["regulators", "emailAddress"];
   return jsonDataAsRows(baseFields, listItem.jsonData);
 }
 
-export function getDetailsViewModel(
-  listItem: ListItemGetObject | ListItem
-): DetailsViewModel {
+export function getDetailsViewModel(listItem: ListItemGetObject | ListItem): DetailsViewModel {
   const item = listItem as ListItemGetObject;
-  const headerField = ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
+  const headerField =
+    ServiceType.lawyers === listItem.type ? item.jsonData.contactName : item.jsonData.organisationName;
 
   return {
     organisation: {
