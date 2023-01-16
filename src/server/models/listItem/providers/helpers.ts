@@ -11,6 +11,7 @@ import * as metaData from "server/services/metadata";
 import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
 import { listsRoutes } from "server/components/lists";
 import { HttpException } from "server/middlewares/error-handlers";
+import { getObjectDiff } from "server/components/lists/controllers/ingest/helpers";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -194,18 +195,14 @@ export function getChangedAddressFields(
     city: address?.city,
   };
 
-  const webhookAddress = pickWebhookAddressAsAddress(webhook);
-  const updatableEntries = Object.entries(updatableAddressObject);
+  const webhookAsAddress = {
+    firstLine: webhook["address.firstLine"] ?? address?.firstLine,
+    secondLine: webhook["address.secondLine"] ?? address?.secondLine,
+    postCode: webhook.postCode ?? address.postCode,
+    city: webhook.city ?? address.city,
+  };
 
-  return updatableEntries.reduce((prev, entry) => {
-    const [key, value] = entry as [keyof UpdatableAddressFields, any];
-    const webhookValue = webhookAddress[key];
-    const valueHasChanged = webhookValue !== value;
-    return {
-      ...prev,
-      ...(valueHasChanged && { [key]: webhookValue }),
-    };
-  }, {});
+  return getObjectDiff(updatableAddressObject, webhookAsAddress);
 }
 
 export function setLanguagesProvided(newLanguage: string, languagesProvided: string): string {
