@@ -52,8 +52,9 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   const userId = req.user?.userData.id;
   let requestedChanges;
 
-  // @ts-ignore
   const hasPendingUpdate = listItem.status === Status.EDITED;
+
+  // @ts-ignore
   const isLegacyUpdate = hasPendingUpdate && !listItem.jsonData?.updatedJsonData;
 
   // @ts-ignore
