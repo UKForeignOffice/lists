@@ -365,6 +365,8 @@ describe("Dashboard Controllers", () => {
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
 
+      mockRes.locals = { list, listItem };
+
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,
         address: {
