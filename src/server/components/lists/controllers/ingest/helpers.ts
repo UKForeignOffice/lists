@@ -23,7 +23,7 @@ export function arrayHasChanges(beforeArray: any[] = [], afterArray: any[] = [])
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   afterArray.sort();
 
-  return afterArray.reduce((hasChanges, curr, index, arr) => {
+  return afterArray.reduce((hasChanges, curr, index) => {
     if (hasChanges) {
       return true;
     }
