@@ -1,17 +1,26 @@
 import { arrayHasChanges, getObjectDiff } from "../helpers";
 
-test("arrayHasChanges", () => {
-  expect(arrayHasChanges([1], [1])).toBeFalsy();
-  expect(arrayHasChanges(["a"], ["a"])).toBeFalsy();
-  expect(arrayHasChanges([], [])).toBeFalsy();
-  expect(arrayHasChanges(["fried", "scrambled", "poached"], ["fried", "scrambled", "poached"])).toBeFalsy();
+describe("arrayHasChanges", () => {
+  it("returns false for arrays with the same value in the same order", () => {
+    expect(arrayHasChanges([1], [1])).toBeFalsy();
+    expect(arrayHasChanges(["a"], ["a"])).toBeFalsy();
+    expect(arrayHasChanges([], [])).toBeFalsy();
+    expect(arrayHasChanges(["fried", "scrambled", "poached"], ["fried", "scrambled", "poached"])).toBeFalsy();
+    expect(arrayHasChanges([true, true, false], [true, true, false])).toBeFalsy();
+  });
 
-  expect(arrayHasChanges(["a", "b", "c"], ["b", "c", "a"])).toBeFalsy();
-  expect(arrayHasChanges([1, 2, 3], [3, 1, 2])).toBeFalsy();
+  it("returns false for arrays with the same value but different order", () => {
+    expect(arrayHasChanges(["a", "b", "c"], ["b", "c", "a"])).toBeFalsy();
+    expect(arrayHasChanges([1, 2, 3], [3, 1, 2])).toBeFalsy();
+    expect(arrayHasChanges([true, true, false], [true, false, true])).toBeFalsy();
+  });
 
-  expect(arrayHasChanges([1], [1, 2])).toBeTruthy();
-  expect(arrayHasChanges([1, 2], [1])).toBeTruthy();
-  expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
+  it("returns true for arrays with different values", () => {
+    expect(arrayHasChanges([1], [1, 2])).toBeTruthy();
+    expect(arrayHasChanges([1, 2], [1])).toBeTruthy();
+    expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
+    expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
+  });
 });
 
 describe("getObjectDiff", () => {
