@@ -45,9 +45,14 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   unpublished: {
     AND: [
       {
-        status: {
-          in: ["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"],
+        history: {
+          some: {
+            type: "PUBLISHED",
+          },
         },
+      },
+      {
+        isPublished: false,
       },
       {
         NOT: {
