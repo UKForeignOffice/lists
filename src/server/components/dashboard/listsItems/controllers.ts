@@ -27,10 +27,17 @@ function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
+  /**
+   * Cherry-picked from origin/feat/1541-sworn-list-fix
+   */
+  const swornTranslatorFields =
+    listItem.type === "translatorsInterpreters" ? ["swornInterpretations", "swornTranslations"] : [];
+  const jsonData = (listItem as ListItemGetObject).jsonData;
+
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys((listItem as ListItemGetObject).jsonData).map(
+    ...[...Object.keys(jsonData), ...swornTranslatorFields].map(
       (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
     )
   );
@@ -47,7 +54,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem!;
+  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
 
   let requestedChanges;
