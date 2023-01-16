@@ -174,16 +174,6 @@ export function getListItemContactInformation(listItem: ListItem): {
   return { contactName, contactEmailAddress, contactPhoneNumber };
 }
 
-export function pickWebhookAddressAsAddress(
-  webhook: DeserialisedWebhookData | ListItemJsonData
-): Partial<UpdatableAddressFields> {
-  return {
-    firstLine: webhook["address.firstLine"],
-    secondLine: webhook["address.secondLine"],
-    postCode: webhook.postCode,
-    city: webhook.city,
-  };
-}
 export function getChangedAddressFields(
   webhook: DeserialisedWebhookData | ListItemJsonData,
   address: Partial<Address>
@@ -197,7 +187,7 @@ export function getChangedAddressFields(
 
   const webhookAsAddress = {
     firstLine: webhook["address.firstLine"] ?? address?.firstLine,
-    secondLine: webhook["address.secondLine"] ?? address?.secondLine,
+    secondLine: webhook["address.secondLine"] ?? address?.secondLine ?? undefined,
     postCode: webhook.postCode ?? address.postCode,
     city: webhook.city ?? address.city,
   };
