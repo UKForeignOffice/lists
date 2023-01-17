@@ -334,6 +334,7 @@ export async function update(
 
       geoLocationParams = [currentAddress.geoLocationId!, point];
     } catch (e) {
+      logger.error(e);
       throw Error("GeoLocation update failed");
     }
   }
