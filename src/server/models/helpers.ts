@@ -4,6 +4,7 @@ import { CountryName, ServiceType } from "server/models/types";
 import { findListByCountryAndType } from "server/models/list";
 import { prisma } from "server/models/db/prisma-client";
 import { PrismaPromise } from "@prisma/client";
+import { logger } from "server/services/logger";
 
 /**
  * TODO:- This should really be a tuple of [number, number] but AWS sdk uses a number array..?!s
@@ -16,6 +17,7 @@ function isValidPoint(point: Point): Boolean {
 
 export const rawInsertGeoLocation = async (point: Point | number[]): Promise<number> => {
   if (!isValidPoint(point)) {
+    logger.warn(`invalid coordinates ${point}`);
     throw new Error("Invalid points entered");
   }
 
@@ -32,13 +34,16 @@ export const rawInsertGeoLocation = async (point: Point | number[]): Promise<num
 };
 
 export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> => {
+  logger.info(`updating geolocation id ${id}, with coordinates ${point}`);
+
   if (!isValidPoint(point)) {
+    logger.warn(`invalid coordinates ${point}`);
     throw new Error("Invalid points entered");
   }
 
-  return prisma.$queryRaw`
-    UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id
-  `;
+  return prisma.$executeRawUnsafe(
+    `UPDATE public."GeoLocation" SET location = ('POINT(${point[0]} ${point[1]})') WHERE id = ${id} RETURNING id`
+  );
 };
 
 export function geoPointIsValid(geoPoint: any): boolean {

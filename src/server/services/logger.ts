@@ -2,14 +2,14 @@ import { createLogger, format, transports } from "winston";
 import { LOG_LEVEL } from "server/config";
 
 const ignoreHttpGET = format((info) => {
-  if (info.message?.startsWith("HTTP GET")) {
+  if (info?.message?.startsWith?.("HTTP GET")) {
     return false;
   }
   return info;
 });
 
 const ignoreHttpPOST = format((info) => {
-  if (info.message?.startsWith("HTTP POST")) {
+  if (info?.message?.startsWith?.("HTTP POST")) {
     return false;
   }
   return info;
