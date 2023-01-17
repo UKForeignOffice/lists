@@ -44,7 +44,7 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date, listItemStatuses?: Status[], isAnnualReview?: boolean): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date, listItemStatuses: Status[] = [], isAnnualReview?: boolean): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
@@ -63,8 +63,8 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date, li
                 array_contains: [],
               },
             },
-            ...(listItemStatuses != null && { status: { in: listItemStatuses }}),
-            ...(isAnnualReview != null && { isAnnualReview }),
+            ...(listItemStatuses.length && { status: { in: listItemStatuses }}),
+            ...(isAnnualReview !== undefined && { isAnnualReview }),
             history: {
               some: {
                 type: "PUBLISHED",

@@ -200,8 +200,8 @@ export function displayUnpublishWarning(list: ListWithJsonData, listItems: Index
  * @param events
  * @param list
  */
-export function annualReviewEmailsSent(events: Array<{ type: string; time: Date }> | undefined, list: ListWithJsonData): boolean {
-  if (!events || events.length === 0) return false;
+export function annualReviewEmailsSent(list: ListWithJsonData, events?: Array<{ type: string; time: Date }> | undefined): boolean {
+  if (!events?.length) return false;
   const annualReviewStartDateString = list?.jsonData?.currentAnnualReview?.keyDates.annualReview.START;
 
   if (!annualReviewStartDateString) return false;

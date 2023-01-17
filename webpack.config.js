@@ -201,7 +201,6 @@ const scheduler = {
   mode: environmentOptions[nodeEnv].mode,
   watch: environmentOptions[nodeEnv].watch,
   entry: {
-    startAnnualReview: getScheduledFilePath("", "annualReviewStartEmailScheduler.ts"),
     unpublish: getScheduledFilePath("", "annualReviewUnpublishedEmailScheduler.ts"),
     batch: getScheduledFilePath("batch", "main.ts"),
     annualReviewWorker: getScheduledFilePath("workers", "main.ts"),

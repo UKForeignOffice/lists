@@ -173,7 +173,7 @@ export async function listItemsIndexController(
 
 function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListItem[]) {
   const emailsSent = listItems?.some((listItem) => {
-    return SummaryHelpers.annualReviewEmailsSent(listItem?.history, list);
+    return SummaryHelpers.annualReviewEmailsSent(list, listItem?.history);
   });
   return {
     onMonthWarning: displayOneMonthAnnualReviewWarning(list),

@@ -97,18 +97,6 @@ describe("Date Contexts", () => {
     });
   });
 
-  // function spyFindListItemsById(listItemRecord: ListItemGetObject, shouldReject?: boolean): any {
-  //   const spy = jest.spyOn(listItem, "findListItemById");
-  //
-  //   if (shouldReject === true) {
-  //     spy.mockRejectedValue({ error: new Error("error"), });
-  //   } else {
-  //     spy.mockResolvedValue({ result: [listItemRecord] });
-  //   }
-  //
-  //   return spy;
-  // }
-
   describe("update list items", () => {
     const listItem: ListItem = {
       id: 1,
@@ -131,6 +119,7 @@ describe("Date Contexts", () => {
       reference: "ref",
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastAnnualReviewStartDate: new Date(),
       nextAnnualReviewStartDate: new Date(),
       isAnnualReview: false,
       type: "lawyers",
@@ -148,11 +137,11 @@ describe("Date Contexts", () => {
     };
 
     // @todo FIX THIS BROKEN TEST
-  //   test("no list items found", () => {
-  //     spyFindListItemsForLists(listItem,false);
-  //     populateCurrentAnnualReview([list], dateContexts)
-  //
-  //     expect(logger.error).toHaveBeenCalledWith(`Unable to retrieve List Items for Lists ${list.id}: error`);
-  //   });
+    test.todo("no list items found", () => {
+      // spyFindListItemsForLists(listItem,false);
+      populateCurrentAnnualReview([list], dateContexts)
+
+      expect(logger.error).toHaveBeenCalledWith(`Unable to retrieve List Items for Lists ${list.id}: error`);
+    });
   });
 });
