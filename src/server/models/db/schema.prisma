@@ -138,9 +138,8 @@ enum AuditEvent {
   PINNED // TODO: deprecate
   UNPINNED // TODO: deprecate
   DELETED
-  REMINDER
-
   UNDEFINED
+  REMINDER
 }
 
 enum Status {
