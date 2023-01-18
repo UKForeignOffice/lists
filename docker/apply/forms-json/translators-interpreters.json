@@ -415,11 +415,7 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
-          "condition": "isTranslatorCountryPilot"
+          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english"
         }
       ]
     },
