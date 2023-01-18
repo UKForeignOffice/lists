@@ -198,8 +198,7 @@ describe("Dashboard Controllers", () => {
       mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You cannot change your own permissions. You need to ask another administrator to change this for you."));
+      expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/users/user@gov.uk`);
     });
   });
 

@@ -56,9 +56,21 @@ export async function usersListController(req: Request, res: Response, next: Nex
 export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
     const { userEmail } = req.params;
+    const errorText = req?.flash("errorText") ? req.flash("errorText")[0] : "";
+    const errorTitle = req?.flash("errorTitle") ? req.flash("errorTitle")[0] : "";
 
     if (typeof userEmail !== "string") {
       return next();
+    }
+
+    let error = {};
+    if (errorText || errorTitle) {
+      error = {
+        field: "roles",
+        title: errorTitle,
+        text: errorText,
+        href: "#roles-Administrator",
+      };
     }
 
     const user = await findUserByEmail(`${userEmail}`);
@@ -69,6 +81,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       UserRoles,
       user,
       req,
+      error,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
@@ -81,7 +94,6 @@ export async function usersEditPostController(req: Request, res: Response, next:
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
   const emailAddress = req?.user?.userData?.email;
-
   const isAdminUser = await isAdministrator(emailAddress);
   if (!isAdminUser) {
     // disallow editing of SuperAdmins
@@ -91,7 +103,14 @@ export async function usersEditPostController(req: Request, res: Response, next:
   if (emailAddress === userEmail) {
     // disallow editing of SuperAdmins
     logger.warn(`user ${req.user?.userData.id} attempted to change their own permissions`);
-    return next(new HttpException(405, "405", "You cannot change your own permissions. You need to ask another administrator to change this for you."));
+    const error = {
+      title: "You cannot change your own permissions.",
+      text: "You need to ask another administrator to change this for you.",
+    };
+
+    req.flash("errorText", error.text);
+    req.flash("errorTitle", error.title);
+    return res.redirect(`/dashboard/users/${userEmail}`);
   }
 
   if (Array.isArray(usersRoles)) {

@@ -165,6 +165,7 @@ export interface UserJsonData extends JsonObject {
 
 export interface User extends PrismaClient.User {
   jsonData: UserJsonData;
+  email: string;
 }
 
 export interface UserCreateInput extends PrismaClient.Prisma.UserCreateInput {

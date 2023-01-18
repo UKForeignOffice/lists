@@ -176,7 +176,7 @@ function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListI
     return SummaryHelpers.annualReviewEmailsSent(list, listItem?.history);
   });
   return {
-    onMonthWarning: displayOneMonthAnnualReviewWarning(list),
+    oneMonthWarning: displayOneMonthAnnualReviewWarning(list),
     emailsSent,
     unpublishWarning: displayUnpublishWarning(list, listItems),
   };

@@ -137,11 +137,6 @@ describe("Date Contexts", () => {
     };
 
     // @todo FIX THIS BROKEN TEST
-    test.todo("no list items found", () => {
-      // spyFindListItemsForLists(listItem,false);
-      populateCurrentAnnualReview([list], dateContexts)
-
-      expect(logger.error).toHaveBeenCalledWith(`Unable to retrieve List Items for Lists ${list.id}: error`);
-    });
+    test.todo("no list items found");
   });
 });
