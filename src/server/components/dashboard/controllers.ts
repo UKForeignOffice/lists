@@ -56,19 +56,19 @@ export async function usersListController(req: Request, res: Response, next: Nex
 export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
     const { userEmail } = req.params;
-    const errorText = req?.flash("errorText") ? req.flash("errorText")[0] : "";
-    const errorTitle = req?.flash("errorTitle") ? req.flash("errorTitle")[0] : "";
+    const errorText = req?.flash("errorText");
+    const errorTitle = req?.flash("errorTitle");
 
     if (typeof userEmail !== "string") {
       return next();
     }
 
     let error = {};
-    if (errorText || errorTitle) {
+    if (errorText?.length || errorTitle?.length) {
       error = {
         field: "roles",
-        title: errorTitle,
-        text: errorText,
+        title: errorTitle[0],
+        text: errorText[0],
         href: "#roles-Administrator",
       };
     }
@@ -108,7 +108,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
       text: "You need to ask another administrator to change this for you.",
     };
 
-    req.flash("errorText", error.text);
+      req.flash("errorText", error.text);
     req.flash("errorTitle", error.title);
     return res.redirect(`/dashboard/users/${userEmail}`);
   }

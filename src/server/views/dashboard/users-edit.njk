@@ -7,12 +7,11 @@
 
 {% block dashboard %}
   <h1 class="govuk-heading-l">Editing User</h1>
+  <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
   {% endif %}
-
-  <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   <form class="form" action="{{ req.originalUrl }}" method="post" required>
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
