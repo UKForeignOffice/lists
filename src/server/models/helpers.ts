@@ -33,6 +33,7 @@ export const rawInsertGeoLocation = async (point: Point | number[]): Promise<num
   return result.rows[0].id;
 };
 
+// eslint-disable-next-line @typescript-eslint/promise-function-async
 export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> => {
   logger.info(`updating geolocation id ${id}, with coordinates ${point}`);
 
