@@ -65,7 +65,7 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
     newAnnualReviewDateFormatted: DateFns.format(annualReviewDate.value, DATE_FORMAT),
-    newAnnualReviewDate: annualReviewDate.value,
+    newAnnualReviewDate: annualReviewDate.value.toISOString(),
     list,
     serviceType: startCase(list.type).toLowerCase(),
     csrfToken: getCSRFToken(req),
@@ -76,17 +76,17 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { newAnnualReviewDate } = req.body;
-  const newAnnualReviewDateFormatted = new Date(newAnnualReviewDate as string);
-  const annualReviewDate = DateFns.format(newAnnualReviewDateFormatted, DATE_FORMAT);
+  const annualReviewDate = new Date(newAnnualReviewDate as string);
+  const newAnnualReviewDateFormatted = DateFns.format(annualReviewDate, DATE_FORMAT);
 
-  await updateAnnualReviewDate(listId, newAnnualReviewDateFormatted.toISOString());
+  await updateAnnualReviewDate(listId, annualReviewDate.toISOString());
 
   for (const emailAddress of list.jsonData.users ?? []) {
     await sendAnnualReviewDateChangeEmail({
       emailAddress,
       serviceType: startCase(list.type),
       country: list.country!.name!,
-      annualReviewDate,
+      annualReviewDate: newAnnualReviewDateFormatted,
     });
   }
 

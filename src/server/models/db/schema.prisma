@@ -15,7 +15,7 @@ model List {
   reference                     String   @default(uuid()) @unique
   createdAt                     DateTime @default(now())
   updatedAt                     DateTime @updatedAt
-  nextAnnualReviewStartDate     DateTime @default(dbgenerated("NOW() + interval '1 year'")) @db.Date
+  nextAnnualReviewStartDate     DateTime? @db.Date
   lastAnnualReviewStartDate     DateTime? @db.Date
   isAnnualReview                Boolean @default(false)
 

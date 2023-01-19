@@ -71,7 +71,7 @@ export function getAnnualReviewDate(
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const dateValues: [number, number, number] = [currentYear, Number(month) - 1, Number(day)];
-  const userEnteredDate = new Date(...dateValues);
+  const userEnteredDate = new Date(Date.UTC(...dateValues));
   const validDate = calculateValidDate(userEnteredDate, maxDate);
 
   if (isLeapYear || !DateFns.isExists(...dateValues)) {

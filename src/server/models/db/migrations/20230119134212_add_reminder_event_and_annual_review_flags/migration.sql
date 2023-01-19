@@ -4,13 +4,16 @@ ALTER TYPE "AuditEvent" ADD VALUE 'REMINDER';
 -- AlterEnum
 ALTER TYPE "ListItemEvent" ADD VALUE 'REMINDER';
 
+-- DropIndex
+DROP INDEX "Audit.jsonData_index";
+
 -- AlterTable
 ALTER TABLE "List" ADD COLUMN     "isAnnualReview" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "lastAnnualReviewStartDate" DATE,
-ADD COLUMN     "nextAnnualReviewStartDate" DATE NOT NULL DEFAULT NOW() + interval '1 year';
+ADD COLUMN     "nextAnnualReviewStartDate" DATE;
 
--- RenameIndex
-ALTER INDEX "Audit.jsonData_index" RENAME TO "Audit_jsonData_idx";
+-- CreateIndex
+CREATE INDEX "Audit_jsonData_idx" ON "Audit"("jsonData");
 
 -- RenameIndex
 ALTER INDEX "Audit.type_index" RENAME TO "Audit_type_idx";
