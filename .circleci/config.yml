@@ -94,7 +94,7 @@ jobs:
             docker-compose up -d lists apply
             docker ps
 
-      - run: # this will let you view logs from the apply and lists docker containers
+#      - run: # this will let you view logs from the apply and lists docker containers
 #          name: logs
 #          background: true
 #          command: docker-compose logs -f lists apply
