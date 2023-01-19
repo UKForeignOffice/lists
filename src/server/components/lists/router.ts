@@ -11,6 +11,7 @@ import {
 import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
+import annualReviewRouter from "server/components/annual-review/router";
 
 export const listsRouter = express.Router();
 
@@ -35,3 +36,4 @@ listsRouter.get(listsRoutes.termsAndConditions, (req, res) => {
   res.render("help/terms-and-conditions");
 });
 listsRouter.use(ingestRouter);
+listsRouter.use(annualReviewRouter);

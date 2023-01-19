@@ -4,6 +4,7 @@ import {
   DeserialisedWebhookData,
   ListItemJsonData,
 } from "server/models/listItem/providers/deserialisers/types";
+import { Status } from "@prisma/client";
 
 
 
@@ -52,6 +53,10 @@ export type IndexListItem = Pick<
   updatedAt: string;
   publishingStatus: string;
   activityStatus: ActivityStatusViewModel;
+  lastPublished?: string;
+  status: Status;
+  isAnnualReview: boolean;
+  history: PrismaClient.Event[];
 };
 
 export interface PaginationOptions {
@@ -78,7 +83,11 @@ export type EventName =
   | "unpin"
   | "disapprove"
   | "publish"
-  | "unpublish";
+  | "unpublish"
+  | "sendAnnualReviewReminderEmail"
+  | "startAnnualReview"
+  | "sendPostUnpublishReminderEmail"
+  | "sendProviderUnpublishReminderEmail";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 

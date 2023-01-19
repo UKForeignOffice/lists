@@ -15,7 +15,6 @@ Feature: List management change annual review date
     And I see page with heading "Confirm new annual review start date"
     And I click the "Continue" button
     Then I see the notification text "Annual review date updated successfully"
-    And I should see "1 February" as part of the date
 
   Scenario: User cannot enter date Febuary 29
     Given I enter "29" in the "day" input

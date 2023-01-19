@@ -84,6 +84,9 @@ describe("Dashboard Controllers", () => {
         users: [mockReq.user.userData.email],
       },
       countryId: 1,
+      nextAnnualReviewStartDate: new Date("01-Jan-2023"),
+      lastAnnualReviewStartDate: new Date("01-Jan-2022"),
+      isAnnualReview: false,
     };
 
     listItem = {
@@ -113,6 +116,7 @@ describe("Dashboard Controllers", () => {
       listId: 1,
       status: Status.NEW,
       history: [],
+      isAnnualReview: false,
     };
   });
 
@@ -169,7 +173,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("usersEditPostController", () => {
-    test("it correctly updates user removing SuperAdmin role", async () => {
+    test("next invoked when user updated but they do not have Administrator role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
 
@@ -178,16 +182,11 @@ describe("Dashboard Controllers", () => {
 
       mockReq.method = "POST";
       mockReq.body = {
-        roles: `${UserRoles.Administrator}`,
+        roles: ``,
       };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-      expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
-        jsonData: {
-          roles: [UserRoles.Administrator],
-        },
-      });
-      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/users");
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You do not have access to edit users"));
     });
 
     test("next is invoked with updateUser error", async () => {
@@ -195,11 +194,11 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
-      mockReq.body = { roles: "" };
+      mockReq.user.userData.email = "user@gov.uk"
+      mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "Not allowed to edit super admin account"));
+      expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/users/user@gov.uk`);
     });
   });
 
@@ -212,7 +211,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "" }];
+      const lists: any = [{ id: 1, nextAnnualReviewStartDate: null, lastAnnualReviewStartDate: null }];
       mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
@@ -479,7 +478,7 @@ describe("Dashboard Controllers", () => {
       const result = getAnnualReviewDate("1", "8");
       // then
       expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current date");
     });
 
     it("returns invalid date if user enters Feb 29th", () => {

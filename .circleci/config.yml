@@ -36,6 +36,10 @@ jobs:
           command: npm run lint
 
       - run:
+          name: Build
+          command: npm run build:ci
+
+      - run:
           name: Run tests
           command: npm run test
 
@@ -90,10 +94,10 @@ jobs:
             docker-compose up -d lists apply
             docker ps
 
-      # - run: # this will let you view logs from the apply and lists docker containers
-      #     name: logs
-      #     background: true
-      #     command: docker-compose logs -f lists
+#      - run: # this will let you view logs from the apply and lists docker containers
+#          name: logs
+#          background: true
+#          command: docker-compose logs -f lists apply
 
 
       - run:
@@ -115,7 +119,6 @@ jobs:
 #      - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
 #         path: ~/repo/cypress/videos
 #         destination: videos
-
 
 
   publish:
@@ -143,7 +146,6 @@ jobs:
             | # set $DOCKER_TAG as either the git tag that triggered the build, or the git sha (for deploy-test branch)
             if [ "<<pipeline.git.tag>>" == "" ]; then echo 'export DOCKER_TAG="<<pipeline.git.revision>>"' >> $BASH_ENV; else echo 'export DOCKER_TAG="<<pipeline.git.tag>>"' >> $BASH_ENV; fi
 
-
       - when:
           condition:
             equal: [lists, <<parameters.app>>]
@@ -152,7 +154,7 @@ jobs:
                 name: Publish docker image - lists
                 command: |
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
-                  docker build --build-arg NODE_ENV=production --build-arg=BUILD_MODE=prod --build-arg DOCKER_TAG=$DOCKER_TAG -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
+                  docker build --build-arg NODE_ENV=production --build-arg=BUILD_MODE=prod --build-arg DOCKER_TAG=$DOCKER_TAG --target main -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
                   docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG
 
       - when:
@@ -183,6 +185,28 @@ jobs:
                   eval $(aws ecr get-login --no-include-email --region eu-west-2)
                   docker tag repo_postgres 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
                   docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
+
+      - when:
+          condition:
+            equal: [lists-scheduler-batch, <<parameters.app>>]
+          steps:
+            - run:
+                name: Publish docker image - annual review scheduled batch process
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG --build-arg BUILD_MODE=ci --target scheduled -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG .
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG
+
+      - when:
+          condition:
+            equal: [lists-scheduler-worker, <<parameters.app>>]
+          steps:
+            - run:
+                name: Publish docker image - annual review scheduled worker process
+                command: |
+                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  docker build --build-arg DOCKER_TAG=$DOCKER_TAG --build-arg BUILD_MODE=ci --target scheduled -t 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG .
+                  docker push 523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG
 
   deploy:
     <<: *defaults
@@ -297,17 +321,25 @@ jobs:
           container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
-
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
           container-image-updates: lists-apply=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$CIRCLE_SHA1
           resource-name: deployment/lists-apply
 
-
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
           container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
           resource-name: deployment/lists-postgres
+
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
+          resource-name: cronjob/lists-scheduler-batch
+
+      - kubernetes/update-container-image:
+          namespace: << parameters.namespace >>
+          container-image-updates: lists-scheduler-worker=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$CIRCLE_SHA1
+          resource-name: cronjob/lists-scheduler-worker
 
       - run:
           name: Disconnect from OpenVPN
@@ -368,6 +400,35 @@ workflows:
             - VPN
             - AWS
 
+
+      - publish:
+          name: publish-lists-scheduler-batch
+          app: lists-scheduler-batch
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - never-publish
+          context:
+            - VPN
+            - AWS
+
+
+      - publish:
+          name: publish-lists-scheduler-worker
+          app: lists-scheduler-worker
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - never-publish
+          context:
+            - VPN
+            - AWS
+
+
       - deploy:
           name: deploy-test
           namespace: test-lists
@@ -377,6 +438,8 @@ workflows:
           requires:
             - publish-lists
             - publish-lists-apply
+#            - publish-lists-scheduler-batch
+#            - publish-lists-scheduler-worker
 #            - publish-lists-postgres
           filters:
             branches:

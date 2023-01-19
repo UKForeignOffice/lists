@@ -1,5 +1,8 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { ActivityStatusViewModel } from "server/models/listItem/types";
+import { ActivityStatusViewModel, IndexListItem } from "server/models/listItem/types";
+import * as DateFns from "date-fns";
+import { isAfter, isBefore } from "date-fns";
+import { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
   NEW: {
@@ -129,4 +132,83 @@ export function getActivityStatus(item: ListItemWithHistory): ActivityStatusView
   }
 
   return statusToActivityVM[status];
+}
+
+export function getLastPublished(events: Array<{ type: string; time: Date }> | undefined): string {
+  if (!events || events.length === 0) return "Not applicable";
+
+  const publishedEvents = events.filter((event) => event.type === "PUBLISHED");
+  const sortedByDate = publishedEvents.sort((a, b) => a.time.getTime() - b.time.getTime());
+
+  return sortedByDate.length > 0 ? DateFns.format(sortedByDate[0].time, "dd MMMM yyyy") : "Not applicable";
+}
+
+/**
+ * Used to display the warning banner in the list items page to notify that the annual review is due to start within the
+ * next month. This is determined where the current date is after the one month warning date and before the annual review
+ * start date.
+ * @param list
+ */
+export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): boolean {
+  const oneMonthBeforeDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH;
+  const annualReviewDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
+  let oneMonthWarning = false;
+
+  if (oneMonthBeforeDateString && annualReviewDateString) {
+    const oneMonthBeforeDate = new Date(list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH as string);
+    const isAfterOneMonthDate = isAfter(Date.now(), oneMonthBeforeDate);
+    const annualReviewDate = new Date(list.jsonData.currentAnnualReview?.keyDates.annualReview.START as string);
+    const isBeforeAnnualReviewDate = isBefore(Date.now(), annualReviewDate);
+    oneMonthWarning = isAfterOneMonthDate && isBeforeAnnualReviewDate;
+  }
+  return oneMonthWarning;
+}
+
+/**
+ * Used to display the warning banner in the list items page to notify that there are list items where the providers
+ * have not responded AND the current date is five weeks or less prior to the unpublish date. Providers that haven't
+ * responded can be determined where listItem.isAnnualReview = true and the listItem.status = OUT_WITH_PROVIDER.
+ * @param list
+ * @param listItems
+ */
+export function displayUnpublishWarning(list: ListWithJsonData, listItems: IndexListItem[]) {
+  let display = false;
+  let countOfListItems = 0;
+  const fiveWeeksBeforeUnpublishDateString = list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
+  if (fiveWeeksBeforeUnpublishDateString) {
+    const fiveWeeksBeforeUnpublishDate = new Date(fiveWeeksBeforeUnpublishDateString);
+    const isAfterFiveWeeksBeforeUnpublishDate = isAfter(Date.now(), fiveWeeksBeforeUnpublishDate);
+    if (isAfterFiveWeeksBeforeUnpublishDate) {
+      const listItemsToBeUnpublished = listItems.filter((listItem) => {
+        return listItem.isAnnualReview && listItem.status === Status.OUT_WITH_PROVIDER;
+      });
+      countOfListItems = listItemsToBeUnpublished.length;
+      display = countOfListItems > 0;
+    }
+  }
+  return {
+    display,
+    countOfListItems,
+  };
+}
+
+/**
+ * Used to display the warning banner in the list items page to notify the annual review email has been sent to the
+ * providers. Only returns true if there are Event records for this list item with an event type "ANNUAL_REVIEW_STARTED"
+ * and where the event time is after the annual review start date. This ensures Event records from previous years do not
+ * get used when performing this validation.
+ * @param events
+ * @param list
+ */
+export function annualReviewEmailsSent(list: ListWithJsonData, events?: Array<{ type: string; time: Date }> | undefined): boolean {
+  if (!events?.length) return false;
+  const annualReviewStartDateString = list?.jsonData?.currentAnnualReview?.keyDates.annualReview.START;
+
+  if (!annualReviewStartDateString) return false;
+  const annualReviewDate = new Date(annualReviewStartDateString);
+
+  return events.some((event) => {
+    return event.type === "ANNUAL_REVIEW_STARTED" &&
+      isAfter(event.time, annualReviewDate);
+  });
 }

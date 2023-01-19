@@ -182,17 +182,10 @@ $two-thirds: $one-third * 2;
   }
   &__list-item-tag-container {
     position: absolute;
-    top: govuk-spacing(3);
+    top: 0;
     right: 0;
     width: $one-third;
     text-align: right;
-  }
-  &__list-item-dates {
-    @include govuk-media-query(700px) {
-      position: absolute;
-    }
-    top: 0;
-    right: 0;
   }
   &__content-list {
     &--pinned {
@@ -272,4 +265,9 @@ $two-thirds: $one-third * 2;
 
 .govuk-notification-banner__full-width {
   max-width: 100%;
+}
+
+.govuk-notification-banner--error {
+  border-color: 	#AA2A16;
+  background-color: 	#AA2A16;
 }
