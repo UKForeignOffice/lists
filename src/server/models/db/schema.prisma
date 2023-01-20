@@ -1,3 +1,4 @@
+// for Mac M1, add "linux-arm-openssl-1.1.x" to binaryTargets
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
@@ -10,10 +11,14 @@ datasource db {
 }
 
 model List {
-  id                  Int      @id @default(autoincrement())
-  reference           String   @default(uuid()) @unique
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                            Int      @id @default(autoincrement())
+  reference                     String   @default(uuid()) @unique
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+  nextAnnualReviewStartDate     DateTime? @db.Date
+  lastAnnualReviewStartDate     DateTime? @db.Date
+  isAnnualReview                Boolean @default(false)
+
 
   type                String
   country             Country  @relation(fields: [countryId], references: [id])
@@ -134,6 +139,7 @@ enum AuditEvent {
   UNPINNED // TODO: deprecate
   DELETED
   UNDEFINED
+  REMINDER
 }
 
 enum Status {
@@ -144,9 +150,7 @@ enum Status {
   UNPUBLISHED //
   CHECK_ANNUAL_REVIEW
   ANNUAL_REVIEW_OVERDUE
-
 }
-
 
 model Event {
   id                  Int    @id @default(autoincrement())
@@ -157,7 +161,6 @@ model Event {
   jsonData            Json
 }
 
-// add any actions that can be performed on a list item.
 enum ListItemEvent {
   NEW
   OUT_WITH_PROVIDER // Requested changes
@@ -171,6 +174,7 @@ enum ListItemEvent {
   ANNUAL_REVIEW_STARTED
   CHECK_ANNUAL_REVIEW
   ARCHIVED
+  REMINDER
 }
 
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported

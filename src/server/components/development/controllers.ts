@@ -2,7 +2,7 @@
 import { exec } from "child_process";
 import { Request, Response } from "express";
 import { UserRoles } from "server/models/types";
-import { GOVUK_NOTIFY_API_KEY } from "server/config";
+import { NOTIFY } from "server/config";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";
 
 export function deployDb(req: Request, res: Response): void {
@@ -27,7 +27,7 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
     typeof email === "string" &&
     typeof key === "string" &&
     key?.length > 10 &&
-    (GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)
+    (NOTIFY.apiKey ?? "").includes(`${key}`)
   ) {
     const user = await findUserByEmail(email);
 
@@ -52,6 +52,6 @@ export async function promoteUser(req: Request, res: Response): Promise<void> {
       res.status(500).send(error.message);
     }
   } else {
-    res.send(`Got email: ${email} and key is valid ${(GOVUK_NOTIFY_API_KEY ?? "").includes(`${key}`)}`);
+    res.send(`Got email: ${email} and key is valid ${(NOTIFY.apiKey ?? "").includes(`${key}`)}`);
   }
 }

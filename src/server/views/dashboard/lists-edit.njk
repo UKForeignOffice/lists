@@ -25,7 +25,6 @@
       <h1 class="govuk-heading-l">
         Settings - {{ _.startCase(list.type) }}
       </h1>
-      <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
       <div>
         <h2 class="govuk-heading-m">Annual review</h2>
@@ -63,7 +62,7 @@
                 </span>
               {% endif %}
               <div id="publisher-hint" class="govuk-body">
-                All users can accept and publish service providers on the {{ _.startCase(list.type)}} list in {{list.country.name}}.
+                All users can accept and publish service providers on the {{ _.startCase(list.type).toLowerCase()}} list in {{list.country.name}}.
               </div>
                 <label class="govuk-label" for="publisher">
                   Enter an email address

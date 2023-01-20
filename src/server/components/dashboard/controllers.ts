@@ -17,9 +17,6 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 
 import type { List } from "server/models/types";
-import { format, parseISO } from "date-fns";
-
-const DATE_FORMAT_SHORT_MONTH = "d MMM yyyy";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -59,9 +56,21 @@ export async function usersListController(req: Request, res: Response, next: Nex
 export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
     const { userEmail } = req.params;
+    const errorText = req?.flash("errorText");
+    const errorTitle = req?.flash("errorTitle");
 
     if (typeof userEmail !== "string") {
       return next();
+    }
+
+    let error = {};
+    if (errorText?.length || errorTitle?.length) {
+      error = {
+        field: "roles",
+        title: errorTitle[0],
+        text: errorText[0],
+        href: "#roles-Administrator",
+      };
     }
 
     const user = await findUserByEmail(`${userEmail}`);
@@ -72,6 +81,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       UserRoles,
       user,
       req,
+      error,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
@@ -83,12 +93,24 @@ export async function usersEditPostController(req: Request, res: Response, next:
   let roles: UserRoles[];
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
   const { userEmail } = req.params;
-
-  const isEditingSuperAdminUser = await isAdministrator(userEmail);
-  if (isEditingSuperAdminUser) {
+  const emailAddress = req?.user?.userData?.email;
+  const isAdminUser = await isAdministrator(emailAddress);
+  if (!isAdminUser) {
     // disallow editing of SuperAdmins
-    logger.warn(`user ${req.user?.userData.id} attempted to edit super user ${userEmail}`);
-    return next(new HttpException(405, "405", "Not allowed to edit super admin account"));
+    logger.warn(`non-admin user ${req.user?.userData.id} attempted to edit user ${userEmail}`);
+    return next(new HttpException(405, "405", "You do not have access to edit users"));
+  }
+  if (emailAddress === userEmail) {
+    // disallow editing of SuperAdmins
+    logger.warn(`user ${req.user?.userData.id} attempted to change their own permissions`);
+    const error = {
+      title: "You cannot change your own permissions.",
+      text: "You need to ask another administrator to change this for you.",
+    };
+
+      req.flash("errorText", error.text);
+    req.flash("errorTitle", error.title);
+    return res.redirect(`/dashboard/users/${userEmail}`);
   }
 
   if (Array.isArray(usersRoles)) {
@@ -136,15 +158,34 @@ export async function listsController(req: Request, res: Response, next: NextFun
 }
 
 function listsWithFormattedDates(lists: List[]): List[] {
-  return lists.map((list) => ({
-    ...list,
-    annualReviewStartDate: formatAnnualReviewDate(list, "annualReviewStartDate"),
-    lastAnnualReviewStartDate: formatAnnualReviewDate(list, "lastAnnualReviewStartDate"),
-  }));
+  return lists.map((list) => {
+    const nextAnnualReviewStartDateString = formatAnnualReviewDate(list, "nextAnnualReviewStartDate");
+    const lastAnnualReviewStartDateString = formatAnnualReviewDate(list, "lastAnnualReviewStartDate");
+    let returnObj = {
+      ...list,
+    };
+    if (nextAnnualReviewStartDateString) {
+      returnObj = {
+        ...returnObj,
+        nextAnnualReviewStartDate: nextAnnualReviewStartDateString,
+      };
+    }
+    if (lastAnnualReviewStartDateString) {
+      returnObj = {
+        ...returnObj,
+        lastAnnualReviewStartDate: lastAnnualReviewStartDateString,
+      };
+    }
+    return returnObj;
+  });
 }
 
-function formatAnnualReviewDate(list: List, field: string): string {
-  return list?.jsonData?.[field] ? format(parseISO(list.jsonData[field] as string), DATE_FORMAT_SHORT_MONTH) : "";
+function formatAnnualReviewDate(list: List, field: string): Date | null {
+  if (["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"].includes(field)) {
+    // @ts-ignore
+    return list[field];
+  }
+  return null;
 }
 
 // TODO: test
@@ -159,7 +200,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     if (listId !== "new") {
       list = await findListById(listId);
-      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "annualReviewStartDate");
+      annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "nextAnnualReviewStartDate");
       lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
       templateUrl = "dashboard/lists-edit";
 
@@ -228,8 +269,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     error = {
       field: "publisher",
       text: !publisher
-        ? "You must indicated a publisher"
-        : "New users can only be example@fco.gov.uk, or example@fcdo.gov.uk",
+        ? "Enter an FCO or FCDO email address to add a user, e.g. 'example@fco.gov.uk or example@fcdo.gov.uk'"
+        : "New users must have an FCO or FCDO email address, e.g. 'example@fco.gov.uk, or example@fcdo.gov.uk'",
       href: "#publisher",
     };
   }

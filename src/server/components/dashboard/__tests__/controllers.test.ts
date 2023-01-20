@@ -84,6 +84,9 @@ describe("Dashboard Controllers", () => {
         users: [mockReq.user.userData.email],
       },
       countryId: 1,
+      nextAnnualReviewStartDate: new Date("01-Jan-2023"),
+      lastAnnualReviewStartDate: new Date("01-Jan-2022"),
+      isAnnualReview: false,
     };
 
     listItem = {
@@ -118,6 +121,7 @@ describe("Dashboard Controllers", () => {
       listId: 1,
       status: Status.NEW,
       history: [],
+      isAnnualReview: false,
     };
   });
 
@@ -174,7 +178,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("usersEditPostController", () => {
-    test("it correctly updates user removing SuperAdmin role", async () => {
+    test("next invoked when user updated but they do not have Administrator role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
 
@@ -183,16 +187,11 @@ describe("Dashboard Controllers", () => {
 
       mockReq.method = "POST";
       mockReq.body = {
-        roles: `${UserRoles.Administrator}`,
+        roles: ``,
       };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-      expect(spyUpdateUser).toHaveBeenCalledWith(mockReq.params.userEmail, {
-        jsonData: {
-          roles: [UserRoles.Administrator],
-        },
-      });
-      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/users");
+      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "You do not have access to edit users"));
     });
 
     test("next is invoked with updateUser error", async () => {
@@ -200,11 +199,11 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
-      mockReq.body = { roles: "" };
+      mockReq.user.userData.email = "user@gov.uk"
+      mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(new HttpException(405, "405", "Not allowed to edit super admin account"));
+      expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/users/user@gov.uk`);
     });
   });
 
@@ -217,7 +216,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with found lists", async () => {
-      const lists: any = [{ id: 1, annualReviewStartDate: "", lastAnnualReviewStartDate: "" }];
+      const lists: any = [{ id: 1, nextAnnualReviewStartDate: null, lastAnnualReviewStartDate: null }];
       mockReq.user.getLists.mockResolvedValueOnce(lists);
 
       await listsController(mockReq, mockRes, mockNext);
@@ -470,29 +469,12 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("getAnnualReviewDate", () => {
-    const list = {
-      jsonData: {
-        lastAnnualReviewStartDate: new Date("2022-01-01"),
-        annualReviewStartDate: new Date("2023-01-01"),
-      },
-    };
 
-    const annualReviewInNov = {
-      jsonData: {
-        lastAnnualReviewStartDate: new Date("2022-11-01"),
-        annualReviewStartDate: new Date("2023-11-01"),
-      },
-    };
-
-    global.Date.now = jest.fn(() => new Date(1670944983729).getTime()); // Current date to 2022-12-13
+    jest.useFakeTimers().setSystemTime(new Date(1670944983729));  // Current date to 2022-12-13
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "2",
-        list,
-      });
+      const result = getAnnualReviewDate("1", "2");
 
       // then
       expect(result.value).toBeTruthy();
@@ -500,24 +482,15 @@ describe("Dashboard Controllers", () => {
 
     it("returns invalid date if over 6 months of last annual review", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "8",
-        list,
-      });
-
+      const result = getAnnualReviewDate("1", "8");
       // then
       expect(result.value).toBeFalsy();
-      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current review date");
+      expect(result.errorMsg).toEqual("You can only change the date up to 6 months after the current date");
     });
 
     it("returns invalid date if user enters Feb 29th", () => {
       // when
-      const result = getAnnualReviewDate({
-        day: "29",
-        month: "2",
-        list,
-      });
+      const result = getAnnualReviewDate("29", "2");
 
       // then
       expect(result.value).toBeFalsy();
@@ -526,12 +499,8 @@ describe("Dashboard Controllers", () => {
 
     it("returns a different year if the user select January within 6 months of annual review", () => {
       // when
-      global.Date.now = jest.fn(() => new Date(1698796800000).getTime()); // Current date to 2023-11-01
-      const result = getAnnualReviewDate({
-        day: "1",
-        month: "1",
-        list: annualReviewInNov,
-      });
+      jest.useFakeTimers().setSystemTime(new Date(1698796800000));  // Current date to 2023-11-01
+      const result = getAnnualReviewDate("1", "1");
 
       // then
       expect(result.value).toBeTruthy();

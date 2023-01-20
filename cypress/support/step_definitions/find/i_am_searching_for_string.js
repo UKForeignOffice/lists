@@ -15,4 +15,4 @@ Given(
       exact: false,
     }).type(`${city}{enter}`);
   }
-);
+)

@@ -3,7 +3,9 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 
-import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput } from "./types";
+import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput, CurrentAnnualReview } from "./types";
+import { subMonths } from "date-fns";
+import { Status } from "@prisma/client";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -39,6 +41,78 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   } catch (error) {
     logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
     return undefined;
+  }
+}
+
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date, listItemStatuses: Status[] = [], isAnnualReview?: boolean): Promise<Result<List[]>> {
+  try {
+    logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
+
+    const result = (await prisma.list.findMany({
+      where: {
+        nextAnnualReviewStartDate: annualReviewStartDate,
+        isAnnualReview: false,
+      },
+      include: {
+        country: true,
+        items: {
+          where: {
+            list: {
+              jsonData: {
+                path: ["currentAnnualReview", "eligibleListItems"],
+                array_contains: [],
+              },
+            },
+            ...(listItemStatuses.length && { status: { in: listItemStatuses }}),
+            ...(isAnnualReview !== undefined && { isAnnualReview }),
+            history: {
+              some: {
+                type: "PUBLISHED",
+                time: {
+                  lte: subMonths(Date.now(), 1)
+                },
+              },
+            },
+          },
+          include: {
+            history: {
+              orderBy: {
+                time: "desc",
+              },
+            },
+          },
+        },
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+
+    return { result };
+  } catch (error) {
+    logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
+    return { error: Error("Unable to get lists") };
+  }
+}
+
+export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>> {
+  try {
+    const result = (await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ["currentAnnualReview"],
+          not: "",
+        },
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+    return { result };
+  } catch (error) {
+    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
+    return { error: new Error("Unable to get lists in annual review") };
   }
 }
 
@@ -116,16 +190,42 @@ export async function updateList(
   }
 }
 
-export async function updateAnnualReviewDate(listId: string, annualReviewStartDate: string): Promise<void> {
-  const list = await findListById(listId);
-  const jsonData = { ...(list as List).jsonData, annualReviewStartDate };
-
+export async function updateAnnualReviewDate(listId: string, nextAnnualReviewStartDate: string): Promise<void> {
   await prisma.list.update({
     where: {
       id: Number(listId),
     },
     data: {
-      jsonData,
+      nextAnnualReviewStartDate,
     },
   });
+}
+
+export async function updateListForAnnualReview(
+  list: List,
+  listData: {
+    currentAnnualReview?: CurrentAnnualReview;
+  }
+): Promise<Result<List>> {
+  try {
+    const data: ListUpdateInput = {
+      isAnnualReview: true,
+      jsonData: {
+        ...list.jsonData,
+        currentAnnualReview: listData.currentAnnualReview,
+      },
+    };
+
+    const result = (await prisma.list.update({
+      where: {
+        id: list.id,
+      },
+      data,
+    })) as List;
+    return { result };
+  } catch (error) {
+    const errorMessage = `Unable to update list for annual review: ${(error as Error).message}`;
+    logger.error(errorMessage);
+    return { error: new Error(errorMessage) };
+  }
 }

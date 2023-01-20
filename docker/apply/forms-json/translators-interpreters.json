@@ -415,11 +415,7 @@
       ],
       "next": [
         {
-          "path": "/you-cannot-be-added-to-the-list-at-this-time"
-        },
-        {
-          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
-          "condition": "isTranslatorCountryPilot"
+          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english"
         }
       ]
     },
@@ -2780,70 +2776,6 @@
               "type": "Value",
               "value": "false",
               "display": "No"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "isTranslatorCountryPilot",
-      "displayName": "Country pilots Translators Interpreters",
-      "value": {
-        "name": "isTranslatorCountryPilot",
-        "conditions": [
-          {
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Poland",
-              "display": "Poland"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Indonesia",
-              "display": "Indonesia"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Egypt",
-              "display": "Egypt"
-            }
-          },
-          {
-            "coordinator": "or",
-            "field": {
-              "name": "country",
-              "type": "AutocompleteField",
-              "display": "Country list"
-            },
-            "operator": "is",
-            "value": {
-              "type": "Value",
-              "value": "Argentina",
-              "display": "Argentina"
             }
           }
         ]

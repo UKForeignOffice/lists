@@ -87,6 +87,7 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
+
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
@@ -95,9 +96,10 @@ export async function parseJsonFormData(
    * I have tried doing a babel/tsc/webpack/jest moduleNameMapping change but it is still causing errors.
    * Giving up. Enjoy
    */
-  const baseDir = isUnderTest
-    ? __dirname.replace("src/server/components/formRunner", "docker/apply")
-    : __dirname.replace("dist", "docker/apply");
+  let baseDir = __dirname.replace("dist", "dist/src/server/components/formRunner");
+  if (!baseDir.includes("dist")) {
+    baseDir = baseDir.replace("/src/server/components/formRunner", "/dist/src/server/components/formRunner");
+  }
   const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
 
   const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");

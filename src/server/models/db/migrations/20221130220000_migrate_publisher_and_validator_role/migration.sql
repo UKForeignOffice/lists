@@ -15,3 +15,4 @@ update "User"
 set "jsonData" =  jsonb_set(cast("jsonData" as jsonb), '{roles}', '["Administrator"]'::jsonb, true) where "jsonData"->'roles' ?| array['SuperAdmin'];
 
 
+

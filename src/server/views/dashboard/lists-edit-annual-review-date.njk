@@ -21,7 +21,7 @@
       Change annual review start date
     </h1>
 
-    <p class="govuk-body">The next {{_.startCase(list.type)}} list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
+    <p class="govuk-body">The next {{_.startCase(list.type).toLowerCase()}} list annual review starts <strong>{{ annualReviewStartDate }}.</strong></p>
 
     {{ govukDateInput({
       id: "annualReveiwDateForm",

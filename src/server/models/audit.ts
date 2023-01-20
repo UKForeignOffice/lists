@@ -1,36 +1,60 @@
 import { prisma } from "./db/prisma-client";
-import { Prisma, AuditEvent } from "@prisma/client";
+import { AuditEvent } from "@prisma/client";
 
 import {
-  Audit,
-  AuditListItemEventName,
-  AuditCreateInput,
-  ListItem,
-  User,
+  AuditCreateInput, ListEventJsonData, ListItemEventJsonData
 } from "./types";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-
-interface ListItemEventData {
-  userId?: User["id"];
-  itemId: ListItem["id"];
-  eventName: AuditListItemEventName;
-  requestedChanges?: string;
-  updatedJsonData?: ListItemJsonData;
-}
 
 /**
  * @deprecated
  * TODO: deprecate, this is handled by the history field
  */
 export function recordListItemEvent(
-  eventData: ListItemEventData,
-  auditEvent: AuditEvent
-): Prisma.Prisma__AuditClient<Audit> {
+  eventData: ListItemEventJsonData | ListEventJsonData,
+  auditEvent: AuditEvent,
+  type?: "user" | "list" | "listItem"
+) {
+  type = type ?? "listItem";
   const data: AuditCreateInput = {
     auditEvent,
-    type: "listItem",
+    type,
     jsonData: { ...eventData },
   };
 
-  return prisma.audit.create({ data }) as Prisma.Prisma__AuditClient<Audit>;
+  return prisma.audit.create({ data });
 }
+
+export async function findAuditEvents(
+  annualReviewReference: string,
+  auditEvent: AuditEvent,
+  type?: "user" | "list" | "listItem"
+) {
+  type = type ?? "listItem";
+
+  try {
+    const result = await prisma.audit.findMany({
+      take: 1,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        AND: [
+          {
+            type,
+          },
+          {
+            jsonData: {
+              path: ["annualReviewRef"],
+              equals: annualReviewReference,
+            },
+          },
+        ],
+      },
+    });
+    return { result };
+  } catch (e) {
+    const message = `Unable to find audit records: ${e.message}`;
+    return { error: new Error(message) };
+  }
+}
+

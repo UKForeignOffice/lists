@@ -28,10 +28,17 @@ function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
   updatedJsonData: ListItemJsonData
 ): ListItemJsonData {
+  /**
+   * Cherry-picked from origin/feat/1541-sworn-list-fix
+   */
+  const swornTranslatorFields =
+    listItem.type === "translatorsInterpreters" ? ["swornInterpretations", "swornTranslations"] : [];
+  const jsonData = (listItem as ListItemGetObject).jsonData;
+
   return Object.assign(
     {},
     listItem.jsonData,
-    ...Object.keys((listItem as ListItemGetObject).jsonData).map(
+    ...[...Object.keys(jsonData), ...swornTranslatorFields].map(
       (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
     )
   );
@@ -465,7 +472,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   if (userHasRemovedOwnEmail) {
     const error = {
       field: "publisherList",
-      text: "You cannot remove your own email address from a list",
+      text: "You cannot remove yourself as a user. Contact an administrator to remove your email address from this list.",
       href: "#publishers",
     };
 
