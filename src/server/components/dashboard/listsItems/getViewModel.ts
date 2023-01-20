@@ -111,11 +111,37 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
   return jsonData?.[field];
 }
 
+function hasUpdate(field: KeyOfJsonData, listItem: ListItemJsonData) {
+  const updatedJsonData = listItem?.updatedJsonData;
+  if (!updatedJsonData) {
+    return false;
+  }
+  if (field === "address") {
+    const addressFields = ["address.firstLine", "address.secondLine", "postCode", "city"];
+    const addressFieldsHasChange =
+      addressFields.findIndex((addressField) => {
+        // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+        // eslint-disable-next-line no-prototype-builtins
+        return updatedJsonData?.hasOwnProperty?.(addressField) ?? false;
+      }) !== -1;
+    return addressFieldsHasChange;
+  }
+
+  // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+  // eslint-disable-next-line no-prototype-builtins
+  return updatedJsonData?.hasOwnProperty?.(field);
+}
+
 function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.govukRow {
   const value = parseValue(field, listItem);
   const type = getValueMacroType(value, field);
   const htmlValues = ["link", "emailAddress", "phoneNumber", "multiLineText"];
   const valueKey = htmlValues.includes(type) ? "html" : "text";
+
+  const fieldHasUpdate = hasUpdate(field, listItem);
+
+  const updateTag = { html: "<strong class='govuk-tag'>Updated</strong>" };
+
   return {
     key: {
       text: fieldTitles[field] ?? "",
@@ -123,6 +149,10 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
     value: {
       [valueKey]: value,
     },
+    ...(fieldHasUpdate && {
+      actions: { items: [updateTag] },
+      hasUpdate: fieldHasUpdate,
+    }),
     type: getValueMacroType(value, field),
   };
 }
@@ -158,6 +188,7 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
   if (listItem.type === ServiceType.translatorsInterpreters && listItem.jsonData.addressDisplay) {
     listItem.jsonData.addressDisplay = AddressDisplay[listItem.jsonData.addressDisplay];
   }
+
   return jsonDataAsRows(contactFields, listItem.jsonData);
 }
 
@@ -253,4 +284,3 @@ export function getDetailsViewModel(listItem: ListItemGetObject | ListItem): Det
     headerField,
   };
 }
-

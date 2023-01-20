@@ -4,16 +4,18 @@ Feature: Dashboard filtering
     Given I am logged in as a "Administrator"
     And A "lawyers" list exists for Eurasia
     And there are these list items
-      | contactName | organisationName | emailAddress               | status            | isPublished | emailVerified | updatedAt |
-      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW               | false       | true          | 01/01/22  |
-      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW               | false       | false         | 05/01/22  |
-      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER | false       | true          | 12/01/22  |
-      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED            | false       | true          | 03/02/22  |
-      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED            | true        | true          | 04/02/22  |
-      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED         | true        | true          | 08/01/22  |
+      | contactName | organisationName | emailAddress               | status              | isPublished | emailVerified | updatedAt |
+      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW                 | false       | true          | 01/01/22  |
+      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW                 | false       | false         | 05/01/22  |
+      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | false       | true          | 12/01/22  |
+      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED              | false       | true          | 03/02/22  |
+      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED              | true        | true          | 04/02/22  |
+      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED           | true        | true          | 08/01/22  |
+      | Newman      | Newman Law       | smoke@cautionyourblast.com | CHECK_ANNUAL_REVIEW | false       | true          | 10/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
   Scenario Outline: View list item details
+
     When I am viewing the list item details for "<contactName>"
     Then I see radio buttons "<radioButtons>"
     And I do not see radio buttons "<radioButtonsConfirm>"
@@ -119,8 +121,21 @@ Feature: Dashboard filtering
       | Professional associations                     | Miniluv                                |
       | Email - private                               | smoke@cautionyourblast.com             |
 
-
   Scenario: Should not be able to view list if not publisher
     Given I am logged in as a ""
     When I visit a list that I am not a publisher of
     Then I should see an unauthorised page
+
+
+  Scenario: Should see updated notification at the top of the page for CHECK_ANNUAL_REVIEW
+    When I am viewing the list item details for "Newman"
+    Then I see the notification text "This service provider has confirmed their details are up to date"
+
+
+  Scenario: Should see UPDATED tags on updated fields
+    When Some fields have been updated for "Newman"
+    And I am viewing the list item details for "Newman"
+    Then I see the notification text "This service provider has updated their details"
+    And I "see" the updated tag on row "Pro bono"
+    And I "see" the updated tag on row "Company"
+    And I "do not see" the updated tag on row "Legal aid"

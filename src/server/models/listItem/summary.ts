@@ -123,7 +123,6 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   });
 
   const pinnedItems = (await findPinnedIndexListItems(options)) ?? [];
-
   return {
     pinnedItems: pinnedItems?.map?.(listItemsWithIndexDetails),
     items: result.map(listItemsWithIndexDetails),

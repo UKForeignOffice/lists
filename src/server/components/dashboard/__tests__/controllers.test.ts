@@ -106,6 +106,11 @@ describe("Dashboard Controllers", () => {
       isApproved: true,
       isBlocked: false,
       isPublished: true,
+      publishingStatus: "live",
+      activityStatus: {
+        text: "Check new entry",
+        type: "to_do",
+      },
       reference: "TEST-UUID",
       type: "lawyers",
       createdAt: new Date(),
@@ -358,6 +363,8 @@ describe("Dashboard Controllers", () => {
       mockReq.user.userData.id = 3;
       listItem.type = ServiceType.lawyers;
       list.type = ServiceType.lawyers;
+
+      mockRes.locals = { list, listItem };
 
       jest.spyOn(listItemModel, "findListItemById").mockResolvedValue({
         ...listItem,

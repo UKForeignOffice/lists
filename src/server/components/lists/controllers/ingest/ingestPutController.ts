@@ -9,30 +9,22 @@ import { ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
+import { getObjectDiff } from "./helpers";
 
-export async function ingestPutController(
-  req: Request,
-  res: Response
-): Promise<Response<any, Record<string, any>> | undefined> {
+export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {
-    res.status(500).json({
+    return res.status(500).json({
       error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
-    return;
   }
 
-  if (error) {
-    res.status(422).json({ error: error.message });
-    return;
-  }
-
-  if (value === undefined) {
-    res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
-    return;
+  if (error?.message) {
+    logger.error(`ingestPutController. Validating schema failed ${error.message}`);
+    return res.status(422).json({ error: "request could not be processed - post data could not be parsed" });
   }
 
   let data: DeserialisedWebhookData;
@@ -46,12 +38,9 @@ export async function ingestPutController(
   try {
     const listItem = await prisma.listItem.findUnique({
       where: { id: Number(id) },
-      include: {
-        history: true,
-      },
     });
 
-    if (listItem === undefined) {
+    if (!listItem) {
       return res.status(404).send({
         error: {
           message: `Unable to store updates - listItem could not be found`,
@@ -59,18 +48,25 @@ export async function ingestPutController(
       });
     }
 
-    const jsonData = listItem?.jsonData as Prisma.JsonObject;
+    const jsonData = listItem.jsonData as Prisma.JsonObject;
+
+    const diff = getObjectDiff(jsonData, data);
+
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
-      updatedJsonData: data,
+      updatedJsonData: diff,
     };
+
+    const { isAnnualReview = false } = value.metadata;
+    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff) : EVENTS.EDITED(diff);
+    const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
 
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
-        status: Status.EDITED,
+        status,
         history: {
-          create: EVENTS.EDITED(data),
+          create: event,
         },
         jsonData: jsonDataWithUpdatedJsonData,
       },

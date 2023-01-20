@@ -191,6 +191,7 @@ $two-thirds: $one-third * 2;
     &--pinned {
       margin-bottom: govuk-spacing(8);
       border-bottom: 4px solid govuk-colour("dark-grey");
+      align-items: baseline;
     }
   }
   &__list-item-pin {
@@ -261,6 +262,16 @@ $two-thirds: $one-third * 2;
   .govuk-header__content {
     max-width: 33.66%;
   }
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.grey-border-bottom {
+  border-bottom: 1px solid grey;
+  padding-bottom: 1rem;
 }
 
 .govuk-notification-banner__full-width {

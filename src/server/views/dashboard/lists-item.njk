@@ -20,14 +20,18 @@
     </div>
   </aside>
 
+
   <div class="govuk-grid-column-three-quarters">
     {% if error and error.text %}
       {{ dashboardMacros.errorBanner(error) }}
     {% endif %}
 
-    <h1 class="govuk-heading-l">
-      {{ title }}
-    </h1>
+    <div class="flex-space-between">
+      <h1 class="govuk-heading-l">
+        {{ title }} details
+      </h1>
+      <div class="govuk-caption-m">Submitted: {{ listItem.createdAt | date }}</div>
+    </div>
 
     {% if not listItem %}
       <p class="govuk-body">Details could not be found</p>

@@ -46,6 +46,9 @@ export function getNewSessionWebhookData(
     questions,
     options,
     name: "Changes required",
+    metadata: {
+      isAnnualReview,
+    },
   };
   return newSessionData;
 }
