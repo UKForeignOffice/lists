@@ -21,6 +21,8 @@ describe("arrayHasChanges", () => {
     expect(arrayHasChanges(["a", "b", "c"], ["d", "e", "f"])).toBeTruthy();
     expect(arrayHasChanges(["a", "b", "c"], ["a", "b", "d"])).toBeTruthy();
     expect(arrayHasChanges([true, true, true], [true, true, false])).toBeTruthy();
+    expect(arrayHasChanges([], ["toot"])).toBeTruthy();
+    expect(arrayHasChanges(undefined, ["woot"])).toBeTruthy();
   });
 });
 
