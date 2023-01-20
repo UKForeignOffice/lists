@@ -178,7 +178,7 @@ describe("Auth Module", () => {
     test("logout is correct", () => {
       expect(req.logout).not.toHaveBeenCalled();
 
-      getLogoutController(req, res);
+      getLogoutController(req, res, next);
 
       expect(req.logout).toHaveBeenCalled();
     });

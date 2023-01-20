@@ -42,19 +42,66 @@
     </aside>
 
     <div class="govuk-grid-column-three-quarters">
-    {% if messages.successBannerTitle %}
-        {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
-        {% set bannerTitle = messages.successBannerTitle %}
-        {{ dashboardMacros.successBanner(bannerHeading, bannerTitle, messages.successBannerColour) }}
-    {% endif %}
+      {% if messages.successBannerTitle %}
+          {% set bannerHeading = _.capitalize(_.toLower(messages.successBannerHeading)) %}
+          {% set bannerTitle = messages.successBannerTitle %}
+          {{ dashboardMacros.successBanner(bannerHeading, bannerTitle, messages.successBannerColour) }}
+      {% endif %}
 
-  <h1 class="govuk-heading-l">
-    {{ title }}
-  </h1>
+      <h1 class="govuk-heading-l">
+        {{ title }}
+      </h1>
+
+      {% if bannerToggles.oneMonthWarning %}
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Annual review
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <p class="govuk-notification-banner__heading">
+              Annual review will start on {{ annualReviewDate }} at 11am (GMT)
+
+              <a href="{{ listsEditUrl }}/annual-review-date">
+                <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" data-module="govuk-button">Change date</button>
+              </a>
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if bannerToggles.emailsSent %}
+        <div class="govuk-notification-banner govuk-notification-banner--success" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Annual review has started
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <p class="govuk-notification-banner__heading">
+              All published service providers were sent a request to review their information on {{ annualReviewDate }} at 11am (GMT)
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if bannerToggles.unpublishWarning.display %}
+        <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Service providers are going to be unpublished
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <strong>{{ bannerToggles.unpublishWarning.countOfListItems }} service {{ "providers are" if bannerToggles.unpublishWarning.countOfListItems > 1 else "provider is" }} going to be unpublished at 1pm on {{ unpublishDate }} as they have not responded to the annual review. <a href="#" class="govuk-link">Check which providers</a> are going to be unpublished.</strong>
+          </div>
+        </div>
+      {% endif %}
 
       {% if list.items.length > 1 %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        <div class="govuk-body">The list is ordered with the most recent submissions and changes first</div>
+        <strong class="govuk-body">The list is ordered with the most recent submissions and changes first</strong>
       {% endif %}
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
       {% if list.pinnedItems.length !== 0 %}

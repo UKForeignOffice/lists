@@ -2,6 +2,8 @@ import Joi from "joi";
 import { get } from "lodash";
 import { countriesList } from "server/services/metadata";
 import * as config from "server/config";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { AuditListItemEventName } from "server/models/types";
 
 const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
 
@@ -29,7 +31,12 @@ export function isCountryNameValid(countryName: string): boolean {
 }
 
 export function throwIfConfigVarIsUndefined(varName: string): void {
-  if (get(config, varName) === undefined) {
-    throw new Error(`Environment variable ${varName} is missing`);
+  if (!get(config, varName)) {
+    throw new Error(`Server config variable ${varName} is missing`);
   }
+}
+
+export interface EventMetaData {
+  auditEvent: AuditEvent | ListItemEvent;
+  auditListItemEventName: AuditListItemEventName;
 }

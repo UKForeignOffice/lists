@@ -4,6 +4,8 @@
 import { Response } from "express";
 import { findListItemById } from "server/models/listItem";
 import { getListOverview } from "server/components/dashboard/listsItems/helpers";
+import { ListItem } from "server/models/types";
+import { Event } from "@prisma/client";
 
 export type NonPrimitiveMacros = "link" | "emailAddress" | "phoneNumber" | "multiLineText";
 
@@ -81,3 +83,5 @@ export type ListItemRes = Response<
     listItem: UnwrapNull<Unwrap<ReturnType<typeof findListItemById>>>;
   }
 >;
+
+export type ListItemWithHistory = ListItem & {history: Event[]};

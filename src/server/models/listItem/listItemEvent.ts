@@ -1,4 +1,11 @@
+import { prisma } from "../db/prisma-client";
 import { Prisma, ListItemEvent } from "@prisma/client";
+import {
+  Event,
+  EventCreateInput,
+  EventJsonData
+} from "./types";
+import { logger } from "server/services/logger";
 
 type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
@@ -106,4 +113,33 @@ export const EVENTS = {
       eventName: "annual review started",
     },
   }),
+
+  [ListItemEvent.REMINDER]: (updatedJsonData = {}): EventCreate<"REMINDER"> => ({
+    type: ListItemEvent.REMINDER,
+    jsonData: {
+      eventName: "reminder",
+      updatedJsonData,
+    },
+  }),
 };
+
+export function recordEvent(
+  eventData: EventJsonData,
+  listItemId: number,
+  eventType: ListItemEvent
+): Prisma.Prisma__EventClient<Event> {
+  logger.debug(`event type ${eventType} to record`);
+  const data: EventCreateInput = {
+    time: new Date(),
+    type: eventType,
+    jsonData: { ...eventData },
+    listItem: {
+      connect: {
+        id: listItemId,
+      }
+    }
+  };
+  logger.debug(`creating Event record with data [${JSON.stringify(data)}`);
+
+  return prisma.event.create({ data }) as Prisma.Prisma__EventClient<Event>;
+}

@@ -79,8 +79,11 @@ export async function findUsers(): Promise<User[]> {
   }
 }
 
-export async function isAdministrator(email: string): Promise<boolean> {
+export async function isAdministrator(email: string | undefined): Promise<boolean> {
   try {
+    if (!email) {
+      return false;
+    }
     const user = await findUserByEmail(email);
     return user?.jsonData.roles?.includes(UserRoles.Administrator) === true;
   } catch (error) {

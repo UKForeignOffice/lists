@@ -34,7 +34,9 @@ export async function getListOverview(id: number) {
       id: true,
       type: true,
       country: true,
-      jsonData: false,
+      nextAnnualReviewStartDate: true,
+      lastAnnualReviewStartDate: true,
+      jsonData: true,
     },
   });
 }
