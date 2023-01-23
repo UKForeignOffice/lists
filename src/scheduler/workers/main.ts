@@ -92,7 +92,7 @@ async function processProviderEmailsForListItems(
 
     // get the most recent audit record to determine if the email has already been sent for the start milestone
     if (annualReviewRef) {
-      const { result: events } = await findAuditEvents(annualReviewRef, "REMINDER", "listItem");
+      const { result: events } = await findAuditEvents(annualReviewRef, "REMINDER", "listItem", listItem.id);
       if (events?.length) {
         const audit = events.pop();
         isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedProviderEmail");

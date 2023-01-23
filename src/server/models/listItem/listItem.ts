@@ -457,7 +457,7 @@ export async function updateIsAnnualReview(
   const updatedListItems: ListItemWithHistory[] = [];
 
   if (!listItems) {
-    const message = `List ids must be provided to update list items`;
+    const message = `List item ids must be provided to update list items for list ${list.id}`;
     logger.error(message);
     return { error: new Error(message) };
   }
@@ -481,29 +481,11 @@ export async function updateIsAnnualReview(
       },
     };
     try {
-      logger.debug(`updating list item in transaction`);
-      const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
-
-      const result = await prisma.$transaction([
-        prisma.listItem.update(updateListItemPrismaStatement),
-        recordListItemEvent(
-          {
-            annualReviewRef: annualReviewRef,
-            eventName: "reminder",
-            itemId: listItem.id,
-            reminderType: "sendStartedProviderEmail",
-          },
-          auditEvent
-        ),
-      ]);
-      if (!result) {
-        const message = `transaction update failed for listItem ${listItem.id} update for annual review`;
-        logger.error(message);
-      } else {
-        updatedListItems.push(listItem);
-      }
+      logger.debug(`updating isAnnualReview for list item ${listItem.id}`);
+      await prisma.listItem.update(updateListItemPrismaStatement);
+      updatedListItems.push(listItem);
     } catch (err) {
-      const message = `listItem.update transaction error occurred updating list item ${listItem.id} due to ${err.message}.  Rolling back transaction.`;
+      const message = `could not update list item ${listItem.id} due to ${err.message}.`;
       logger.error(message);
     }
   }
