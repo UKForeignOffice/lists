@@ -53,7 +53,7 @@ export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEE
  * @returns UnpublishedDateContext[]
  */
 function getUnpublishedDateContexts(today: Date): DateContext[] {
-  const unpublishedDateSixWeeksAway = addDays(today, schedulerMilestoneDays.provider.SIX_WEEKS);
+  const unpublishedDateSixWeeksAway = addDays(today, (schedulerMilestoneDays.provider.SIX_WEEKS + schedulerMilestoneDays.post.ONE_MONTH));
   const unpublishedDateOneDayAway = subDays(unpublishedDateSixWeeksAway, 1);
 
   const unpublishedDateContextsForFiltering: DateContext[] = [

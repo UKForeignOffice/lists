@@ -27,9 +27,29 @@ export function recordListItemEvent(
 export async function findAuditEvents(
   annualReviewReference: string,
   auditEvent: AuditEvent,
-  type?: "user" | "list" | "listItem"
+  type?: "user" | "list" | "listItem",
+  itemId?: number,
 ) {
   type = type ?? "listItem";
+
+  const andCondition = [
+    {
+      type,
+    },
+    {
+      jsonData: {
+        path: ["annualReviewRef"],
+        equals: annualReviewReference,
+      },
+    }];
+  if (itemId) {
+    andCondition.push({
+      jsonData: {
+        path: ["itemId"],
+        equals: `${itemId}`,
+      },
+    });
+  }
 
   try {
     const result = await prisma.audit.findMany({
@@ -38,17 +58,7 @@ export async function findAuditEvents(
         createdAt: "desc",
       },
       where: {
-        AND: [
-          {
-            type,
-          },
-          {
-            jsonData: {
-              path: ["annualReviewRef"],
-              equals: annualReviewReference,
-            },
-          },
-        ],
+        AND: andCondition,
       },
     });
     return { result };
