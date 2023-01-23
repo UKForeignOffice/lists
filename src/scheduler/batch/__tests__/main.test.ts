@@ -27,31 +27,31 @@ const annualReview: DateContext[] = [
 
 const unpublish: DateContext[] = [
   {
-    eventDate: new Date(2022, 11, 12, 0, 0, 0),
+    eventDate: new Date(2023, 0, 9, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.FIVE_WEEKS,
   },
   {
-    eventDate: new Date(2022, 11, 19, 0, 0, 0),
+    eventDate: new Date(2023, 0, 16, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.FOUR_WEEKS,
   },
   {
-    eventDate: new Date(2022, 11, 26, 0, 0, 0),
+    eventDate: new Date(2023, 0, 23, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.THREE_WEEKS,
   },
   {
-    eventDate: new Date(2023, 0, 2, 0, 0, 0),
+    eventDate: new Date(2023, 0, 30, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.TWO_WEEKS,
   },
   {
-    eventDate: new Date(2023, 0, 9, 0, 0, 0),
+    eventDate: new Date(2023, 0, 6, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.ONE_WEEK,
   },
   {
-    eventDate: new Date(2023, 0, 15, 0, 0, 0),
+    eventDate: new Date(2023, 0, 12, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.ONE_DAY,
   },
   {
-    eventDate: new Date(2023, 0, 16, 0, 0, 0),
+    eventDate: new Date(2023, 0, 13, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.both.UNPUBLISH,
   },
 ];
