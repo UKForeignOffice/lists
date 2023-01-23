@@ -409,7 +409,7 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - never-publish
+                - deploy-test
           context:
             - VPN
             - AWS
@@ -423,7 +423,7 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-                - never-publish
+                - deploy-test
           context:
             - VPN
             - AWS
@@ -438,8 +438,8 @@ workflows:
           requires:
             - publish-lists
             - publish-lists-apply
-#            - publish-lists-scheduler-batch
-#            - publish-lists-scheduler-worker
+            - publish-lists-scheduler-batch
+            - publish-lists-scheduler-worker
 #            - publish-lists-postgres
           filters:
             branches:
