@@ -42,14 +42,11 @@ export async function get(req: Request, res: ListIndexRes) {
     return res.redirect(res.locals.listEditUrl);
   }
 
-  const {
-    currentAnnualReview = {
-      keyDates: createKeyDatesFromISODate(nextAnnualReviewStartDate),
-    },
-  } = jsonData;
+  const keyDates =
+    jsonData.currentAnnualReview?.keyDates?.annualReview ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);
 
   return res.render("dashboard/lists-edit-dev", {
-    keyDates: currentAnnualReview.keyDates,
+    keyDates,
     csrfToken: req.csrfToken(),
   });
 }
