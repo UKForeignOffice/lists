@@ -1,0 +1,90 @@
+{% extends "./dashboard.njk" %}
+{% import "./macros.njk" as dashboardMacros %}
+{% from "table/macro.njk" import govukTable %}
+{% from "input/macro.njk" import govukInput %}
+{% from "button/macro.njk" import govukButton %}
+
+
+{% block content %}
+  <div class="govuk-grid-row back-links__container">
+    <aside class="govuk-grid-column-one-quarter back-links__aside">
+      <div class="back-links__item">
+        <a class="govuk-link govuk-back-link" href="{{ listsEditUrl }}">Back</a>
+      </div>
+      <div class="back-links__item">
+        <a class="govuk-link govuk-back-link" href="{{ listsEditUrl }}">Back</a>
+      </div>
+    </aside>
+
+    <div class="govuk-grid-column-three-quarters">
+      {% if messages.successBannerHeading %}
+        {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
+      {% endif %}
+
+      {% if messages.error %}
+        {{ dashboardMacros.errorBanner(messages.error) }}
+      {% endif %}
+
+      {% if error.field %}
+        {{ dashboardMacros.errorBanner(error) }}
+      {% endif %}
+
+      <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
+      <h1 class="govuk-heading-l">
+        Settings - {{ _.startCase(list.type) }}
+      </h1>
+
+      <form class="form" method="post" required>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {% set rowsWithInput = [] %}
+        {% for key, value in keyDates %}
+          {% set input = govukInput({
+            label: {
+              text: key,
+              classes: "govuk-visually-hidden"
+            },
+            value: value,
+            id: key,
+            name: key
+          }) %}
+
+          {% set rowWithInput = [
+            {
+              text: key
+            },
+            {
+              html: input
+            }
+          ]
+          %}
+
+          {% set rowsWithInput = (rowsWithInput.push(rowWithInput), rowsWithInput) %}
+
+        {% endfor %}
+
+        {{ govukTable({
+          caption: "Key dates",
+          captionClasses: "govuk-table__caption--m",
+          firstCellIsHeader: true,
+          head: [
+            {
+              text: "Key date"
+            },
+            {
+              text: "Date to send email"
+            }
+          ],
+          rows: rowsWithInput
+        }) }}
+
+        {{ govukButton({
+          text: "Update"
+        }) }}
+
+
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

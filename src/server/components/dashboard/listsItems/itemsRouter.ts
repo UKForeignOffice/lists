@@ -8,6 +8,7 @@ import {
 } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 import * as annualReview from "server/components/dashboard/annualReview/controllers";
+import * as developmentControllers from "server/components/dashboard/listsItems/controllers.development";
 
 import { logger } from "server/services/logger";
 import express from "express";
@@ -49,6 +50,9 @@ listRouter.param("listId", async (req, res, next, listId) => {
     return next(e);
   }
 });
+
+listRouter.get("/:listId/development", developmentControllers.get);
+listRouter.post("/:listId/development", developmentControllers.post);
 
 listRouter.all("/:listId*", validateAccessToList);
 

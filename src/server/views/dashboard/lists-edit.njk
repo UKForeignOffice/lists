@@ -17,6 +17,10 @@
         {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
       {% endif %}
 
+      {% if messages.error %}
+        {{ dashboardMacros.errorBanner(messages.error) }}
+      {% endif %}
+
       {% if error.field %}
         {{ dashboardMacros.errorBanner(error) }}
       {% endif %}
