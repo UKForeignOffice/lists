@@ -221,7 +221,7 @@ export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHi
   return updatedListItems.result;
 }
 
-async function processAnnualReview(): Promise<void> {
+async function processAnnualReview() {
   const listResult = await findListsWithCurrentAnnualReview();
 
   // validate list results
@@ -250,14 +250,28 @@ async function processAnnualReview(): Promise<void> {
     return;
   }
   const { result: listItems } = listItemsResult;
-  for (const list of listsWithCurrentAnnualReview) {
-    const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
-    await processList(list, listItemsForList);
-  }
+  logger.info("attempting to process lists");
+
+  // for (const list of listsWithCurrentAnnualReview) {
+  //   const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
+  //   await processList(list, listItemsForList);
+  // }
+
+  return Promise.allSettled(
+    listsWithCurrentAnnualReview.map(async (list) => {
+      const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
+      return await processList(list, listItemsForList);
+    })
+  );
 }
 
 processAnnualReview()
   .then((r) => {
+    logger.info(`should be an array ${r}`);
+    r?.forEach((promise) => {
+      logger.info(`${promise.status}`);
+    });
+
     logger.info(`Annual review worker finished`);
     process.exit(0);
   })
