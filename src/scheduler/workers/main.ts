@@ -136,53 +136,58 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   }
   const annualReviewKeyDates = list.jsonData.currentAnnualReview?.keyDates.annualReview;
   const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
-  if (annualReviewRef) {
-    // get the most recent audit record to determine if the email has already been sent for the respective milestones
-    const audit = await getLatestReminderAuditEvent(annualReviewRef, "list");
-    const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
-    let isEmailSent = false;
-    const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
+  if (!annualReviewRef) {
+    logger.info(`Annual review reference not found in currentAnnualReview field for list ${list.id}`);
+    return;
+  }
+  // get the most recent audit record to determine if the email has already been sent for the respective milestones
+  const audit = await getLatestReminderAuditEvent(annualReviewRef, "list");
+  const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
+  let isEmailSent = false;
+  const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
     // todayDateString = formatDate(subDays(new Date(), 28)); // today is annual review start date
     // todayDateString = formatDate(subDays(new Date(), 27)); // today is day before annual review start date
-    const today = new Date(todayDateString);
+  const today = new Date(todayDateString);
+  logger.info(`Checking annual review milestone dates against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
 
-    // email the posts and providers if today = one of the annual review milestone date
-    switch (today.toISOString()) {
-      case annualReviewKeyDates?.POST_ONE_MONTH:
-        isEmailSent = isEmailSentBefore(audit, "sendOneMonthPostEmail");
-        if (!isEmailSent) {
-          await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
-        }
-        break;
-      case annualReviewKeyDates?.POST_ONE_WEEK:
-        isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
-        if (!isEmailSent) {
-          await processPostEmailsForList(list, "POST_ONE_WEEK", "sendOneWeekPostEmail");
-        }
-        break;
-      case annualReviewKeyDates?.POST_ONE_DAY:
-        isEmailSent = isEmailSentBefore(audit as Audit, "sendOneDayPostEmail");
-        if (!isEmailSent) {
-          await processPostEmailsForList(list, "POST_ONE_DAY", "sendOneDayPostEmail");
-        }
-        break;
-      case annualReviewKeyDates?.START:
-        // email posts to notify of annual review start
-        isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
-        if (!isEmailSent) {
-          await processPostEmailsForList(list, "START", "sendStartedPostEmail");
-        }
+  // email the posts and providers if today = one of the annual review milestone date
+  switch (today.toISOString()) {
+    case annualReviewKeyDates?.POST_ONE_MONTH:
+      isEmailSent = isEmailSentBefore(audit, "sendOneMonthPostEmail");
+      if (!isEmailSent) {
+        await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
+      }
+      break;
+    case annualReviewKeyDates?.POST_ONE_WEEK:
+      isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
+      if (!isEmailSent) {
+        await processPostEmailsForList(list, "POST_ONE_WEEK", "sendOneWeekPostEmail");
+      }
+      break;
+    case annualReviewKeyDates?.POST_ONE_DAY:
+      isEmailSent = isEmailSentBefore(audit as Audit, "sendOneDayPostEmail");
+      if (!isEmailSent) {
+        await processPostEmailsForList(list, "POST_ONE_DAY", "sendOneDayPostEmail");
+      }
+      break;
+    case annualReviewKeyDates?.START:
+      // email posts to notify of annual review start
+      isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
+      if (!isEmailSent) {
+        await processPostEmailsForList(list, "START", "sendStartedPostEmail");
+      }
 
-        // update ListItem.isAnnualReview if today = the START milestone date
-        // email providers to notify of annual review start
-        isEmailSent = isEmailSentBefore(listItemAudit as Audit, "sendStartedProviderEmail");
-        if (!isEmailSent) {
-          const updatedListItems = await updateIsAnnualReviewForListItems(listItemsForList, list);
-          const currentDateString = formatDate(addDays(today, 42));
-          await processProviderEmailsForListItems(list, updatedListItems, "START", currentDateString);
-        }
-        break;
-    }
+      // update ListItem.isAnnualReview if today = the START milestone date
+      // email providers to notify of annual review start
+      isEmailSent = isEmailSentBefore(listItemAudit as Audit, "sendStartedProviderEmail");
+      if (!isEmailSent) {
+        const updatedListItems = await updateIsAnnualReviewForListItems(listItemsForList, list);
+        const currentDateString = formatDate(addDays(today, 42));
+        await processProviderEmailsForListItems(list, updatedListItems, "START", currentDateString);
+      }
+      break;
+    default:
+      logger.info(`Annual review milestone dates for list ${list.id} don't match against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
   }
 }
 
