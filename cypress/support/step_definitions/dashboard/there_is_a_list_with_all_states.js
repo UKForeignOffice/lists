@@ -6,11 +6,9 @@ Given("A {string} list exists for Eurasia", (providerType) => {
   createListForService(providerType);
 });
 
-const todaysDate = new Date();
 function createListForService(service) {
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
-    annualReviewStartDate: todaysDate,
   };
   cy.task("db", {
     operation: "country.upsert",
@@ -44,6 +42,7 @@ function createListForService(service) {
       create: {
         type: service,
         reference: "SMOKE",
+        nextAnnualReviewStartDate: new Date(),
         jsonData,
         country: {
           connect: {
@@ -54,6 +53,7 @@ function createListForService(service) {
       update: {
         type: service,
         jsonData,
+        nextAnnualReviewStartDate: new Date(),
         items: {
           deleteMany: {},
         },
