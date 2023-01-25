@@ -25,8 +25,7 @@ export async function get(req: Request, res: ListIndexRes) {
 
   if (!nextAnnualReviewStartDate) {
     req.flash("error", "Set an annual review date first");
-
-    return res.redirect(res.locals.listEditUrl);
+    return res.redirect(res.locals.listsEditUrl);
   }
 
   const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);

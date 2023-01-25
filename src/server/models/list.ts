@@ -190,6 +190,9 @@ export async function updateList(
   }
 }
 
+/**
+ * todo: deprecate
+ */
 export async function updateAnnualReviewDate(listId: string, nextAnnualReviewStartDate: string): Promise<void> {
   await prisma.list.update({
     where: {
