@@ -39,9 +39,10 @@
 
         {% set rowsWithInput = [] %}
         {% for key, value in keyDates %}
+          {% set text = _.replace(key, r/annualReview|unpublished|\[|\]/g, '') %}
           {% set input = govukInput({
             label: {
-              text: key,
+              text: text,
               classes: "govuk-visually-hidden"
             },
             value: value,
@@ -51,7 +52,7 @@
 
           {% set rowWithInput = [
             {
-              text: key
+              text: text
             },
             {
               html: input

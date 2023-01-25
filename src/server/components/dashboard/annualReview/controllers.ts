@@ -9,6 +9,11 @@ import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
 
 import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
+import { prisma } from "server/models/db/prisma-client";
+import {
+  createKeyDatesFromISODate,
+  updateAnnualReviewWithKeyDates,
+} from "server/components/dashboard/annualReview/helpers.keyDates";
 
 export const DATE_FORMAT = "d MMMM yyyy";
 
@@ -79,7 +84,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   const annualReviewDate = new Date(newAnnualReviewDate as string);
   const newAnnualReviewDateFormatted = DateFns.format(annualReviewDate, DATE_FORMAT);
 
-  await updateAnnualReviewDate(listId, annualReviewDate.toISOString());
+  await updateAnnualReviewWithKeyDates(listId, annualReviewDate.toISOString());
 
   for (const emailAddress of list.jsonData.users ?? []) {
     await sendAnnualReviewDateChangeEmail({
