@@ -223,7 +223,6 @@ export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHi
 
 async function processAnnualReview(): Promise<void> {
   const listResult = await findListsWithCurrentAnnualReview();
-  logger.debug(`Found ${listResult.result?.length} Lists with current annual review populated`);
 
   // validate list results
   if (!listResult.result?.length) {
@@ -237,6 +236,8 @@ async function processAnnualReview(): Promise<void> {
   });
 
   const listIds = listsWithCurrentAnnualReview.map(list => list.id);
+  logger.debug(`Found ${listResult.result?.length} Lists [${listIds}] with current annual review populated`);
+
   if (!listItemIds?.length) {
     logger.info(`No list item ids eligible for annual review found for lists ${listIds}`);
     return;

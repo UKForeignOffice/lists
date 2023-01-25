@@ -38,10 +38,10 @@
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         <li>
-          {% if error?.href %}
+          {% if not error?.href %}
             <a href="{{ error.href }}">{{ error.text }}</a>
           {% else %}
-            {{ error.text if error.text else error }}
+            {{ error.text }}
           {% endif %}
         </li>
       </ul>

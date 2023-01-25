@@ -36,11 +36,11 @@ export async function populateCurrentAnnualReview(
     });
     if (!listItemsEligibleForAnnualReview.length) {
       logger.info(`No list items identified for list ${list.id}, excluding from sending annual review emails`);
-      return;
+    } else {
+      const listItemIdsForAnnualReview = listItemsEligibleForAnnualReview.map((listItem) => listItem.id);
+      const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
+      await updateListForAnnualReview(list, { currentAnnualReview });
     }
-    const listItemIdsForAnnualReview = listItemsEligibleForAnnualReview.map((listItem) => listItem.id);
-    const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
-    await updateListForAnnualReview(list, { currentAnnualReview });
   }
 }
 

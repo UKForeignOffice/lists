@@ -70,11 +70,11 @@ async function dateHasExpired(listId: number): Promise<boolean | undefined> {
     },
   })) as List;
 
-  if (!listData?.jsonData?.annualReviewStartDate) {
+  if (!listData?.nextAnnualReviewStartDate) {
     throw new Error("An annual review start date does not exist");
   }
 
-  const annualReviewStartDate = new Date(listData?.jsonData?.annualReviewStartDate as number);
+  const annualReviewStartDate = new Date(listData?.nextAnnualReviewStartDate);
   const maxDate = add(annualReviewStartDate, { weeks: 6 });
 
   return isPast(maxDate);
