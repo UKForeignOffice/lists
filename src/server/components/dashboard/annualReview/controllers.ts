@@ -1,6 +1,6 @@
 import * as DateFns from "date-fns";
 import { startCase } from "lodash";
-import { findListById, updateAnnualReviewDate } from "server/models/list";
+import { findListById } from "server/models/list";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
@@ -9,11 +9,7 @@ import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
 
 import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
-import { prisma } from "server/models/db/prisma-client";
-import {
-  createKeyDatesFromISODate,
-  updateAnnualReviewWithKeyDates,
-} from "server/components/dashboard/annualReview/helpers.keyDates";
+import { updateAnnualReviewWithKeyDates } from "server/components/dashboard/annualReview/helpers.keyDates";
 
 export const DATE_FORMAT = "d MMMM yyyy";
 
@@ -84,7 +80,13 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   const annualReviewDate = new Date(newAnnualReviewDate as string);
   const newAnnualReviewDateFormatted = DateFns.format(annualReviewDate, DATE_FORMAT);
 
-  await updateAnnualReviewWithKeyDates(listId, annualReviewDate.toISOString());
+  try {
+    await updateAnnualReviewWithKeyDates(list, annualReviewDate.toISOString());
+  } catch (e) {
+    logger.error(e);
+    req.flash("error", "There was a problem updating the annual review date");
+    return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+  }
 
   for (const emailAddress of list.jsonData.users ?? []) {
     await sendAnnualReviewDateChangeEmail({
