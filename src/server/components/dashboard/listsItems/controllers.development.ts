@@ -28,6 +28,10 @@ export async function get(req: Request, res: ListIndexRes) {
     return res.redirect(res.locals.listsEditUrl);
   }
 
+  if (!jsonData.currentAnnualReview?.keyDates) {
+    logger.warn(`${list.id} is missing the keyDates object`);
+  }
+
   const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);
 
   return res.render("dashboard/lists-edit-dev", {
