@@ -57,7 +57,7 @@ export async function updateListsForAnnualReview(todayDateString: string): Promi
     const { result } = await findListByAnnualReviewDate(annualReviewStartContext.eventDate);
 
     // exclude lists that already have currentAnnualReview populated
-    const lists = result?.filter(list => !list.jsonData.currentAnnualReview);
+    const lists = result?.filter(list => !list.jsonData.currentAnnualReview?.eligibleListItems);
 
     logger.info(`Found ${lists?.length} Lists matching annual review start date [${annualReviewStartContext.eventDate}]`);
     if (!lists?.length) {

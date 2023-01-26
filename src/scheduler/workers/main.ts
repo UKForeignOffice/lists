@@ -224,7 +224,7 @@ export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHi
   return updatedListItems.result;
 }
 
-async function processAnnualReview() {
+async function processAnnualReview(): Promise<void> {
   const listResult = await findListsWithCurrentAnnualReview();
 
   // validate list results
@@ -245,7 +245,6 @@ async function processAnnualReview() {
     logger.info(`No list item ids eligible for annual review found for lists ${listIds}`);
     return;
   }
-
   // get list items eligible for annual review for all lists
   const listItemsResult = await findListItems({ listItemIds });
   if (listItemsResult.error ?? !listItemsResult.result.length) {
@@ -253,23 +252,14 @@ async function processAnnualReview() {
     return;
   }
   const { result: listItems } = listItemsResult;
-  logger.info("attempting to process lists");
-
-  return Promise.allSettled(
-    listsWithCurrentAnnualReview.map(async (list) => {
-      const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
-      return await processList(list, listItemsForList);
-    })
-  );
+  for (const list of listsWithCurrentAnnualReview) {
+    const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
+    await processList(list, listItemsForList);
+  }
 }
 
 processAnnualReview()
   .then((r) => {
-    logger.info(`should be an array ${r}`);
-    r?.forEach((promise) => {
-      logger.info(`${promise.status}`);
-    });
-
     logger.info(`Annual review worker finished`);
     process.exit(0);
   })
