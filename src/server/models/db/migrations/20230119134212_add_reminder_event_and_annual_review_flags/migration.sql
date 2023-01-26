@@ -1,8 +1,5 @@
--- AlterEnum
-ALTER TYPE "AuditEvent" ADD VALUE 'REMINDER';
 
--- AlterEnum
-ALTER TYPE "ListItemEvent" ADD VALUE 'REMINDER';
+
 
 -- DropIndex
 DROP INDEX "Audit.jsonData_index";
