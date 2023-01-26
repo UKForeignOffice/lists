@@ -145,8 +145,6 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
   let isEmailSent = false;
   const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
-    // todayDateString = formatDate(subDays(new Date(), 28)); // today is annual review start date
-    // todayDateString = formatDate(subDays(new Date(), 27)); // today is day before annual review start date
   const today = new Date(todayDateString);
   logger.info(`Checking annual review milestone dates against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
 
@@ -256,11 +254,6 @@ async function processAnnualReview() {
   }
   const { result: listItems } = listItemsResult;
   logger.info("attempting to process lists");
-
-  // for (const list of listsWithCurrentAnnualReview) {
-  //   const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
-  //   await processList(list, listItemsForList);
-  // }
 
   return Promise.allSettled(
     listsWithCurrentAnnualReview.map(async (list) => {
