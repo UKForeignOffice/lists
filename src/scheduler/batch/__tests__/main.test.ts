@@ -41,11 +41,11 @@ const unpublish: DateContext[] = [
   },
   {
     eventDate: new Date(2023, 1, 6, 0, 0, 0),
-    eventMilestone: schedulerMilestoneDays.provider.ONE_WEEK,
+    eventMilestone: schedulerMilestoneDays.both.ONE_WEEK,
   },
   {
     eventDate: new Date(2023, 1, 12, 0, 0, 0),
-    eventMilestone: schedulerMilestoneDays.provider.ONE_DAY,
+    eventMilestone: schedulerMilestoneDays.both.ONE_DAY,
   },
   {
     eventDate: new Date(2023, 1, 13, 0, 0, 0),
