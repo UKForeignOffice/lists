@@ -1,8 +1,5 @@
 import { DateContext, getDateContexts, schedulerMilestoneDays, SchedulerDateContexts } from "../helpers";
-import * as listItem from "../../../server/models/listItem";
-import { List, ListItem, ListItemGetObject } from "../../../server/models/types";
-import { populateCurrentAnnualReview } from "../main";
-import { logger } from "server/services/logger";
+import { List, ListItem } from "../../../server/models/types";
 
 jest.mock("server/services/logger");
 
@@ -87,8 +84,8 @@ describe("Date Contexts", () => {
       schedulerMilestoneDays.provider.FOUR_WEEKS,
       schedulerMilestoneDays.provider.THREE_WEEKS,
       schedulerMilestoneDays.provider.TWO_WEEKS,
-      schedulerMilestoneDays.provider.ONE_WEEK,
-      schedulerMilestoneDays.provider.ONE_DAY,
+      schedulerMilestoneDays.both.ONE_WEEK,
+      schedulerMilestoneDays.both.ONE_DAY,
       schedulerMilestoneDays.both.START,
     ])("unpublished date context for milestone days", (milestoneDays) => {
       const { expectedContext, actualContext } = testContext(actualUnpublishContext, unpublish, milestoneDays);

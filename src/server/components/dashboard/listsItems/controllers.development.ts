@@ -54,12 +54,12 @@ function parseKeyDatesFromBodyRequest(keyDates: ScheduledProcessKeyDates) {
       START: formatISOString(annualReview.START),
     },
     unpublished: {
-      ONE_DAY_UNTIL_UNPUBLISH: formatISOString(unpublished.ONE_DAY_UNTIL_UNPUBLISH),
       PROVIDER_FIVE_WEEKS: formatISOString(unpublished.PROVIDER_FIVE_WEEKS),
       PROVIDER_FOUR_WEEKS: formatISOString(unpublished.PROVIDER_FOUR_WEEKS),
       PROVIDER_THREE_WEEKS: formatISOString(unpublished.PROVIDER_THREE_WEEKS),
       PROVIDER_TWO_WEEKS: formatISOString(unpublished.PROVIDER_TWO_WEEKS),
-      PROVIDER_ONE_WEEK: formatISOString(unpublished.PROVIDER_ONE_WEEK),
+      ONE_WEEK: formatISOString(unpublished.ONE_WEEK),
+      ONE_DAY: formatISOString(unpublished.ONE_DAY),
       UNPUBLISH: formatISOString(unpublished.UNPUBLISH),
     },
   };
@@ -71,12 +71,12 @@ function flattenKeyDatesObject(keyDates: ScheduledProcessKeyDates) {
     "annualReview[POST_ONE_WEEK]": keyDates.annualReview.POST_ONE_WEEK,
     "annualReview[POST_ONE_DAY]": keyDates.annualReview.POST_ONE_DAY,
     "annualReview[START]": keyDates.annualReview.START,
-    "unpublished[ONE_DAY_UNTIL_UNPUBLISH]": keyDates.unpublished.ONE_DAY_UNTIL_UNPUBLISH,
     "unpublished[PROVIDER_FIVE_WEEKS]": keyDates.unpublished.PROVIDER_FIVE_WEEKS,
     "unpublished[PROVIDER_FOUR_WEEKS]": keyDates.unpublished.PROVIDER_FOUR_WEEKS,
     "unpublished[PROVIDER_THREE_WEEKS]": keyDates.unpublished.PROVIDER_THREE_WEEKS,
     "unpublished[PROVIDER_TWO_WEEKS]": keyDates.unpublished.PROVIDER_TWO_WEEKS,
-    "unpublished[PROVIDER_ONE_WEEK]": keyDates.unpublished.PROVIDER_ONE_WEEK,
+    "unpublished[ONE_WEEK]": keyDates.unpublished.ONE_WEEK,
+    "unpublished[ONE_DAY]": keyDates.unpublished.ONE_DAY,
     "unpublished[UNPUBLISH]": keyDates.unpublished.UNPUBLISH,
   };
 }

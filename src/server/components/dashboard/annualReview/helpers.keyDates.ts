@@ -26,13 +26,13 @@ export function createKeyDatesFromISODate(isoDate: string | Date): ScheduledProc
       START: subDaysFromISODate(isoDate, 0),
     },
     unpublished: {
-      UNPUBLISH: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.SIX_WEEKS),
-      ONE_DAY_UNTIL_UNPUBLISH: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.SIX_WEEKS - 1),
       PROVIDER_FIVE_WEEKS: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.ONE_WEEK),
       PROVIDER_FOUR_WEEKS: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.TWO_WEEKS),
       PROVIDER_THREE_WEEKS: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.THREE_WEEKS),
       PROVIDER_TWO_WEEKS: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.FOUR_WEEKS),
-      PROVIDER_ONE_WEEK: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.FIVE_WEEKS),
+      ONE_WEEK: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.FIVE_WEEKS),
+      ONE_DAY: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.SIX_WEEKS - 1),
+      UNPUBLISH: addDaysFromISODate(isoDate, INTERVALS_IN_DAYS.provider.SIX_WEEKS),
     },
   };
 }
