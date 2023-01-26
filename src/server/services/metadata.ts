@@ -151,7 +151,7 @@ export const countriesList = [
   { text: "Kazakhstan", value: "Kazakhstan", code: "KAZ" },
   { text: "Kenya", value: "Kenya", code: "KEN" },
   { text: "Kiribati", value: "Kiribati", code: "KIR" },
-  { text: "Kosovo", value: "Kosovo", code: "XKX" },
+  { text: "Kosovo", value: "Kosovo", code: "SRB" },
   { text: "Kuwait", value: "Kuwait", code: "KWT" },
   { text: "Kyrgyzstan", value: "Kyrgyzstan", code: "KGZ" },
   { text: "Laos", value: "Laos", code: "LAO" },
@@ -247,6 +247,7 @@ export const countriesList = [
   { text: "Slovenia", value: "Slovenia", code: "SVN" },
   { text: "Solomon Islands", value: "Solomon Islands", code: "SLB" },
   { text: "Somalia", value: "Somalia", code: "SOM" },
+  { text: "Somaliland", value: "Somaliland", code: "SOM" },
   { text: "South Africa", value: "South Africa", code: "ZAF" },
   {
     text: "South Georgia and South Sandwich Islands",
