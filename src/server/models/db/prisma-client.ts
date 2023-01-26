@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
-// import { isLocalHost } from "server/config";
+import { isLocalHost } from "server/config";
 
 const logLevel: Prisma.LogDefinition[] = [
   {
@@ -13,7 +13,7 @@ const logLevel: Prisma.LogDefinition[] = [
   },
 ];
 
-// if (isLocalHost) {
+if (isLocalHost) {
   logLevel.push(
     {
       emit: "event",
@@ -24,7 +24,7 @@ const logLevel: Prisma.LogDefinition[] = [
       level: "info",
     }
   );
-// }
+}
 
 export const prisma = new PrismaClient({
   log: logLevel,
@@ -38,7 +38,8 @@ prisma.$connect().catch((error) => {
 prisma.$on("query", (e: Prisma.QueryEvent) => {
   logger.info(`
     Prisma Query: ${e.query} \r\n
-    Duration: ${e.duration}ms
+    Duration: ${e.duration}ms \r\n
+    Params: ${e.params}
   `);
 });
 
