@@ -18,6 +18,8 @@ export const schedulerMilestoneDays = {
     ONE_DAY: 1,
   },
   both: {
+    ONE_WEEK: 7,
+    ONE_DAY: 1,
     START: 0,
     UNPUBLISH: 0,
   },
@@ -30,8 +32,8 @@ export type SchedulerMilestone =
   | typeof schedulerMilestoneDays.provider.FOUR_WEEKS
   | typeof schedulerMilestoneDays.provider.THREE_WEEKS
   | typeof schedulerMilestoneDays.provider.TWO_WEEKS
-  | typeof schedulerMilestoneDays.provider.ONE_WEEK
-  | typeof schedulerMilestoneDays.provider.ONE_DAY
+  | typeof schedulerMilestoneDays.both.ONE_WEEK
+  | typeof schedulerMilestoneDays.both.ONE_DAY
   | typeof schedulerMilestoneDays.both.UNPUBLISH;
 
 export interface DateContext {
@@ -58,7 +60,7 @@ function getUnpublishedDateContexts(today: Date): DateContext[] {
 
   const unpublishedDateContextsForFiltering: DateContext[] = [
     {
-      eventMilestone: schedulerMilestoneDays.provider.ONE_DAY,
+      eventMilestone: schedulerMilestoneDays.both.ONE_DAY,
       eventDate: unpublishedDateOneDayAway,
     },
     {
@@ -69,7 +71,7 @@ function getUnpublishedDateContexts(today: Date): DateContext[] {
 
   // fill in the dates between 1 to 5 weeks from the todayDateString
   for (
-    let daysBeforeEvent = schedulerMilestoneDays.provider.ONE_WEEK;
+    let daysBeforeEvent = schedulerMilestoneDays.both.ONE_WEEK;
     daysBeforeEvent <= schedulerMilestoneDays.provider.FIVE_WEEKS;
     daysBeforeEvent += 7
   ) {
@@ -166,15 +168,15 @@ export function getCurrentAnnualReviewData(
           "unpublish",
           schedulerMilestoneDays.provider.TWO_WEEKS
         ).eventDate.toISOString(),
-        PROVIDER_ONE_WEEK: getDateForContext(
+        ONE_WEEK: getDateForContext(
           contexts,
           "unpublish",
-          schedulerMilestoneDays.provider.ONE_WEEK
+          schedulerMilestoneDays.both.ONE_WEEK
         ).eventDate.toISOString(),
-        ONE_DAY_UNTIL_UNPUBLISH: getDateForContext(
+        ONE_DAY: getDateForContext(
           contexts,
           "unpublish",
-          schedulerMilestoneDays.provider.ONE_DAY
+          schedulerMilestoneDays.both.ONE_DAY
         ).eventDate.toISOString(),
         UNPUBLISH: getDateForContext(
           contexts,

@@ -34,8 +34,8 @@ export interface UnpublishedKeyDates extends JsonObject {
   PROVIDER_FOUR_WEEKS: string;
   PROVIDER_THREE_WEEKS: string;
   PROVIDER_TWO_WEEKS: string;
-  PROVIDER_ONE_WEEK: string;
-  ONE_DAY_UNTIL_UNPUBLISH: string;
+  ONE_WEEK: string;
+  ONE_DAY: string;
   UNPUBLISH: string;
 }
 export interface ScheduledProcessKeyDates extends JsonObject {
