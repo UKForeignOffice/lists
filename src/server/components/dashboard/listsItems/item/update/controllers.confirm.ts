@@ -38,18 +38,6 @@ type Action =
   | "update"
   | "remove";
 
-const ACTIONS: [Action] = [
-  "publish",
-  "updateNew",
-  "unpublish",
-  "requestChanges",
-  "updateLive",
-  "pin",
-  "unpin",
-  "update",
-  "remove",
-];
-
 const actionToHandlers: Record<Action, string> = {
   publish: "",
   updateNew: "",

@@ -4,7 +4,10 @@ import type { NextFunction, Request } from "express";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
-import { ServiceType } from "server/models/types";
+import { ListItem, ServiceType, User } from "server/models/types";
+import { recordListItemEvent } from "server/models/audit";
+import { AuditEvent } from "@prisma/client";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 
 /**
  * TODO:- this does not redirect, just next(err) which renders
@@ -50,3 +53,46 @@ export const serviceTypeDetailsHeading: Record<ServiceType | string, string> = {
   lawyers: "Lawyer",
   translatorsInterpreters: "Translator or interpreter",
 };
+
+export async function handlePinListItem(id: number, userId: User["id"], isPinned: boolean): Promise<ListItem> {
+  if (userId === undefined) {
+    throw new Error("deleteListItem Error: userId is undefined");
+  }
+
+  try {
+    const auditEvent = recordListItemEvent(
+      {
+        eventName: isPinned ? "pin" : "unpin",
+        itemId: id,
+        userId,
+      },
+      isPinned ? AuditEvent.PINNED : AuditEvent.UNPINNED
+    );
+
+    const connectOrDisconnect = isPinned ? "connect" : "disconnect";
+    const pinOrUnpinEvent = isPinned ? EVENTS.PINNED(userId) : EVENTS.PINNED(userId);
+
+    const [listItem] = await prisma.$transaction([
+      prisma.listItem.update({
+        where: {
+          id,
+        },
+        data: {
+          pinnedBy: {
+            [connectOrDisconnect]: [{ id: userId }],
+          },
+          history: {
+            create: [pinOrUnpinEvent],
+          },
+        },
+      }),
+      auditEvent,
+    ]);
+
+    return listItem;
+  } catch (e: any) {
+    logger.error(`deleteListItem Error ${e.message}`);
+
+    throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
+  }
+}
