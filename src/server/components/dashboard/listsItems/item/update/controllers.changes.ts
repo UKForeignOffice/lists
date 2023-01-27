@@ -10,6 +10,9 @@ import { prisma } from "server/models/db/prisma-client";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { recordListItemEvent } from "server/models/audit";
 
+/**
+ * TODO: remove underTest
+ */
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
