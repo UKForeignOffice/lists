@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { deleteListItem } from "server/models/listItem";
 
-export async function del(req: Request, res: Response): Promise<void> {
+export async function remove(req: Request, res: Response) {
   const userId = req.user!.id;
   const { listItemUrl, listIndexUrl, listItem } = res.locals;
 
