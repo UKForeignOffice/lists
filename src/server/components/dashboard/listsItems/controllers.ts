@@ -62,9 +62,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
     updatedJsonData = auditJsonData?.updatedJsonData;
-  }
-
-  if (hasPendingUpdate && !isLegacyUpdate) {
     listItem.jsonData = mapUpdatedAuditJsonDataToListItem(listItem, updatedJsonData);
   }
 
@@ -86,6 +83,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   const actionButtonsForStatus = actionButtons[listItem.status];
+
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
     changeMessage: req.session?.changeMessage,
