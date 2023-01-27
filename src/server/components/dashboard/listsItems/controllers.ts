@@ -143,49 +143,6 @@ export async function listItemPostController(req: Request, res: Response) {
   return res.redirect(`${listItemUrl}/confirm`);
 }
 
-export async function handleListItemUpdate(id: number, userId: User["id"]): Promise<void> {
-  logger.info(`${userId} looking for ${id} to update`);
-  const listItem = await prisma.listItem.findUnique({
-    where: { id },
-    include: {
-      history: {
-        orderBy: {
-          time: "desc",
-        },
-      },
-    },
-  });
-
-  if (listItem === null) {
-    logger.error(`${userId} tried to look for ${id}, listItem could not be found`);
-    throw new Error(`Unable to store updates - listItem could not be found`);
-  }
-
-  const editEvent = listItem?.history.find((event) => {
-    // @ts-ignore
-    return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
-  });
-
-  logger.info(`found edit event ${JSON.stringify(editEvent)}`);
-
-  const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
-
-  // @ts-ignore
-  if (listItem.jsonData?.updatedJsonData) {
-    await update(id, userId);
-    return;
-  }
-
-  if (auditJsonData?.updatedJsonData) {
-    await update(id, userId);
-    return;
-  }
-
-  if (auditJsonData?.updatedJsonData !== undefined) {
-    // @ts-ignore
-    await update(id, userId, auditJsonData.updatedJsonData);
-  }
-}
 export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
