@@ -39,6 +39,7 @@ export async function populateCurrentAnnualReview(
     } else {
       const listItemIdsForAnnualReview = listItemsEligibleForAnnualReview.map((listItem) => listItem.id);
       const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
+
       await updateListForAnnualReview(list, { currentAnnualReview });
     }
   }
@@ -53,11 +54,7 @@ export async function updateListsForAnnualReview(todayDateString: string): Promi
     helpers.schedulerMilestoneDays.both.START
   );
   if (annualReviewStartContext) {
-    // @todo also get the lists without an annual review date that were first published 1 year ago. Only needed if List.annualReviewStartDate not populated
-    const { result } = await findListByAnnualReviewDate(annualReviewStartContext.eventDate);
-
-    // exclude lists that already have currentAnnualReview populated
-    const lists = result?.filter(list => !list.jsonData.currentAnnualReview?.eligibleListItems);
+    const { result: lists } = await findListByAnnualReviewDate(annualReviewStartContext.eventDate, today);
 
     logger.info(`Found ${lists?.length} Lists matching annual review start date [${annualReviewStartContext.eventDate}]`);
     if (!lists?.length) {
