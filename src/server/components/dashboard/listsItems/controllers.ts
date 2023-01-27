@@ -226,27 +226,6 @@ async function handleListItemRequestChanges(
   }
 }
 
-export async function listItemPublishController(req: Request, res: Response): Promise<void> {
-  const { action } = req.body;
-  const isPublished = action === "publish";
-  console.log("action", action);
-
-  const { listItem, listItemUrl, listIndexUrl } = res.locals;
-  console.log("listItem", listItem);
-
-  try {
-    await handlePublishListItem(listItem.id, isPublished, req.user!.id);
-
-    const successBannerHeading = `${action}ed`;
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
-    req.flash("successBannerHeading", successBannerHeading);
-    req.flash("successBannerColour", "green");
-    return res.redirect(listIndexUrl);
-  } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(listItemUrl);
-  }
-}
 
 export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
   const userEmail = req.body.userEmail;
