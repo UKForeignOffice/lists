@@ -13,4 +13,3 @@ updateRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPubl
 updateRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
 updateRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);
 updateRouter.post("/:listId/items/:listItemId/pin", controllers.listItemPinController);
-updateRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
