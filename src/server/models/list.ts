@@ -1,11 +1,11 @@
-import { compact, toLower, trim } from "lodash";
-import { logger } from "server/services/logger";
-import { isGovUKEmailAddress } from "server/utils/validation";
-import { prisma } from "./db/prisma-client";
+import {compact, toLower, trim} from "lodash";
+import {logger} from "server/services/logger";
+import {isGovUKEmailAddress} from "server/utils/validation";
+import {prisma} from "./db/prisma-client";
 
-import { List, CountryName, ServiceType, ListCreateInput, ListUpdateInput, CurrentAnnualReview } from "./types";
-import { subMonths } from "date-fns";
-import { Status } from "@prisma/client";
+import {CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType} from "./types";
+import {subMonths} from "date-fns";
+import {Status} from "@prisma/client";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -44,25 +44,21 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date, listItemStatuses: Status[] = [], isAnnualReview?: boolean): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date, today: Date, listItemStatuses: Status[] = [], isAnnualReview?: boolean): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
     const result = (await prisma.list.findMany({
       where: {
-        nextAnnualReviewStartDate: annualReviewStartDate,
-        isAnnualReview: false,
+        nextAnnualReviewStartDate: {
+          gte: today,
+          lte: annualReviewStartDate,
+        },
       },
       include: {
         country: true,
         items: {
           where: {
-            list: {
-              jsonData: {
-                path: ["currentAnnualReview", "eligibleListItems"],
-                array_contains: [],
-              },
-            },
             ...(listItemStatuses.length && { status: { in: listItemStatuses }}),
             ...(isAnnualReview !== undefined && { isAnnualReview }),
             history: {
@@ -99,7 +95,7 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
     const result = (await prisma.list.findMany({
       where: {
         jsonData: {
-          path: ["currentAnnualReview"],
+          path: ["currentAnnualReview", "eligibleListItems"],
           not: "",
         },
       },
@@ -212,7 +208,6 @@ export async function updateListForAnnualReview(
 ): Promise<Result<List>> {
   try {
     const data: ListUpdateInput = {
-      isAnnualReview: true,
       jsonData: {
         ...list.jsonData,
         currentAnnualReview: listData.currentAnnualReview,
