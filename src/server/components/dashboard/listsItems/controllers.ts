@@ -1,28 +1,17 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
-import { togglerListItemIsPublished } from "server/models/listItem/listItem";
-import { EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
+import { EventJsonData, ListItem, ListItemGetObject } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, Prisma, Status } from "@prisma/client";
-import { prisma } from "server/models/db/prisma-client";
-import { recordListItemEvent } from "server/models/audit";
-import { logger } from "server/services/logger";
+import { Prisma, Status } from "@prisma/client";
 import { findListById, updateList } from "server/models/list";
-import { createListSearchBaseLink } from "server/components/lists/helpers";
-import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
-import serviceName from "server/utils/service-name";
-import { sendDataPublishedEmail, sendEditDetailsEmail } from "server/services/govuk-notify";
 import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
-
-import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import type { ListItemRes, ListIndexRes } from "server/components/dashboard/listsItems/types";
+import type { ListIndexRes, ListItemRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
 import { isEmpty } from "lodash";
-import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
