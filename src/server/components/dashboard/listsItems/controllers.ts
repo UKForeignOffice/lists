@@ -119,63 +119,21 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   });
 }
 
-export async function listItemPostController(req: Request, res: Response): Promise<void> {
+export async function listItemPostController(req: Request, res: Response) {
   const { message, action } = req.body;
-  const { list, listItem, listItemUrl } = res.locals;
-  try {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const { listItemUrl } = res.locals;
 
-    const confirmationPages: { [key: string]: string } = {
-      publish: "dashboard/list-item-confirm-publish",
-      updateNew: "dashboard/list-item-confirm-publish",
-      unpublish: "dashboard/list-item-confirm-unpublish",
-      requestChanges: "dashboard/list-item-confirm-changes",
-      update: "dashboard/list-item-confirm-update",
-      updateLive: "dashboard/list-item-confirm-update",
-      pin: "dashboard/list-item-confirm-pin",
-      unpin: "dashboard/list-item-confirm-pin",
-      remove: "dashboard/list-item-confirm-remove",
-    };
-
-    const customFormActions: { [key: string]: string } = {
-      updateNew: "update",
-    };
-
-    const confirmationPage = confirmationPages[action];
-
-    if (!action) {
-      req.flash("errorMsg", "You must select an action");
-      return res.redirect(listItemUrl);
-    }
-
-    if (action === "requestChanges") {
-      if (!message) {
-        req.flash("errorMsg", "You must provide a message to request a change");
-        return res.redirect(listItemUrl);
-      }
-
-      req.session.changeMessage = message;
-    }
-
-    if (!confirmationPage) {
-      logger.error(`${action} was requested by ${req.user?.userData.id} but the confirmation page could not be found.`);
-      req.flash("errorMsg", "The action cannot be performed at this time");
-      return res.redirect(listItemUrl);
-    }
-
-    res.render(confirmationPage, {
-      ...DEFAULT_VIEW_PROPS,
-      list,
-      listItem,
-      message,
-      action,
-      formAction: customFormActions[action],
-      req,
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    logger.error(`listItemPostController Error: ${(error as Error).message}`);
+  if (!action) {
+    req.flash("errorMsg", "You must select an action");
+    return res.redirect(listItemUrl);
   }
+
+  req.session.update = {
+    action,
+    message,
+  };
+
+  return res.redirect(`${listItemUrl}/confirm`);
 }
 
 export async function listItemPinController(req: Request, res: Response) {
@@ -242,23 +200,6 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
     logger.error(`deleteListItem Error ${e.message}`);
 
     throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
-  }
-}
-
-export async function listItemDeleteController(req: Request, res: Response): Promise<void> {
-  const userId = req.user!.id;
-  const { listItemUrl, listIndexUrl, listItem } = res.locals;
-
-  try {
-    await deleteListItem(listItem.id, userId);
-
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
-    req.flash("successBannerHeading", "Removed");
-    req.flash("successBannerColour", "red");
-    return res.redirect(listIndexUrl);
-  } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
-    return res.redirect(listItemUrl);
   }
 }
 
@@ -414,8 +355,10 @@ async function handleListItemRequestChanges(
 export async function listItemPublishController(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
   const isPublished = action === "publish";
+  console.log("action", action);
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
+  console.log("listItem", listItem);
 
   try {
     await handlePublishListItem(listItem.id, isPublished, req.user!.id);

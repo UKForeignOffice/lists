@@ -91,7 +91,7 @@ listRouter.param("listItemId", async (req, res, next, listItemId) => {
 listRouter.get("/:listId/items/:listItemId", controllers.listItemGetController);
 listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController);
 
-listRouter.use(updateRouter);
+listRouter.use("/:listId/items/:listItemId", updateRouter);
 updateRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
 
 listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
