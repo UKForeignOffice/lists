@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { logger } from "server/services/logger";
-import { handlePinListItem } from "server/components/dashboard/listsItems/controllers";
+import { handlePinListItem } from "server/components/dashboard/listsItems/helpers";
 
-export async function listItemPinController(req: Request, res: Response) {
+export async function pin(req: Request, res: Response) {
   const { action } = req.body;
   const userId = req.user!.userData.id;
   const listItem = res.locals.listItem!;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { getCSRFToken } from "server/components/cookies/helpers";
+import { Action } from "./types";
 
 const confirmationPages: { [key: string]: string } = {
   publish: "dashboard/list-item-confirm-publish",
@@ -25,29 +26,6 @@ const actionToConfirmationView: Record<Action, string> = {
   update: "update",
   updateLive: "update",
   updateNew: "publish",
-};
-
-type Action =
-  | "publish"
-  | "updateNew"
-  | "unpublish"
-  | "requestChanges"
-  | "updateLive"
-  | "pin"
-  | "unpin"
-  | "update"
-  | "remove";
-
-const actionToHandlers: Record<Action, string> = {
-  publish: "",
-  updateNew: "",
-  unpublish: "",
-  requestChanges: "",
-  update: "",
-  updateLive: "",
-  pin: "",
-  unpin: "",
-  remove: "",
 };
 
 export async function get(req: Request, res: Response): Promise<void> {
