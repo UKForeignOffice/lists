@@ -3,7 +3,11 @@ import { EventJsonData, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
-import { update } from "server/models/listItem";
+import { togglerListItemIsPublished, update } from "server/models/listItem";
+import { createListSearchBaseLink } from "server/components/lists";
+import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
+import serviceName from "server/utils/service-name";
+import { sendDataPublishedEmail } from "server/services/govuk-notify";
 
 export async function listItemUpdateController(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
@@ -69,5 +73,31 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
   if (auditJsonData?.updatedJsonData !== undefined) {
     // @ts-ignore
     await update(id, userId, auditJsonData.updatedJsonData);
+  }
+}
+
+export async function handlePublishListItem(
+  listItemId: number,
+  isPublished: boolean,
+  userId: User["id"]
+): Promise<void> {
+  const updatedListItem = await togglerListItemIsPublished({
+    id: listItemId,
+    isPublished,
+    userId,
+  });
+
+  if (updatedListItem.isPublished) {
+    const searchLink = createListSearchBaseLink(updatedListItem.type);
+    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
+    const typeName = serviceName(updatedListItem.type);
+
+    await sendDataPublishedEmail(
+      contactName,
+      contactEmailAddress,
+      typeName,
+      updatedListItem.address.country.name,
+      searchLink
+    );
   }
 }

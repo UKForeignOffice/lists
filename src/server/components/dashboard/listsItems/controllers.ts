@@ -1,9 +1,9 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
-import { deleteListItem, togglerListItemIsPublished, update } from "server/models/listItem/listItem";
+import { togglerListItemIsPublished } from "server/models/listItem/listItem";
 import { EventJsonData, List, ListItem, ListItemGetObject, User } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { AuditEvent, ListItemEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { logger } from "server/services/logger";
@@ -245,32 +245,6 @@ export async function listItemPublishController(req: Request, res: Response): Pr
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
-  }
-}
-
-export async function handlePublishListItem(
-  listItemId: number,
-  isPublished: boolean,
-  userId: User["id"]
-): Promise<void> {
-  const updatedListItem = await togglerListItemIsPublished({
-    id: listItemId,
-    isPublished,
-    userId,
-  });
-
-  if (updatedListItem.isPublished) {
-    const searchLink = createListSearchBaseLink(updatedListItem.type);
-    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
-    const typeName = serviceName(updatedListItem.type);
-
-    await sendDataPublishedEmail(
-      contactName,
-      contactEmailAddress,
-      typeName,
-      updatedListItem.address.country.name,
-      searchLink
-    );
   }
 }
 
