@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 import express from "express";
-import * as controllers from "server/components/dashboard/listsItems/controllers";
 import { del } from "./controllers.delete";
 import * as confirmController from "./controllers.confirm";
 export const updateRouter = express.Router();
