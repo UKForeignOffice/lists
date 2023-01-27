@@ -15,6 +15,18 @@ const confirmationPages: { [key: string]: string } = {
   remove: "dashboard/list-item-confirm-remove",
 };
 
+const actionToConfirmationView: Record<Action, string> = {
+  publish: "publish",
+  pin: "pin",
+  remove: "remove",
+  requestChanges: "requestChanges",
+  unpin: "pin",
+  unpublish: "unpublish",
+  update: "update",
+  updateLive: "update",
+  updateNew: "publish",
+};
+
 type Action =
   | "publish"
   | "updateNew"
@@ -25,6 +37,18 @@ type Action =
   | "unpin"
   | "update"
   | "remove";
+
+const ACTIONS: [Action] = [
+  "publish",
+  "updateNew",
+  "unpublish",
+  "requestChanges",
+  "updateLive",
+  "pin",
+  "unpin",
+  "update",
+  "remove",
+];
 
 const actionToHandlers: Record<Action, string> = {
   publish: "",
@@ -38,40 +62,40 @@ const actionToHandlers: Record<Action, string> = {
   remove: "",
 };
 
-const actionToHeading: Record<Action, string> = {};
-
 export async function get(req: Request, res: Response): Promise<void> {
   const { list, listItem, listItemUrl } = res.locals;
   const { update = {} } = req.session;
   const { message, action } = update;
-  try {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 
-    if (!action) {
-      req.flash("errorMsg", "You must select an action");
-      return res.redirect(listItemUrl);
-    }
-
-    if (action === "requestChanges") {
-      if (!message) {
-        req.flash("errorMsg", "You must provide a message to request a change");
-        return res.redirect(listItemUrl);
-      }
-
-      req.session.changeMessage = message;
-    }
-
-    res.render(`dashboard/list-item-confirm/${action}`, {
-      ...DEFAULT_VIEW_PROPS,
-      list,
-      listItem,
-      message,
-      action,
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    logger.error(`listItemPostController Error: ${(error as Error).message}`);
+  if (!action) {
+    req.flash("errorMsg", "You must select an action");
+    return res.redirect(listItemUrl);
   }
+
+  res.render(`dashboard/list-item-confirm/${action}`, {
+    ...DEFAULT_VIEW_PROPS,
+    list,
+    listItem,
+    message,
+    action,
+    csrfToken: getCSRFToken(req),
+  });
 }
 
-export function post() {}
+export function post(req: Request, res: Response) {
+  const { update = {} } = req.session;
+  const { action } = update;
+  logger.info(`user ${req.user!.id} is attempting to perform ${action}`);
+  const handler = actionToHandlers[action];
+
+  if (!handler) {
+    req.flash("errorMsg", "This action is not recognised");
+    logger.error(`${req.user!.id} attempted to perform an unrecognised action "${action}" on ${req.params.listId}`);
+    return res.redirect(res.locals.listItemUrl);
+  }
+
+  return handler(req, res);
+
+  //
+}

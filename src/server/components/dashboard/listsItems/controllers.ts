@@ -48,6 +48,8 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   let error;
   const errorMsg = req.flash("errorMsg");
 
+  req.session.update = {};
+
   // @ts-expect-error
   if (errorMsg?.length > 0) {
     error = {
@@ -125,6 +127,11 @@ export async function listItemPostController(req: Request, res: Response) {
 
   if (!action) {
     req.flash("errorMsg", "You must select an action");
+    return res.redirect(listItemUrl);
+  }
+
+  if (action === "requestChanges" && !message) {
+    req.flash("errorMsg", "You must provide a message to request a change");
     return res.redirect(listItemUrl);
   }
 
