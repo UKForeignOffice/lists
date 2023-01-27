@@ -13,7 +13,7 @@ import { recordListItemEvent } from "server/models/audit";
 /**
  * TODO: remove underTest
  */
-export async function listItemRequestChangeController(req: Request, res: Response): Promise<void> {
+export async function requestChanges(req: Request, res: Response): Promise<void> {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
   const userId = req.user!.id;

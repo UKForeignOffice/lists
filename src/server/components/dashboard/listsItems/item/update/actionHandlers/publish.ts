@@ -54,7 +54,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
   }
 }
 
-export async function listItemPublishController(req: Request, res: Response): Promise<void> {
+export async function publish(req: Request, res: Response): Promise<void> {
   const { action } = req.body;
   const isPublished = action === "publish";
 
