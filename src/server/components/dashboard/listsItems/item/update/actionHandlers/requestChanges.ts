@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import { List, ListItemGetObject, User } from "server/models/types";
+import { ListItemGetObject, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";

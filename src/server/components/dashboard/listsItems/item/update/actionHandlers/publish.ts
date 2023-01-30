@@ -5,8 +5,8 @@ import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { ActionHandlersReq } from "server/components/dashboard/listsItems/item/update/types";
-import { sendPublishedEmail } from "server/components/dashboard/listsItems/item/update/actionHandlers/helpers";
+import { ActionHandlersReq } from "./../types";
+import { sendPublishedEmail } from "./helpers";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]) {
   logger.info(`${userId} looking for ${id} to update`);
