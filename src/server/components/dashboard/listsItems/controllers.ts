@@ -86,7 +86,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
-    changeMessage: req.session?.changeMessage,
     list,
     req,
     listItem: {
