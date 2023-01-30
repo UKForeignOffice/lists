@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -6,7 +6,7 @@ import { Action, ActionHandlersReq } from "./types";
 import { actionHandlers } from "./actionHandlers";
 import { ListItemRes } from "../../types";
 
-export async function get(req: ActionHandlersReq, res: Response) {
+export async function get(req: Request, res: Response, _next: NextFunction) {
   const { listItemUrl } = res.locals;
   const { update = {} } = req.session;
   const { message, action } = update;

@@ -8,13 +8,13 @@ import { AuditEvent, ListItem, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { recordListItemEvent } from "server/models/audit";
-import { ActionHandlersReq } from "../types";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import { Request } from "express";
 
 /**
  * TODO: remove underTest
  */
-export async function requestChanges(req: ActionHandlersReq, res: ListItemRes) {
+export async function requestChanges(req: Request, res: ListItemRes) {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
   const userId = req.user!.id;

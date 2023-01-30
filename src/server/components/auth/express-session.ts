@@ -6,6 +6,7 @@ import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
+import { Action } from "server/components/dashboard/listsItems/item/update/types";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -18,7 +19,7 @@ declare module "express-session" {
     returnTo?: string;
     update?: {
       message?: string;
-      action?: string;
+      action?: Action;
     };
     currentUrl?: string;
   }
