@@ -4,12 +4,13 @@ import { logger } from "server/services/logger";
 import { findListItems } from "server/models/listItem";
 import { SCHEDULED_PROCESS_TODAY_DATE } from "server/config";
 import * as helpers from "./helpers";
-import { getCurrentAnnualReviewData, getDateForContext } from "./helpers";
+import {getCurrentAnnualReviewData, schedulerMilestoneDays} from "./helpers";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
+import {addDays} from "date-fns";
+import _ from "lodash";
 
 export async function populateCurrentAnnualReview(
-  lists: List[],
-  contexts: helpers.SchedulerDateContexts
+  lists: List[]
 ): Promise<void> {
   const listIds = lists.map((list) => list.id);
   const findListItemsResult = await findListItems({
@@ -38,31 +39,43 @@ export async function populateCurrentAnnualReview(
       logger.info(`No list items identified for list ${list.id}, excluding from sending annual review emails`);
     } else {
       const listItemIdsForAnnualReview = listItemsEligibleForAnnualReview.map((listItem) => listItem.id);
-      const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
 
-      await updateListForAnnualReview(list, { currentAnnualReview });
+      const contexts = helpers.getDateContexts(list.nextAnnualReviewStartDate);
+      const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
+      let isUpdateList = true;
+      // use the same reference if it already exists to ensure audit records can be checked for previous emails
+      if (list.jsonData?.currentAnnualReview?.reference) {
+        const { eligibleListItems: currentEligibileListItems } = list.jsonData.currentAnnualReview;
+        const { eligibleListItems: newEligibileListItems } = currentAnnualReview;
+        isUpdateList = !_.isEqual(
+          currentEligibileListItems.sort((a, b) => a - b),
+          newEligibileListItems.sort((a, b) => a - b));
+        if (isUpdateList) {
+          currentAnnualReview.reference = list.jsonData.currentAnnualReview.reference;
+          currentAnnualReview.keyDates = list.jsonData.currentAnnualReview.keyDates;
+        }
+      }
+
+      if (isUpdateList) {
+        await updateListForAnnualReview(list, {currentAnnualReview});
+      }
     }
   }
 }
 
 export async function updateListsForAnnualReview(todayDateString: string): Promise<void> {
   const today = new Date(todayDateString);
-  const contexts = helpers.getDateContexts(today);
-  const annualReviewStartContext = getDateForContext(
-    contexts,
-    "annualReview",
-    helpers.schedulerMilestoneDays.both.START
-  );
-  if (annualReviewStartContext) {
-    const { result: lists } = await findListByAnnualReviewDate(annualReviewStartContext.eventDate, today);
+  const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH)
+  if (annualReviewStartDate) {
+    const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate, today);
 
-    logger.info(`Found ${lists?.length} Lists matching annual review start date [${annualReviewStartContext.eventDate}]`);
+    logger.info(`Found ${lists?.length} Lists matching annual review start date [${annualReviewStartDate}]`);
     if (!lists?.length) {
-      logger.info(`No lists found for annual review date ${annualReviewStartContext.eventDate}`);
+      logger.info(`No lists found for annual review date ${annualReviewStartDate}`);
       return;
     }
     // @ts-ignore
-    await populateCurrentAnnualReview(lists, contexts);
+    await populateCurrentAnnualReview(lists);
   }
 }
 
