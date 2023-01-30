@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { handleListItemUpdate } from "server/components/dashboard/listsItems/item/update/actionHandlers/publish";
-import { sendPublishedEmail } from "server/components/dashboard/listsItems/item/update/actionHandlers/helpers";
+import { handleListItemUpdate } from "./publish";
+import { sendPublishedEmail } from "./helpers";
 import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 
 export async function update(req: Request, res: Response): Promise<void> {

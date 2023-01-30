@@ -59,11 +59,13 @@ export async function publish(req: ActionHandlersReq, res: Response) {
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
+  const verb = isPublished ? "published" : "unpublished";
+
   try {
     await handlePublishListItem(listItem.id, isPublished, req.user!.id);
 
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been published`);
-    req.flash("successBannerHeading", "Published");
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${verb}`);
+    req.flash("successBannerHeading", _.startCase(verb));
     req.flash("successBannerColour", "green");
     return res.redirect(listIndexUrl);
   } catch (error: any) {

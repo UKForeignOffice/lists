@@ -370,7 +370,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
   let geoLocationParams: Nullable<[number, Point]>;
 
-  if (requiresAddressUpdate) {
+  if (requiresAddressUpdate && data) {
     try {
       const address = makeAddressGeoLocationString(data);
       const country = getCountryFromData(data);
