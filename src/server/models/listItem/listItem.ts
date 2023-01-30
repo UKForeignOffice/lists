@@ -350,7 +350,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
   }
 
   const { address: currentAddress, ...listItem } = listItemResult!;
-  const addressUpdates = getChangedAddressFields(data, currentAddress ?? {});
+  const addressUpdates = getChangedAddressFields(data!, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
   const areasOfLaw = data?.areasOfLaw;
   const repatriationServicesProvided = data?.repatriationServicesProvided;
