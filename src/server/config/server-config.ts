@@ -37,6 +37,7 @@ export const NOTIFY = {
       postOneDay: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE?.trim() ?? "",
       postStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED?.trim() ?? "",
       providerStart: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED?.trim() ?? "",
+      annualReviewCompleted: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_COMPLETED?.trim() ?? "",
     },
     unpublishNotice: {
       postWeekly: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE?.trim() ?? "",

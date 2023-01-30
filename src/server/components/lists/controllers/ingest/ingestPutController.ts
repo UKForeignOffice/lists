@@ -10,6 +10,7 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
+import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -82,6 +83,8 @@ export async function ingestPutController(req: Request, res: Response) {
         AuditEvent.EDITED
       ),
     ]);
+
+    await sendAnnualReviewCompletedEmailForList(listItem.listId);
 
     return res.status(204).send();
   } catch (e) {

@@ -14,6 +14,7 @@ import { logger } from "server/services/logger";
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
+import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -157,7 +158,7 @@ export async function declarationPostController(req: Request, res: Response, nex
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
-    await prisma.listItem.update({
+    const updatedListItem = await prisma.listItem.update({
       where: { reference: listItemRef },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
@@ -166,7 +167,7 @@ export async function declarationPostController(req: Request, res: Response, nex
         },
       },
     });
-
+    await sendAnnualReviewCompletedEmailForList(updatedListItem.listId);
     res.redirect("/annual-review/submitted");
   } catch (err) {
     next(err);

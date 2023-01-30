@@ -160,6 +160,27 @@ export async function sendAnnualReviewDateChangeEmail(options: {
   }
 }
 
+export async function sendAnnualReviewCompletedEmail(
+  emailAddress: string,
+  typePlural: string,
+  country: string): Promise<void> {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    const personalisation = {
+      typeSingular: pluralize.singular(typePlural),
+      country,
+    };
+    logger.info(`personalisation for sendAnnualReviewCompletedEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${emailAddress}`);
+    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.annualReviewCompleted, emailAddress, { personalisation });
+  } catch (error) {
+    logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
+
 export async function sendAnnualReviewPostEmail(
   milestoneTillAnnualReviewStart: MilestoneTillAnnualReview,
   emailAddress: string,
