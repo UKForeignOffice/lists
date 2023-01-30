@@ -7,6 +7,7 @@ import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { ActionHandlersReq } from "./../types";
 import { sendPublishedEmail } from "./helpers";
+import { startCase } from "lodash";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]) {
   logger.info(`${userId} looking for ${id} to update`);
@@ -65,7 +66,7 @@ export async function publish(req: ActionHandlersReq, res: Response) {
     await handlePublishListItem(listItem.id, isPublished, req.user!.id);
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${verb}`);
-    req.flash("successBannerHeading", _.startCase(verb));
+    req.flash("successBannerHeading", startCase(verb));
     req.flash("successBannerColour", "green");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
