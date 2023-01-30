@@ -16,7 +16,10 @@ const SECRET_NAME = "SESSION_SECRET";
 declare module "express-session" {
   export interface SessionData {
     returnTo?: string;
-    changeMessage?: string;
+    update?: {
+      message?: string;
+      action?: string;
+    };
     currentUrl?: string;
   }
 }
