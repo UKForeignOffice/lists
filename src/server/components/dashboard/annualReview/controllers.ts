@@ -10,6 +10,7 @@ import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
 import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
 import { updateAnnualReviewWithKeyDates } from "server/components/dashboard/annualReview/helpers.keyDates";
+import {isAfter, isEqual} from "date-fns";
 
 export const DATE_FORMAT = "d MMMM yyyy";
 
@@ -73,6 +74,20 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
   });
 }
 
+function isUpdateKeyDates(list: List) {
+  const currentAnnualReviewStart = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
+  let shouldUpdate = true;
+  if (currentAnnualReviewStart) {
+    const currentAnnualReviewStartDate = new Date(currentAnnualReviewStart);
+    const today = new Date();
+    if (isEqual(today, currentAnnualReviewStartDate) || isAfter(today, currentAnnualReviewStartDate)) {
+      logger.info(`Annual review already started on ${currentAnnualReviewStartDate.toISOString()}, not updating list.jsonData.currentAnnualReview`);
+      shouldUpdate = false;
+    }
+  }
+  return shouldUpdate;
+}
+
 async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
   const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
@@ -80,14 +95,18 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   const annualReviewDate = new Date(newAnnualReviewDate as string);
   const newAnnualReviewDateFormatted = DateFns.format(annualReviewDate, DATE_FORMAT);
 
-  try {
-    await updateAnnualReviewWithKeyDates(list, annualReviewDate.toISOString());
-  } catch (e) {
-    logger.error(e);
-    req.flash("error", "There was a problem updating the annual review date");
-    return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
-  }
+  // check if annual review start date has passed and prevent updating if so
+  const isUpdateCurrentAnnualReview = isUpdateKeyDates(list);
 
+  if (isUpdateCurrentAnnualReview) {
+    try {
+      await updateAnnualReviewWithKeyDates(list, annualReviewDate.toISOString());
+    } catch (e) {
+      logger.error(e);
+      req.flash("error", "There was a problem updating the annual review date");
+      return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+    }
+  }
   for (const emailAddress of list.jsonData.users ?? []) {
     await sendAnnualReviewDateChangeEmail({
       emailAddress,
