@@ -6,12 +6,3 @@ export const updateRouter = express.Router();
 
 updateRouter.get("/confirm", confirmController.get);
 updateRouter.post("/confirm", confirmController.post);
-
-/**
- * TODO: ref to /:listItemId/:action?
- */
-updateRouter.post("/delete", del);
-updateRouter.post("/publish", controllers.listItemPublishController);
-updateRouter.post("/changes", controllers.listItemRequestChangeController);
-updateRouter.post("/update", controllers.listItemUpdateController);
-updateRouter.post("/pin", controllers.listItemPinController);

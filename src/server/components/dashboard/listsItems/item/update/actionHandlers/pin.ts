@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { handlePinListItem } from "server/components/dashboard/listsItems/helpers";
+import { Request, Response } from "express";
 
 export async function pin(req: Request, res: Response) {
   const { action } = req.body;

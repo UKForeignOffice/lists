@@ -12,11 +12,13 @@ export type Action =
   | "update"
   | "remove";
 
-interface ActionHandlersRequest extends Request {
+export interface ActionHandlersReq extends Request {
   session: Request["session"] & {
-    action: Action;
-    message?: string;
+    update?: {
+      action?: Action;
+      message?: string;
+    };
   };
 }
 
-export type ActionRequestHandler = (req: ActionHandlersRequest, res: ListItemRes, next: NextFunction) => Promise<any>;
+export type ActionRequestHandler = (req: ActionHandlersReq, res: ListItemRes, next: NextFunction) => Promise<any>;

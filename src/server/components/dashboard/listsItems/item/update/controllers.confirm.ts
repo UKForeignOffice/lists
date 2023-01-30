@@ -1,8 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { Action } from "./types";
+import { Action, ActionHandlersReq } from "./types";
+import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
+import { ListItemRes } from "../../types";
 
 const confirmationPages: { [key: string]: string } = {
   publish: "dashboard/list-item-confirm-publish",
@@ -28,18 +30,17 @@ const actionToConfirmationView: Record<Action, string> = {
   updateNew: "publish",
 };
 
-export async function get(req: Request, res: Response): Promise<void> {
+export async function get(req: ActionHandlersReq, res: Response) {
   const { list, listItem, listItemUrl } = res.locals;
   const { update = {} } = req.session;
   const { message, action } = update;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 
   if (!action) {
     req.flash("errorMsg", "You must select an action");
     return res.redirect(listItemUrl);
   }
 
-  res.render(`dashboard/list-item-confirm/${action}`, {
+  return res.render(`dashboard/list-item-confirm/${action}`, {
     ...DEFAULT_VIEW_PROPS,
     list,
     listItem,
@@ -49,19 +50,18 @@ export async function get(req: Request, res: Response): Promise<void> {
   });
 }
 
-export function post(req: Request, res: Response) {
+export function post(req: ActionHandlersReq, res: ListItemRes, next: NextFunction) {
   const { update = {} } = req.session;
   const { action } = update;
-  logger.info(`user ${req.user!.id} is attempting to perform ${action}`);
-  const handler = actionToHandlers[action];
 
-  if (!handler) {
+  if (!action || !actionHandlers[action]) {
     req.flash("errorMsg", "This action is not recognised");
     logger.error(`${req.user!.id} attempted to perform an unrecognised action "${action}" on ${req.params.listId}`);
     return res.redirect(res.locals.listItemUrl);
   }
 
-  return handler(req, res);
+  const handler = actionHandlers[action];
+  logger.info(`user ${req.user!.id} is attempting to perform an an action: ${action} with handler ${handler.name}`);
 
-  //
+  return handler(req, res, next);
 }
