@@ -5,50 +5,50 @@ jest.mock("server/services/logger");
 
 const annualReview: DateContext[] = [
   {
-    eventDate: new Date(2022, 11, 5, 0, 0, 0),
+    eventDate: new Date(2022, 10, 7, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.post.ONE_MONTH,
   },
   {
-    eventDate: new Date(2022, 11, 26, 0, 0, 0),
+    eventDate: new Date(2022, 10, 28, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.post.ONE_WEEK,
   },
   {
-    eventDate: new Date(2023, 0, 1, 0, 0, 0),
+    eventDate: new Date(2022, 11, 4, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.post.ONE_DAY,
   },
   {
-    eventDate: new Date(2023, 0, 2, 0, 0, 0),
+    eventDate: new Date(2022, 11, 5, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.both.START,
   },
 ];
 
 const unpublish: DateContext[] = [
   {
-    eventDate: new Date(2023, 0, 9, 0, 0, 0),
+    eventDate: new Date(2022, 11, 12, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.FIVE_WEEKS,
   },
   {
-    eventDate: new Date(2023, 0, 16, 0, 0, 0),
+    eventDate: new Date(2022, 11, 19, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.FOUR_WEEKS,
   },
   {
-    eventDate: new Date(2023, 0, 23, 0, 0, 0),
+    eventDate: new Date(2022, 11, 26, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.THREE_WEEKS,
   },
   {
-    eventDate: new Date(2023, 0, 30, 0, 0, 0),
+    eventDate: new Date(2023, 0, 2, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.provider.TWO_WEEKS,
   },
   {
-    eventDate: new Date(2023, 1, 6, 0, 0, 0),
+    eventDate: new Date(2023, 0, 9, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.both.ONE_WEEK,
   },
   {
-    eventDate: new Date(2023, 1, 12, 0, 0, 0),
+    eventDate: new Date(2023, 0, 15, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.both.ONE_DAY,
   },
   {
-    eventDate: new Date(2023, 1, 13, 0, 0, 0),
+    eventDate: new Date(2023, 0, 16, 0, 0, 0),
     eventMilestone: schedulerMilestoneDays.both.UNPUBLISH,
   },
 ];

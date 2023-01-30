@@ -54,8 +54,8 @@ export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEE
  * @param todayDateString
  * @returns UnpublishedDateContext[]
  */
-function getUnpublishedDateContexts(today: Date): DateContext[] {
-  const unpublishedDateSixWeeksAway = addDays(today, (schedulerMilestoneDays.provider.SIX_WEEKS + schedulerMilestoneDays.post.ONE_MONTH));
+function getUnpublishedDateContexts(annualReviewStartDate: Date): DateContext[] {
+  const unpublishedDateSixWeeksAway = addDays(annualReviewStartDate, (schedulerMilestoneDays.provider.SIX_WEEKS));
   const unpublishedDateOneDayAway = subDays(unpublishedDateSixWeeksAway, 1);
 
   const unpublishedDateContextsForFiltering: DateContext[] = [
@@ -71,49 +71,47 @@ function getUnpublishedDateContexts(today: Date): DateContext[] {
 
   // fill in the dates between 1 to 5 weeks from the todayDateString
   for (
-    let daysBeforeEvent = schedulerMilestoneDays.both.ONE_WEEK;
-    daysBeforeEvent <= schedulerMilestoneDays.provider.FIVE_WEEKS;
-    daysBeforeEvent += 7
+    let eventMilestone = schedulerMilestoneDays.both.ONE_WEEK;
+    eventMilestone <= schedulerMilestoneDays.provider.FIVE_WEEKS;
+    eventMilestone += 7
   ) {
-    const localUnpublishDate = subDays(unpublishedDateSixWeeksAway, daysBeforeEvent);
-    const unpublishDate = new Date(localUnpublishDate.getFullYear(), localUnpublishDate.getMonth(), localUnpublishDate.getDate(), 0, 0, 0);
-    const eventDate = new Date(unpublishDate.getFullYear(), unpublishDate.getMonth(), unpublishDate.getDate(), 0, 0, 0);
+    const localEventDate = subDays(unpublishedDateSixWeeksAway, eventMilestone);
+    const eventDate = new Date(localEventDate.getFullYear(), localEventDate.getMonth(), localEventDate.getDate(), 0, 0, 0);
     unpublishedDateContextsForFiltering.push({
       eventDate,
-      eventMilestone: daysBeforeEvent,
+      eventMilestone,
     });
   }
   return unpublishedDateContextsForFiltering;
 }
 
-function getAnnualReviewDateContexts(today: Date): DateContext[] {
-  const annualReviewStart = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
+function getAnnualReviewDateContexts(annualReviewStartDate: Date): DateContext[] {
 
   const annualReview: DateContext[] = [
     {
       eventMilestone: schedulerMilestoneDays.post.ONE_MONTH,
-      eventDate: today,
+      eventDate: subDays(annualReviewStartDate, schedulerMilestoneDays.post.ONE_MONTH),
     },
     {
       eventMilestone: schedulerMilestoneDays.post.ONE_DAY,
-      eventDate: subDays(annualReviewStart, schedulerMilestoneDays.post.ONE_DAY),
+      eventDate: subDays(annualReviewStartDate, schedulerMilestoneDays.post.ONE_DAY),
     },
     {
       eventMilestone: schedulerMilestoneDays.post.ONE_WEEK,
-      eventDate: subDays(annualReviewStart, schedulerMilestoneDays.post.ONE_WEEK),
+      eventDate: subDays(annualReviewStartDate, schedulerMilestoneDays.post.ONE_WEEK),
     },
     {
       eventMilestone: schedulerMilestoneDays.both.START,
-      eventDate: annualReviewStart,
+      eventDate: annualReviewStartDate,
     },
   ];
   return annualReview;
 }
 
-export function getDateContexts(today: Date): SchedulerDateContexts {
+export function getDateContexts(annualReviewStartDate: Date): SchedulerDateContexts {
   return {
-    annualReview: getAnnualReviewDateContexts(today),
-    unpublish: getUnpublishedDateContexts(today),
+    annualReview: getAnnualReviewDateContexts(annualReviewStartDate),
+    unpublish: getUnpublishedDateContexts(annualReviewStartDate),
   };
 }
 
