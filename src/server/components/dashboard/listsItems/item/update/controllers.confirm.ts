@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { Action, ActionHandlersReq } from "./types";
+import { Action } from "./types";
 import { actionHandlers } from "./actionHandlers";
 import { ListItemRes } from "../../types";
 
@@ -31,7 +31,7 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
   });
 }
 
-export function post(req: ActionHandlersReq, res: ListItemRes, next: NextFunction) {
+export function post(req: Request, res: ListItemRes, next: NextFunction) {
   const { update = {} } = req.session;
   const { action } = update;
 
