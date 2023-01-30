@@ -5,43 +5,51 @@ import { initialiseFormRunnerSession } from "server/components/formRunner/helper
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendEditDetailsEmail } from "server/services/govuk-notify";
-import { AuditEvent, Status } from "@prisma/client";
+import { AuditEvent, ListItem, Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { recordListItemEvent } from "server/models/audit";
+import { ActionHandlersReq } from "../types";
+import { ListItemRes } from "server/components/dashboard/listsItems/types";
 
 /**
  * TODO: remove underTest
  */
-export async function requestChanges(req: Request, res: Response): Promise<void> {
+export async function requestChanges(req: ActionHandlersReq, res: ListItemRes) {
   const { underTest } = req.params;
   const isUnderTest = underTest === "true";
   const userId = req.user!.id;
-  const changeMessage: string = req.session?.changeMessage ?? "";
-  const { list, listItem } = res.locals;
+  const changeMessage = req.session.update?.message;
+  const { listItem } = res.locals;
   const { listItemUrl, listIndexUrl } = res.locals;
+
+  if (!listItem) {
+    logger.error("List item could not be found during requestChanges");
+    return res.status(500);
+  }
 
   if (!changeMessage) {
     req.flash("errorMsg", "You must provide a message to request a change");
     return res.redirect(listItemUrl);
   }
 
-  try {
-    await handleListItemRequestChanges(list, listItem, changeMessage, userId, isUnderTest);
+  const jsonData = listItem.jsonData as ListItemGetObject["jsonData"];
 
-    req.flash("successBannerTitle", `Change request sent to ${listItem.jsonData.organisationName}`);
+  try {
+    await handleListItemRequestChanges(listItem, changeMessage, userId, isUnderTest);
+
+    req.flash("successBannerTitle", `Change request sent to ${jsonData?.organisationName}`);
     req.flash("successBannerHeading", "Requested");
     req.flash("successBannerColour", "blue");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${jsonData?.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
 
 async function handleListItemRequestChanges(
-  list: List,
-  listItem: ListItemGetObject,
+  listItem: ListItem,
   message: string,
   userId: User["id"],
   isUnderTest: boolean
@@ -50,6 +58,10 @@ async function handleListItemRequestChanges(
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
   logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
+  const list = {
+    type: listItem.type,
+  };
+
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isUnderTest });
 
   // Email applicant
@@ -57,7 +69,7 @@ async function handleListItemRequestChanges(
   const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
 
   logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`);
-  const listType = serviceName(list?.type ?? "");
+  const listType = serviceName(listItem.type ?? "");
 
   logger.info(`Got list type [${listType}`);
   await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);

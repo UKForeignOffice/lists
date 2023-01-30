@@ -2,9 +2,4 @@
 
 {% block confirmChangesContent %}
   <h2 class="govuk-heading-m">You are about to remove the following provider from the live list:</h2>
-
-  <p class="govuk-body govuk-!-padding-2 confirmation-focus-box">
-    {{ req.session.changeMessage | striptags(true) | escape | nl2br if req.session.changeMessage }}
-  </p>
-
 {% endblock %}

@@ -3,12 +3,11 @@ import { EventJsonData, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
-import { togglerListItemIsPublished } from "server/models/listItem";
+import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { createListSearchBaseLink } from "server/components/lists";
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendDataPublishedEmail } from "server/services/govuk-notify";
-import { update } from "server/components/dashboard/listsItems/item/update/actionHandlers/update";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]): Promise<void> {
   logger.info(`${userId} looking for ${id} to update`);
@@ -33,25 +32,22 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
   });
 
-  logger.info(`found edit event ${JSON.stringify(editEvent)}`);
+  if (editEvent) {
+    logger.info(`found edit event ${JSON.stringify(editEvent)}`);
+  }
 
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
-  // @ts-ignore
-  if (listItem.jsonData?.updatedJsonData) {
-    await update(id, userId);
-    return;
-  }
-
   if (auditJsonData?.updatedJsonData) {
-    await update(id, userId);
-    return;
-  }
-
-  if (auditJsonData?.updatedJsonData !== undefined) {
     // @ts-ignore
+    logger.info(
+      `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
+    );
     await update(id, userId, auditJsonData.updatedJsonData);
   }
+
+  logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItem.jsonData?.updatedJsonData)}`);
+  await update(id, userId);
 }
 
 export async function publish(req: Request, res: Response): Promise<void> {

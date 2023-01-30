@@ -8,6 +8,6 @@
   <h2 class="govuk-heading-m">You are asking for the following changes:</h2>
 
   <p class="govuk-body govuk-!-padding-2 confirmation-focus-box">
-    {{ req.session.changeMessage | striptags(true) | escape | nl2br if req.session.changeMessage }}
+    {{ message }}
   </p>
 {% endblock %}

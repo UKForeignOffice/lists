@@ -350,11 +350,10 @@ export async function update(
   // @ts-ignore
   const data: DeserialisedWebhookData | null | undefined = legacyDataParameter ?? jsonData?.updatedJsonData;
 
-  if (!data) {
-    logger.error(
+  if (!legacyDataParameter ?? jsonData?.updatedJsonData) {
+    logger.warn(
       "listItem.update cannot resolve any data to update the list item with jsonData.updatedJsonData and data parameter were empty"
     );
-    throw Error(`${userId} attempted to update ${id} but no data was found`);
   }
 
   const { address: currentAddress, ...listItem } = listItemResult!;
@@ -391,12 +390,15 @@ export async function update(
     }
   }
 
+  delete updatedJsonData.updatedJsonData;
+
   const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
     where: { id },
     data: {
       jsonData: updatedJsonData,
       isApproved: true,
       isPublished: true,
+      isAnnualReview: false,
       status: Status.PUBLISHED,
       history: {
         create: EVENTS.PUBLISHED(userId),

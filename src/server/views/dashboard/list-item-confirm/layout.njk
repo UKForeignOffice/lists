@@ -42,15 +42,9 @@
     <p class="govuk-body">Refer to the service guidance for further information.</p>
 
     <div class="govuk-button-group">
-
       {{ govukButton({
-        text: "Request changes",
-        classes: "govuk-button--ok govuk-!-margin-bottom-2",
-        attributes: {
-          id: ["action-button-", listItem.id] | join,
-          "data-title": _.startCase(titleProperty),
-          "data-id": listItem.id
-        }
+        text: buttonText,
+        classes: "govuk-button--ok govuk-!-margin-bottom-2"
       }) }}
 
       <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ listItemUrl }}">Cancel</a>
