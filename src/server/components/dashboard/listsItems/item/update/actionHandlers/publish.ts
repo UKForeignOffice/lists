@@ -1,15 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { EventJsonData, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
-import { createListSearchBaseLink } from "server/components/lists";
-import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
-import serviceName from "server/utils/service-name";
-import { sendDataPublishedEmail } from "server/services/govuk-notify";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { ActionHandlersReq } from "server/components/dashboard/listsItems/item/update/types";
+import { sendPublishedEmail } from "server/components/dashboard/listsItems/item/update/actionHandlers/helpers";
 
-export async function handleListItemUpdate(id: number, userId: User["id"]): Promise<void> {
+export async function handleListItemUpdate(id: number, userId: User["id"]) {
   logger.info(`${userId} looking for ${id} to update`);
   const listItem = await prisma.listItem.findUnique({
     where: { id },
@@ -43,15 +42,19 @@ export async function handleListItemUpdate(id: number, userId: User["id"]): Prom
     logger.info(
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
-    await update(id, userId, auditJsonData.updatedJsonData);
+    // @ts-ignore
+    return update(id, userId, auditJsonData.updatedJsonData);
   }
 
-  logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItem.jsonData?.updatedJsonData)}`);
-  await update(id, userId);
+  const listItemJsonData = listItem.jsonData as ListItemJsonData;
+
+  logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItemJsonData.updatedJsonData)}`);
+  return update(id, userId);
 }
 
-export async function publish(req: Request, res: Response): Promise<void> {
-  const { action } = req.body;
+export async function publish(req: ActionHandlersReq, res: Response) {
+  const { update = {} } = req.session;
+  const { action } = update;
   const isPublished = action === "publish";
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
@@ -59,9 +62,8 @@ export async function publish(req: Request, res: Response): Promise<void> {
   try {
     await handlePublishListItem(listItem.id, isPublished, req.user!.id);
 
-    const successBannerHeading = `${action}ed`;
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${successBannerHeading}`);
-    req.flash("successBannerHeading", successBannerHeading);
+    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been published`);
+    req.flash("successBannerHeading", "Published");
     req.flash("successBannerColour", "green");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
@@ -70,11 +72,7 @@ export async function publish(req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function handlePublishListItem(
-  listItemId: number,
-  isPublished: boolean,
-  userId: User["id"]
-): Promise<void> {
+export async function handlePublishListItem(listItemId: number, isPublished: boolean, userId: User["id"]) {
   const updatedListItem = await togglerListItemIsPublished({
     id: listItemId,
     isPublished,
@@ -82,16 +80,6 @@ export async function handlePublishListItem(
   });
 
   if (updatedListItem.isPublished) {
-    const searchLink = createListSearchBaseLink(updatedListItem.type);
-    const { contactName, contactEmailAddress } = getListItemContactInformation(updatedListItem);
-    const typeName = serviceName(updatedListItem.type);
-
-    await sendDataPublishedEmail(
-      contactName,
-      contactEmailAddress,
-      typeName,
-      updatedListItem.address.country.name,
-      searchLink
-    );
+    return await sendPublishedEmail(updatedListItem);
   }
 }

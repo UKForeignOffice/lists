@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { handleListItemUpdate } from "server/components/dashboard/listsItems/item/update/actionHandlers/publish";
+import { sendPublishedEmail } from "server/components/dashboard/listsItems/item/update/actionHandlers/helpers";
+import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
@@ -7,12 +9,8 @@ export async function update(req: Request, res: Response): Promise<void> {
   const { listItemUrl, listIndexUrl } = res.locals;
 
   try {
-    await handleListItemUpdate(listItem.id, userId);
-
-    if (userId === undefined) {
-      req.flash("errorMsg", "Unable to perform action - user could not be identified");
-      return res.redirect(listItemUrl);
-    }
+    const [updatedListItem] = await handleListItemUpdate(listItem.id, userId);
+    await sendPublishedEmail(updatedListItem as ListItemWithAddressCountry);
 
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been updated and published`);
     req.flash("successBannerHeading", "Updated and published");

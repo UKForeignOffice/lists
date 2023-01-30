@@ -1,12 +1,5 @@
 import { WebhookData } from "server/components/formRunner";
-import {
-  AuditListItemEventName,
-  List,
-  ListItem,
-  Point,
-  ServiceType,
-  User
-} from "server/models/types";
+import { AuditListItemEventName, List, ListItem, Point, ServiceType, User } from "server/models/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
@@ -113,10 +106,10 @@ export async function findListItemById(id: string | number) {
 }
 
 export async function findListItems(options: {
-    listIds?: number[],
-    listItemIds?: number[],
-    statuses?: Status[],
-    isAnnualReview?: boolean
+  listIds?: number[];
+  listItemIds?: number[];
+  statuses?: Status[];
+  isAnnualReview?: boolean;
 }) {
   try {
     const { listIds, listItemIds, statuses, isAnnualReview } = options;
@@ -127,15 +120,15 @@ export async function findListItems(options: {
     }
     const result = await prisma.listItem.findMany({
       where: {
-        ...(listIds != null && { listId: { in: listIds }}),
-        ...(listItemIds != null && { id: { in: listItemIds }}),
-        ...(statuses != null && { status: { in: statuses }}),
+        ...(listIds != null && { listId: { in: listIds } }),
+        ...(listItemIds != null && { id: { in: listItemIds } }),
+        ...(statuses != null && { status: { in: statuses } }),
         ...(isAnnualReview != null && { isAnnualReview }),
         history: {
           some: {
             type: "PUBLISHED",
             time: {
-              lte: subMonths(Date.now(), 1)
+              lte: subMonths(Date.now(), 1),
             },
           },
         },
@@ -324,11 +317,7 @@ type Nullable<T> = T | undefined | null;
 /**
  * updates and PUBLISHES!
  */
-export async function update(
-  id: ListItem["id"],
-  userId: User["id"],
-  legacyDataParameter?: DeserialisedWebhookData
-): Promise<void> {
+export async function update(id: ListItem["id"], userId: User["id"], legacyDataParameter?: DeserialisedWebhookData) {
   logger.info(`user ${userId} is attempting to update ${id}`);
   if (legacyDataParameter) {
     logger.info(
@@ -339,7 +328,11 @@ export async function update(
     .findFirst({
       where: { id },
       include: {
-        address: true,
+        address: {
+          include: {
+            country: true,
+          },
+        },
       },
     })
     .catch((e) => {
@@ -436,6 +429,8 @@ export async function update(
     if (!result) {
       throw Error("listItem.update prisma update failed");
     }
+
+    return result;
   } catch (err) {
     logger.error(`listItem.update transactional error - rolling back ${err.message}`);
     throw err;
