@@ -147,7 +147,7 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
       text: fieldTitles[field] ?? "",
     },
     value: {
-      [valueKey]: value,
+      [valueKey]: fieldHasUpdate ? parseValue(field, listItem.updatedJsonData) : value,
     },
     ...(fieldHasUpdate && {
       actions: { items: [updateTag] },
