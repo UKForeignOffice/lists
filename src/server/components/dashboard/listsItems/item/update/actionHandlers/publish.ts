@@ -1,11 +1,10 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { EventJsonData, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { ActionHandlersReq } from "./../types";
 import { sendPublishedEmail } from "./helpers";
 import { startCase } from "lodash";
 
@@ -53,7 +52,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   return update(id, userId);
 }
 
-export async function publish(req: ActionHandlersReq, res: Response) {
+export async function publish(req: Request, res: Response) {
   const { update = {} } = req.session;
   const { action } = update;
   const isPublished = action === "publish";
