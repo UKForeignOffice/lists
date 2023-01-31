@@ -52,6 +52,7 @@ describe("Dashboard Controllers", () => {
       flash: jest.fn(),
       isUnauthenticated: jest.fn().mockReturnValue(false),
       isAuthenticated: jest.fn().mockReturnValue(true),
+      session: {},
     };
 
     mockRes = {
@@ -199,7 +200,7 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
-      mockReq.user.userData.email = "user@gov.uk"
+      mockReq.user.userData.email = "user@gov.uk";
       mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
@@ -469,8 +470,7 @@ describe("Dashboard Controllers", () => {
   });
 
   describe("getAnnualReviewDate", () => {
-
-    jest.useFakeTimers().setSystemTime(new Date(1670944983729));  // Current date to 2022-12-13
+    jest.useFakeTimers().setSystemTime(new Date(1670944983729)); // Current date to 2022-12-13
 
     it("returns valid date if within 6 months of last annual review", () => {
       // when
@@ -499,7 +499,7 @@ describe("Dashboard Controllers", () => {
 
     it("returns a different year if the user select January within 6 months of annual review", () => {
       // when
-      jest.useFakeTimers().setSystemTime(new Date(1698796800000));  // Current date to 2023-11-01
+      jest.useFakeTimers().setSystemTime(new Date(1698796800000)); // Current date to 2023-11-01
       const result = getAnnualReviewDate("1", "1");
 
       // then
