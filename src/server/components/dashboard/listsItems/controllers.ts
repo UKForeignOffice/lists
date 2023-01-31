@@ -28,7 +28,7 @@ function mapUpdatedAuditJsonDataToListItem(
     {},
     listItem.jsonData,
     ...[...Object.keys(jsonData), ...swornTranslatorFields].map(
-      (k) => k in updatedJsonData && { [k]: updatedJsonData[k] }
+      (k) => updatedJsonData[k] && { [k]: updatedJsonData[k] }
     )
   );
 }
