@@ -1,7 +1,7 @@
 <li class="dashboard__list-item" id="item-{{ listItem.id }}" data-testid="list-item-row">
   <div class="dashboard__list-item-title">
     <form class="form"
-          action="items/{{ listItem.id }}/pin"
+          action="items/{{ listItem.id }}"
           method="post">
       {% set action = "unpin" if isPinned else "pin" %}
       {% set fillStatus = "filled" if isPinned else "unfilled" %}
@@ -9,6 +9,7 @@
         <span class="govuk-visually-hidden">Organisation name:</span>
         <span data-testid="organisation-name-{{ listItem.contactName }}">{{ listItem.organisationName }}</span>
         <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="skip-confirmation" id="skip-confirmation" value="true" />
         <button class="dashboard__list-item-pin" name="action" value="{{ action }}" data-testid="{{ action }}-{{ listItem.contactName }}">
           <label class="govuk-visually-hidden">{{ action }} {{ listItem.organisationName }}</label>
           <img class="dashboard__list-item-icon" src="/assets/images/{{ action }}.png" alt="{{ fillStatus }} star" width="24px" height="24px">
