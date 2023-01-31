@@ -4,7 +4,12 @@ import * as DateFns from "date-fns";
 import { isAfter, isBefore } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 
-export const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
+/**
+ * Additions to Status type to help with rendering
+ */
+export type AdditionalStatus = "OUT_FOR_ANNUAL_REVIEW";
+
+export const statusToActivityVM: Record<Status | AdditionalStatus, ActivityStatusViewModel> = {
   NEW: {
     type: "to_do",
     text: "Check new entry",
@@ -33,6 +38,10 @@ export const statusToActivityVM: Record<Status, ActivityStatusViewModel> = {
     text: "Removed by post",
     type: "to_do",
     colour: "red",
+  },
+  OUT_FOR_ANNUAL_REVIEW: {
+    type: "out_with_provider",
+    text: "Out for annual review",
   },
 };
 
@@ -119,6 +128,10 @@ export function getActivityStatus(item: ListItemWithHistory): ActivityStatusView
     return statusToActivityVM.EDITED;
   }
 
+  if (status === "OUT_WITH_PROVIDER" && item.isAnnualReview) {
+    return statusToActivityVM.OUT_FOR_ANNUAL_REVIEW;
+  }
+
   if (!isPublished) {
     if (status === "OUT_WITH_PROVIDER") {
       return statusToActivityVM.OUT_WITH_PROVIDER;
@@ -155,7 +168,9 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
   let oneMonthWarning = false;
 
   if (oneMonthBeforeDateString && annualReviewDateString) {
-    const oneMonthBeforeDate = new Date(list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH as string);
+    const oneMonthBeforeDate = new Date(
+      list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH as string
+    );
     const isAfterOneMonthDate = isAfter(Date.now(), oneMonthBeforeDate);
     const annualReviewDate = new Date(list.jsonData.currentAnnualReview?.keyDates.annualReview.START as string);
     const isBeforeAnnualReviewDate = isBefore(Date.now(), annualReviewDate);
@@ -174,7 +189,8 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
 export function displayUnpublishWarning(list: ListWithJsonData, listItems: IndexListItem[]) {
   let display = false;
   let countOfListItems = 0;
-  const fiveWeeksBeforeUnpublishDateString = list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
+  const fiveWeeksBeforeUnpublishDateString =
+    list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
   if (fiveWeeksBeforeUnpublishDateString) {
     const fiveWeeksBeforeUnpublishDate = new Date(fiveWeeksBeforeUnpublishDateString);
     const isAfterFiveWeeksBeforeUnpublishDate = isAfter(Date.now(), fiveWeeksBeforeUnpublishDate);
@@ -200,7 +216,10 @@ export function displayUnpublishWarning(list: ListWithJsonData, listItems: Index
  * @param events
  * @param list
  */
-export function annualReviewEmailsSent(list: ListWithJsonData, events?: Array<{ type: string; time: Date }> | undefined): boolean {
+export function annualReviewEmailsSent(
+  list: ListWithJsonData,
+  events?: Array<{ type: string; time: Date }> | undefined
+): boolean {
   if (!events?.length) return false;
   const annualReviewStartDateString = list?.jsonData?.currentAnnualReview?.keyDates.annualReview.START;
 
@@ -208,7 +227,6 @@ export function annualReviewEmailsSent(list: ListWithJsonData, events?: Array<{ 
   const annualReviewDate = new Date(annualReviewStartDateString);
 
   return events.some((event) => {
-    return event.type === "ANNUAL_REVIEW_STARTED" &&
-      isAfter(event.time, annualReviewDate);
+    return event.type === "ANNUAL_REVIEW_STARTED" && isAfter(event.time, annualReviewDate);
   });
 }
