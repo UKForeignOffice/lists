@@ -12,6 +12,8 @@ import type { ListIndexRes, ListItemRes } from "server/components/dashboard/list
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
 import { isEmpty } from "lodash";
+import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
+import { Action } from "server/components/dashboard/listsItems/item/update/types";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -107,8 +109,10 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   });
 }
 
-export async function listItemPostController(req: Request, res: Response) {
+export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
   const { message, action } = req.body;
+  const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
+
   const { listItemUrl } = res.locals;
 
   if (!action) {
@@ -125,6 +129,12 @@ export async function listItemPostController(req: Request, res: Response) {
     action,
     message,
   };
+
+  const allowedSkipConfirmationActions = ["pin", "unpin"];
+
+  if (skipConfirmation && allowedSkipConfirmationActions.includes(action)) {
+    return actionHandlers[action as Action](req, res, next);
+  }
 
   return res.redirect(`${listItemUrl}/confirm`);
 }

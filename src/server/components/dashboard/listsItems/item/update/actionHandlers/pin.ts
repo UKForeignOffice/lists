@@ -3,7 +3,13 @@ import { handlePinListItem } from "server/components/dashboard/listsItems/helper
 import { Request, Response } from "express";
 
 export async function pin(req: Request, res: Response) {
-  const { action } = req.body;
+  let action = req.session.update?.action;
+  const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
+
+  if (skipConfirmation) {
+    action = req.body.action;
+  }
+
   const userId = req.user!.userData.id;
   const listItem = res.locals.listItem!;
   const isPinned = action === "pin";
