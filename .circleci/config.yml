@@ -94,10 +94,10 @@ jobs:
             docker-compose up -d lists apply
             docker ps
 
-      - run: # this will let you view logs from the apply and lists docker containers
-          name: logs
-          background: true
-          command: docker-compose logs -f lists apply
+#      - run: # this will let you view logs from the apply and lists docker containers
+#          name: logs
+#          background: true
+#          command: docker-compose logs -f lists apply
 
 
       - run:
@@ -116,9 +116,9 @@ jobs:
             - ~/.cache
 
 
-      - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
-         path: ~/repo/cypress/videos
-         destination: videos
+#      - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
+#         path: ~/repo/cypress/videos
+#         destination: videos
 
 
   publish:
