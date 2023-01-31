@@ -93,7 +93,7 @@ listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController
 
 listRouter.use("/:listId/items/:listItemId", updateRouter);
 
-updateRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
+listRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
 
 listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
 listRouter.post("/:listId/annual-review-date", annualReview.editDatePostController);
