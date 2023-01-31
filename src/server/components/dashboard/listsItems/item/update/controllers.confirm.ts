@@ -68,5 +68,5 @@ const actionToButtonText: Record<Action, string> = {
   unpublish: "Unpublish",
   update: "Update",
   updateLive: "Update",
-  updateNew: "Update",
+  updateNew: "Publish",
 };

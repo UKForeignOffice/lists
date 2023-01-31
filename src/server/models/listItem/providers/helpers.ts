@@ -186,10 +186,10 @@ export function getChangedAddressFields(
   };
 
   const webhookAsAddress = {
-    firstLine: webhook["address.firstLine"] ?? address?.firstLine,
-    secondLine: webhook["address.secondLine"] ?? address?.secondLine ?? undefined,
-    postCode: webhook.postCode ?? address.postCode,
-    city: webhook.city ?? address.city,
+    firstLine: webhook?.["address.firstLine"] ?? address?.firstLine,
+    secondLine: webhook?.["address.secondLine"] ?? address?.secondLine ?? undefined,
+    postCode: webhook?.postCode ?? address.postCode,
+    city: webhook?.city ?? address.city,
   };
 
   return getObjectDiff(updatableAddressObject, webhookAsAddress);
