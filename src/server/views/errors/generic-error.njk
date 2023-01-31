@@ -12,6 +12,8 @@
               Page not found
             {% elif status == 429 %}
               You have exceeded the maximum rate of page requests
+            {% elif status == 405 %}
+              Access denied
             {% else %}
               Sorry, there is a problem with the service
             {% endif %}
