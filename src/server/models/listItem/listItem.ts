@@ -404,6 +404,13 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
         },
       }),
     },
+    include: {
+      address: {
+        include: {
+          country: true,
+        },
+      },
+    },
   };
 
   try {
