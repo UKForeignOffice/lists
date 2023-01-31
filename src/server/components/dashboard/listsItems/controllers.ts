@@ -14,6 +14,7 @@ import { getActivityStatus, getPublishingStatus } from "server/models/listItem/s
 import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import { Action } from "server/components/dashboard/listsItems/item/update/types";
+import { logger } from "server/services/logger";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -30,7 +31,7 @@ function mapUpdatedAuditJsonDataToListItem(
     {},
     listItem.jsonData,
     ...[...Object.keys(jsonData), ...swornTranslatorFields].map(
-      (k) => updatedJsonData[k] && { [k]: updatedJsonData[k] }
+      (k) => updatedJsonData?.[k] && { [k]: updatedJsonData[k] }
     )
   );
 }
@@ -61,6 +62,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   let updatedJsonData = listItem.jsonData?.updatedJsonData;
 
   if (hasPendingUpdate && isLegacyUpdate) {
+    logger.info(`rendering ${listItem.id} with legacy update`);
     const auditForEdits = listItem?.history?.find?.((event) => event.type === "EDITED");
     const auditJsonData: EventJsonData = auditForEdits?.jsonData as EventJsonData;
     updatedJsonData = auditJsonData?.updatedJsonData;
