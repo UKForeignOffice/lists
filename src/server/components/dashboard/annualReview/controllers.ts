@@ -11,6 +11,8 @@ import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
 import { updateAnnualReviewWithKeyDates } from "server/components/dashboard/annualReview/helpers.keyDates";
 import {isAfter, isEqual} from "date-fns";
+import {UserRoles} from "server/models/types";
+import {HttpException} from "server/middlewares/error-handlers";
 
 export const DATE_FORMAT = "d MMMM yyyy";
 
@@ -45,7 +47,7 @@ export async function editDateGetController(req: Request, res: Response, next: N
 export async function editDatePostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     return req.body.action === "confirmNewDate"
-      ? await confirmNewAnnualReviewDate(req, res)
+      ? await confirmNewAnnualReviewDate(req, res, next)
       : await updateNewAnnualReviewDate(req, res);
   } catch (error) {
     logger.error(`editDatePostController Error: ${(error as Error).message}`);
@@ -53,7 +55,7 @@ export async function editDatePostController(req: Request, res: Response, next: 
   }
 }
 
-async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<void> {
+async function confirmNewAnnualReviewDate(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { day, month } = req.body;
@@ -64,6 +66,11 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response): Promise<
     return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
   }
 
+  const roles = req.user?.userData?.jsonData.roles;
+  if (roles && !roles.includes(UserRoles.Administrator)) {
+    logger.warn(`non-admin user ${req.user?.userData.id} attempted to edit annual review start date`);
+    return next(new HttpException(405, "405", "You do not have access to edit the annual review start date"));
+  }
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
     newAnnualReviewDateFormatted: DateFns.format(annualReviewDate.value, DATE_FORMAT),
