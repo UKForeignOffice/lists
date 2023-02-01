@@ -2,8 +2,10 @@ import { isGovUKEmailAddress, isCountryNameValid, throwIfConfigVarIsUndefined } 
 import { countriesList } from "server/services/metadata";
 
 describe("isGovUKEmailAddress", () => {
+  const env = { ...process.env };
   beforeEach(() => {});
   afterEach(() => {
+    process.env = env;
     jest.restoreAllMocks();
   });
 
@@ -31,7 +33,7 @@ describe("isGovUKEmailAddress", () => {
     /**
      * Set process.env, reset modules, then re-import ./../validation so the new value is used
      */
-    jest.replaceProperty(process.env, "ALLOWED_EMAIL_DOMAINS", "gmail.com,gov.uk");
+    process.env.ALLOWED_EMAIL_DOMAINS = "gmail.com,gov.uk";
     jest.resetModules();
 
     expect(require("./../validation").isGovUKEmailAddress("person@gmail.com")).toBe(true);
