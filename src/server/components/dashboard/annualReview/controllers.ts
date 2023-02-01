@@ -11,8 +11,6 @@ import type { NextFunction, Request, Response } from "express";
 import type { List } from "server/models/types";
 import { updateAnnualReviewWithKeyDates } from "server/components/dashboard/annualReview/helpers.keyDates";
 import {isAfter, isEqual} from "date-fns";
-import {UserRoles} from "server/models/types";
-import {HttpException} from "server/middlewares/error-handlers";
 
 export const DATE_FORMAT = "d MMMM yyyy";
 
