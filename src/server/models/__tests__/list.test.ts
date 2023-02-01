@@ -21,8 +21,6 @@ describe("List Model:", () => {
     jsonData: {
       createdBy: "test@gov.uk",
       users: ["test@gov.uk"],
-      validators: ["test@gov.uk"],
-      administrators: ["test@gov.uk"],
     },
   };
 
@@ -105,8 +103,8 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.covidTestProviders,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
-      createdBy: "test@gov.uk",
+      users: ["test@fcdo.gov.uk", "publisher@fcdo.gov.uk", undefined],
+      createdBy: "test@fcdo.gov.uk",
     };
 
     test("create call is correct", async () => {
@@ -170,8 +168,8 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.covidTestProviders,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
-      createdBy: "test@gov.uk",
+      users: ["test@fcdo.gov.uk", "publisher@fcdo.gov.uk"],
+      createdBy: "test@fcdo.gov.uk",
     };
 
     test("create call is correct", async () => {
