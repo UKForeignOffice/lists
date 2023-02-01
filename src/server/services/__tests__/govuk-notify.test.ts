@@ -29,11 +29,9 @@ const mocks: { [name: string]: undefined | string } = {
 
 const mockNotify = NOTIFY;
 
-const env = { ...process.env };
-
 jest.mock("server/config", () => {
   return {
-    ...env,
+    ...process.env,
     get GOVUK_NOTIFY_API_KEY() {
       return mocks.GOVUK_NOTIFY_API_KEY;
     },
