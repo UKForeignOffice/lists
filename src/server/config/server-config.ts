@@ -49,11 +49,6 @@ export const NOTIFY = {
   },
 };
 
-// Scheduled process
-const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
-const defaultTodayDateString = new Date().toLocaleString("en-gb", options);
-export const SCHEDULED_PROCESS_TODAY_DATE = process.env.SCHEDULED_PROCESS_TODAY_DATE ?? defaultTodayDateString;
-
 // Form runner
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
 export const FORM_RUNNER_PUBLIC_URL = `${SERVICE_DOMAIN}/application`;

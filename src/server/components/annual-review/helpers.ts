@@ -8,7 +8,7 @@ export async function sendAnnualReviewCompletedEmailForList(listId: number) {
   if (list?.jsonData?.users) {
     await Promise.all(
       list.jsonData.users.map(async (postEmailAddress: string) => {
-        await sendAnnualReviewCompletedEmail(
+        return await sendAnnualReviewCompletedEmail(
           postEmailAddress,
           lowerCase(startCase(list.type)),
           list?.country?.name ?? ""

@@ -2,9 +2,8 @@ import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/mo
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { findListItems } from "server/models/listItem";
-import { SCHEDULED_PROCESS_TODAY_DATE } from "server/config";
 import * as helpers from "./helpers";
-import {getCurrentAnnualReviewData, schedulerMilestoneDays} from "./helpers";
+import {getCurrentAnnualReviewData, getTodayDate, schedulerMilestoneDays} from "./helpers";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import {addDays} from "date-fns";
 import _ from "lodash";
@@ -63,8 +62,7 @@ export async function populateCurrentAnnualReview(
   }
 }
 
-export async function updateListsForAnnualReview(todayDateString: string): Promise<void> {
-  const today = new Date(todayDateString);
+export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH)
   if (annualReviewStartDate) {
     const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate, today);
@@ -85,8 +83,7 @@ export async function updateListsForAnnualReview(todayDateString: string): Promi
  *    todayDateString = formatDate(subDays(new Date(), 27)); // today is day before annual review start date
  *    todayDateString = formatDate(subDays(new Date(), 21)); // today is one week before annual review start date
  */
-const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
-updateListsForAnnualReview(todayDateString)
+updateListsForAnnualReview( getTodayDate())
   .then((r) => {
     logger.info(`Batch scheduler finished`);
     process.exit(0);
