@@ -206,3 +206,8 @@ export function getDateForContext(
   }
   return dateContext;
 }
+
+export function getTodayDate() {
+  const localDate = new Date();
+  return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0));
+}

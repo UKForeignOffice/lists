@@ -1,22 +1,21 @@
-import { findListsWithCurrentAnnualReview } from "server/models/list";
-import { logger } from "server/services/logger";
+import {findListsWithCurrentAnnualReview} from "server/models/list";
+import {logger} from "server/services/logger";
 import {
   Audit,
   List,
   ListAnnualReviewPostReminderType,
   ListItemAnnualReviewProviderReminderType,
 } from "server/models/types";
-import { lowerCase, startCase } from "lodash";
-import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "server/services/govuk-notify";
-import { findAuditEvents, recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
-import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { findListItems, updateIsAnnualReview } from "server/models/listItem";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { MilestoneTillAnnualReview } from "../batch/helpers";
-import {addDays, isBefore, isEqual} from "date-fns";
-import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "../helpers";
-import { SCHEDULED_PROCESS_TODAY_DATE } from "server/config";
+import {lowerCase, startCase} from "lodash";
+import {sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail} from "server/services/govuk-notify";
+import {findAuditEvents, recordListItemEvent} from "server/models/audit";
+import {AuditEvent, ListItemEvent} from "@prisma/client";
+import {BaseDeserialisedWebhookData} from "server/models/listItem/providers/deserialisers/types";
+import {findListItems, updateIsAnnualReview} from "server/models/listItem";
+import {ListItemWithHistory} from "server/components/dashboard/listsItems/types";
+import {getTodayDate, MilestoneTillAnnualReview} from "../batch/helpers";
+import {isAfter, isBefore, isEqual} from "date-fns";
+import {createAnnualReviewProviderUrl, formatDate, isEmailSentBefore} from "../helpers";
 
 async function processPostEmailsForList(
   list: List,
@@ -65,15 +64,17 @@ async function processPostEmailsForList(
   );
 }
 
-async function emailProvider(list: List, listItem: ListItemWithHistory, deletionDate: string) {
+async function emailProvider(list: List, listItem: ListItemWithHistory) {
   const annualReviewProviderUrl = createAnnualReviewProviderUrl(listItem);
+  const unpublishDate = new Date(list.jsonData.currentAnnualReview?.keyDates.unpublished.UNPUBLISH ?? "");
+  const unpublishDateString = formatDate(unpublishDate);
 
   const providerEmailResult = await sendAnnualReviewProviderEmail(
     (listItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
     lowerCase(startCase(listItem.type)),
     list?.country?.name ?? "",
     (listItem.jsonData as BaseDeserialisedWebhookData).contactName,
-    deletionDate,
+    unpublishDateString,
     annualReviewProviderUrl
   );
   return providerEmailResult;
@@ -81,9 +82,7 @@ async function emailProvider(list: List, listItem: ListItemWithHistory, deletion
 
 async function processProviderEmailsForListItems(
   list: List,
-  listItems: ListItemWithHistory[],
-  daysBeforeAnnualReviewStart: string,
-  deletionDate: string
+  listItems: ListItemWithHistory[]
 ) {
   for (const listItem of listItems) {
     const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
@@ -100,7 +99,7 @@ async function processProviderEmailsForListItems(
 
     // email the provider and add an audit record
     if (!isEmailSent) {
-      const providerEmailResult = await emailProvider(list, listItem, deletionDate);
+      const providerEmailResult = await emailProvider(list, listItem);
       const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
 
       if (providerEmailResult.result) {
@@ -128,10 +127,11 @@ async function getLatestReminderAuditEvent(annualReviewRef: string, auditType: "
   return audit;
 }
 
-function hasMilestonePassed(today: Date, milestoneDate: string) {
-  const isBeforeBool = isBefore(new Date(milestoneDate), today);
-  const isEqualBool = isEqual(new Date(milestoneDate), today);
-  return isBeforeBool || isEqualBool;
+function isWithinInterval( today: Date, interval: { start: string; end: string }) {
+  const isAtStart = isEqual(today, new Date(interval.start));
+  const isAfterStart = isAfter(today, new Date(interval.start));
+  const isBeforeEnd = isBefore(today, new Date(interval.end));
+  return (isAtStart || isAfterStart) && isBeforeEnd;
 }
 
 export async function processList(list: List, listItemsForList: ListItemWithHistory[]) {
@@ -149,11 +149,32 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   const audit = await getLatestReminderAuditEvent(annualReviewRef, "list");
   const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
   let isEmailSent = false;
-  const todayDateString = SCHEDULED_PROCESS_TODAY_DATE;
-  const today = new Date(todayDateString);
+
+  const today = getTodayDate();
   logger.info(`Checking annual review milestone dates against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
 
-  if (today.toISOString() === annualReviewKeyDates?.START) {
+  if (isWithinInterval(today,{ start: annualReviewKeyDates?.POST_ONE_MONTH ?? "", end: annualReviewKeyDates?.POST_ONE_WEEK ?? "" })) {
+    isEmailSent = isEmailSentBefore(audit as Audit, "sendOneMonthPostEmail");
+    if (!isEmailSent) {
+      await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
+    }
+    return;
+  }
+  if (isWithinInterval(today, { start: annualReviewKeyDates?.POST_ONE_WEEK ?? "", end: annualReviewKeyDates?.POST_ONE_DAY ?? "" })) {
+    isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
+    if (!isEmailSent) {
+      await processPostEmailsForList(list, "POST_ONE_WEEK", "sendOneWeekPostEmail");
+    }
+    return;
+  }
+  if (isEqual(today, new Date(annualReviewKeyDates?.POST_ONE_DAY ?? ""))) {
+    isEmailSent = isEmailSentBefore(audit, "sendOneDayPostEmail");
+    if (!isEmailSent) {
+      await processPostEmailsForList(list, "POST_ONE_DAY", "sendOneDayPostEmail");
+    }
+    return;
+  }
+  if (isEqual(new Date(annualReviewKeyDates?.START ?? ""), today)) {
     // email posts to notify of annual review start
     isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
     if (!isEmailSent) {
@@ -168,29 +189,10 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
       return;
     }
     const updatedListItems = await updateIsAnnualReviewForListItems(listItemsForList, list);
-    const currentDateString = formatDate(addDays(today, 42));
-    await processProviderEmailsForListItems(list, updatedListItems, "START", currentDateString);
-
-  } else if (isBefore(today, new Date(annualReviewKeyDates?.START ?? ""))) {
-    if (hasMilestonePassed(today, annualReviewKeyDates?.POST_ONE_DAY ?? "")) {
-      isEmailSent = isEmailSentBefore(audit as Audit, "sendOneDayPostEmail");
-      if (!isEmailSent) {
-        await processPostEmailsForList(list, "POST_ONE_DAY", "sendOneDayPostEmail");
-      }
-    } else if (hasMilestonePassed(today, annualReviewKeyDates?.POST_ONE_WEEK ?? "")) {
-      isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
-      if (!isEmailSent) {
-        await processPostEmailsForList(list, "POST_ONE_WEEK", "sendOneWeekPostEmail");
-      }
-    } else if (hasMilestonePassed(today, annualReviewKeyDates?.POST_ONE_MONTH ?? "")) {
-      isEmailSent = isEmailSentBefore(audit, "sendOneMonthPostEmail");
-      if (!isEmailSent) {
-        await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
-      }
-    } else {
-      logger.info(`Annual review milestone dates for list ${list.id} don't match against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
-    }
+    await processProviderEmailsForListItems(list, updatedListItems);
+    return;
   }
+  logger.debug(`Annual review key dates for list ${list.id} don't match against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
 }
 
 export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHistory[], list: List): Promise<ListItemWithHistory[]> {
