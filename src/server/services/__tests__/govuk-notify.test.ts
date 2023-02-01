@@ -29,8 +29,11 @@ const mocks: { [name: string]: undefined | string } = {
 
 const mockNotify = NOTIFY;
 
+const env = { ...process.env };
+
 jest.mock("server/config", () => {
-  return ({
+  return {
+    ...env,
     get GOVUK_NOTIFY_API_KEY() {
       return mocks.GOVUK_NOTIFY_API_KEY;
     },
@@ -84,11 +87,11 @@ jest.mock("server/config", () => {
           },
           postStart() {
             return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED;
-          }
-        }
+          },
+        },
       },
     },
-  });
+  };
 });
 
 describe("GOVUK Notify service:", () => {
@@ -96,9 +99,7 @@ describe("GOVUK Notify service:", () => {
     test("it throws when Server config variable NOTIFY.apiKey is missing", () => {
       mockNotify.apiKey = "";
 
-      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
-        "Server config variable NOTIFY.apiKey is missing"
-      );
+      expect(() => GovUKNotify.getNotifyClient()).toThrowError("Server config variable NOTIFY.apiKey is missing");
 
       mockNotify.apiKey = mocks.GOVUK_NOTIFY_API_KEY ?? "";
     });
@@ -115,17 +116,12 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
-        emailAddress,
-        authenticationLink
-      );
+      const result = await GovUKNotify.sendAuthenticationEmail(emailAddress, authenticationLink);
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        NOTIFY.templates.auth,
-        emailAddress,
-        { personalisation: { authenticationLink } }
-      );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.auth, emailAddress, {
+        personalisation: { authenticationLink },
+      });
     });
 
     test("email won't be sent when email address is not GOV.UK", async () => {
@@ -133,10 +129,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@google.com";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
-        emailAddress,
-        authenticationLink
-      );
+      const result = await GovUKNotify.sendAuthenticationEmail(emailAddress, authenticationLink);
 
       expect(result).toBe(false);
       expect(notifyClient.sendEmail).not.toHaveBeenCalled();
@@ -151,15 +144,10 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
-        emailAddress,
-        authenticationLink
-      );
+      const result = await GovUKNotify.sendAuthenticationEmail(emailAddress, authenticationLink);
 
       expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "sendAuthenticationEmail Error: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("sendAuthenticationEmail Error: sendEmail error message");
     });
   });
 
@@ -186,18 +174,14 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        NOTIFY.templates.emailConfirmation,
-        emailAddress,
-        {
-          personalisation: {
-            confirmationLink,
-            contactName,
-            country,
-            type,
-          },
-        }
-      );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.emailConfirmation, emailAddress, {
+        personalisation: {
+          confirmationLink,
+          contactName,
+          country,
+          type,
+        },
+      });
     });
 
     test("it returns false when sendEmail rejects", async () => {
@@ -221,9 +205,7 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "sendApplicationConfirmationEmail Error: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("sendApplicationConfirmationEmail Error: sendEmail error message");
     });
   });
 
@@ -239,32 +221,20 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const type = "COVID-19 test providers";
       const country = "Germany";
-      const searchLink =
-        "http://localhost:3000/find?serviceType=covidTestProviders";
+      const searchLink = "http://localhost:3000/find?serviceType=covidTestProviders";
 
-      const result = await GovUKNotify.sendDataPublishedEmail(
-        contactName,
-        emailAddress,
-        type,
-        country,
-        searchLink
-      );
+      const result = await GovUKNotify.sendDataPublishedEmail(contactName, emailAddress, type, country, searchLink);
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        NOTIFY.templates.published,
-        "testemail@gov.uk",
-        {
-          personalisation: {
-            contactName: "Ada Lovelace",
-            country: "Germany",
-            searchLink:
-              "http://localhost:3000/find?serviceType=covidTestProviders",
-            type: "COVID-19 test provider",
-            typePlural: "COVID-19 test providers",
-          },
-        }
-      );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.published, "testemail@gov.uk", {
+        personalisation: {
+          contactName: "Ada Lovelace",
+          country: "Germany",
+          searchLink: "http://localhost:3000/find?serviceType=covidTestProviders",
+          type: "COVID-19 test provider",
+          typePlural: "COVID-19 test providers",
+        },
+      });
     });
 
     test("it returns false when sendEmail rejects", async () => {
@@ -279,18 +249,10 @@ describe("GOVUK Notify service:", () => {
       const country = "Germany";
       const searchLink = "http://localhost:3000/find?serviceType=lawyers";
 
-      const result = await GovUKNotify.sendDataPublishedEmail(
-        contactName,
-        emailAddress,
-        type,
-        country,
-        searchLink
-      );
+      const result = await GovUKNotify.sendDataPublishedEmail(contactName, emailAddress, type, country, searchLink);
 
       expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "sendDataPublishedEmail Error: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("sendDataPublishedEmail Error: sendEmail error message");
     });
   });
 
@@ -306,8 +268,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const typePlural = "Lawyers";
       const message = "Please correct the address";
-      const changeLink =
-        "http://localhost:3001/session/TOKEN-ABC123";
+      const changeLink = "http://localhost:3001/session/TOKEN-ABC123";
 
       const { result } = await GovUKNotify.sendEditDetailsEmail(
         contactName,
@@ -318,19 +279,15 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
-        NOTIFY.templates.edit,
-        "testemail@gov.uk",
-        {
-          personalisation: {
-            typeSingular: "Lawyer",
-            typePlural,
-            contactName,
-            message,
-            changeLink,
-          },
-        }
-      );
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.edit, "testemail@gov.uk", {
+        personalisation: {
+          typeSingular: "Lawyer",
+          typePlural,
+          contactName,
+          message,
+          changeLink,
+        },
+      });
     });
 
     test("it returns false when sendEmail rejects", async () => {
@@ -343,21 +300,12 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const typePlural = "Lawyers";
       const message = "Please correct the address";
-      const changeLink =
-        "http://localhost:3001/session/TOKEN-ABC123";
+      const changeLink = "http://localhost:3001/session/TOKEN-ABC123";
 
-      const result = await GovUKNotify.sendEditDetailsEmail(
-        contactName,
-        emailAddress,
-        typePlural,
-        message,
-        changeLink
-      );
+      const result = await GovUKNotify.sendEditDetailsEmail(contactName, emailAddress, typePlural, message, changeLink);
 
       expect(result.error?.message).toBe("Unable to send change request email: sendEmail error message");
-      expect(logger.error).toHaveBeenCalledWith(
-        "Unable to send change request email: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("Unable to send change request email: sendEmail error message");
     });
   });
 
@@ -382,7 +330,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneMonth,
         "testemail@gov.uk",
@@ -393,7 +341,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
-        },
+        }
       );
     });
 
@@ -417,7 +365,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneWeek,
         "testemail@gov.uk",
@@ -428,7 +376,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
-        },
+        }
       );
     });
 
@@ -452,7 +400,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneDay,
         "testemail@gov.uk",
@@ -463,7 +411,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
-        },
+        }
       );
     });
 
@@ -487,7 +435,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postStart,
         "testemail@gov.uk",
@@ -498,7 +446,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
-        },
+        }
       );
     });
 
@@ -522,14 +470,11 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result.error?.message).toBe("Unable to send annual review post email: sendEmail error message");
-      expect(logger.error).toHaveBeenCalledWith(
-        "Unable to send annual review post email: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("Unable to send annual review post email: sendEmail error message");
     });
   });
 
   describe("sendAnnualReviewProviderEmail", () => {
-
     test("notify.sendEmail command is correct for START milestone", async () => {
       const notifyClient = GovUKNotify.getNotifyClient();
 
@@ -553,7 +498,7 @@ describe("GOVUK Notify service:", () => {
         changeLink
       );
 
-      expect(result).toBe(true );
+      expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.providerStart,
         "testemail@gov.uk",
@@ -565,7 +510,7 @@ describe("GOVUK Notify service:", () => {
             deletionDate,
             changeLink,
           },
-        },
+        }
       );
     });
 
@@ -592,9 +537,7 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result.error?.message).toBe("Unable to send annual review provider email: sendEmail error message");
-      expect(logger.error).toHaveBeenCalledWith(
-        "Unable to send annual review provider email: sendEmail error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("Unable to send annual review provider email: sendEmail error message");
     });
   });
 });
