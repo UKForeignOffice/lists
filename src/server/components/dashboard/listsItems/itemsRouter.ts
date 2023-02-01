@@ -18,6 +18,7 @@ import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
 import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
+import {onlyAllowAdminsEditAnnualReviewDate} from "server/components/auth/helpers";
 
 export const listRouter = express.Router();
 
@@ -95,5 +96,5 @@ listRouter.use("/:listId/items/:listItemId", updateRouter);
 
 listRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
 
-listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
-listRouter.post("/:listId/annual-review-date", annualReview.editDatePostController);
+listRouter.get("/:listId/annual-review-date", onlyAllowAdminsEditAnnualReviewDate, annualReview.editDateGetController);
+listRouter.post("/:listId/annual-review-date", onlyAllowAdminsEditAnnualReviewDate, annualReview.editDatePostController);

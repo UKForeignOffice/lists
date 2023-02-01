@@ -66,11 +66,6 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response, next: Nex
     return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
   }
 
-  const roles = req.user?.userData?.jsonData.roles;
-  if (roles && !roles.includes(UserRoles.Administrator)) {
-    logger.warn(`non-admin user ${req.user?.userData.id} attempted to edit annual review start date`);
-    return next(new HttpException(405, "405", "You do not have access to edit the annual review start date"));
-  }
   return res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
     newAnnualReviewDateFormatted: DateFns.format(annualReviewDate.value, DATE_FORMAT),
