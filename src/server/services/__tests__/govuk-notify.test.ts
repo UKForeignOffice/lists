@@ -31,7 +31,8 @@ const mockNotify = NOTIFY;
 
 jest.mock("server/config", () => {
   return {
-    ...process.env,
+    DEFAULT_ALLOWED_EMAIL_DOMAINS: ["fcdo.gov.uk", "gov.uk", "fco.gov.uk"],
+    ALLOWED_EMAIL_DOMAINS: "gov.uk",
     get GOVUK_NOTIFY_API_KEY() {
       return mocks.GOVUK_NOTIFY_API_KEY;
     },
