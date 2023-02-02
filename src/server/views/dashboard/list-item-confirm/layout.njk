@@ -1,0 +1,56 @@
+{% from "button/macro.njk" import govukButton %}
+{% extends "./../dashboard.njk" %}
+
+{% block pageTitle %}
+  List management - {{ buttonText }} - {{ title + " - " if title }} {{ SERVICE_NAME }}
+{% endblock %}
+
+{% block aside %}
+  <div class="back-links__item">
+    <a class="govuk-link govuk-back-link" href="{{ listItemUrl }}">Back</a>
+  </div>
+{% endblock %}
+
+{% block dashboard %}
+
+  <form class="form" method="post">
+    <input type="hidden" name="_csrf" id="_csrf" value="{{ csrfToken }}" />
+
+    <h1 class="govuk-heading-l">
+      {% block heading %}
+        {{ _.startCase(buttonText)}} {{ listItem.jsonData.organisationName }}
+      {% endblock %}
+    </h1>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    {% block confirmChangesContent %}
+    {% endblock %}
+
+    {% if willEmail %}
+      <p class="govuk-body govuk-!-padding-2 confirmation-focus-box" data-testid="provider-summary">
+        {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}<br/>
+        {{ listItem.jsonData.organisationName if listItem.jsonData.organisationName }}<br/>
+        {{ listItem.jsonData.emailAddress }}<br/>
+        {{ listItem.jsonData.phoneNumber }}
+      </p>
+    {% endif %}
+
+    <p class="govuk-body">
+      Before proceeding, you may want to record your decision (for example in a shared spreadsheet).
+    </p>
+
+    <p class="govuk-body">Refer to the service guidance for further information.</p>
+
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: buttonText,
+        classes: "govuk-button--ok govuk-!-margin-bottom-2"
+      }) }}
+
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2" href="{{ listItemUrl }}">Cancel</a>
+    </div>
+  </form>
+
+
+{% endblock %}

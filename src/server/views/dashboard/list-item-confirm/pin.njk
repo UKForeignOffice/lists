@@ -1,0 +1,14 @@
+{% extends "./layout.njk" %}
+
+{% block confirmChangesContent %}
+  <h2 class="govuk-heading-m">
+    You are about to {{ buttonText.toLowerCase() }} {{ "to" if action == pin else "from" }} your list
+  </h2>
+  <p class="govuk-body">
+    {% if action === pin %}
+      The list entry will appear at the top of your list until it is published or you unpin it.
+    {% else %}
+      The list entry will no longer appear at the top of your list after you unpin it.
+    {% endif %}
+  </p>
+{% endblock %}

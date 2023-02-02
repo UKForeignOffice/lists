@@ -126,7 +126,7 @@ export async function listItemsIndexController(
     const sanitisedQueryParams = sanitiseListItemsQueryParams(req.query);
     const { activity, publishing, page } = sanitisedQueryParams;
     const queryTag = [...activity, ...publishing];
-    req.session.changeMessage = undefined;
+    req.session.update = undefined;
 
     const list = await findIndexListItems({
       listId,

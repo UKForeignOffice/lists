@@ -16,6 +16,7 @@ import { getListOverview, serviceTypeDetailsHeading } from "server/components/da
 import { ensureAuthenticated } from "server/components/auth";
 import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
+import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 
 export const listRouter = express.Router();
@@ -90,14 +91,8 @@ listRouter.param("listItemId", async (req, res, next, listItemId) => {
 listRouter.get("/:listId/items/:listItemId", controllers.listItemGetController);
 listRouter.post("/:listId/items/:listItemId", controllers.listItemPostController);
 
-/**
- * TODO: ref to /:listItemId/:action?
- */
-listRouter.post("/:listId/items/:listItemId/delete", controllers.listItemDeleteController);
-listRouter.post("/:listId/items/:listItemId/publish", controllers.listItemPublishController);
-listRouter.post("/:listId/items/:listItemId/changes", controllers.listItemRequestChangeController);
-listRouter.post("/:listId/items/:listItemId/update", controllers.listItemUpdateController);
-listRouter.post("/:listId/items/:listItemId/pin", controllers.listItemPinController);
+listRouter.use("/:listId/items/:listItemId", updateRouter);
+
 listRouter.post("/:listId/publisher-delete", controllers.listPublisherDelete);
 
 listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
