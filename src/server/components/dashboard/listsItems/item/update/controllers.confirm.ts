@@ -23,10 +23,13 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
     return res.redirect(listItemUrl);
   }
 
+  const actionsWithEmail: Action[] = ["publish", "remove", "requestChanges", "update", "updateLive", "updateNew"];
+
   return res.render(`dashboard/list-item-confirm/${view}`, {
     ...DEFAULT_VIEW_PROPS,
     message,
     action,
+    willEmail: actionsWithEmail.includes(action),
     buttonText: actionToButtonText[action],
     csrfToken: getCSRFToken(req),
   });

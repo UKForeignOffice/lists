@@ -18,7 +18,7 @@
 
     <h1 class="govuk-heading-l">
       {% block heading %}
-        {{ _.startCase(buttonText)}} this service provider
+        {{ _.startCase(buttonText)}} {{ listItem.jsonData.organisationName }}
       {% endblock %}
     </h1>
 
@@ -28,13 +28,12 @@
     {% endblock %}
 
     {% if willEmail %}
-    <p class="govuk-body">An email with this request will be sent to the following service provider:</p>
-    <p class="govuk-body govuk-!-padding-2 confirmation-focus-box" data-testid="provider-summary">
-      {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}<br/>
-      {{ listItem.jsonData.organisationName if listItem.jsonData.organisationName }}<br/>
-      {{ listItem.jsonData.emailAddress }}<br/>
-      {{ listItem.jsonData.phoneNumber }}
-    </p>
+      <p class="govuk-body govuk-!-padding-2 confirmation-focus-box" data-testid="provider-summary">
+        {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}<br/>
+        {{ listItem.jsonData.organisationName if listItem.jsonData.organisationName }}<br/>
+        {{ listItem.jsonData.emailAddress }}<br/>
+        {{ listItem.jsonData.phoneNumber }}
+      </p>
     {% endif %}
 
     <p class="govuk-body">
