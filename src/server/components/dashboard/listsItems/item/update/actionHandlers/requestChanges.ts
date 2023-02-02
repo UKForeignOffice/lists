@@ -22,20 +22,15 @@ export async function requestChanges(req: Request, res: ListItemRes) {
   const { listItem } = res.locals;
   const { listItemUrl, listIndexUrl } = res.locals;
 
-  if (!listItem) {
-    logger.error("List item could not be found during requestChanges");
-    return res.status(500);
-  }
-
   if (!changeMessage) {
     req.flash("errorMsg", "You must provide a message to request a change");
     return res.redirect(listItemUrl);
   }
 
-  const jsonData = listItem.jsonData as ListItemGetObject["jsonData"];
+  const jsonData = listItem!.jsonData as ListItemGetObject["jsonData"];
 
   try {
-    await handleListItemRequestChanges(listItem, changeMessage, userId, isUnderTest);
+    await handleListItemRequestChanges(listItem!, changeMessage, userId, isUnderTest);
 
     req.flash("successBannerTitle", `Change request sent to ${jsonData?.organisationName}`);
     req.flash("successBannerHeading", "Requested");
