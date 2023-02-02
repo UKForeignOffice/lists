@@ -2,7 +2,7 @@
 {% extends "./../dashboard.njk" %}
 
 {% block pageTitle %}
-  List management - {{ _.startCase(action) }} - {{ title + " - " if title }} {{ SERVICE_NAME }}
+  List management - {{ buttonText }} - {{ title + " - " if title }} {{ SERVICE_NAME }}
 {% endblock %}
 
 {% block aside %}
@@ -18,7 +18,7 @@
 
     <h1 class="govuk-heading-l">
       {% block heading %}
-        {{ _.startCase(action)}} this service provider
+        {{ _.startCase(buttonText)}} this service provider
       {% endblock %}
     </h1>
 
@@ -27,6 +27,7 @@
     {% block confirmChangesContent %}
     {% endblock %}
 
+    {% if willEmail %}
     <p class="govuk-body">An email with this request will be sent to the following service provider:</p>
     <p class="govuk-body govuk-!-padding-2 confirmation-focus-box" data-testid="provider-summary">
       {{ _.startCase(_.toLower(listItem.jsonData.contactName)) }}<br/>
@@ -34,6 +35,7 @@
       {{ listItem.jsonData.emailAddress }}<br/>
       {{ listItem.jsonData.phoneNumber }}
     </p>
+    {% endif %}
 
     <p class="govuk-body">
       Before proceeding, you may want to record your decision (for example in a shared spreadsheet).

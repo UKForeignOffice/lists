@@ -26,6 +26,7 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
   return res.render(`dashboard/list-item-confirm/${view}`, {
     ...DEFAULT_VIEW_PROPS,
     message,
+    action,
     buttonText: actionToButtonText[action],
     csrfToken: getCSRFToken(req),
   });
