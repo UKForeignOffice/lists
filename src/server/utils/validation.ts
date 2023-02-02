@@ -5,25 +5,25 @@ import * as config from "server/config";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 import { AuditListItemEventName } from "server/models/types";
 
+const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
+
 export function isValidEmailAddress(email: string): boolean {
-  const schema = Joi.string().email().lowercase().options({ convert: true });
+  const schema = Joi.string().email();
   const result = schema.validate(email);
 
-  if (result.error) {
-    return false;
+  if (result.error === undefined) {
+    return true;
   }
 
-  const domain = result.value.split("@")[1];
-  const acceptedDomainSchema = Joi.string()
-    .domain()
-    .valid(...config.DEFAULT_ALLOWED_EMAIL_DOMAINS, ...config.ALLOWED_EMAIL_DOMAINS);
-  const domainResult = acceptedDomainSchema.validate(domain);
-
-  return !domainResult.error;
+  return false;
 }
 
 export function isGovUKEmailAddress(email: string): boolean {
-  return isValidEmailAddress(email);
+  if (config.isCybDev || config.isSmokeTest) {
+    return isValidEmailAddress(email);
+  } else {
+    return isValidEmailAddress(email) && GOV_UK_EMAIL_REGEX.test(email);
+  }
 }
 
 export function isCountryNameValid(countryName: string): boolean {

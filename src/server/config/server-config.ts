@@ -56,9 +56,3 @@ export const SCHEDULED_PROCESS_TODAY_DATE = process.env.SCHEDULED_PROCESS_TODAY_
 // Form runner
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
 export const FORM_RUNNER_PUBLIC_URL = `${SERVICE_DOMAIN}/application`;
-
-/**
- * Always allow FCDO log in (i.e. cannot be overridden).
- */
-export const DEFAULT_ALLOWED_EMAIL_DOMAINS = ["fcdo.gov.uk", "fco.gov.uk"];
-export const ALLOWED_EMAIL_DOMAINS = process.env.ALLOWED_EMAIL_DOMAINS?.split(",") ?? [];
