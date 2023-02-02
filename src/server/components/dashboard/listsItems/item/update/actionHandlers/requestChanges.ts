@@ -30,7 +30,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
   const jsonData = listItem!.jsonData as ListItemGetObject["jsonData"];
 
   try {
-    await handleListItemRequestChanges(listItem!, changeMessage, userId, isUnderTest);
+    await handleListItemRequestChanges(listItem as ListItem, changeMessage, userId, isUnderTest);
 
     req.flash("successBannerTitle", `Change request sent to ${jsonData?.organisationName}`);
     req.flash("successBannerHeading", "Requested");
