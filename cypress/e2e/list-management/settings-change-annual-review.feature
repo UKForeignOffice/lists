@@ -9,8 +9,7 @@ Feature: List management change annual review date
     And I see page with heading "Change annual review start date"
 
   Scenario: Can change annual review date
-    Given I enter "1" in the "day" input
-    And I enter "2" in the "month" input
+    When I enter a valid new annual review date
     And I click the "Continue" button
     And I see page with heading "Confirm new annual review start date"
     And I click the "Continue" button
