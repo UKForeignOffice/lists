@@ -318,9 +318,11 @@ type Nullable<T> = T | undefined | null;
  * updates and PUBLISHES!
  */
 export async function update(id: ListItem["id"], userId: User["id"], legacyDataParameter?: DeserialisedWebhookData) {
-  logger.info(`user ${userId} is attempting to update ${id}`);
+  const updateLogger = logger.child({ listItemId: id, user: userId, method: "ListItem.update" });
+  updateLogger.info(`user ${userId} is attempting to update ${id}`);
+
   if (legacyDataParameter) {
-    logger.info(
+    updateLogger.info(
       "legacy data parameter used. updating with legacy data parameter however ListItem.jsonData.updatedJsonData should be used"
     );
   }
@@ -343,9 +345,9 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
   // @ts-ignore
   const data: DeserialisedWebhookData | null | undefined = legacyDataParameter ?? jsonData?.updatedJsonData;
 
-  if (!legacyDataParameter ?? jsonData?.updatedJsonData) {
-    logger.warn(
-      "listItem.update cannot resolve any data to update the list item with jsonData.updatedJsonData and data parameter were empty"
+  if (!data) {
+    updateLogger.info(
+      "Cannot resolve any data to update the list item with jsonData.updatedJsonData and data parameter were empty"
     );
   }
 
@@ -378,7 +380,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
       geoLocationParams = [currentAddress.geoLocationId!, point];
     } catch (e) {
-      logger.error(e);
+      updateLogger.error(e);
       throw Error("GeoLocation update failed");
     }
   }
@@ -439,7 +441,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
     return result;
   } catch (err) {
-    logger.error(`listItem.update transactional error - rolling back ${err.message}`);
+    updateLogger.error(`listItem.update transactional error - rolling back ${err.message}`);
     throw err;
   }
 }
