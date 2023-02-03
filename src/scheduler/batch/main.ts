@@ -64,7 +64,7 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
-    const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate, today);
+    const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate);
 
     logger.info(
       `Found the lists ${lists?.map((list) => list.id)} matching annual review start date [${annualReviewStartDate}]`
