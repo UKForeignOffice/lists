@@ -1,11 +1,11 @@
-import {compact, toLower, trim} from "lodash";
-import {logger} from "server/services/logger";
-import {isGovUKEmailAddress} from "server/utils/validation";
-import {prisma} from "./db/prisma-client";
+import { compact, toLower, trim } from "lodash";
+import { logger } from "server/services/logger";
+import { isGovUKEmailAddress } from "server/utils/validation";
+import { prisma } from "./db/prisma-client";
 
-import {CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType} from "./types";
-import {subMonths} from "date-fns";
-import {Status} from "@prisma/client";
+import { CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
+import { subMonths } from "date-fns";
+import { Status } from "@prisma/client";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -44,14 +44,19 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date, today: Date, listItemStatuses: Status[] = [], isAnnualReview?: boolean): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(
+  annualReviewStartDate: Date,
+  fromDate: Date,
+  listItemStatuses: Status[] = [],
+  isAnnualReview?: boolean
+): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
     const result = (await prisma.list.findMany({
       where: {
         nextAnnualReviewStartDate: {
-          gte: today,
+          gte: fromDate,
           lte: annualReviewStartDate,
         },
       },
@@ -59,13 +64,13 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date, to
         country: true,
         items: {
           where: {
-            ...(listItemStatuses.length && { status: { in: listItemStatuses }}),
+            ...(listItemStatuses.length && { status: { in: listItemStatuses } }),
             ...(isAnnualReview !== undefined && { isAnnualReview }),
             history: {
               some: {
                 type: "PUBLISHED",
                 time: {
-                  lte: subMonths(Date.now(), 1)
+                  lte: subMonths(Date.now(), 1),
                 },
               },
             },
