@@ -1,21 +1,21 @@
-import {findListsWithCurrentAnnualReview} from "server/models/list";
-import {logger} from "server/services/logger";
+import { findListsWithCurrentAnnualReview } from "server/models/list";
+import { logger } from "server/services/logger";
 import {
   Audit,
   List,
   ListAnnualReviewPostReminderType,
   ListItemAnnualReviewProviderReminderType,
 } from "server/models/types";
-import {lowerCase, startCase} from "lodash";
-import {sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail} from "server/services/govuk-notify";
-import {findAuditEvents, recordListItemEvent} from "server/models/audit";
-import {AuditEvent, ListItemEvent} from "@prisma/client";
-import {BaseDeserialisedWebhookData} from "server/models/listItem/providers/deserialisers/types";
-import {findListItems, updateIsAnnualReview} from "server/models/listItem";
-import {ListItemWithHistory} from "server/components/dashboard/listsItems/types";
-import {getTodayDate, MilestoneTillAnnualReview} from "../batch/helpers";
-import {isAfter, isBefore, isEqual} from "date-fns";
-import {createAnnualReviewProviderUrl, formatDate, isEmailSentBefore} from "../helpers";
+import { lowerCase, startCase } from "lodash";
+import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "server/services/govuk-notify";
+import { findAuditEvents, recordListItemEvent } from "server/models/audit";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import { findListItems, updateIsAnnualReview } from "server/models/listItem";
+import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
+import { MilestoneTillAnnualReview } from "../batch/helpers";
+import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "../helpers";
 
 async function processPostEmailsForList(
   list: List,
@@ -25,7 +25,9 @@ async function processPostEmailsForList(
   // Check if sent before
   let emailSent = false;
   if (!list.jsonData.users) {
-    logger.info(`Unable to send email to post for ${milestoneTillAnnualReview}. No users identified for List ${list.id}.`);
+    logger.info(
+      `Unable to send email to post for ${milestoneTillAnnualReview}. No users identified for List ${list.id}.`
+    );
     return;
   }
   for (const publisherEmail of list.jsonData.users) {
@@ -80,10 +82,7 @@ async function emailProvider(list: List, listItem: ListItemWithHistory) {
   return providerEmailResult;
 }
 
-async function processProviderEmailsForListItems(
-  list: List,
-  listItems: ListItemWithHistory[]
-) {
+async function processProviderEmailsForListItems(list: List, listItems: ListItemWithHistory[]) {
   for (const listItem of listItems) {
     const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
     let isEmailSent = false;
@@ -127,13 +126,6 @@ async function getLatestReminderAuditEvent(annualReviewRef: string, auditType: "
   return audit;
 }
 
-function isWithinInterval( today: Date, interval: { start: string; end: string }) {
-  const isAtStart = isEqual(today, new Date(interval.start));
-  const isAfterStart = isAfter(today, new Date(interval.start));
-  const isBeforeEnd = isBefore(today, new Date(interval.end));
-  return (isAtStart || isAfterStart) && isBeforeEnd;
-}
-
 export async function processList(list: List, listItemsForList: ListItemWithHistory[]) {
   if (!listItemsForList.length) {
     logger.info(`No list items found for list ${list.id}`);
@@ -150,31 +142,46 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
   let isEmailSent = false;
 
-  const today = getTodayDate();
-  logger.info(`Checking annual review milestone dates against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
+  const today = startOfDay(new Date());
+  const processListLogger = logger.child({ listId: list.id, method: "processList" });
+  processListLogger.info(
+    `Checking annual review key dates for list id ${
+      list.id
+    } against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`
+  );
 
-  if (isWithinInterval(today,{ start: annualReviewKeyDates?.POST_ONE_MONTH ?? "", end: annualReviewKeyDates?.POST_ONE_WEEK ?? "" })) {
+  if (
+    isWithinInterval(today, {
+      start: new Date(annualReviewKeyDates?.POST_ONE_MONTH ?? ""),
+      end: subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? "")), 1),
+    })
+  ) {
     isEmailSent = isEmailSentBefore(audit as Audit, "sendOneMonthPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
     }
     return;
   }
-  if (isWithinInterval(today, { start: annualReviewKeyDates?.POST_ONE_WEEK ?? "", end: annualReviewKeyDates?.POST_ONE_DAY ?? "" })) {
+  if (
+    isWithinInterval(today, {
+      start: new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? ""),
+      end: subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_DAY ?? "")), 1),
+    })
+  ) {
     isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "POST_ONE_WEEK", "sendOneWeekPostEmail");
     }
     return;
   }
-  if (isEqual(today, new Date(annualReviewKeyDates?.POST_ONE_DAY ?? ""))) {
+  if (isSameDay(today, new Date(annualReviewKeyDates?.POST_ONE_DAY ?? ""))) {
     isEmailSent = isEmailSentBefore(audit, "sendOneDayPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "POST_ONE_DAY", "sendOneDayPostEmail");
     }
     return;
   }
-  if (isEqual(new Date(annualReviewKeyDates?.START ?? ""), today)) {
+  if (isSameDay(new Date(annualReviewKeyDates?.START ?? ""), today)) {
     // email posts to notify of annual review start
     isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
     if (!isEmailSent) {
@@ -192,10 +199,17 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
     await processProviderEmailsForListItems(list, updatedListItems);
     return;
   }
-  logger.debug(`Annual review key dates for list ${list.id} don't match against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`);
+  logger.debug(
+    `Annual review key dates for list ${
+      list.id
+    } don't match against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`
+  );
 }
 
-export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHistory[], list: List): Promise<ListItemWithHistory[]> {
+export async function updateIsAnnualReviewForListItems(
+  listItems: ListItemWithHistory[],
+  list: List
+): Promise<ListItemWithHistory[]> {
   if (listItems.length === 0) {
     logger.info(`No List items found for list ${list.id}`);
     return [];
@@ -219,9 +233,7 @@ export async function updateIsAnnualReviewForListItems(listItems: ListItemWithHi
   if (updatedListItems.result.length < listItems.length) {
     const listItemsNotUpdated = listItems.filter((listItem) => {
       // @ts-ignore
-      return !updatedListItems.result
-        .map((updatedListItem) => updatedListItem.id)
-        .includes(listItem.id);
+      return !updatedListItems.result.map((updatedListItem) => updatedListItem.id).includes(listItem.id);
     });
     logger.error(
       `List items ${listItemsNotUpdated.map((listItem) => listItem.id)} were not updated for annual review start`
@@ -239,12 +251,12 @@ async function processAnnualReview(): Promise<void> {
     return;
   }
   const listsWithCurrentAnnualReview = listResult.result;
-  const listItemIds = listsWithCurrentAnnualReview.flatMap(list => {
+  const listItemIds = listsWithCurrentAnnualReview.flatMap((list) => {
     const listItemIds = list?.jsonData?.currentAnnualReview?.eligibleListItems;
-    return !listItemIds ? [] : listItemIds.map(itemId => itemId);
+    return !listItemIds ? [] : listItemIds.map((itemId) => itemId);
   });
 
-  const listIds = listsWithCurrentAnnualReview.map(list => list.id);
+  const listIds = listsWithCurrentAnnualReview.map((list) => list.id);
   logger.debug(`Found ${listResult.result?.length} Lists [${listIds}] with current annual review populated`);
 
   if (!listItemIds?.length) {

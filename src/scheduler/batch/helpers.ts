@@ -1,4 +1,4 @@
-import { addDays, subDays } from "date-fns";
+import { addDays, startOfDay, subDays } from "date-fns";
 import { CurrentAnnualReview } from "server/models/types";
 import crypto from "crypto";
 
@@ -55,7 +55,7 @@ export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEE
  * @returns UnpublishedDateContext[]
  */
 function getUnpublishedDateContexts(annualReviewStartDate: Date): DateContext[] {
-  const unpublishedDateSixWeeksAway = addDays(annualReviewStartDate, (schedulerMilestoneDays.provider.SIX_WEEKS));
+  const unpublishedDateSixWeeksAway = addDays(annualReviewStartDate, schedulerMilestoneDays.provider.SIX_WEEKS);
   const unpublishedDateOneDayAway = subDays(unpublishedDateSixWeeksAway, 1);
 
   const unpublishedDateContextsForFiltering: DateContext[] = [
@@ -75,10 +75,10 @@ function getUnpublishedDateContexts(annualReviewStartDate: Date): DateContext[] 
     eventMilestone <= schedulerMilestoneDays.provider.FIVE_WEEKS;
     eventMilestone += 7
   ) {
-    const localEventDate = subDays(unpublishedDateSixWeeksAway, eventMilestone);
-    const eventDate = new Date(localEventDate.getFullYear(), localEventDate.getMonth(), localEventDate.getDate(), 0, 0, 0);
+    const eventDate = subDays(unpublishedDateSixWeeksAway, eventMilestone);
+    const startOfEventDate = startOfDay(eventDate);
     unpublishedDateContextsForFiltering.push({
-      eventDate,
+      eventDate: startOfEventDate,
       eventMilestone,
     });
   }
@@ -86,7 +86,6 @@ function getUnpublishedDateContexts(annualReviewStartDate: Date): DateContext[] 
 }
 
 function getAnnualReviewDateContexts(annualReviewStartDate: Date): DateContext[] {
-
   const annualReview: DateContext[] = [
     {
       eventMilestone: schedulerMilestoneDays.post.ONE_MONTH,
@@ -115,10 +114,7 @@ export function getDateContexts(annualReviewStartDate: Date): SchedulerDateConte
   };
 }
 
-export function getCurrentAnnualReviewData(
-  listItemIdsForAnnualReview: any[],
-  contexts: SchedulerDateContexts
-) {
+export function getCurrentAnnualReviewData(listItemIdsForAnnualReview: any[], contexts: SchedulerDateContexts) {
   const currentAnnualReview: CurrentAnnualReview = {
     reference: crypto.randomUUID(),
     eligibleListItems: listItemIdsForAnnualReview,
@@ -139,11 +135,7 @@ export function getCurrentAnnualReviewData(
           "annualReview",
           schedulerMilestoneDays.post.ONE_DAY
         ).eventDate.toISOString(),
-        START: getDateForContext(
-          contexts,
-          "annualReview",
-          schedulerMilestoneDays.both.START
-        ).eventDate.toISOString(),
+        START: getDateForContext(contexts, "annualReview", schedulerMilestoneDays.both.START).eventDate.toISOString(),
       },
       unpublished: {
         PROVIDER_FIVE_WEEKS: getDateForContext(
@@ -171,11 +163,7 @@ export function getCurrentAnnualReviewData(
           "unpublish",
           schedulerMilestoneDays.both.ONE_WEEK
         ).eventDate.toISOString(),
-        ONE_DAY: getDateForContext(
-          contexts,
-          "unpublish",
-          schedulerMilestoneDays.both.ONE_DAY
-        ).eventDate.toISOString(),
+        ONE_DAY: getDateForContext(contexts, "unpublish", schedulerMilestoneDays.both.ONE_DAY).eventDate.toISOString(),
         UNPUBLISH: getDateForContext(
           contexts,
           "unpublish",
@@ -187,11 +175,7 @@ export function getCurrentAnnualReviewData(
   return currentAnnualReview;
 }
 
-export function getDateForContext(
-  contexts: SchedulerDateContexts,
-  contextType: string,
-  milestone: SchedulerMilestone
-) {
+export function getDateForContext(contexts: SchedulerDateContexts, contextType: string, milestone: SchedulerMilestone) {
   let dateContext;
   switch (contextType) {
     case "annualReview":
@@ -207,7 +191,3 @@ export function getDateForContext(
   return dateContext;
 }
 
-export function getTodayDate() {
-  const localDate = new Date();
-  return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0));
-}
