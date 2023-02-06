@@ -14,7 +14,7 @@ import { logger } from "server/services/logger";
 import type { ListItemGetObject, List } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
-import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
+import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -25,11 +25,10 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
       return next(new HttpException(404, "404", "The list item cannot be found"));
     }
 
-    const listItem = result as unknown as ListItemGetObject;
+    const listItem = result;
 
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
-    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
     if (await dateHasExpired(listItem.listId)) {
@@ -38,13 +37,36 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
       });
     }
 
-    if (userHasConfirmed) {
-      return res.render("annual-review/error", {
-        text: {
-          title: "You have already submitted your annual review",
-          body: "The annual review for your business has already been submitted.",
+    if (listItem.status !== Status.OUT_WITH_PROVIDER && listItem.isAnnualReview) {
+      const currentAnnualReview = listItem?.list?.jsonData?.currentAnnualReview;
+      const annualReviewReference = currentAnnualReview?.reference;
+
+      const userAlreadySubmitted = await prisma.event.findFirst({
+        where: {
+          listItemId: listItem.id,
+          type: "CHECK_ANNUAL_REVIEW",
+          jsonData: {
+            path: ["reference"],
+            equals: annualReviewReference,
+          },
         },
       });
+
+      if (userAlreadySubmitted) {
+        logger.info(
+          `listItemId: ${
+            listItem.id
+          } attempted to resubmit annual review details. Found a previous event with the currentAnnualReview reference ${annualReviewReference} ${JSON.stringify(
+            userAlreadySubmitted
+          )}`
+        );
+        return res.render("annual-review/error", {
+          text: {
+            title: "You have already submitted your annual review",
+            body: "The annual review for your business has already been submitted.",
+          },
+        });
+      }
     }
 
     if (errorMsg) {
@@ -158,12 +180,23 @@ export async function declarationPostController(req: Request, res: Response, nex
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
+    const result = await findListItemByReference(listItemRef);
+    if (!result) {
+      return next(new HttpException(404, "404", "The list item cannot be found"));
+    }
+
+    const { list } = result;
+    const currentAnnualReview = list?.jsonData?.currentAnnualReview;
+    const annualReviewReference = currentAnnualReview?.reference;
+
     const updatedListItem = await prisma.listItem.update({
       where: { reference: listItemRef },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
         history: {
-          create: EVENTS.CHECK_ANNUAL_REVIEW(),
+          create: EVENTS.CHECK_ANNUAL_REVIEW({
+            reference: annualReviewReference,
+          }),
         },
       },
     });

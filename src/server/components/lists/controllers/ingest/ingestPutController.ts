@@ -10,7 +10,7 @@ import { deserialise } from "server/models/listItem/listItemCreateInputFromWebho
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
-import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
+import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -39,6 +39,13 @@ export async function ingestPutController(req: Request, res: Response) {
   try {
     const listItem = await prisma.listItem.findUnique({
       where: { id: Number(id) },
+      select: {
+        list: {
+          select: {
+            jsonData: true,
+          },
+        },
+      },
     });
 
     if (!listItem) {
@@ -58,8 +65,12 @@ export async function ingestPutController(req: Request, res: Response) {
       updatedJsonData: diff,
     };
 
+    const annualReviewReference = listItem.list.jsonData?.currentAnnualReview?.reference;
+
     const { isAnnualReview = false } = value.metadata;
-    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff) : EVENTS.EDITED(diff);
+    const event = isAnnualReview
+      ? EVENTS.CHECK_ANNUAL_REVIEW({ ...diff, reference: annualReviewReference })
+      : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
 
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {

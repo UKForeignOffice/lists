@@ -156,6 +156,7 @@ export async function findListItemByReference(ref: string) {
         list: {
           select: {
             type: true,
+            jsonData: true,
           },
         },
         address: {
