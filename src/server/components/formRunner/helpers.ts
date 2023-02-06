@@ -16,6 +16,7 @@ import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
+import { logger } from "server/services/logger";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -87,7 +88,6 @@ export async function parseJsonFormData(
   listType: string,
   isUnderTest: boolean = false
 ): Promise<Array<Partial<FormRunner.Question>>> {
-
   /**
    * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
    * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
@@ -141,6 +141,9 @@ export async function initialiseFormRunnerSession({
   isUnderTest,
   isAnnualReview,
 }: initialiseFormRunnerInput): Promise<string> {
+  logger.info(
+    `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
+  );
   const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,

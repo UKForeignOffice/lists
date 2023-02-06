@@ -350,10 +350,6 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
       "Cannot resolve any data to update the list item with jsonData.updatedJsonData and data parameter were empty"
     );
   }
-
-  const { address: currentAddress, ...listItem } = listItemResult!;
-  const addressUpdates = getChangedAddressFields(data!, currentAddress ?? {});
-  const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
   const areasOfLaw = data?.areasOfLaw;
   const repatriationServicesProvided = data?.repatriationServicesProvided;
   const localServicesProvided = data?.localServicesProvided;
@@ -372,11 +368,15 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
   let geoLocationParams: Nullable<[number, Point]>;
 
+  const { address: currentAddress, ...listItem } = listItemResult!;
+  const addressUpdates = getChangedAddressFields(data!, currentAddress ?? {});
+  const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
+
   if (requiresAddressUpdate && data) {
     try {
-      const address = makeAddressGeoLocationString(data);
-      const country = getCountryFromData(data);
-      const point = await geoLocatePlaceByText(address, country);
+      // @ts-ignore
+      const address = makeAddressGeoLocationString(updatedJsonData);
+      const point = await geoLocatePlaceByText(address, currentAddress.country.name);
 
       geoLocationParams = [currentAddress.geoLocationId!, point];
     } catch (e) {
