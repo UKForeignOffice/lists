@@ -11,10 +11,11 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
-import type { ListItemGetObject, List } from "server/models/types";
+import type { ListItemGetObject, List, ListJsonData } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
+import { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -38,7 +39,8 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     }
 
     if (listItem.status !== Status.OUT_WITH_PROVIDER && listItem.isAnnualReview) {
-      const currentAnnualReview = listItem?.list?.jsonData?.currentAnnualReview;
+      const list = listItem?.list as ListWithJsonData;
+      const currentAnnualReview = list?.jsonData?.currentAnnualReview;
       const annualReviewReference = currentAnnualReview?.reference;
 
       const userAlreadySubmitted = await prisma.event.findFirst({
@@ -185,8 +187,8 @@ export async function declarationPostController(req: Request, res: Response, nex
       return next(new HttpException(404, "404", "The list item cannot be found"));
     }
 
-    const { list } = result;
-    const currentAnnualReview = list?.jsonData?.currentAnnualReview;
+    const list = result.list;
+    const currentAnnualReview = (list.jsonData as ListJsonData).currentAnnualReview;
     const annualReviewReference = currentAnnualReview?.reference;
 
     const updatedListItem = await prisma.listItem.update({
