@@ -206,12 +206,16 @@ export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail
 export type ListItemUnpublishedPostReminderType =
   | "sendUnpublishedPostEmail"
   | "sendUnpublishOneDayPostEmail"
-  | "sendUnpublishWeeklyPostEmail";
+  | "sendUnpublishOneWeekPostEmail";
 
 export type ListItemUnpublishedProviderReminderType =
   | "sendUnpublishedProviderEmail"
   | "sendUnpublishOneDayProviderEmail"
-  | "sendUnpublishWeeklyProviderEmail";
+  | "sendUnpublishFiveWeekProviderEmail"
+  | "sendUnpublishFourWeekProviderEmail"
+  | "sendUnpublishThreeWeekProviderEmail"
+  | "sendUnpublishTwoWeekProviderEmail"
+  | "sendUnpublishOneWeekProviderEmail";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 

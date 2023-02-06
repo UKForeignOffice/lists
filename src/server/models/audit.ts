@@ -43,10 +43,12 @@ export async function findAuditEvents(
       },
     }];
   if (itemId) {
-    andCondition.push({
+    andCondition.push(
+      {
       jsonData: {
         path: ["itemId"],
-        equals: `${itemId}`,
+        // @ts-ignore
+        equals: itemId,
       },
     });
   }

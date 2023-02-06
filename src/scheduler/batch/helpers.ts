@@ -48,6 +48,8 @@ export interface SchedulerDateContexts {
 
 export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEEK" | "POST_ONE_MONTH";
 
+export type MilestoneTillUnpublish = "POST_ONE_WEEK" | "POST_ONE_DAY" | "PROVIDER_FIVE_WEEKS" | "PROVIDER_FOUR_WEEKS" | "PROVIDER_THREE_WEEKS" | "PROVIDER_TWO_WEEKS" | "PROVIDER_ONE_WEEK" | "PROVIDER_ONE_DAY" | "UNPUBLISH";
+
 /**
  * Calculate the annual review dates six weeks prior to the unpublish date of 0, 1, 7, 14, 21, 28, 35 days in the future
  * from the todayDateString.

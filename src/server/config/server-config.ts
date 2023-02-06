@@ -40,9 +40,10 @@ export const NOTIFY = {
       annualReviewCompleted: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_COMPLETED?.trim() ?? "",
     },
     unpublishNotice: {
-      postWeekly: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE?.trim() ?? "",
+      postOneWeek: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_ONE_WEEK_NOTICE?.trim() ?? "",
       postOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE?.trim() ?? "",
       postUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE?.trim() ?? "",
+      providerWeekly: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED?.trim() ?? "",
       providerOneDay: process.env.GOVUK_NOTIFY_UNPUBLISH_PROVIDER_ONE_DAY_NOTICE?.trim() ?? "",
       providerUnpublished: process.env.GOVUK_NOTIFY_UNPUBLISHED_PROVIDER_NOTICE?.trim() ?? "",
     },

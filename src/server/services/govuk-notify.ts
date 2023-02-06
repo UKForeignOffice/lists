@@ -5,6 +5,7 @@ import { logger } from "./logger";
 import { isGovUKEmailAddress, throwIfConfigVarIsUndefined } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { MilestoneTillAnnualReview } from "../../scheduler/batch/helpers";
+import { ListItemUnpublishedPostReminderType, ListItemUnpublishedProviderReminderType } from "server/models/types";
 
 let notifyClient: any;
 
@@ -250,90 +251,92 @@ export async function sendAnnualReviewProviderEmail(
   }
   return { result: true };
 }
-// @todo REMOVE COMMENTED CODE ONCE UNPUBLISHED WORKER IMPLEMENTED
-// export async function sendUnpublishedPostEmail(
-//   daysBeforeUnpublished: number,
-//   emailAddress: string,
-//   typePlural: string,
-//   country: string,
-//   numberNotResponded: string
-// ): Promise<{ result?: boolean, error?: Error }> {
-//   try {
-//     if (config.isSmokeTest) {
-//       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-//       return { result: true };
-//     }
-//     logger.info(`sending sendUnpublishedPostEmail for ${daysBeforeUnpublished} days before being unpublished
-//     [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
-//
-//     const notifyTemplates: Record<number, string> = {
-//       35: NOTIFY.templates.unpublishNotice.postWeekly ?? "",
-//       28: NOTIFY.templates.unpublishNotice.postWeekly ?? "",
-//       21: NOTIFY.templates.unpublishNotice.postWeekly ?? "",
-//       14: NOTIFY.templates.unpublishNotice.postWeekly ?? "",
-//       7: NOTIFY.templates.unpublishNotice.postWeekly ?? "",
-//       1: NOTIFY.templates.unpublishNotice.postOneDay ?? "",
-//       0: NOTIFY.templates.unpublishNotice.postUnpublished ?? "",
-//     };
-//     await getNotifyClient().sendEmail(
-//       notifyTemplates[daysBeforeUnpublished],
-//       emailAddress,
-//       {
-//       personalisation: {
-//         typePluralCapitalised: typePlural.toUpperCase(),
-//         typePlural,
-//         country,
-//         numberNotResponded,
-//       },
-//     });
-//   } catch (error) {
-//     logger.error(`unable to send post email ${daysBeforeUnpublished} days before unpublishing: ${error.stack}`);
-//     return { error: Error(`Unable to send change request email: ${error.message}`) };
-//   }
-//   return { result: true };
-// }
-//
-// export async function sendUnpublishedProviderEmail(
-//   daysUntilUnpublished: number,
-//   emailAddress: string,
-//   typePlural: string,
-//   country: string,
-//   contactName: string,
-//   deletionDate: string,
-//   changeLink: string
-// ): Promise<{ result?: boolean, error?: Error }> {
-//   try {
-//     if (config.isSmokeTest) {
-//       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-//       return { result: true };
-//     }
-//
-//     logger.info(`sending sendUnpublishedProviderEmail for ${daysUntilUnpublished} days untill unpublished [contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}]`)
-//     const notifyTemplates: Record<number, string> = {
-//       1: NOTIFY.templates.unpublishNotice.providerOneDay ?? "",
-//       0: NOTIFY.templates.unpublishNotice.providerUnpublished ?? "",
-//     };
-//     const basePersonalisation = {
-//       contactName,
-//       typePlural,
-//       country,
-//       changeLink,
-//     }
-//     const personalisation = daysUntilUnpublished === 0
-//       ? { ...basePersonalisation, deletionDate }
-//       : basePersonalisation;
-//
-//     await getNotifyClient().sendEmail(
-//       notifyTemplates[daysUntilUnpublished],
-//       emailAddress,
-//       { personalisation }
-//     );
-//     logger.debug(`Sent email to ${emailAddress} with template ${notifyTemplates[daysUntilUnpublished]} for ${daysUntilUnpublished} days before unpublishing`);
-//
-//   } catch (error) {
-//     const errorMsg = `Unable to send annual review provider email: ${error.message}`;
-//     logger.error(errorMsg);
-//     return { error: new Error(errorMsg) };
-//   }
-//   return { result: true };
-// }
+
+export async function sendUnpublishedPostEmail(
+  reminderType: ListItemUnpublishedPostReminderType,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  numberNotResponded: string
+): Promise<{ result?: boolean, error?: Error }> {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
+      return { result: true };
+    }
+    logger.info(`sending ${reminderType} with
+    [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
+
+    const notifyTemplates: Record<ListItemUnpublishedPostReminderType, string> = {
+      sendUnpublishOneWeekPostEmail: NOTIFY.templates.unpublishNotice.postOneWeek ?? "",
+      sendUnpublishOneDayPostEmail: NOTIFY.templates.unpublishNotice.postOneDay ?? "",
+      sendUnpublishedPostEmail: NOTIFY.templates.unpublishNotice.postUnpublished ?? "",
+    };
+    await getNotifyClient().sendEmail(
+      notifyTemplates[reminderType],
+      emailAddress,
+      {
+      personalisation: {
+        typePluralCapitalised: typePlural.toUpperCase(),
+        typePlural,
+        country,
+        numberNotResponded,
+      },
+    });
+  } catch (error) {
+    logger.error(`unable to send ${reminderType}: ${error.stack}`);
+    return { error: Error(`Unable to send change request email: ${error.message}`) };
+  }
+  return { result: true };
+}
+
+export async function sendUnpublishedProviderEmail(
+  reminderType: ListItemUnpublishedProviderReminderType,
+  emailAddress: string,
+  typePlural: string,
+  country: string,
+  contactName: string,
+  deletionDate: string,
+  changeLink: string
+): Promise<{ result?: boolean, error?: Error }> {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
+      return { result: true };
+    }
+
+    logger.info(`sending sendUnpublishedProviderEmail for ${reminderType} [contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}]`);
+
+    const notifyTemplates: Record<ListItemUnpublishedProviderReminderType, string> = {
+      sendUnpublishFiveWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
+      sendUnpublishFourWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
+      sendUnpublishThreeWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
+      sendUnpublishTwoWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
+      sendUnpublishOneWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
+      sendUnpublishOneDayProviderEmail: NOTIFY.templates.unpublishNotice.providerOneDay ?? "",
+      sendUnpublishedProviderEmail: NOTIFY.templates.unpublishNotice.providerUnpublished ?? "",
+    };
+    const basePersonalisation = {
+      contactName,
+      typePlural,
+      country,
+      changeLink,
+    };
+    const personalisation = reminderType === "sendUnpublishedProviderEmail"
+      ? { ...basePersonalisation, deletionDate }
+      : basePersonalisation;
+
+    await getNotifyClient().sendEmail(
+      notifyTemplates[reminderType],
+      emailAddress,
+      { personalisation }
+    );
+    logger.debug(`Sent email to ${emailAddress} with template ${notifyTemplates[reminderType]} for ${reminderType}`);
+
+  } catch (error) {
+    const errorMsg = `Unable to send annual review provider email: ${error.message}`;
+    logger.error(errorMsg);
+    return { error: new Error(errorMsg) };
+  }
+  return { result: true };
+}

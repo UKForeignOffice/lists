@@ -2,7 +2,9 @@ import {
   Audit,
   ListAnnualReviewPostReminderType,
   ListEventJsonData,
-  ListItemAnnualReviewProviderReminderType,
+  ListItemAnnualReviewProviderReminderType, ListItemEventJsonData,
+  ListItemUnpublishedPostReminderType,
+  ListItemUnpublishedProviderReminderType,
 } from "server/models/types";
 import { logger } from "server/services/logger";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
@@ -26,12 +28,13 @@ export function createAnnualReviewProviderUrl(listItem: ListItemWithHistory): st
 
 export function isEmailSentBefore(
   audit: Audit | undefined,
-  reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
+  reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType | ListItemUnpublishedProviderReminderType | ListItemUnpublishedPostReminderType
 ): boolean {
   if (!audit || !audit.jsonData) {
     return false;
   }
   const subsequentEmailsForReminderType = {
+    // annual review
     sendOneMonthPostEmail: [
       "sendOneMonthPostEmail",
       "sendOneWeekPostEmail",
@@ -42,8 +45,22 @@ export function isEmailSentBefore(
     sendOneDayPostEmail: ["sendOneDayPostEmail", "sendStartedPostEmail"],
     sendStartedPostEmail: ["sendStartedPostEmail"],
     sendStartedProviderEmail: ["sendStartedProviderEmail"],
+
+    // unpublish post
+    sendUnpublishOneWeekPostEmail: ["sendUnpublishOneWeekPostEmail", "sendUnpublishOneDayPostEmail", "sendUnpublishedPostEmail"],
+    sendUnpublishOneDayPostEmail: ["sendUnpublishOneDayPostEmail", "sendUnpublishedPostEmail"],
+    sendUnpublishedPostEmail: ["sendUnpublishedPostEmail"],
+
+    // unpublish provider
+    sendUnpublishFiveWeekProviderEmail: ["sendUnpublishFiveWeekProviderEmail", "sendUnpublishFourWeekProviderEmail", "sendUnpublishThreeWeekProviderEmail", "sendUnpublishTwoWeekProviderEmail", "sendUnpublishOneWeekProviderEmail", "sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishFourWeekProviderEmail: ["sendUnpublishFourWeekProviderEmail", "sendUnpublishThreeWeekProviderEmail", "sendUnpublishTwoWeekProviderEmail", "sendUnpublishOneWeekProviderEmail", "sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishThreeWeekProviderEmail: ["sendUnpublishThreeWeekProviderEmail", "sendUnpublishTwoWeekProviderEmail", "sendUnpublishOneWeekProviderEmail", "sendUnpublishTwoWeekProviderEmail", "sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishTwoWeekProviderEmail: ["sendUnpublishTwoWeekProviderEmail", "sendUnpublishOneWeekProviderEmail", "sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishOneWeekProviderEmail: ["sendUnpublishOneWeekProviderEmail", "sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishOneDayProviderEmail: ["sendUnpublishOneDayProviderEmail", "sendUnpublishedProviderEmail"],
+    sendUnpublishedProviderEmail: ["sendUnpublishedProviderEmail"],
   };
-  const listEventJsonData = audit.jsonData as ListEventJsonData;
+  const listEventJsonData = audit.jsonData as ListEventJsonData | ListItemEventJsonData;
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];
   const reminderHasBeenSent = subsequentEmails?.includes?.(listEventJsonData?.reminderType as string) ?? false;
   if (reminderHasBeenSent) {
