@@ -1,7 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
 import { AuditListItemEventName, List, ListItem, Point, ServiceType, User } from "server/models/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
-import { getCountryFromData, makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
+import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
 import { recordListItemEvent } from "server/models/audit";
