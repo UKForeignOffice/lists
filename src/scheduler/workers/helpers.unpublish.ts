@@ -20,6 +20,8 @@ import { logger } from "server/services/logger";
 import { sendUnpublishedProviderEmail } from "server/services/govuk-notify";
 import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { lowerCase, startCase } from "lodash";
+import { updateIsAnnualReviewForListItems } from "./main";
+import { ListItemEvent } from "@prisma/client";
 
 export async function processUnpublishEmails(
   list: List,
@@ -32,8 +34,8 @@ export async function processUnpublishEmails(
 ) {
   if (
     isBefore(
-      new Date(unpublishedKeyDates?.PROVIDER_FIVE_WEEKS ?? ""),
-      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_FOUR_WEEKS ?? "")), 1)
+      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_FOUR_WEEKS ?? "")), 1),
+      new Date(unpublishedKeyDates?.PROVIDER_FIVE_WEEKS ?? "")
     ) &&
     isWithinInterval(today, {
       start: new Date(unpublishedKeyDates?.PROVIDER_FIVE_WEEKS ?? ""),
@@ -49,8 +51,8 @@ export async function processUnpublishEmails(
 
   if (
     isBefore(
-      new Date(unpublishedKeyDates?.PROVIDER_FOUR_WEEKS ?? ""),
-      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_THREE_WEEKS ?? "")), 1)
+      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_THREE_WEEKS ?? "")), 1),
+      new Date(unpublishedKeyDates?.PROVIDER_FOUR_WEEKS ?? "")
     ) &&
     isWithinInterval(today, {
       start: new Date(unpublishedKeyDates?.PROVIDER_FOUR_WEEKS ?? ""),
@@ -66,8 +68,8 @@ export async function processUnpublishEmails(
 
   if (
     isBefore(
-      new Date(unpublishedKeyDates?.PROVIDER_THREE_WEEKS ?? ""),
-      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_TWO_WEEKS ?? "")), 1)
+      subDays(endOfDay(new Date(unpublishedKeyDates?.PROVIDER_TWO_WEEKS ?? "")), 1),
+      new Date(unpublishedKeyDates?.PROVIDER_THREE_WEEKS ?? "")
     ) &&
     isWithinInterval(today, {
       start: new Date(unpublishedKeyDates?.PROVIDER_THREE_WEEKS ?? ""),
@@ -83,8 +85,8 @@ export async function processUnpublishEmails(
 
   if (
     isBefore(
-      new Date(unpublishedKeyDates?.PROVIDER_TWO_WEEKS ?? ""),
-      subDays(endOfDay(new Date(unpublishedKeyDates?.ONE_WEEK ?? "")), 1)
+      subDays(endOfDay(new Date(unpublishedKeyDates?.ONE_WEEK ?? "")), 1),
+      new Date(unpublishedKeyDates?.PROVIDER_TWO_WEEKS ?? "")
     ) &&
     isWithinInterval(today, {
       start: new Date(unpublishedKeyDates?.PROVIDER_TWO_WEEKS ?? ""),
@@ -100,8 +102,8 @@ export async function processUnpublishEmails(
 
   if (
     isBefore(
-      new Date(unpublishedKeyDates?.ONE_WEEK ?? ""),
-      subDays(endOfDay(new Date(unpublishedKeyDates?.ONE_DAY ?? "")), 1)
+      subDays(endOfDay(new Date(unpublishedKeyDates?.ONE_DAY ?? "")), 1),
+      new Date(unpublishedKeyDates?.ONE_WEEK ?? "")
     ) &&
     isWithinInterval(today, {
       start: new Date(unpublishedKeyDates?.ONE_WEEK ?? ""),
@@ -159,9 +161,13 @@ export async function processUnpublishEmails(
       logger.info(`UnpublishedProviderEmail has already been sent to providers for list ${list.id}`);
       return;
     }
-    // @todo unpublish list items here
-    // const updatedListItems = await updateI sAnnualReviewForListItems(listItemsForList, list);
-    await processProviderEmailsForListItems(list, uncompletedListItems, "sendUnpublishedProviderEmail", true);
+    const unpublishedListItems = uncompletedListItems.map((listItem) => {
+      listItem.status = "UNPUBLISHED";
+      listItem.isAnnualReview = false;
+      return listItem;
+    })
+    const updatedListItems = await updateIsAnnualReviewForListItems(unpublishedListItems, list, ListItemEvent.UNPUBLISHED, "unpublish");
+    await processProviderEmailsForListItems(list, updatedListItems, "sendUnpublishedProviderEmail", true);
     return;
   }
 

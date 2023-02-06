@@ -13,7 +13,7 @@ import { ListItemWithHistory } from "server/components/dashboard/listsItems/type
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { findAuditEvents, recordListItemEvent } from "server/models/audit";
 import { emailProviderForAnnualReviewKeyDates } from "./helpers.annualReview";
-import { AuditEvent } from "@prisma/client";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
 import { MilestoneTillAnnualReview, MilestoneTillUnpublish } from "../batch/helpers";
 import { sendAnnualReviewPostEmail, sendUnpublishedPostEmail } from "server/services/govuk-notify";
 import { lowerCase, startCase } from "lodash";
@@ -259,7 +259,7 @@ export async function processPostEmail(
     | ListItemUnpublishedPostReminderType
 ): Promise<boolean> {
   logger.info(`Checking if ${reminderType} email should be sent [today: ${intervalDate}, start: ${start}, end: ${end}`);
-  if (isBefore(end, start) && isWithinInterval(intervalDate, { start, end })) {
+  if (isBefore(start, end) && isWithinInterval(intervalDate, { start, end })) {
     const isEmailSent = isEmailSentBefore(audit, reminderType);
     if (!isEmailSent) {
       await processPostEmailsForList(list, milestoneTillAnnualReview, reminderType);
@@ -281,7 +281,7 @@ export async function processPostProviderEmail(
   providerReminderType: ListItemAnnualReviewProviderReminderType | ListItemUnpublishedProviderReminderType,
   listItemAudit?: Audit
 ): Promise<boolean> {
-  if (isBefore(end, start) && isWithinInterval(intervalDate, { start, end })) {
+  if (isBefore(start, end) && isWithinInterval(intervalDate, { start, end })) {
     let isEmailSent = isEmailSentBefore(audit, postReminderType);
     if (!isEmailSent) {
       await processPostEmailsForList(list, milestoneTillAnnualReview, postReminderType);
@@ -292,7 +292,12 @@ export async function processPostProviderEmail(
       logger.info(`${providerReminderType} email has already been sent to providers for list ${list.id}`);
       return true;
     }
-    const updatedListItems = await updateIsAnnualReviewForListItems(listItems, list);
+    const listItemsForAnnualReview = listItems.map((listItem) => {
+      listItem.status = "OUT_WITH_PROVIDER";
+      listItem.isAnnualReview = true;
+      return listItem;
+    });
+    const updatedListItems = await updateIsAnnualReviewForListItems(listItemsForAnnualReview, list, ListItemEvent.ANNUAL_REVIEW_STARTED, "startAnnualReview");
     await processProviderEmailsForListItems(list, updatedListItems, providerReminderType);
     return true;
   }

@@ -1,6 +1,6 @@
 import { findListsWithCurrentAnnualReview } from "server/models/list";
 import { logger } from "server/services/logger";
-import { AnnualReviewKeyDates, Audit, List, UnpublishedKeyDates } from "server/models/types";
+import { AnnualReviewKeyDates, Audit, AuditListItemEventName, List, UnpublishedKeyDates } from "server/models/types";
 import { AuditEvent, ListItem, ListItemEvent } from "@prisma/client";
 import { findListItems, updateIsAnnualReview } from "server/models/listItem";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
@@ -68,7 +68,9 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
 
 export async function updateIsAnnualReviewForListItems(
   listItems: ListItemWithHistory[],
-  list: List
+  list: List,
+  event: ListItemEvent,
+  eventName: AuditListItemEventName
 ): Promise<ListItemWithHistory[]> {
   if (listItems.length === 0) {
     logger.info(`No List items found for list ${list.id}`);
@@ -77,8 +79,8 @@ export async function updateIsAnnualReviewForListItems(
   const updatedListItems: Result<ListItemWithHistory[]> = await updateIsAnnualReview(
     list,
     listItems,
-    ListItemEvent.ANNUAL_REVIEW_STARTED,
-    "startAnnualReview",
+    event,
+    eventName,
     AuditEvent.REMINDER
   );
 

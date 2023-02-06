@@ -474,8 +474,8 @@ export async function updateIsAnnualReview(
         id: listItem.id,
       },
       data: {
-        isAnnualReview: listItem.status !== Status.UNPUBLISHED,
-        status: Status.OUT_WITH_PROVIDER,
+        isAnnualReview: listItem.isAnnualReview,
+        status: listItem.status,
         // history: EVENTS[listItemEvent](),
         history: {
           create: {
