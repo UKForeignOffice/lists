@@ -341,6 +341,8 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
       throw Error(`list item ${id} not found - ${e}`);
     });
 
+  const { address: currentAddress, ...listItem } = listItemResult!;
+
   const jsonData = listItemResult?.jsonData as Prisma.JsonObject;
   // @ts-ignore
   const data: DeserialisedWebhookData | null | undefined = legacyDataParameter ?? jsonData?.updatedJsonData;
@@ -368,7 +370,6 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
   let geoLocationParams: Nullable<[number, Point]>;
 
-  const { address: currentAddress, ...listItem } = listItemResult!;
   const addressUpdates = getChangedAddressFields(data!, currentAddress ?? {});
   const requiresAddressUpdate = Object.keys(addressUpdates).length > 0;
 
