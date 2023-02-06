@@ -100,15 +100,15 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
    */
   if (field === "address") {
     return [
-      jsonData["address.firstLine"]?.trim() ?? "",
-      jsonData["address.secondLine"]?.trim() ?? "",
-      jsonData.postCode?.trim() ?? "",
-      jsonData.city?.trim() ?? "",
+      jsonData.updatedJsonData?.["address.firstLine"] ?? jsonData["address.firstLine"]?.trim() ?? "",
+      jsonData.updatedJsonData?.["address.secondLine"] ?? jsonData["address.secondLine"]?.trim() ?? "",
+      jsonData.updatedJsonData?.postCode ?? jsonData.postCode?.trim() ?? "",
+      jsonData.updatedJsonData?.city ?? jsonData.city?.trim() ?? "",
     ]
       .filter((line) => line)
       .join(`\n`);
   }
-  return jsonData?.[field];
+  return jsonData?.updatedJsonData?.[field] ?? jsonData?.[field];
 }
 
 function hasUpdate(field: KeyOfJsonData, listItem: ListItemJsonData) {
@@ -147,7 +147,7 @@ function rowFromField(field: KeyOfJsonData, listItem: ListItemJsonData): Types.g
       text: fieldTitles[field] ?? "",
     },
     value: {
-      [valueKey]: fieldHasUpdate ? parseValue(field, listItem.updatedJsonData) : value,
+      [valueKey]: value,
     },
     ...(fieldHasUpdate && {
       actions: { items: [updateTag] },
