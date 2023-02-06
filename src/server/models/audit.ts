@@ -1,9 +1,7 @@
 import { prisma } from "./db/prisma-client";
 import { AuditEvent } from "@prisma/client";
 
-import {
-  AuditCreateInput, ListEventJsonData, ListItemEventJsonData
-} from "./types";
+import { AuditCreateInput, ListEventJsonData, ListItemEventJsonData } from "./types";
 
 /**
  * @deprecated
@@ -28,7 +26,7 @@ export async function findAuditEvents(
   annualReviewReference: string,
   auditEvent: AuditEvent,
   type?: "user" | "list" | "listItem",
-  itemId?: number,
+  itemId?: number
 ) {
   type = type ?? "listItem";
 
@@ -41,10 +39,10 @@ export async function findAuditEvents(
         path: ["annualReviewRef"],
         equals: annualReviewReference,
       },
-    }];
+    },
+  ];
   if (itemId) {
-    andCondition.push(
-      {
+    andCondition.push({
       jsonData: {
         path: ["itemId"],
         // @ts-ignore
@@ -69,4 +67,3 @@ export async function findAuditEvents(
     return { error: new Error(message) };
   }
 }
-

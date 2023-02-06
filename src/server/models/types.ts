@@ -1,10 +1,10 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 import {
-  ListItemJsonData,
-  LawyerJsonData,
   CovidTestSupplierJsonData,
   FuneralDirectorJsonData,
+  LawyerJsonData,
+  ListItemJsonData,
   TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
@@ -179,7 +179,8 @@ export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
 // Audit
 export type AuditEventName = "edit" | "new";
 
-export type AuditListItemEventName = "edit"
+export type AuditListItemEventName =
+  | "edit"
   | "new"
   | "requestChange"
   | "edit"

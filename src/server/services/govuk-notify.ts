@@ -1,9 +1,9 @@
 import { NotifyClient } from "notifications-node-client";
 import pluralize from "pluralize";
 import * as config from "server/config";
+import { NOTIFY } from "server/config";
 import { logger } from "./logger";
 import { isGovUKEmailAddress, throwIfConfigVarIsUndefined } from "server/utils/validation";
-import { NOTIFY } from "server/config";
 import { MilestoneTillAnnualReview } from "../../scheduler/batch/helpers";
 import { ListItemUnpublishedPostReminderType, ListItemUnpublishedProviderReminderType } from "server/models/types";
 
@@ -11,9 +11,7 @@ let notifyClient: any;
 
 export function getNotifyClient(): any {
   if (notifyClient === undefined) {
-    const requiredTemplateIds = [
-      "NOTIFY.apiKey",
-    ];
+    const requiredTemplateIds = ["NOTIFY.apiKey"];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
     if (config.isSmokeTest) {
@@ -154,7 +152,11 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       country: options.country,
       annualReviewDate: options.annualReviewDate,
     };
-    logger.info(`personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${options.emailAddress}`);
+    logger.info(
+      `personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${options.emailAddress}`
+    );
     await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
@@ -164,7 +166,8 @@ export async function sendAnnualReviewDateChangeEmail(options: {
 export async function sendAnnualReviewCompletedEmail(
   emailAddress: string,
   typePlural: string,
-  country: string): Promise<void> {
+  country: string
+): Promise<void> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}]`);
@@ -175,8 +178,14 @@ export async function sendAnnualReviewCompletedEmail(
       typeSingular: pluralize.singular(typePlural),
       country,
     };
-    logger.info(`personalisation for sendAnnualReviewCompletedEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${emailAddress}`);
-    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.annualReviewCompleted, emailAddress, { personalisation });
+    logger.info(
+      `personalisation for sendAnnualReviewCompletedEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.annualReviewCompleted, emailAddress, {
+      personalisation,
+    });
   } catch (error) {
     logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
   }
@@ -209,7 +218,11 @@ export async function sendAnnualReviewPostEmail(
       annualReviewDate,
       typePluralCapitalised: typePlural.toUpperCase(),
     };
-    logger.info(`template - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`);
+    logger.info(
+      `template - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
+        personalisation
+      )}`
+    );
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation });
     return { result: result.statusText === "Created" };
   } catch (error) {
@@ -241,9 +254,13 @@ export async function sendAnnualReviewProviderEmail(
       changeLink,
     };
     logger.info(
-      `template ${NOTIFY.templates.annualReviewNotices.providerStart}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
+      `template ${
+        NOTIFY.templates.annualReviewNotices.providerStart
+      }, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, { personalisation });
+    await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
+      personalisation,
+    });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
     logger.error(message);
@@ -258,24 +275,21 @@ export async function sendUnpublishedPostEmail(
   typePlural: string,
   country: string,
   numberNotResponded: string
-): Promise<{ result?: boolean, error?: Error }> {
+): Promise<{ result?: boolean; error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
       return { result: true };
     }
     logger.info(`sending ${reminderType} with
-    [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`)
+    [typePlural: ${typePlural}, country: ${country}, number not responded: ${numberNotResponded}]`);
 
     const notifyTemplates: Record<ListItemUnpublishedPostReminderType, string> = {
       sendUnpublishOneWeekPostEmail: NOTIFY.templates.unpublishNotice.postOneWeek ?? "",
       sendUnpublishOneDayPostEmail: NOTIFY.templates.unpublishNotice.postOneDay ?? "",
       sendUnpublishedPostEmail: NOTIFY.templates.unpublishNotice.postUnpublished ?? "",
     };
-    await getNotifyClient().sendEmail(
-      notifyTemplates[reminderType],
-      emailAddress,
-      {
+    await getNotifyClient().sendEmail(notifyTemplates[reminderType], emailAddress, {
       personalisation: {
         typePluralCapitalised: typePlural.toUpperCase(),
         typePlural,
@@ -298,14 +312,16 @@ export async function sendUnpublishedProviderEmail(
   contactName: string,
   deletionDate: string,
   changeLink: string
-): Promise<{ result?: boolean, error?: Error }> {
+): Promise<{ result?: boolean; error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
       return { result: true };
     }
 
-    logger.info(`sending sendUnpublishedProviderEmail for ${reminderType} [contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}]`);
+    logger.info(
+      `sending sendUnpublishedProviderEmail for ${reminderType} [contactName:${contactName}, typePlural: ${typePlural}, country: ${country}, deletionDate: ${deletionDate}, changeLink: ${changeLink}]`
+    );
 
     const notifyTemplates: Record<ListItemUnpublishedProviderReminderType, string> = {
       sendUnpublishFiveWeekProviderEmail: NOTIFY.templates.unpublishNotice.providerWeekly ?? "",
@@ -322,17 +338,11 @@ export async function sendUnpublishedProviderEmail(
       country,
       changeLink,
     };
-    const personalisation = reminderType === "sendUnpublishedProviderEmail"
-      ? { ...basePersonalisation, deletionDate }
-      : basePersonalisation;
+    const personalisation =
+      reminderType === "sendUnpublishedProviderEmail" ? { ...basePersonalisation, deletionDate } : basePersonalisation;
 
-    await getNotifyClient().sendEmail(
-      notifyTemplates[reminderType],
-      emailAddress,
-      { personalisation }
-    );
+    await getNotifyClient().sendEmail(notifyTemplates[reminderType], emailAddress, { personalisation });
     logger.debug(`Sent email to ${emailAddress} with template ${notifyTemplates[reminderType]} for ${reminderType}`);
-
   } catch (error) {
     const errorMsg = `Unable to send annual review provider email: ${error.message}`;
     logger.error(errorMsg);
