@@ -4,10 +4,11 @@ Feature: Provider annual review confirmation
     Background:
         Given A "lawyers" list exists for Eurasia
         And there are these list items
-            | contactName | organisationName | emailAddress               | status    | isPublished |
-            | Winston     | Winston Law      | smoke@cautionyourblast.com | PUBLISHED | true        |
-            | O'brien     | Brien Law        | smoke@cautionyourblast.com | PUBLISHED | true        |
-            | Julia       | Julia Law        | smoke@cautionyourblast.com | PUBLISHED | true        |
+            | contactName | organisationName | emailAddress               | status    | isPublished | isAnnualReview |
+            | Winston     | Winston Law      | smoke@cautionyourblast.com | PUBLISHED | true        | true           |
+            | O'brien     | Brien Law        | smoke@cautionyourblast.com | PUBLISHED | true        | true           |
+            | Julia       | Julia Law        | smoke@cautionyourblast.com | PUBLISHED | true        | true           |
+        And the list is in annual review
         And I click on the link from the confirmation email
 
     Scenario: Show error if no option is selected
