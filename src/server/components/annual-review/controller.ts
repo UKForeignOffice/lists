@@ -31,7 +31,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const errorMsg = req.flash("annualReviewError")[0];
     let error = null;
 
-    if ((await dateHasExpired(listItem.listId)) || !listItem.isAnnualReview) {
+    if (!listItem.isAnnualReview || (await dateHasExpired(listItem.listId))) {
       return res.render("annual-review/error", {
         text: { title: "This link has expired", body: "This link has expired" },
       });
