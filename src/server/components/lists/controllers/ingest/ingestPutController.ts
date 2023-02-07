@@ -5,12 +5,12 @@ import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { ServiceType } from "server/models/types";
+import { ListJsonData, ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
-import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
+import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -36,20 +36,27 @@ export async function ingestPutController(req: Request, res: Response) {
     return res.status(422).json({ error: "questions could not be deserialised" });
   }
 
-  try {
-    const listItem = await prisma.listItem.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!listItem) {
-      return res.status(404).send({
-        error: {
-          message: `Unable to store updates - listItem could not be found`,
+  const listItem = await prisma.listItem.findUnique({
+    where: { id: Number(id) },
+    include: {
+      list: {
+        select: {
+          jsonData: true,
         },
-      });
-    }
+      },
+    },
+  });
 
-    const jsonData = listItem.jsonData as Prisma.JsonObject;
+  if (!listItem) {
+    return res.status(404).send({
+      error: {
+        message: `Unable to store updates - listItem ${listItem} could not be found`,
+      },
+    });
+  }
+
+  try {
+    const jsonData = listItem.jsonData as DeserialisedWebhookData;
 
     const diff = getObjectDiff(jsonData, data);
 
@@ -58,8 +65,11 @@ export async function ingestPutController(req: Request, res: Response) {
       updatedJsonData: diff,
     };
 
+    const listJsonData = listItem.list.jsonData as ListJsonData;
+    const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
+
     const { isAnnualReview = false } = value.metadata;
-    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff) : EVENTS.EDITED(diff);
+    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
 
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {

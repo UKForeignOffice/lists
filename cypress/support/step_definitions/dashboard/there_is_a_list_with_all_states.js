@@ -152,7 +152,15 @@ function setupPublishEvents(options) {
 }
 
 function listItem(options) {
-  const { isArchived, emailVerified = true, isPublished, service = "lawyers", __smoke, ...rest } = options;
+  const {
+    isArchived,
+    emailVerified = true,
+    isPublished,
+    isAnnualReview = false,
+    service = "lawyers",
+    __smoke,
+    ...rest
+  } = options;
 
   const events = setupPublishEvents(options);
   const history = {
@@ -175,6 +183,7 @@ function listItem(options) {
   return {
     ...(updatedAt && { updatedAt }),
     status,
+    isAnnualReview,
     isPublished,
     type: service,
     jsonData,
@@ -245,6 +254,7 @@ function itemsFromRows(rows) {
       ...rest,
       isPublished,
       isArchived,
+      isAnnualReview,
       emailVerified: row.emailVerified !== "false", // default to TRUE for ease (i.e. only explicitly set to false when needed).
       __smoke,
     });

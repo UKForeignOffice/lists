@@ -11,40 +11,63 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
-import type { ListItemGetObject, List } from "server/models/types";
+import type { ListItemGetObject, List, ListJsonData } from "server/models/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
-import {sendAnnualReviewCompletedEmailForList} from "server/components/annual-review/helpers";
+import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
+import { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listItemRef } = req.params;
-    const result = await findListItemByReference(listItemRef);
+    const listItem = await findListItemByReference(listItemRef);
 
-    if (!result) {
+    if (!listItem) {
       return next(new HttpException(404, "404", "The list item cannot be found"));
     }
 
-    const listItem = result as unknown as ListItemGetObject;
-
+    // @ts-ignore
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
-    const userHasConfirmed = listItem.status === Status.CHECK_ANNUAL_REVIEW;
     let error = null;
 
-    if (await dateHasExpired(listItem.listId)) {
+    if (!listItem.isAnnualReview || (await dateHasExpired(listItem.listId))) {
       return res.render("annual-review/error", {
         text: { title: "This link has expired", body: "This link has expired" },
       });
     }
 
-    if (userHasConfirmed) {
-      return res.render("annual-review/error", {
-        text: {
-          title: "You have already submitted your annual review",
-          body: "The annual review for your business has already been submitted.",
+    if (listItem.status !== Status.OUT_WITH_PROVIDER && listItem.isAnnualReview) {
+      const list = listItem?.list as ListWithJsonData;
+      const currentAnnualReview = list?.jsonData?.currentAnnualReview;
+      const annualReviewReference = currentAnnualReview?.reference;
+
+      const userAlreadySubmitted = await prisma.event.findFirst({
+        where: {
+          listItemId: listItem.id,
+          type: "CHECK_ANNUAL_REVIEW",
+          jsonData: {
+            path: ["reference"],
+            equals: annualReviewReference,
+          },
         },
       });
+
+      if (userAlreadySubmitted) {
+        logger.info(
+          `listItemId: ${
+            listItem.id
+          } attempted to resubmit annual review details. Found a previous event with the currentAnnualReview reference ${annualReviewReference} ${JSON.stringify(
+            userAlreadySubmitted
+          )}`
+        );
+        return res.render("annual-review/error", {
+          text: {
+            title: "You have already submitted your annual review",
+            body: "The annual review for your business has already been submitted.",
+          },
+        });
+      }
     }
 
     if (errorMsg) {
@@ -53,7 +76,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
 
     res.render("annual-review/provider-confirmation", {
       rows,
-      country: listItem?.jsonData?.country,
+      country: listItem.address.country.name,
       service: startCase(listItem?.type),
       csrfToken: getCSRFToken(req),
       reference: listItem.reference,
@@ -158,12 +181,21 @@ export async function declarationPostController(req: Request, res: Response, nex
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
+    const result = await findListItemByReference(listItemRef);
+    if (!result) {
+      return next(new HttpException(404, "404", "The list item cannot be found"));
+    }
+
+    const list = result.list;
+    const currentAnnualReview = (list.jsonData as ListJsonData).currentAnnualReview;
+    const annualReviewReference = currentAnnualReview?.reference;
+
     const updatedListItem = await prisma.listItem.update({
       where: { reference: listItemRef },
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
         history: {
-          create: EVENTS.CHECK_ANNUAL_REVIEW(),
+          create: EVENTS.CHECK_ANNUAL_REVIEW({}, annualReviewReference),
         },
       },
     });
