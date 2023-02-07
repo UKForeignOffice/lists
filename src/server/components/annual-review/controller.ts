@@ -120,13 +120,12 @@ export async function confirmPostController(req: Request, res: Response, next: N
       return res.redirect(`/annual-review/confirm/${req.body.reference}`);
     }
 
-    if (chosenValue === "yes") {
-      return res.redirect(`/annual-review/declaration/${req.body.reference}`);
-    }
-
+    let hasUpdates = false;
     if (chosenValue === "no") {
-      await redirectToFormRunner(req, res, next);
+      hasUpdates = true;
     }
+    req.flash("hasUpdates", `${hasUpdates}`);
+    return res.redirect(`/annual-review/declaration/${req.body.reference}`);
   } catch (err) {
     next(err);
   }
@@ -157,6 +156,7 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
 export function declarationGetController(req: Request, res: Response, next: NextFunction): void {
   const { listItemRef } = req.params;
   const errorMsg = req.flash("declarationError")[0];
+  const hasUpdates = req.flash("hasUpdates")[0];
   let error = null;
 
   if (!listItemRef) {
@@ -168,17 +168,22 @@ export function declarationGetController(req: Request, res: Response, next: Next
     error = { text: errorMsg };
   }
 
-  res.render("annual-review/declaration", { reference: listItemRef, error, csrfToken: getCSRFToken(req) });
+  res.render("annual-review/declaration", { reference: listItemRef, hasUpdates, error, csrfToken: getCSRFToken(req) });
 }
 
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { confirmation } = req.body;
+    const { confirmation, hasUpdates } = req.body;
     const { listItemRef } = req.params;
 
     if (!confirmation) {
       req.flash("declarationError", "You must select the declaration box to proceed");
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
+    }
+
+    if (hasUpdates) {
+      await redirectToFormRunner(req, res, next);
+      return;
     }
 
     const result = await findListItemByReference(listItemRef);

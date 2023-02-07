@@ -40,6 +40,7 @@
 
       <form action="/annual-review/declaration/{{ reference }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="hasUpdates" value="{{ hasUpdates }}" />
         {{ govukCheckboxes({
           name: "confirmation",
           errorMessage: error,
