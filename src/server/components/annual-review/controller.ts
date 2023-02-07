@@ -52,7 +52,6 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
           },
         },
       });
-      logger.info("user already submitted", userAlreadySubmitted);
 
       if (userAlreadySubmitted) {
         logger.info(
