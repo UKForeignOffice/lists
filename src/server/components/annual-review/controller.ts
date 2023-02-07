@@ -156,7 +156,6 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
 export function declarationGetController(req: Request, res: Response, next: NextFunction): void {
   const { listItemRef } = req.params;
   const errorMsg = req.flash("declarationError")[0];
-  const hasUpdates = req.flash("hasUpdates")[0];
   let error = null;
 
   if (!listItemRef) {
@@ -168,7 +167,7 @@ export function declarationGetController(req: Request, res: Response, next: Next
     error = { text: errorMsg };
   }
 
-  res.render("annual-review/declaration", { reference: listItemRef, hasUpdates, error, csrfToken: getCSRFToken(req) });
+  res.render("annual-review/declaration", { reference: listItemRef, error, csrfToken: getCSRFToken(req) });
 }
 
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
