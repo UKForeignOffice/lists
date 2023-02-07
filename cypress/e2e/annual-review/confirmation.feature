@@ -23,6 +23,15 @@ Feature: Provider annual review confirmation
         Then I see page with heading "Declaration"
 
 
+    Scenario: Summary page after declaration if no option is chosen
+        When I click the "No, I need to update my information" radio button
+        And I click the "Continue" button
+        And I see page with heading "Declaration"
+        And I check the "Confirmed" checkbox
+        And I click the "Submit" button
+        Then I see page with heading "Check your answers"
+
+
     Scenario: Show declaration page error
         When I click the "Yes, I confirm my information is still correct" radio button
         And I click the "Continue" button

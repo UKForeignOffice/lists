@@ -22,6 +22,7 @@ declare module "express-session" {
       action?: Action;
     };
     currentUrl?: string;
+    updatesRequired?: boolean;
   }
 }
 

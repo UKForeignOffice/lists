@@ -120,11 +120,11 @@ export async function confirmPostController(req: Request, res: Response, next: N
       return res.redirect(`/annual-review/confirm/${req.body.reference}`);
     }
 
-    let hasUpdates = false;
+    let updatesRequired = false;
     if (chosenValue === "no") {
-      hasUpdates = true;
+      updatesRequired = true;
     }
-    req.flash("hasUpdates", `${hasUpdates}`);
+    req.session.updatesRequired = updatesRequired;
     return res.redirect(`/annual-review/declaration/${req.body.reference}`);
   } catch (err) {
     next(err);
@@ -173,15 +173,16 @@ export function declarationGetController(req: Request, res: Response, next: Next
 
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { confirmation, hasUpdates } = req.body;
+    const { confirmation } = req.body;
     const { listItemRef } = req.params;
+    const { updatesRequired } = req.session;
 
     if (!confirmation) {
       req.flash("declarationError", "You must select the declaration box to proceed");
       return res.redirect(`/annual-review/declaration/${listItemRef}`);
     }
 
-    if (hasUpdates) {
+    if (updatesRequired) {
       await redirectToFormRunner(req, res, next);
       return;
     }
