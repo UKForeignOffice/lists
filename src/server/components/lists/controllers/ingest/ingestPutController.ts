@@ -4,8 +4,8 @@ import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { ServiceType } from "server/models/types";
+import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { ListJsonData, ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
@@ -36,27 +36,27 @@ export async function ingestPutController(req: Request, res: Response) {
     return res.status(422).json({ error: "questions could not be deserialised" });
   }
 
-  try {
-    const listItem = await prisma.listItem.findUnique({
-      where: { id: Number(id) },
-      select: {
-        list: {
-          select: {
-            jsonData: true,
-          },
+  const listItem = await prisma.listItem.findUnique({
+    where: { id: Number(id) },
+    include: {
+      list: {
+        select: {
+          jsonData: true,
         },
       },
+    },
+  });
+
+  if (!listItem) {
+    return res.status(404).send({
+      error: {
+        message: `Unable to store updates - listItem ${listItem} could not be found`,
+      },
     });
+  }
 
-    if (!listItem) {
-      return res.status(404).send({
-        error: {
-          message: `Unable to store updates - listItem could not be found`,
-        },
-      });
-    }
-
-    const jsonData = listItem.jsonData as Prisma.JsonObject;
+  try {
+    const jsonData = listItem.jsonData as DeserialisedWebhookData;
 
     const diff = getObjectDiff(jsonData, data);
 
@@ -65,7 +65,8 @@ export async function ingestPutController(req: Request, res: Response) {
       updatedJsonData: diff,
     };
 
-    const annualReviewReference = listItem.list.jsonData?.currentAnnualReview?.reference;
+    const listJsonData = listItem.list.jsonData as ListJsonData;
+    const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
     const { isAnnualReview = false } = value.metadata;
     const event = isAnnualReview

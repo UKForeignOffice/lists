@@ -20,14 +20,13 @@ import { ListWithJsonData } from "server/components/dashboard/helpers";
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { listItemRef } = req.params;
-    const result = await findListItemByReference(listItemRef);
+    const listItem = await findListItemByReference(listItemRef);
 
-    if (!result) {
+    if (!listItem) {
       return next(new HttpException(404, "404", "The list item cannot be found"));
     }
 
-    const listItem = result;
-
+    // @ts-ignore
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
     let error = null;
@@ -77,7 +76,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
 
     res.render("annual-review/provider-confirmation", {
       rows,
-      country: listItem?.jsonData?.country,
+      country: listItem.address.country.name,
       service: startCase(listItem?.type),
       csrfToken: getCSRFToken(req),
       reference: listItem.reference,
