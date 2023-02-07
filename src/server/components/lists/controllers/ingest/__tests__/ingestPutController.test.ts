@@ -235,6 +235,9 @@ const sampleListItem = {
   id: "1",
   jsonData: { organisationName: "The Amazing Lawyers" },
   type: "lawyers",
+  list: {
+    id: 8,
+  },
 };
 
 const response = {
