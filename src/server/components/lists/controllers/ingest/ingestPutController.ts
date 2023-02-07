@@ -4,7 +4,7 @@ import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
-import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { ListJsonData, ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
