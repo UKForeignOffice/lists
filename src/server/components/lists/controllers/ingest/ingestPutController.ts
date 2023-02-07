@@ -69,9 +69,7 @@ export async function ingestPutController(req: Request, res: Response) {
     const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
     const { isAnnualReview = false } = value.metadata;
-    const event = isAnnualReview
-      ? EVENTS.CHECK_ANNUAL_REVIEW({ ...diff, reference: annualReviewReference })
-      : EVENTS.EDITED(diff);
+    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
 
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {

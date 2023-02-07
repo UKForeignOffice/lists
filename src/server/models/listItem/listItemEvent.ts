@@ -1,10 +1,6 @@
 import { prisma } from "../db/prisma-client";
 import { Prisma, ListItemEvent } from "@prisma/client";
-import {
-  Event,
-  EventCreateInput,
-  EventJsonData
-} from "./types";
+import { Event, EventCreateInput, EventJsonData } from "./types";
 import { logger } from "server/services/logger";
 
 type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
@@ -77,48 +73,60 @@ export const EVENTS = {
   /**
    * After post requests a change.
    */
-  [ListItemEvent.OUT_WITH_PROVIDER]: (userId: number, requestedChanges: string): EventCreate<"OUT_WITH_PROVIDER"> => ({
+  [ListItemEvent.OUT_WITH_PROVIDER]: (
+    userId: number,
+    requestedChanges: string,
+    reference?: string
+  ): EventCreate<"OUT_WITH_PROVIDER"> => ({
     type: ListItemEvent.OUT_WITH_PROVIDER,
     jsonData: {
       eventName: "requestChange",
       userId,
       requestedChanges,
+      ...{ reference },
     },
   }),
 
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: (updatedJsonData = {}): EventCreate<"EDITED"> => ({
+  [ListItemEvent.EDITED]: (updatedJsonData = {}, reference?: string): EventCreate<"EDITED"> => ({
     type: ListItemEvent.EDITED,
     jsonData: {
       notes: ["user resubmitted with these updates"],
       eventName: "edited",
       updatedJsonData,
+      ...{ reference },
     },
   }),
 
-  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (updatedJsonData = {}): EventCreate<"CHECK_ANNUAL_REVIEW"> => ({
+  [ListItemEvent.CHECK_ANNUAL_REVIEW]: (
+    updatedJsonData = {},
+    reference?: string
+  ): EventCreate<"CHECK_ANNUAL_REVIEW"> => ({
     type: ListItemEvent.CHECK_ANNUAL_REVIEW,
     jsonData: {
       notes: ["user submitted annual review with these updates"],
       eventName: "check annual review",
       updatedJsonData,
+      ...{ reference },
     },
   }),
 
-  [ListItemEvent.ANNUAL_REVIEW_STARTED]: (): EventCreate<"ANNUAL_REVIEW_STARTED"> => ({
+  [ListItemEvent.ANNUAL_REVIEW_STARTED]: (reference?: string): EventCreate<"ANNUAL_REVIEW_STARTED"> => ({
     type: ListItemEvent.ANNUAL_REVIEW_STARTED,
     jsonData: {
       eventName: "annual review started",
+      ...{ reference },
     },
   }),
 
-  [ListItemEvent.REMINDER]: (updatedJsonData = {}): EventCreate<"REMINDER"> => ({
+  [ListItemEvent.REMINDER]: (updatedJsonData = {}, reference?: string): EventCreate<"REMINDER"> => ({
     type: ListItemEvent.REMINDER,
     jsonData: {
       eventName: "reminder",
       updatedJsonData,
+      ...{ reference },
     },
   }),
 };
@@ -136,8 +144,8 @@ export function recordEvent(
     listItem: {
       connect: {
         id: listItemId,
-      }
-    }
+      },
+    },
   };
   logger.debug(`creating Event record with data [${JSON.stringify(data)}`);
 

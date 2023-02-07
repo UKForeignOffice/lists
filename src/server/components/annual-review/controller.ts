@@ -52,6 +52,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
           },
         },
       });
+      logger.info("user already submitted", userAlreadySubmitted);
 
       if (userAlreadySubmitted) {
         logger.info(
@@ -195,9 +196,7 @@ export async function declarationPostController(req: Request, res: Response, nex
       data: {
         status: Status.CHECK_ANNUAL_REVIEW,
         history: {
-          create: EVENTS.CHECK_ANNUAL_REVIEW({
-            reference: annualReviewReference,
-          }),
+          create: EVENTS.CHECK_ANNUAL_REVIEW({}, annualReviewReference),
         },
       },
     });
