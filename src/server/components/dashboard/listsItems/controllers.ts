@@ -79,9 +79,9 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     NEW: ["publish", "request-changes", "remove", "archive"],
     OUT_WITH_PROVIDER: ["publish", "request-changes", "remove", "archive"],
     EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
-    PUBLISHED: ["unpublish", "remove"],
+    PUBLISHED: ["request-changes", "unpublish", "remove"],
     UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
-    CHECK_ANNUAL_REVIEW: ["update-live", "unpublish", "remove", "archive"],
+    CHECK_ANNUAL_REVIEW: ["update-live", "request-changes", "unpublish", "remove", "archive"],
     ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove", "archive"],
   };
 
