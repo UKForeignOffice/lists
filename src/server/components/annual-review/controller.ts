@@ -120,7 +120,7 @@ export async function confirmPostController(req: Request, res: Response, next: N
       return res.redirect(`/annual-review/confirm/${req.body.reference}`);
     }
 
-    req.session.updatesRequired = chosenValue === "yes"
+    req.session.updatesRequired = chosenValue === "no"
     return res.redirect(`/annual-review/declaration/${req.body.reference}`);
   } catch (err) {
     next(err);
