@@ -195,17 +195,9 @@ function getContactRows(listItem: ListItemGetObject): Types.govukRow[] {
 function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const { jsonData } = listItem;
   const type = listItem.type as ServiceType;
-  const baseFields: KeyOfJsonData[] = ["contactName", "size", "regions"];
+  const baseFields: KeyOfJsonData[] = ["organisationName", "contactName", "size", "regions"];
   const fields = {
-    [ServiceType.lawyers]: [
-      "organisationName",
-      "size",
-      "regions",
-      "areasOfLaw",
-      "legalAid",
-      "proBono",
-      "representedBritishNationals",
-    ],
+    [ServiceType.lawyers]: [...baseFields, "areasOfLaw", "legalAid", "proBono", "representedBritishNationals"],
     [ServiceType.covidTestProviders]: [...baseFields],
     [ServiceType.funeralDirectors]: [
       ...baseFields,
