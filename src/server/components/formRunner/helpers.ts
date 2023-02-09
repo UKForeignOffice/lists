@@ -2,13 +2,12 @@ import * as FormRunner from "./types";
 import path from "path";
 import fs from "fs";
 import {
-  EventJsonData,
   FuneralDirectorListItemGetObject,
   LawyerListItemGetObject,
   List,
   ListItem,
   ServiceType,
-  TranslatorInterpreterListItemGetObject
+  TranslatorInterpreterListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
@@ -18,7 +17,6 @@ import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
-import { ListItemEvent } from "@prisma/client";
 import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
 import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -139,19 +137,8 @@ interface initialiseFormRunnerInput {
 }
 
 export function mergeUpdatedJson(listItem: ListItemWithHistory) {
-  const editEvent = listItem?.history.find((event) => {
-    // @ts-ignore
-    return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
-  });
-
-  if (editEvent) {
-    logger.info(`found edit event ${JSON.stringify(editEvent)}`);
-  }
-
-  const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
   const listItemJsonData = listItem?.jsonData as ListItemJsonData;
-  const data: DeserialisedWebhookData | null | undefined =
-    auditJsonData?.updatedJsonData ?? listItemJsonData?.updatedJsonData;
+  const data: DeserialisedWebhookData | null | undefined = listItemJsonData?.updatedJsonData;
   return merge(listItem.jsonData, data) as ListItemJsonData;
 }
 
