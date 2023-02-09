@@ -174,6 +174,11 @@ export async function findListItemByReference(ref: string) {
             },
           },
         },
+        history: {
+          orderBy: {
+            time: "desc",
+          },
+        },
       },
     });
   } catch (error) {
@@ -187,10 +192,12 @@ export async function findListItemByReference(ref: string) {
 export async function togglerListItemIsPublished({
   id,
   isPublished,
+  jsonData,
   userId,
 }: {
   id: number;
   isPublished: boolean;
+  jsonData: ListItemJsonData,
   userId: User["id"];
 }): Promise<ListItemWithAddressCountry> {
   if (userId === undefined) {
@@ -200,7 +207,9 @@ export async function togglerListItemIsPublished({
   const event = EVENTS[status](userId);
   logger.info(`user ${userId} is setting ${id} isPublished to ${isPublished}`);
   const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
-
+  if (jsonData.updatedJsonData) {
+    delete jsonData.updatedJsonData;
+  }
   try {
     const [listItem] = await prisma.$transaction([
       prisma.listItem.update({
@@ -209,6 +218,7 @@ export async function togglerListItemIsPublished({
           isApproved: true,
           isPublished,
           status,
+          jsonData,
           history: {
             create: [event],
           },
@@ -356,6 +366,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
   const areasOfLaw = data?.areasOfLaw;
   const repatriationServicesProvided = data?.repatriationServicesProvided;
   const localServicesProvided = data?.localServicesProvided;
+
   const updatedJsonData = merge(listItem.jsonData, data) as ListItemJsonData;
 
   // @todo this will need restructuring to accommodate array field types for other providers
