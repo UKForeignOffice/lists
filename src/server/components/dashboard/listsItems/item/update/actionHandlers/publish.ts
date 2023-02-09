@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { EventJsonData, User } from "server/models/types";
+import { EventJsonData, ListItem, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
@@ -60,28 +60,31 @@ export async function publish(req: Request, res: Response) {
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
 
   const verb = isPublished ? "published" : "unpublished";
-
+  let organisationName = listItem.jsonData.organisationName;
   try {
-    await handlePublishListItem(listItem.id, isPublished, req.user!.id);
-
-    req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been ${verb}`);
+    const updatedListItem = await handlePublishListItem(listItem, isPublished, req.user!.id);
+    const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
+    organisationName = jsonData?.organisationName ?? jsonData.organisationName;
+    req.flash("successBannerTitle", `${organisationName} has been ${verb}`);
     req.flash("successBannerHeading", startCase(verb));
     req.flash("successBannerColour", "green");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
 
-export async function handlePublishListItem(listItemId: number, isPublished: boolean, userId: User["id"]) {
+export async function handlePublishListItem(listItem: ListItem, isPublished: boolean, userId: User["id"]) {
   const updatedListItem = await togglerListItemIsPublished({
-    id: listItemId,
+    id: listItem.id,
     isPublished,
+    jsonData: listItem.jsonData as ListItemJsonData,
     userId,
   });
 
   if (updatedListItem.isPublished) {
-    return await sendPublishedEmail(updatedListItem);
+    await sendPublishedEmail(updatedListItem);
   }
+  return updatedListItem;
 }

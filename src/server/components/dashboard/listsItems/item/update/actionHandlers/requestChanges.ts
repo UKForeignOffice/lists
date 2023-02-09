@@ -10,6 +10,7 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { recordListItemEvent } from "server/models/audit";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { Request } from "express";
+import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
 
 /**
  * TODO: remove underTest
@@ -43,7 +44,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
 }
 
 async function handleListItemRequestChanges(
-  listItem: ListItem,
+  listItem: ListItemWithHistory,
   message: string,
   userId: User["id"],
   isUnderTest: boolean

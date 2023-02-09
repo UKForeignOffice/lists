@@ -352,6 +352,7 @@ describe("ListItem Model:", () => {
       type: "lawyers",
     };
 
+
     sampleCountry = { id: "123TEST", name: "United Kingdom" };
 
     sampleLocation = [1, 1];

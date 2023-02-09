@@ -5,9 +5,10 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { Action } from "./types";
 import { actionHandlers } from "./actionHandlers";
 import { ListItemRes } from "../../types";
+import { mergeUpdatedJson } from "server/components/formRunner/helpers";
 
 export async function get(req: Request, res: Response, _next: NextFunction) {
-  const { listItemUrl } = res.locals;
+  const { listItemUrl, listItem } = res.locals;
   const { update = {} } = req.session;
   const { message, action } = update;
 
@@ -23,12 +24,14 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
     return res.redirect(listItemUrl);
   }
 
+  listItem.jsonData = mergeUpdatedJson(listItem);
   const actionsWithEmail: Action[] = ["publish", "remove", "requestChanges", "update", "updateLive", "updateNew"];
 
   return res.render(`dashboard/list-item-confirm/${view}`, {
     ...DEFAULT_VIEW_PROPS,
     message,
     action,
+    listItem,
     willEmail: actionsWithEmail.includes(action),
     buttonText: actionToButtonText[action],
     csrfToken: getCSRFToken(req),
