@@ -2,21 +2,25 @@ import * as FormRunner from "./types";
 import path from "path";
 import fs from "fs";
 import {
+  EventJsonData,
   FuneralDirectorListItemGetObject,
   LawyerListItemGetObject,
   List,
   ListItem,
   ServiceType,
-  TranslatorInterpreterListItemGetObject,
+  TranslatorInterpreterListItemGetObject
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
-import { kebabCase } from "lodash";
+import { kebabCase, merge } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
+import { ListItemEvent } from "@prisma/client";
+import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
+import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -128,10 +132,27 @@ export async function parseJsonFormData(
 
 interface initialiseFormRunnerInput {
   list: Pick<List, "type"> | Pick<ListItem, "type">;
-  listItem: ListItem;
+  listItem: ListItemWithHistory;
   message: string;
   isUnderTest: boolean;
   isAnnualReview?: boolean;
+}
+
+export function mergeUpdatedJson(listItem: ListItemWithHistory) {
+  const editEvent = listItem?.history.find((event) => {
+    // @ts-ignore
+    return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
+  });
+
+  if (editEvent) {
+    logger.info(`found edit event ${JSON.stringify(editEvent)}`);
+  }
+
+  const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
+  const listItemJsonData = listItem?.jsonData as ListItemJsonData;
+  const data: DeserialisedWebhookData | null | undefined =
+    auditJsonData?.updatedJsonData ?? listItemJsonData?.updatedJsonData;
+  return merge(listItem.jsonData, data) as ListItemJsonData;
 }
 
 export async function initialiseFormRunnerSession({
@@ -144,6 +165,8 @@ export async function initialiseFormRunnerSession({
   logger.info(
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
   );
+
+  listItem.jsonData = mergeUpdatedJson(listItem);
   const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
