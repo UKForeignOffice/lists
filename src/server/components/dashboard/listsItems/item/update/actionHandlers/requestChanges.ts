@@ -70,7 +70,6 @@ async function handleListItemRequestChanges(
   await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);
   logger.info(`Sent email, updating listItem`);
 
-  const { isPublished } = listItem;
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
 
@@ -82,7 +81,6 @@ async function handleListItemRequestChanges(
         where: { id: listItem.id },
         data: {
           status,
-          isPublished,
           history: {
             create: [EVENTS.OUT_WITH_PROVIDER(userId, message)],
           },
