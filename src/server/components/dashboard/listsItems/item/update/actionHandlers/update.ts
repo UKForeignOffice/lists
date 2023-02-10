@@ -11,7 +11,7 @@ export async function update(req: Request, res: Response): Promise<void> {
   try {
     const [updatedListItem] = await handleListItemUpdate(listItem.id, userId);
     const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
-    const organisationName = jsonData?.organisationName ?? jsonData.organisationName;
+    const organisationName = jsonData.organisationName;
     await sendPublishedEmail(updatedListItem as ListItemWithAddressCountry);
 
     req.flash("successBannerTitle", `${organisationName} has been updated and published`);
