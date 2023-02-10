@@ -143,7 +143,7 @@ export async function findListItems(options: {
     });
     return { result };
   } catch (error) {
-    logger.error(`findListItemsForLists Error ${(error as Error).message}`);
+    logger.error(`findListItemsForLists Error ${(error as Error).stack}`);
     return { error: Error("Unable to get list items") };
   }
 }
@@ -173,12 +173,7 @@ export async function findListItemByReference(ref: string) {
               },
             },
           },
-        },
-        history: {
-          orderBy: {
-            time: "desc",
-          },
-        },
+        }
       },
     });
   } catch (error) {
@@ -475,7 +470,7 @@ export async function updateIsAnnualReview(
 ): Promise<Result<ListItemWithHistory[]>> {
   const updatedListItems: ListItemWithHistory[] = [];
 
-  if (!listItems) {
+  if (!listItems?.length) {
     const message = `List item ids must be provided to update list items for list ${list.id}`;
     logger.error(message);
     return { error: new Error(message) };
