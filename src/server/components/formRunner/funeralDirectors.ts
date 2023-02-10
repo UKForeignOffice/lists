@@ -25,7 +25,7 @@ const FormRunnerFields: { [key: string]: string } = {
   publishEmail: "jsonData.publishEmail",
   representedBritishNationals: "jsonData.representedBritishNationals",
   phoneNumber: "jsonData.phoneNumber",
-  emergencyPhoneNumber: "jsonData.emergencyPhoneNumber",
+  contactPhoneNumber: "jsonData.contactPhoneNumber",
   regulators: "jsonData.regulators",
   declaration: "jsonData.declaration",
   country: "jsonData.country",
