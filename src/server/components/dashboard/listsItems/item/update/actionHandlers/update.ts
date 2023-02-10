@@ -7,7 +7,6 @@ export async function update(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
   const listItem = res.locals.listItem;
   const { listItemUrl, listIndexUrl } = res.locals;
-  const organisationName = listItem.jsonData.organisationName;
   try {
     const [updatedListItem] = await handleListItemUpdate(listItem.id, userId);
     const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
@@ -19,7 +18,7 @@ export async function update(req: Request, res: Response): Promise<void> {
     req.flash("successBannerColour", "green");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
     return res.redirect(listItemUrl);
   }
 }
