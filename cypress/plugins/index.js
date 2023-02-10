@@ -45,5 +45,7 @@ module.exports = (on, config) => {
       logger.log(message);
       return null;
     },
+    batch: () => require("./../../dist/scheduler/batch"),
+    worker: () => require("./../../dist/scheduler/worker"),
   });
 };
