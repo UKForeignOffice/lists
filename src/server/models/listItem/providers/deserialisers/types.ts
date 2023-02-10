@@ -60,7 +60,7 @@ export interface BaseDeserialisedWebhookData {
   publishEmail: string;
   publicEmailAddress?: string;
   phoneNumber: string;
-  emergencyPhoneNumber?: string;
+  contactPhoneNumber?: string;
   declaration: string[];
   type: ServiceType;
   updatedJsonData?: Omit<BaseDeserialisedWebhookData, "updatedJsonData">
