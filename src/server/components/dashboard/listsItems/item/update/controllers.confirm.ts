@@ -5,7 +5,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { Action } from "./types";
 import { actionHandlers } from "./actionHandlers";
 import { ListItemRes } from "../../types";
-import { mergeUpdatedJson } from "server/components/formRunner/helpers";
+import { merge } from "lodash";
 
 export async function get(req: Request, res: Response, _next: NextFunction) {
   const { listItemUrl, listItem } = res.locals;
@@ -24,7 +24,8 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
     return res.redirect(listItemUrl);
   }
 
-  listItem.jsonData = mergeUpdatedJson(listItem);
+
+  listItem.jsonData = merge(listItem.jsonData, listItem.jsonData.updatedJsonData ?? {});
   const actionsWithEmail: Action[] = ["publish", "remove", "requestChanges", "update", "updateLive", "updateNew"];
 
   return res.render(`dashboard/list-item-confirm/${view}`, {

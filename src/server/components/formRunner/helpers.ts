@@ -17,8 +17,7 @@ import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
-import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
-import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -130,16 +129,10 @@ export async function parseJsonFormData(
 
 interface initialiseFormRunnerInput {
   list: Pick<List, "type"> | Pick<ListItem, "type">;
-  listItem: ListItemWithHistory;
+  listItem: ListItem;
   message: string;
   isUnderTest: boolean;
   isAnnualReview?: boolean;
-}
-
-export function mergeUpdatedJson(listItem: ListItemWithHistory) {
-  const listItemJsonData = listItem?.jsonData as ListItemJsonData;
-  const data: DeserialisedWebhookData | null | undefined = listItemJsonData?.updatedJsonData;
-  return merge(listItem.jsonData, data) as ListItemJsonData;
 }
 
 export async function initialiseFormRunnerSession({
@@ -153,7 +146,8 @@ export async function initialiseFormRunnerSession({
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
   );
 
-  listItem.jsonData = mergeUpdatedJson(listItem);
+  const listItemJsonData = listItem?.jsonData as ListItemJsonData;
+  listItem.jsonData = merge(listItem.jsonData, listItemJsonData.updatedJsonData ?? {});
   const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
