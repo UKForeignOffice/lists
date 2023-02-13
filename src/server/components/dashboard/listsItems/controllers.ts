@@ -15,6 +15,7 @@ import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
+import type { AdditionalStatus } from "server/models/listItem/summary.helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -75,7 +76,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     requestedChanges = jsonData?.requestedChanges;
   }
 
-  const actionButtons: Record<Status, string[]> = {
+  const actionButtons: Record<Status | AdditionalStatus, string[]> = {
     NEW: ["publish", "request-changes", "unpublish", "archive"],
     OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "remove", "archive"],
     EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
