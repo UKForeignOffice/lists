@@ -59,19 +59,20 @@ export async function ingestPutController(req: Request, res: Response) {
     const jsonData = listItem.jsonData as DeserialisedWebhookData;
 
     const diff = getObjectDiff(jsonData, data);
+    if (diff?.updatedJsonData) {
+      delete diff.updatedJsonData;
+    }
 
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
       updatedJsonData: diff,
     };
-
     const listJsonData = listItem.list.jsonData as ListJsonData;
     const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
     const { isAnnualReview = false } = value.metadata;
     const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
-
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
@@ -94,8 +95,9 @@ export async function ingestPutController(req: Request, res: Response) {
       ),
     ]);
 
-    await sendAnnualReviewCompletedEmailForList(listItem.listId);
-
+    if (isAnnualReview) {
+      await sendAnnualReviewCompletedEmailForList(listItem.listId);
+    }
     return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
