@@ -1,6 +1,7 @@
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
 Given("eurasia lawyers are due to begin annual review", () => {
+  setAnnualReview();
   createEligible();
   createIneligible();
 });
@@ -16,6 +17,21 @@ function createEligible() {
 function createIneligible() {
   createNew();
   createRepublishedRecently();
+}
+
+function setAnnualReview() {
+  const today = new Date();
+  const fourWeeksAway = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getDate() + 28);
+
+  cy.task("db", {
+    operation: "list.update",
+    variables: {
+      where: {
+        reference: "SMOKE",
+      },
+      data: { nextAnnualReviewStartDate: fourWeeksAway },
+    },
+  });
 }
 
 function createNew() {

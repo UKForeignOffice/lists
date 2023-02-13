@@ -17,7 +17,6 @@ const { logger } = require("webpack-cli/lib/utils");
 
 const cucumber = require("cypress-cucumber-preprocessor").default;
 const db = new PrismaClient();
-
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -45,7 +44,11 @@ module.exports = (on, config) => {
       logger.log(message);
       return null;
     },
-    batch: () => require("./../../dist/scheduler/batch"),
-    worker: () => require("./../../dist/scheduler/worker"),
+    batch: async () => {
+      return await require("./../../dist/scheduler/batch");
+    },
+    worker: async () => {
+      return await require("./../../dist/scheduler/worker");
+    },
   });
 };
