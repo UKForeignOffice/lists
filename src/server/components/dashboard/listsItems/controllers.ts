@@ -76,13 +76,14 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "remove", "archive"],
-    OUT_WITH_PROVIDER: [listItem.isPublished ? "update-live" : "publish", "request-changes", "remove", "archive"],
+    NEW: ["publish", "request-changes", "unpublish", "archive"],
+    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "remove", "archive"],
     EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
-    PUBLISHED: ["request-changes", "unpublish", "remove"],
+    PUBLISHED: ["request-changes", "unpublish"],
     UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
-    CHECK_ANNUAL_REVIEW: ["update-live", "request-changes", "unpublish", "remove", "archive"],
+    CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish", "archive"],
     ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove", "archive"],
+    OUT_FOR_ANNUAL_REVIEW: ["unpublish"],
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
