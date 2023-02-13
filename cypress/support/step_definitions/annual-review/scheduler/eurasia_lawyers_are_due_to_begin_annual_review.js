@@ -1,29 +1,29 @@
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
-Given("eurasia lawyers are due to begin annual review", () => {
-  setAnnualReview();
-  createEligible();
-  createIneligible();
+Given("eurasia lawyers are due to begin annual review", async () => {
+  await setAnnualReview();
+  await createEligible();
+  await createIneligible();
 });
 
-function createEligible() {
+async function createEligible() {
   const eligibleReferences = ["eligible-1", "eligible-2", "eligible-3", "eligible-4", "eligible-5"];
 
-  eligibleReferences.forEach((reference) => {
+  eligibleReferences.forEach(async (reference) => {
     createEligibleListItem(reference);
   });
 }
 
-function createIneligible() {
-  createNew();
-  createRepublishedRecently();
+async function createIneligible() {
+  await createNew();
+  await createRepublishedRecently();
 }
 
-function setAnnualReview() {
+async function setAnnualReview() {
   const today = new Date();
   const fourWeeksAway = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getDate() + 28);
 
-  cy.task("db", {
+  await cy.task("db", {
     operation: "list.update",
     variables: {
       where: {
@@ -34,15 +34,15 @@ function setAnnualReview() {
   });
 }
 
-function createNew() {
+async function createNew() {
   const reference = "ineligible-1";
-  cy.task("db", {
+  await cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
         reference,
         isPublished: false,
-        ...listItemCreateBaseObject,
+        ...listItemCreateBaseObject(),
         history: {
           createMany: {
             data: [
@@ -70,18 +70,18 @@ function createNew() {
   });
 }
 
-function createRepublishedRecently() {
+async function createRepublishedRecently() {
   const reference = "ineligible-2";
   const unpublishDate = new Date();
-  unpublishDate.setMonth(-1);
+  unpublishDate.setDate(unpublishDate.getDate() - 15);
 
-  cy.task("db", {
+  return await cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
         reference,
         isPublished: true,
-        ...listItemCreateBaseObject,
+        ...listItemCreateBaseObject(),
         history: {
           createMany: {
             data: [events.NEW(), events.PUBLISHED(), events.UNPUBLISHED(unpublishDate), events.PUBLISHED(new Date())],
@@ -102,19 +102,13 @@ function createRepublishedRecently() {
   });
 }
 
-function createEligibleListItem(reference) {
-  const dateNineMonthsAgo = new Date();
-  dateNineMonthsAgo.setMonth(-8);
-
-  const dateTenMonthsAgo = new Date();
-  dateTenMonthsAgo.setMonth(-9);
-
-  cy.task("db", {
+async function createEligibleListItem(reference) {
+  return await cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
         reference,
-        ...listItemCreateBaseObject,
+        ...listItemCreateBaseObject(),
         history: {
           createMany: {
             data: [events.NEW(), events.PUBLISHED()],
@@ -173,7 +167,7 @@ const events = {
 
 // DO NOT CHANGE so this accepts parameters.
 // This is just used to generate base json data.
-function baseJsonData() {
+async function baseJsonData() {
   return {
     country: "Eurasia",
     contactName: randFullName(),
@@ -193,7 +187,6 @@ function baseJsonData() {
     },
   };
 }
-
 function jsonDataLawyers() {
   return {
     ...baseJsonData(),
@@ -203,17 +196,18 @@ function jsonDataLawyers() {
     legalAid: true,
   };
 }
-
-const listItemCreateBaseObject = {
-  type: "lawyers",
-  isApproved: true,
-  isPublished: true,
-  isBlocked: false,
-  status: "PUBLISHED",
-  jsonData: jsonDataLawyers(),
-  list: {
-    connect: {
-      reference: "SMOKE",
+function listItemCreateBaseObject() {
+  return {
+    type: "lawyers",
+    isApproved: true,
+    isPublished: true,
+    isBlocked: false,
+    status: "PUBLISHED",
+    jsonData: jsonDataLawyers(),
+    list: {
+      connect: {
+        reference: "SMOKE",
+      },
     },
-  },
-};
+  };
+}

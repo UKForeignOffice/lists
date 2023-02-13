@@ -12,11 +12,10 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const { PrismaClient } = require("@prisma/client");
 const { logger } = require("webpack-cli/lib/utils");
-
-const cucumber = require("cypress-cucumber-preprocessor").default;
+const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
+const cucumber = require("cypress-cucumber-preprocessor").default;
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -38,17 +37,28 @@ module.exports = (on, config) => {
   on("task", {
     db: async ({ operation, variables }) => {
       const [model, action] = operation.split(".");
-      return await db[model][action](variables);
+      const result = await db[model][action](variables);
+      console.log(model, action);
+      return result;
     },
     log: (message) => {
       logger.log(message);
       return null;
     },
-    batch: async () => {
-      return await require("./../../dist/scheduler/batch");
+    batch: async function () {
+      try {
+        const { updateListsForAnnualReview } = await require("./../../dist/scheduler/updateListsForAnnualReview");
+        return await updateListsForAnnualReview(new Date());
+      } catch (e) {
+        Promise.reject(e);
+      }
     },
-    worker: async () => {
-      return await require("./../../dist/scheduler/worker");
+    worker: async function () {
+      try {
+        return await require("./../../dist/scheduler/worker");
+      } catch (e) {
+        Promise.reject(e);
+      }
     },
   });
 };
