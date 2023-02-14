@@ -137,8 +137,10 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
 
   const { list, ...listItem } = result;
 
+
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({
     list,
+    // @ts-ignore
     listItem,
     message: "Correct your information and submit your details again.",
     isUnderTest: Boolean(underTest),

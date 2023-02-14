@@ -7,7 +7,7 @@ import {
   List,
   ListItem,
   ServiceType,
-  TranslatorInterpreterListItemGetObject,
+  TranslatorInterpreterListItemGetObject
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
@@ -18,6 +18,8 @@ import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } f
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
+import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 
 export function getNewSessionWebhookData(
   listType: string,
@@ -61,7 +63,6 @@ export async function generateFormRunnerWebhookData(
   isUnderTest: boolean
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
-
   switch (list.type) {
     case ServiceType.lawyers:
       questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
@@ -129,7 +130,7 @@ export async function parseJsonFormData(
 
 interface initialiseFormRunnerInput {
   list: Pick<List, "type"> | Pick<ListItem, "type">;
-  listItem: ListItem;
+  listItem: ListItemWithAddressCountry;
   message: string;
   isUnderTest: boolean;
   isAnnualReview?: boolean;
@@ -146,8 +147,17 @@ export async function initialiseFormRunnerSession({
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
   );
 
-  const listItemJsonData = listItem?.jsonData as ListItemJsonData;
-  listItem.jsonData = merge(listItem.jsonData, listItemJsonData.updatedJsonData ?? {});
+  // merge with listItem.jsonData
+  let jsonData = listItem.jsonData as ListItemJsonData;
+  listItem.jsonData = merge(listItem.jsonData, jsonData?.updatedJsonData ?? {});
+
+  // merge with listItem.address
+  jsonData = listItem.jsonData as ListItemJsonData;
+  listItem.address = {
+    ...listItem.address,
+    ...getChangedAddressFields(jsonData, listItem.address)
+  };
+
   const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
