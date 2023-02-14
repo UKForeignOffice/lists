@@ -77,15 +77,15 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status | AdditionalStatus, string[]> = {
-    NEW: ["publish", "request-changes", "unpublish", "archive"],
-    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "remove", "archive"],
+    NEW: ["publish", "request-changes", "unpublish"],
+    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "unpublish"], // unpublish here should be replaced with archive
     EDITED: listItem.isPublished
       ? ["update-live", "request-changes", "unpublish"]
-      : ["update-new", "request-changes", "remove", "archive"],
+      : ["update-new", "request-changes", "unpublish"], // unpublish here should be replaced with archive
     PUBLISHED: ["request-changes", "unpublish"],
     UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
-    CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish", "archive"],
-    ANNUAL_REVIEW_OVERDUE: ["unpublish", "remove", "archive"],
+    CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish"],
+    ANNUAL_REVIEW_OVERDUE: ["unpublish"],
     OUT_FOR_ANNUAL_REVIEW: ["unpublish"],
   };
 

@@ -76,11 +76,11 @@
             </label>
           </div>
         {% endif %}
-        {% if "unpublish" in actionButtons %}
+        {% if "update-live" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-unpublish">
-            Unpublish
+          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateLive" form="mainForm">
+          <label class="govuk-label govuk-radios__label" for="action-update">
+            Update live version
           </label>
         </div>
         {% endif %}
@@ -100,11 +100,11 @@
           </div>
         </div>
         {% endif %}
-        {% if "update-live" in actionButtons %}
+        {% if "unpublish" in actionButtons %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateLive" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-update">
-            Update live version
+          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish" form="mainForm">
+          <label class="govuk-label govuk-radios__label" for="action-unpublish">
+            Unpublish
           </label>
         </div>
         {% endif %}
