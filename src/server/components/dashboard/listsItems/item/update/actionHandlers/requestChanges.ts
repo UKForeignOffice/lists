@@ -10,7 +10,7 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { recordListItemEvent } from "server/models/audit";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { Request } from "express";
-import { ListItemWithHistory } from "server/models/listItem/summary.helpers";
+import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 
 /**
  * TODO: remove underTest
@@ -31,6 +31,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
   const jsonData = listItem.jsonData as ListItemGetObject["jsonData"];
 
   try {
+    // @ts-ignore
     await handleListItemRequestChanges(listItem, changeMessage, userId, isUnderTest);
 
     req.flash("successBannerTitle", `Change request sent to ${jsonData?.organisationName}`);
@@ -44,7 +45,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
 }
 
 async function handleListItemRequestChanges(
-  listItem: ListItemWithHistory,
+  listItem: ListItemWithAddressCountry,
   message: string,
   userId: User["id"],
   isUnderTest: boolean
