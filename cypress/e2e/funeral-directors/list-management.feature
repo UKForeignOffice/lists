@@ -4,7 +4,7 @@ Feature: List management actions
 		Given I am logged in as a "Administrator"
 		And A "funeralDirectors" list exists for Eurasia
 		And there are these list items
-			| contactName | organisationName       | emailAddress               | status    | isPublished |  service         |
+			| contactName | organisationName       | emailAddress               | status    | isPublished | service          |
 			| Lola        | Lola Funeral Directors | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
 			| Nima        | Nima And Sons          | smoke@cautionyourblast.com | NEW       | false       | funeralDirectors |
 			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | funeralDirectors |
@@ -20,9 +20,9 @@ Feature: List management actions
 		And The textarea should show if I click the Request changes radio button
 
 		Examples:
-			| contactName | radioButtons                   | radioButtonsConfirm          |
-			| Lola        | Publish,Request changes,Remove | Unpublish,Confirm and update |
-			| Nima        | Publish,Request changes,Remove | Unpublish,Confirm and update |
+			| contactName | radioButtons                      | radioButtonsConfirm       |
+			| Lola        | Publish,Unpublish,Request changes | Remove,Confirm and update |
+			| Nima        | Publish,Unpublish,Request changes | Remove,Confirm and update |
 
 
 	Scenario Outline: Request changes for list item
@@ -55,11 +55,11 @@ Feature: List management actions
 
 	Scenario Outline: Remove list item
 		When I am viewing the list item details for "<contactName>"
-		And I click the "Remove" radio button
+		And I click the "Unpublish" radio button
 		And I click the "Continue" button
-		Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
-		And I click the "Remove" button
-		Then I see the notification text "<organisationName> has been removed"
+		Then I should see the heading "Unpublish <organisationName>"
+		And I click the "Unpublish" button
+		Then I see the notification text "<organisationName> has been unpublished"
 
 		Examples:
 			| contactName | organisationName       |
@@ -93,8 +93,8 @@ Feature: List management actions
 	Scenario: Show expected fields on list detail
 		When I am viewing the list item details for "Lola"
 		Then I should see these rows
-      | rowLabel                                      | rowValue                                                 |
-      | Regions                                       | France and UK                                            |
+			| rowLabel                                      | rowValue                                                 |
+			| Regions                                       | France and UK                                            |
 			| Local services                                | Local burials, Flower arrangements, Exhumations          |
 			| Provided services to British nationals before | Yes                                                      |
 			| Repatriation services                         | Body repatriation, Ashes repatriation (from a cremation) |

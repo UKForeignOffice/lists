@@ -22,11 +22,11 @@ Feature: Dashboard filtering
     And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName | radioButtons                               | radioButtonsConfirm                         |
-      | Winston     | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Julia       | Publish,Request changes,Remove             | Unpublish,Update live version               |
-      | Bruce       | Update live version,Request changes,Remove | Publish,Unpublish                           |
-      | Joker       | Publish,Request changes,Remove             | Update live version,Unpublish               |
+      | contactName | radioButtons                                  | radioButtonsConfirm        |
+      | Winston     | Publish,Request changes,Unpublish             | Remove,Update live version |
+      | Julia       | Publish,Request changes,Unpublish             | Remove,Update live version |
+      | Bruce       | Update live version,Request changes,Unpublish | Publish,Remove             |
+      | Joker       | Publish,Request changes,Unpublish             | Update live version,Remove |
 
 
   Scenario Outline: Request changes for list item
@@ -63,11 +63,11 @@ Feature: Dashboard filtering
   Scenario Outline: Remove list item
 
     When I am viewing the list item details for "<contactName>"
-    And I click the "Remove" radio button
+    And I click the "Unpublish" radio button
     And I click the "Continue" button
-    Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
-    And I click the "Remove" button
-    Then I see the notification text "<organisationName> has been removed"
+    Then I should see the heading "Unpublish <organisationName>"
+    And I click the "Unpublish" button
+    Then I see the notification text "<organisationName> has been unpublished"
 
     Examples:
       | contactName | organisationName |

@@ -79,7 +79,9 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   const actionButtons: Record<Status | AdditionalStatus, string[]> = {
     NEW: ["publish", "request-changes", "unpublish", "archive"],
     OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "remove", "archive"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "remove", "archive"],
+    EDITED: listItem.isPublished
+      ? ["update-live", "request-changes", "unpublish"]
+      : ["update-new", "request-changes", "remove", "archive"],
     PUBLISHED: ["request-changes", "unpublish"],
     UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
     CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish", "archive"],
