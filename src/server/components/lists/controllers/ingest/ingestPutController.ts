@@ -56,13 +56,8 @@ export async function ingestPutController(req: Request, res: Response) {
   }
 
   try {
-    const jsonData = listItem.jsonData as DeserialisedWebhookData;
-
+    const { updatedJsonData, ...jsonData } = listItem.jsonData as DeserialisedWebhookData;
     const diff = getObjectDiff(jsonData, data);
-    if (diff?.updatedJsonData) {
-      delete diff.updatedJsonData;
-    }
-
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,
       updatedJsonData: diff,
