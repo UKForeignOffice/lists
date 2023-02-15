@@ -4,14 +4,18 @@ Feature: Dashboard filtering
     Given I am logged in as a "Administrator"
     And A "lawyers" list exists for Eurasia
     And there are these list items
-      | contactName | organisationName | emailAddress               | status              | isPublished | emailVerified | updatedAt |
-      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW                 | false       | true          | 01/01/22  |
-      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW                 | false       | false         | 05/01/22  |
-      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | false       | true          | 12/01/22  |
-      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED              | false       | true          | 03/02/22  |
-      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED              | true        | true          | 04/02/22  |
-      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED           | true        | true          | 08/01/22  |
-      | Newman      | Newman Law       | smoke@cautionyourblast.com | CHECK_ANNUAL_REVIEW | false       | true          | 10/01/22  |
+      | contactName | organisationName | emailAddress               | status              | isPublished | isAnnualReview | emailVerified | updatedAt |
+      | Winston     | Winston Law      | smoke@cautionyourblast.com | NEW                 | false       | false          | true          | 01/01/22  |
+      | O'brien     | Brien Law        | smoke@cautionyourblast.com | NEW                 | false       | false          | false         | 05/01/22  |
+      | Julia       | Julia Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | false       | false          | true          | 12/01/22  |
+      | Samson      | Samson Law       | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | true        | false          | true          | 07/01/22  |
+      | Joker       | Emmanuel Law     | smoke@cautionyourblast.com | EDITED              | false       | false          | true          | 03/02/22  |
+      | Bruce       | Wayne Lawyers    | smoke@cautionyourblast.com | EDITED              | true        | true           | true          | 04/02/22  |
+      | Parsons     | Parsons Law      | smoke@cautionyourblast.com | PUBLISHED           | true        | true           | true          | 08/01/22  |
+      | Newman      | Newman Law       | smoke@cautionyourblast.com | CHECK_ANNUAL_REVIEW | false       | false          | true          | 10/01/22  |
+      | Tessa       | Tessa Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | false       | true           | true          | 11/01/22  |
+      | Kaleb       | Kaleb Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | true        | true           | true          | 06/01/22  |
+      | Seth        | Seth Law         | smoke@cautionyourblast.com | CHECK_ANNUAL_REVIEW | true        | false          | true          | 09/01/22  |
     Given I am viewing list item index for reference:SMOKE
 
   Scenario Outline: View list item details
@@ -27,6 +31,17 @@ Feature: Dashboard filtering
       | Julia       | Publish,Request changes,Unpublish             | Remove,Update live version |
       | Bruce       | Update live version,Request changes,Unpublish | Publish,Remove             |
       | Joker       | Publish,Request changes,Unpublish             | Update live version,Remove |
+
+
+
+  Scenario Outline: Show single radio button option for certain scenarios
+    When I am viewing the list item details for "<contactName>"
+    Then I see radio buttons "Unpublish"
+
+    Examples:
+      | contactName |
+      | Tessa       |
+      | Kaleb       |
 
 
   Scenario Outline: Request changes for list item
@@ -139,3 +154,19 @@ Feature: Dashboard filtering
     And I "see" the updated tag on row "Pro bono"
     And I "see" the updated tag on row "Company"
     And I "do not see" the updated tag on row "Legal aid"
+
+  Scenario Outline: Request changes for list item
+
+    When I am viewing the list item details for "<contactName>"
+    And The textarea should show if I click the Request changes radio button
+    And I enter a message in the textarea
+    And I click the "Continue" button
+    Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
+    And I click the "Request changes" button
+    Then I see the notification text "Change request sent to <organisationName>"
+
+    Examples:
+      | contactName | organisationName |
+      | Julia       | Julia Law        |
+      | Winston     | Winston Law      |
+      | Joker       | Emmanuel Law     |

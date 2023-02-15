@@ -15,7 +15,6 @@ import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
-import type { AdditionalStatus } from "server/models/listItem/summary.helpers";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -76,17 +75,15 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     requestedChanges = jsonData?.requestedChanges;
   }
 
-  const actionButtons: Record<Status | AdditionalStatus, string[]> = {
+  const actionButtons: Record<Status, string[]> = {
     NEW: ["publish", "request-changes", "unpublish"],
-    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "unpublish"], // unpublish here should be replaced with archive
-    EDITED: listItem.isPublished
-      ? ["update-live", "request-changes", "unpublish"]
-      : ["update-new", "request-changes", "unpublish"], // unpublish here should be replaced with archive
+    OUT_WITH_PROVIDER:
+      listItem.isPublished || listItem.isAnnualReview ? ["unpublish"] : ["publish", "request-changes", "unpublish"], // unpublish here should be replaced with archive
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "unpublish"], // unpublish here should be replaced with archive
     PUBLISHED: ["request-changes", "unpublish"],
     UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
     CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish"],
     ANNUAL_REVIEW_OVERDUE: ["unpublish"],
-    OUT_FOR_ANNUAL_REVIEW: ["unpublish"],
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
