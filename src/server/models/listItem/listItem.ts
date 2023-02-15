@@ -536,3 +536,15 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
     throw new Error("Failed to delete item");
   }
 }
+
+export async function archiveListItem(id: number, userId: User["id"], reason: string): Promise<void> {
+  await prisma.listItem.update({
+    where: { id: Number(id) },
+    data: {
+      status: Status.UNPUBLISHED,
+      history: {
+        create: EVENTS.ARCHIVED(userId, reason),
+      },
+    },
+  });
+}

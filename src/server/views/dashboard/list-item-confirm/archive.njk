@@ -1,0 +1,27 @@
+{% from "textarea/macro.njk" import govukTextarea %}
+{% extends "./layout.njk" %}
+
+{% block confirmChangesContent %}
+  <h2 class="govuk-heading-m">Are you sure you want to archive this service provider?</h2>
+
+    <p class="govuk-body">When a service provider is archived you cannot:
+      <ul class="govuk-list govuk-list--bullet">
+        <li>use the list management system to ask them to change their information</li>
+        <li>publish their information on the list</li>
+      </ul>
+    </p>
+
+    <p class="govuk-body">Service provider details are stored in the archive for 1 year before being deleted.</p>
+
+    {{ govukTextarea({
+      name: "reason",
+      id: "reason",
+      label: {
+        text: "Reason for archiving (optional)",
+        classes: "govuk-label--m",
+        isPageHeading: true
+      }
+    }) }}
+
+
+{% endblock %}

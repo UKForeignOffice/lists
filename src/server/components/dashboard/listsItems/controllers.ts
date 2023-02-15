@@ -10,7 +10,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListIndexRes, ListItemRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
-import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
+import { getActivityStatus, getPublishingStatus, PUBLISHING_STATUS } from "server/models/listItem/summary.helpers";
 import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import { Action } from "server/components/dashboard/listsItems/item/update/types";
@@ -87,7 +87,15 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  const actionButtonsForStatus = actionButtons[listItem.status];
+  let actionButtonsForStatus = actionButtons[listItem.status];
+
+  if (getPublishingStatus(listItem) !== PUBLISHING_STATUS.live) {
+    actionButtonsForStatus = [...actionButtonsForStatus, "archive"];
+  }
+
+  if (getPublishingStatus(listItem) === PUBLISHING_STATUS.archived) {
+    actionButtonsForStatus = ["remove"];
+  }
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,

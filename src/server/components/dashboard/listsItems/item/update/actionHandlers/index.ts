@@ -3,6 +3,7 @@ import { update } from "./update";
 import { pin } from "./pin";
 import { remove } from "./remove";
 import { publish } from "./publish";
+import { archive } from "./archive";
 import { requestChanges } from "./requestChanges";
 import { RequestHandler } from "express";
 
@@ -16,5 +17,6 @@ export const actionHandlers: Record<Action, RequestHandler> = {
   requestChanges,
   remove,
   publish,
+  archive,
   unpublish: publish,
 };

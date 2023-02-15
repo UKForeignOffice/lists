@@ -116,6 +116,14 @@
           </label>
         </div>
         {% endif %}
+        {% if "archive" in actionButtons %}
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="action-archive" name="action" type="radio" value="archive" form="mainForm">
+          <label class="govuk-label govuk-radios__label" for="action-archive">
+            Archive
+          </label>
+        </div>
+        {% endif %}
       </div>
     </fieldset>
   </div>
