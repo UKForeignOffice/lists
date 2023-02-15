@@ -203,7 +203,6 @@ const scheduler = {
   entry: {
     unpublish: getScheduledFilePath("", "annualReviewUnpublishedEmailScheduler.ts"),
     batch: getScheduledFilePath("batch", "main.ts"),
-    updateListsForAnnualReview: getScheduledFilePath("batch", "updateListsForAnnualReview.ts"),
     annualReviewWorker: getScheduledFilePath("workers", "main.ts"),
   },
   devtool: "cheap-module-source-map",
