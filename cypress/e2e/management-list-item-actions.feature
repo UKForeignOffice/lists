@@ -34,9 +34,10 @@ Feature: Dashboard filtering
 
 
 
-  Scenario Outline: Show single radio button option for certain scenarios
+  Scenario Outline: Show only Unpublish when listItem has isPublished or isAnnualReview flag set
     When I am viewing the list item details for "<contactName>"
     Then I see radio buttons "Unpublish"
+    And I do not see radio buttons "Publish,Request changes,Remove,Update live version"
 
     Examples:
       | contactName |
