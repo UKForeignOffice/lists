@@ -13,7 +13,7 @@ Every day at 10:50 and 11:00 the batch process and worker process will run at th
 
 ### Batch process
 
-The batch process will a json object `currentAnnualReview` and appends it to `List.jsonData`.
+The batch process generates a json object `currentAnnualReview` and appends it to `List.jsonData`.
 
 ```
 // List.jsonData
