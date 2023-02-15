@@ -7,12 +7,12 @@ import {
   List,
   ListItem,
   ServiceType,
-  TranslatorInterpreterListItemGetObject
+  TranslatorInterpreterListItemGetObject,
 } from "server/models/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
-import { kebabCase, merge } from "lodash";
+import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
@@ -147,18 +147,22 @@ export async function initialiseFormRunnerSession({
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
   );
 
-  // merge with listItem.jsonData
-  let jsonData = listItem.jsonData as ListItemJsonData;
-  listItem.jsonData = merge(listItem.jsonData, jsonData?.updatedJsonData ?? {});
-
-  // merge with listItem.address
-  jsonData = listItem.jsonData as ListItemJsonData;
-  listItem.address = {
-    ...listItem.address,
-    ...getChangedAddressFields(jsonData, listItem.address)
+  const { updatedJsonData, ...jsonData } = listItem.jsonData as ListItemJsonData;
+  const mergedJsonData = {
+    ...jsonData,
+    ...updatedJsonData,
   };
 
-  const questions = await generateFormRunnerWebhookData(list, listItem, isUnderTest);
+  const listItemForInit = {
+    ...listItem,
+    jsonData: mergedJsonData,
+    address: {
+      ...listItem.address,
+      ...getChangedAddressFields(mergedJsonData, listItem.address),
+    },
+  };
+
+  const questions = await generateFormRunnerWebhookData(list, listItemForInit, isUnderTest);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
     listItem.id,
