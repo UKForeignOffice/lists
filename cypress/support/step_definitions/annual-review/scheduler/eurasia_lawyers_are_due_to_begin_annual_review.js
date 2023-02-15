@@ -10,7 +10,7 @@ async function createEligible() {
   const eligibleReferences = ["eligible-1", "eligible-2", "eligible-3", "eligible-4", "eligible-5"];
 
   eligibleReferences.forEach(async (reference) => {
-    createEligibleListItem(reference);
+    await createEligibleListItem(reference);
   });
 }
 

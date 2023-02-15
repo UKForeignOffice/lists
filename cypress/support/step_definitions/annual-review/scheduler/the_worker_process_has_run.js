@@ -1,3 +1,3 @@
-Given("the worker process has run", () => {
-  cy.task("worker");
+When("the worker process has run", async () => {
+  await cy.task("worker");
 });

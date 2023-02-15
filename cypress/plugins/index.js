@@ -16,6 +16,7 @@ const { logger } = require("webpack-cli/lib/utils");
 const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 const cucumber = require("cypress-cucumber-preprocessor").default;
+
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -38,7 +39,6 @@ module.exports = (on, config) => {
     db: async ({ operation, variables }) => {
       const [model, action] = operation.split(".");
       const result = await db[model][action](variables);
-      console.log(model, action);
       return result;
     },
     log: (message) => {
@@ -46,19 +46,12 @@ module.exports = (on, config) => {
       return null;
     },
     batch: async function () {
-      try {
-        const { updateListsForAnnualReview } = await require("./../../dist/scheduler/updateListsForAnnualReview");
-        return await updateListsForAnnualReview(new Date());
-      } catch (e) {
-        Promise.reject(e);
-      }
+      const childProcess = require("node:child_process");
+      return childProcess.execFileSync("node", [`./dist/scheduler/batch.js`]);
     },
     worker: async function () {
-      try {
-        return await require("./../../dist/scheduler/worker");
-      } catch (e) {
-        Promise.reject(e);
-      }
+      const childProcess = require("node:child_process");
+      return childProcess.execFileSync("node", [`./dist/scheduler/worker.js`]);
     },
   });
 };

@@ -1,3 +1,3 @@
-Given("the batch process has run", () => {
-  cy.task("batch");
+When("the batch process has run", async () => {
+  await cy.task("batch");
 });
