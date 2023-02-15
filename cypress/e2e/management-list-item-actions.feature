@@ -142,6 +142,15 @@ Feature: Dashboard filtering
     When I visit a list that I am not a publisher of
     Then I should see an unauthorised page
 
+  Scenario: Archive list item
+    When I am viewing the list item details for "Julia"
+    And I click the "Archive" radio button
+    And I click the "Continue" button
+    And I see page with heading "Archive Julia Law"
+    And I click the "Archive" button
+    Then I see the notification text "Julia Law has been archived"
+    And I do not see "Julia" on the page
+
 
   Scenario: Should see updated notification at the top of the page for CHECK_ANNUAL_REVIEW
     When I am viewing the list item details for "Newman"
