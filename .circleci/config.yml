@@ -36,10 +36,6 @@ jobs:
           command: npm run lint
 
       - run:
-          name: Build
-          command: npm run build:ci
-
-      - run:
           name: Run tests
           command: npm run test
 
@@ -87,7 +83,7 @@ jobs:
             docker-compose build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
 
       - run:
-          name: build and run  lists
+          name: build and run lists
           command: |
             docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build lists apply
@@ -98,6 +94,11 @@ jobs:
 #          name: logs
 #          background: true
 #          command: docker-compose logs -f lists apply
+
+      - run:
+         name: build scheduler images
+         command: |
+           docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
 
 
       - run:
