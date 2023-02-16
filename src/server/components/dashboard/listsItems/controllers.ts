@@ -89,11 +89,13 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
   let actionButtonsForStatus = actionButtons[listItem.status];
 
-  if (getPublishingStatus(listItem) !== PUBLISHING_STATUS.live) {
+  const publishingStatus = getPublishingStatus(listItem);
+
+  if (listItem.isPublished) {
     actionButtonsForStatus = [...actionButtonsForStatus, "archive"];
   }
 
-  if (getPublishingStatus(listItem) === PUBLISHING_STATUS.archived) {
+  if (publishingStatus === PUBLISHING_STATUS.archived) {
     actionButtonsForStatus = ["remove"];
   }
 
@@ -104,7 +106,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     listItem: {
       ...listItem,
       activityStatus: getActivityStatus(listItem),
-      publishingStatus: getPublishingStatus(listItem),
+      publishingStatus,
     },
     annualReview: {
       providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
