@@ -55,9 +55,13 @@
         const radios = document.querySelectorAll('input[type=radio][name="action"]');
         const radiosArray = Array.from(radios);
         const requestChangesRadioBtn = radiosArray.find(radio => radio.value === "requestChanges");
+        const archiveRadioBtn = radiosArray.find(radio => radio.value === "archive");
 
         if (requestChangesRadioBtn && !requestChangesRadioBtn.checked) {
           document.getElementById("conditional-action-requestChanges").classList.add(hiddenClass);
+        }
+        if (archiveRadioBtn && !archiveRadioBtn.checked) {
+          document.getElementById("conditional-action-archive").classList.add(hiddenClass);
         }
 
         radios.forEach(radio => radio.addEventListener('change', () => {

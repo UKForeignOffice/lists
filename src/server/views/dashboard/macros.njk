@@ -123,6 +123,14 @@
             Archive
           </label>
         </div>
+        <div class="govuk-radios__conditional" id="conditional-action-archive">
+          <div class="govuk-form-group">
+            <div class="govuk-hint">
+              Reason for archiving
+            </div>
+            <textarea class="govuk-textarea" id="reason" name="reason" rows="5" aria-describedby="action-archive-hint">{{ changeMessage if changeMessage }}</textarea>
+          </div>
+        </div>
         {% endif %}
       </div>
     </fieldset>
