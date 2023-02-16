@@ -47,11 +47,11 @@ module.exports = (on, config) => {
     },
     batch: async function () {
       const childProcess = require("node:child_process");
-      return childProcess.execSync("docker compose run scheduler-batch");
+      return childProcess.execSync("docker-compose run scheduler-batch");
     },
     worker: async function () {
       const childProcess = require("node:child_process");
-      return childProcess.execSync("docker compose run scheduler-annual-review-worker");
+      return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
     },
   });
 };
