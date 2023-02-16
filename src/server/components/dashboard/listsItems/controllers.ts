@@ -10,7 +10,7 @@ import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListIndexRes, ListItemRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
-import { getActivityStatus, getPublishingStatus, PUBLISHING_STATUS } from "server/models/listItem/summary.helpers";
+import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
 import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import { Action } from "server/components/dashboard/listsItems/item/update/types";
@@ -76,28 +76,17 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "unpublish"],
-    OUT_WITH_PROVIDER:
-      listItem.isPublished || listItem.isAnnualReview ? ["unpublish"] : ["publish", "request-changes", "unpublish"], // unpublish here should be replaced with archive
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "unpublish"], // unpublish here should be replaced with archive
+    NEW: ["publish", "request-changes", "archive"],
+    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "archive"],
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "archive"],
     PUBLISHED: ["request-changes", "unpublish"],
-    UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
-    CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish"],
-    ANNUAL_REVIEW_OVERDUE: ["unpublish"],
+    UNPUBLISHED: ["publish", "request-changes", "remove"],
+    CHECK_ANNUAL_REVIEW: ["request-changes", listItem.isPublished ? "unpublish" : "archive", "publish"],
+    ANNUAL_REVIEW_OVERDUE: ["archive"],
   };
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  let actionButtonsForStatus = actionButtons[listItem.status];
-
-  const publishingStatus = getPublishingStatus(listItem);
-
-  if (listItem.isPublished) {
-    actionButtonsForStatus = [...actionButtonsForStatus, "archive"];
-  }
-
-  if (publishingStatus === PUBLISHING_STATUS.archived) {
-    actionButtonsForStatus = ["remove"];
-  }
+  const actionButtonsForStatus = actionButtons[listItem.status];
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -106,7 +95,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     listItem: {
       ...listItem,
       activityStatus: getActivityStatus(listItem),
-      publishingStatus,
+      publishingStatus: getPublishingStatus(listItem),
     },
     annualReview: {
       providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
