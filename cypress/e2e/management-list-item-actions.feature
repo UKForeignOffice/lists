@@ -27,10 +27,10 @@ Feature: Dashboard filtering
 
     Examples:
       | contactName | radioButtons                                  | radioButtonsConfirm        |
-      | Winston     | Publish,Request changes,Unpublish             | Remove,Update live version |
-      | Julia       | Publish,Request changes,Unpublish             | Remove,Update live version |
-      | Bruce       | Update live version,Request changes,Unpublish | Publish,Remove             |
-      | Joker       | Publish,Request changes,Unpublish             | Update live version,Remove |
+      | Winston     | Publish,Request changes,Archive             | Remove,Update live version |
+      | Julia       | Publish,Request changes,Archive             | Remove,Update live version |
+      | Bruce       | Update live version,Request changes,Archive | Publish,Remove             |
+      | Joker       | Publish,Request changes,Archive             | Update live version,Remove |
 
 
 
@@ -41,7 +41,6 @@ Feature: Dashboard filtering
 
     Examples:
       | contactName |
-      | Tessa       |
       | Kaleb       |
 
 
@@ -76,7 +75,21 @@ Feature: Dashboard filtering
       | Winston     | Winston Law      |
 
 
-  Scenario Outline: Remove list item
+  Scenario Outline: Remove non-live list items
+
+    When I am viewing the list item details for "<contactName>"
+    And I click the "Archive" radio button
+    And I click the "Continue" button
+    Then I should see the heading "Archive <organisationName>"
+    And I click the "Archive" button
+    Then I see the notification text "<organisationName> has been archived"
+
+    Examples:
+      | contactName | organisationName |
+      | Julia       | Julia Law        |
+      | Winston     | Winston Law      |
+
+  Scenario Outline: Remove live list items
 
     When I am viewing the list item details for "<contactName>"
     And I click the "Unpublish" radio button
@@ -87,9 +100,6 @@ Feature: Dashboard filtering
 
     Examples:
       | contactName | organisationName |
-      | Julia       | Julia Law        |
-      | Winston     | Winston Law      |
-      | Joker       | Emmanuel Law     |
       | Parsons     | Parsons Law      |
 
 

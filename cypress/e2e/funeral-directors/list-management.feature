@@ -21,8 +21,8 @@ Feature: List management actions
 
 		Examples:
 			| contactName | radioButtons                      | radioButtonsConfirm       |
-			| Lola        | Publish,Unpublish,Request changes | Remove,Confirm and update |
-			| Nima        | Publish,Unpublish,Request changes | Remove,Confirm and update |
+			| Lola        | Publish,Archive,Request changes | Remove,Confirm and update |
+			| Nima        | Publish,Archive,Request changes | Remove,Confirm and update |
 
 
 	Scenario Outline: Request changes for list item
@@ -55,11 +55,11 @@ Feature: List management actions
 
 	Scenario Outline: Remove list item
 		When I am viewing the list item details for "<contactName>"
-		And I click the "Unpublish" radio button
+		And I click the "Archive" radio button
 		And I click the "Continue" button
-		Then I should see the heading "Unpublish <organisationName>"
-		And I click the "Unpublish" button
-		Then I see the notification text "<organisationName> has been unpublished"
+		Then I should see the heading "Archive <organisationName>"
+		And I click the "Archive" button
+		Then I see the notification text "<organisationName> has been archived"
 
 		Examples:
 			| contactName | organisationName       |
