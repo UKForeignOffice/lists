@@ -85,7 +85,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     unpin: false, // never show this radio
     unpublish: listItem.isPublished,
     update: false, // never show this radio
-    updateLive: listItem.isPublished,
+    updateLive: listItem.isPublished && listItem.status === "EDITED",
     updateNew: !listItem.isPublished,
     publish: false,
   };
