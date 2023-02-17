@@ -86,6 +86,7 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
 updateListsForAnnualReview(startOfDay(new Date()))
   .then((r) => {
     logger.info(`Batch scheduler finished`);
+
     process.exit(0);
   })
   .catch((r: Error) => {

@@ -94,6 +94,12 @@ jobs:
             docker-compose up -d lists apply
             docker ps
 
+
+      - run:
+          name: build scheduler images
+          command: |
+            docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
+
 #      - run: # this will let you view logs from the apply and lists docker containers
 #          name: logs
 #          background: true
