@@ -53,13 +53,11 @@
 {% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons, changeMessage) %}
   {% set actionToLabelText = {
       publish: "Publish",
-      pin: "Pin",
       remove: "Remove",
       requestChanges: "Request changes",
       unpin: "Unpin",
       unpublish: "Unpublish",
-      update: "Update",
-      updateLive: "Update",
+      updateLive: "Update live version",
       updateNew: "Publish",
       archive: "Archive"
     }

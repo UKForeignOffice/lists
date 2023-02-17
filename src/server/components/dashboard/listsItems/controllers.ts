@@ -75,18 +75,25 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     requestedChanges = jsonData?.requestedChanges;
   }
 
-  const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "requestChanges", "archive"],
-    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "requestChanges", "archive"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "requestChanges", "archive"],
-    PUBLISHED: ["requestChanges", "unpublish"],
-    UNPUBLISHED: ["publish", "requestChanges", "remove"],
-    CHECK_ANNUAL_REVIEW: ["requestChanges", listItem.isPublished ? "unpublish" : "archive", "publish"],
-    ANNUAL_REVIEW_OVERDUE: ["archive"],
+  const publishingStatus = getPublishingStatus(listItem);
+
+  const actions: Record<Action, boolean> = {
+    archive: !listItem.isPublished && publishingStatus !== "archived",
+    pin: false, // never show this radio
+    remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
+    requestChanges: listItem.status !== "ANNUAL_REVIEW_OVERDUE",
+    unpin: false, // never show this radio
+    unpublish: listItem.isPublished,
+    update: false, // never show this radio
+    updateLive: listItem.isPublished,
+    updateNew: !listItem.isPublished,
+    publish: false,
   };
 
+  // @ts-ignore
+  const actionButtons = [...new Set(Object.keys(actions).filter((action) => actions[action]))];
+
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  const actionButtonsForStatus = actionButtons[listItem.status];
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -95,14 +102,14 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     listItem: {
       ...listItem,
       activityStatus: getActivityStatus(listItem),
-      publishingStatus: getPublishingStatus(listItem),
+      publishingStatus,
     },
     annualReview: {
       providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
       fieldsUpdated: !isEmpty((listItem.jsonData as ListItemJsonData).updatedJsonData),
     },
     isPinned,
-    actionButtons: actionButtonsForStatus,
+    actionButtons,
     requestedChanges,
     error,
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
