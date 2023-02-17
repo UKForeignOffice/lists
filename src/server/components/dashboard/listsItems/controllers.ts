@@ -76,12 +76,11 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const publishingStatus = getPublishingStatus(listItem);
-
   const actions: Record<Action, boolean> = {
     archive: !listItem.isPublished && publishingStatus !== "archived",
     pin: false, // never show this radio
     remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
-    requestChanges: listItem.status !== "ANNUAL_REVIEW_OVERDUE",
+    requestChanges: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
     unpin: false, // never show this radio
     unpublish: listItem.isPublished,
     update: false, // never show this radio
@@ -91,7 +90,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   };
 
   // @ts-ignore
-  const actionButtons = [...new Set(Object.keys(actions).filter((action) => actions[action]))];
+  const actionButtons = Object.keys(actions).filter((action) => actions[action]);
 
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
 
