@@ -76,12 +76,12 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "archive"],
-    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "request-changes", "archive"],
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "archive"],
-    PUBLISHED: ["request-changes", "unpublish"],
-    UNPUBLISHED: ["publish", "request-changes", "remove"],
-    CHECK_ANNUAL_REVIEW: ["request-changes", listItem.isPublished ? "unpublish" : "archive", "publish"],
+    NEW: ["publish", "requestChanges", "archive"],
+    OUT_WITH_PROVIDER: listItem.isPublished ? ["unpublish"] : ["publish", "requestChanges", "archive"],
+    EDITED: [listItem.isPublished ? "update-live" : "update-new", "requestChanges", "archive"],
+    PUBLISHED: ["requestChanges", "unpublish"],
+    UNPUBLISHED: ["publish", "requestChanges", "remove"],
+    CHECK_ANNUAL_REVIEW: ["requestChanges", listItem.isPublished ? "unpublish" : "archive", "publish"],
     ANNUAL_REVIEW_OVERDUE: ["archive"],
   };
 
@@ -112,7 +112,8 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 }
 
 export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
-  const { message, action } = req.body;
+  const { action } = req.body;
+  const message = req.body.message ?? req.body.reason;
   const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
 
   const { listItemUrl } = res.locals;
