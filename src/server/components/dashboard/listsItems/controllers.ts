@@ -119,7 +119,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
 export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
   const { action } = req.body;
-  const message = req.body.message ?? req.body.reason;
+  const message = req.body.message || req.body.reason;
   const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
 
   const { listItemUrl } = res.locals;
