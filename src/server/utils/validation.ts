@@ -11,11 +11,7 @@ export function isValidEmailAddress(email: string): boolean {
   const schema = Joi.string().email();
   const result = schema.validate(email);
 
-  if (result.error === undefined) {
-    return true;
-  }
-
-  return false;
+  return result.error === undefined;
 }
 
 export function isGovUKEmailAddress(email: string): boolean {

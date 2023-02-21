@@ -10,9 +10,9 @@
       <div class="govuk-grid-column-two-thirds">
         {% if error %}
           {{ govukErrorSummary({
-            titleText: "Invalid GOV.UK email address",
+            titleText: "Invalid email address",
             errorList: [{
-              text: "Please use a valid GOV.UK email address",
+              text: "Please use a valid email address",
               href: "#email-address"
             }]
           }) }}
@@ -37,7 +37,7 @@
               <h3 class="govuk-notification-banner__heading">
                 Email sent
               </h3>
-              <p class="govuk-body">We have sent you an email with the login instructions</p>
+              <p class="govuk-body">We have sent you an email with the login instructions. <br/> If you do not receive an email, contact (someone).</p>
             </div>
           </div>
         {% endif %}

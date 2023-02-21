@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { isGovUKEmailAddress } from "server/utils/validation";
+import { isGovUKEmailAddress, isValidEmailAddress } from "server/utils/validation";
 import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
 import { authRoutes } from "./routes";
@@ -12,11 +12,7 @@ export const authController = passport.authenticate("jwt", {
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 
-export function getLoginController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function getLoginController(req: Request, res: Response, next: NextFunction): void {
   const { token } = req.params;
   const { invalidToken, token: tokenParam } = req.query;
 
@@ -33,30 +29,32 @@ export function getLoginController(
   });
 }
 
-export async function postLoginController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function postLoginController(req: Request, res: Response, next: NextFunction): Promise<void> {
   const emailAddress = req.body.emailAddress?.trim();
 
+  if (!isValidEmailAddress(emailAddress)) {
+    res.render("login", {
+      error: true,
+    });
+    return;
+  }
+
+  if (!isGovUKEmailAddress(emailAddress)) {
+    res.render("login", {
+      success: true,
+    });
+    logger.info("Non GOV.UK email entered");
+    return;
+  }
   try {
-    if (!isGovUKEmailAddress(emailAddress)) {
-      res.render("login", {
-        error: true,
-      });
-      return;
-    }
-
     const protocol = isLocalHost ? "http" : "https";
-
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
 
-    if (isLocalHost || isSmokeTest || isCybDev) {
-      res.redirect(authLink);
-      return;
-    }
+    // if (isLocalHost || isSmokeTest || isCybDev) {
+    //   res.redirect(authLink);
+    //   return;
+    // }
 
     await sendAuthenticationEmail(emailAddress, authLink);
     res.render("login", {
