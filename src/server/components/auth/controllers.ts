@@ -51,10 +51,10 @@ export async function postLoginController(req: Request, res: Response, next: Nex
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
 
-    // if (isLocalHost || isSmokeTest || isCybDev) {
-    //   res.redirect(authLink);
-    //   return;
-    // }
+    if (isLocalHost || isSmokeTest || isCybDev) {
+      res.redirect(authLink);
+      return;
+    }
 
     await sendAuthenticationEmail(emailAddress, authLink);
     res.render("login", {
