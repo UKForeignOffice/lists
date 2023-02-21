@@ -47,7 +47,7 @@ COMMIT;
 
 ## 4 - Take a Dump of Data from Local Dev Database
 
-After you've made your changes, take another dump of the data from the local development database to create a new dump file that includes your changes.
+Take another dump of the data from the local development database to create a new dump file that includes your changes.
 
 ```bash
 psql -U master -h localhost -d lists < updated_prod_data.sql
