@@ -77,7 +77,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   const publishingStatus = getPublishingStatus(listItem);
   const actions: Record<Action, boolean> = {
-    archive: !listItem.isPublished && publishingStatus !== "archived",
+    archive: !listItem.isPublished && !["archived", "unpublished"].includes(publishingStatus),
     pin: false, // never show this radio
     remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
     requestChanges: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
