@@ -45,20 +45,21 @@ COMMIT;
 
 ```
 
-## 4 - Take a Dump of Data from Local Dev Database
+## 4 - Take a Dump of Data from Local Dev DB & Encrypt Dump File
 
-Take another dump of the data from the local development database to create a new dump file that includes your changes.
+Take another dump of the data from the local development database to create a new dump file that includes your changes then Encrypt the dump file using GPG.
+
+You can do that with the following command
 
 ```bash
-psql -U master -h localhost -d lists < updated_prod_data.sql
-```
-
-## 5 - Encrypt Dump File and Reference in DB Container
-
-Finally, encrypt the dump file and reference it in your database container.
-
-```
-gpg -e -o updated_prod_data.sql.zip.gpg -r [recipient_id] updated_prod_data.sql
+pg_dump postgresql://master:[password]@localhost:5432/lists | gpg -e -o updated_prod_data.sql.zip.gpg -r [recipient_id]
 ```
 
 [GPG Documentation](https://www.gnupg.org/documentation/index.html)
+
+
+## 5 - Reference in DB Container
+
+In the Lists application navigate to `docker/db` and replace the existing sql.zip.gpg file with the newly encrypted one.
+
+Open the Dockerfile in that same directory and replace the end of the line that starts `RUN cd /docker-entrypoint-initdb.d...` with the new encrypted dump file.
