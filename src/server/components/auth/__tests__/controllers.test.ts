@@ -133,10 +133,19 @@ describe("Auth Module", () => {
       });
     });
 
-    test("authentication request fails if email address is not gov.uk ", () => {
+    test("present user with success message if email address is NOT gov.uk", () => {
       req.body.emailAddress = "someemail@gmail.com";
       postLoginController(req, res, next);
-      expect(res.render).toHaveBeenCalledWith("login", { error: true });
+      expect(res.render).toHaveBeenCalledWith("login", { success: true });
+    });
+
+    test("prevent authentication email sending if email address is NOT gov.uk", async () => {
+      const sendAuthEmail = jest.fn(() => notifyService.sendAuthenticationEmail());
+
+      req.body.emailAddress = "someemail@gmail.com";
+      await postLoginController(req, res, next);
+
+      expect(sendAuthEmail).not.toHaveBeenCalledWith();
     });
 
     test("authLink is not logged outside localhost", (done) => {
