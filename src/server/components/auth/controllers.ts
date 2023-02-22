@@ -42,8 +42,9 @@ export async function postLoginController(req: Request, res: Response, next: Nex
   if (!isGovUKEmailAddress(emailAddress)) {
     res.render("login", {
       success: true,
+      emailAddress,
     });
-    logger.info("Non GOV.UK email entered");
+    logger.info(`${emailAddress} (non GOV.UK) attempted to log in`);
     return;
   }
   try {
@@ -59,6 +60,7 @@ export async function postLoginController(req: Request, res: Response, next: Nex
     await sendAuthenticationEmail(emailAddress, authLink);
     res.render("login", {
       success: true,
+      emailAddress,
     });
   } catch (e) {
     logger.error("postLoginController", e);
