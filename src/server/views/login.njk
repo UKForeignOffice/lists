@@ -1,4 +1,5 @@
 {% extends "layout.njk" %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block pageTitle %}
   List management - Login - {{ SERVICE_NAME }}
@@ -27,19 +28,19 @@
           }) }}
         {% endif %}
         {% if success %}
-          <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-            <div class="govuk-notification-banner__header">
-              <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                Success
-              </h2>
-            </div>
-            <div class="govuk-notification-banner__content">
-              <h3 class="govuk-notification-banner__heading">
-                Email sent
-              </h3>
-              <p class="govuk-body">A link to sign in to list management has been sent to {{emailAddress}}. <br/> If you don’t receive an email contact <a href="mailto:digitalservicesfeedback@fco.gov.u">digitalservicesfeedback@fco.gov.uk</a></p>
-            </div>
-          </div>
+          {% set html %}
+            <h3 class="govuk-notification-banner__heading">
+              Email sent
+            </h3>
+            <p class="govuk-body">A link to sign in to list management has been sent to <strong>{{emailAddress}}</strong>.</p>
+            <p class="govuk-body">
+              If you don’t receive an email contact <a class="govuk-notification-banner__link" href="mailto:digitalservicesfeedback@fco.gov.uk">digitalservicesfeedback@fco.gov.uk</a>
+            </p>
+          {% endset %}
+          {{ govukNotificationBanner({
+            html: html,
+            type: 'success'
+          }) }}
         {% endif %}
         {% if not success %}
           <form class="form" method="post">
