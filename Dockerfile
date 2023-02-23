@@ -1,15 +1,12 @@
 # if you are on Mac M1 please add --platform=linux/amd64 after FROM below
-FROM node:14.17-alpine3.13 AS base
+FROM node:14-alpine AS base
 RUN mkdir -p /usr/src/app && \
     addgroup -g 1001 appuser && \
     adduser -S -u 1001 -G appuser appuser && \
     chown -R appuser:appuser /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
-    apk upgrade && \
-    apk add --no-cache bash && \
-    apk del wget musl-utils vim netcat-openbsd binutils
-
+    apk upgrade
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
@@ -19,6 +16,9 @@ RUN npm i
 COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY docker/apply/forms-json ./docker/apply/forms-json
 COPY --chown=appuser:appuser ./src ./src/
+USER root
+RUN chmod -x /usr/bin/ldd
+RUN chmod -x /usr/bin/wget
 
 
 FROM dependencies AS build
@@ -47,7 +47,7 @@ CMD ["npm", "run", "start:prod"]
 
 # docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
 # if you are on Mac M1 please add --platform=linux/amd64 after FROM below
-FROM node:14.17-alpine3.13 AS scheduled
+FROM node:14-alpine AS scheduled
 WORKDIR /usr/src/scheduler
 COPY --from=main /usr/src/app/dist ./dist/
 COPY --from=main /usr/src/app/node_modules ./node_modules/
