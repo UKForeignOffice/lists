@@ -19,12 +19,15 @@ const proxy = new Proxy(notifyClient, {
   get(target, prop, receiver) {
     const value = target[prop];
     if (value instanceof Function) {
-      return function (...args) {
-        console.log("mocked");
-        return value.apply(this === receiver ? target : this, args);
+      return async function (...args) {
+        console.log(...args);
+        return await Promise.resolve({
+          data: {
+            status_code: 200,
+          },
+        });
       };
     }
-    return value;
   },
 });
 
