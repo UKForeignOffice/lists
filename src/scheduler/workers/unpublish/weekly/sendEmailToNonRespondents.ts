@@ -1,4 +1,4 @@
-import { findNonRespondentsForList } from "./unpublish";
+import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
 
 export async function sendEmailsToNonRespondents(list) {
