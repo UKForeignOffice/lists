@@ -7,7 +7,8 @@ RUN mkdir -p /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
     apk upgrade && \
-    apk add --no-cache bash git curl
+    apk add --no-cache bash && \
+    apk del wget musl-utils vim netcat-openbsd binutils
 
 
 FROM base AS dependencies
