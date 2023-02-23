@@ -36,4 +36,4 @@ Feature: Emails sent on key dates
    Given the current time is within the "START" key date range
     When the worker process has run
     Then the "START" key date email is sent to post
-    And an email for the "START" key date is sent to providers
+    And an email for the "START" key date is sent to eligible providers

@@ -1,4 +1,4 @@
-Then("an email for the {string} key date is sent to providers", function (keyDate) {
+Then("an email for the {string} key date is sent to eligible providers", function (keyDate) {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {
@@ -35,8 +35,11 @@ Then("an email for the {string} key date is sent to providers", function (keyDat
           createdAt: "desc",
         },
       },
-    }).then((audit) => {
-      cy.expect(audit.id).to.exist;
+    }).then((audits, list) => {
+      cy.expect(audits.length).to.be.gt(0);
+      audits.forEach((audit) => {
+        cy.expect(audit.jsonData.itemId).to.be.oneOf(list.jsonData.currentAnnualReview.eligibleListItems);
+      });
     });
   });
 });
