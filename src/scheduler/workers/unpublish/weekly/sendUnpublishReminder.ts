@@ -3,7 +3,7 @@ import pluralize from "pluralize";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { ServiceType } from "server/models/types";
 import { logger as parentLogger } from "server/services/logger";
-import { NotifyClient } from "notifications-node-client";
+import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 
 const template = "XX";
@@ -19,8 +19,7 @@ const proxy = new Proxy(notifyClient, {
   get(target, prop, receiver) {
     const value = target[prop];
     if (value instanceof Function) {
-      return async function (...args) {
-        console.log(...args);
+      return async function () {
         return await Promise.resolve({
           data: {
             status_code: 200,
@@ -51,9 +50,11 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     return response.data;
   } catch (e) {
-    if (e.data?.errors) {
-      errors.forEach((error) => {
-        logger.error(`NotifyClient responded with ${error.status_code}, ${error}, ${error.message}`);
+    if ("data" in e && e.data.errors) {
+      const errors = e.data.errors as RequestError[];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      errors.forEach(({ status_code, error, message }) => {
+        logger.error(`NotifyClient responded with ${status_code}, ${error}, ${message}`);
       });
       return e;
     }
