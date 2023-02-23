@@ -1,7 +1,9 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
+import { List } from "@prisma/client";
 
-export async function sendEmailsToNonRespondents(list) {
+export async function sendEmailsToNonRespondents(list: List) {
   const { listItems, meta } = await findNonRespondentsForList(list);
-  listItems.forEach(async (listItem) => await sendUnpublishReminder(listItem, meta));
+
+  // const emailsToSend = listItems.map(async (listItem) => await sendUnpublishReminder(listItem, meta));
 }
