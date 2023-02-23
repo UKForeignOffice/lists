@@ -1,6 +1,6 @@
 import { logger } from "server/services/logger";
-import { findListsInAnnualReview } from "./unpublish/weekly/unpublish";
-import { sendEmailsToNonRespondents } from "./unpublish/weekly/sendEmailToNonRespondents";
+import { sendEmailsToNonRespondents } from "./sendEmailToNonRespondents";
+import { findListsInAnnualReview } from "./findListsInAnnualReview";
 
 async function main() {
   const listsInAnnualReview = await findListsInAnnualReview();

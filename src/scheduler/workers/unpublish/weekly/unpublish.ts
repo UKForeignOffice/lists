@@ -4,23 +4,6 @@ import {prisma} from "server/models/db/prisma-client";
 import {type ListJsonData} from "server/models/types";
 import {logger} from "server/services/logger";
 
-export async function findListsInAnnualReview() {
-  const today = startOfToday().toISOString();
-  return prisma.list.findMany({
-    where: {
-      nextAnnualReviewStartDate: {
-        lte: today,
-        not: null
-      },
-      items: {
-        some: {
-          isAnnualReview: true,
-        },
-      },
-    },
-  });
-}
-
 export async function findNonRespondentsForList(list: List) {
   const log = logger.child({listId: list.id, method: "findNonRespondentsForList" })
 
