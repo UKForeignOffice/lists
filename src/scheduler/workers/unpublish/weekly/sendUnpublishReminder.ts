@@ -14,7 +14,8 @@ const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 const proxy = new Proxy(notifyClient, {
   get(target, prop, receiver) {
-    const value = target[prop];
+    // @ts-ignore
+    const value = target[prop]!;
     if (NODE_ENV === "production") return value;
 
     if (value instanceof Function) {
@@ -30,7 +31,13 @@ const proxy = new Proxy(notifyClient, {
         throw {
           data: {
             status_code: 400,
-            errors: [],
+            errors: [
+              {
+                status_code: 400,
+                error: "oops",
+                message: "no",
+              },
+            ],
           },
         };
       };
@@ -61,7 +68,7 @@ export async function sendUnpublishReminder(listItem: ListItemWithAddressCountry
      * https://docs.notifications.service.gov.uk/node.html#send-an-email-response
      */
 
-    const event = addUnpublishReminderEvent(listItem.id, [personalisation.weeksUntilUnpublish], meta.reference);
+    const event = await addUnpublishReminderEvent(listItem.id, [personalisation.weeksUntilUnpublish], meta.reference);
 
     if (!event) {
       logger.error(

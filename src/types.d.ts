@@ -15,7 +15,7 @@ declare module "notifications-node-client" {
     getNotifications: (
       templateType?: string,
       status?: Status,
-      reference?: reference,
+      reference?: string,
       olderThan?: string
     ) => Response<GetNotificationByIdResponse>;
 
