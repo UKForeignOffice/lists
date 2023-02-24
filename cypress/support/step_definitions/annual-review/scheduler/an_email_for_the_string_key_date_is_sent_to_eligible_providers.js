@@ -1,4 +1,5 @@
-Then("an email for the {string} key date is sent to eligible providers", function (keyDate) {
+Then("an email for the {string} key date is sent to eligible providers", async function (keyDate) {
+  let list, audits;
   cy.task("db", {
     operation: "list.findFirst",
     variables: {
@@ -6,12 +7,13 @@ Then("an email for the {string} key date is sent to eligible providers", functio
         reference: "SMOKE",
       },
     },
-  }).then((list) => {
+  }).then((result) => {
+    list = result;
     const keyDateReminders = {
       START: "sendStartedProviderEmail",
     };
     cy.task("db", {
-      operation: "audit.findFirst",
+      operation: "audit.findMany",
       variables: {
         where: {
           type: "listItem",
@@ -35,7 +37,8 @@ Then("an email for the {string} key date is sent to eligible providers", functio
           createdAt: "desc",
         },
       },
-    }).then((audits, list) => {
+    }).then((result) => {
+      audits = result;
       cy.expect(audits.length).to.be.gt(0);
       audits.forEach((audit) => {
         cy.expect(audit.jsonData.itemId).to.be.oneOf(list.jsonData.currentAnnualReview.eligibleListItems);
