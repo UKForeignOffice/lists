@@ -1,4 +1,3 @@
-jest.mock("server/services/logger");
 jest.mock("server/services/redis");
 
 jest.mock("crypto", () => {

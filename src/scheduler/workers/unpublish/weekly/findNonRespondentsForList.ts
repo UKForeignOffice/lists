@@ -1,8 +1,9 @@
-import { differenceInWeeks, parseISO, startOfDay, startOfToday, startOfTomorrow } from "date-fns";
+import { differenceInWeeks, parseISO, startOfDay, startOfToday } from "date-fns";
 import { prisma } from "server/models/db/prisma-client";
 import { ListJsonData } from "server/models/types";
 import { logger } from "server/services/logger";
 import { List, Prisma } from "@prisma/client";
+import { findReminderToSend } from "./findReminderToSend";
 
 export async function findNonRespondentsForList(list: List) {
   const log = logger.child({ listId: list.id, method: "findNonRespondentsForList" });
@@ -10,31 +11,19 @@ export async function findNonRespondentsForList(list: List) {
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates, reference } = jsonData.currentAnnualReview!;
   const { unpublished } = keyDates;
-  const unpublishDate = startOfDay(parseISO(unpublished.UNPUBLISH));
   log.info(`unpublish date ${unpublished.UNPUBLISH}`);
 
-  // const today = startOfTomorrow();
   const today = startOfToday();
-  const weeksUntilUnpublish = differenceInWeeks(unpublishDate, today, { roundingMethod: "ceil" });
 
-  log.info(`Unpublish date is ${weeksUntilUnpublish} weeks away`);
-  const weeksBeforeUnpublishToQuery: { [n: number]: string } = {
-    5: unpublished.PROVIDER_FIVE_WEEKS,
-    4: unpublished.PROVIDER_FOUR_WEEKS,
-    3: unpublished.PROVIDER_THREE_WEEKS,
-    2: unpublished.PROVIDER_TWO_WEEKS,
-    1: unpublished.ONE_WEEK,
-    0: unpublished.UNPUBLISH,
-  };
-
-  const reminderToFind = weeksBeforeUnpublishToQuery[weeksUntilUnpublish];
+  const { reminderToFind, weeksUntilUnpublish } = findReminderToSend(list);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
-  log.debug(
-    `looking for list items to send unpublish provider reminder at ${weeksUntilUnpublish} weeks (No events >= ${reminderToFind})`
-  );
 
   log.debug(`${weeksUntilUnpublish} weeks until unpublish`);
   log.debug(`no event.time >= ${reminderToFind}`);
+
+  if (weeksUntilUnpublish === 6) {
+    return {};
+  }
 
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {
     type: "EDITED",
