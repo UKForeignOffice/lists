@@ -122,11 +122,11 @@ export const EVENTS = {
     },
   }),
 
-  [ListItemEvent.REMINDER]: (updatedJsonData = {}, reference?: string): EventCreate<"REMINDER"> => ({
+  [ListItemEvent.REMINDER]: (notes?: string[], reference?: string): EventCreate<"REMINDER"> => ({
     type: ListItemEvent.REMINDER,
     jsonData: {
       eventName: "reminder",
-      updatedJsonData,
+      ...{ notes },
       ...{ reference },
     },
   }),
