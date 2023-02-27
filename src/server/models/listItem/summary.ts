@@ -94,6 +94,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       AND: {
         ...emailIsVerified,
         ...notPinnedByUser(options.userId!),
+        ...(!reqQueries.includes("archived") && { NOT: queryToPrismaQueryMap.archived }),
       },
       ...(OR.length && { OR }),
     },

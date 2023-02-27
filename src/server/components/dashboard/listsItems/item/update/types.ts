@@ -7,4 +7,5 @@ export type Action =
   | "pin"
   | "unpin"
   | "update"
+  | "archive"
   | "remove";

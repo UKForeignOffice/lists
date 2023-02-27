@@ -24,7 +24,6 @@ export async function get(req: Request, res: Response, _next: NextFunction) {
     return res.redirect(listItemUrl);
   }
 
-
   listItem.jsonData = merge(listItem.jsonData, listItem.jsonData.updatedJsonData ?? {});
   const actionsWithEmail: Action[] = ["publish", "remove", "requestChanges", "update", "updateLive", "updateNew"];
 
@@ -65,6 +64,7 @@ const actionToConfirmationView: Record<Action, string> = {
   update: "update",
   updateLive: "update",
   updateNew: "publish",
+  archive: "archive",
 };
 
 const actionToButtonText: Record<Action, string> = {
@@ -77,4 +77,5 @@ const actionToButtonText: Record<Action, string> = {
   update: "Update",
   updateLive: "Update",
   updateNew: "Publish",
+  archive: "Archive",
 };

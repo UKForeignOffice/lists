@@ -23,32 +23,31 @@ Feature: Dashboard filtering
     When I am viewing the list item details for "<contactName>"
     Then I see radio buttons "<radioButtons>"
     And I do not see radio buttons "<radioButtonsConfirm>"
-    And The textarea should show if I click the Request changes radio button
 
     Examples:
-      | contactName | radioButtons                                  | radioButtonsConfirm        |
-      | Winston     | Publish,Request changes,Unpublish             | Remove,Update live version |
-      | Julia       | Publish,Request changes,Unpublish             | Remove,Update live version |
-      | Bruce       | Update live version,Request changes,Unpublish | Publish,Remove             |
-      | Joker       | Publish,Request changes,Unpublish             | Update live version,Remove |
+      | contactName | radioButtons                        | radioButtonsConfirm        |
+      | Winston     | Publish,Request changes,Archive     | Remove,Update live version |
+      | Julia       | Publish,Archive                     | Remove,Update live version |
+      | Bruce       | Update live version,Request changes | Publish,Remove             |
+      | Joker       | Publish,Request changes,Archive     | Update live version,Remove |
 
 
+  Scenario: Request changes radio button reveals a textarea
+    When I am viewing the list item details for "Winston"
+    And I select "Request changes"
+    And I see the input "Change message"
 
-  Scenario Outline: Show only Unpublish when listItem has isPublished or isAnnualReview flag set
-    When I am viewing the list item details for "<contactName>"
+
+  Scenario: Show only Unpublish when listItem has isPublished or isAnnualReview flag set
+    When I am viewing the list item details for "Kaleb"
     Then I see radio buttons "Unpublish"
     And I do not see radio buttons "Publish,Request changes,Remove,Update live version"
-
-    Examples:
-      | contactName |
-      | Tessa       |
-      | Kaleb       |
 
 
   Scenario Outline: Request changes for list item
 
     When I am viewing the list item details for "<contactName>"
-    And The textarea should show if I click the Request changes radio button
+    And I select "Request changes"
     And I enter a message in the textarea
     And I click the "Continue" button
     Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
@@ -57,7 +56,6 @@ Feature: Dashboard filtering
 
     Examples:
       | contactName | organisationName |
-      | Julia       | Julia Law        |
       | Winston     | Winston Law      |
       | Joker       | Emmanuel Law     |
 
@@ -76,7 +74,21 @@ Feature: Dashboard filtering
       | Winston     | Winston Law      |
 
 
-  Scenario Outline: Remove list item
+  Scenario Outline: Remove non-live list items
+
+    When I am viewing the list item details for "<contactName>"
+    And I click the "Archive" radio button
+    And I click the "Continue" button
+    Then I should see the heading "Archive <organisationName>"
+    And I click the "Archive" button
+    Then I see the notification text "<organisationName> has been archived"
+
+    Examples:
+      | contactName | organisationName |
+      | Julia       | Julia Law        |
+      | Winston     | Winston Law      |
+
+  Scenario Outline: Remove live list items
 
     When I am viewing the list item details for "<contactName>"
     And I click the "Unpublish" radio button
@@ -87,9 +99,6 @@ Feature: Dashboard filtering
 
     Examples:
       | contactName | organisationName |
-      | Julia       | Julia Law        |
-      | Winston     | Winston Law      |
-      | Joker       | Emmanuel Law     |
       | Parsons     | Parsons Law      |
 
 
@@ -142,6 +151,15 @@ Feature: Dashboard filtering
     When I visit a list that I am not a publisher of
     Then I should see an unauthorised page
 
+  Scenario: Archive list item
+    When I am viewing the list item details for "Julia"
+    And I click the "Archive" radio button
+    And I click the "Continue" button
+    And I see page with heading "Archive Julia Law"
+    And I click the "Archive" button
+    Then I see the notification text "Julia Law has been archived"
+    And I do not see "Julia" on the page
+
 
   Scenario: Should see updated notification at the top of the page for CHECK_ANNUAL_REVIEW
     When I am viewing the list item details for "Newman"
@@ -156,18 +174,3 @@ Feature: Dashboard filtering
     And I "see" the updated tag on row "Company"
     And I "do not see" the updated tag on row "Legal aid"
 
-  Scenario Outline: Request changes for list item
-
-    When I am viewing the list item details for "<contactName>"
-    And The textarea should show if I click the Request changes radio button
-    And I enter a message in the textarea
-    And I click the "Continue" button
-    Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
-    And I click the "Request changes" button
-    Then I see the notification text "Change request sent to <organisationName>"
-
-    Examples:
-      | contactName | organisationName |
-      | Julia       | Julia Law        |
-      | Winston     | Winston Law      |
-      | Joker       | Emmanuel Law     |

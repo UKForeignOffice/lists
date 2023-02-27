@@ -17,17 +17,16 @@ Feature: List management actions
 		When I am viewing the list item details for "<contactName>"
 		Then I see radio buttons "<radioButtons>"
 		And I do not see radio buttons "<radioButtonsConfirm>"
-		And The textarea should show if I click the Request changes radio button
 
 		Examples:
-			| contactName | radioButtons                      | radioButtonsConfirm       |
-			| Lola        | Publish,Unpublish,Request changes | Remove,Confirm and update |
-			| Nima        | Publish,Unpublish,Request changes | Remove,Confirm and update |
+			| contactName | radioButtons                      | radioButtonsConfirm     |
+			| Lola        | Publish,Archive,Request changes | Remove,Confirm and update |
+			| Nima        | Publish,Archive,Request changes | Remove,Confirm and update |
 
 
 	Scenario Outline: Request changes for list item
 		When I am viewing the list item details for "<contactName>"
-		And The textarea should show if I click the Request changes radio button
+    And I select "Request changes"
 		And I enter a message in the textarea
 		And I click the "Continue" button
 		Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"
@@ -55,11 +54,11 @@ Feature: List management actions
 
 	Scenario Outline: Remove list item
 		When I am viewing the list item details for "<contactName>"
-		And I click the "Unpublish" radio button
+		And I click the "Archive" radio button
 		And I click the "Continue" button
-		Then I should see the heading "Unpublish <organisationName>"
-		And I click the "Unpublish" button
-		Then I see the notification text "<organisationName> has been unpublished"
+		Then I should see the heading "Archive <organisationName>"
+		And I click the "Archive" button
+		Then I see the notification text "<organisationName> has been archived"
 
 		Examples:
 			| contactName | organisationName       |
