@@ -3,7 +3,6 @@ import { getDbPool } from "./db/database";
 import { CountryName, ServiceType } from "server/models/types";
 import { findListByCountryAndType } from "server/models/list";
 import { prisma } from "server/models/db/prisma-client";
-import { PrismaPromise } from "@prisma/client";
 import { logger } from "server/services/logger";
 
 /**
@@ -33,8 +32,7 @@ export const rawInsertGeoLocation = async (point: Point | number[]): Promise<num
   return result.rows[0].id;
 };
 
-// eslint-disable-next-line @typescript-eslint/promise-function-async
-export const rawUpdateGeoLocation = (id: number, point: Point): PrismaPromise<number> => {
+export const rawUpdateGeoLocation = (id: number, point: Point) => {
   logger.info(`updating geolocation id ${id}, with coordinates ${point}`);
 
   if (!isValidPoint(point)) {

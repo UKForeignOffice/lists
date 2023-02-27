@@ -45,15 +45,15 @@ export function getObjectDiff<T extends Record<string, unknown>>(
   return allKeys.reduce((prev, key) => {
     const beforeValue = beforeObject?.[key];
     const isArray = Array.isArray(beforeValue);
-    const newValue = afterObject?.[key];
+    const newValue= afterObject?.[key];
     const isObject = beforeValue && typeof beforeValue === "object" && !isArray;
     let nestedDiff;
 
     if (isObject) {
-      nestedDiff = getObjectDiff(beforeValue, newValue);
+      nestedDiff = getObjectDiff(beforeValue as Record<string, string> , newValue as Record<string, string> );
     }
 
-    const valueDidChange = !isArray ? beforeValue !== newValue : arrayHasChanges(beforeValue, newValue);
+    const valueDidChange = !isArray ? beforeValue !== newValue : arrayHasChanges(beforeValue, newValue as any[]);
 
     if (isArray && valueDidChange) {
       nestedDiff = newValue;

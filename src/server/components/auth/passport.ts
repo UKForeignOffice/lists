@@ -13,6 +13,7 @@ import AuthenticatedUser from "./authenticated-user";
 import { JWT_ALGORITHM } from "./constants";
 import { logger } from "server/services/logger";
 
+
 export async function configurePassport(server: Express): Promise<void> {
   const JWT_SECRET = await getJwtSecret();
   const OPTIONS: StrategyOptions = {
@@ -44,7 +45,8 @@ export async function configurePassport(server: Express): Promise<void> {
           });
         }
 
-        done(null, userData);
+        const authenticatedUser = new AuthenticatedUser(userData!);
+        done(null, authenticatedUser);
       }
     })
   );

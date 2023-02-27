@@ -1,4 +1,4 @@
-import IORedis from "ioredis";
+import IORedis, { Redis, Cluster } from "ioredis";
 import { logger } from "./logger";
 import {
   REDIS_HOST,
@@ -8,7 +8,7 @@ import {
   REDIS_CLUSTER_MODE,
 } from "server/config";
 
-export type RedisClient = IORedis.Cluster | IORedis.Redis;
+export type RedisClient = Cluster | Redis;
 
 export type GetRedisClient = () => RedisClient;
 
@@ -21,7 +21,7 @@ export function isRedisAvailable(): boolean {
 export function getRedisClient(): RedisClient {
   if (redisClient === undefined) {
     if (REDIS_CLUSTER_MODE) {
-      redisClient = new IORedis.Cluster(
+      redisClient = new Cluster(
         [
           {
             host: REDIS_HOST,
@@ -45,9 +45,9 @@ export function getRedisClient(): RedisClient {
       });
     }
 
-    redisClient.on("error", (error) => {
-      logger.error(`Redis Error: ${error.message}`);
-      throw Error("Redis is not configured, exiting");  
+    redisClient.on("error", (error: unknown) => {
+      logger.error(`Redis Error: ${(error as Error).message}`);
+      throw Error("Redis is not configured, exiting");
     });
   }
 
