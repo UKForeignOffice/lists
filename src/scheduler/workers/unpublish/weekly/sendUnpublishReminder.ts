@@ -3,7 +3,7 @@ import { logger as parentLogger } from "server/services/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NODE_ENV, NOTIFY } from "server/config";
 import { ListItemWithCountryName, Meta } from "./types";
-import { addUnpublishReminderEvent } from "scheduler/workers/unpublish/weekly/addUnpublishReminderEvent";
+import { addUnpublishReminderEvent } from "./addUnpublishReminderEvent";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart ?? "1f94c831-0181-4b59-b70a-b3304db7f4c2";
@@ -13,7 +13,7 @@ const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
-  const personalisation = weeklyReminderPersonalisation(listItem, meta);
+  const personalisation = weeklyReminderPersonalisation(listItem);
   const emailAddress = jsonData.emailAddress;
   logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
