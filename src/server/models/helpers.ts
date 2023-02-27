@@ -32,7 +32,7 @@ export const rawInsertGeoLocation = async (point: Point | number[]): Promise<num
   return result.rows[0].id;
 };
 
-export const rawUpdateGeoLocation = (id: number, point: Point) => {
+export const rawUpdateGeoLocation = async (id: number, point: Point) => {
   logger.info(`updating geolocation id ${id}, with coordinates ${point}`);
 
   if (!isValidPoint(point)) {
