@@ -67,7 +67,7 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   },
 };
 
-export function calculatePagination(paginationOptions: PaginationOptions): {} | { take: number; skip: number } {
+export function calculatePagination(paginationOptions: PaginationOptions): Record<string, unknown> | { take: number; skip: number } {
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {

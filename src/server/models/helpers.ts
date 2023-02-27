@@ -11,7 +11,7 @@ import { logger } from "server/services/logger";
  */
 type Point = [number, number] | number[];
 
-function isValidPoint(point: Point): Boolean {
+function isValidPoint(point: Point): boolean {
   return isNumber(point[0]) || isNumber(point[1]);
 }
 

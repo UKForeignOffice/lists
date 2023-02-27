@@ -3,10 +3,10 @@ import { ServiceType } from "server/models/types";
 export interface Component {
   name: string;
   title: string;
-  options: {};
+  options: Record<string, unknown>;
   type: string;
   content: string;
-  schema: {};
+  schema: Record<string, unknown>;
 }
 
 export interface Field {
@@ -29,9 +29,7 @@ export interface NewSessionData {
     callbackUrl: string;
     redirectPath: string;
   };
-  metadata: {
-    [additionalProps: string]: any;
-  };
+  metadata: Record<string, any>;
   name: string;
 }
 

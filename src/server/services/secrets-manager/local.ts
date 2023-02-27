@@ -7,7 +7,7 @@ import { generateRandomSecret } from "./helpers";
 let secretsManager: LocalSecretsManager;
 
 class LocalSecretsManager {
-  secrets: { [k: string]: GetSecretValueResponse } = {};
+  secrets: Record<string, GetSecretValueResponse> = {};
   constructor(options?: SecretsManager.Types.ClientConfiguration) {
     logger.info("Using LocalSecretsManager");
   }
