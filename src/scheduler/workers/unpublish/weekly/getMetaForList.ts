@@ -11,7 +11,7 @@ export function getMetaForList(list: List): Meta {
   const { currentAnnualReview } = jsonData;
   const { keyDates } = currentAnnualReview;
 
-  const endDate = startOfDay(parseISO(keyDates.unpublish.UNPUBLISHED));
+  const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
 
   return {
     reference: jsonData.currentAnnualReview!.reference,
