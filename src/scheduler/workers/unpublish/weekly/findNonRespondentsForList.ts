@@ -58,10 +58,6 @@ export async function findNonRespondentsForList(list: List) {
     }`
   );
 
-  if (listItems.length === 0) {
-    await findDebug(list, reminderHasBeenSent);
-  }
-
   return listItems;
 }
 
