@@ -1,10 +1,10 @@
 import { List } from "@prisma/client";
-import { logger } from "server/services/logger";
+import { logger as parentLogger } from "server/services/logger";
 import { ListJsonData } from "server/models/types";
 import { addWeeks, differenceInWeeks, parseISO, startOfDay, startOfToday } from "date-fns";
 
 export function findReminderToSend(list: List) {
-  const log = logger.child({ listId: list.id, method: "findNonRespondentsForList" });
+  const logger = parentLogger.child({ listId: list.id, method: "findNonRespondentsForList" });
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;
   const today = startOfToday();
@@ -19,7 +19,7 @@ export function findReminderToSend(list: List) {
 
   const reminderToFind = addWeeks(startDate, weeksSinceStartDate).toISOString();
 
-  log.debug(
+  logger.debug(
     `looking for list items to send unpublish provider reminder at ${weeksSinceStartDate} weeks (No reminder events sent >= ${reminderToFind})`
   );
 
