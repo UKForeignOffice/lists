@@ -3,6 +3,7 @@ import { ListJsonData } from "server/models/types";
 import { logger } from "server/services/logger";
 import { List, Prisma } from "@prisma/client";
 import { findReminderToSend } from "./findReminderToSend";
+import { findDebug } from "scheduler/workers/unpublish/weekly/findNonRespondentsForList.debug";
 
 export async function findNonRespondentsForList(list: List) {
   const log = logger.child({ listId: list.id, method: "findNonRespondentsForList" });
@@ -56,6 +57,10 @@ export async function findNonRespondentsForList(list: List) {
       listItems.length === 0 ? "(already sent for this period)" : [listItems.map((listItem) => listItem.id)]
     }`
   );
+
+  if (listItems.length === 0) {
+    await findDebug(list, reminderHasBeenSent);
+  }
 
   return listItems;
 }
