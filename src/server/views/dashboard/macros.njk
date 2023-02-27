@@ -2,6 +2,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
+{% from "textarea/macro.njk" import govukTextarea %}
 
 {% macro navMenu(title, path, req) %}
   <li>
@@ -50,85 +51,88 @@
 {% endmacro %}
 
 {% macro listItemEditActionBar(list, listItem, dashboardRoutes, titleProperty, isPinned, actionButtons, changeMessage) %}
+  {% set actionToLabelText = {
+      publish: "Publish",
+      remove: "Remove",
+      requestChanges: "Request changes",
+      unpin: "Unpin",
+      unpublish: "Unpublish",
+      updateLive: "Update live version",
+      updateNew: "Publish",
+      archive: "Archive"
+    }
+  %}
 
+  {% set changeMessageHtml %}
+    {{ govukTextarea ({
+      id: "message",
+      name: "message",
+      label: {
+        text: "Change message",
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        text: "Provide simple and concise instructions to the service provider on what they need to change."
+      }
+    }) }}
+  {% endset %}
+
+  {% set archiveHtml %}
+    {{ govukTextarea ({
+      id: "reason",
+      name: "reason",
+      label: {
+        text: "Reason",
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        text: "Reason for archiving"
+      }
+    }) }}
+  {% endset %}
+
+  {% set items = [] %}
+
+  {% for action in actionButtons %}
+    {% if action in ["requestChanges", "archive"] %}
+      {% set isRequestChanges = action == "requestChanges" %}
+      {% set item = {
+        text: actionToLabelText[action],
+        value: action,
+        id: action,
+        conditional: {
+          html: changeMessageHtml if isRequestChanges else archiveHtml
+        }
+      } %}
+    {% else %}
+      {% set item = {
+        text: actionToLabelText[action],
+        value: action,
+        id: action
+      } %}
+    {% endif %}
+
+
+    {% set items = (items.push(item), items)  %}
+
+  {% endfor %}
   <div class="govuk-!-margin-top-8">
-  <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-      <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-        <h1 class="govuk-fieldset__heading">
-          Select an option
-        </h1>
-      </legend>
-      <div class="govuk-radios" data-module="govuk-radios">
-        {% if "publish" in actionButtons %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-publish" name="action" type="radio" value="publish" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-publish">
-            Publish
-          </label>
-        </div>
-        {% endif %}
-        {% if "update-new" in actionButtons %}
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateNew" form="mainForm">
-            <label class="govuk-label govuk-radios__label" for="action-update">
-              Publish
-            </label>
-          </div>
-        {% endif %}
-        {% if "update-live" in actionButtons %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-update" name="action" type="radio" value="updateLive" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-update">
-            Update live version
-          </label>
-        </div>
-        {% endif %}
-        {% if "request-changes" in actionButtons %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-requestChanges" name="action" type="radio" value="requestChanges" data-aria-controls="conditional-action-edit" form="mainForm" {% if changeMessage %} checked {% endif %}>
-          <label class="govuk-label govuk-radios__label" for="action-requestChanges">
-            Request changes
-          </label>
-        </div>
-        <div class="govuk-radios__conditional" id="conditional-action-requestChanges">
-          <div class="govuk-form-group">
-            <div id="action-edit-hint" class="govuk-hint">
-              Provide simple and concise instructions to the service provider on what they need to change.
-            </div>
-            <textarea class="govuk-textarea" id="message" name="message" rows="5" aria-describedby="action-requestChanges-hint">{{ changeMessage if changeMessage }}</textarea>
-          </div>
-        </div>
-        {% endif %}
-        {% if "unpublish" in actionButtons %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-unpublish" name="action" type="radio" value="unpublish" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-unpublish">
-            Unpublish
-          </label>
-        </div>
-        {% endif %}
-        {% if "remove" in actionButtons %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="action-remove" name="action" type="radio" value="remove" form="mainForm">
-          <label class="govuk-label govuk-radios__label" for="action-remove">
-            Remove
-          </label>
-        </div>
-        {% endif %}
-      </div>
-    </fieldset>
-  </div>
+    {{ govukRadios({
+      name: "action",
+      fieldset: {
+        legend: {
+          text: "Select an option",
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend--l"
+        }
+      },
+      items: items
+    }) }}
 
   <div class="govuk-button-group">
     {{ govukButton({
       text: "Continue",
-      classes: "govuk-button--ok govuk-!-margin-bottom-2",
-      attributes: {
-        id: ["action-button-", listItem.id] | join,
-        "data-title": _.startCase(titleProperty),
-        "data-id": listItem.id
-      }
+      classes: "govuk-button--ok govuk-!-margin-bottom-2"
     }) }}
   </div>
 

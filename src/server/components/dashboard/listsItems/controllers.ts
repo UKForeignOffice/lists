@@ -75,19 +75,24 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     requestedChanges = jsonData?.requestedChanges;
   }
 
-  const actionButtons: Record<Status, string[]> = {
-    NEW: ["publish", "request-changes", "unpublish"],
-    OUT_WITH_PROVIDER:
-      listItem.isPublished || listItem.isAnnualReview ? ["unpublish"] : ["publish", "request-changes", "unpublish"], // unpublish here should be replaced with archive
-    EDITED: [listItem.isPublished ? "update-live" : "update-new", "request-changes", "unpublish"], // unpublish here should be replaced with archive
-    PUBLISHED: ["request-changes", "unpublish"],
-    UNPUBLISHED: ["publish", "request-changes", "remove", "archive"],
-    CHECK_ANNUAL_REVIEW: ["request-changes", "unpublish", "publish"],
-    ANNUAL_REVIEW_OVERDUE: ["unpublish"],
+  const publishingStatus = getPublishingStatus(listItem);
+  const actions: Record<Action, boolean> = {
+    archive: !listItem.isPublished && !["archived", "unpublished"].includes(publishingStatus),
+    pin: false, // never show this radio
+    remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
+    requestChanges: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
+    unpin: false, // never show this radio
+    unpublish: listItem.isPublished,
+    update: false, // never show this radio
+    updateLive: listItem.isPublished && listItem.status === "EDITED",
+    updateNew: !listItem.isPublished && listItem.status === "EDITED",
+    publish: !listItem.isPublished && listItem.status !== "EDITED",
   };
 
+  // @ts-ignore
+  const actionButtons = Object.keys(actions).filter((action) => actions[action]);
+
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
-  const actionButtonsForStatus = actionButtons[listItem.status];
 
   res.render("dashboard/lists-item", {
     ...DEFAULT_VIEW_PROPS,
@@ -96,14 +101,14 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     listItem: {
       ...listItem,
       activityStatus: getActivityStatus(listItem),
-      publishingStatus: getPublishingStatus(listItem),
+      publishingStatus,
     },
     annualReview: {
       providerResponded: listItem.status === Status.CHECK_ANNUAL_REVIEW,
       fieldsUpdated: !isEmpty((listItem.jsonData as ListItemJsonData).updatedJsonData),
     },
     isPinned,
-    actionButtons: actionButtonsForStatus,
+    actionButtons,
     requestedChanges,
     error,
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
@@ -113,7 +118,8 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 }
 
 export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
-  const { message, action } = req.body;
+  const { action } = req.body;
+  const message = req.body.message || req.body.reason;
   const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
 
   const { listItemUrl } = res.locals;

@@ -18,7 +18,7 @@ import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
 import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
-import {onlyAllowAdminsEditAnnualReviewDate} from "server/components/auth/helpers";
+import { onlyAllowAdminsEditAnnualReviewDate } from "server/components/auth/helpers";
 
 export const listRouter = express.Router();
 

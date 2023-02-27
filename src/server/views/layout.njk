@@ -35,13 +35,11 @@
   <link as="font" href="/assets/fonts/bold-b542beb274-v2.woff2" type="font/woff2" crossorigin="anonymous">
   <link as="font" href="/assets/fonts/light-94a07e06a1-v2.woff2" type="font/woff" crossorigin="anonymous">
   <link as="font" href="/assets/fonts/light-f591b13f7d-v2.woff" type="font/woff" crossorigin="anonymous">
+  <script type="text/javascript" src="/assets/accessible-autocomplete.min.js"></script>
   <link href="/assets/accessible-autocomplete.min.css" rel="stylesheet" />
   <link type="text/css" rel="stylesheet" href="/assets/styles/main.css">
 
   <meta name="Description" content="Find {{ serviceLabel if serviceLabel else "a Professional Service"}} {{ "in " + _.startCase(country) if country else "abroad"}} - GOV.UK">
-
-  <script src="/assets/govuk-frontend/all.js"></script>
-  <script src="/assets/accessible-autocomplete.min.js"></script>
 {% endblock %}
 
 
@@ -90,6 +88,10 @@
 {% endblock %}
 
 {% block bodyEnd %}
+  <script type="text/javascript" src="/assets/govuk-frontend/all.js"></script>
+  <script nonce="{{ cspNonce }}">
+    window.GOVUKFrontend.initAll()
+  </script>
   <script type="text/javascript" src="/assets/main.js" nonce="{{cspNonce}}"></script>
 {% endblock %}
 

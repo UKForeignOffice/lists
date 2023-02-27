@@ -7,6 +7,7 @@ export async function update(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
   const listItem = res.locals.listItem;
   const { listItemUrl, listIndexUrl } = res.locals;
+
   try {
     const [updatedListItem] = await handleListItemUpdate(listItem.id, userId);
     const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
