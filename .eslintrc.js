@@ -27,6 +27,7 @@ module.exports = {
     "@typescript-eslint/prefer-optional-chain": 1,
     "@typescript-eslint/no-misused-promises": 1,
     "@typescript-eslint/return-await": 1,
+    "@typescript-eslint/no-unnecessary-type-assertion": 1,
   },
   ignorePatterns: [
     "playground/",
