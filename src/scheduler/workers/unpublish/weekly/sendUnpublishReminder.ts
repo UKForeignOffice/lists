@@ -15,7 +15,7 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = weeklyReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
-  logger.info(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
+  logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
     const response = await proxy.sendEmail(template, emailAddress, {
@@ -26,7 +26,7 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
     const event = await addUnpublishReminderEvent(
       listItem.id,
       [
-        `${personalisation.weeksUntilUnpublish} until unpublish`,
+        `sent reminder for ${meta.weeksUntilUnpublish} weeks until unpublish`,
         JSON.stringify({
           notify_response: response.data,
         }),
@@ -39,13 +39,14 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
         `${meta.weeksUntilUnpublish} weeks until unpublish reminder event failed to create for ${listItem.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
       logger.warn(
-        `insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${personalisation.weeksUntilUnpublish} until unpublish"], "reference": "${meta.reference}"}');`
+        `insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.weeksUntilUnpublish} until unpublish"], "reference": "${meta.reference}"}');`
       );
     }
 
     return response.data;
   } catch (e) {
-    if ("data" in e && e.data.errors) {
+    const isNotifyError = "data" in e && e.data.errors;
+    if (isNotifyError) {
       const errors = e.data.errors as RequestError[];
       // eslint-disable-next-line @typescript-eslint/naming-convention
       errors.forEach(({ status_code, error, message }) => {
