@@ -10,7 +10,7 @@ interface Meta {
 export function getMetaForList(list: Prisma.List): Meta {
   const { jsonData } = list as List;
   const { currentAnnualReview } = jsonData;
-  const { keyDates } = currentAnnualReview;
+  const { keyDates } = currentAnnualReview!;
 
   const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
 

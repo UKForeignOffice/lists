@@ -1,5 +1,6 @@
 import { prisma } from "server/models/db/prisma-client";
 
+// @ts-ignore
 export const findDebug = async (list, reminderHasBeenSent) => {
   const listItems = await prisma.listItem.findMany({
     where: {
@@ -23,7 +24,7 @@ export const findDebug = async (list, reminderHasBeenSent) => {
       },
     },
   });
-
+  // eslint-disable-next-line no-console
   console.log(
     `There are list items that have already been sent a reminder after ${reminderHasBeenSent.time.gte} for list ${list.id}, e.g:`,
     listItems[0]?.history?.[0]

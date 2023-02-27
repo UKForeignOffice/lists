@@ -2,8 +2,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { logger as parentLogger } from "server/services/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NODE_ENV, NOTIFY } from "server/config";
-import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
-import { Meta } from "scheduler/workers/unpublish/weekly/types";
+import { ListItemWithCountryName, Meta } from "./types";
 import { addUnpublishReminderEvent } from "scheduler/workers/unpublish/weekly/addUnpublishReminderEvent";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 
@@ -43,8 +42,7 @@ const proxy = new Proxy(notifyClient, {
     }
   },
 });
-
-export async function sendUnpublishReminder(listItem: ListItemWithAddressCountry, meta: Meta) {
+export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = weeklyReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
