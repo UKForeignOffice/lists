@@ -1,14 +1,12 @@
 import { ServiceType } from "server/models/types";
-import pluralize from "pluralize";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { ListItemWithCountryName, Meta } from "./types";
+import { ListItemWithCountryName } from "./types";
 
-export function weeklyReminderPersonalisation(listItem: ListItemWithCountryName, meta: Meta) {
+export function weeklyReminderPersonalisation(listItem: ListItemWithCountryName) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
   return {
     type: serviceDisplayString[listItemType],
-    weeksUntilUnpublish: pluralize("week", meta.weeksUntilUnpublish, true),
     contactName: jsonData.contactName,
     country: listItem.address.country.name,
   };
