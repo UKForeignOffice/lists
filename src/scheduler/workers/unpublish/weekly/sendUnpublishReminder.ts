@@ -1,12 +1,11 @@
-import pluralize from "pluralize";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { ServiceType } from "server/models/types";
 import { logger as parentLogger } from "server/services/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NODE_ENV, NOTIFY } from "server/config";
 import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 import { Meta } from "scheduler/workers/unpublish/weekly/types";
 import { addUnpublishReminderEvent } from "scheduler/workers/unpublish/weekly/addUnpublishReminderEvent";
+import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 
 const template = "XX";
 const logger = parentLogger.child({ method: "sendUnpublishEmail", template });
@@ -47,13 +46,7 @@ const proxy = new Proxy(notifyClient, {
 
 export async function sendUnpublishReminder(listItem: ListItemWithAddressCountry, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
-  const listItemType = listItem.type as ServiceType;
-  const personalisation = {
-    type: serviceDisplayString[listItemType],
-    weeksUntilUnpublish: pluralize("week", meta.weeksUntilUnpublish, true),
-    contactName: jsonData.contactName,
-    country: listItem.address.country.name,
-  };
+  const personalisation = weeklyReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
   logger.info(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
@@ -63,12 +56,16 @@ export async function sendUnpublishReminder(listItem: ListItemWithAddressCountry
       reference: meta.reference,
     });
 
-    /**
-     * TODO: In future we can use the response object and query the API to retry rather than rely on a "missing" event.
-     * https://docs.notifications.service.gov.uk/node.html#send-an-email-response
-     */
-
-    const event = await addUnpublishReminderEvent(listItem.id, [personalisation.weeksUntilUnpublish], meta.reference);
+    const event = await addUnpublishReminderEvent(
+      listItem.id,
+      [
+        `${personalisation.weeksUntilUnpublish} until unpublish`,
+        JSON.stringify({
+          notify_response: response.data,
+        }),
+      ],
+      meta.reference
+    );
 
     if (!event) {
       logger.error(
@@ -93,10 +90,3 @@ export async function sendUnpublishReminder(listItem: ListItemWithAddressCountry
     logger.error(`Failed to make request to NotifyClient ${e}`);
   }
 }
-
-const serviceDisplayString: Record<ServiceType, string> = {
-  covidTestProviders: "Covid test providers",
-  funeralDirectors: "Funeral directors",
-  lawyers: "Lawyers",
-  translatorsInterpreters: "Translator or interpreters",
-};

@@ -41,8 +41,8 @@ const list = {
         annualReview: {
           START: startDate,
         },
-        unpublish: {
-          UNPUBLISHED: unpublishDate,
+        unpublished: {
+          UNPUBLISH: unpublishDate,
         },
       },
     },
