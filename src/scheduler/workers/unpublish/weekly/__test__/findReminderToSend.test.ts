@@ -16,39 +16,33 @@ const annualReview = {
 };
 
 const start = new Date(annualReview.START).toISOString().split("T")[0];
-
 describe(`findReminderToSend when start date is ${start}`, () => {
-  /**
-   *     { days: 1, currentWeek: 0, label: "start of week", scheduledDate: weeklyReminders[0] },
-   *     { days: 3, currentWeek: 0, label: "mid week", scheduledDate: weeklyReminders[0] },
-   *     { days: 6, currentWeek: 0, label: "before end of week", scheduledDate: weeklyReminders[0] },
-   */
-  const table = [
-    { days: 7, currentWeek: 1, label: "start of week", scheduledDate: weeklyReminders[1] },
-    { days: 8, currentWeek: 1, label: "mid week", scheduledDate: weeklyReminders[1] },
-    { days: 10, currentWeek: 1, label: "mid week", scheduledDate: weeklyReminders[1] },
-    { days: 13, currentWeek: 1, label: "before end of week", scheduledDate: weeklyReminders[1] },
-    { days: 14, currentWeek: 2, label: "start of week", scheduledDate: weeklyReminders[2] },
-    { days: 15, currentWeek: 2, label: "mid week", scheduledDate: weeklyReminders[2] },
-    { days: 17, currentWeek: 2, label: "mid week", scheduledDate: weeklyReminders[2] },
-    { days: 20, currentWeek: 2, label: "before end of week", scheduledDate: weeklyReminders[2] },
-    { days: 21, currentWeek: 3, label: "start of week", scheduledDate: weeklyReminders[3] },
-    { days: 22, currentWeek: 3, label: "mid", scheduledDate: weeklyReminders[3] },
-    { days: 24, currentWeek: 3, label: "mid week", scheduledDate: weeklyReminders[3] },
-    { days: 27, currentWeek: 3, label: "before end of week", scheduledDate: weeklyReminders[3] },
-    { days: 28, currentWeek: 4, label: "start of week", scheduledDate: weeklyReminders[4] },
-  ];
-  test.each(table)(
-    `$days days after start date.
-    Checking for the absence of reminders scheduled for >= $scheduledDate (found on weeklyReminders[$currentWeek])`,
-    ({ days, scheduledDate }) => {
+  test.each`
+    days  | currentWeek | scheduledDate         | label
+    ${7}  | ${1}        | ${weeklyReminders[1]} | ${"start of week"}
+    ${8}  | ${1}        | ${weeklyReminders[1]} | ${"mid week"}
+    ${10} | ${1}        | ${weeklyReminders[1]} | ${"mid week"}
+    ${13} | ${1}        | ${weeklyReminders[1]} | ${"end of week"}
+    ${14} | ${2}        | ${weeklyReminders[2]} | ${"start of week"}
+    ${15} | ${2}        | ${weeklyReminders[2]} | ${"mid week"}
+    ${17} | ${2}        | ${weeklyReminders[2]} | ${"mid week"}
+    ${20} | ${2}        | ${weeklyReminders[2]} | ${"end of week"}
+    ${21} | ${3}        | ${weeklyReminders[3]} | ${"start of week"}
+    ${22} | ${3}        | ${weeklyReminders[3]} | ${"mid week"}
+    ${24} | ${3}        | ${weeklyReminders[3]} | ${"mid week"}
+    ${27} | ${3}        | ${weeklyReminders[3]} | ${"end of week"}
+    ${28} | ${4}        | ${weeklyReminders[4]} | ${"start start week"}
+  `(
+    "$days days after start date ($label $currentWeek). Checking for the absence of reminders scheduled for >= $scheduledDate",
+    ({ days, scheduledDate, currentWeek }) => {
       const date = new Date(annualReview.START);
       const day = date.getDate();
       date.setDate(day + days);
       jest.useFakeTimers().setSystemTime(date);
 
-      const { reminderToFind, weeksUntilUnpublish } = findReminderToSend(list);
+      const { reminderToFind, weeksSinceStartDate } = findReminderToSend(list);
       expect(reminderToFind).toBe(scheduledDate);
+      expect(weeksSinceStartDate).toBe(currentWeek);
     }
   );
 });
