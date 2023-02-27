@@ -6,42 +6,11 @@ import { ListItemWithCountryName, Meta } from "./types";
 import { addUnpublishReminderEvent } from "scheduler/workers/unpublish/weekly/addUnpublishReminderEvent";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 
-const template = "XX";
+const template = NOTIFY.templates.annualReviewNotices.providerStart ?? "1f94c831-0181-4b59-b70a-b3304db7f4c2";
+
 const logger = parentLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-const proxy = new Proxy(notifyClient, {
-  get(target, prop, receiver) {
-    // @ts-ignore
-    const value = target[prop]!;
-    if (NODE_ENV === "production") return value;
-
-    if (value instanceof Function) {
-      return async function () {
-        if (Math.random() >= 0.5) {
-          return {
-            data: {
-              status_code: 200,
-            },
-          };
-        }
-        // eslint-disable-next-line @typescript-eslint/no-throw-literal
-        throw {
-          data: {
-            status_code: 400,
-            errors: [
-              {
-                status_code: 400,
-                error: "oops",
-                message: "no",
-              },
-            ],
-          },
-        };
-      };
-    }
-  },
-});
 export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = weeklyReminderPersonalisation(listItem, meta);
@@ -88,3 +57,36 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
     logger.error(`Failed to make request to NotifyClient ${e}`);
   }
 }
+
+const proxy = new Proxy(notifyClient, {
+  get(target, prop, receiver) {
+    // @ts-ignore
+    const value = target[prop]!;
+    if (NODE_ENV === "production") return value;
+
+    if (value instanceof Function) {
+      return async function () {
+        if (Math.random() >= 0.5) {
+          return {
+            data: {
+              status_code: 200,
+            },
+          };
+        }
+        // eslint-disable-next-line @typescript-eslint/no-throw-literal
+        throw {
+          data: {
+            status_code: 400,
+            errors: [
+              {
+                status_code: 400,
+                error: "oops",
+                message: "no",
+              },
+            ],
+          },
+        };
+      };
+    }
+  },
+});
