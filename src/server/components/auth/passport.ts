@@ -44,6 +44,7 @@ export async function configurePassport(server: Express): Promise<void> {
           });
         }
 
+        // @ts-ignore
         done(null, userData);
       }
     })
