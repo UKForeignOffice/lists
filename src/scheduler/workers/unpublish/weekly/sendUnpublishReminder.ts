@@ -17,7 +17,7 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
   // const emailAddress = jsonData.emailAddress;
 
   const emailAddress = "simulate-delivered@notifications.service.gov.uk";
-  logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
+  logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
     const response = await notifyClient.sendEmail(template, emailAddress, {
@@ -57,6 +57,10 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
       return e;
     }
 
-    logger.error(`Failed to make request to NotifyClient ${e}`);
+    logger.error(
+      `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
+        personalisation
+      )} for email address ${emailAddress} - ${e}`
+    );
   }
 }

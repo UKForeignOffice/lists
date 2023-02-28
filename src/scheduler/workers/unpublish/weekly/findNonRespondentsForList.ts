@@ -42,7 +42,7 @@ export async function findNonRespondentsForList(list: List) {
       status: "OUT_WITH_PROVIDER",
       history: {
         none: {
-          AND: [editedSinceAnnualReviewDate, reminderHasBeenSent],
+          OR: [editedSinceAnnualReviewDate, reminderHasBeenSent],
         },
       },
     },
