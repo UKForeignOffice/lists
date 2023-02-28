@@ -1,11 +1,11 @@
 import { prisma } from "server/models/db/prisma-client";
 import { ListJsonData } from "server/models/types";
-import { logger as parentLogger } from "server/services/logger";
+import { schedulerLogger } from "scheduler/logger";
 import { List, Prisma } from "@prisma/client";
 import { findReminderToSend } from "./findReminderToSend";
 
 export async function findNonRespondentsForList(list: List) {
-  const logger = parentLogger.child({ listId: list.id, method: "findNonRespondentsForList" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList" });
 
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;
