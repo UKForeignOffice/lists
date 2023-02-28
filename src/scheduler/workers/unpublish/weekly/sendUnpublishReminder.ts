@@ -49,13 +49,6 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
   } catch (e) {
     const { response } = e;
 
-    if (!response) {
-      logger.error(
-        `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
-          personalisation
-        )} for email address ${emailAddress} - ${e}`
-      );
-    }
     const isNotifyError = "data" in response && response.data.errors;
     if (isNotifyError) {
       const errors = response.data.errors as RequestError[];
@@ -67,5 +60,11 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
       });
       throw e;
     }
+
+    logger.error(
+      `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
+        personalisation
+      )} for email address ${emailAddress} - ${e}`
+    );
   }
 }
