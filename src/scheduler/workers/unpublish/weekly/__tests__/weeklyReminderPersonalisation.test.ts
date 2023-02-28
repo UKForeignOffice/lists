@@ -6,11 +6,7 @@ describe.each`
   ${"funeralDirectors"}        | ${"Funeral directors"}
   ${"translatorsInterpreters"} | ${"Translator or interpreters"}
 `("weeklyReminderPersonalisation for list with type $serviceType", ({ serviceType, displayString }) => {
-  test.each`
-    weeks |
-    ${1}
-    ${2}
-  `("metadata is correct for $weeks weeks", ({ weeks }) => {
+  test.each([1, 2])("metadata is correct for %p weeks", ({ weeks }) => {
     const listItem = {
       reference: "344M4N",
       type: serviceType,
