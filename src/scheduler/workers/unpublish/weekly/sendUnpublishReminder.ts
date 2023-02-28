@@ -13,12 +13,14 @@ const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
-  const personalisation = weeklyReminderPersonalisation(listItem);
-  const emailAddress = jsonData.emailAddress;
+  const personalisation = weeklyReminderPersonalisation(listItem, meta);
+  // const emailAddress = jsonData.emailAddress;
+
+  const emailAddress = "simulate-delivered@notifications.service.gov.uk";
   logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
-    const response = await proxy.sendEmail(template, emailAddress, {
+    const response = await notifyClient.sendEmail(template, emailAddress, {
       personalisation,
       reference: meta.reference,
     });
@@ -39,7 +41,7 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
         `${meta.weeksUntilUnpublish} weeks until unpublish reminder event failed to create for ${listItem.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
       logger.warn(
-        `insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.weeksUntilUnpublish} until unpublish"], "reference": "${meta.reference}"}');`
+        `Query for event insertion: insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.weeksUntilUnpublish} until unpublish"], "reference": "${meta.reference}"}');`
       );
     }
 
@@ -58,36 +60,3 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
     logger.error(`Failed to make request to NotifyClient ${e}`);
   }
 }
-
-const proxy = new Proxy(notifyClient, {
-  get(target, prop, receiver) {
-    // @ts-ignore
-    const value = target[prop]!;
-    if (NODE_ENV === "production") return value;
-
-    if (value instanceof Function) {
-      return async function () {
-        if (Math.random() >= 0.5) {
-          return {
-            data: {
-              status_code: 200,
-            },
-          };
-        }
-        // eslint-disable-next-line @typescript-eslint/no-throw-literal
-        throw {
-          data: {
-            status_code: 400,
-            errors: [
-              {
-                status_code: 400,
-                error: "oops",
-                message: "no",
-              },
-            ],
-          },
-        };
-      };
-    }
-  },
-});

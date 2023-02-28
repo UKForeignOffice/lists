@@ -5,18 +5,18 @@ import {
   ListItemAnnualReviewProviderReminderType,
 } from "server/models/types";
 import { logger } from "server/services/logger";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { ListItem } from "@prisma/client";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 
 export function formatDate(date: Date = todayDateString) {
   const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short", year: "numeric" };
-  return date.toLocaleString('en-gb', options);
+  return date.toLocaleString("en-gb", options);
 }
 
-export function createAnnualReviewProviderUrl(listItem: ListItemWithHistory): string {
+export function createAnnualReviewProviderUrl(listItem: ListItem): string {
   const protocol = isLocalHost ? "http" : "https";
   const host = `${protocol}://${SERVICE_DOMAIN}`;
   const path = `/annual-review/confirm/${listItem.reference}`;
