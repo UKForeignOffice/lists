@@ -15,7 +15,7 @@
     "commit": "cz",
     "start:prod": "npm run prisma:deploy && NODE_ENV=production node --trace-warnings ./dist/server.js",
     "type-check": "tsc --noEmit",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --resolve-plugins-relative-to .",
     "lint:fix": "eslint ./src --fix",
     "test": "jest --detectOpenHandles --forceExit --verbose",
     "test:debug": "node --expose-gc ./node_modules/.bin/jest --verbose --logHeapUsage -i --detect-leaks --detectOpenHandles",
