@@ -1,4 +1,4 @@
-import { Address, ListItem } from "@prisma/client";
+import { Address, List, ListItem } from "@prisma/client";
 
 export interface Meta {
   /**
@@ -10,6 +10,8 @@ export interface Meta {
    * Weeks until unpublish. Used for debugging. added to `Event.jsonData.notes`.
    */
   weeksUntilUnpublish: number;
+
+  parsedUnpublishDate: string;
 }
 
 export type ListItemWithCountryName = ListItem & { address: Address & { country: { name: string } } };
