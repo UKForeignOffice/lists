@@ -1,10 +1,10 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
-import { List } from "@prisma/client";
 import { getMetaForList } from "./getMetaForList";
 import { logger } from "scheduler/logger";
+import { ListWithCountryName } from "./types";
 
-export async function sendEmailsToNonRespondents(list: List) {
+export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
   const meta = getMetaForList(list);
 
   if (!meta) {

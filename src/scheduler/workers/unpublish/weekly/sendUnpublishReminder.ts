@@ -1,22 +1,22 @@
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
-import { NODE_ENV, NOTIFY } from "server/config";
-import { ListItemWithCountryName, Meta } from "./types";
+import { NOTIFY } from "server/config";
+import { Meta } from "./types";
 import { addUnpublishReminderEvent } from "./addUnpublishReminderEvent";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
+import { ListItem } from "@prisma/client";
 
-const template = NOTIFY.templates.annualReviewNotices.providerStart ?? "1f94c831-0181-4b59-b70a-b3304db7f4c2";
+const template = NOTIFY.templates.annualReviewNotices.providerStart;
 
 const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
+export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = weeklyReminderPersonalisation(listItem, meta);
-  // const emailAddress = jsonData.emailAddress;
+  const emailAddress = jsonData.emailAddress;
 
-  const emailAddress = "simulate-delivered@notifications.service.gov.uk";
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
@@ -47,20 +47,25 @@ export async function sendUnpublishReminder(listItem: ListItemWithCountryName, m
 
     return response.data;
   } catch (e) {
-    const isNotifyError = "data" in e && e.data.errors;
-    if (isNotifyError) {
-      const errors = e.data.errors as RequestError[];
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      errors.forEach(({ status_code, error, message }) => {
-        logger.error(`NotifyClient responded with ${status_code}, ${error}, ${message}`);
-      });
-      return e;
-    }
+    const { response } = e;
 
-    logger.error(
-      `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
-        personalisation
-      )} for email address ${emailAddress} - ${e}`
-    );
+    if (!response) {
+      logger.error(
+        `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
+          personalisation
+        )} for email address ${emailAddress} - ${e}`
+      );
+    }
+    const isNotifyError = "data" in response && response.data.errors;
+    if (isNotifyError) {
+      const errors = response.data.errors as RequestError[];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      errors.forEach(({ error, message }) => {
+        logger.error(
+          `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`
+        );
+      });
+      throw e;
+    }
   }
 }

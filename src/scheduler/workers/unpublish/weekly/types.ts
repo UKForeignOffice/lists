@@ -12,6 +12,9 @@ export interface Meta {
   weeksUntilUnpublish: number;
 
   parsedUnpublishDate: string;
+
+  countryName: string;
 }
 
 export type ListItemWithCountryName = ListItem & { address: Address & { country: { name: string } } };
+export type ListWithCountryName = List & { country: { name: string } };
