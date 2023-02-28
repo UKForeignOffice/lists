@@ -46,9 +46,6 @@ export async function findNonRespondentsForList(list: List) {
         },
       },
     },
-    include: {
-      ...countryName,
-    },
   });
 
   logger.info(
@@ -59,15 +56,3 @@ export async function findNonRespondentsForList(list: List) {
 
   return listItems;
 }
-
-const countryName = {
-  address: {
-    include: {
-      country: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  },
-};

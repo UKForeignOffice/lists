@@ -15,5 +15,12 @@ export async function findListsInAnnualReview() {
         },
       },
     },
+    include: {
+      country: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 }

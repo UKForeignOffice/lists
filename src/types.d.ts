@@ -121,10 +121,9 @@ declare module "notifications-node-client" {
     is_csv: boolean;
   }
 
-  type Response<T> = Promise<{ status: number; data: T | { errors: RequestError[] } }>;
+  type Response<T> = Promise<{ status: number; data: T | { status_code: number; errors: RequestError[] } }>;
 
   interface RequestError {
-    status_code: number;
     error: string;
     message: string;
   }

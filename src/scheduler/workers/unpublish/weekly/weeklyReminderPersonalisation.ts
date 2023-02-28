@@ -1,15 +1,16 @@
 import { ServiceType } from "server/models/types";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { ListItemWithCountryName, Meta } from "./types";
 import { createAnnualReviewProviderUrl } from "scheduler/helpers";
+import { ListItem } from "@prisma/client";
+import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
-export function weeklyReminderPersonalisation(listItem: ListItemWithCountryName, meta: Meta) {
+export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
   return {
     typePlural: serviceDisplayString[listItemType],
     contactName: jsonData.contactName,
-    country: listItem.address.country.name,
+    country: meta.countryName,
     deletionDate: meta.parsedUnpublishDate,
     changeLink: createAnnualReviewProviderUrl(listItem),
   };
