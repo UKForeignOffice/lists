@@ -12,12 +12,3 @@ export async function main() {
       logger.error(failedResult.reason);
     });
 }
-
-main()
-  .then((results) => {
-    // process.exit(0);
-  })
-  .catch((r: Error) => {
-    logger.error(`Weekly reminder scheduler failed due to ${r.message}, ${r.stack}`);
-    // process.exit(1);
-  });
