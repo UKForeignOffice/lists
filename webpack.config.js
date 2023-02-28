@@ -201,9 +201,8 @@ const scheduler = {
   mode: environmentOptions[nodeEnv].mode,
   watch: environmentOptions[nodeEnv].watch,
   entry: {
-    unpublish: getScheduledFilePath("workers/unpublish/weekly", "index.ts"),
+    worker: getScheduledFilePath("workers", "main.new.ts"),
     batch: getScheduledFilePath("batch", "main.ts"),
-    annualReviewWorker: getScheduledFilePath("workers", "main.ts"),
   },
   devtool: "cheap-module-source-map",
   output: {
