@@ -24,6 +24,8 @@ test.each`
     expect(getMetaForList(list)).toStrictEqual({
       reference,
       weeksUntilUnpublish: expectedWeeks,
+      parsedUnpublishDate: "15 March 2023",
+      countryName: "United Kingdom",
     });
   }
 );
@@ -34,6 +36,9 @@ const unpublishDate = "2023-03-15T00:00:00.000Z";
 
 const list = {
   nextAnnualReviewStartDate: startDate,
+  country: {
+    name: "United Kingdom",
+  },
   jsonData: {
     currentAnnualReview: {
       reference,

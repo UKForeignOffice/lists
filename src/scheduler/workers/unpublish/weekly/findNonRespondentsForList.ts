@@ -15,8 +15,6 @@ export async function findNonRespondentsForList(list: List) {
   const { reminderToFind, weeksSinceStartDate } = findReminderToSend(list);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
 
-  logger.debug(`looking for list items with no reminder events with event.time >= ${reminderToFind}`);
-
   if (weeksSinceStartDate >= 6) {
     return [];
   }
@@ -50,7 +48,9 @@ export async function findNonRespondentsForList(list: List) {
 
   logger.info(
     `Found ${listItems.length} items to send unpublish reminder ${
-      listItems.length === 0 ? "(already sent for this period)" : [listItems.map((listItem) => listItem.id)]
+      listItems.length === 0
+        ? `(already sent for period starting >= ${reminderToFind})`
+        : [listItems.map((listItem) => listItem.id)]
     }`
   );
 

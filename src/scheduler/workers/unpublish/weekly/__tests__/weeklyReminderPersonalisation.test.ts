@@ -7,19 +7,15 @@ describe.each`
   ${"translatorsInterpreters"} | ${"Translator or interpreters"}
 `("weeklyReminderPersonalisation for list with type $serviceType", ({ serviceType, displayString }) => {
   test.each`
-    weeks | expectedWeekString
-    ${1}  | ${"1 week"}
-    ${2}  | ${"2 weeks"}
-  `("metadata is correct for $weeks weeks", ({ weeks, expectedWeekString }) => {
+    weeks |
+    ${1}
+    ${2}
+  `("metadata is correct for $weeks weeks", ({ weeks }) => {
     const listItem = {
+      reference: "344M4N",
       type: serviceType,
       jsonData: {
         contactName: "Dr. Eggman",
-      },
-      address: {
-        country: {
-          name: "United Kingdom",
-        },
       },
     };
 
@@ -27,12 +23,25 @@ describe.each`
       weeklyReminderPersonalisation(listItem, {
         type: serviceType,
         weeksUntilUnpublish: weeks,
+        countryName: "United Kingdom",
+        parsedUnpublishDate: "15 March 2023",
       })
     ).toStrictEqual({
-      type: displayString,
-      weeksUntilUnpublish: expectedWeekString,
+      typePlural: displayString,
       contactName: "Dr. Eggman",
       country: "United Kingdom",
+      deletionDate: "15 March 2023",
+      changeLink: "https://test-domain/annual-review/confirm/344M4N",
     });
   });
 });
+
+/**
+ * {
+ *     typePlural: serviceDisplayString[listItemType],
+ *     contactName: jsonData.contactName,
+ *     country: meta.countryName,
+ *     deletionDate: meta.parsedUnpublishDate,
+ *     changeLink: createAnnualReviewProviderUrl(listItem),
+ *   };
+ */
