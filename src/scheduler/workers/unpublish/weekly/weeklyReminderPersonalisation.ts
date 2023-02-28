@@ -1,5 +1,5 @@
 import { ServiceType } from "server/models/types";
-import { ListItemWithCountryName, Meta } from "./types";
+import { Meta } from "./types";
 import { createAnnualReviewProviderUrl } from "scheduler/helpers";
 import { ListItem } from "@prisma/client";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
