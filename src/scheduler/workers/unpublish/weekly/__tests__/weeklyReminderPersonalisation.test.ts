@@ -35,13 +35,3 @@ describe.each`
     });
   });
 });
-
-/**
- * {
- *     typePlural: serviceDisplayString[listItemType],
- *     contactName: jsonData.contactName,
- *     country: meta.countryName,
- *     deletionDate: meta.parsedUnpublishDate,
- *     changeLink: createAnnualReviewProviderUrl(listItem),
- *   };
- */
