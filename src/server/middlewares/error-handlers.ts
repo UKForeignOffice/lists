@@ -66,7 +66,7 @@ function getErrorMessage(message: string): string {
   return error;
 }
 
-export function rateLimitExceededErrorHandler (req: Request, res: Response, next: Function): void {
+export function rateLimitExceededErrorHandler (req: Request, res: Response, next: NextFunction): void {
   const err = new HttpException(429, "429", "Maximum rate of page requests exceeded - wait and try again");
   return next(err);
 }

@@ -66,7 +66,7 @@ export type ListIndexOptions = {
   activity?: Array<keyof Tags>,
   publishing?: Array<keyof Tags>,
   sort?: keyof OrderBy;
-  reqQuery?: { [query: string]: any };
+  reqQuery?: Record<string, any>;
 } & PaginationOptions;
 
 export type EventName =

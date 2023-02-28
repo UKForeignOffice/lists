@@ -84,7 +84,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
   // note: we are applying take/skip on List (i.e. take 20 Lists) rather than take 20 Items
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const paginationOptions: {} | { take: number; skip: number } = calculatePagination(options);
+  const paginationOptions: Record<string, unknown> | { take: number; skip: number } = calculatePagination(options);
 
   const OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
 

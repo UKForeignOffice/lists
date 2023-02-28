@@ -115,7 +115,7 @@ function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
 }
 
 export async function listItemsIndexController(
-  req: Request<IndexParams, {}, {}, IndexQuery>,
+  req: Request<IndexParams, Record<string, unknown>, Record<string, unknown>, IndexQuery>,
   res: ListItemRes,
   next: NextFunction
 ): Promise<void> {

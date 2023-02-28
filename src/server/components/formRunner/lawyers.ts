@@ -11,7 +11,7 @@ import { get } from "lodash";
  * is equivalent to `get(listItem, "jsonData.organisationName")`
  * is equivalent to `listItem.jsonData.organisationName`.
  */
-const FormRunnerFields: { [key: string]: string } = {
+const FormRunnerFields: Record<string, string> = {
   speakEnglish: "jsonData.speakEnglish",
   contactName: "jsonData.contactName",
   organisationName: "jsonData.organisationName",

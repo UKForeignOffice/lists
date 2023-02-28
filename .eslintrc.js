@@ -21,6 +21,13 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/ban-ts-ignore": 0,
     "@typescript-eslint/prefer-ts-expect-error": 0,
+    "@typescript-eslint/consistent-type-imports": 1,
+    "@typescript-eslint/ban-ts-comment": 1,
+    "@typescript-eslint/no-confusing-void-expression": 1,
+    "@typescript-eslint/prefer-optional-chain": 1,
+    "@typescript-eslint/no-misused-promises": 1,
+    "@typescript-eslint/return-await": 1,
+    "@typescript-eslint/no-unnecessary-type-assertion": 1,
   },
   ignorePatterns: [
     "playground/",

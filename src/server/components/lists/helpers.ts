@@ -33,9 +33,7 @@ export async function initLists(server: Express): Promise<void> {
  *   - detects the presence of the _csrf property and deletes it.
  * @param params
  */
-export function preProcessParams(params: { [name: string]: any }, req: Request): {
-  [name: string]: any;
-} {
+export function preProcessParams(params: Record<string, any>, req: Request): Record<string, any> {
   const { _csrf, ...paramsCopy } = params;
 
   // select all
@@ -72,7 +70,7 @@ export function preProcessParams(params: { [name: string]: any }, req: Request):
 }
 
 export function queryStringFromParams(
-  params: { [name: string]: any },
+  params: Record<string, any>,
   removeEmptyValues?: boolean
 ): string {
   return Object.keys(params)

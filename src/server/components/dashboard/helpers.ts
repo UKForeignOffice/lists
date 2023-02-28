@@ -39,7 +39,7 @@ export async function getInitiateFormRunnerSessionToken(
   return token;
 }
 
-export const pageTitles: { [key: string]: string } = {
+export const pageTitles: Record<string, string> = {
   [dashboardRoutes.usersEdit]: "edit user",
   [dashboardRoutes.usersList]: "user list",
   [dashboardRoutes.lists]: "all provider lists",
