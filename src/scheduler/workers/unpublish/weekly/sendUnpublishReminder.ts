@@ -1,5 +1,5 @@
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { logger as parentLogger } from "server/services/logger";
+import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NODE_ENV, NOTIFY } from "server/config";
 import { ListItemWithCountryName, Meta } from "./types";
@@ -8,7 +8,7 @@ import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart ?? "1f94c831-0181-4b59-b70a-b3304db7f4c2";
 
-const logger = parentLogger.child({ method: "sendUnpublishEmail", template });
+const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItemWithCountryName, meta: Meta) {
