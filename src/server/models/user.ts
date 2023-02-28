@@ -2,7 +2,7 @@ import { omit } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { User, UserJsonData, UserRoles, UserUpdateInput } from "./types";
+import { User, UserRoles } from "./types";
 
 export async function findUserByEmail(email: string): Promise<User | undefined> {
   try {
