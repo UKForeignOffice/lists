@@ -247,7 +247,7 @@ export interface ListItemEventJsonData extends BaseAuditEventJsonData {
 export interface ListEventJsonData extends BaseAuditEventJsonData {
   eventName: AuditListEventName;
   annualReviewRef?: string;
-  reminderType?: ListAnnualReviewPostReminderType;
+  reminderType?: ListAnnualReviewPostReminderType | ListItemUnpublishedPostReminderType;
 }
 
 export type AuditEventJsonData = ListItemEventJsonData | ListEventJsonData;

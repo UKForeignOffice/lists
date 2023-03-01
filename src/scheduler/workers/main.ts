@@ -242,7 +242,7 @@ export async function updateIsAnnualReviewForListItems(
   return updatedListItems.result;
 }
 
-async function processAnnualReview(): Promise<void> {
+export async function processAnnualReview(): Promise<void> {
   const listResult = await findListsWithCurrentAnnualReview();
 
   // validate list results
