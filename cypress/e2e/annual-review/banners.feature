@@ -9,7 +9,4 @@ Feature: Annual review banners
 
     Scenario:
       Then I see the start banner
-
-
-
-
+      Then I see the notification text "Annual review will start on"
