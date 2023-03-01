@@ -2,17 +2,21 @@ import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { Meta } from "../types";
-import { addUnpublishReminderEvent } from "./addUnpublishReminderEvent";
 import { dayBeforePostReminderPersonalisation } from "./dailyReminderPersonalisation";
-import {AuditEvent, List} from "@prisma/client";
-import {recordListItemEvent} from "server/models/audit";
+import { AuditEvent, List } from "@prisma/client";
+import { recordListItemEvent } from "server/models/audit";
 
 const template = NOTIFY.templates.unpublishNotice.postOneDay;
 
 const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-export async function sendDayBeforeUnpublishPostReminder(emailAddress: string, list: List, numberNotResponded: number, meta: Meta) {
+export async function sendDayBeforeUnpublishPostReminder(
+  emailAddress: string,
+  list: List,
+  numberNotResponded: number,
+  meta: Meta
+) {
   const personalisation = dayBeforePostReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);

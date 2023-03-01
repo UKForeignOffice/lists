@@ -1,6 +1,6 @@
 import { prisma } from "server/models/db/prisma-client";
-import {AuditCreateInput, ListEventJsonData, ListItemEventJsonData} from "server/models/types";
-import {AuditEvent} from "@prisma/client";
+import { AuditCreateInput, ListEventJsonData } from "server/models/types";
+import { AuditEvent } from "@prisma/client";
 
 export function recordListItemEvent(
   eventData: ListEventJsonData,
