@@ -101,19 +101,19 @@ describe("Today Date", () => {
   describe("today is GMT timezone", () => {
     jest.useFakeTimers().setSystemTime(new Date("01-Dec-2022 15:37:22.000"));
     const expectedDate = "2022-12-01T00:00:00.000Z";
-    const actualDate = startOfDay(new Date());
-    expect(actualDate.toISOString()).toBe(expectedDate);
+    const actualDate = startOfDay(new Date()).toISOString();
+    expect(actualDate).toBe(expectedDate);
   });
   describe("today is BST timezone after midnight", () => {
     jest.useFakeTimers().setSystemTime(new Date("05-May-2023 15:37:22.000"));
-    const expectedDate = "2023-05-05T00:00:00.000Z";
-    const actualDate = startOfDay(new Date());
-    expect(actualDate.toISOString()).toBe(expectedDate);
+    const expectedDate = "2023-05-04T23:00:00.000Z";
+    const actualDate = startOfDay(new Date()).toISOString();
+    expect(actualDate).toBe(expectedDate);
   });
   describe("today is BST timezone after 11pm, before midnight", () => {
     jest.useFakeTimers().setSystemTime(new Date("05-May-2023 23:37:22.000"));
-    const expectedDate = "2023-05-05T00:00:00.000Z";
-    const actualDate = startOfDay(new Date());
-    expect(actualDate.toISOString()).toBe(expectedDate);
+    const expectedDate = "2023-05-04T23:00:00.000Z";
+    const actualDate = startOfDay(new Date()).toISOString();
+    expect(actualDate).toBe(expectedDate);
   });
 });
