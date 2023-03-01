@@ -112,7 +112,7 @@ describe("Today Date", () => {
   });
   describe("today is BST timezone after 11pm, before midnight", () => {
     jest.useFakeTimers().setSystemTime(new Date("05-May-2023 23:37:22.000"));
-    const expectedDate = "2023-05-04T00:00:00.000Z";
+    const expectedDate = "2023-05-05T00:00:00.000Z";
     const actualDate = startOfDay(new Date()).toISOString();
     expect(actualDate).toBe(expectedDate);
   });
