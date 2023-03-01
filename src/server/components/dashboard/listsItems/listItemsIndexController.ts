@@ -154,6 +154,9 @@ export async function listItemsIndexController(
     );
     const unpublishDate = AnnualReviewHelpers.calculateNewDateAfterPeriod(annualReviewDate, { weeks: 6 });
 
+    const bannerToggles = await annualReviewBannerToggles(res.locals.list as ListWithJsonData, list.items);
+    console.log("toggles", bannerToggles);
+
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
@@ -162,7 +165,7 @@ export async function listItemsIndexController(
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       annualReviewDate,
       unpublishDate: unpublishDate ? AnnualReviewHelpers.formatDate(unpublishDate) : undefined,
-      bannerToggles: annualReviewBannerToggles(res.locals.list as ListWithJsonData, list.items),
+      bannerToggles,
       // @ts-expect-error
       csrfToken: getCSRFToken(req),
     });
@@ -171,13 +174,27 @@ export async function listItemsIndexController(
   }
 }
 
-function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListItem[]) {
+async function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListItem[]) {
   const emailsSent = listItems?.some((listItem) => {
     return SummaryHelpers.annualReviewEmailsSent(list, listItem?.history);
   });
-  return {
-    oneMonthWarning: displayOneMonthAnnualReviewWarning(list),
-    emailsSent,
-    unpublishWarning: displayUnpublishWarning(list, listItems),
-  };
+
+  const unpublishWarning = await displayUnpublishWarning(list);
+
+  if (unpublishWarning) {
+    return {
+      unpublishWarning,
+    };
+  }
+
+  if (emailsSent) {
+    return { emailsSent };
+  }
+
+  const oneMonthWarning = displayOneMonthAnnualReviewWarning(list);
+  if (oneMonthWarning) {
+    return {
+      oneMonthWarning,
+    };
+  }
 }

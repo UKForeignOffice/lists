@@ -1,8 +1,9 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { ActivityStatusViewModel, IndexListItem } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import { isAfter, isBefore } from "date-fns";
+import { differenceInWeeks, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
+import { prisma } from "server/models/db/prisma-client";
 
 /**
  * Additions to Status type to help with rendering
@@ -183,29 +184,37 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
  * Used to display the warning banner in the list items page to notify that there are list items where the providers
  * have not responded AND the current date is five weeks or less prior to the unpublish date. Providers that haven't
  * responded can be determined where listItem.isAnnualReview = true and the listItem.status = OUT_WITH_PROVIDER.
- * @param list
- * @param listItems
  */
-export function displayUnpublishWarning(list: ListWithJsonData, listItems: IndexListItem[]) {
-  let display = false;
-  let countOfListItems = 0;
-  const fiveWeeksBeforeUnpublishDateString =
-    list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
-  if (fiveWeeksBeforeUnpublishDateString) {
-    const fiveWeeksBeforeUnpublishDate = new Date(fiveWeeksBeforeUnpublishDateString);
-    const isAfterFiveWeeksBeforeUnpublishDate = isAfter(Date.now(), fiveWeeksBeforeUnpublishDate);
-    if (isAfterFiveWeeksBeforeUnpublishDate) {
-      const listItemsToBeUnpublished = listItems.filter((listItem) => {
-        return listItem.isAnnualReview && listItem.status === Status.OUT_WITH_PROVIDER;
-      });
-      countOfListItems = listItemsToBeUnpublished.length;
-      display = countOfListItems > 0;
-    }
+export async function displayUnpublishWarning(list: ListWithJsonData) {
+  const keyDates = list.jsonData.currentAnnualReview?.keyDates!;
+  const startDate = startOfDay(parseISO(keyDates?.annualReview.START));
+  const unpublishDate = startOfDay(parseISO(keyDates?.unpublished.UNPUBLISH));
+
+  const weeksSinceStarting = differenceInWeeks(unpublishDate, startDate, { roundingMethod: "floor" });
+  const countOfListItems = await countNumberOfNonRespondents(list.id!, startDate);
+
+  if (weeksSinceStarting >= 5 && countOfListItems > 0) {
+    return {
+      countOfListItems,
+    };
   }
-  return {
-    display,
-    countOfListItems,
-  };
+}
+
+async function countNumberOfNonRespondents(listId: number, annualReviewStartDate: string | Date) {
+  return await prisma.listItem.count({
+    where: {
+      listId,
+      status: "OUT_WITH_PROVIDER",
+      history: {
+        none: {
+          type: "EDITED",
+          time: {
+            gte: annualReviewStartDate,
+          },
+        },
+      },
+    },
+  });
 }
 
 /**
