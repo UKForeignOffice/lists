@@ -2,6 +2,8 @@ import { main as unpublishWeeklyTask } from "./unpublish/weekly";
 import { logger } from "server/services/logger";
 
 async function main() {
+  // if a task needs to be executed first, await them here.
+
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
   const tasks = [unpublishWeeklyTask()];
 
