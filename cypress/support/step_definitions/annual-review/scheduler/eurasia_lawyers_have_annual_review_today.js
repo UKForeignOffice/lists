@@ -2,13 +2,20 @@ import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
 const today = new Date();
 
-Given("eurasia lawyers have annual review today", async () => {
-  await updateListForAnnualReview();
+Given("eurasia lawyers have annual review in {string} days", async (days = "0") => {
+  await updateListForAnnualReview(days);
   await createListItem("test-user");
 });
 
-async function updateListForAnnualReview() {
-  const todayAfternoon = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getDate(), 12, 0, 0);
+async function updateListForAnnualReview(days) {
+  const todayAfternoon = new Date(
+    today.getUTCFullYear(),
+    today.getUTCMonth(),
+    today.getDate() + Number(days),
+    12,
+    0,
+    0
+  );
 
   await cy.task("db", {
     operation: "list.update",
@@ -17,7 +24,8 @@ async function updateListForAnnualReview() {
         reference: "SMOKE",
       },
       data: {
-        nextAnnualReviewStartDate: todayAfternoon, jsonData: {
+        nextAnnualReviewStartDate: todayAfternoon,
+        jsonData: {
           users: ["smoke@cautionyourblast.com"],
           currentAnnualReview: {
             keyDates: {
