@@ -13,9 +13,9 @@ import { AuditEvent, ListItemEvent } from "@prisma/client";
 import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { findListItems, updateIsAnnualReview } from "server/models/listItem";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { MilestoneTillAnnualReview } from "../batch/helpers";
+import { MilestoneTillAnnualReview } from "../../batch/helpers";
 import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
-import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "../helpers";
+import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "./helpers";
 
 async function processPostEmailsForList(
   list: List,
@@ -275,13 +275,3 @@ async function processAnnualReview(): Promise<void> {
     await processList(list, listItemsForList);
   }
 }
-
-processAnnualReview()
-  .then((r) => {
-    logger.info(`Annual review worker finished`);
-    process.exit(0);
-  })
-  .catch((r: Error) => {
-    logger.error(`Annual review scheduler failed due to ${r.message}, ${r.stack}`);
-    process.exit(1);
-  });
