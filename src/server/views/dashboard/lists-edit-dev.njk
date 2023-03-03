@@ -93,6 +93,11 @@
 
           {% for listItem in data.events %}
 
+            {% set eventDelete = "?del=" %}
+
+            {% for event in listItem.history %}
+              {% set eventDelete = eventDelete + event.id + "," %}
+            {% endfor %}
 
             {% set row = {
               key: {
@@ -100,9 +105,16 @@
               },
               value: {
                 text: listItem.history.length + " sent"
+              },
+              actions: {
+                items: [
+                  {
+                    href: eventDelete,
+                    text: "Delete reminders"
+                  }
+                ]
               }
             } %}
-
 
             {% set eventRows = (eventRows.push(row), eventRows) %}
 
@@ -115,7 +127,7 @@
               </span>
             </summary>
             <div class="govuk-details__text">
-              {{ data.range }}
+              {{ data.range }} <br>
               <a class="govuk-button govuk-button--warning" href="development?{{ data.deleteUrl }}">Delete all reminders for this week</a>
               {{ govukSummaryList({
                 rows: eventRows
