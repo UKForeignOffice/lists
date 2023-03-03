@@ -115,6 +115,7 @@
               </span>
             </summary>
             <div class="govuk-details__text">
+              {{ data.range }}
               <a class="govuk-button govuk-button--warning" href="development?{{ data.deleteUrl }}">Delete all reminders for this week</a>
               {{ govukSummaryList({
                 rows: eventRows

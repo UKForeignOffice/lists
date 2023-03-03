@@ -42,13 +42,13 @@ export async function get(req: Request, res: ListIndexRes) {
 
   const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);
   const weeklyReminders = await findReminders(list.id);
-  const end = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
+  const start = startOfDay(parseISO(keyDates.annualReview.START));
 
   return res.render("dashboard/lists-edit-dev", {
     keyDates: flattenKeyDatesObject(keyDates),
     csrfToken: req.csrfToken(),
     weeklyReminders,
-    currentWeek: differenceInWeeks(end, startOfToday()),
+    currentWeek: differenceInWeeks(startOfToday(), start),
   });
 }
 
@@ -176,7 +176,7 @@ async function findReminders(listId: number) {
     const greaterThanStartOfWeek = { gte: weekStartDate };
     const lessThanStartOfNextWeek = { lt: weeks[index + 1] ?? new Date() };
     return {
-      weeksSinceStart: differenceInWeeks(weekStartDate, start),
+      weeksSinceStart: differenceInWeeks(weekStartDate, start, { roundingMethod: "floor" }),
       eventInput: {
         ...greaterThanStartOfWeek,
         ...lessThanStartOfNextWeek,
@@ -213,6 +213,7 @@ async function findReminders(listId: number) {
 
       return {
         weeksSinceStart,
+        eventInput,
         count,
         events,
         deleteUrl,
@@ -227,9 +228,10 @@ async function findReminders(listId: number) {
         events: curr.events,
         count: curr.count,
         deleteUrl: curr.deleteUrl,
+        range: `${curr.eventInput.gte.toISOString()} - ${curr.eventInput.lt.toISOString()}`,
       },
     };
-  });
+  }, {});
 }
 
 async function deleteEvents(ids: number[]) {
