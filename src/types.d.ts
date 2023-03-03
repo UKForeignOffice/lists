@@ -41,7 +41,6 @@ declare module "notifications-node-client" {
     };
     id: string;
     reference?: string;
-    scheduled_for?: string;
     template: Template;
     uri: string;
   }
@@ -121,7 +120,12 @@ declare module "notifications-node-client" {
     is_csv: boolean;
   }
 
-  type Response<T> = Promise<{ status: number; data: T | { status_code: number; errors: RequestError[] } }>;
+  type Response<T> = Promise<{ status: number; data: T | ErrorResponse }>;
+
+  interface ErrorResponse {
+    status_code: number;
+    errors: RequestError[];
+  }
 
   interface RequestError {
     error: string;

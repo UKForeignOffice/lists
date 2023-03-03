@@ -28,10 +28,13 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
   const { keyDates } = currentAnnualReview;
 
   const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
+  const startDate = startOfDay(parseISO(keyDates.annualReview.START));
+  const today = startOfToday();
 
   return {
     reference: jsonData.currentAnnualReview!.reference,
-    weeksUntilUnpublish: differenceInWeeks(endDate, startOfToday()),
+    weeksUntilUnpublish: differenceInWeeks(endDate, today),
+    weeksSinceStart: differenceInWeeks(today, startDate, { roundingMethod: "floor" }),
     parsedUnpublishDate: format(endDate, DISPLAY_DATE_FORMAT),
     countryName: list.country.name,
   };

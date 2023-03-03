@@ -27,12 +27,9 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     const event = await addUnpublishReminderEvent(
       listItem.id,
-      [
-        `sent reminder for ${meta.weeksUntilUnpublish} weeks until unpublish`,
-        JSON.stringify({
-          notify_response: response.data,
-        }),
-      ],
+      // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
+      response.data,
+      [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
       meta.reference
     );
 
@@ -41,7 +38,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
         `${meta.weeksUntilUnpublish} weeks until unpublish reminder event failed to create for ${listItem.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
       logger.warn(
-        `Query for event insertion: insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.weeksUntilUnpublish} until unpublish"], "reference": "${meta.reference}"}');`
+        `Query for event insertion: insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)"], "reference": "${meta.reference}"}');`
       );
     }
 

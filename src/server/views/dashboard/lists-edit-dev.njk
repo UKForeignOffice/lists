@@ -3,6 +3,7 @@
 {% from "table/macro.njk" import govukTable %}
 {% from "input/macro.njk" import govukInput %}
 {% from "button/macro.njk" import govukButton %}
+{% from "summary-list/macro.njk" import govukSummaryList %}
 
 
 {% block content %}
@@ -82,6 +83,48 @@
         {{ govukButton({
           text: "Update"
         }) }}
+
+
+
+        <h3 class="govuk-heading-s">Current week (since annual review starting): {{ currentWeek }}</h3>
+
+        {% for week, data in weeklyReminders %}
+          {% set eventRows = [] %}
+
+          {% for listItem in data.events %}
+
+
+            {% set row = {
+              key: {
+                text: "listItemId: " + listItem.id
+              },
+              value: {
+                text: listItem.history.length + " sent"
+              }
+            } %}
+
+
+            {% set eventRows = (eventRows.push(row), eventRows) %}
+
+          {% endfor %}
+
+          <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                <h3 class="govuk-heading-s">{{ week }} weeks since start date. {{ data.count }} reminders sent</h3>
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+              <a class="govuk-button govuk-button--warning" href="development?{{ data.deleteUrl }}">Delete all reminders for this week</a>
+              {{ govukSummaryList({
+                rows: eventRows
+              }) }}
+            </div>
+          </details>
+
+
+
+        {% endfor %}
 
 
       </form>
