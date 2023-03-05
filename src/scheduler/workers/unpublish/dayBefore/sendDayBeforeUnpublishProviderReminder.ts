@@ -14,16 +14,20 @@ const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
+  logger.info(`getting personalisation details`);
   const personalisation = dayBeforeProviderReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
+    logger.info(`sending email`);
     const response = await notifyClient.sendEmail(template, emailAddress, {
       personalisation,
       reference: meta.reference,
     });
+
+    logger.info(`adding reminder event`);
 
     const event = await addUnpublishReminderEvent(
       listItem.id,
@@ -45,6 +49,7 @@ export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem,
       );
     }
 
+    logger.info(`getting personalisation details`);
     return response.data;
   } catch (e) {
     const { response } = e;

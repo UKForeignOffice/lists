@@ -19,7 +19,7 @@ export function findReminderToSend(list: List) {
 
   const reminderToFind = addWeeks(startDate, weeksSinceStartDate).toISOString();
 
-  logger.debug(
+  logger.info(
     `looking for list items to send unpublish provider reminder at ${weeksSinceStartDate} weeks after start date (No reminder events sent >= ${reminderToFind})`
   );
 

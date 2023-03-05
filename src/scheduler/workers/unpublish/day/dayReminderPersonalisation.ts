@@ -1,10 +1,9 @@
 import { ServiceType } from "server/models/types";
 import { Meta } from "../types";
-import { createAnnualReviewProviderUrl } from "scheduler/helpers";
 import {List, ListItem} from "@prisma/client";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
-export function dayBeforeProviderReminderPersonalisation(listItem: ListItem, meta: Meta) {
+export function providerReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
 
@@ -12,11 +11,10 @@ export function dayBeforeProviderReminderPersonalisation(listItem: ListItem, met
     typePlural: serviceDisplayString[listItemType],
     contactName: jsonData.contactName,
     country: meta.countryName,
-    changeLink: createAnnualReviewProviderUrl(listItem),
   };
 }
 
-export function dayBeforePostReminderPersonalisation(list: List, numberNotResponded: number, meta: Meta) {
+export function postReminderPersonalisation(list: List, numberNotResponded: number, meta: Meta) {
   const listItemType = list.type as ServiceType;
 
   return {

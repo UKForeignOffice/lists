@@ -7,6 +7,7 @@ import { ListWithCountryName } from "../types";
 import { ListJsonData } from "server/models/types";
 
 export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
+  logger.info(`getting meta data for list ${list.id}`);
   const meta = getMetaForList(list);
   if (!meta) {
     throw new Error(`Exiting for list ${list.id}, not enough information to continue`);
@@ -14,9 +15,7 @@ export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
 
   // @ts-ignore
   if (meta?.daysUntilUnpublish !== 1) {
-    logger.info(
-      `${meta.daysUntilUnpublish} does not match 1 day before unpublish, skipping sendEmailsToNonRespondents`
-    );
+    logger.info(`${meta.daysUntilUnpublish} does not match 1 day before unpublish, skipping sendEmailsToNonRespondents`);
     return;
   }
 

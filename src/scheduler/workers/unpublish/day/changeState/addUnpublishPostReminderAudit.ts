@@ -2,17 +2,15 @@ import { prisma } from "server/models/db/prisma-client";
 import { AuditCreateInput, ListEventJsonData } from "server/models/types";
 import { AuditEvent } from "@prisma/client";
 
-export function recordListItemEvent(
+export async function addUnpublishPostReminderAudit(
   eventData: ListEventJsonData,
   auditEvent: AuditEvent,
-  type?: "user" | "list" | "listItem"
 ) {
-  type = type ?? "listItem";
   const data: AuditCreateInput = {
     auditEvent,
-    type,
+    type: "list",
     jsonData: { ...eventData },
   };
 
-  return prisma.audit.create({ data });
+  return await prisma.audit.create({ data });
 }

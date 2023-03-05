@@ -1,11 +1,11 @@
 import { logger } from "server/services/logger";
 import { sendEmailsToNonRespondents } from "./sendEmailToNonRespondents";
-import { findListsInAnnualReview } from "../findListsInAnnualReview";
+import { findListsInAnnualReviewForReminders } from "../findListsInAnnualReviewForReminders";
 
 export async function main() {
-  const listsInAnnualReview = await findListsInAnnualReview();
+  const listsInAnnualReview = await findListsInAnnualReviewForReminders();
   const results = await Promise.allSettled(listsInAnnualReview.map(sendEmailsToNonRespondents));
-  results
+  return results
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
       // @ts-ignore

@@ -1,9 +1,11 @@
 import { logger } from "server/services/logger";
 import { sendEmailsToNonRespondents } from "./sendEmailToNonRespondents";
-import { findListsInAnnualReview } from "../findListsInAnnualReview";
+import { findListsInAnnualReviewForReminders } from "../findListsInAnnualReviewForReminders";
 
 export async function main() {
-  const listsInAnnualReview = await findListsInAnnualReview();
+  logger.info("starting dayBefore.findListsInAnnualReview");
+  const listsInAnnualReview = await findListsInAnnualReviewForReminders();
+  logger.info(`retrieved ${listsInAnnualReview.length} lists.  Attempting to send emails`);
   const results = await Promise.allSettled(listsInAnnualReview.map(sendEmailsToNonRespondents));
   results
     .filter((result) => result.status !== "fulfilled")
@@ -11,4 +13,5 @@ export async function main() {
       // @ts-ignore
       logger.error(failedResult.reason);
     });
+  logger.info("ending dayBefore.findListsInAnnualReview");
 }

@@ -3,18 +3,19 @@ import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { Meta } from "../types";
-import { addUnpublishReminderEvent } from "./addUnpublishReminderEvent";
-import { dayBeforeProviderReminderPersonalisation } from "./dailyReminderPersonalisation";
+import { addUnpublishProviderReminderEvent } from "./changeState/addUnpublishProviderReminderEvent";
+import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
 import { ListItem } from "@prisma/client";
 
-const template = NOTIFY.templates.unpublishNotice.providerOneDay;
+const template = NOTIFY.templates.unpublishNotice.providerUnpublished;
 
-const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem, meta: Meta) {
+export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta: Meta) {
+  const logger = schedulerLogger.child({ listItemId: listItem.id, method: "sendUnpublishEmail", template });
+
   const jsonData = listItem.jsonData as ListItemJsonData;
-  const personalisation = dayBeforeProviderReminderPersonalisation(listItem, meta);
+  const personalisation = providerReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
@@ -25,7 +26,7 @@ export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem,
       reference: meta.reference,
     });
 
-    const event = await addUnpublishReminderEvent(
+    const event = await addUnpublishProviderReminderEvent(
       listItem.id,
       [
         `sent reminder for ${meta.daysUntilUnpublish} days until unpublish`,
@@ -38,10 +39,7 @@ export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem,
 
     if (!event) {
       logger.error(
-        `${meta.daysUntilUnpublish} days until unpublish reminder event failed to create for ${listItem.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
-      );
-      logger.warn(
-        `Query for event insertion: insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.daysUntilUnpublish} day until unpublish"], "reference": "${meta.reference}"}');`
+        `unpublish reminder event failed to create. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
     }
 
@@ -52,7 +50,6 @@ export async function sendDayBeforeUnpublishProviderReminder(listItem: ListItem,
     const isNotifyError = "data" in response && response.data.errors;
     if (isNotifyError) {
       const errors = response.data.errors as RequestError[];
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       errors.forEach(({ error, message }) => {
         logger.error(
           `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`

@@ -2,22 +2,22 @@ import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { Meta } from "../types";
-import { dayBeforePostReminderPersonalisation } from "./dailyReminderPersonalisation";
+import { postReminderPersonalisation } from "./dayReminderPersonalisation";
 import { AuditEvent, List } from "@prisma/client";
-import { recordListItemEvent } from "server/models/audit";
+import { addUnpublishPostReminderAudit } from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
 
-const template = NOTIFY.templates.unpublishNotice.postOneDay;
+const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
-const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-export async function sendDayBeforeUnpublishPostReminder(
+export async function sendUnpublishPostConfirmation(
   emailAddress: string,
   list: List,
   numberNotResponded: number,
   meta: Meta
 ) {
-  const personalisation = dayBeforePostReminderPersonalisation(list, numberNotResponded, meta);
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishPostConfirmation", template });
+  const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
@@ -27,23 +27,19 @@ export async function sendDayBeforeUnpublishPostReminder(
       reference: meta.reference,
     });
 
-    const updateAudit = await recordListItemEvent(
+    const updateAudit = await addUnpublishPostReminderAudit(
       {
-        reminderType: "sendUnpublishOneDayPostEmail",
+        reminderType: "sendUnpublishedPostEmail",
         eventName: "reminder",
         itemId: list.id,
         annualReviewRef: meta.reference,
       },
-      AuditEvent.PUBLISHED,
-      "list"
+      AuditEvent.UNPUBLISHED,
     );
 
     if (!updateAudit) {
       logger.error(
-        `${meta.daysUntilUnpublish} days until unpublish reminder event failed to create for list ${list.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
-      );
-      logger.warn(
-        `Query for event insertion: insert into "Audit"("listId", type, "jsonData") values (${list.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["${meta.daysUntilUnpublish} day until unpublish"], "reference": "${meta.reference}"}');`
+        `unpublish reminder event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
       );
     }
 
