@@ -91,30 +91,25 @@
         {% for week, data in weeklyReminders %}
           {% set eventRows = [] %}
 
-          {% for listItem in data.events %}
-
-            {% set eventDelete = "?del=" %}
-
-            {% for event in listItem.history %}
-              {% set eventDelete = eventDelete + event.id + "," %}
-            {% endfor %}
+          {% for event in data.events %}
 
             {% set row = {
               key: {
-                text: "listItemId: " + listItem.id
+                text: event.listItem.id + " " + event.listItem.jsonData.organisationName
               },
               value: {
-                text: listItem.history.length + " sent"
+                text: event.jsonData.notes
               },
               actions: {
                 items: [
                   {
-                    href: eventDelete,
-                    text: "Delete reminders"
+                    href: "?del=" + event.id,
+                    text: "Delete reminder"
                   }
                 ]
               }
             } %}
+
 
             {% set eventRows = (eventRows.push(row), eventRows) %}
 
@@ -123,7 +118,7 @@
           <details class="govuk-details" data-module="govuk-details">
             <summary class="govuk-details__summary">
               <span class="govuk-details__summary-text">
-                <h3 class="govuk-heading-s">{{ week }} weeks since start date. {{ data.count }} reminders sent</h3>
+                <h3 class="govuk-heading-s">{{ week }} weeks since start date. {{ data.events.length }} reminders sent</h3>
               </span>
             </summary>
             <div class="govuk-details__text">
