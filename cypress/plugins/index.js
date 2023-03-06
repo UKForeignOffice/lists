@@ -50,7 +50,7 @@ module.exports = (on, config) => {
     },
     worker: async function () {
       const childProcess = require("node:child_process");
-      return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
+      return childProcess.execSync("node dist/scheduler/annualReviewWorker.js");
     },
   });
 };
