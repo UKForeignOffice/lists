@@ -1,29 +1,30 @@
 import { getMetaForList } from "../getMetaForList";
 
 test.each`
-  daysSinceStart | expectedWeeks
-  ${1}           | ${5}
-  ${2}           | ${5}
-  ${5}           | ${5}
-  ${7}           | ${5}
-  ${11}          | ${4}
-  ${14}          | ${4}
-  ${15}          | ${3}
-  ${21}          | ${3}
-  ${22}          | ${2}
-  ${28}          | ${2}
-  ${35}          | ${1}
-  ${42}          | ${0}
+  daysSinceStart | expectedWeeksUntilUnpublish | expectedWeeksSinceStart
+  ${1}           | ${5}                        | ${0}
+  ${2}           | ${5}                        | ${0}
+  ${5}           | ${5}                        | ${0}
+  ${7}           | ${5}                        | ${0}
+  ${11}          | ${4}                        | ${1}
+  ${14}          | ${4}                        | ${1}
+  ${15}          | ${3}                        | ${2}
+  ${21}          | ${3}                        | ${2}
+  ${22}          | ${2}                        | ${3}
+  ${28}          | ${2}                        | ${3}
+  ${35}          | ${1}                        | ${4}
+  ${42}          | ${0}                        | ${5}
 `(
-  "getMetaForList returns $expectedWeeks weeks until unpublish when it has been $daysSinceStart days since starting",
-  ({ daysSinceStart, expectedWeeks }) => {
+  "getMetaForList returns $expectedWeeksUntilUnpublish weeks until unpublish when it has been $daysSinceStart days since starting",
+  ({ daysSinceStart, expectedWeeksUntilUnpublish, expectedWeeksSinceStart }) => {
     const date = new Date(startDate);
     const day = date.getDate();
     date.setDate(day + daysSinceStart);
     jest.useFakeTimers().setSystemTime(date);
     expect(getMetaForList(list)).toStrictEqual({
       reference,
-      weeksUntilUnpublish: expectedWeeks,
+      weeksUntilUnpublish: expectedWeeksUntilUnpublish,
+      expectedWeeksSinceStart: expectedWeeksSinceStart,
       parsedUnpublishDate: "15 March 2023",
       countryName: "United Kingdom",
     });
