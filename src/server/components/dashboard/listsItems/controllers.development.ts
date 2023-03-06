@@ -18,6 +18,7 @@ export async function get(req: Request, res: ListIndexRes) {
     // @ts-ignore
     const toDelete = req.query.del.split(",").map(Number);
     await deleteEvents(toDelete);
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     req.flash("successBannerMessage", `Reminders ${req.query.del} deleted. They will be reattempted on the next run`);
     req.flash("successBannerHeading", "Key dates update");
     return res.redirect("development");
