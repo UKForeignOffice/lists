@@ -1,4 +1,4 @@
-import { differenceInDays, differenceInWeeks, format, parseISO, startOfToday } from "date-fns";
+import { differenceInDays, differenceInWeeks, format, parseISO, startOfDay, startOfToday } from "date-fns";
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { ListWithCountryName, Meta } from "./types";
@@ -27,13 +27,16 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
 
   const { keyDates } = currentAnnualReview;
 
-  const endDate = parseISO(keyDates.unpublished.UNPUBLISH);
+  const startDate = startOfDay(parseISO(keyDates.annualReview.START));
   const today = startOfToday();
+  const endDate = parseISO(keyDates.unpublished.UNPUBLISH);
   const daysUntilUnpublish = differenceInDays(endDate, today);
+
   return {
     reference: jsonData.currentAnnualReview!.reference,
     daysUntilUnpublish,
     weeksUntilUnpublish: differenceInWeeks(endDate, startOfToday()),
+    weeksSinceStart: differenceInWeeks(today, startDate, { roundingMethod: "floor" }),
     parsedUnpublishDate: format(endDate, DISPLAY_DATE_FORMAT),
     countryName: list.country.name,
   };

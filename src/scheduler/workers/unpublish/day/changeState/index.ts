@@ -23,11 +23,12 @@ export async function changeState(list: ListWithCountryName) {
   const listItems = await findListItemsToResetAnnualReview(list);
   logger.info(`retrieved list items: ${listItems.length}`);
   if (listItems.length) {
-    const unpublishedListItems = await unpublishListItems(listItems.map((listItem) => listItem.id));
+    const unpublishedListItemsTasks = await unpublishListItems(listItems.map((listItem) => listItem.id));
+    await Promise.allSettled(unpublishedListItemsTasks);
     logger.info(
-      `${unpublishedListItems.length ? "Reset" : "Could not reset"} annual review state for list items [${listItems.map(
-        (listItem) => listItem.id
-      )}]`
+      `${
+        unpublishedListItemsTasks.length ? "Reset" : "Could not reset"
+      } annual review state for list items [${listItems.map((listItem) => listItem.id)}]`
     );
   }
 

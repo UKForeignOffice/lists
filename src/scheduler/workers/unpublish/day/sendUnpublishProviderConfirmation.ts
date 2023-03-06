@@ -28,8 +28,11 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
     });
 
     logger.debug(`adding unpublished provider reminder event...`);
+
     const event = await addUnpublishProviderReminderEvent(
       listItem.id,
+      // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
+      response.data,
       [
         `sent reminder for ${meta.daysUntilUnpublish} days until unpublish`,
         JSON.stringify({
