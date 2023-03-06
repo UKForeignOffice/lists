@@ -197,7 +197,7 @@ export type AuditListItemEventName =
   | "startAnnualReview"
   | "reminder";
 
-export type AuditListEventName = "edit" | "new" | "reminder";
+export type AuditListEventName = "edit" | "new" | "reminder" | "endAnnualReview";
 
 export type ListAnnualReviewPostReminderType =
   | "sendOneMonthPostEmail"
