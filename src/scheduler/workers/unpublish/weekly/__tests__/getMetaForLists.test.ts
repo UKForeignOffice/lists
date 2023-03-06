@@ -24,7 +24,7 @@ test.each`
     expect(getMetaForList(list)).toStrictEqual({
       reference,
       weeksUntilUnpublish: expectedWeeksUntilUnpublish,
-      expectedWeeksSinceStart: expectedWeeksSinceStart,
+      weeksSinceStart: expectedWeeksSinceStart,
       parsedUnpublishDate: "15 March 2023",
       countryName: "United Kingdom",
     });
