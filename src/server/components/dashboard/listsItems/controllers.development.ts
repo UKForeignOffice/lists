@@ -18,6 +18,8 @@ export async function get(req: Request, res: ListIndexRes) {
     // @ts-ignore
     const toDelete = req.query.del.split(",").map(Number);
     await deleteEvents(toDelete);
+    req.flash("successBannerMessage", `Reminders ${req.query.del} deleted. They will be reattempted on the next run`);
+    req.flash("successBannerHeading", "Key dates update");
     return res.redirect("development");
   }
 
@@ -185,35 +187,26 @@ async function findReminders(listId: number) {
 
   const weeksWithEvents = await Promise.all(
     weeksWithQueryInput.map(async ({ weeksSinceStart, eventInput }) => {
-      const events = await prisma.listItem.findMany({
+      const events = await prisma.event.findMany({
         where: {
-          listId: list.id,
-          isAnnualReview: true,
-          history: {
-            some: {
-              type: "REMINDER",
-              time: eventInput,
-            },
+          listItem: {
+            listId: list.id,
+            isAnnualReview: true,
           },
+          type: "REMINDER",
+          time: eventInput,
         },
-        select: {
-          id: true,
-          history: {
-            where: {
-              time: eventInput,
-            },
-          },
+        include: {
+          listItem: true,
         },
       });
-      const count = events.reduce((prev, curr) => prev + curr.history.length, 0);
 
-      const eventIds = events.flatMap((listItem) => listItem.history.map((event) => `${event.id}`));
+      const eventIds = events.map((event) => `${event.id}`);
       const deleteUrl = new URLSearchParams({ del: eventIds });
 
       return {
         weeksSinceStart,
         eventInput,
-        count,
         events,
         deleteUrl,
       };
@@ -225,7 +218,6 @@ async function findReminders(listId: number) {
       ...prev,
       [curr.weeksSinceStart]: {
         events: curr.events,
-        count: curr.count,
         deleteUrl: curr.deleteUrl,
         range: `${curr.eventInput.gte.toISOString().substring(0, 10)} - ${curr.eventInput.lt
           .toISOString()
