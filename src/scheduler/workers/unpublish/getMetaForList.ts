@@ -1,4 +1,4 @@
-import {differenceInDays, differenceInWeeks, format, parseISO, startOfDay, startOfToday} from "date-fns";
+import { differenceInDays, differenceInWeeks, format, parseISO, startOfToday } from "date-fns";
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { ListWithCountryName, Meta } from "./types";

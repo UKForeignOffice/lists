@@ -17,5 +17,4 @@ export async function main() {
   logger.info(`Resetting annual review state for lists [${listsToResetAnnualReview.map((list) => list.id)}]`);
   const stateTasks = listsToResetAnnualReview.map(await changeState);
   await Promise.allSettled(stateTasks);
-
 }
