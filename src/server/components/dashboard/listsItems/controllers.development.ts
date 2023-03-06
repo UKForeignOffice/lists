@@ -148,7 +148,6 @@ async function findReminders(listId: number) {
       id: listId,
     },
   });
-
   if (!list) {
     return;
   }
@@ -228,7 +227,9 @@ async function findReminders(listId: number) {
         events: curr.events,
         count: curr.count,
         deleteUrl: curr.deleteUrl,
-        range: `${curr.eventInput.gte.toISOString()} - ${curr.eventInput.lt.toISOString()}`,
+        range: `${curr.eventInput.gte.toISOString().substring(0, 10)} - ${curr.eventInput.lt
+          .toISOString()
+          .substring(0, 10)}`,
       },
     };
   }, {});
