@@ -1,7 +1,7 @@
 import { List } from "@prisma/client";
 import { schedulerLogger } from "scheduler/logger";
 import { ListJsonData } from "server/models/types";
-import {  parseISO, startOfDay } from "date-fns";
+import { parseISO } from "date-fns";
 
 export function findReminderToSend(list: List) {
   const logger = schedulerLogger.child({ listId: list.id, method: "findReminderToSend" });

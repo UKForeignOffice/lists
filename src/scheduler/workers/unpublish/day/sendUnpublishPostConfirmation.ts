@@ -4,7 +4,9 @@ import { NOTIFY } from "server/config";
 import { Meta } from "../types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
 import { AuditEvent, List } from "@prisma/client";
-import { addUnpublishPostReminderAudit } from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
+import {
+  addUnpublishPostReminderAudit
+} from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
 
 const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
@@ -22,7 +24,6 @@ export async function sendUnpublishPostConfirmation(
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
   try {
-    logger.info(`Attempting to send post unpublished email using template ${template}, personalisation ${personalisation}`);
     const response = await notifyClient.sendEmail(template, emailAddress, {
       personalisation,
       reference: meta.reference,
