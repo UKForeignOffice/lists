@@ -76,6 +76,9 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
   }
 
   const publishingStatus = getPublishingStatus(listItem);
+
+  const hasResponded = ["EDITED", "CHECK_ANNUAL_REVIEW"].includes(listItem.status);
+
   const actions: Record<Action, boolean> = {
     archive: !listItem.isPublished && !["archived", "unpublished"].includes(publishingStatus),
     pin: false, // never show this radio
@@ -84,8 +87,8 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     unpin: false, // never show this radio
     unpublish: listItem.isPublished,
     update: false, // never show this radio
-    updateLive: listItem.isPublished && listItem.status === "EDITED",
-    updateNew: !listItem.isPublished && listItem.status === "EDITED",
+    updateLive: listItem.isPublished && hasResponded,
+    updateNew: !listItem.isPublished && hasResponded,
     publish: !listItem.isPublished && listItem.status !== "EDITED",
   };
 
