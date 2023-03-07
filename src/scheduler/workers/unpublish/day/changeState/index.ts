@@ -23,7 +23,7 @@ export async function changeState(list: ListWithCountryName) {
   const listItems = await findListItemsToResetAnnualReview(list);
   logger.info(`retrieved list items: ${listItems.length}`);
   if (listItems.length) {
-    const unpublishedListItemsTasks = await unpublishListItems(listItems.map((listItem) => listItem.id));
+    const unpublishedListItemsTasks = await unpublishListItems(listItems.map((listItem) => listItem.id), jsonData.currentAnnualReview.reference);
     await Promise.allSettled(unpublishedListItemsTasks);
     logger.info(
       `${

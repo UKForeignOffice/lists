@@ -144,6 +144,14 @@ export const EVENTS = {
       },
     };
   },
+
+  [ListItemEvent.ANNUAL_REVIEW_OVERDUE]: (reference?: string): EventCreate<"ANNUAL_REVIEW_OVERDUE"> => ({
+    type: ListItemEvent.ANNUAL_REVIEW_OVERDUE,
+    jsonData: {
+      eventName: "annual review overdue",
+      ...{ reference },
+    },
+  }),
 };
 
 export function recordEvent(
