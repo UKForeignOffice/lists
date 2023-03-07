@@ -86,7 +86,7 @@
     "@commitlint/config-conventional": "^13.2.0",
     "@ngneat/falso": "^5.0.0",
     "@testing-library/cypress": "^8.0.3",
-    "@testing-library/user-event": "^13.1.9",
+    "@testing-library/user-event": "^14.4.3",
     "@types/body-parser": "^1.19.1",
     "@types/cheerio": "^0.22.30",
     "@types/compression": "^1.7.1",
