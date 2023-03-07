@@ -5,15 +5,15 @@ test.each`
   ${1}           | ${5}                        | ${0}
   ${2}           | ${5}                        | ${0}
   ${5}           | ${5}                        | ${0}
-  ${7}           | ${5}                        | ${0}
+  ${7}           | ${5}                        | ${1}
   ${11}          | ${4}                        | ${1}
-  ${14}          | ${4}                        | ${1}
+  ${14}          | ${4}                        | ${2}
   ${15}          | ${3}                        | ${2}
-  ${21}          | ${3}                        | ${2}
+  ${21}          | ${3}                        | ${3}
   ${22}          | ${2}                        | ${3}
-  ${28}          | ${2}                        | ${3}
-  ${35}          | ${1}                        | ${4}
-  ${42}          | ${0}                        | ${5}
+  ${28}          | ${2}                        | ${4}
+  ${35}          | ${1}                        | ${5}
+  ${42}          | ${0}                        | ${6}
 `(
   "getMetaForList returns $expectedWeeksUntilUnpublish weeks until unpublish when it has been $daysSinceStart days since starting",
   ({ daysSinceStart, expectedWeeksUntilUnpublish, expectedWeeksSinceStart }) => {
