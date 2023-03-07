@@ -372,7 +372,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li> currently qualified to provide translation or interpretation services</li>\n  <li> reliable and willing to help on a regular basis</li>\n  <li> able to respond within a reasonable timeframe to client requests</li>\n  <li> willing to update or re-confirm your details on an annual basis on request</li>\n  <li> aware that inclusion on the 'Find an English-speaking translator or interpreter abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n  </li>\n</ul>\n",
+          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li> currently qualified to provide translation or interpretation services</li>\n  <li> reliable and willing to help on a regular basis</li>\n  <li> able to respond within a reasonable timeframe to client requests</li>\n  <li> willing to update or re-confirm your details on an annual basis on request</li>\n  <li> aware that inclusion on the 'Find an English-speaking translator or interpreter abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n  </li>\n</ul>\n<p class=\"govuk-body\">Read the <a class=\"govuk-link\" href=\"/help/terms-and-conditions\" target=\"_blank\">full terms and conditions</a>.</p>\n",
           "schema": {}
         },
         {
