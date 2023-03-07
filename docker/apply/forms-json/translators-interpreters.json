@@ -2451,7 +2451,7 @@
       "type": "string",
       "items": [
         {
-          "text": "Confirmed",
+          "text": "I have read and agree with this statement",
           "value": "confirm"
         }
       ]
