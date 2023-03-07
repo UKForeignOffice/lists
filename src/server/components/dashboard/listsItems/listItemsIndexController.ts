@@ -1,20 +1,11 @@
 import { NextFunction, Request } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import {
-  ACTIVITY_TAGS,
-  AnnualReviewBanner,
-  IndexListItem,
-  ORDER_BY,
-  PUBLISHING_TAGS,
-  TAGS,
-  Tags,
-} from "server/models/listItem/types";
+import { ACTIVITY_TAGS, IndexListItem, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import { ListWithJsonData } from "../helpers";
-import * as SummaryHelpers from "server/models/listItem/summary.helpers";
 import {
   displayEmailsSentBanner,
   displayOneMonthAnnualReviewWarning,

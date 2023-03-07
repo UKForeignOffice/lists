@@ -192,7 +192,10 @@ export function displayOneMonthAnnualReviewWarning(
 export async function displayUnpublishWarning(
   list: ListWithJsonData
 ): Promise<AnnualReviewBanner<"unpublishWarning", number>> {
-  const keyDates = list.jsonData.currentAnnualReview?.keyDates!;
+  const keyDates = list.jsonData.currentAnnualReview?.keyDates;
+  if (!keyDates) {
+    return;
+  }
   const startDate = startOfDay(parseISO(keyDates?.annualReview.START));
   const unpublishDate = startOfDay(parseISO(keyDates?.unpublished.UNPUBLISH));
 
