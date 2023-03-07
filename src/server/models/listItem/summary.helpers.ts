@@ -1,5 +1,5 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { ActivityStatusViewModel, IndexListItem } from "server/models/listItem/types";
+import { ActivityStatusViewModel, AnnualReviewBanner, IndexListItem } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
 import { differenceInWeeks, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
@@ -163,7 +163,9 @@ export function getLastPublished(events: Array<{ type: string; time: Date }> | u
  * start date.
  * @param list
  */
-export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): boolean {
+export function displayOneMonthAnnualReviewWarning(
+  list: ListWithJsonData
+): AnnualReviewBanner<"oneMonthWarning", boolean> {
   const oneMonthBeforeDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH;
   const annualReviewDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
   let oneMonthWarning = false;
@@ -177,7 +179,9 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
     const isBeforeAnnualReviewDate = isBefore(Date.now(), annualReviewDate);
     oneMonthWarning = isAfterOneMonthDate && isBeforeAnnualReviewDate;
   }
-  return oneMonthWarning;
+  return {
+    oneMonthWarning,
+  };
 }
 
 /**
@@ -185,7 +189,9 @@ export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): bool
  * have not responded AND the current date is five weeks or less prior to the unpublish date. Providers that haven't
  * responded can be determined where listItem.isAnnualReview = true and the listItem.status = OUT_WITH_PROVIDER.
  */
-export async function displayUnpublishWarning(list: ListWithJsonData) {
+export async function displayUnpublishWarning(
+  list: ListWithJsonData
+): Promise<AnnualReviewBanner<"unpublishWarning", number>> {
   const keyDates = list.jsonData.currentAnnualReview?.keyDates!;
   const startDate = startOfDay(parseISO(keyDates?.annualReview.START));
   const unpublishDate = startOfDay(parseISO(keyDates?.unpublished.UNPUBLISH));
@@ -195,7 +201,7 @@ export async function displayUnpublishWarning(list: ListWithJsonData) {
 
   if (weeksSinceStarting >= 5 && countOfListItems > 0) {
     return {
-      countOfListItems,
+      unpublishWarning: countOfListItems,
     };
   }
 }
@@ -217,13 +223,26 @@ async function countNumberOfNonRespondents(listId: number, annualReviewStartDate
   });
 }
 
+export function displayEmailsSentBanner(
+  list: ListWithJsonData,
+  listItems: IndexListItem[]
+): AnnualReviewBanner<"emailsSent", boolean> {
+  const emailsSent = listItems?.some((listItem) => {
+    return annualReviewEmailsSent(list, listItem?.history);
+  });
+
+  if (!emailsSent) return;
+
+  return {
+    emailsSent,
+  };
+}
+
 /**
  * Used to display the warning banner in the list items page to notify the annual review email has been sent to the
  * providers. Only returns true if there are Event records for this list item with an event type "ANNUAL_REVIEW_STARTED"
  * and where the event time is after the annual review start date. This ensures Event records from previous years do not
  * get used when performing this validation.
- * @param events
- * @param list
  */
 export function annualReviewEmailsSent(
   list: ListWithJsonData,
