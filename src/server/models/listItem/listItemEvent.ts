@@ -1,5 +1,5 @@
 import { prisma } from "../db/prisma-client";
-import { Prisma, ListItemEvent } from "@prisma/client";
+import { ListItemEvent, Prisma } from "@prisma/client";
 import { Event, EventCreateInput, EventJsonData } from "./types";
 import { logger } from "server/services/logger";
 import { SendEmailResponse } from "notifications-node-client";

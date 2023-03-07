@@ -56,8 +56,8 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       sandbox: "false"
-#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
-#    env_file: .env
+    #    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
+    #    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy
@@ -78,8 +78,8 @@ services:
       DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
       DEBUG: "true"
       LOG_LEVEL: "debug"
-#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
-#    env_file: .env
+    #    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
+    #    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,7 +93,7 @@ services:
       target: scheduled
       args:
         - BUILD_MODE=ci
-    command: npm run scheduler:annual-review-worker
+    command: npm run scheduler:worker
     environment:
       DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
       FORM_RUNNER_URL: "apply:3001"
@@ -109,42 +109,6 @@ services:
       GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE}"
       GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED}"
       GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED}"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
-      sandbox: "false"
-#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
-#    env_file: .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-      apply:
-        condition: service_started
-
-  scheduler-unpublish:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: scheduled
-      args:
-        - BUILD_MODE=ci
-    command: ['npm', 'run', 'scheduler:unpublish']
-    environment:
-      DATABASE_URL: "postgresql://master:postgrespass@postgres:5432/lists"
-      FORM_RUNNER_URL: "apply:3001"
-      DEBUG: "true"
-      LOG_LEVEL: "info"
-      LOCATION_SERVICE_INDEX_NAME: fcdo-professional-service-finder
-      GOVUK_NOTIFY_API_KEY: "${GOVUK_NOTIFY_API_KEY}"
-      GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID: "${GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID}"
-      GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID: "${GOVUK_NOTIFY_POST_NEW_PROFESSIONAL_APPLICATION_RECEIVED_TEMPLATE_ID}"
-      GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID: "${GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID}"
-      GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID: "${GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID}"
-      GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID: "${GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID}"
-      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE": "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE}"
-      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE}"
-      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE}"
-      GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED}"
-      GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED: "${GOVUK_NOTIFY_ANNUAL_REVIEW_PROVIDER_STARTED}"
       GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE: "${GOVUK_NOTIFY_UNPUBLISH_POST_WEEKLY_NOTICE}"
       GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE: "${GOVUK_NOTIFY_UNPUBLISH_POST_ONE_DAY_NOTICE}"
       GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE: "${GOVUK_NOTIFY_UNPUBLISHED_POST_NOTICE}"
@@ -153,8 +117,8 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
       sandbox: "false"
-#    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
-#    env_file: .env
+    #    uncomment this if you have a .env file you want to use locally. Docker compose will throw an error if this does not exist.
+    #    env_file: .env
     depends_on:
       postgres:
         condition: service_healthy
