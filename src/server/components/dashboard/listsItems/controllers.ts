@@ -91,7 +91,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   // @ts-ignore
   const actionButtons = Object.keys(actions).filter((action) => actions[action]);
-
+  logger.info(`action buttons ${listItem.id} ${JSON.stringify(actionButtons)}`);
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;
 
   res.render("dashboard/lists-item", {
