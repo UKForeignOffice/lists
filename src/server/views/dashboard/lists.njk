@@ -35,7 +35,7 @@
             </td>
             <td class="govuk-table__cell">{{ list.country.name }}</td>
 
-            <td class="govuk-table__cell">{{ list.lastAnnualReviewStartDate if list.lastAnnualReviewStartDate else "No review"}}</td>
+            <td class="govuk-table__cell">{{ list.lastAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) if list.lastAnnualReviewStartDate else "No review"}}</td>
             <td class="govuk-table__cell">{{ list.nextAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) if list.nextAnnualReviewStartDate }}</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">
               <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.id) }}" class="govuk-link">Settings</a>
