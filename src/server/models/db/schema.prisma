@@ -159,6 +159,8 @@ model Event {
   listItemId          Int
   type                ListItemEvent
   jsonData            Json
+
+  @@index([time, listItemId])
 }
 
 enum ListItemEvent {

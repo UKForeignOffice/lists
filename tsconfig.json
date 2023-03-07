@@ -15,6 +15,7 @@
     "paths": {
       "client/*": ["client/*"],
       "server/*": ["server/*"],
+      "scheduler/*": ["scheduler/*"],
       "@jest/*": ["./../.jest/*"]
     },
     "useUnknownInCatchVariables": false,
@@ -23,6 +24,7 @@
     ".jest/*",
     "src",
     "src/server/**/*",
+    "src/scheduler/**/*",
     "src/client/**/*",
     "node_modules/jest-extended/types/**/*.d.ts",
   ],

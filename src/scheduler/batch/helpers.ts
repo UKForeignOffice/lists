@@ -70,6 +70,8 @@ function getUnpublishedDateContexts(annualReviewStartDate: Date): DateContext[] 
   ];
 
   // fill in the dates between 1 to 5 weeks from the todayDateString
+  // TODO:- refactor to use eachWeekOfInterval (see git 39e9155437946edfb6a879328656f7e5143b767b findReminderToSend.newUnpublishedObject.)
+  // TODO:- investigate I [jen] don't think this is necessary anymore.
   for (
     let eventMilestone = schedulerMilestoneDays.both.ONE_WEEK;
     eventMilestone <= schedulerMilestoneDays.provider.FIVE_WEEKS;
@@ -190,4 +192,3 @@ export function getDateForContext(contexts: SchedulerDateContexts, contextType: 
   }
   return dateContext;
 }
-

@@ -201,13 +201,13 @@ const scheduler = {
   mode: environmentOptions[nodeEnv].mode,
   watch: environmentOptions[nodeEnv].watch,
   entry: {
-    unpublish: getScheduledFilePath("", "annualReviewUnpublishedEmailScheduler.ts"),
+    worker: getScheduledFilePath("workers", "main.ts"),
     batch: getScheduledFilePath("batch", "main.ts"),
-    annualReviewWorker: getScheduledFilePath("workers", "main.ts"),
   },
   devtool: "cheap-module-source-map",
   output: {
     path: path.resolve(__dirname, "dist", "scheduler"),
+    filename: "[name].js",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".json"],

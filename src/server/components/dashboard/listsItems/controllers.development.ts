@@ -1,16 +1,27 @@
 import { ListIndexRes } from "server/components/dashboard/listsItems/types";
-import { List, ScheduledProcessKeyDates } from "server/models/types";
-import { parseISO } from "date-fns";
+import { List, ListJsonData, ScheduledProcessKeyDates } from "server/models/types";
+import { differenceInWeeks, eachWeekOfInterval, parseISO, startOfDay, startOfToday } from "date-fns";
 
 import { prisma } from "server/models/db/prisma-client";
 import { Request } from "express";
 import { logger } from "server/services/logger";
 import { createKeyDatesFromISODate } from "server/components/dashboard/annualReview/helpers.keyDates";
+import { URLSearchParams } from "url";
 
 export async function get(req: Request, res: ListIndexRes) {
   if (!req.user?.isAdministrator) {
     req.flash("error", "You do not have the correct permissions to view this page");
     return res.redirect(res.locals.listsEditUrl);
+  }
+
+  if (req.query.del) {
+    // @ts-ignore
+    const toDelete = req.query.del.split(",").map(Number);
+    await deleteEvents(toDelete);
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    req.flash("successBannerMessage", `Reminders ${req.query.del} deleted. They will be reattempted on the next run`);
+    req.flash("successBannerHeading", "Key dates update");
+    return res.redirect("development");
   }
 
   const { list } = res.locals;
@@ -33,10 +44,14 @@ export async function get(req: Request, res: ListIndexRes) {
   }
 
   const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);
+  const weeklyReminders = await findReminders(list.id);
+  const start = startOfDay(parseISO(keyDates.annualReview.START));
 
   return res.render("dashboard/lists-edit-dev", {
     keyDates: flattenKeyDatesObject(keyDates),
     csrfToken: req.csrfToken(),
+    weeklyReminders,
+    currentWeek: differenceInWeeks(startOfToday(), start),
   });
 }
 
@@ -54,10 +69,6 @@ function parseKeyDatesFromBodyRequest(keyDates: ScheduledProcessKeyDates) {
       START: formatISOString(annualReview.START),
     },
     unpublished: {
-      PROVIDER_FIVE_WEEKS: formatISOString(unpublished.PROVIDER_FIVE_WEEKS),
-      PROVIDER_FOUR_WEEKS: formatISOString(unpublished.PROVIDER_FOUR_WEEKS),
-      PROVIDER_THREE_WEEKS: formatISOString(unpublished.PROVIDER_THREE_WEEKS),
-      PROVIDER_TWO_WEEKS: formatISOString(unpublished.PROVIDER_TWO_WEEKS),
       ONE_WEEK: formatISOString(unpublished.ONE_WEEK),
       ONE_DAY: formatISOString(unpublished.ONE_DAY),
       UNPUBLISH: formatISOString(unpublished.UNPUBLISH),
@@ -71,10 +82,6 @@ function flattenKeyDatesObject(keyDates: ScheduledProcessKeyDates) {
     "annualReview[POST_ONE_WEEK]": keyDates.annualReview.POST_ONE_WEEK,
     "annualReview[POST_ONE_DAY]": keyDates.annualReview.POST_ONE_DAY,
     "annualReview[START]": keyDates.annualReview.START,
-    "unpublished[PROVIDER_FIVE_WEEKS]": keyDates.unpublished.PROVIDER_FIVE_WEEKS,
-    "unpublished[PROVIDER_FOUR_WEEKS]": keyDates.unpublished.PROVIDER_FOUR_WEEKS,
-    "unpublished[PROVIDER_THREE_WEEKS]": keyDates.unpublished.PROVIDER_THREE_WEEKS,
-    "unpublished[PROVIDER_TWO_WEEKS]": keyDates.unpublished.PROVIDER_TWO_WEEKS,
     "unpublished[ONE_WEEK]": keyDates.unpublished.ONE_WEEK,
     "unpublished[ONE_DAY]": keyDates.unpublished.ONE_DAY,
     "unpublished[UNPUBLISH]": keyDates.unpublished.UNPUBLISH,
@@ -136,4 +143,97 @@ export async function post(req: Request, res: ListIndexRes) {
   req.flash("successBannerHeading", "Key dates update");
 
   return res.redirect(`${res.locals.listsEditUrl}/development`);
+}
+
+async function findReminders(listId: number) {
+  const list = await prisma.list.findUnique({
+    where: {
+      id: listId,
+    },
+  });
+  if (!list) {
+    return;
+  }
+
+  const jsonData = list.jsonData as ListJsonData;
+  const { currentAnnualReview } = jsonData;
+  const { keyDates } = currentAnnualReview!;
+
+  const start = startOfDay(parseISO(keyDates.annualReview.START));
+  const end = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
+  const weekStartsOn = start.getDay();
+
+  const weeks = eachWeekOfInterval(
+    {
+      start,
+      end,
+    },
+    {
+      // @ts-ignore
+      weekStartsOn,
+    }
+  );
+
+  const weeksWithQueryInput = weeks.map((weekStartDate, index) => {
+    const greaterThanStartOfWeek = { gte: weekStartDate };
+    const lessThanStartOfNextWeek = { lt: weeks[index + 1] ?? new Date() };
+    return {
+      weeksSinceStart: differenceInWeeks(weekStartDate, start, { roundingMethod: "floor" }),
+      eventInput: {
+        ...greaterThanStartOfWeek,
+        ...lessThanStartOfNextWeek,
+      },
+    };
+  });
+
+  const weeksWithEvents = await Promise.all(
+    weeksWithQueryInput.map(async ({ weeksSinceStart, eventInput }) => {
+      const events = await prisma.event.findMany({
+        where: {
+          listItem: {
+            listId: list.id,
+            isAnnualReview: true,
+          },
+          type: "REMINDER",
+          time: eventInput,
+        },
+        include: {
+          listItem: true,
+        },
+      });
+
+      const eventIds = events.map((event) => `${event.id}`);
+      const deleteUrl = new URLSearchParams({ del: eventIds });
+
+      return {
+        weeksSinceStart,
+        eventInput,
+        events,
+        deleteUrl,
+      };
+    })
+  );
+
+  return weeksWithEvents.reduce((prev, curr) => {
+    return {
+      ...prev,
+      [curr.weeksSinceStart]: {
+        events: curr.events,
+        deleteUrl: curr.deleteUrl,
+        range: `${curr.eventInput.gte.toISOString().substring(0, 10)} - ${curr.eventInput.lt
+          .toISOString()
+          .substring(0, 10)}`,
+      },
+    };
+  }, {});
+}
+
+async function deleteEvents(ids: number[]) {
+  return await prisma.event.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
 }
