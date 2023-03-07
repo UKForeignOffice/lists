@@ -191,7 +191,7 @@ export function displayOneMonthAnnualReviewWarning(
  */
 export async function displayUnpublishWarning(
   list: ListWithJsonData
-): Promise<AnnualReviewBanner<"unpublishWarning", number>> {
+): Promise<AnnualReviewBanner<"unpublishWarning", { countOfListItems: number }>> {
   const keyDates = list.jsonData.currentAnnualReview?.keyDates;
   if (!keyDates) {
     return;
@@ -204,7 +204,9 @@ export async function displayUnpublishWarning(
 
   if (weeksSinceStarting >= 5 && countOfListItems > 0) {
     return {
-      unpublishWarning: countOfListItems,
+      unpublishWarning: {
+        countOfListItems,
+      },
     };
   }
 }
