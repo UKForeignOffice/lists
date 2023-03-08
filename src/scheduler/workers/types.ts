@@ -1,4 +1,4 @@
-import { Address, List, ListItem } from "@prisma/client";
+import { List } from "@prisma/client";
 
 export interface Meta {
   /**
@@ -16,5 +16,4 @@ interface CountryName {
   country: { name: string };
 }
 
-export type ListItemWithCountryName = ListItem & { address: Address & CountryName };
 export type ListWithCountryName = List & CountryName;
