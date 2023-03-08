@@ -1,9 +1,17 @@
 # Steps to update the dev db with prod data
 
+## Pre-requisites
 
-## 1 - Take a Dump of Data from Production and Export to a File
+- Login details for the FCDO AWS configuration https://github.com/UKForeignOffice/configurable-forms-infrastructure#kubectl-client-configuration 
+- Connected to the VPN and authenticated. See [connecting to the test db](https://github.com/UKForeignOffice/lists/blob/master/docs/connecting-to-test-db.md#connecting-to-test-environment-database) for more details
+- Set your context to `fco-forms-prod`. `% kubectx fco-forms-prod`
+- postgres running on your machine locally 
+  - `% docker compose up postgres`
 
-Take a dump of the data from the production environment and export it to a file. This file will contain all of the data that is currently in the production database.
+
+## 1 - Get a dump of data from production and export to a file
+
+Get a dump of the data from the production environment and export it to a file. This file will contain all of the data that is currently in the production database.
 
 You will first have to use **kubectl** to get the list of available pods `kubectl get pod`
 Locate the one with the prefix `lists-postgres- `
@@ -45,15 +53,18 @@ COMMIT;
 
 ```
 
-## 4 - Take a Dump of Data from Local Dev DB & Encrypt Dump File
+## 4 - Create encrypted export to commit to repository
 
-Take another dump of the data from the local development database to create a new dump file that includes your changes then Encrypt the dump file using GPG.
+Get another dump of the data from the local development database to create a new dump file that includes your changes then Encrypt the dump file using GPG.
 
 You can do that with the following command
 
 ```bash
 pg_dump postgresql://master:[password]@localhost:5432/lists | gpg -e -o updated_prod_data.sql.zip.gpg -r [recipient_id]
 ```
+
+
+See [connecting-to-test-db.md#snapshot](https://github.com/UKForeignOffice/lists/blob/master/docs/connecting-to-test-db.md#snapshot) on how to decrypt and encrypt the database using GPG. 
 
 [GPG Documentation](https://www.gnupg.org/documentation/index.html)
 
