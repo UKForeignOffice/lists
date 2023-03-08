@@ -94,7 +94,7 @@ describe("Auth Module", () => {
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(res.render).toHaveBeenCalledWith("login", { success: true });
+        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@depto.gov.uk" });
         done();
       });
     });
@@ -133,10 +133,19 @@ describe("Auth Module", () => {
       });
     });
 
-    test("authentication request fails if email address is not gov.uk ", () => {
+    test("present user with success message if email address is NOT gov.uk", () => {
       req.body.emailAddress = "someemail@gmail.com";
       postLoginController(req, res, next);
-      expect(res.render).toHaveBeenCalledWith("login", { error: true });
+      expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "someemail@gmail.com" });
+    });
+
+    test("prevent authentication email sending if email address is NOT gov.uk", async () => {
+      const sendAuthEmail = jest.fn(() => notifyService.sendAuthenticationEmail());
+
+      req.body.emailAddress = "someemail@gmail.com";
+      await postLoginController(req, res, next);
+
+      expect(sendAuthEmail).not.toHaveBeenCalledWith();
     });
 
     test("authLink is not logged outside localhost", (done) => {
@@ -149,7 +158,7 @@ describe("Auth Module", () => {
 
       setTimeout(() => {
         expect(logger.warn).not.toHaveBeenCalled();
-        expect(res.render).toHaveBeenCalledWith("login", { success: true });
+        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@depto.gov.uk" });
         done();
       });
     });
