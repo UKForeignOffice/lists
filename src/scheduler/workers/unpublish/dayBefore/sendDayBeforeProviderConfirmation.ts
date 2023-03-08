@@ -2,10 +2,10 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "../../types";
 import { addUnpublishProviderReminderEvent } from "./addUnpublishProviderReminderEvent";
 import { providerReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
 import { ListItem } from "@prisma/client";
+import { Meta } from "scheduler/workers/types";
 
 const template = NOTIFY.templates.unpublishNotice.providerOneDay;
 

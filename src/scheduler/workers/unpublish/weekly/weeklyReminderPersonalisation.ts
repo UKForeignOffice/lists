@@ -1,8 +1,8 @@
 import { ServiceType } from "server/models/types";
-import { Meta } from "./types";
-import { createAnnualReviewProviderUrl } from "scheduler/workers/processListsBeforeAndDuringStart/helpers";
 import { ListItem } from "@prisma/client";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
+import { Meta } from "scheduler/workers/types";
 
 export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
