@@ -28,8 +28,8 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
   const { keyDates } = currentAnnualReview;
 
   const startDate = startOfDay(parseISO(keyDates.annualReview.START));
+  const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
   const today = startOfToday();
-  const endDate = parseISO(keyDates.unpublished.UNPUBLISH);
   const daysUntilUnpublish = differenceInDays(endDate, today);
 
   return {

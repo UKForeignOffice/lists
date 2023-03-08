@@ -15,7 +15,8 @@ import { findListItems, updateIsAnnualReview } from "server/models/listItem";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { MilestoneTillAnnualReview } from "../../batch/helpers";
 import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
-import { createAnnualReviewProviderUrl, formatDate, isEmailSentBefore } from "./helpers";
+import { formatDate, isEmailSentBefore } from "./helpers";
+import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
 
 async function processPostEmailsForList(
   list: List,
