@@ -1,10 +1,10 @@
 import * as PrismaClient from "@prisma/client";
 import { countriesList } from "server/services/metadata";
 import {
-  ListItemJsonData,
-  LawyerJsonData,
   CovidTestSupplierJsonData,
   FuneralDirectorJsonData,
+  LawyerJsonData,
+  ListItemJsonData,
   TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
@@ -29,6 +29,7 @@ export interface AnnualReviewKeyDates extends JsonObject {
   POST_ONE_DAY: string;
   START: string;
 }
+
 export interface UnpublishedKeyDates extends JsonObject {
   PROVIDER_FIVE_WEEKS: string;
   PROVIDER_FOUR_WEEKS: string;
@@ -38,15 +39,18 @@ export interface UnpublishedKeyDates extends JsonObject {
   ONE_DAY: string;
   UNPUBLISH: string;
 }
+
 export interface ScheduledProcessKeyDates extends JsonObject {
   annualReview: AnnualReviewKeyDates;
   unpublished: UnpublishedKeyDates;
 }
+
 export interface CurrentAnnualReview extends JsonObject {
   reference: string;
   eligibleListItems: number[];
   keyDates: ScheduledProcessKeyDates;
 }
+
 export interface ListJsonData extends JsonObject {
   users?: string[];
   currentAnnualReview?: CurrentAnnualReview;
@@ -179,10 +183,10 @@ export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
 // Audit
 export type AuditEventName = "edit" | "new";
 
-export type AuditListItemEventName = "edit"
+export type AuditListItemEventName =
+  | "edit"
   | "new"
   | "requestChange"
-  | "edit"
   | "approve"
   | "delete"
   | "pin"
@@ -247,7 +251,7 @@ export interface ListItemEventJsonData extends BaseAuditEventJsonData {
 export interface ListEventJsonData extends BaseAuditEventJsonData {
   eventName: AuditListEventName;
   annualReviewRef?: string;
-  reminderType?: ListAnnualReviewPostReminderType;
+  reminderType?: ListAnnualReviewPostReminderType | ListItemUnpublishedPostReminderType;
 }
 
 export type AuditEventJsonData = ListItemEventJsonData | ListEventJsonData;
