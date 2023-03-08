@@ -27,7 +27,7 @@ Feature: Provider annual review confirmation
         When I click the "No, I need to update my information" radio button
         And I click the "Continue" button
         And I see page with heading "Declaration"
-        And I check the "Confirmed" checkbox
+        And I check the "I have read and agree with this statement" checkbox
         And I click the "Submit" button
         Then I see page with heading "Check your answers"
 
@@ -42,7 +42,7 @@ Feature: Provider annual review confirmation
     Scenario: Show success page
         When I click the "Yes, I confirm my information is still correct" radio button
         And I click the "Continue" button
-        And I check the "Confirmed" checkbox
+        And I check the "I have read and agree with this statement" checkbox
         And I click the "Submit" button
         Then I see page with heading "Application resubmitted"
 
@@ -50,7 +50,7 @@ Feature: Provider annual review confirmation
     Scenario: Show error page after visitng same page
         When I click the "Yes, I confirm my information is still correct" radio button
         And I click the "Continue" button
-        And I check the "Confirmed" checkbox
+        And I check the "I have read and agree with this statement" checkbox
         And I click the "Submit" button
         And I go back to confirmation page
         Then I see page with heading "You have already submitted your annual review"
