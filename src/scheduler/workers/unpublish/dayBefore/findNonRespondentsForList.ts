@@ -10,7 +10,9 @@ export async function findNonRespondentsForList(list: List) {
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
 
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {
-    type: "EDITED",
+    type: {
+      in: ["EDITED", "CHECK_ANNUAL_REVIEW"],
+    },
     time: {
       gte: annualReviewDate,
     },
