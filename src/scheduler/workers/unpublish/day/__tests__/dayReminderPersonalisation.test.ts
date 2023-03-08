@@ -1,7 +1,4 @@
 import { postReminderPersonalisation, providerReminderPersonalisation } from "../dayReminderPersonalisation";
-import { sendUnpublishPostConfirmation } from "../sendUnpublishPostConfirmation";
-import { sendUnpublishProviderConfirmation } from "../sendUnpublishProviderConfirmation";
-import { createAnnualReviewProviderUrl } from "../../../createAnnualReviewProviderUrl";
 
 describe.each`
   serviceType                  | displayString
