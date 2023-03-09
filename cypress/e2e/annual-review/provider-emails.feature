@@ -9,6 +9,3 @@ Feature: Check correct email is sent to provider that has had edits requested
         When eurasia lawyers have annual review in "-15" days
         And the batch process has run
         And the worker process has run
-# Trigger process to chekc if emails need to be sent
-# Set email to be triggered 3 days before today or wait 3 days
-# Check if email has been sent

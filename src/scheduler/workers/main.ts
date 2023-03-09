@@ -19,7 +19,7 @@ async function main() {
 }
 
 main()
-  .then((promiseResults) => {
+  .then(() => {
     logger.info("All tasks completed");
     process.exit(0);
   })

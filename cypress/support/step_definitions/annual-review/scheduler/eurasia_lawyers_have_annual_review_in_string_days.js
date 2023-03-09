@@ -4,7 +4,10 @@ const today = new Date();
 
 When("eurasia lawyers have annual review in {string} days", async (days = "0") => {
   await updateListForAnnualReview(days);
-  await createListItem("test-user");
+
+  ["user1", "user2"].forEach(async (reference) => {
+    await createListItem(reference);
+  });
 });
 
 async function updateListForAnnualReview(days) {
@@ -39,10 +42,10 @@ async function createListItem(reference) {
     variables: {
       data: {
         reference,
-        ...createListItemBaseObject(),
+        ...createListItemBaseObject(reference),
         history: {
           createMany: {
-            data: [events.PUBLISHED(monthAfterToday)],
+            data: [events.PUBLISHED(monthAfterToday), events.OUT_WITH_PROVIDER(monthAfterToday)],
           },
         },
         address: {
@@ -61,6 +64,13 @@ async function createListItem(reference) {
 }
 
 const events = {
+  OUT_WITH_PROVIDER: (date) => ({
+    time: date,
+    type: "OUT_WITH_PROVIDER",
+    jsonData: {
+      eventName: "out with provider",
+    },
+  }),
   PUBLISHED: (date) => ({
     time: date,
     type: "PUBLISHED",
@@ -70,13 +80,14 @@ const events = {
   }),
 };
 
-function createListItemBaseObject() {
+function createListItemBaseObject(reference) {
   return {
     type: "lawyers",
     isApproved: true,
     isPublished: true,
     isBlocked: false,
-    status: "PUBLISHED",
+    isAnnualReview: reference !== "user1",
+    status: reference === "user1" ? "PUBLISHED" : "OUT_WITH_PROVIDER",
     jsonData: createLawyersJsonData(),
     list: {
       connect: {

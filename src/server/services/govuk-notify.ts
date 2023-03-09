@@ -10,9 +10,7 @@ let notifyClient: any;
 
 export function getNotifyClient(): any {
   if (notifyClient === undefined) {
-    const requiredTemplateIds = [
-      "NOTIFY.apiKey",
-    ];
+    const requiredTemplateIds = ["NOTIFY.apiKey"];
 
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
     if (config.isSmokeTest) {
