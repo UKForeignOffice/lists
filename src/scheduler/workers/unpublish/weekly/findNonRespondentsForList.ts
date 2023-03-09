@@ -15,7 +15,10 @@ export async function findNonRespondentsForList(list: List) {
   const { reminderToFind, weeksSinceStartDate } = findReminderToSend(list);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
 
-  if (weeksSinceStartDate >= 6) {
+  if (weeksSinceStartDate >= 6 || weeksSinceStartDate === 0) {
+    logger.info(
+      `Week since start date is ${weeksSinceStartDate}. Week 0 or week >= 6 will not be sent weekly reminder emails`
+    );
     return [];
   }
 
