@@ -32,6 +32,13 @@ export async function sendUnpublishEmails(list: ListWithCountryName) {
   // @ts-ignore email provider
   const providerEmailTasks = listItems.map(async (listItem) => await sendUnpublishProviderConfirmation(listItem, meta));
   const emailsForProviders = await Promise.allSettled(providerEmailTasks);
+  emailsForProviders
+    .filter((result) => result.status !== "fulfilled")
+    .forEach((failedResult) => {
+      // @ts-ignore
+      logger.error(`Failed to send email to provider ${failedResult.reason}`);
+    });
+
   logger.info(
     `Sent ${emailsForProviders.filter((promise) => promise.status === "fulfilled").length} provider emails for list ${
       list.id
@@ -48,6 +55,14 @@ export async function sendUnpublishEmails(list: ListWithCountryName) {
     );
     const emailsForPost = await Promise.allSettled(postEmailTasks);
     emailsSent = emailsSent.concat(emailsForPost);
+
+    emailsForPost
+      .filter((result) => result.status !== "fulfilled")
+      .forEach((failedResult) => {
+        // @ts-ignore
+        logger.error(`Failed to send email to post ${failedResult.reason}`);
+      });
+
     logger.info(
       `Sent ${emailsForPost.filter((promise) => promise.status === "fulfilled").length} post emails for list ${list.id}`
     );
