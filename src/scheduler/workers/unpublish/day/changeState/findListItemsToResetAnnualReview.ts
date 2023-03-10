@@ -1,12 +1,13 @@
 import { prisma } from "server/models/db/prisma-client";
 import { schedulerLogger } from "scheduler/logger";
 import { List } from "@prisma/client";
-import { findReminderToSend } from "../findReminderToSend";
 
 export async function findListItemsToResetAnnualReview(list: List) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "findListItemsToResetAnnualReview", timeframe: "day" });
-
-  const { reminderToFind } = findReminderToSend(list);
+  const logger = schedulerLogger.child({
+    listId: list.id,
+    method: "findListItemsToResetAnnualReview",
+    timeframe: "day",
+  });
 
   const listItems = await prisma.listItem.findMany({
     where: {
@@ -16,13 +17,6 @@ export async function findListItemsToResetAnnualReview(list: List) {
     },
   });
 
-  logger.info(
-    `Found ${listItems.length} items to send unpublish reminder ${
-      listItems.length === 0
-        ? `(already sent for period starting >= ${reminderToFind})`
-        : [listItems.map((listItem) => listItem.id)]
-    }`
-  );
-
+  logger.info(`Found ${listItems.length} items to unpublish (${listItems.map((listItem) => listItem.id)})`);
   return listItems;
 }

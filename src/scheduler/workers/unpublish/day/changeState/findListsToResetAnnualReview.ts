@@ -1,23 +1,33 @@
-import { isBefore, startOfToday } from "date-fns";
-import { prisma } from "server/models/db/prisma-client";
-import { ListJsonData } from "server/models/types";
-import { isEqual } from "lodash";
-import { schedulerLogger } from "scheduler/logger";
+import {startOfToday} from "date-fns";
+import {prisma} from "server/models/db/prisma-client";
+import {schedulerLogger} from "scheduler/logger";
 
 export async function findListsToResetAnnualReview() {
-  const logger = schedulerLogger.child({ method: "findListsToResetAnnualReview", timeframe: "day" });
+  const logger = schedulerLogger.child({method: "findListsToResetAnnualReview", timeframe: "day"});
 
   const today = startOfToday().toISOString();
   const lists = await prisma.list.findMany({
     where: {
-      nextAnnualReviewStartDate: {
-        lte: today,
-        not: null,
-      },
-      jsonData: {
-        path: ["currentAnnualReview", "eligibleListItems"],
-        not: "",
-      },
+      AND: [
+        {
+          nextAnnualReviewStartDate: {
+            lte: today,
+            not: null,
+          },
+        },
+        {
+          jsonData: {
+            path: ["currentAnnualReview", "eligibleListItems"],
+            not: "",
+          },
+        },
+        {
+          jsonData: {
+            path: ["currentAnnualReview", "keyDates", "unpublished", "UNPUBLISH"],
+            lte: startOfToday().toISOString(),
+          },
+        },
+      ],
     },
     include: {
       country: {
@@ -27,17 +37,6 @@ export async function findListsToResetAnnualReview() {
       },
     },
   });
-
-  const listsToResetAnnualReview = lists.filter((list) => {
-    const jsonData = list.jsonData as ListJsonData;
-    const unpublishDate = new Date(jsonData.currentAnnualReview?.keyDates.unpublished.UNPUBLISH ?? "");
-    const resetState = isBefore(unpublishDate, startOfToday()) || isEqual(unpublishDate, startOfToday());
-    return resetState;
-  });
-  logger.info(
-    `found ${listsToResetAnnualReview.length} lists to reset annual review state [${listsToResetAnnualReview.map(
-      (list) => list.id
-    )}]`
-  );
-  return listsToResetAnnualReview;
+  logger.info(`found ${lists.length} lists to reset annual review state [${lists.map((list) => list.id)}]`);
+  return lists;
 }
