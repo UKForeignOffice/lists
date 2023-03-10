@@ -4,7 +4,7 @@ import { List } from "@prisma/client";
 import { findReminderToSend } from "../findReminderToSend";
 
 export async function findListItemsToResetAnnualReview(list: List) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "findListItemsToResetAnnualReview", timeframe: "day" });
 
   const { reminderToFind } = findReminderToSend(list);
 

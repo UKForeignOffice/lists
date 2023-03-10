@@ -7,7 +7,7 @@ import { getMetaForList } from "scheduler/workers/unpublish/day/getMetaForList";
 import { findListItemsToResetAnnualReview } from "scheduler/workers/unpublish/day/changeState/findListItemsToResetAnnualReview";
 
 export async function changeState(list: ListWithCountryName) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "changeState" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "changeState", timeframe: "day" });
 
   const jsonData = list.jsonData as ListJsonData;
   if (!jsonData?.currentAnnualReview) {

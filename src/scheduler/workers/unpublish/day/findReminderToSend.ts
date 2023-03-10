@@ -4,7 +4,7 @@ import { ListJsonData } from "server/models/types";
 import { parseISO } from "date-fns";
 
 export function findReminderToSend(list: List) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "findReminderToSend" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "findReminderToSend", timeframe: "day" });
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;
   const unpublishDate = parseISO(keyDates.unpublished.UNPUBLISH);
