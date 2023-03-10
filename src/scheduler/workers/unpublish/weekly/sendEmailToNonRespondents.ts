@@ -1,10 +1,11 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
 import { getMetaForList } from "./getMetaForList";
-import { logger } from "scheduler/logger";
+import { schedulerLogger } from "scheduler/logger";
 import { ListWithCountryName } from "../types";
 
 export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendEmailsToNonRespondents", timeframe: "weekly" });
   const meta = getMetaForList(list);
 
   if (!meta) {

@@ -7,7 +7,7 @@ import { ListWithCountryName } from "../types";
 import { ListJsonData } from "server/models/types";
 
 export async function sendUnpublishEmails(list: ListWithCountryName) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishEmails" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishEmails", timeframe: "day" });
 
   const meta = getMetaForList(list);
   if (!meta) {

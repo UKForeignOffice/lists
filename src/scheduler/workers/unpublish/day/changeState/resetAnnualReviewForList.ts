@@ -9,7 +9,7 @@ import { Meta } from "scheduler/workers/unpublish/day/types";
 import { schedulerLogger } from "scheduler/logger";
 
 export async function resetAnnualReviewForList(list: List, meta: Meta) {
-  const logger = schedulerLogger.child({ list: list.id, method: "resetAnnualReviewForList" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "resetAnnualReviewForList", timeframe: "day" });
 
   const jsonData = list.jsonData as ListJsonData;
   delete jsonData.currentAnnualReview;

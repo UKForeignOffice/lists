@@ -5,7 +5,7 @@ import { isEqual } from "lodash";
 import { schedulerLogger } from "scheduler/logger";
 
 export async function findListsToResetAnnualReview() {
-  const logger = schedulerLogger.child({ method: "findListsToResetAnnualReview" });
+  const logger = schedulerLogger.child({ method: "findListsToResetAnnualReview", timeframe: "day" });
 
   const today = startOfToday().toISOString();
   const lists = await prisma.list.findMany({

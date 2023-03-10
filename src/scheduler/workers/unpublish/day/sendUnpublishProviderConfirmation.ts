@@ -12,7 +12,7 @@ const template = NOTIFY.templates.unpublishNotice.providerUnpublished;
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta: Meta) {
-  const logger = schedulerLogger.child({ listItemId: listItem.id, method: "sendUnpublishEmail", template });
+  const logger = schedulerLogger.child({ listId: listItem.listId, listItemId: listItem.id, method: "sendUnpublishProviderConfirmation", timeframe: "day", template });
 
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = providerReminderPersonalisation(listItem, meta);

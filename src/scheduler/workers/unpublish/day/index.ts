@@ -5,7 +5,7 @@ import { schedulerLogger } from "scheduler/logger";
 import { changeState } from "scheduler/workers/unpublish/day/changeState";
 
 export async function main() {
-  const logger = schedulerLogger.child({ method: "unpublish day" });
+  const logger = schedulerLogger.child({ method: "unpublish day", timeframe: "day" });
 
   const listsInAnnualReview = await findListsInAnnualReviewForReminders();
   const listsToResetAnnualReview = await findListsToResetAnnualReview();

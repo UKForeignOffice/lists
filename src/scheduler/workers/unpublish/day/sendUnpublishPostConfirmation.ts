@@ -18,7 +18,7 @@ export async function sendUnpublishPostConfirmation(
   numberNotResponded: number,
   meta: Meta
 ) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishPostConfirmation", template });
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishPostConfirmation", timeframe: "day", template });
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
