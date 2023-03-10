@@ -1,20 +1,15 @@
-import { findListsInAnnualReviewForReminders } from "../findListsInAnnualReviewForReminders";
-import { findListsToResetAnnualReview } from "scheduler/workers/unpublish/day/changeState/findListsToResetAnnualReview";
-import { sendUnpublishEmails } from "scheduler/workers/unpublish/day/sendUnpublishEmails";
-import { schedulerLogger } from "scheduler/logger";
-import { changeState } from "scheduler/workers/unpublish/day/changeState";
+import { findListsInAnnualReview } from "../findListsInAnnualReview";
+import { findListsToResetAnnualReview } from "./changeState/findListsToResetAnnualReview";
+import { main as sendEmails } from "./sendEmails";
+import { changeState as unpublishProvidersAndResetList } from "./changeState";
 
 export async function main() {
-  const logger = schedulerLogger.child({ method: "unpublish day", timeframe: "day" });
-
-  const listsInAnnualReview = await findListsInAnnualReviewForReminders();
+  const listsInAnnualReview = await findListsInAnnualReview();
   const listsToResetAnnualReview = await findListsToResetAnnualReview();
 
-  logger.info(`Sending unpublish emails for lists [${listsInAnnualReview.map((list) => list.id)}]`);
-  const emailTasks = listsInAnnualReview.map(await sendUnpublishEmails);
+  const emailTasks = listsInAnnualReview.map(await sendEmails);
   await Promise.allSettled(emailTasks);
 
-  logger.info(`Resetting annual review state for lists [${listsToResetAnnualReview.map((list) => list.id)}]`);
-  const stateTasks = listsToResetAnnualReview.map(await changeState);
+  const stateTasks = listsToResetAnnualReview.map(await unpublishProvidersAndResetList);
   await Promise.allSettled(stateTasks);
 }
