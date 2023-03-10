@@ -3,9 +3,9 @@ import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { Meta } from "./types";
-import { addUnpublishProviderReminderEvent } from "./changeState/addUnpublishProviderReminderEvent";
 import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
 import { ListItem } from "@prisma/client";
+import {addReminderEvent} from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.unpublishNotice.providerUnpublished;
 
@@ -29,7 +29,7 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
 
     logger.debug(`adding unpublished provider reminder event...`);
 
-    const event = await addUnpublishProviderReminderEvent(
+    const event = await addReminderEvent(
       listItem.id,
       // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,
