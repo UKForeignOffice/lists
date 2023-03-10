@@ -28,7 +28,6 @@ export async function main(list: ListWithCountryName) {
   }
 
   logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
-  // @ts-ignore email provider
   const emailsForProviders = listItems.map(async (listItem) => await sendUnpublishProviderConfirmation(listItem, meta));
 
   const listJsonData = list.jsonData as ListJsonData;
@@ -40,4 +39,5 @@ export async function main(list: ListWithCountryName) {
     );
     return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
   }
+  return await Promise.allSettled(emailsForProviders);
 }
