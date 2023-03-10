@@ -1,7 +1,7 @@
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "../types";
+import { Meta } from "./types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
 import { AuditEvent, List } from "@prisma/client";
 import {

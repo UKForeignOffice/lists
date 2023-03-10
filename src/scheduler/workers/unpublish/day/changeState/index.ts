@@ -3,7 +3,7 @@ import { ListWithCountryName } from "../../types";
 import { ListJsonData } from "server/models/types";
 import { unpublishListItems } from "./unpublishListItems";
 import { resetAnnualReviewForList } from "./resetAnnualReviewForList";
-import { getMetaForList } from "scheduler/workers/unpublish/getMetaForList";
+import { getMetaForList } from "scheduler/workers/unpublish/day/getMetaForList";
 import { findListItemsToResetAnnualReview } from "scheduler/workers/unpublish/day/changeState/findListItemsToResetAnnualReview";
 
 export async function changeState(list: ListWithCountryName) {

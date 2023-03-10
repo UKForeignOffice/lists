@@ -1,5 +1,5 @@
 import { ServiceType } from "server/models/types";
-import { Meta } from "../types";
+import { Meta } from "./types";
 import { List, ListItem } from "@prisma/client";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
