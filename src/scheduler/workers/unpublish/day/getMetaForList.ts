@@ -1,7 +1,8 @@
-import { differenceInDays, differenceInWeeks, format, parseISO, startOfDay, startOfToday } from "date-fns";
+import { differenceInDays, format, parseISO, startOfDay, startOfToday } from "date-fns";
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
-import { ListWithCountryName, Meta } from "../types";
+import { ListWithCountryName } from "../types";
+import { Meta } from "./types";
 
 /**
  * {@link https://date-fns.org/v1.28.5/docs/format}
@@ -27,7 +28,6 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
 
   const { keyDates } = currentAnnualReview;
 
-  const startDate = startOfDay(parseISO(keyDates.annualReview.START));
   const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
   const today = startOfToday();
   const daysUntilUnpublish = differenceInDays(endDate, today);
@@ -35,8 +35,6 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
   return {
     reference: jsonData.currentAnnualReview!.reference,
     daysUntilUnpublish,
-    weeksUntilUnpublish: differenceInWeeks(endDate, startOfToday()),
-    weeksSinceStart: differenceInWeeks(today, startDate, { roundingMethod: "floor" }),
     parsedUnpublishDate: format(endDate, DISPLAY_DATE_FORMAT),
     countryName: list.country.name,
   };

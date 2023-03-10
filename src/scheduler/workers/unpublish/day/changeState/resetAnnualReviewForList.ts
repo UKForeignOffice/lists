@@ -5,7 +5,7 @@ import { addYears } from "date-fns";
 import {
   addUnpublishPostReminderAudit
 } from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
-import { Meta } from "scheduler/workers/unpublish/types";
+import { Meta } from "scheduler/workers/unpublish/day/types";
 import { schedulerLogger } from "scheduler/logger";
 
 export async function resetAnnualReviewForList(list: List, meta: Meta) {

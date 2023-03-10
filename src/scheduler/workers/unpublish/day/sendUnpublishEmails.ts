@@ -1,7 +1,7 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishProviderConfirmation } from "./sendUnpublishProviderConfirmation";
 import { sendUnpublishPostConfirmation } from "./sendUnpublishPostConfirmation";
-import { getMetaForList } from "../getMetaForList";
+import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
 import { ListWithCountryName } from "../types";
 import { ListJsonData } from "server/models/types";

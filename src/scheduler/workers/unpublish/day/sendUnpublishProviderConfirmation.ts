@@ -2,7 +2,7 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "../types";
+import { Meta } from "./types";
 import { addUnpublishProviderReminderEvent } from "./changeState/addUnpublishProviderReminderEvent";
 import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
 import { ListItem } from "@prisma/client";
