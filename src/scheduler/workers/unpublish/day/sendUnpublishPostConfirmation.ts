@@ -24,8 +24,6 @@ export async function sendUnpublishPostConfirmation(
   });
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
-  logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
-
   try {
     const response = await notifyClient.sendEmail(template, emailAddress, {
       personalisation,

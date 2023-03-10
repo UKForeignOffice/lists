@@ -5,29 +5,30 @@ import { NOTIFY } from "server/config";
 import { Meta } from "./types";
 import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
 import { ListItem } from "@prisma/client";
-import {addReminderEvent} from "scheduler/workers/helpers/addReminderEvent";
+import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.unpublishNotice.providerUnpublished;
 
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta: Meta) {
-  const logger = schedulerLogger.child({ listId: listItem.listId, listItemId: listItem.id, method: "sendUnpublishProviderConfirmation", timeframe: "day", template });
+  const logger = schedulerLogger.child({
+    listId: listItem.listId,
+    listItemId: listItem.id,
+    method: "sendUnpublishProviderConfirmation",
+    timeframe: "day",
+    template,
+  });
 
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = providerReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
 
-  logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
-
   try {
-    logger.debug(`sending email for provider unpublished...`);
     const response = await notifyClient.sendEmail(template, emailAddress, {
       personalisation,
       reference: meta.reference,
     });
-
-    logger.debug(`adding unpublished provider reminder event...`);
 
     const event = await addReminderEvent(
       listItem.id,
