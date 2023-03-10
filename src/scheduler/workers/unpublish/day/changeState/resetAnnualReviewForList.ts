@@ -2,9 +2,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { AuditEvent, List } from "@prisma/client";
 import { ListJsonData } from "server/models/types";
 import { addYears } from "date-fns";
-import {
-  addUnpublishPostReminderAudit
-} from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
+import { addAudit } from "scheduler/workers/unpublish/day/changeState/addAudit";
 import { Meta } from "scheduler/workers/unpublish/day/types";
 import { schedulerLogger } from "scheduler/logger";
 
@@ -28,7 +26,7 @@ export async function resetAnnualReviewForList(list: List, meta: Meta) {
   });
   logger.info(`Reset annual review state for list ${list.id}`);
 
-  await addUnpublishPostReminderAudit(
+  await addAudit(
     {
       eventName: "endAnnualReview",
       itemId: list.id,

@@ -4,9 +4,7 @@ import { NOTIFY } from "server/config";
 import { Meta } from "./types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
 import { AuditEvent, List } from "@prisma/client";
-import {
-  addUnpublishPostReminderAudit
-} from "scheduler/workers/unpublish/day/changeState/addUnpublishPostReminderAudit";
+import { addAudit } from "scheduler/workers/unpublish/day/changeState/addAudit";
 
 const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
@@ -18,7 +16,12 @@ export async function sendUnpublishPostConfirmation(
   numberNotResponded: number,
   meta: Meta
 ) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendUnpublishPostConfirmation", timeframe: "day", template });
+  const logger = schedulerLogger.child({
+    listId: list.id,
+    method: "sendUnpublishPostConfirmation",
+    timeframe: "day",
+    template,
+  });
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
@@ -29,14 +32,14 @@ export async function sendUnpublishPostConfirmation(
       reference: meta.reference,
     });
 
-    const updateAudit = await addUnpublishPostReminderAudit(
+    const updateAudit = await addAudit(
       {
         reminderType: "sendUnpublishedPostEmail",
         eventName: "reminder",
         itemId: list.id,
         annualReviewRef: meta.reference,
       },
-      AuditEvent.UNPUBLISHED,
+      AuditEvent.UNPUBLISHED
     );
 
     if (!updateAudit) {

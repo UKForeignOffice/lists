@@ -10,11 +10,11 @@ export async function main() {
   const listsInAnnualReview = await findListsInAnnualReviewForReminders();
   const listsToResetAnnualReview = await findListsToResetAnnualReview();
 
-  logger.info(`Resetting annual review state for lists [${listsToResetAnnualReview.map((list) => list.id)}]`);
-  const stateTasks = listsToResetAnnualReview.map(await changeState);
-  await Promise.allSettled(stateTasks);
-
   logger.info(`Sending unpublish emails for lists [${listsInAnnualReview.map((list) => list.id)}]`);
   const emailTasks = listsInAnnualReview.map(await sendUnpublishEmails);
   await Promise.allSettled(emailTasks);
+
+  logger.info(`Resetting annual review state for lists [${listsToResetAnnualReview.map((list) => list.id)}]`);
+  const stateTasks = listsToResetAnnualReview.map(await changeState);
+  await Promise.allSettled(stateTasks);
 }
