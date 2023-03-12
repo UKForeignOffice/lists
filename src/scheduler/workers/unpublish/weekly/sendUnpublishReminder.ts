@@ -2,17 +2,23 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { addUnpublishReminderEvent } from "./addUnpublishReminderEvent";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 import { ListItem } from "@prisma/client";
-import { Meta } from "scheduler/workers/types";
+import { Meta } from "scheduler/workers/unpublish/weekly/types";
+import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;
 
-const logger = schedulerLogger.child({ method: "sendUnpublishEmail", template });
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
+  const logger = schedulerLogger.child({
+    listId: listItem.listId,
+    listItemId: listItem.id,
+    method: "sendUnpublishReminder",
+    template,
+    timeframe: "weekly",
+  });
   const jsonData = listItem.jsonData as ListItemJsonData;
   const personalisation = weeklyReminderPersonalisation(listItem, meta);
   const emailAddress = jsonData.emailAddress;
@@ -25,7 +31,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
       reference: meta.reference,
     });
 
-    const event = await addUnpublishReminderEvent(
+    const event = await addReminderEvent(
       listItem.id,
       // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,

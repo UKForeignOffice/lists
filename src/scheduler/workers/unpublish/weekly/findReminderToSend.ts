@@ -4,7 +4,7 @@ import { ListJsonData } from "server/models/types";
 import { addWeeks, differenceInWeeks, parseISO, startOfDay, startOfToday } from "date-fns";
 
 export function findReminderToSend(list: List) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList", timeframe: "weekly" });
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;
   const today = startOfToday();

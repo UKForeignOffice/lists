@@ -1,8 +1,8 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
-import { getMetaForList } from "../getMetaForList";
+import { getMetaForList } from "./getMetaForList";
 import { logger } from "scheduler/logger";
-import { ListWithCountryName } from "./types";
+import { ListWithCountryName } from "../types";
 
 export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
   const meta = getMetaForList(list);
@@ -12,7 +12,7 @@ export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
   }
 
   // @ts-ignore
-  if (meta?.weeksUntilUnpublish >= 6) {
+  if (meta.weeksUntilUnpublish >= 6) {
     logger.info(`${list.id} has >= 6 weeks until unpublish, skipping sendEmailsToNonRespondents`);
     return;
   }
