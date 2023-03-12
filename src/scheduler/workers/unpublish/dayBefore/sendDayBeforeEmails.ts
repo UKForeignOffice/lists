@@ -1,7 +1,7 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendDayBeforeProviderConfirmation } from "./sendDayBeforeProviderConfirmation";
 import { sendDayBeforePostConfirmation } from "./sendDayBeforePostConfirmation";
-import { getMetaForList } from "../getMetaForList";
+import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
 import { ListWithCountryName } from "../../types";
 import { ListJsonData } from "server/models/types";
@@ -36,19 +36,18 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
     }`
   );
 
-  let emailsSent = emailsForProviders;
   const listJsonData = list.jsonData as ListJsonData;
 
-  // email post
-  if (listJsonData.users) {
-    const postEmailTasks = listJsonData.users.map(
-      async (emailAddress) => await sendDayBeforePostConfirmation(emailAddress, list, listItems.length, meta)
-    );
-    const emailsForPost = await Promise.allSettled(postEmailTasks);
-    emailsSent = emailsSent.concat(emailsForPost);
-    logger.info(
-      `Sent ${emailsForPost.filter((promise) => promise.status === "fulfilled").length} post emails for list ${list.id}`
-    );
+  if (!listJsonData.users) {
+    return await Promise.allSettled(emailsForProviders);
   }
-  return await Promise.allSettled(emailsSent);
+  // email post
+  const postEmailTasks = listJsonData.users.map(
+    async (emailAddress) => await sendDayBeforePostConfirmation(emailAddress, list, listItems.length, meta)
+  );
+  const emailsForPost = await Promise.allSettled(postEmailTasks);
+  logger.info(
+    `Sent ${emailsForPost.filter((promise) => promise.status === "fulfilled").length} post emails for list ${list.id}`
+  );
+  return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
 }

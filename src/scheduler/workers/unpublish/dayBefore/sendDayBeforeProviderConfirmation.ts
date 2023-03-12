@@ -2,10 +2,10 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { addUnpublishProviderReminderEvent } from "./addUnpublishProviderReminderEvent";
 import { providerReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
 import { ListItem } from "@prisma/client";
-import { Meta } from "scheduler/workers/types";
+import { Meta } from "./types";
+import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.unpublishNotice.providerOneDay;
 
@@ -30,16 +30,11 @@ export async function sendDayBeforeProviderConfirmation(listItem: ListItem, meta
       reference: meta.reference,
     });
 
-    const event = await addUnpublishProviderReminderEvent(
+    const event = await addReminderEvent(
       listItem.id,
       // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,
-      [
-        `sent reminder for ${meta.daysUntilUnpublish} days until unpublish`,
-        JSON.stringify({
-          notify_response: response.data,
-        }),
-      ],
+      [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       meta.reference
     );
 
