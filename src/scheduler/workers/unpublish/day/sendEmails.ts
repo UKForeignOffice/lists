@@ -32,12 +32,12 @@ export async function main(list: ListWithCountryName) {
 
   const listJsonData = list.jsonData as ListJsonData;
 
-  // email post
-  if (listJsonData.users) {
-    const emailsForPost = listJsonData.users.map(
-      async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list, listItems.length, meta)
-    );
-    return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
+  if (!listJsonData.users) {
+    return await Promise.allSettled(emailsForProviders);
   }
-  return await Promise.allSettled(emailsForProviders);
+  // email post
+  const emailsForPost = listJsonData.users.map(
+    async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list, listItems.length, meta)
+  );
+  return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
 }

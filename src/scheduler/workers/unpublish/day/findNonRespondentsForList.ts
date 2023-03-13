@@ -1,12 +1,15 @@
 import { prisma } from "server/models/db/prisma-client";
 import { schedulerLogger } from "scheduler/logger";
 import { List, Prisma } from "@prisma/client";
-import { findReminderToSend } from "./findReminderToSend";
+import { ListJsonData } from "server/models/types";
+import { parseISO } from "date-fns";
 
 export async function findNonRespondentsForList(list: List) {
   const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList", timeframe: "day" });
 
-  const { reminderToFind } = findReminderToSend(list);
+  const jsonData = list.jsonData as ListJsonData;
+  const { keyDates } = jsonData.currentAnnualReview!;
+  const reminderToFind = parseISO(keyDates.unpublished.UNPUBLISH);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
 
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {

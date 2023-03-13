@@ -1,9 +1,9 @@
-import {startOfToday} from "date-fns";
-import {prisma} from "server/models/db/prisma-client";
-import {schedulerLogger} from "scheduler/logger";
+import { startOfToday } from "date-fns";
+import { prisma } from "server/models/db/prisma-client";
+import { schedulerLogger } from "scheduler/logger";
 
 export async function findListsToResetAnnualReview() {
-  const logger = schedulerLogger.child({method: "findListsToResetAnnualReview", timeframe: "day"});
+  const logger = schedulerLogger.child({ method: "findListsToResetAnnualReview", timeframe: "day" });
 
   const today = startOfToday().toISOString();
   const lists = await prisma.list.findMany({
