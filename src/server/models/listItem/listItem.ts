@@ -113,10 +113,10 @@ export async function findListItems(options: {
 }) {
   try {
     const { listIds, listItemIds, statuses, isAnnualReview } = options;
-    if ((!listIds || !listIds.length) && (!listItemIds || !listItemIds?.length)) {
+    if (!(listIds?.length ?? listItemIds?.length)) {
       const message = "List ids or list item ids must be specified to find list items";
       logger.error(message);
-      return { error: Error(message) };
+      return { error: message };
     }
     const result = await prisma.listItem.findMany({
       where: {
@@ -128,7 +128,7 @@ export async function findListItems(options: {
           some: {
             type: "PUBLISHED",
             time: {
-              lte: subMonths(Date.now(), 1),
+              lte: subMonths(Date.now(), 1), // Get annual review date from List, check 28 days before that day
             },
           },
         },
