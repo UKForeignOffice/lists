@@ -25,6 +25,8 @@ export const LOCATION_SERVICE_INDEX_NAME =
 // GOVUK Notify
 export const NOTIFY = {
   apiKey: process.env.GOVUK_NOTIFY_API_KEY?.trim() ?? "",
+  smokeTestApiKey:
+    "lists_test__mock_sends_emails-51af028d-d3a7-491a-9d9a-b657dc9bc133-0b79d844-1815-42ba-88cd-dce32b3b1fe1",
   templates: {
     auth: process.env.GOVUK_NOTIFY_AUTHENTICATION_EMAIL_TEMPLATE_ID?.trim() ?? "",
     emailConfirmation: process.env.GOVUK_NOTIFY_PROFESSIONAL_APPLICATION_EMAIL_CONFIRMATION_TEMPLATE_ID?.trim() ?? "",

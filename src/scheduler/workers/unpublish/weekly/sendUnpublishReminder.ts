@@ -8,9 +8,7 @@ import { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;
-const notifyApiKey = isSmokeTest
-  ? "lists_test__mock_sends_emails-51af028d-d3a7-491a-9d9a-b657dc9bc133-0b79d844-1815-42ba-88cd-dce32b3b1fe1"
-  : NOTIFY.apiKey;
+const notifyApiKey = isSmokeTest ? NOTIFY.smokeTestApiKey : NOTIFY.apiKey;
 const notifyClient = new NotifyClient(notifyApiKey);
 
 export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {

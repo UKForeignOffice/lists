@@ -5,7 +5,7 @@ Feature: Check correct email is sent to provider that has had edits requested
         Given A "lawyers" list exists for Eurasia
 
 
-    Scenario Outline: Provider is sent emai for 3 weeks left till unpublish
+    Scenario Outline: Provider is sent a differnt unpublish email based on weeks since annual review
         When eurasia lawyers have annual review in "-<daysSinceAnnualReview>" days
         And the batch process has run
         And the worker process has run
