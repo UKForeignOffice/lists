@@ -16,7 +16,7 @@ const DISPLAY_DATE_FORMAT = "d MMMM yyyy";
  * Additional data extracted from `List` to be passed down for each email.
  */
 export function getMetaForList(list: ListWithCountryName): Meta | undefined {
-  const logger = schedulerLogger.child({ listId: list.id, method: "getMetaForList", timeframe: "day" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "getMetaForList", timeframe: "dayBefore" });
 
   const { jsonData } = list as List;
   const { currentAnnualReview } = jsonData;

@@ -3,7 +3,7 @@ import { sendDayBeforeEmails } from "scheduler/workers/unpublish/dayBefore/sendD
 import { schedulerLogger } from "scheduler/logger";
 
 export async function main() {
-  const logger = schedulerLogger.child({ method: "day before unpublish" });
+  const logger = schedulerLogger.child({ method: "day before unpublish", timeframe: "dayBefore" });
 
   const listsInAnnualReview = await findListsInAnnualReview();
 

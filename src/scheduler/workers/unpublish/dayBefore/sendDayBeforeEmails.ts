@@ -7,7 +7,7 @@ import { ListWithCountryName } from "../../types";
 import { ListJsonData } from "server/models/types";
 
 export async function sendDayBeforeEmails(list: ListWithCountryName) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforeEmails" });
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforeEmails", timeframe: "dayBefore" });
 
   const meta = getMetaForList(list);
   if (!meta) {

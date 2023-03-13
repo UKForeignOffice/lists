@@ -16,7 +16,7 @@ export async function sendDayBeforePostReminder(
   numberNotResponded: number,
   meta: Meta
 ) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforePostConfirmation", template });
+  const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforePostReminder", timeframe: "dayBefore", template });
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
