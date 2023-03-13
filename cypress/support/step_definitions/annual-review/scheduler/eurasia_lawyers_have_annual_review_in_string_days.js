@@ -1,16 +1,15 @@
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
-const today = new Date();
-
 When("eurasia lawyers have annual review in {string} days", async (days = "0") => {
-  await updateListForAnnualReview(days);
+  const today = new Date();
+  await updateListForAnnualReview(days, today);
 
   ["user1", "user2"].forEach(async (reference) => {
-    await createListItem(reference);
+    await createListItem(reference, today);
   });
 });
 
-async function updateListForAnnualReview(days) {
+async function updateListForAnnualReview(days, today) {
   const todayAfternoon = new Date(
     today.getUTCFullYear(),
     today.getUTCMonth(),
@@ -33,7 +32,7 @@ async function updateListForAnnualReview(days) {
   });
 }
 
-async function createListItem(reference) {
+async function createListItem(reference, today) {
   const monthAfterToday = today;
   monthAfterToday.setMonth(today.getMonth() - 1);
 

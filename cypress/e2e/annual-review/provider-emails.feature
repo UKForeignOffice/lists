@@ -5,7 +5,16 @@ Feature: Check correct email is sent to provider that has had edits requested
         Given A "lawyers" list exists for Eurasia
 
 
-    Scenario: Provider has not responded for 3 days
-        When eurasia lawyers have annual review in "-15" days
+    Scenario Outline: Provider is sent emai for 3 weeks left till unpublish
+        When eurasia lawyers have annual review in "-<daysSinceAnnualReview>" days
         And the batch process has run
         And the worker process has run
+        Then the reminder email for "<reminderWeek>" weeks is sent to eligible providers
+
+        Examples:
+            | daysSinceAnnualReview | reminderWeek |
+            | 8                     | 1            |
+            | 15                    | 2            |
+            | 22                    | 3            |
+            | 29                    | 4            |
+            | 36                    | 5            |
