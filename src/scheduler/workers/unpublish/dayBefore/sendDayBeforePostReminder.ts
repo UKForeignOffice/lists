@@ -10,7 +10,7 @@ const template = NOTIFY.templates.unpublishNotice.postOneDay;
 
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
-export async function sendDayBeforePostConfirmation(
+export async function sendDayBeforePostReminder(
   emailAddress: string,
   list: List,
   numberNotResponded: number,

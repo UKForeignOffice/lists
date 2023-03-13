@@ -16,7 +16,7 @@ test.each`
   ${42}          | ${0}                        | ${6}
 `(
   "getMetaForList returns $expectedWeeksUntilUnpublish weeks until unpublish when it has been $daysSinceStart days since starting",
-  ({ daysSinceStart, expectedWeeksUntilUnpublish, expectedWeeksSinceStart, expectedDaysUntilUnpublish }) => {
+  ({ daysSinceStart, expectedWeeksUntilUnpublish, expectedWeeksSinceStart }) => {
     const date = new Date(startDate);
     const day = date.getDate();
     date.setDate(day + daysSinceStart);
