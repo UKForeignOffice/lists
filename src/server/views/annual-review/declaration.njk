@@ -12,8 +12,14 @@
       <a class="govuk-link govuk-back-link" href="/annual-review/confirm/{{ reference }}">Back</a>
     </div>
 
-    {% if error.text %} {{ govukErrorSummary({ titleText: "There is a problem", errorList: [ { text: error.text, href:
-    "#is-your-information-correct" } ] }) }} {% endif %}
+    {% if error.text %}
+      {{ govukErrorSummary({ titleText: "There is a problem",
+        errorList: [{
+          text: error.text,
+          href: "#is-your-information-correct"
+        }]
+      }) }}
+    {% endif %}
 
     <h1 class="govuk-heading-l">Declaration</h1>
 
@@ -39,8 +45,15 @@
 
     <form action="/annual-review/declaration/{{ reference }}" method="post">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-      {{ govukCheckboxes({ name: "confirmation", errorMessage: error, items: [ { value: "confirm", text: "I have read
-      and agree with this statement" } ] }) }} {{ govukButton({ text: "Submit" }) }}
+      {{ govukCheckboxes({
+        name: "confirmation",
+        errorMessage: error,
+        items: [{
+          value: "confirm",
+          text: "I have readand agree with this statement"
+        }]
+      }) }}
+      {{ govukButton({ text: "Submit" }) }}
     </form>
   </div>
 </div>
