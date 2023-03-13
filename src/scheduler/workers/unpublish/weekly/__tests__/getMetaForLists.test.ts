@@ -1,19 +1,19 @@
 import { getMetaForList } from "../getMetaForList";
 
 test.each`
-  daysSinceStart | expectedWeeksUntilUnpublish | expectedWeeksSinceStart | expectedDaysUntilUnpublish
-  ${1}           | ${5}                        | ${0}                    | ${41}
-  ${2}           | ${5}                        | ${0}                    | ${40}
-  ${5}           | ${5}                        | ${0}                    | ${37}
-  ${7}           | ${5}                        | ${1}                    | ${35}
-  ${11}          | ${4}                        | ${1}                    | ${31}
-  ${14}          | ${4}                        | ${2}                    | ${28}
-  ${15}          | ${3}                        | ${2}                    | ${27}
-  ${21}          | ${3}                        | ${3}                    | ${21}
-  ${22}          | ${2}                        | ${3}                    | ${20}
-  ${28}          | ${2}                        | ${4}                    | ${14}
-  ${35}          | ${1}                        | ${5}                    | ${7}
-  ${42}          | ${0}                        | ${6}                    | ${0}
+  daysSinceStart | expectedWeeksUntilUnpublish | expectedWeeksSinceStart
+  ${1}           | ${5}                        | ${0}
+  ${2}           | ${5}                        | ${0}
+  ${5}           | ${5}                        | ${0}
+  ${7}           | ${5}                        | ${1}
+  ${11}          | ${4}                        | ${1}
+  ${14}          | ${4}                        | ${2}
+  ${15}          | ${3}                        | ${2}
+  ${21}          | ${3}                        | ${3}
+  ${22}          | ${2}                        | ${3}
+  ${28}          | ${2}                        | ${4}
+  ${35}          | ${1}                        | ${5}
+  ${42}          | ${0}                        | ${6}
 `(
   "getMetaForList returns $expectedWeeksUntilUnpublish weeks until unpublish when it has been $daysSinceStart days since starting",
   ({ daysSinceStart, expectedWeeksUntilUnpublish, expectedWeeksSinceStart, expectedDaysUntilUnpublish }) => {
@@ -23,7 +23,6 @@ test.each`
     jest.useFakeTimers().setSystemTime(date);
     expect(getMetaForList(list)).toStrictEqual({
       reference,
-      daysUntilUnpublish: expectedDaysUntilUnpublish,
       weeksUntilUnpublish: expectedWeeksUntilUnpublish,
       weeksSinceStart: expectedWeeksSinceStart,
       parsedUnpublishDate: "15 March 2023",
