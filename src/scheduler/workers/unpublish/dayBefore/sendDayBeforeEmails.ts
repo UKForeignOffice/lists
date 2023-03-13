@@ -1,6 +1,6 @@
 import { findNonRespondentsForList } from "./findNonRespondentsForList";
-import { sendDayBeforeProviderConfirmation } from "./sendDayBeforeProviderConfirmation";
-import { sendDayBeforePostConfirmation } from "./sendDayBeforePostConfirmation";
+import { sendDayBeforeProviderReminder } from "./sendDayBeforeProviderReminder";
+import { sendDayBeforePostReminder } from "./sendDayBeforePostReminder";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
 import { ListWithCountryName } from "../../types";
@@ -28,7 +28,7 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   }
 
   logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
-  const providerEmailTasks = listItems.map(async (listItem) => await sendDayBeforeProviderConfirmation(listItem, meta));
+  const providerEmailTasks = listItems.map(async (listItem) => await sendDayBeforeProviderReminder(listItem, meta));
   const emailsForProviders = await Promise.allSettled(providerEmailTasks);
   logger.info(
     `Sent ${emailsForProviders.filter((promise) => promise.status === "fulfilled").length} provider emails for list ${
@@ -43,7 +43,7 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   }
   // email post
   const postEmailTasks = listJsonData.users.map(
-    async (emailAddress) => await sendDayBeforePostConfirmation(emailAddress, list, listItems.length, meta)
+    async (emailAddress) => await sendDayBeforePostReminder(emailAddress, list, listItems.length, meta)
   );
   const emailsForPost = await Promise.allSettled(postEmailTasks);
   logger.info(
