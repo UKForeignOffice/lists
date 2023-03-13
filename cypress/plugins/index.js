@@ -12,6 +12,7 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+const { logger } = require("webpack-cli/lib/utils");
 const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 const cucumber = require("cypress-cucumber-preprocessor").default;
@@ -41,7 +42,7 @@ module.exports = (on, config) => {
       return result;
     },
     log: (message) => {
-      console.log(message);
+      logger.log(message);
       return null;
     },
     batch: async function () {
@@ -50,7 +51,7 @@ module.exports = (on, config) => {
     },
     worker: async function () {
       const childProcess = require("node:child_process");
-      return childProcess.execSync("node dist/scheduler/annualReviewWorker.js");
+      return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
     },
   });
 };
