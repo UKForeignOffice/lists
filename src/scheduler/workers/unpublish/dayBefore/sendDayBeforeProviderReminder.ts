@@ -14,7 +14,8 @@ const notifyClient = new NotifyClient(NOTIFY.apiKey);
 export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Meta) {
   const logger = schedulerLogger.child({
     listItemId: listItem.id,
-    method: "sendDayBeforeProviderConfirmation",
+    method: "sendDayBeforeProviderReminder",
+    timeframe: "dayBefore",
     template,
   });
 
