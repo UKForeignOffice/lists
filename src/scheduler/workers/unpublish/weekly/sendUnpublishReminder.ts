@@ -4,7 +4,7 @@ import { NotifyClient, RequestError } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 import { ListItem } from "@prisma/client";
-import { Meta } from "scheduler/workers/unpublish/weekly/types";
+import { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;

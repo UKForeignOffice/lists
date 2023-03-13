@@ -12,7 +12,6 @@ export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
     throw new Error(`Exiting for list ${list.id}, not enough information to continue`);
   }
 
-  // @ts-ignore
   if (meta.weeksUntilUnpublish >= 6) {
     logger.info(`${list.id} has >= 6 weeks until unpublish, skipping sendEmailsToNonRespondents`);
     return;

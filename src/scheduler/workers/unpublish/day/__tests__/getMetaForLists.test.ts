@@ -8,7 +8,7 @@ test.each`
   ${0}
   ${-1}
 `(
-  "getMetaForList returns $expectedWeeksUntilUnpublish weeks until unpublish when it has been $daysSinceStart days since starting",
+  "getMetaForList returns $daysBeforeUnpublish days until unpublish when the current day is $daysBeforeUnpublish days before unpublish",
   ({ daysBeforeUnpublish }) => {
     let fakeToday = new Date(unpublishDate);
     fakeToday = subDays(fakeToday, daysBeforeUnpublish);
