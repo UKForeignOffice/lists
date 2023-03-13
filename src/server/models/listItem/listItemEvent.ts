@@ -37,11 +37,12 @@ export const EVENTS = {
     },
   }),
 
-  [ListItemEvent.UNPUBLISHED]: (userId?: number): EventCreate<"UNPUBLISHED"> => ({
+  [ListItemEvent.UNPUBLISHED]: (userId?: number, reference?: string): EventCreate<"UNPUBLISHED"> => ({
     type: ListItemEvent.UNPUBLISHED,
     jsonData: {
       eventName: "unpublish",
       ...(userId && { userId }),
+      ...(reference && { reference }),
     },
   }),
 

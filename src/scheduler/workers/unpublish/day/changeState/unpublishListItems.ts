@@ -12,7 +12,7 @@ export async function unpublishListItems(ids: number[], reference?: string) {
         isAnnualReview: false,
         isPublished: false,
         history: {
-          create: EVENTS.ANNUAL_REVIEW_OVERDUE(reference),
+          create: [EVENTS.ANNUAL_REVIEW_OVERDUE(reference), EVENTS.UNPUBLISHED(undefined, reference)],
         },
       },
     });
