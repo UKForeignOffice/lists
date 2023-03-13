@@ -369,7 +369,7 @@
           "name": "VUylUR",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n</ul>\n\n\n",
+          "content": "<p class=\"govuk-body\">By continuing you declare that you are:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>\n    currently qualified to practise law or meet the national criteria for providing legal services to the public, for example mandatory affiliation\n  </li>\n  <li>\n    not disbarred from practising law\n  </li>\n  <li>\n    reliable and willing to help on a regular basis\n  </li>\n  <li>\n    able to respond within a reasonable timeframe to client requests\n  </li>\n  <li>\n    willing to update or re-confirm your details on a bi-annual basis on request\n  </li>\n  <li>\n  aware that inclusion on the 'Find a lawyer abroad' service is not an endorsement by the FCDO and you are not affiliated to the FCDO in any way\n</ul>\n<p class=\"govuk-body\">Read the <a class=\"govuk-link\" href=\"/help/terms-and-conditions\" target=\"_blank\">full terms and conditions</a>.</p>\n\n\n",
           "schema": {}
         },
         {
@@ -1533,7 +1533,7 @@
       "type": "string",
       "items": [
         {
-          "text": "Confirmed",
+          "text": "I have read and agree with this statement",
           "value": "confirm"
         }
       ]
