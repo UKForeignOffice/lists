@@ -23,7 +23,7 @@ export async function main(list: ListWithCountryName) {
 
   const listItems = await findNonRespondentsForList(list);
 
-  if (!listItems) {
+  if (!listItems.length) {
     return;
   }
 
