@@ -157,8 +157,7 @@ export async function listItemsIndexController(
     );
     const unpublishDate = AnnualReviewHelpers.calculateNewDateAfterPeriod(annualReviewDate, { weeks: 6 });
 
-    const bannerToggles = await annualReviewBannerToggles(res.locals.list as ListWithJsonData, list.items);
-
+    const bannerToggles = await annualReviewBannerToggles(res.locals.list as ListWithJsonData);
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
@@ -178,8 +177,8 @@ export async function listItemsIndexController(
 
 async function annualReviewBannerToggles(list: ListWithJsonData) {
   let banner;
+  banner ??= displayOneMonthAnnualReviewWarning(list);
   banner ??= await displayUnpublishWarning(list);
   banner ??= await displayEmailsSentBanner(list);
-  banner ??= displayOneMonthAnnualReviewWarning(list);
   return banner;
 }
