@@ -1,4 +1,5 @@
 import { WebhookData } from "server/components/formRunner";
+import { findListById } from "server/models/list";
 import { AuditListItemEventName, List, ListItem, Point, ServiceType, User } from "server/models/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
@@ -15,7 +16,6 @@ import { merge } from "lodash";
 import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { subMonths } from "date-fns";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -105,34 +105,32 @@ export async function findListItemById(id: string | number) {
   }
 }
 
-export async function findListItems(options: {
-  listIds: number[];
-  listItemIds?: number[];
-  statuses?: Status[];
-  isAnnualReview?: boolean;
-}) {
+export async function findListItems(options: { listIds: number[]; statuses?: Status[]; isAnnualReview?: boolean }) {
   try {
-    const { listIds, listItemIds, statuses, isAnnualReview } = options;
-    if (!(listIds?.length ?? listItemIds?.length)) {
+    const { listIds, statuses, isAnnualReview } = options;
+    if (!listIds?.length) {
       const message = "List ids or list item ids must be specified to find list items";
       logger.error(message);
       return { error: message };
     }
 
+    const tableData = await Promise.all(listIds.map(async (listId) => ({ list: await findListById(listId), listId })));
+
     const result = await prisma.listItem.findMany({
       where: {
-        listId: { in: listIds },
-        ...(listItemIds != null && { id: { in: listItemIds } }),
-        ...(statuses != null && { status: { in: statuses } }),
-        ...(isAnnualReview != null && { isAnnualReview }),
-        history: {
-          some: {
-            type: "PUBLISHED",
-            time: {
-              lte: subMonths(Date.now(), 1),
+        AND: tableData.map(({ list, listId }: any) => ({
+          listId,
+          ...(statuses != null && { status: { in: statuses } }),
+          ...(isAnnualReview != null && { isAnnualReview }),
+          history: {
+            some: {
+              type: "PUBLISHED",
+              time: {
+                lte: list?.jsonData?.currentAnnualReview?.keyDates.POST_ONE_MONTH,
+              },
             },
           },
-        },
+        })),
       },
       include: {
         history: {
@@ -174,7 +172,7 @@ export async function findListItemByReference(ref: string) {
               },
             },
           },
-        }
+        },
       },
     });
   } catch (error) {
@@ -193,7 +191,7 @@ export async function togglerListItemIsPublished({
 }: {
   id: number;
   isPublished: boolean;
-  jsonData: ListItemJsonData,
+  jsonData: ListItemJsonData;
   userId: User["id"];
 }): Promise<ListItemWithAddressCountry> {
   if (userId === undefined) {
