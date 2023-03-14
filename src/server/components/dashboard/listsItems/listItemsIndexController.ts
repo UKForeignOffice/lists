@@ -176,7 +176,10 @@ export async function listItemsIndexController(
   }
 }
 
-async function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListItem[]) {
-  const unpublishWarningBanner = await displayUnpublishWarning(list);
-  return unpublishWarningBanner ?? displayEmailsSentBanner(list, listItems) ?? displayOneMonthAnnualReviewWarning(list);
+async function annualReviewBannerToggles(list: ListWithJsonData) {
+  let banner;
+  banner ??= await displayUnpublishWarning(list);
+  banner ??= await displayEmailsSentBanner(list);
+  banner ??= displayOneMonthAnnualReviewWarning(list);
+  return banner;
 }
