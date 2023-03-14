@@ -16,7 +16,7 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
     isAnnualReview: false,
   });
   if (findListItemsResult.error) {
-    logger.error(`Unable to retrieve List Items for Lists ${listIds}: ${findListItemsResult.error}`);
+    logger.error(`Unable to retrieve List Items for Lists ${listIds}: ${findListItemsResult.error.message}`);
     return;
   }
   if (!findListItemsResult.result?.length) {
