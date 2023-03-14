@@ -106,7 +106,7 @@ export async function findListItemById(id: string | number) {
 }
 
 export async function findListItems(options: {
-  listIds?: number[];
+  listIds: number[];
   listItemIds?: number[];
   statuses?: Status[];
   isAnnualReview?: boolean;
@@ -118,9 +118,10 @@ export async function findListItems(options: {
       logger.error(message);
       return { error: message };
     }
+
     const result = await prisma.listItem.findMany({
       where: {
-        ...(listIds != null && { listId: { in: listIds } }),
+        listId: { in: listIds },
         ...(listItemIds != null && { id: { in: listItemIds } }),
         ...(statuses != null && { status: { in: statuses } }),
         ...(isAnnualReview != null && { isAnnualReview }),
@@ -128,7 +129,7 @@ export async function findListItems(options: {
           some: {
             type: "PUBLISHED",
             time: {
-              lte: subMonths(Date.now(), 1), // Get annual review date from List, check 28 days before that day
+              lte: subMonths(Date.now(), 1),
             },
           },
         },
