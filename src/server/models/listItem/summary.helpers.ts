@@ -1,16 +1,7 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { ActivityStatusViewModel, AnnualReviewBanner, IndexListItem } from "server/models/listItem/types";
+import { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import {
-  addWeeks,
-  differenceInWeeks,
-  isAfter,
-  isBefore,
-  isWithinInterval,
-  parseISO,
-  startOfDay,
-  startOfToday,
-} from "date-fns";
+import { differenceInWeeks, isWithinInterval, parseISO, startOfDay, startOfToday } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
 
@@ -238,7 +229,9 @@ async function countNumberOfNonRespondents(listId: number, annualReviewStartDate
   });
 }
 
-export async function displayEmailsSentBanner(list: ListWithJsonData): AnnualReviewBanner<"emailsSent", number> {
+export async function displayEmailsSentBanner(
+  list: ListWithJsonData
+): Promise<AnnualReviewBanner<"emailsSent", number>> {
   const startDateISO = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
 
   if (!startDateISO) {
