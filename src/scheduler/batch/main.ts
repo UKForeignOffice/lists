@@ -1,11 +1,18 @@
-import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/models/list";
+import {
+  findListByAnnualReviewDate,
+  updateListForAnnualReview,
+  findListsWithoutNextAnnualReview,
+  findFirstPublishedDateForList,
+  addAnnualReviewToList,
+} from "server/models/list";
+import type {ListWithFirstPublishedDate} from "server/models/list";
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { findListItems } from "server/models/listItem";
 import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { addDays, startOfDay } from "date-fns";
+import { addDays, startOfDay, addYears, isAfter } from "date-fns";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
@@ -61,6 +68,33 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
   }
 }
 
+async function addAnnualReviewDateToPublishedLists() {
+  try {
+    const listsWithoutCurrentAnnualReviewDate = await findListsWithoutNextAnnualReview();
+    const listsWithPublishedListItem = await Promise.all(
+      (listsWithoutCurrentAnnualReviewDate as List[]).map(async (list) => {
+        const publishEventResult = await findFirstPublishedDateForList(list.id);
+        if (!publishEventResult) {
+          return null;
+        }
+        const oneYearAfterFirstPublishedDate = addYears(publishEventResult.time, 1);
+        const isAfterToday = isAfter(oneYearAfterFirstPublishedDate, new Date());
+        return isAfterToday ? { listId: list.id, oneYearAfterFirstPublishedDate } : null;
+      })
+    ).then((arr) => arr.filter(Boolean));
+
+    await Promise.all(
+      (listsWithPublishedListItem as ListWithFirstPublishedDate[]).map(
+        async ({ listId, oneYearAfterFirstPublishedDate }) => {
+          await addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate });
+        }
+      )
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
@@ -72,9 +106,10 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
     if (!lists?.length) {
       return;
     }
-    // @ts-ignore
     await populateCurrentAnnualReview(lists);
   }
+
+  await addAnnualReviewDateToPublishedLists();
 }
 
 /**

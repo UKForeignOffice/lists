@@ -2,9 +2,9 @@ import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { subMonths } from "date-fns";
 
 import { CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
+import { subMonths, addYears, isBefore } from "date-fns";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -86,10 +86,30 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
   }
 }
 
+export async function findListsWithoutNextAnnualReview() {
+  try {
+    const result = (await prisma.list.findMany({
+      where: {
+        nextAnnualReviewStartDate: null,
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+
+    logger.debug(`${result.length} lists without nextAnnualReview found`);
+    return result;
+  } catch (error) {
+    logger.error(`findListsWithoutNextAnnualReview Error: ${(error as Error).message}`);
+    return { error: new Error("Unable to get lists in annual review") };
+  }
+}
+
 export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>> {
   try {
     const result = (await prisma.list.findMany({
       where: {
+        nextAnnualReviewStartDate: null,
         jsonData: {
           path: ["currentAnnualReview", "eligibleListItems"],
           not: "",
@@ -106,6 +126,20 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
     logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
     return { error: new Error("Unable to get lists in annual review") };
   }
+}
+
+export async function findFirstPublishedDateForList(listId: number) {
+  return await prisma.event.findFirst({
+    where: {
+      listItem: {
+        listId,
+      },
+      type: "PUBLISHED",
+    },
+    orderBy: {
+      time: "asc",
+    },
+  });
 }
 
 export async function createList(listData: {
@@ -222,4 +256,20 @@ export async function updateListForAnnualReview(
     logger.error(errorMessage);
     return { error: new Error(errorMessage) };
   }
+}
+
+export interface ListWithFirstPublishedDate {
+  listId: number;
+  oneYearAfterFirstPublishedDate: Date;
+}
+
+export async function addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate }: ListWithFirstPublishedDate) {
+  return await prisma.list.update({
+    where: {
+      id: listId,
+    },
+    data: {
+      nextAnnualReviewStartDate: oneYearAfterFirstPublishedDate,
+    },
+  });
 }
