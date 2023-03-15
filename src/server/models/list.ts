@@ -2,6 +2,7 @@ import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
+import { subMonths } from "date-fns";
 
 import { CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
 
@@ -42,15 +43,14 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date, today: Date): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
     const result = (await prisma.list.findMany({
       where: {
         nextAnnualReviewStartDate: {
-          gte: annualReviewStartDate,
-          lt: today,
+          lte: annualReviewStartDate,
         },
       },
       include: {
@@ -61,8 +61,7 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date, to
               some: {
                 type: "PUBLISHED",
                 time: {
-                  gte: annualReviewStartDate,
-                  lte: today,
+                  lte: subMonths(Date.now(), 1),
                 },
               },
             },
