@@ -4,7 +4,7 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
 
 import { CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
-import { subMonths, addYears, isBefore } from "date-fns";
+import { subMonths } from "date-fns";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
