@@ -33,8 +33,8 @@ async function updateListForAnnualReview(days, today) {
 }
 
 async function createListItem(reference, today) {
-  const monthAfterToday = today;
-  monthAfterToday.setMonth(today.getMonth() - 1);
+  const monthBeforeToday = today;
+  monthBeforeToday.setMonth(today.getMonth() - 1);
 
   return await cy.task("db", {
     operation: "listItem.create",
@@ -44,7 +44,7 @@ async function createListItem(reference, today) {
         ...createListItemBaseObject(reference),
         history: {
           createMany: {
-            data: [events.PUBLISHED(monthAfterToday), events.OUT_WITH_PROVIDER(monthAfterToday)],
+            data: [events.PUBLISHED(monthBeforeToday), events.OUT_WITH_PROVIDER(monthBeforeToday)],
           },
         },
         address: {
