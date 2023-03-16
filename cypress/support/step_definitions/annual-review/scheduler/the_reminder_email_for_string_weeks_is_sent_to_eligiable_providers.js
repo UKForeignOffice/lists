@@ -15,12 +15,12 @@ Then("the reminder email for {string} weeks is sent to eligible providers", asyn
         where: {
           type: "REMINDER",
           AND: [
-            // {
-            //   jsonData: {
-            //     path: ["notes"],
-            //     equals: [`sent reminder for week ${noOfWeeks}. (${TOTAL_NO_UNPUBLISH_WEEKS - noOfWeeks} until unpublish date)`],
-            //   },
-            // },
+            {
+              jsonData: {
+                path: ["notes"],
+                equals: [`sent reminder for week ${noOfWeeks}. (${TOTAL_NO_UNPUBLISH_WEEKS - noOfWeeks} until unpublish date)`],
+              },
+            },
             {
               jsonData: {
                 path: ["reference"],
