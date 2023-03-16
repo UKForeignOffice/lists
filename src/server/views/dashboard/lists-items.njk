@@ -86,7 +86,7 @@
         </div>
       {% endif %}
 
-      {% if bannerToggles.unpublishWarning.display %}
+      {% if bannerToggles.unpublishWarning %}
         <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -94,7 +94,7 @@
             </h2>
           </div>
           <div class="govuk-notification-banner__content">
-            <strong>{{ bannerToggles.unpublishWarning.countOfListItems }} service {{ "providers are" if bannerToggles.unpublishWarning.countOfListItems > 1 else "provider is" }} going to be unpublished at 1pm on {{ unpublishDate }} as they have not responded to the annual review. <a href="#" class="govuk-link">Check which providers</a> are going to be unpublished.</strong>
+            <strong>{{ bannerToggles.unpublishWarning.countOfListItems }} service {{ "providers are" if bannerToggles.unpublishWarning.countOfListItems > 1 else "provider is" }} going to be unpublished at 1pm on {{ unpublishDate }} as they have not responded to the annual review. <a href="?activity=out_with_provider" class="govuk-link">Check which providers</a> are going to be unpublished.</strong>
           </div>
         </div>
       {% endif %}

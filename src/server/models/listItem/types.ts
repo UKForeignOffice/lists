@@ -102,3 +102,7 @@ export interface Event extends PrismaClient.Event {
 export interface EventCreateInput extends PrismaClient.Prisma.EventCreateInput {
   jsonData: EventJsonData;
 }
+
+export type AnnualReviewBanner<BannerType extends "emailsSent" | "oneMonthWarning" | "unpublishWarning", V> =
+  | { [Key in BannerType]: V }
+  | undefined;

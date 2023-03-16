@@ -1,8 +1,10 @@
-import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
-import { ActivityStatusViewModel, IndexListItem } from "server/models/listItem/types";
+import type { Event, ListItem, Prisma, Status } from "@prisma/client";
+import { ListItemEvent } from "@prisma/client";
+import type { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import { isAfter, isBefore } from "date-fns";
-import { ListWithJsonData } from "server/components/dashboard/helpers";
+import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
+import type { ListWithJsonData } from "server/components/dashboard/helpers";
+import { prisma } from "server/models/db/prisma-client";
 
 /**
  * Additions to Status type to help with rendering
@@ -162,71 +164,109 @@ export function getLastPublished(events: Array<{ type: string; time: Date }> | u
  * start date.
  * @param list
  */
-export function displayOneMonthAnnualReviewWarning(list: ListWithJsonData): boolean {
+export function displayOneMonthAnnualReviewWarning(
+  list: ListWithJsonData
+): AnnualReviewBanner<"oneMonthWarning", boolean> {
   const oneMonthBeforeDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH;
   const annualReviewDateString = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
-  let oneMonthWarning = false;
 
-  if (oneMonthBeforeDateString && annualReviewDateString) {
-    const oneMonthBeforeDate = new Date(
-      list.jsonData.currentAnnualReview?.keyDates.annualReview.POST_ONE_MONTH as string
-    );
-    const isAfterOneMonthDate = isAfter(Date.now(), oneMonthBeforeDate);
-    const annualReviewDate = new Date(list.jsonData.currentAnnualReview?.keyDates.annualReview.START as string);
-    const isBeforeAnnualReviewDate = isBefore(Date.now(), annualReviewDate);
-    oneMonthWarning = isAfterOneMonthDate && isBeforeAnnualReviewDate;
+  if (!oneMonthBeforeDateString || !annualReviewDateString) {
+    return;
   }
-  return oneMonthWarning;
+
+  const annualReviewDateWithScheduledTime = set(parseISO(annualReviewDateString), {
+    hours: 10,
+    minutes: 59,
+  });
+
+  const todayIsBetweenOneMonthBeforeAndStart = isWithinInterval(Date.now(), {
+    start: parseISO(oneMonthBeforeDateString),
+    end: annualReviewDateWithScheduledTime,
+  });
+
+  if (todayIsBetweenOneMonthBeforeAndStart) {
+    return {
+      oneMonthWarning: true,
+    };
+  }
 }
 
 /**
  * Used to display the warning banner in the list items page to notify that there are list items where the providers
  * have not responded AND the current date is five weeks or less prior to the unpublish date. Providers that haven't
  * responded can be determined where listItem.isAnnualReview = true and the listItem.status = OUT_WITH_PROVIDER.
- * @param list
- * @param listItems
  */
-export function displayUnpublishWarning(list: ListWithJsonData, listItems: IndexListItem[]) {
-  let display = false;
-  let countOfListItems = 0;
-  const fiveWeeksBeforeUnpublishDateString =
-    list.jsonData.currentAnnualReview?.keyDates.unpublished.PROVIDER_FIVE_WEEKS;
-  if (fiveWeeksBeforeUnpublishDateString) {
-    const fiveWeeksBeforeUnpublishDate = new Date(fiveWeeksBeforeUnpublishDateString);
-    const isAfterFiveWeeksBeforeUnpublishDate = isAfter(Date.now(), fiveWeeksBeforeUnpublishDate);
-    if (isAfterFiveWeeksBeforeUnpublishDate) {
-      const listItemsToBeUnpublished = listItems.filter((listItem) => {
-        return listItem.isAnnualReview && listItem.status === Status.OUT_WITH_PROVIDER;
-      });
-      countOfListItems = listItemsToBeUnpublished.length;
-      display = countOfListItems > 0;
-    }
+export async function displayUnpublishWarning(
+  list: ListWithJsonData
+): Promise<AnnualReviewBanner<"unpublishWarning", { countOfListItems: number }>> {
+  const keyDates = list.jsonData.currentAnnualReview?.keyDates;
+  if (!keyDates) {
+    return;
   }
-  return {
-    display,
-    countOfListItems,
-  };
+  const startDate = parseISO(keyDates?.annualReview.START);
+
+  if (!isPast(startDate)) {
+    return;
+  }
+
+  const weeksSinceStarting = differenceInWeeks(Date.now(), startDate, { roundingMethod: "floor" });
+  const countOfListItems = await countNumberOfNonRespondents(list.id!, startDate);
+
+  if (weeksSinceStarting >= 5 && countOfListItems > 0) {
+    return {
+      unpublishWarning: {
+        countOfListItems,
+      },
+    };
+  }
 }
 
-/**
- * Used to display the warning banner in the list items page to notify the annual review email has been sent to the
- * providers. Only returns true if there are Event records for this list item with an event type "ANNUAL_REVIEW_STARTED"
- * and where the event time is after the annual review start date. This ensures Event records from previous years do not
- * get used when performing this validation.
- * @param events
- * @param list
- */
-export function annualReviewEmailsSent(
-  list: ListWithJsonData,
-  events?: Array<{ type: string; time: Date }> | undefined
-): boolean {
-  if (!events?.length) return false;
-  const annualReviewStartDateString = list?.jsonData?.currentAnnualReview?.keyDates.annualReview.START;
-
-  if (!annualReviewStartDateString) return false;
-  const annualReviewDate = new Date(annualReviewStartDateString);
-
-  return events.some((event) => {
-    return event.type === "ANNUAL_REVIEW_STARTED" && isAfter(event.time, annualReviewDate);
+async function countNumberOfNonRespondents(listId: number, annualReviewStartDate: string | Date) {
+  return await prisma.listItem.count({
+    where: {
+      listId,
+      status: "OUT_WITH_PROVIDER",
+      isAnnualReview: true,
+      history: {
+        none: {
+          type: {
+            in: ["EDITED", "CHECK_ANNUAL_REVIEW"],
+          },
+          time: {
+            gte: annualReviewStartDate,
+          },
+        },
+      },
+    },
   });
+}
+
+export async function displayEmailsSentBanner(
+  list: ListWithJsonData
+): Promise<AnnualReviewBanner<"emailsSent", number>> {
+  const startDateISO = list.jsonData.currentAnnualReview?.keyDates.annualReview.START;
+
+  if (!startDateISO) {
+    return;
+  }
+
+  const startDate = parseISO(startDateISO);
+
+  const emailsSent = await prisma.event.count({
+    where: {
+      listItem: {
+        listId: list.id,
+      },
+      type: "ANNUAL_REVIEW_STARTED",
+      time: {
+        gte: startDate,
+      },
+    },
+  });
+
+  if (!emailsSent) return;
+
+  return {
+    emailsSent,
+  };
 }

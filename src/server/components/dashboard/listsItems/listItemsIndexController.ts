@@ -1,13 +1,16 @@
 import { NextFunction, Request } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import { ACTIVITY_TAGS, IndexListItem, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
+import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import { ListWithJsonData } from "../helpers";
-import * as SummaryHelpers from "server/models/listItem/summary.helpers";
-import { displayOneMonthAnnualReviewWarning, displayUnpublishWarning } from "server/models/listItem/summary.helpers";
+import {
+  displayEmailsSentBanner,
+  displayOneMonthAnnualReviewWarning,
+  displayUnpublishWarning,
+} from "server/models/listItem/summary.helpers";
 
 /**
  * TODO:- rename file to listItems. Currently lists items for parity with existing code.
@@ -154,6 +157,7 @@ export async function listItemsIndexController(
     );
     const unpublishDate = AnnualReviewHelpers.calculateNewDateAfterPeriod(annualReviewDate, { weeks: 6 });
 
+    const bannerToggles = await annualReviewBannerToggles(res.locals.list as ListWithJsonData);
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
@@ -162,7 +166,7 @@ export async function listItemsIndexController(
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       annualReviewDate,
       unpublishDate: unpublishDate ? AnnualReviewHelpers.formatDate(unpublishDate) : undefined,
-      bannerToggles: annualReviewBannerToggles(res.locals.list as ListWithJsonData, list.items),
+      bannerToggles,
       // @ts-expect-error
       csrfToken: getCSRFToken(req),
     });
@@ -171,13 +175,10 @@ export async function listItemsIndexController(
   }
 }
 
-function annualReviewBannerToggles(list: ListWithJsonData, listItems: IndexListItem[]) {
-  const emailsSent = listItems?.some((listItem) => {
-    return SummaryHelpers.annualReviewEmailsSent(list, listItem?.history);
-  });
-  return {
-    oneMonthWarning: displayOneMonthAnnualReviewWarning(list),
-    emailsSent,
-    unpublishWarning: displayUnpublishWarning(list, listItems),
-  };
+async function annualReviewBannerToggles(list: ListWithJsonData) {
+  let banner;
+  banner ??= displayOneMonthAnnualReviewWarning(list);
+  banner ??= await displayUnpublishWarning(list);
+  banner ??= await displayEmailsSentBanner(list);
+  return banner;
 }
