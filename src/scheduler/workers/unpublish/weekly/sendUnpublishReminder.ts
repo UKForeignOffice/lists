@@ -8,7 +8,6 @@ import { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;
-
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
