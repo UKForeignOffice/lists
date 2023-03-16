@@ -203,13 +203,12 @@ export async function displayUnpublishWarning(
     return;
   }
   const startDate = startOfDay(parseISO(keyDates?.annualReview.START));
-  const unpublishDate = startOfDay(parseISO(keyDates?.unpublished.UNPUBLISH));
 
   if (!isPast(startDate)) {
     return;
   }
 
-  const weeksSinceStarting = differenceInWeeks(unpublishDate, Date.now(), { roundingMethod: "floor" });
+  const weeksSinceStarting = differenceInWeeks(startDate, Date.now(), { roundingMethod: "floor" });
   const countOfListItems = await countNumberOfNonRespondents(list.id!, startDate);
 
   if (weeksSinceStarting >= 5 && countOfListItems > 0) {
