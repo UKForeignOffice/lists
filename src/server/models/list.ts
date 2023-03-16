@@ -1,3 +1,4 @@
+import { startOfToday, subDays } from "date-fns";
 import { compact, toLower, trim } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
@@ -61,7 +62,7 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date, to
               some: {
                 type: "PUBLISHED",
                 time: {
-                  gte: annualReviewStartDate,
+                  gte: subDays(startOfToday(), 28),
                   lte: today,
                 },
               },

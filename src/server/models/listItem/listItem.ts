@@ -16,6 +16,7 @@ import { merge } from "lodash";
 import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
+import { subMonths } from "date-fns";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -114,11 +115,18 @@ export async function findListItems(options: { listIds: number[]; statuses?: Sta
       return { error: message };
     }
 
-    const tableData = await Promise.all(listIds.map(async (listId) => ({ list: await findListById(listId), listId })));
+    interface TableData {
+      list: List | undefined;
+      listId: number;
+    }
+
+    const tableData: TableData[] = await Promise.all(
+      listIds.map(async (listId) => ({ list: await findListById(listId), listId }))
+    );
 
     const result = await prisma.listItem.findMany({
       where: {
-        AND: tableData.map(({ list, listId }: any) => ({
+        OR: tableData.map(({ list, listId }: any) => ({
           listId,
           ...(statuses != null && { status: { in: statuses } }),
           ...(isAnnualReview != null && { isAnnualReview }),
@@ -126,7 +134,7 @@ export async function findListItems(options: { listIds: number[]; statuses?: Sta
             some: {
               type: "PUBLISHED",
               time: {
-                lte: list?.jsonData?.currentAnnualReview?.keyDates.POST_ONE_MONTH,
+                lte: subMonths(list?.nextAnnualReviewStartDate, 1),
               },
             },
           },

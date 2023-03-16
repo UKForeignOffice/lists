@@ -5,7 +5,7 @@ import { findListItems } from "server/models/listItem";
 import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { subDays, startOfDay } from "date-fns";
+import { addDays, startOfDay } from "date-fns";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
@@ -62,7 +62,7 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
 }
 
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
-  const annualReviewStartDate = subDays(today, schedulerMilestoneDays.post.ONE_MONTH);
+  const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
     const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate, today);
 
