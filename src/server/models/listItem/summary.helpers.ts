@@ -1,7 +1,7 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import { differenceInWeeks, isWithinInterval, parseISO, startOfDay, startOfToday } from "date-fns";
+import { differenceInWeeks, isToday, isWithinInterval, parseISO, startOfDay, startOfToday } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
 
@@ -173,9 +173,11 @@ export function displayOneMonthAnnualReviewWarning(
     return;
   }
 
+  const annualReviewDateWithScheduledTime = parseISO(`${annualReviewDateString}T10:59:00Z`);
+
   const todayIsBetweenOneMonthBeforeAndStart = isWithinInterval(startOfToday(), {
     start: parseISO(oneMonthBeforeDateString),
-    end: parseISO(annualReviewDateString),
+    end: annualReviewDateWithScheduledTime,
   });
 
   if (todayIsBetweenOneMonthBeforeAndStart) {
