@@ -1,15 +1,14 @@
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient, RequestError } from "notifications-node-client";
-import { NOTIFY, isSmokeTest } from "server/config";
+import { NOTIFY } from "server/config";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 import { ListItem } from "@prisma/client";
 import { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;
-const notifyApiKey = isSmokeTest ? NOTIFY.smokeTestApiKey : NOTIFY.apiKey;
-const notifyClient = new NotifyClient(notifyApiKey);
+const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
   const logger = schedulerLogger.child({
