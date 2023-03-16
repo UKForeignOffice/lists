@@ -35,7 +35,7 @@ export function arrayHasChanges(beforeArray: any[] = [], afterArray: any[] = [])
  * Recursive object comparison, returns the key/value pairs which have changed from beforeObject to afterObject.
  * Missing key/value pairs will be detected as `null` (to be deleted).
  */
-export function getObjectDiff<T extends { [key: string]: any }>(
+export function getObjectDiff<T extends Record<string, any>>(
   beforeObject: T,
   afterObject: T,
   options = defaultOptions

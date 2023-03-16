@@ -113,7 +113,7 @@ export async function findListItems(options: {
 }) {
   try {
     const { listIds, listItemIds, statuses, isAnnualReview } = options;
-    if ((!listIds || !listIds.length) && (!listItemIds || !listItemIds?.length)) {
+    if (!(listIds?.length) && !(listItemIds?.length)) {
       const message = "List ids or list item ids must be specified to find list items";
       logger.error(message);
       return { error: Error(message) };
@@ -438,6 +438,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
     );
 
     if (requiresAddressUpdate) {
+      // @ts-ignore
       result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit]);
     } else {
       result = await prisma.$transaction([updateItem, updateAudit]);

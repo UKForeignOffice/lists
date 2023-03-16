@@ -36,7 +36,7 @@ export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-const serviceTypeToNoun: {[key: string]: string} = {
+const serviceTypeToNoun: Record<string, string> = {
   translation: "translator",
   interpretation: "interpreter"
 };

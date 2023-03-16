@@ -2,7 +2,7 @@ import { omit } from "lodash";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
-import { User, UserCreateInput, UserRoles, UserUpdateInput } from "./types";
+import { User, UserRoles } from "./types";
 
 export async function findUserByEmail(email: string): Promise<User | undefined> {
   try {
@@ -30,17 +30,18 @@ export async function findUserById(id: number): Promise<User | undefined> {
   }
 }
 
-export async function createUser(data: UserCreateInput): Promise<User | undefined> {
-  if (!isGovUKEmailAddress(data.email)) {
+export async function createUser(data: Partial<User>): Promise<User | undefined> {
+  if (!isGovUKEmailAddress(data.email!)) {
     logger.warn(`Trying to create non GOV.UK user ${data.email}`);
     return undefined;
   }
 
   try {
     return (await prisma.user.create({
+      // @ts-ignore
       data: {
         ...data,
-        email: data.email.toLowerCase(),
+        email: data.email!.toLowerCase(),
       },
     })) as User;
   } catch (error) {
@@ -49,7 +50,7 @@ export async function createUser(data: UserCreateInput): Promise<User | undefine
   }
 }
 
-export async function updateUser(email: string, data: UserUpdateInput): Promise<User | undefined> {
+export async function updateUser(email: string, data: Partial<User>): Promise<User | undefined> {
   if (typeof data.email === "string" && !isGovUKEmailAddress(data.email)) {
     logger.warn(`Trying to update non GOV.UK user ${data.email}`);
     return undefined;

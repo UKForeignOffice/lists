@@ -24,7 +24,7 @@ export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
 
 export async function listItemCreateInputFromWebhook(
   webhook: WebhookData,
-  skipAddressCreation: Boolean = false
+  skipAddressCreation: boolean = false
 ): Promise<Prisma.ListItemCreateInput> {
   const deserialised = deserialise(webhook);
   const { type, country } = deserialised;
