@@ -31,7 +31,6 @@ Then("the reminder email for {string} weeks is sent to eligible providers", asyn
         },
       },
     }).then((result) => {
-      cy.log("🚀 ~ Then ~ result:", result)
       cy.expect(result.length).to.be.gt(0);
     })
   })
