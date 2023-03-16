@@ -1,7 +1,7 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import { differenceInWeeks, isToday, isWithinInterval, parseISO, set, startOfDay, startOfToday } from "date-fns";
+import { differenceInWeeks, isPast, isWithinInterval, parseISO, set, startOfDay } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
 
@@ -205,7 +205,11 @@ export async function displayUnpublishWarning(
   const startDate = startOfDay(parseISO(keyDates?.annualReview.START));
   const unpublishDate = startOfDay(parseISO(keyDates?.unpublished.UNPUBLISH));
 
-  const weeksSinceStarting = differenceInWeeks(unpublishDate, startDate, { roundingMethod: "floor" });
+  if (!isPast(startDate)) {
+    return;
+  }
+
+  const weeksSinceStarting = differenceInWeeks(unpublishDate, Date.now(), { roundingMethod: "floor" });
   const countOfListItems = await countNumberOfNonRespondents(list.id!, startDate);
 
   if (weeksSinceStarting >= 5 && countOfListItems > 0) {
