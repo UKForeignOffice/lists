@@ -12,10 +12,18 @@ Feature: Eligible list items are calculated correctly
   I should only review providers that have been published for over a month,
   So that I do not have to verify details that have been recently reviewed.
 
-  Scenario:
+  Background:
     Given A "lawyers" list exists for Eurasia
-    And eurasia lawyers are due to begin annual review
-    When the batch process has run
+
+  Scenario:
+    When eurasia lawyers are due to begin annual review
+    And the batch process has run
     Then eligible list items are correct
 
-
+  Scenario: A date is added automatically if one is not set
+    When there are these list items
+      | contactName | status    | isPublished | isBlocked | isApproved | emailVerified | isPinned |
+      | Winston     | PUBLISHED | true        | false     | false      | true          | false    |
+    And no annual review date is set
+    And the batch process has run
+    Then an annual review date has been set

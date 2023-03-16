@@ -5,7 +5,7 @@ import {
   findFirstPublishedDateForList,
   addAnnualReviewToList,
 } from "server/models/list";
-import type {ListWithFirstPublishedDate} from "server/models/list";
+import type { ListWithFirstPublishedDate } from "server/models/list";
 import { List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { findListItems } from "server/models/listItem";
@@ -68,18 +68,21 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
   }
 }
 
-async function addAnnualReviewDateToPublishedLists() {
+async function addAnnualReviewDateToPublishedLists(listsWithoutCurrentAnnualReviewDate: List[]) {
   try {
-    const listsWithoutCurrentAnnualReviewDate = await findListsWithoutNextAnnualReview();
     const listsWithPublishedListItem = await Promise.all(
-      (listsWithoutCurrentAnnualReviewDate as List[]).map(async (list) => {
+      listsWithoutCurrentAnnualReviewDate.map(async (list) => {
         const publishEventResult = await findFirstPublishedDateForList(list.id);
         if (!publishEventResult) {
           return null;
         }
         const oneYearAfterFirstPublishedDate = addYears(publishEventResult.time, 1);
         const isAfterToday = isAfter(oneYearAfterFirstPublishedDate, new Date());
-        return isAfterToday ? { listId: list.id, oneYearAfterFirstPublishedDate } : null;
+        if (!isAfterToday) {
+          logger.error(`List with id ${list.id} has an old first published date. Annual review will not be set.`);
+          return null;
+        }
+        return { listId: list.id, oneYearAfterFirstPublishedDate };
       })
     ).then((arr) => arr.filter(Boolean));
 
@@ -99,17 +102,22 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
     const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate);
+    const listsWithoutCurrentAnnualReviewDate = await findListsWithoutNextAnnualReview();
 
     logger.info(
       `Found the lists ${lists?.map((list) => list.id)} matching annual review start date [${annualReviewStartDate}]`
     );
+
+    if ((listsWithoutCurrentAnnualReviewDate as List[]).length) {
+      await addAnnualReviewDateToPublishedLists(listsWithoutCurrentAnnualReviewDate as List[]);
+    }
+
     if (!lists?.length) {
+      logger.error("updateListsForAnnualReview: no list with annual review found");
       return;
     }
     await populateCurrentAnnualReview(lists);
   }
-
-  await addAnnualReviewDateToPublishedLists();
 }
 
 /**
