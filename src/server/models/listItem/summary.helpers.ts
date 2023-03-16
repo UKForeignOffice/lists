@@ -1,7 +1,7 @@
 import { Event, ListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/listItem/types";
 import * as DateFns from "date-fns";
-import { differenceInWeeks, isPast, isWithinInterval, parseISO, set, startOfDay } from "date-fns";
+import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
 
