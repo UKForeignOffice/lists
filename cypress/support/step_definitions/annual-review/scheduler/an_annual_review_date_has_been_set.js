@@ -1,4 +1,4 @@
-And("an annual review date has been set", async () => {
+Then("an annual review date has been set", async () => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {

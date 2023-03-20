@@ -1,18 +1,17 @@
+import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/models/list";
 import {
-  findListByAnnualReviewDate,
-  updateListForAnnualReview,
-  findListsWithoutNextAnnualReview,
   findFirstPublishedDateForList,
+  findListsWithoutNextAnnualReview,
   addAnnualReviewToList,
-} from "server/models/list";
-import type { ListWithFirstPublishedDate } from "server/models/list";
-import { List } from "server/models/types";
-import { logger } from "server/services/logger";
+} from "scheduler/batch/model";
+import type { ListWithFirstPublishedDate } from "scheduler/batch/model";
+import type { List } from "server/models/types";
+import { logger } from "scheduler/logger";
 import { findListItems } from "server/models/listItem";
 import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { addDays, startOfDay, addYears, isAfter } from "date-fns";
+import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
+import { addDays, startOfDay, addYears, isFuture } from "date-fns";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
@@ -77,7 +76,7 @@ async function addAnnualReviewDateToPublishedLists(listsWithoutCurrentAnnualRevi
           return null;
         }
         const oneYearAfterFirstPublishedDate = addYears(publishEventResult.time, 1);
-        const isAfterToday = isAfter(oneYearAfterFirstPublishedDate, new Date());
+        const isAfterToday = isFuture(oneYearAfterFirstPublishedDate);
         if (!isAfterToday) {
           logger.error(`List with id ${list.id} has an old first published date. Annual review will not be set.`);
           return null;
