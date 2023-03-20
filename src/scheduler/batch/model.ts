@@ -1,26 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { logger } from "scheduler/logger";
-import type { List } from "server/models/types";
+import { addYears } from "date-fns";
 
 export const prisma = new PrismaClient();
 
 export interface ListWithFirstPublishedDate {
   listId: number;
   oneYearAfterFirstPublishedDate: Date;
-}
-
-export async function findFirstPublishedDateForList(listId: number) {
-  return await prisma.event.findFirst({
-    where: {
-      listItem: {
-        listId,
-      },
-      type: "PUBLISHED",
-    },
-    orderBy: {
-      time: "asc",
-    },
-  });
 }
 
 export async function addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate }: ListWithFirstPublishedDate) {
@@ -36,14 +22,29 @@ export async function addAnnualReviewToList({ listId, oneYearAfterFirstPublished
 
 export async function findListsWithoutNextAnnualReview() {
   try {
-    const result = (await prisma.list.findMany({
+    const result = await prisma.list.findMany({
       where: {
         nextAnnualReviewStartDate: null,
       },
-      include: {
-        country: true,
+      select: {
+        items: {
+          where: {
+            history: {
+              some: {
+                type: "PUBLISHED",
+                time: {
+                  gt: addYears(new Date(), -1).toISOString(),
+                },
+              },
+            },
+          },
+          include: {
+            history: true,
+            list: true,
+          },
+        },
       },
-    })) as List[];
+    });
 
     logger.debug(`${result.length} lists without nextAnnualReview found`);
     return result;
