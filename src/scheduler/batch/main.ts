@@ -1,13 +1,12 @@
 import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/models/list";
 import { findListsWithoutNextAnnualReview, addAnnualReviewToList } from "scheduler/batch/model";
-import type { ListWithFirstPublishedDate } from "scheduler/batch/model";
 import type { List, BaseListItemGetObject as ListItem } from "server/models/types";
 import { logger } from "scheduler/logger";
 import { findListItems } from "server/models/listItem";
 import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
 import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { addDays, startOfDay, addYears, isFuture } from "date-fns";
+import { addDays, startOfDay, addYears } from "date-fns";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
