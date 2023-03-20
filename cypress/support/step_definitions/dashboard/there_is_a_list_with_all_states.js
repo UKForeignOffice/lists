@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { rand, randCompanyName, randEmail, randFullName } from "@ngneat/falso";
+import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 import { ListItemEvent } from "@prisma/client";
 
 Given("A {string} list exists for Eurasia", (providerType) => {

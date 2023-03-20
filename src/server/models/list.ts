@@ -90,7 +90,6 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
   try {
     const result = (await prisma.list.findMany({
       where: {
-        nextAnnualReviewStartDate: null,
         jsonData: {
           path: ["currentAnnualReview", "eligibleListItems"],
           not: "",
