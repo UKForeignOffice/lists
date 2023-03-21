@@ -18,7 +18,7 @@ Feature: Eligible list items are calculated correctly
   Scenario:
     When eurasia lawyers are due to begin annual review
     And the batch process has run
-    Then eligible list items are correct
+    Then "6" eligible list items exist
 
 
   Scenario: A date is added automatically if one is not set
