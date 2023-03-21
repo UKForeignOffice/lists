@@ -3,8 +3,8 @@ import { findListsWithoutNextAnnualReview, addAnnualReviewToList } from "schedul
 import type { List, BaseListItemGetObject as ListItem } from "server/models/types";
 import { logger } from "scheduler/logger";
 import { findListItems } from "server/models/listItem";
-import * as helpers from "./helpers";
-import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
+import * as helpers from "../helpers";
+import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
 import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { addDays, startOfDay, addYears } from "date-fns";
 import type { Event } from "server/models/listItem/types";
