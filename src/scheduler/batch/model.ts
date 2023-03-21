@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { logger } from "scheduler/logger";
-import { addYears } from "date-fns";
+import { subYears } from "date-fns";
 
 export const prisma = new PrismaClient();
 
@@ -33,7 +33,7 @@ export async function findListsWithoutNextAnnualReview() {
               some: {
                 type: "PUBLISHED",
                 time: {
-                  gt: addYears(new Date(), -1).toISOString(),
+                  gt: subYears(new Date(), 1),
                 },
               },
             },
