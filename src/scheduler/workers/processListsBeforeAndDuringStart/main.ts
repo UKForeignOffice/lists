@@ -233,8 +233,7 @@ export async function updateIsAnnualReviewForListItems(
   }
   if (updatedListItems.result.length < listItems.length) {
     const listItemsNotUpdated = listItems.filter((listItem) => {
-      // @ts-ignore
-      return !updatedListItems.result.map((updatedListItem) => updatedListItem.id).includes(listItem.id);
+      return updatedListItems.result!.map((updatedListItem) => updatedListItem.id).includes(listItem.id);
     });
     logger.error(
       `List items ${listItemsNotUpdated.map((listItem) => listItem.id)} were not updated for annual review start`
@@ -265,7 +264,7 @@ export async function processAnnualReview(): Promise<void> {
     return;
   }
   // get list items eligible for annual review for all lists
-  const listItemsResult = await findListItems({ listItemIds });
+  const listItemsResult = await findListItems({ listIds });
   if (listItemsResult.error ?? !listItemsResult.result.length) {
     logger.info(`No list items found for any of the list Ids ${listIds}`);
     return;
