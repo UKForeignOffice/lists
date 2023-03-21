@@ -7,6 +7,7 @@ import * as helpers from "./helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "./helpers";
 import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { addDays, startOfDay, addYears } from "date-fns";
+import type { Event } from "server/models/listItem/types";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
@@ -62,29 +63,49 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
   }
 }
 
-async function addAnnualReviewDateToPublishedLists(listsWithoutCurrentAnnualReviewDate: Array<{ items: ListItem[] }>) {
+interface EventWithListId extends Partial<Event> {
+  listId: number;
+}
+
+async function addAnnualReviewDateToPublishedLists(listsWithoutAnnualReviewDate: Array<{ items: ListItem[] }>) {
   try {
-    const listItems = listsWithoutCurrentAnnualReviewDate.filter((list) => list.items.length).map((list) => list.items);
+    const nonEmptyLists = listsWithoutAnnualReviewDate.filter((list) => list.items.length);
+    const listItems = nonEmptyLists.flatMap((list) => list.items);
 
-    const flattenedListItem = listItems.flatMap((item) => item);
-    const listIds = new Set(flattenedListItem.map((listItem) => listItem.listId));
-    const uniquListIds = Array.from(listIds);
-    const historyEvents = flattenedListItem
-      .map((listItem) => ({ ...listItem.history?.find((his) => his.type === "PUBLISHED"), listId: listItem.listId }))
-      .sort((a, b) => new Date(b.time) - new Date(a.time));
+    const listIdsSet = new Set(listItems.map((listItem) => listItem.listId));
+    const uniqueListIds = Array.from(listIdsSet);
 
-    const filteredHistoryEvents = uniquListIds.map((id) =>
-      historyEvents.find((historyEvent) => historyEvent.listId === id)
+    const publishedHistoryEvents = listItems
+      .map((listItem) => {
+        const x: EventWithListId = {
+          ...listItem.history!.find((event) => event.type === "PUBLISHED"),
+          listId: listItem.listId,
+        };
+        return x;
+      })
+      .sort(sortNewestFirstByDate);
+
+    const filteredHistoryEvents = uniqueListIds.map(
+      (id) => publishedHistoryEvents.find((event) => event.listId === id)!
     );
+
     await Promise.all(
-      (filteredHistoryEvents).map(async ({ listId, time }) => {
-        const oneYearAfterFirstPublishedDate = addYears(time, 1);
+      filteredHistoryEvents.map(async ({ listId, time }: EventWithListId) => {
+        const oneYearAfterFirstPublishedDate = addYears(time!, 1);
         await addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate });
       })
     );
   } catch (error) {
     logger.error(error);
   }
+}
+
+function sortNewestFirstByDate(a: EventWithListId, b: EventWithListId) {
+  return new Date(b.time as Date).getTime() - new Date(a.time as Date).getTime();
+}
+
+interface ListItemWithList extends ListItem {
+  list: List;
 }
 
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
@@ -96,8 +117,10 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
       `Found the lists ${lists?.map((list) => list.id)} matching annual review start date [${annualReviewStartDate}]`
     );
 
-    if ((listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItem[] }>).length) {
-      await addAnnualReviewDateToPublishedLists(listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItem[] }>);
+    if ((listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItemWithList[] }>).length) {
+      await addAnnualReviewDateToPublishedLists(
+        listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItemWithList[] }>
+      );
     }
 
     if (!lists?.length) {
