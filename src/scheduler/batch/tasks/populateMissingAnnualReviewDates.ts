@@ -17,8 +17,6 @@ export async function populateMissingAnnualReviewDates() {
 
   const listIds = listsWithoutAnnualReview.map(({ id }) => id);
 
-  logger.info(`${listIds.length} lists with nextAnnualReviewDate to be updated ${listIds}`);
-
   const rows = await prisma.firstPublishedOnList.findMany({
     where: {
       listId: {
@@ -26,6 +24,8 @@ export async function populateMissingAnnualReviewDates() {
       },
     },
   });
+
+  logger.info(`${rows.length} lists with nextAnnualReviewDate to be updated ${rows.map(({ listIds }) => listIds)}`);
 
   const updates = await Promise.allSettled(rows.map(addAnnualReviewStartDate));
 
@@ -44,7 +44,7 @@ async function addAnnualReviewStartDate({ firstPublished, listId }: FirstPublish
    * Annual review start date must be set at least 29 days in future, from today.
    */
 
-  const proposedDate = addYears(firstPublished, 1);
+  const proposedDate = startOfDay(addYears(firstPublished, 1));
   const minDate = addDays(startOfToday(), 29);
 
   const proposedDateIsWithinAMonth = isBefore(proposedDate, minDate);
@@ -56,10 +56,14 @@ async function addAnnualReviewStartDate({ firstPublished, listId }: FirstPublish
     );
   }
 
-  logger.info(`listId: ${listId} setting newAnnualReviewStartDate: ${newStartDate}`);
+  logger.info(
+    `listId: ${listId} was firstPublished on ${firstPublished.toISOString()} setting newAnnualReviewStartDate: ${newStartDate}`
+  );
 
   return await prisma.list.update({
-    id: listId,
+    where: {
+      id: listId,
+    },
     data: {
       nextAnnualReviewStartDate: newStartDate,
     },
