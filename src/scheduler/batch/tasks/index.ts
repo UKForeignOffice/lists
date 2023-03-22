@@ -112,16 +112,9 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
     const { result: lists } = await findListByAnnualReviewDate(annualReviewStartDate);
-    const listsWithoutCurrentAnnualReviewDate = await findListsWithoutNextAnnualReview();
     logger.info(
       `Found the lists ${lists?.map((list) => list.id)} matching annual review start date [${annualReviewStartDate}]`
     );
-
-    if ((listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItemWithList[] }>).length) {
-      await addAnnualReviewDateToPublishedLists(
-        listsWithoutCurrentAnnualReviewDate as Array<{ items: ListItemWithList[] }>
-      );
-    }
 
     if (!lists?.length) {
       logger.error("updateListsForAnnualReview: no list with annual review found");
