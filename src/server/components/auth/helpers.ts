@@ -25,15 +25,6 @@ export function ensureUserIsAdministrator(req: Request, res: Response, next: Nex
   }
 }
 
-export function onlyAllowAdminsEditAnnualReviewDate(req: Request, res: Response, next: NextFunction) {
-  if(req.user?.isAdministrator) {
-    return next();
-  }
-
-  req.flash("error", "You do not have permissions to edit the annual review date");
-  return res.redirect(res?.locals.listsEditUrl);
-}
-
 export async function initAuth(server: Express): Promise<void> {
   await configureExpressSession(server);
   await configurePassport(server);
