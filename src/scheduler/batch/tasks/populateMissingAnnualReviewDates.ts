@@ -25,7 +25,7 @@ export async function populateMissingAnnualReviewDates() {
     },
   });
 
-  logger.info(`${rows.length} lists with nextAnnualReviewDate to be updated ${rows.map(({ listIds }) => listIds)}`);
+  logger.info(`${rows.length} lists with nextAnnualReviewDate to be updated ${rows.map(({ listId }) => listId)}`);
 
   const updates = await Promise.allSettled(rows.map(addAnnualReviewStartDate));
 
@@ -48,11 +48,11 @@ async function addAnnualReviewStartDate({ firstPublished, listId }: FirstPublish
   const minDate = addDays(startOfToday(), 29);
 
   const proposedDateIsWithinAMonth = isBefore(proposedDate, minDate);
-  const newStartDate = proposedDateIsWithinAMonth ? minDate : startOfDay(proposedDate);
+  const newStartDate = proposedDateIsWithinAMonth ? minDate.toISOString() : startOfDay(proposedDate).toISOString();
 
   if (proposedDateIsWithinAMonth) {
     logger.info(
-      `listId: ${listId} has firstPublished date of ${firstPublished.toISOString()}. Proposed date (${newStartDate}) is within 29 days from today, setting ${minDate} instead`
+      `listId: ${listId} has firstPublished date of ${firstPublished}. Proposed date (${newStartDate}) is within 29 days from today, setting ${minDate} instead`
     );
   }
 
