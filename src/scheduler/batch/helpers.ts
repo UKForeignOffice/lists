@@ -116,7 +116,7 @@ export function getDateContexts(annualReviewStartDate: Date): SchedulerDateConte
   };
 }
 
-export function getCurrentAnnualReviewData(listItemIdsForAnnualReview: any[], contexts: SchedulerDateContexts) {
+export function getCurrentAnnualReviewData(listItemIdsForAnnualReview: number[], contexts: SchedulerDateContexts) {
   const currentAnnualReview: CurrentAnnualReview = {
     reference: crypto.randomUUID(),
     eligibleListItems: listItemIdsForAnnualReview,
