@@ -1,13 +1,11 @@
 import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/models/list";
-import { findListsWithoutNextAnnualReview, addAnnualReviewToList } from "scheduler/batch/model";
-import type { List, BaseListItemGetObject as ListItem } from "server/models/types";
+import type { List } from "server/models/types";
 import { logger } from "scheduler/logger";
 import { findListItems } from "server/models/listItem";
 import * as helpers from "../helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
 import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { addDays, startOfDay, addYears } from "date-fns";
-import type { Event } from "server/models/listItem/types";
+import { addDays } from "date-fns";
 import _ from "lodash";
 
 export async function populateCurrentAnnualReview(lists: List[]): Promise<void> {
@@ -61,47 +59,6 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
       }
     }
   }
-}
-
-interface EventWithListId extends Partial<Event> {
-  listId: number;
-}
-
-async function addAnnualReviewDateToPublishedLists(listsWithoutAnnualReviewDate: Array<{ items: ListItem[] }>) {
-  try {
-    const nonEmptyLists = listsWithoutAnnualReviewDate.filter((list) => list.items.length);
-    const listItems = nonEmptyLists.flatMap((list) => list.items);
-
-    const listIdsSet = new Set(listItems.map((listItem) => listItem.listId));
-    const uniqueListIds = Array.from(listIdsSet);
-
-    const publishedHistoryEvents = listItems
-      .map((listItem) => {
-        const x: EventWithListId = {
-          ...listItem.history!.find((event) => event.type === "PUBLISHED"),
-          listId: listItem.listId,
-        };
-        return x;
-      })
-      .sort(sortNewestFirstByDate);
-
-    const filteredHistoryEvents = uniqueListIds.map(
-      (id) => publishedHistoryEvents.find((event) => event.listId === id)!
-    );
-
-    await Promise.all(
-      filteredHistoryEvents.map(async ({ listId, time }: EventWithListId) => {
-        const oneYearAfterFirstPublishedDate = addYears(time!, 1);
-        await addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate });
-      })
-    );
-  } catch (error) {
-    logger.error(error);
-  }
-}
-
-function sortNewestFirstByDate(a: EventWithListId, b: EventWithListId) {
-  return new Date(b.time as Date).getTime() - new Date(a.time as Date).getTime();
 }
 
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
