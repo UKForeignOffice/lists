@@ -14,7 +14,7 @@ export function startDateFromFirstPublishedDate(firstPublished: Date, listId: nu
 
   if (proposedDateIsWithinAMonth) {
     logger.info(
-      `listId: ${listId} has firstPublished date of ${firstPublished.toISOString()}. Proposed date (${truncatedStartDateISOString}) is within 29 days from today, setting ${minDate.toISOString()} instead`
+      `listId: ${listId} has firstPublished date of ${firstPublished.toISOString()}. Proposed date (${startDate.toISOString()}) is within 29 days from today, setting ${minDate.toISOString()} instead`
     );
   }
 
