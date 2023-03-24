@@ -5,11 +5,11 @@ import { populateMissingAnnualReviewDates } from "./tasks/populateMissingAnnualR
 
 async function main() {
   // if a task needs to be executed first, await them here.
-  logger.info("starting updateListsForAnnualReview");
-  await updateListsForAnnualReview(startOfToday());
-
   logger.info("starting populateMissingAnnualReviewDates");
   await populateMissingAnnualReviewDates();
+
+  logger.info("starting updateListsForAnnualReview");
+  await updateListsForAnnualReview(startOfToday());
 
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
   /*

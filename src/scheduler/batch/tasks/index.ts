@@ -104,10 +104,6 @@ function sortNewestFirstByDate(a: EventWithListId, b: EventWithListId) {
   return new Date(b.time as Date).getTime() - new Date(a.time as Date).getTime();
 }
 
-interface ListItemWithList extends ListItem {
-  list: List;
-}
-
 export async function updateListsForAnnualReview(today: Date): Promise<void> {
   const annualReviewStartDate = addDays(today, schedulerMilestoneDays.post.ONE_MONTH);
   if (annualReviewStartDate) {
