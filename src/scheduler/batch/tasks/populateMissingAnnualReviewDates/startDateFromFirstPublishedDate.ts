@@ -1,4 +1,4 @@
-import { addDays, addYears, formatISO, isBefore, startOfDay, startOfToday } from "date-fns";
+import { addDays, addYears, isBefore, startOfDay, startOfToday } from "date-fns";
 import { logger } from "scheduler/logger";
 import { schedulerMilestoneDays } from "scheduler/batch/helpers";
 
@@ -10,8 +10,7 @@ export function startDateFromFirstPublishedDate(firstPublished: Date, listId: nu
 
   const proposedDateIsWithinAMonth = isBefore(proposedDate, minDate);
 
-  const startDate = proposedDateIsWithinAMonth ? minDate : startOfDay(proposedDate);
-  const truncatedStartDateISOString = formatISO(startDate, { representation: "date" });
+  const startDate = proposedDateIsWithinAMonth ? minDate : proposedDate;
 
   if (proposedDateIsWithinAMonth) {
     logger.info(
@@ -19,5 +18,5 @@ export function startDateFromFirstPublishedDate(firstPublished: Date, listId: nu
     );
   }
 
-  return truncatedStartDateISOString;
+  return startDate;
 }
