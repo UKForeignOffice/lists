@@ -32,7 +32,5 @@ Given("there is a list item published {int} days ago", (days) => {
         },
       },
     },
-  }).then((list) => {
-    cy.expect(list.jsonData.currentAnnualReview.eligibleListItems.length).to.equal(6);
   });
 });

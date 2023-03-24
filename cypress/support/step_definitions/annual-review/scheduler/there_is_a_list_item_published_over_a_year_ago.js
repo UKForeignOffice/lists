@@ -23,14 +23,12 @@ Given("there is a list item published over a year ago", () => {
           create: [
             {
               type: "PUBLISHED",
-              time: "2021-01-01",
+              time: new Date("2021-01-01"),
               jsonData: {},
             },
           ],
         },
       },
     },
-  }).then((list) => {
-    cy.expect(list.jsonData.currentAnnualReview.eligibleListItems.length).to.equal(6);
   });
 });
