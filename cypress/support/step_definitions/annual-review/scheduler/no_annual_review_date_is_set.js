@@ -1,12 +1,13 @@
 And("no annual review date is set", async () => {
   cy.task("db", {
-    operation: "list.findFirst",
+    operation: "list.update",
     variables: {
       where: {
         reference: "SMOKE",
       },
+      data: {
+        nextAnnualReviewStartDate: null,
+      },
     },
-  }).then((list) => {
-    cy.expect(list.nextAnnualReviewStartDate).to.equal(null);
   });
 });
