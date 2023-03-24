@@ -1,5 +1,5 @@
 import type { FirstPublishedOnList } from "@prisma/client";
-import { prisma } from "scheduler/batch/model";
+import { addAnnualReviewToList } from "scheduler/batch/model";
 import { schedulerLogger } from "scheduler/logger";
 import { startDateFromFirstPublishedDate } from "./startDateFromFirstPublishedDate";
 
@@ -12,12 +12,5 @@ export async function addAnnualReviewStartDate({ firstPublished, listId }: First
     `listId: ${listId} was firstPublished on ${firstPublished.toISOString()} setting newAnnualReviewStartDate: ${startDate}`
   );
 
-  return await prisma.list.update({
-    where: {
-      id: listId,
-    },
-    data: {
-      nextAnnualReviewStartDate: startDate,
-    },
-  });
+  return await addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate: startDate });
 }
