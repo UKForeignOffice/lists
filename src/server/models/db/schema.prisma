@@ -181,9 +181,10 @@ enum ListItemEvent {
 }
 
 view FirstPublishedOnList {
-  listId        Int
-  eventId        Int
-  firstPublished DateTime @db.Timestamp(6)
+  listId                      Int
+  eventId                     Int
+  firstPublished              DateTime
+  nextAnnualReviewStartDate   DateTime? @db.Date
   @@unique([listId, eventId])
 }
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported
