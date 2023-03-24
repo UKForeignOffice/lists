@@ -2,9 +2,9 @@ import { prisma } from "scheduler/batch/model";
 import { schedulerLogger } from "scheduler/logger";
 import { addAnnualReviewStartDate } from "./addAnnualReviewStartDate";
 
-const logger = schedulerLogger.child({ method: "populateMissingAnnualReviewDates" });
+const logger = schedulerLogger.child({ method: "populateAnnualReviewDates" });
 
-export async function populateMissingAnnualReviewDates() {
+export async function main() {
   const listsWithoutAnnualReview = await prisma.list.findMany({
     where: {
       nextAnnualReviewStartDate: null,

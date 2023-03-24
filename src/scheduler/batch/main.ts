@@ -1,6 +1,6 @@
 import { logger } from "scheduler/logger";
 import { startOfToday } from "date-fns";
-import { populateMissingAnnualReviewDates } from "./tasks/populateMissingAnnualReviewDates";
+import { main as populateMissingAnnualReviewDates } from "./tasks/populateMissingAnnualReviewDates";
 import { updateListsForAnnualReview } from "./tasks/updateListsForAnnualReview";
 
 async function main() {
