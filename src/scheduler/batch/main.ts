@@ -1,7 +1,7 @@
 import { logger } from "scheduler/logger";
-import { updateListsForAnnualReview } from "./tasks";
 import { startOfToday } from "date-fns";
 import { populateMissingAnnualReviewDates } from "./tasks/populateMissingAnnualReviewDates";
+import { updateListsForAnnualReview } from "./tasks/updateListsForAnnualReview";
 
 async function main() {
   // if a task needs to be executed first, await them here.
@@ -11,9 +11,9 @@ async function main() {
   logger.info("starting updateListsForAnnualReview");
   await updateListsForAnnualReview(startOfToday());
 
-  // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
+  // put all the tasks that can be run async (i.e. not required to be sequential) here.
   /*
-   const tasks = [];
+   const tasks = []; // needs to be an array of promises.
    return await Promise.allSettled(tasks);
    */
 }
