@@ -20,10 +20,16 @@ Feature: Eligible list items are calculated correctly
     And the batch process has run
     Then eligible list items are correct
 
+
   Scenario: A date is added automatically if one is not set
-    When there are these list items
-      | contactName | status    | isPublished | isBlocked | isApproved | emailVerified | isPinned |
-      | Winston     | PUBLISHED | true        | false     | false      | true          | false    |
+    And there is a list item published 60 days ago
+    And no annual review date is set
+    And the batch process has run
+    Then an annual review date has been set
+
+
+  Scenario: A date in the future is set if the first published date was over a year ago
+    And there is a list item published over a year ago
     And no annual review date is set
     And the batch process has run
     Then an annual review date has been set
