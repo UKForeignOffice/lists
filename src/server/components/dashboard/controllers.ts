@@ -208,7 +208,6 @@ export async function listsEditController(req: Request, res: Response, next: Nex
         return next();
       }
     }
-    const userExistsInListJson = list?.jsonData.users?.includes(req.user!.userData.email);
 
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
@@ -216,7 +215,6 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       lastAnnualReviewStartDate,
       listId,
       user: req.user?.userData,
-      userExistsInListJson,
       list,
       req,
       csrfToken: getCSRFToken(req),
