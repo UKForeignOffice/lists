@@ -228,6 +228,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 export async function listsEditPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const removeButtonClicked = "userEmail" in req.body;
+    console.log("🚀 ~ listsEditPostController ~ removeButtonClicked:", removeButtonClicked)
 
     return removeButtonClicked ? await listEditRemovePublisher(req, res) : await listEditAddPublisher(req, res, next);
   } catch (error) {

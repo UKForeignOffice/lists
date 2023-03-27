@@ -143,7 +143,14 @@ export async function createList(listData: {
       },
     };
 
-    const list = (await prisma.list.create({ data })) as List;
+    const list = (await prisma.list.upsert({
+      where: {
+        type: "Lawyers",
+        country: "France",
+      },
+      update: {},
+      create: data,
+    })) as List;
     return list ?? undefined;
   } catch (error) {
     logger.error(`createList Error: ${(error as Error).message}`);
