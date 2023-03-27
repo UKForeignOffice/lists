@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { rand, randCompanyName, randEmail, randFullName } from "@ngneat/falso";
+import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 import { ListItemEvent } from "@prisma/client";
 
 Given("A {string} list exists for Eurasia", (providerType) => {
@@ -42,7 +42,7 @@ function createListForService(service) {
       create: {
         type: service,
         reference: "SMOKE",
-        nextAnnualReviewStartDate: new Date(),
+        nextAnnualReviewStartDate: null,
         jsonData,
         country: {
           connect: {
@@ -53,7 +53,7 @@ function createListForService(service) {
       update: {
         type: service,
         jsonData,
-        nextAnnualReviewStartDate: new Date(),
+        nextAnnualReviewStartDate: null,
         items: {
           deleteMany: {},
         },
@@ -108,7 +108,7 @@ function setupPublishEvents(options) {
 
   const publishEvent = {
     type: ListItemEvent.PUBLISHED,
-    time: new Date("2022-01-01"),
+    time: new Date(),
     jsonData: {
       eventName: "publish",
       userId: "smoke",

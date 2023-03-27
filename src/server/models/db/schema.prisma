@@ -2,7 +2,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
-  previewFeatures = ["fieldReference"]
+  previewFeatures = ["fieldReference", "views"]
 }
 
 datasource db {
@@ -180,6 +180,13 @@ enum ListItemEvent {
   REMINDER
 }
 
+view FirstPublishedOnList {
+  listId                      Int
+  eventId                     Int
+  firstPublished              DateTime
+  nextAnnualReviewStartDate   DateTime? @db.Date
+  @@unique([listId, eventId])
+}
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported
 model GeoLocation {
   id          Int @id @default(autoincrement())

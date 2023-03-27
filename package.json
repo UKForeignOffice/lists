@@ -34,7 +34,7 @@
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open"
   },
   "dependencies": {
-    "@prisma/client": "^4.7.1",
+    "@prisma/client": "^4.11.0",
     "@types/csurf": "^1.11.2",
     "accessible-autocomplete": "^2.0.3",
     "aws-sdk": "^2.1031.0",
@@ -148,7 +148,7 @@
     "nodemon-webpack-plugin": "^4.5.2",
     "postcss-loader": "^7.0.1",
     "prettier": "2.3.2",
-    "prisma": "^4.7.1",
+    "prisma": "^4.11.0",
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
     "sass-loader": "^13.0.2",
