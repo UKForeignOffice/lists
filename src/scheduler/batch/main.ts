@@ -1,5 +1,4 @@
 import { logger } from "scheduler/logger";
-import { startOfToday } from "date-fns";
 import { main as populateMissingAnnualReviewDates } from "./tasks/populateMissingAnnualReviewDates";
 import { updateListsForAnnualReview } from "./tasks/updateListsForAnnualReview";
 
@@ -9,7 +8,7 @@ async function main() {
   await populateMissingAnnualReviewDates();
 
   logger.info("starting updateListsForAnnualReview");
-  await updateListsForAnnualReview(startOfToday());
+  await updateListsForAnnualReview();
 
   // put all the tasks that can be run async (i.e. not required to be sequential) here.
   /*
