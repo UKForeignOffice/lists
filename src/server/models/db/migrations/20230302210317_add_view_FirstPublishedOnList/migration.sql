@@ -3,9 +3,9 @@
 -- min(e.time) selects the earliest time a published event occurred (firstPublished)
 create view "FirstPublishedOnList" as (
  select distinct on (l.id) "listId", min(e.time) over (partition by l.id) "firstPublished", e.id "eventId", l."nextAnnualReviewStartDate"
- from (select "id", "nextAnnualReviewStartDate" from "List") l
-          inner join (select "listId", "id" from "ListItem") li ON li."listId" = l.id
-          inner join (select time, type, id, "listItemId" from "Event" where type = 'PUBLISHED') e on li.id = "listItemId"
-        );
+ from "List" l
+          inner join "ListItem" li ON li."listId" = l.id
+          inner join (select time, type, id, "listItemId" from "Event" where type = 'PUBLISHED') e on li.id = "listItemId");
+
 
 
