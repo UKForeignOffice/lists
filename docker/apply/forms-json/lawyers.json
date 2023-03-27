@@ -1623,7 +1623,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://list:3000/ingest/lawyers"
+        "url": "http://lists:3000/ingest/lawyers"
       }
     }
   ],
