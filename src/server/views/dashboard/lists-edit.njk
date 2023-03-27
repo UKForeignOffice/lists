@@ -41,11 +41,13 @@
             <dd class="govuk-summary-list__value" data-testid="annual-review-date">
               {{ annualReviewStartDate }}
             </dd>
+            {% if user.jsonData.roles.includes('Administrator') %}
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="{{ dashboardRoutes.listsEditAnnualReviewDate.replace(':listId', list.id) }}">
                 Change<span class="govuk-visually-hidden"> date</span>
               </a>
             </dd>
+            {% endif %}
           </div>
         </dl>
       </div>
