@@ -2764,10 +2764,6 @@
     }
   ],
   "version": 2,
-  "feedback": {
-    "feedbackForm": false,
-    "url": "/smart-survey"
-  },
   "conditions": [
     {
       "name": "50_TW9NLlvr2820-1-Qt6",

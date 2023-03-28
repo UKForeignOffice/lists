@@ -1628,10 +1628,6 @@
     }
   ],
   "version": 2,
-  "feedback": {
-    "feedbackForm": false,
-    "url": "/smart-survey"
-  },
   "conditions": [
     {
       "name": "oV9fvQl39FkGahoM46257",
