@@ -151,6 +151,7 @@ export async function createList(listData: {
     const UNIQUE_CONSTRAINT_ERROR_CODE = "P2002";
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === UNIQUE_CONSTRAINT_ERROR_CODE) {
+      logger.error(`createList Error: A list already exists for this country`);
       return { duplicateListError: true };
     }
     throw error;

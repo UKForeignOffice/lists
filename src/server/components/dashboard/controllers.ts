@@ -255,7 +255,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
 
     if ((newList as Record<string, boolean>).duplicateListError) {
       const formattedService = _.upperFirst(_.lowerCase(data.serviceType));
-      req.flash("error", `A list of ${formattedService} already exists in ${data.country}`);
+      req.flash("error", `A list of ${formattedService} in ${data.country} already exists`);
       res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", "new")}`);
       return;
     }

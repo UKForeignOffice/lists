@@ -61,7 +61,7 @@
                     value="{{ serviceType }}"
                     {{-" checked" if list.type === serviceType }}
                   >
-                  <label class="govuk-label govuk-radios__label" for="serviceType">
+                  <label class="govuk-label govuk-radios__label" for="serviceType-{{ serviceType }}">
                     {{ _.startCase(serviceType) }}
                   </label>
                 </div>
