@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { trim } from "lodash";
+import _, { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
@@ -253,10 +253,18 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   if (listId === "new") {
     const newList = await createList(data);
 
-    if (newList?.id !== undefined) {
+    if ((newList as Record<string, boolean>).duplicateListError) {
+      const formattedService = _.upperFirst(_.lowerCase(data.serviceType));
+      req.flash("error", `A list of ${formattedService} already exists in ${data.country}`);
+      res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", "new")}`);
+      return;
+    }
+
+    if ((newList as List).id) {
       req.flash("successBannerHeading", "Success");
       req.flash("successBannerMessage", "List created successfully");
-      return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
+      res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList!.id}`)}`);
+      return;
     }
   }
 

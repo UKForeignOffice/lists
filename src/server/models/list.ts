@@ -1,4 +1,5 @@
 import { compact, toLower, trim } from "lodash";
+import { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "./db/prisma-client";
@@ -113,7 +114,7 @@ export async function createList(listData: {
   serviceType: ServiceType;
   users: string | string[];
   createdBy: string;
-}): Promise<List | undefined> {
+}): Promise<List | Record<string, boolean> | undefined> {
   try {
     const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
 
@@ -147,6 +148,11 @@ export async function createList(listData: {
     return list ?? undefined;
   } catch (error) {
     logger.error(`createList Error: ${(error as Error).message}`);
+    const UNIQUE_CONSTRAINT_ERROR_CODE = "P2002";
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === UNIQUE_CONSTRAINT_ERROR_CODE) {
+      return { duplicateListError: true };
+    }
     throw error;
   }
 }
