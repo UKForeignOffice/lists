@@ -8,7 +8,7 @@ import { isLocalHost } from "server/config";
 export const developmentRouter = express.Router();
 
 developmentRouter.get(`/smart-survey`, (_req, res) => {
-  res.status(301).redirect("https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/");
+  res.status(301).redirect("https://www.smartsurvey.co.uk/s/Find-a-Professional/");
 });
 developmentRouter.get(`/development*`, ensureAuthenticated);
 
