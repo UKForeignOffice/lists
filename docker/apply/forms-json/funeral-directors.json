@@ -16,7 +16,7 @@
           "name": "QLkbfP",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
+          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
           "schema": {}
         }
       ],
