@@ -15,6 +15,7 @@ import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import { UserRoles, ServiceType } from "server/models/types";
+import serviceName from "server/utils/service-name";
 
 import type { List } from "server/models/types";
 
@@ -253,14 +254,16 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   if (listId === "new") {
     const newList = await createList(data);
 
-    if ((newList as Record<string, boolean>).duplicateListError) {
-      const formattedService = _.upperFirst(_.lowerCase(data.serviceType));
+    const isDuplicateListError = "duplicateListError" in newList!;
+
+    if (isDuplicateListError) {
+      const formattedService = _.upperFirst(serviceName(data.serviceType));
       req.flash("error", `A list of ${formattedService} in ${data.country} already exists`);
       res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", "new")}`);
       return;
     }
 
-    if ((newList as List).id) {
+    if (newList!.id) {
       req.flash("successBannerHeading", "Success");
       req.flash("successBannerMessage", "List created successfully");
       res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList!.id}`)}`);
