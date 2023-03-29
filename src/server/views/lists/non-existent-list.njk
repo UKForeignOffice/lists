@@ -1,0 +1,22 @@
+{% extends "layout.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }}{{ " - " + partialPageTitle if partialPageTitle }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <a class="govuk-back-link" href="{{ backLink }}">Back</a>
+        <h1 class="govuk-heading-l">
+        We don’t have an online list of {{ serviceType }} in {{ country }}
+        </h1>
+        <p class="govuk-body">
+        You may still be able to get help finding a local translator or interpreter.
+        </p>
+        <p class="govuk-body">
+        Contact a <a class="govuk-link" href="https://www.gov.uk/world/embassies?utm_source=CYB&utm_medium=FAP&utm_campaign=no_list">British embassy, high commission or consulate</a> which represents the UK in Aruba. Consular staff there may be able to help you find a local translator or interpreter.
+        </p>
+    </div>
+  </div>
+{% endblock %}
