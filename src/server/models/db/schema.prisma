@@ -29,6 +29,7 @@ model List {
   items               ListItem[]
 
   @@index([type, countryId])
+  @@unique([countryId, type])
 }
 
 model ListItem {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { trim } from "lodash";
+import _, { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
@@ -15,6 +15,7 @@ import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import { UserRoles, ServiceType } from "server/models/types";
+import serviceName from "server/utils/service-name";
 
 import type { List } from "server/models/types";
 
@@ -253,10 +254,20 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   if (listId === "new") {
     const newList = await createList(data);
 
-    if (newList?.id !== undefined) {
+    const isDuplicateListError = "duplicateListError" in newList!;
+
+    if (isDuplicateListError) {
+      const formattedService = _.upperFirst(serviceName(data.serviceType));
+      req.flash("error", `A list of ${formattedService} in ${data.country} already exists`);
+      res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", "new")}`);
+      return;
+    }
+
+    if (newList!.id) {
       req.flash("successBannerHeading", "Success");
       req.flash("successBannerMessage", "List created successfully");
-      return res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList.id}`)}`);
+      res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", `${newList!.id}`)}`);
+      return;
     }
   }
 
