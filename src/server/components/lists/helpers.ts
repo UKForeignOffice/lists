@@ -166,35 +166,26 @@ export function removeQueryParameter(
 export const getCountryLawyerRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string => {
-    return get(pagesByCountry, lowerCase(countryName), "https://www.gov.uk/government/collections/list-of-lawyers");
-  };
+  return (countryName: CountryName): string =>
+    get(pagesByCountry, lowerCase(countryName), `/no-list-exists?serviceType=lawyers&country=${countryName}`);
 })();
 
 export const getCountryFuneralDirectorsRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoFuneralDirectorsByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string => {
-    return get(
-      pagesByCountry,
-      lowerCase(countryName),
-      "https://www.gov.uk/government/collections/funeral-directors-worldwide-list"
-    );
-  };
+  return (countryName: CountryName): string =>
+    get(pagesByCountry, lowerCase(countryName), `/no-list-exists?serviceType=funeralDirectors&country=${countryName}`);
 })();
 
 export const getCountryTranslatorsInterpretersRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string => {
-    const test = get(
+  return (countryName: CountryName): string =>
+    get(
       pagesByCountry,
       lowerCase(countryName),
-      "https://www.gov.uk/government/collections/lists-of-translators-and-interpreters"
+      `/no-list-exists?serviceType=translatorsInterpreters&country=${countryName}`
     );
-    debugger
-    return test;
-  };
 })();
 
 export const countryHasLegalAid = (() => {

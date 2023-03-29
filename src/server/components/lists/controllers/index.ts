@@ -350,3 +350,21 @@ export function listsGetPrivateBetaPage(req: Request, res: Response, next: NextF
     ServiceType,
   });
 }
+
+export function listsGetNonExistent(req: Request, res: Response) {
+  const { serviceType, country } = req.query;
+  const backLink = `/find?serviceType=${serviceType}&readNotice=ok`;
+  const typedServiceType = serviceType as "translatorsInterpreters" | "lawyers" | "funeralDirectors";
+
+  const serviceTypes = {
+    translatorsInterpreters: "translators or interpreters",
+    lawyers: "lawyers",
+    funeralDirectors: "funeral directors",
+  };
+
+  res.render("lists/non-existent-list", {
+    serviceType: serviceTypes[typedServiceType],
+    country,
+    backLink,
+  });
+}
