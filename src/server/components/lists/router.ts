@@ -6,7 +6,7 @@ import {
   listsResultsController,
   listsGetPrivateBetaPage,
   listsConfirmApplicationController,
-  removeLanguageGetController
+  removeLanguageGetController,
 } from "./controllers";
 import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
@@ -19,7 +19,7 @@ export const listsRouter = express.Router();
 listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, removeLanguageGetController);
-listsRouter.get(`${listsRoutes.results}*`, redirectToNewUrlStructure);
+listsRouter.get(listsRoutes.results, redirectToNewUrlStructure);
 listsRouter.get(`${listsRoutes.results}/:serviceType/:country`, csrfRequestHandler, listsResultsController);
 
 listsRouter.get(listsRoutes.confirmApplication, listsConfirmApplicationController);
