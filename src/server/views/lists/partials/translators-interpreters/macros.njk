@@ -43,6 +43,11 @@
     {{ item.jsonData.servicesProvided.map(_.upperFirst).join(", ") if item.jsonData.servicesProvided }}
     {{ "Not provided" if not item.jsonData.servicesProvided or item.jsonData.servicesProvided.length === 0 }}
   </p>
+  {% if item.jsonData.swornTranslations or item.jsonData.swornInterpretations %}
+    <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
+      <strong>Official services</strong>: Sworn or certified translation, Sworn interpretation
+    </p>
+  {% endif %}
   {% if item.jsonData.languagesProvided %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
       <strong>Languages translated or interpreted</strong>: {{ item.jsonData.languagesProvided.join(", ") }}

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
@@ -6,22 +6,26 @@ import {
   getAllRequestParams,
   removeQueryParameter,
   getParameterValue,
-  queryStringFromParams, parseListValues
+  queryStringFromParams,
+  parseListValues,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
-import { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import {
   getLanguageNames,
   cleanTranslatorInterpreterServices,
-  cleanTranslatorSpecialties, cleanInterpreterServices, cleanLanguagesProvided, validateCountry
+  cleanTranslatorSpecialties,
+  cleanInterpreterServices,
+  cleanLanguagesProvided,
+  validateCountry,
 } from "server/models/listItem/providers/helpers";
 import { camelCase } from "lodash";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
-import { countriesList } from "server/services/metadata";
+import type { countriesList } from "server/services/metadata";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -38,21 +42,23 @@ export const translatorsInterpretersQuestionsSequence = [
 
 const serviceTypeToNoun: Record<string, string> = {
   translation: "translator",
-  interpretation: "interpreter"
+  interpretation: "interpreter",
 };
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
-  const sanitisedServicesProvidedQuery = servicesProvided.map(service => serviceTypeToNoun[service]).filter(Boolean)
-  const interpretationOnly = sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) && sanitisedServicesProvidedQuery.length === 1;
+  const sanitisedServicesProvidedQuery = servicesProvided.map((service) => serviceTypeToNoun[service]).filter(Boolean);
+  const interpretationOnly =
+    sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) &&
+    sanitisedServicesProvidedQuery.length === 1;
   const article = interpretationOnly ? "an" : "a";
-  return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`
+  return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
 }
 
+function hasSworn(results: TranslatorInterpreterListItemGetObject[]): boolean {
+  return results.some((result) => result.jsonData.swornTranslator || result.jsonData.swornInterpreter);
+}
 
-export async function searchTranslatorsInterpreters(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
   const params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no" } = params;
   let { page = "1" } = params;
@@ -61,23 +67,25 @@ export async function searchTranslatorsInterpreters(
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
-  if(!country) {
+  if (!country) {
     const query = new URLSearchParams(req.query as Record<string, string>);
-    return res.redirect(`${listsRoutes.finder}?${query.toString()}`)
+    res.redirect(`${listsRoutes.finder}?${query.toString()}`);
+    return;
   }
+
   let languageNamesProvided;
   let serviceNamesProvided;
   let servicesProvided;
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
   let filterProps: {
-    countryName: typeof countriesList[number]["value"] | undefined,
-    region?: string,
-    servicesProvided: string[] | undefined,
-    languagesProvided: string[] | undefined,
-    interpreterServices: string[] | undefined,
-    translationSpecialties: string[] | undefined,
-    offset: number,
+    countryName: typeof countriesList[number]["value"] | undefined;
+    region?: string;
+    servicesProvided: string[] | undefined;
+    languagesProvided: string[] | undefined;
+    interpreterServices: string[] | undefined;
+    translationSpecialties: string[] | undefined;
+    offset: number;
   } = {
     countryName: undefined,
     region: "",
@@ -85,8 +93,8 @@ export async function searchTranslatorsInterpreters(
     languagesProvided: [],
     interpreterServices: [],
     translationSpecialties: [],
-    offset: -1
-  }
+    offset: -1,
+  };
 
   try {
     const countryName = validateCountry(country);
@@ -116,10 +124,12 @@ export async function searchTranslatorsInterpreters(
       params.languagesProvided = cleanedLanguagesProvided ?? undefined;
 
       // populate filtered language names
-      languageNamesProvided = cleanedLanguagesProvided?.split(",").map((language: string) => {
-        // @ts-ignore
-        return metaData.languages[language];
-      }).join(", ");
+      languageNamesProvided = cleanedLanguagesProvided
+        ?.split(",")
+        .map((language: string) => {
+          return metaData.languages[language];
+        })
+        .join(", ");
     }
 
     if (servicesProvided) {
@@ -127,7 +137,9 @@ export async function searchTranslatorsInterpreters(
         if (service.includes("all")) {
           return camelCase(service);
         }
-        const serviceName = metaData.translationInterpretationServices.find((metaDataService) => metaDataService.value.toLowerCase() === service)?.value;
+        const serviceName = metaData.translationInterpretationServices.find(
+          (metaDataService) => metaDataService.value.toLowerCase() === service
+        )?.value;
         return camelCase(serviceName);
       });
     }
@@ -139,13 +151,12 @@ export async function searchTranslatorsInterpreters(
       languagesProvided: languagesProvidedArray,
       interpreterServices,
       translationSpecialties,
-      offset: -1
+      offset: -1,
     };
 
     if (countryName) {
       allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
     }
-
   } catch (e) {
     // continue with empty allRows[]
     logger.error(`Exception searching for translators or interpreters`, e);
@@ -156,12 +167,10 @@ export async function searchTranslatorsInterpreters(
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
-    listRequestParams: params
+    listRequestParams: params,
   });
 
-  const offset =
-    ROWS_PER_PAGE * pagination.results.currentPage -
-    ROWS_PER_PAGE;
+  const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
 
   filterProps.offset = offset;
 
@@ -170,7 +179,6 @@ export async function searchTranslatorsInterpreters(
     searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
         listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map((language: string) => {
-          // @ts-ignore
           return metaData.languages[language];
         });
       }
@@ -184,6 +192,7 @@ export async function searchTranslatorsInterpreters(
     ...params,
     resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
+    hasSworn: hasSworn(results),
     removeQueryParameter,
     getParameterValue,
     languageNamesProvided,

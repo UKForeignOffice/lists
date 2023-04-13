@@ -18,8 +18,14 @@
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>
-      Translators and interpreters must be authorised to operate in some countries (known as sworn translators).
-      Check providers are qualified to carry out the service you need in the country you have selected.
+      {% if hasSworn %}
+        Translators and interpreters must be authorised to operate in some countries (known as sworn translators).
+        Check providers are qualified to carry out the service you need in the country you have selected.
+      {% else %}
+        In {{ country }}, translators must be authorised to carry out official translations of legal documents.
+        <p>These translators are known as 'sworn' or 'certified' translators.</p>
+        <p>Check that a translator is authorised to provide an official translation before you use them.</p>
+      {% endif %}
     </strong>
   </div>
 
@@ -51,4 +57,3 @@
     {{ macros.paginationSection(pagination) }}
   {% endif %}
 {% endif %}
-
