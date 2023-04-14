@@ -1,4 +1,3 @@
-# if you are on Mac M1 please add --platform=linux/amd64 after FROM below
 FROM node:14-alpine AS base
 RUN mkdir -p /usr/src/app && \
     addgroup -g 1001 appuser && \
@@ -6,9 +5,7 @@ RUN mkdir -p /usr/src/app && \
     chown -R appuser:appuser /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     apk update && \
-    apk upgrade && \
-    apk add --no-cache bash git curl
-
+    apk upgrade
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
@@ -17,8 +14,7 @@ COPY package.json package-lock.json ./
 RUN npm i
 COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY docker/apply/forms-json ./docker/apply/forms-json
-COPY --chown=appuser:appuser ./src ./src/
-
+COPY ./src ./src/
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
@@ -26,9 +22,21 @@ ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM build AS main
-WORKDIR /usr/src/app
+FROM base AS main
+
+# as root, remove all unnecessary binaries
+WORKDIR /usr/bin
+RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanelf
+
+# continue as appuser (1001)
 USER 1001
+WORKDIR /usr/src/app
+
+# copy neccesary files only
+COPY --from=build /usr/src/app/dist ./dist/
+COPY --from=build /usr/src/app/node_modules ./node_modules/
+COPY --from=build /usr/src/app/docker/apply/forms-json ./docker/apply/forms-json/
+
 ARG NODE_ENV
 ARG DOCKER_TAG
 ENV NODE_ENV=$NODE_ENV
@@ -45,12 +53,7 @@ ENV CI_SMOKE_TEST=true
 CMD ["npm", "run", "start:prod"]
 
 # docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
-# if you are on Mac M1 please add --platform=linux/amd64 after FROM below
-FROM node:14-alpine AS scheduled
+FROM base AS scheduled
 WORKDIR /usr/src/scheduler
-COPY --from=main /usr/src/app/dist ./dist/
-COPY --from=main /usr/src/app/node_modules ./node_modules/
-COPY --from=main /usr/src/app/docker/apply/forms-json ./docker/apply/forms-json/
-COPY --from=main /usr/src/app/src/server/models/db/schema.prisma ./src/server/models/db/
-COPY --from=main /usr/src/app/src/server/models/db/migrations ./src/server/models/db/migrations
+COPY --from=main /usr/src/app/dist/scheduler ./dist/
 COPY docker/scheduler/package.json ./package.json
