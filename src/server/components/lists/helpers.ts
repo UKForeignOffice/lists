@@ -1,4 +1,4 @@
-import querystring from "node:querystring";
+import querystring from "querystring";
 import type { Express, NextFunction, Request, Response } from "express";
 import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
@@ -6,18 +6,19 @@ import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
 import { listsRoutes } from "./routes";
 import type { ListsRequestParams } from "./types";
-import { CountryName, ServiceType } from "server/models/types";
+import type { CountryName } from "server/models/types";
+import { ServiceType } from "server/models/types";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
   fcdoTranslatorsInterpretersByCountry,
-  listOfCountriesWithLegalAid
+  listOfCountriesWithLegalAid,
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
-  FORM_RUNNER_PUBLIC_URL
+  FORM_RUNNER_PUBLIC_URL,
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -69,10 +70,7 @@ export function preProcessParams(params: Record<string, any>, req: Request): Rec
   };
 }
 
-export function queryStringFromParams(
-  params: Record<string, any>,
-  removeEmptyValues?: boolean
-): string {
+export function queryStringFromParams(params: Record<string, any>, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .filter((param) => param !== "page")
     .map((key) => {
@@ -96,10 +94,7 @@ export function queryStringFromParams(
     .join("&");
 }
 
-export function parseListValues(
-  paramName: string,
-  params: ListsRequestParams
-): string[] | undefined {
+export function parseListValues(paramName: string, params: ListsRequestParams): string[] | undefined {
   if (!(`${paramName}` in params)) {
     return undefined;
   }
@@ -113,9 +108,7 @@ export function parseListValues(
   }
 }
 
-export function getServiceLabel(
-  serviceType: string | undefined
-): string | undefined {
+export function getServiceLabel(serviceType: string | undefined): string | undefined {
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
@@ -130,9 +123,7 @@ export function getServiceLabel(
   }
 }
 
-export function getServiceTypeName(
-  serviceType: string | undefined
-): string | undefined {
+export function getServiceTypeName(serviceType: string | undefined): string | undefined {
   if (!serviceType) {
     return undefined;
   }
@@ -147,40 +138,26 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
   };
 }
 
-export function getParameterValue(
-  parameterName: string,
-  queryString: string
-): string {
+export function getParameterValue(parameterName: string, queryString: string): string {
   const searchParams = new URLSearchParams(queryString);
   return searchParams.get(parameterName) ?? "";
 }
 
-export function removeQueryParameter(
-  queryString: string,
-  parameterName: string
-): string {
+export function removeQueryParameter(queryString: string, parameterName: string): string {
   const params = omit(querystring.parse(queryString), parameterName);
   return `${querystring.stringify(params)}`;
 }
 
 export const getCountryLawyerRedirectLink = (() => {
-  const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) =>
-    lowerCase(key)
-  );
+  const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) => lowerCase(key));
 
   return (countryName: CountryName): string => {
-    return get(
-      pagesByCountry,
-      lowerCase(countryName),
-      "https://www.gov.uk/government/collections/list-of-lawyers"
-    );
+    return get(pagesByCountry, lowerCase(countryName), "https://www.gov.uk/government/collections/list-of-lawyers");
   };
 })();
 
 export const getCountryFuneralDirectorsRedirectLink = (() => {
-  const pagesByCountry = mapKeys(fcdoFuneralDirectorsByCountry, (_, key) =>
-    lowerCase(key)
-  );
+  const pagesByCountry = mapKeys(fcdoFuneralDirectorsByCountry, (_, key) => lowerCase(key));
 
   return (countryName: CountryName): string => {
     return get(
@@ -192,9 +169,7 @@ export const getCountryFuneralDirectorsRedirectLink = (() => {
 })();
 
 export const getCountryTranslatorsInterpretersRedirectLink = (() => {
-  const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) =>
-    lowerCase(key)
-  );
+  const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) => lowerCase(key));
 
   return (countryName: CountryName): string => {
     return get(
@@ -207,14 +182,10 @@ export const getCountryTranslatorsInterpretersRedirectLink = (() => {
 
 export const countryHasLegalAid = (() => {
   const countriesWithLegalAid = listOfCountriesWithLegalAid.map(lowerCase);
-  return (country?: string): boolean =>
-    countriesWithLegalAid.includes(lowerCase(country));
+  return (country?: string): boolean => countriesWithLegalAid.includes(lowerCase(country));
 })();
 
-export function createConfirmationLink(
-  req: Request,
-  reference: string
-): string {
+export function createConfirmationLink(req: Request, reference: string): string {
   const protocol = isLocalHost ? "http" : "https";
   const host = `${protocol}://${SERVICE_DOMAIN}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
@@ -258,7 +229,10 @@ function restoreSpecialCharacter(specialCharacter: string, country: string, coun
   const index = country.indexOf(specialCharacter);
   if (index > 0) {
     const before = countryName.substring(0, index);
-    const after = specialCharacter === "," || specialCharacter === "." ? countryName.substring(index) : countryName.substring(index+1);
+    const after =
+      specialCharacter === "," || specialCharacter === "."
+        ? countryName.substring(index)
+        : countryName.substring(index + 1);
     countryName = before.concat(specialCharacter, after);
   }
   return countryName;
@@ -268,7 +242,7 @@ export function formatCountryParam(country: string): string {
   let countryName: string = country;
 
   if (countryName) {
-    countryName = startCase(country)
+    countryName = startCase(country);
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
@@ -276,7 +250,7 @@ export function formatCountryParam(country: string): string {
       countryName = "Côte d'Ivoire";
     }
     const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
-    specialChars.forEach(specialChar => {
+    specialChars.forEach((specialChar) => {
       countryName = restoreSpecialCharacter(specialChar, country, countryName);
     });
   }
