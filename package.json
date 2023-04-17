@@ -17,7 +17,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "test": "jest --detectOpenHandles --forceExit --verbose",
+    "test": "TZ=UTC jest --detectOpenHandles --forceExit --verbose",
     "test:debug": "node --expose-gc ./node_modules/.bin/jest --verbose --logHeapUsage -i --detect-leaks --detectOpenHandles",
     "test:dev": "jest --watch",
     "test:coverage": "jest --coverage",
