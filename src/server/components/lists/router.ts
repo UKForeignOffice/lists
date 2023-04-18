@@ -25,7 +25,7 @@ listsRouter.get(listsRoutes.results, (req, res, next) => {
   if (isInOldUrlStructure) {
     const { serviceType, country, ...rest } = req.query;
     const restOfQueryParams = querystring.stringify(rest as NodeJS.Dict<string>);
-    const newUrlStructure = `/results/${req.query.serviceType}/${req.query.country}?${restOfQueryParams}`;
+    const newUrlStructure = `/results/${serviceType}/${country}?${restOfQueryParams}`;
     res.redirect(newUrlStructure);
   } else {
     next();
