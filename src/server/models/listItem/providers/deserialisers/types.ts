@@ -119,17 +119,18 @@ export interface FuneralDirectorFormWebhookData extends BaseDeserialisedWebhookD
 export interface TranslatorInterpreterFormWebhookData extends BaseDeserialisedWebhookData {
   type: ServiceType.translatorsInterpreters;
 
-  regions: string;
+  addressDisplay: string;
   deliveryOfServices: string[];
-  servicesProvided: string[];
-  translationSpecialties: string[];
+  interpretationInACourt: boolean;
   interpreterServices: string[];
   languagesProvided: string[];
-  representedBritishNationals: boolean;
-  addressDisplay: string;
   memberOfProfessionalAssociations: boolean;
+  regions: string;
+  representedBritishNationals: boolean;
+  servicesProvided: string[];
   swornTranslations: boolean;
-  interpretationInACourt: boolean;
+  swornInterpreter: boolean;
+  translationSpecialties: string[];
 }
 
 export type DeserialisedWebhookData =
