@@ -12,14 +12,26 @@ import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
-import { redirectToNewUrlStructure } from "./helpers";
+import querystring from "querystring";
 
 export const listsRouter = express.Router();
 
 listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, removeLanguageGetController);
-listsRouter.get(listsRoutes.results, redirectToNewUrlStructure);
+
+listsRouter.get(listsRoutes.results, (req, res, next) => {
+  const isInOldUrlStructure = req.query.serviceType && req.query.country;
+  if (isInOldUrlStructure) {
+    const { serviceType, country, ...rest } = req.query;
+    const restOfQueryParams = querystring.stringify(rest as NodeJS.Dict<string>);
+    const newUrlStructure = `/results/${req.query.serviceType}/${req.query.country}?${restOfQueryParams}`;
+    res.redirect(newUrlStructure);
+  } else {
+    next();
+  }
+});
+
 listsRouter.get(`${listsRoutes.results}/:serviceType/:country`, csrfRequestHandler, listsResultsController);
 
 listsRouter.get(listsRoutes.confirmApplication, listsConfirmApplicationController);

@@ -1,5 +1,4 @@
-import querystring from "querystring";
-import type { Express, NextFunction, Request, Response } from "express";
+import type { Express, Request } from "express";
 import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
@@ -255,19 +254,4 @@ export function formatCountryParam(country: string): string {
     });
   }
   return countryName;
-}
-
-function getRestOfQueryParams(req: Request): string {
-  const { serviceType, country, ...rest } = req.query;
-  return querystring.stringify(rest as NodeJS.Dict<string>);
-}
-
-export function redirectToNewUrlStructure(req: Request, res: Response, next: NextFunction) {
-  const oldUrlStructure = "/results?serviceType=";
-  if (req.originalUrl.includes(oldUrlStructure)) {
-    const newUrlStructure = `/results/${req.query.serviceType}/${req.query.country}?${getRestOfQueryParams(req)}`;
-    res.redirect(newUrlStructure);
-  } else {
-    next();
-  }
 }
