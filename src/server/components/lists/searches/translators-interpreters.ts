@@ -55,7 +55,7 @@ function makeResultsTitle(country: string, servicesProvided: string[]): string {
 }
 
 function hasSworn(results: TranslatorInterpreterListItemGetObject[]): boolean {
-  return results.some((result) => result.jsonData.swornTranslator || result.jsonData.swornInterpreter);
+  return results.some((result) => result.jsonData.swornInterpretations || result.jsonData.swornTranslations);
 }
 
 export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
