@@ -20,7 +20,7 @@ const cucumber = require("cypress-cucumber-preprocessor").default;
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+module.exports = (on, _config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
@@ -48,9 +48,15 @@ module.exports = (on, config) => {
       const childProcess = require("node:child_process");
       return childProcess.execSync("docker-compose run scheduler-batch");
     },
-    worker: async function () {
+    worker: async function ({ futureDate }) {
       const childProcess = require("node:child_process");
-      return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
+
+      const commandArgs = ["run", "scheduler-annual-review-worker"];
+      if (futureDate) {
+        commandArgs = [...commandArgs, "--date", futureDate]
+      }
+
+      return childProcess.execSync(`docker-compose ${commandArgs.join(" ")}`);
     },
   });
 };

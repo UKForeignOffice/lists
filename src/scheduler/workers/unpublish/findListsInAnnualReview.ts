@@ -1,8 +1,7 @@
-import { startOfToday } from "date-fns";
 import { prisma } from "server/models/db/prisma-client";
 
-export async function findListsInAnnualReview() {
-  const today = startOfToday().toISOString();
+export async function findListsInAnnualReview(chosenDate: Date) {
+  const today = chosenDate.toISOString();
   return await prisma.list.findMany({
     where: {
       nextAnnualReviewStartDate: {
