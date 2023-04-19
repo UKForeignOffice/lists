@@ -15,23 +15,21 @@ const DISPLAY_DATE_FORMAT = "d MMMM yyyy";
 /**
  * Additional data extracted from `List` to be passed down for each email.
  */
-export function getMetaForList(list: ListWithCountryName): Meta | undefined {
+export function getMetaForList(list: ListWithCountryName, chosenDate?: Date): Meta | undefined {
   const logger = schedulerLogger.child({ listId: list.id, method: "getMetaForList", timeframe: "dayBefore" });
 
   const { jsonData } = list as List;
   const { currentAnnualReview } = jsonData;
 
   if (!currentAnnualReview) {
-    logger.error(
-      `list ${list.id} does not have a fully qualified currentAnnualReview.keyDates object`
-    );
+    logger.error(`list ${list.id} does not have a fully qualified currentAnnualReview.keyDates object`);
     return;
   }
 
   const { keyDates } = currentAnnualReview;
 
   const endDate = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
-  const today = startOfToday();
+  const today = chosenDate ?? startOfToday();
   const daysUntilUnpublish = differenceInDays(endDate, today);
 
   return {
