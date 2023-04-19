@@ -53,7 +53,7 @@ module.exports = (on, _config) => {
 
       let commandArgs = ["run", "scheduler-annual-review-worker"];
       if (options?.futureDate) {
-        commandArgs = [...commandArgs, "--date", options.futureDate]
+        commandArgs = [commandArgs[0], "-e", `TEST_DATE=${options.futureDate}`, commandArgs[1]]
       }
 
       return childProcess.execSync(`docker-compose ${commandArgs.join(" ")}`);
