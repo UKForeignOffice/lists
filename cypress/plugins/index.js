@@ -48,12 +48,12 @@ module.exports = (on, _config) => {
       const childProcess = require("node:child_process");
       return childProcess.execSync("docker-compose run scheduler-batch");
     },
-    worker: async function ({ futureDate }) {
+    worker: async function (options) {
       const childProcess = require("node:child_process");
 
       const commandArgs = ["run", "scheduler-annual-review-worker"];
-      if (futureDate) {
-        commandArgs = [...commandArgs, "--date", futureDate]
+      if (options?.futureDate) {
+        commandArgs = [...commandArgs, "--date", options.futureDate]
       }
 
       return childProcess.execSync(`docker-compose ${commandArgs.join(" ")}`);
