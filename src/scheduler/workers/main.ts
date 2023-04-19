@@ -21,11 +21,11 @@ async function main() {
 }
 
 function getDateFromFlag(): Date | null {
-  const dateIndex = process.argv.indexOf("--date");
+  const dateIndex = process.argv.indexOf("--date") ?? process.env.TEST_DATE;
   if (dateIndex === -1 || dateIndex === process.argv.length - 1) {
     return null;
   }
-  const dateString = process.argv[dateIndex + 1];
+  const dateString = process.argv[dateIndex + 1] ?? process.env.TEST_DATE;
   const testDate = new Date(Number(dateString));
   return isNaN(testDate.getTime()) ? null : testDate;
 }
