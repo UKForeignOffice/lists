@@ -51,7 +51,7 @@ module.exports = (on, _config) => {
     worker: async function (options) {
       const childProcess = require("node:child_process");
 
-      const commandArgs = ["run", "scheduler-annual-review-worker"];
+      let commandArgs = ["run", "scheduler-annual-review-worker"];
       if (options?.futureDate) {
         commandArgs = [...commandArgs, "--date", options.futureDate]
       }
