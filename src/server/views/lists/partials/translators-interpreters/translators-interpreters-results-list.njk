@@ -18,10 +18,13 @@
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>
-      {% if hasSworn.translatorsAndInterpreters or hasSworn.interpreters %}
-        In {{ country }}, translators must be authorised to carry out official translations of legal documents.
+      {% if hasSworn.translatorsAndInterpreters %}
+        In {{ country }}, translators and interpreters must be authorised to carry out official translations of legal documents.
         <p>These are known as ‘sworn’, ‘certified’ or ‘court’ translators or interpreters and are listed in the results as providing official services.</p>
-      {% else if hasSworn.translators %}
+      {% elif hasSworn.interpreters %}
+        In {{ country }}, interpreters must be authorised to carry out official translations of legal documents.
+        <p>These are known as ‘sworn’, ‘certified’ or ‘court’ interpreters and are listed in the results as providing official services.</p>
+      {% elif hasSworn.translators %}
         In {{ country }}, translators must be authorised to carry out official translations of legal documents.
         <p>These translators are known as ‘sworn’ or ‘certified’ translators and are listed in the results as providing official services.</p>
       {% else %}

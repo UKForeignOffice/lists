@@ -48,9 +48,9 @@
       <strong>Official services</strong>:
       {% if item.jsonData.swornTranslations and item.jsonData.swornInterpretations %}
         Sworn or certified translation; Sworn, court or certified interpretation
-      {% else if item.jsonData.swornTranslations %}
+      {% elif item.jsonData.swornTranslations %}
         Sworn or certified translation
-      {% else if item.jsonData.swornInterpretations %}
+      {% elif item.jsonData.swornInterpretations %}
         Sworn, court or certified interpretation
       {% endif %}
     </p>

@@ -64,7 +64,9 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
   const swornOutput: SwornOutputTypes = {
     translators: results.some((result) => result.jsonData.swornTranslations),
     interpreters: results.some((result) => result.jsonData.swornInterpretations),
-    translatorsAndInterpreters: results.some((result) => result.jsonData.swornTranslations && result.jsonData.swornInterpretations),
+    translatorsAndInterpreters: results.some(
+      (result) => result.jsonData.swornTranslations && result.jsonData.swornInterpretations
+    ),
   };
 
   return swornOutput;
