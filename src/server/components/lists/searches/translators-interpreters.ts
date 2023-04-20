@@ -62,10 +62,10 @@ interface SwornOutputTypes {
 
 function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutputTypes {
   const swornOutput: SwornOutputTypes = {
-    translators: results.some((result) => result.jsonData.swornTranslations),
-    interpreters: results.some((result) => result.jsonData.swornInterpretations),
+    translators: results.some((result) => result.jsonData.swornTranslations === "Yes"),
+    interpreters: results.some((result) => result.jsonData.swornInterpretations === "Yes"),
     translatorsAndInterpreters: results.some(
-      (result) => result.jsonData.swornTranslations && result.jsonData.swornInterpretations
+      (result) => result.jsonData.swornTranslations === "Yes" && result.jsonData.swornInterpretations === "Yes"
     ),
   };
 

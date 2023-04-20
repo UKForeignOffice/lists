@@ -128,8 +128,8 @@ export interface TranslatorInterpreterFormWebhookData extends BaseDeserialisedWe
   regions: string;
   representedBritishNationals: boolean;
   servicesProvided: string[];
-  swornTranslations: boolean;
-  swornInterpreter: boolean;
+  swornTranslations: string;
+  swornInterpreter: string;
   translationSpecialties: string[];
 }
 
