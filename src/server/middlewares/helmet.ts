@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { IncomingMessage, ServerResponse } from "http";
+import type { Express } from "express";
+import type { IncomingMessage, ServerResponse } from "http";
 import { get, set } from "lodash";
 import helmet from "helmet";
 import crypto from "crypto";
@@ -7,12 +7,7 @@ import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 const TRUSTED = ["'self'", SERVICE_DOMAIN ?? ""];
 
-const GOVUK_DOMAINS = [
-  "*.publishing.service.gov.uk",
-  "*.gov.uk",
-  "www.gov.uk",
-  "*.dev.gov.uk",
-];
+const GOVUK_DOMAINS = ["*.publishing.service.gov.uk", "*.gov.uk", "www.gov.uk", "*.dev.gov.uk"];
 
 const GOOGLE_ANALYTICS_DOMAINS = [
   "www.google-analytics.com",
@@ -32,15 +27,12 @@ const DATA = ["data:"];
 
 export function configureHelmet(server: Express): void {
   server.use((_req, res, next) => {
-    const nonce = crypto.randomBytes(8).toString("hex");
+    const nonce = crypto.randomBytes(16).toString("base64");
     set(res, "locals.cspNonce", nonce);
     next();
   });
 
-  const generateCspNonce = (
-    _req: IncomingMessage,
-    res: ServerResponse
-  ): string => {
+  const generateCspNonce = (_req: IncomingMessage, res: ServerResponse): string => {
     return `'nonce-${get(res, "locals.cspNonce")}'`;
   };
 
@@ -59,12 +51,7 @@ export function configureHelmet(server: Express): void {
           ...GOOGLE_ANALYTICS_DOMAINS,
           ...GOOGLE_STATIC_DOMAINS,
         ],
-        styleSrc: [
-          ...TRUSTED,
-          ...GOVUK_DOMAINS,
-          GOOGLE_ANALYTICS_DOMAINS[4],
-          ...GOOGLE_STYLES_DOMAINS,
-        ],
+        styleSrc: [...TRUSTED, ...GOVUK_DOMAINS, GOOGLE_ANALYTICS_DOMAINS[4], ...GOOGLE_STYLES_DOMAINS],
         imgSrc: [
           ...TRUSTED,
           ...DATA,

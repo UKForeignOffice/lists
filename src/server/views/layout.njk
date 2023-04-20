@@ -1,102 +1,92 @@
-{% extends "./template.njk" %}
+{% extends "./template.njk" %} {% from "back-link/macro.njk" import govukBackLink %} {% from "footer/macro.njk" import
+govukFooter -%} {% from "skip-link/macro.njk" import govukSkipLink -%} {% from "error-summary/macro.njk" import
+govukErrorSummary %} {% block head %} {% if isProd %}
+<!-- Google Tag Manager -->
+<script nonce="{{cspNonce}}">
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    var n = d.querySelector("[nonce]");
+    n && j.setAttribute("nonce", n.nonce || n.getAttribute("nonce"));
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", "GTM-KZWHG2G");
+</script>
+<!-- End Google Tag Manager -->
 
-{% from "back-link/macro.njk" import govukBackLink %}
-{% from "footer/macro.njk" import govukFooter -%}
-{% from "skip-link/macro.njk" import govukSkipLink -%}
-{% from "error-summary/macro.njk" import govukErrorSummary %}
+<!-- Google Tag Manager -->
+<script nonce="{{cspNonce}}">
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    var n = d.querySelector("[nonce]");
+    n && j.setAttribute("nonce", n.nonce || n.getAttribute("nonce"));
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", "GTM-PCZSN93");
+</script>
 
-{% block head %}
+<script nonce="{{cspNonce}}">
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: "virtualPageview", "page-title": document.title });
+</script>
+<!-- End Google Tag Manager -->
+{% endif %}
 
-  {% if isProd %}
-    <!-- Google Tag Manager -->
-    <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
-    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KZWHG2G');</script>
-    <!-- End Google Tag Manager -->
+<link as="font" href="/assets/fonts/bold-affa96571d-v2.woff" type="font/woff2" crossorigin="anonymous" />
+<link as="font" href="/assets/fonts/bold-b542beb274-v2.woff2" type="font/woff2" crossorigin="anonymous" />
+<link as="font" href="/assets/fonts/light-94a07e06a1-v2.woff2" type="font/woff" crossorigin="anonymous" />
+<link as="font" href="/assets/fonts/light-f591b13f7d-v2.woff" type="font/woff" crossorigin="anonymous" />
+<script type="text/javascript" src="/assets/accessible-autocomplete.min.js"></script>
+<link href="/assets/accessible-autocomplete.min.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="/assets/styles/main.css" />
 
-    <!-- Google Tag Manager -->
-    <script nonce="{{cspNonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
-    n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
+<meta name="Description" content="Find {{ serviceLabel if serviceLabel else "a Professional Service"}} {{ "in " +
+_.startCase(country) if country else "abroad"}} - GOV.UK"> {% endblock %} {% block pageTitle %} {{ title + " - " if
+title }}{{ SERVICE_NAME }} {% endblock %} {% block skipLink %} {# skiplink is inside header to avoid Axe accessibility
+error #} {% endblock %} {% block header %} {% include "includes/header.njk" %} {% endblock %} {% block bodyStart %}
+<script nonce="{{cspNonce}}">
+  document.body.className = document.body.className ? document.body.className + " js-enabled" : "js-enabled";
+</script>
+{% if isProd %}
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe
+    src="https://www.googletagmanager.com/ns.html?id=GTM-KZWHG2G"
+    height="0"
+    width="0"
+    style="display: none; visibility: hidden"
+  ></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
 
-    <script>
-      window.dataLayer = window.dataLayer || []; window.dataLayer.push({ "event": "virtualPageview", "page-title": document.title });
-    </script>
-    <!-- End Google Tag Manager -->
-  {% endif %}
-
-  <link as="font" href="/assets/fonts/bold-affa96571d-v2.woff" type="font/woff2" crossorigin="anonymous">
-  <link as="font" href="/assets/fonts/bold-b542beb274-v2.woff2" type="font/woff2" crossorigin="anonymous">
-  <link as="font" href="/assets/fonts/light-94a07e06a1-v2.woff2" type="font/woff" crossorigin="anonymous">
-  <link as="font" href="/assets/fonts/light-f591b13f7d-v2.woff" type="font/woff" crossorigin="anonymous">
-  <script type="text/javascript" src="/assets/accessible-autocomplete.min.js"></script>
-  <link href="/assets/accessible-autocomplete.min.css" rel="stylesheet" />
-  <link type="text/css" rel="stylesheet" href="/assets/styles/main.css">
-
-  <meta name="Description" content="Find {{ serviceLabel if serviceLabel else "a Professional Service"}} {{ "in " + _.startCase(country) if country else "abroad"}} - GOV.UK">
-{% endblock %}
-
-
-{% block pageTitle %}
-  {{ title + " - " if title }}{{ SERVICE_NAME }}
-{% endblock %}
-
-{% block skipLink %}
-  {# skiplink is inside header to avoid Axe accessibility error #}
-{% endblock %}
-
-{% block header %}
-  {% include "includes/header.njk" %}
-{% endblock %}
-
-{% block bodyStart %}
-    <script nonce="{{cspNonce}}">
-      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
-  </script>
-    {% if isProd %}
-      <!-- Google Tag Manager (noscript) -->
-      <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KZWHG2G" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-      </noscript>
-      <!-- End Google Tag Manager (noscript) -->
-
-      <!-- Google Tag Manager (noscript) -->
-      <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCZSN93" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-      </noscript>
-      <!-- End Google Tag Manager (noscript) -->
-    {% endif %}
-  {% if not cookiesPolicy.isSet %}
-    {% include "cookies/cookie-banner.njk" %}
-  {% endif %}
-{% endblock %}
-
-{% block beforeContent %}
-  <div class="noprint" role="complementary" title="Phase Banner">
-    {% include "includes/phase-banner.njk" %}
-  </div>
-{% endblock %}
-
-{% block content %}
-  <h1 class="govuk-heading-xl">Default page template</h1>
-{% endblock %}
-
-{% block bodyEnd %}
-  <script type="text/javascript" src="/assets/govuk-frontend/all.js"></script>
-  <script nonce="{{ cspNonce }}">
-    window.GOVUKFrontend.initAll()
-  </script>
-  <script type="text/javascript" src="/assets/main.js" nonce="{{cspNonce}}"></script>
-{% endblock %}
-
-{% block footer %}
-    {% include "includes/footer.njk" %}
-{% endblock %}
-
-
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe
+    src="https://www.googletagmanager.com/ns.html?id=GTM-PCZSN93"
+    height="0"
+    width="0"
+    style="display: none; visibility: hidden"
+  ></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+{% endif %} {% if not cookiesPolicy.isSet %} {% include "cookies/cookie-banner.njk" %} {% endif %} {% endblock %} {%
+block beforeContent %}
+<div class="noprint" role="complementary" title="Phase Banner">{% include "includes/phase-banner.njk" %}</div>
+{% endblock %} {% block content %}
+<h1 class="govuk-heading-xl">Default page template</h1>
+{% endblock %} {% block bodyEnd %}
+<script type="text/javascript" src="/assets/govuk-frontend/all.js"></script>
+<script nonce="{{ cspNonce }}">
+  window.GOVUKFrontend.initAll();
+</script>
+<script type="text/javascript" src="/assets/main.js" nonce="{{cspNonce}}"></script>
+{% endblock %} {% block footer %} {% include "includes/footer.njk" %} {% endblock %}
