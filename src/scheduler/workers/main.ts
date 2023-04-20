@@ -6,7 +6,7 @@ import { logger } from "scheduler/logger";
 import { startOfToday } from "date-fns";
 
 async function main() {
-  const chosenDate = getDateFromFlag() ?? startOfToday();
+  const chosenDate = getDateFromEnvVariable() ?? startOfToday();
   // if a task needs to be executed first, await them here.
   try {
     await processListsBeforeAndDuringStart(chosenDate);
@@ -20,12 +20,11 @@ async function main() {
   return await Promise.allSettled(tasks);
 }
 
-function getDateFromFlag(): Date | null {
-  const dateIndex = process.argv.indexOf("--date") ?? process.env.TEST_DATE;
-  if (dateIndex === -1 || dateIndex === process.argv.length - 1) {
+function getDateFromEnvVariable(): Date | null {
+  if (!process.env.TEST_DATE) {
     return null;
   }
-  const dateString = process.argv[dateIndex + 1] ?? process.env.TEST_DATE;
+  const dateString = process.env.TEST_DATE;
   const testDate = new Date(Number(dateString));
   return isNaN(testDate.getTime()) ? null : testDate;
 }
