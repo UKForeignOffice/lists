@@ -362,13 +362,13 @@ describe("Lawyers List:", () => {
     mockListItemSome(false);
 
     const { status, header } = await request(server)
-      .post("/find?serviceType=lawyers&readNotice=ok&country=spain")
+      .post("/find?serviceType=lawyers&readNotice=ok&country=belize")
       .type("text/html");
 
     expect(status).toBe(302);
-    expect(helpers.some).toBeCalledWith("Spain", "lawyers");
+    expect(helpers.some).toBeCalledWith("Belize", "lawyers");
     expect(header.location).toBe(
-      "https://www.gov.uk/government/publications/spain-list-of-lawyers"
+      "https://www.gov.uk/government/publications/belize-list-of-lawyers"
     );
   });
 });

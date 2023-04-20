@@ -148,13 +148,10 @@ describe("Lawyers List:", () => {
   });
 
   describe("getCountryLawyerRedirectLink", () => {
-    test("redirect link is for Spain correct", () => {
+    test("redirect link is for countries are correct", () => {
       [
         "ghana",
         "myanmar",
-        "spain",
-        "italy",
-        "thailand",
         "Antigua and Barbuda",
         "Côte d'Ivoire",
       ].forEach((country: any) => {
