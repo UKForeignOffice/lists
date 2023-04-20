@@ -45,7 +45,14 @@
   </p>
   {% if item.jsonData.swornTranslations or item.jsonData.swornInterpretations %}
     <p class="govuk-body govuk-!-font-size-16 govuk-!-margin-bottom-1">
-      <strong>Official services</strong>: Sworn or certified translation, Sworn interpretation
+      <strong>Official services</strong>:
+      {% if item.jsonData.swornTranslations and item.jsonData.swornInterpretations %}
+        Sworn or certified translation; Sworn, court or certified interpretation
+      {% else if item.jsonData.swornTranslations %}
+        Sworn or certified translation
+      {% else if item.jsonData.swornInterpretations %}
+        Sworn, court or certified interpretation
+      {% endif %}
     </p>
   {% endif %}
   {% if item.jsonData.languagesProvided %}

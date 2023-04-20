@@ -54,9 +54,22 @@ function makeResultsTitle(country: string, servicesProvided: string[]): string {
   return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
 }
 
-function hasSworn(results: TranslatorInterpreterListItemGetObject[]): boolean {
-  return results.some((result) => result.jsonData.swornInterpretations || result.jsonData.swornTranslations);
+interface SwornOutputTypes {
+  translators: boolean;
+  interpreters: boolean;
+  translatorsAndInterpreters: boolean;
 }
+
+function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutputTypes {
+  const swornOutput: SwornOutputTypes = {
+    translators: results.some((result) => result.jsonData.swornTranslations),
+    interpreters: results.some((result) => result.jsonData.swornInterpretations),
+    translatorsAndInterpreters: results.some((result) => result.jsonData.swornTranslations && result.jsonData.swornInterpretations),
+  };
+
+  return swornOutput;
+}
+
 
 export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
   const params = getAllRequestParams(req);
