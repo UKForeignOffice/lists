@@ -208,6 +208,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
     hasSworn: hasSworn(results),
+    filterProps,
     removeQueryParameter,
     getParameterValue,
     languageNamesProvided,
