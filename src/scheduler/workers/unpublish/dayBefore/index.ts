@@ -8,6 +8,6 @@ export async function main() {
   const listsInAnnualReview = await findListsInAnnualReview();
 
   logger.info(`Sending day before unpublish emails for lists [${listsInAnnualReview.map((list) => list.id)}]`);
-  const emailTasks = listsInAnnualReview.map(async (list) => await sendDayBeforeEmails(list));
+  const emailTasks = listsInAnnualReview.map(await sendDayBeforeEmails);
   await Promise.allSettled(emailTasks);
 }
