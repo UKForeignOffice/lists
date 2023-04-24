@@ -4,9 +4,10 @@ Feature: Check correct email is sent to provider this is about to be unpublished
     Given A "lawyers" list exists for Eurasia
 
   Scenario Outline: Provider is sent a differnt unpublish email based on weeks since annual review
-    When eurasia lawyers have annual review in "0" days
-    And the batch process has run
-    And todays date is "<daysAfterAnnualReview>" days after annual review
+    When eurasia lawyers are due to begin annual review
+    And there is a list item published <daysAfterAnnualReview> days ago
+    When the worker process has run
+    # And todays date is "<daysAfterAnnualReview>" days after annual review
     Then the unpublish reminder email for "<reminderDays>" days is sent to eligible providers
 
     Examples:

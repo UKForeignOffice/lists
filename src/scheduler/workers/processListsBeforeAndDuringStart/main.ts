@@ -14,7 +14,7 @@ import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/de
 import { findListItems, updateIsAnnualReview } from "server/models/listItem";
 import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { MilestoneTillAnnualReview } from "../../batch/helpers";
-import { endOfDay, isSameDay, isWithinInterval, subDays } from "date-fns";
+import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
 import { formatDate, isEmailSentBefore } from "./helpers";
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
 
@@ -127,7 +127,7 @@ async function getLatestReminderAuditEvent(annualReviewRef: string, auditType: "
   return audit;
 }
 
-export async function processList(list: List, listItemsForList: ListItemWithHistory[], chosenDate: Date) {
+export async function processList(list: List, listItemsForList: ListItemWithHistory[]) {
   if (!listItemsForList.length) {
     logger.info(`No list items found for list ${list.id}`);
     return;
@@ -143,7 +143,7 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
   let isEmailSent = false;
 
-  const today = chosenDate;
+  const today = startOfDay(new Date());
   const processListLogger = logger.child({ listId: list.id, method: "processList" });
   processListLogger.info(
     `Checking annual review key dates for list id ${
@@ -243,7 +243,7 @@ export async function updateIsAnnualReviewForListItems(
   return updatedListItems.result;
 }
 
-export async function processAnnualReview(chosenDate: Date): Promise<void> {
+export async function processAnnualReview(): Promise<void> {
   const listResult = await findListsWithCurrentAnnualReview();
 
   // validate list results
@@ -273,6 +273,6 @@ export async function processAnnualReview(chosenDate: Date): Promise<void> {
   const { result: listItems } = listItemsResult;
   for (const list of listsWithCurrentAnnualReview) {
     const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
-    await processList(list, listItemsForList, chosenDate);
+    await processList(list, listItemsForList);
   }
 }

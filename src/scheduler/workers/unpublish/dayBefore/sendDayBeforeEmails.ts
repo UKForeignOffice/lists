@@ -6,10 +6,10 @@ import { schedulerLogger } from "scheduler/logger";
 import { ListWithCountryName } from "../../types";
 import { ListJsonData } from "server/models/types";
 
-export async function sendDayBeforeEmails(list: ListWithCountryName, chosenDate: Date) {
+export async function sendDayBeforeEmails(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforeEmails", timeframe: "dayBefore" });
 
-  const meta = getMetaForList(list, chosenDate);
+  const meta = getMetaForList(list);
   if (!meta) {
     return;
   }

@@ -3,9 +3,9 @@ import { findListsToResetAnnualReview } from "./changeState/findListsToResetAnnu
 import { main as sendEmails } from "./sendEmails";
 import { changeState as unpublishProvidersAndResetList } from "./changeState";
 
-export async function main(chosenDate: Date) {
-  const listsInAnnualReview = await findListsInAnnualReview(chosenDate);
-  const listsToResetAnnualReview = await findListsToResetAnnualReview(chosenDate);
+export async function main() {
+  const listsInAnnualReview = await findListsInAnnualReview();
+  const listsToResetAnnualReview = await findListsToResetAnnualReview();
 
   const emailTasks = listsInAnnualReview.map(await sendEmails);
   await Promise.allSettled(emailTasks);
