@@ -14,32 +14,33 @@
   <h2 class="govuk-heading-l govuk-!-margin-bottom-4">{{resultsTitle}}</h2>
 
   {% if hasSworn.translatorsAndInterpreters or hasSworn.interpreters or hasSworn.translators %}
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      {% if hasSworn.translatorsAndInterpreters or (hasSworn.interpreters and hasSworn.translators) %}
-        In {{ country }}, translators and interpreters must be authorised to carry out legal or official services.
-        <p>These are known as ‘sworn’, ‘certified’ or ‘court’ translators or interpreters and are listed in the results as providing official services.</p>
-      {% elif hasSworn.interpreters %}
-        In {{ country }}, interpreters must be authorised to carry out legal or official services.
-        <p>These are known as ‘sworn’, ‘certified’ or ‘court’ interpreters and are listed in the results as providing official services.</p>
-      {% elif hasSworn.translators %}
-        In {{ country }}, translators must be authorised to carry out legal or official services.
-        <p>These translators are known as ‘sworn’ or ‘certified’ translators and are listed in the results as providing official services.</p>
-      {% endif %}
-    </strong>
-  </div>
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        {% if hasSworn.translatorsAndInterpreters %}
+          In {{ country }}, translators and interpreters must be authorised to carry out legal or official services.
+          <p>These are known as ‘sworn’, ‘certified’ or ‘court’ translators or interpreters and are listed in the results as providing official services.</p>
+        {% elif hasSworn.interpreters %}
+          In {{ country }}, interpreters must be authorised to carry out legal or official services.
+          <p>These are known as ‘sworn’, ‘certified’ or ‘court’ interpreters and are listed in the results as providing official services.</p>
+        {% elif hasSworn.translators %}
+          In {{ country }}, translators must be authorised to carry out legal or official services.
+          <p>These translators are known as ‘sworn’ or ‘certified’ translators and are listed in the results as providing official services.</p>
+        {% endif %}
+      </strong>
+    </div>
   {% else %}
-  <div class="govuk-body govuk-!-margin-bottom-4">Check that
-    {% if filterProps.interpreterServices and filterProps.translationSpecialties %}
-      translators and interpreters
-    {% elif filterProps.interpreterServices %}
-      interpreters
-    {% elif filterProps.translationSpecialties %}
-      translators
-    {% endif %}
-    can carry out the service you need in the language of your choosing before hiring them.</div>
+    <div class="govuk-body govuk-!-margin-bottom-4">Check that
+      {% if filterProps.interpreterServices and filterProps.translationSpecialties %}
+        translators and interpreters
+      {% elif filterProps.interpreterServices %}
+        interpreters
+      {% elif filterProps.translationSpecialties %}
+        translators
+      {% endif %}
+      can carry out the service you need in the language of your choosing before hiring them.
+    </div>
   {% endif %}
 
 {% if (print !== "yes") %}

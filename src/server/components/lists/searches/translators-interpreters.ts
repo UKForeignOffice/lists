@@ -53,17 +53,16 @@ function makeResultsTitle(country: string, servicesProvided: string[]): string {
 interface SwornOutputTypes {
   translators: boolean;
   interpreters: boolean;
-  translatorsAndInterpreters: boolean;
+  translatorsAndInterpreters?: boolean;
 }
 
 function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutputTypes {
-  const swornOutput: SwornOutputTypes = {
+  let swornOutput: SwornOutputTypes = {
     translators: results.some((result) => result.jsonData.swornTranslations === "Yes"),
     interpreters: results.some((result) => result.jsonData.swornInterpretations === "Yes"),
-    translatorsAndInterpreters: results.some(
-      (result) => result.jsonData.swornTranslations === "Yes" && result.jsonData.swornInterpretations === "Yes"
-    ),
   };
+
+  swornOutput = { ...swornOutput, translatorsAndInterpreters: swornOutput.translators && swornOutput.interpreters };
 
   return swornOutput;
 }
