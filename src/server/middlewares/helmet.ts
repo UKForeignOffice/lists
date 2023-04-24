@@ -27,7 +27,7 @@ const DATA = ["data:"];
 
 export function configureHelmet(server: Express): void {
   server.use((_req, res, next) => {
-    const nonce = crypto.randomBytes(16).toString("base64");
+    const nonce = crypto.randomBytes(8).toString("hex");
     set(res, "locals.cspNonce", nonce);
     next();
   });
