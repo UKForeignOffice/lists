@@ -41,17 +41,13 @@ export const translatorsInterpretersQuestionsSequence = [
 ];
 
 const serviceTypeToNoun: Record<string, string> = {
-  translation: "translator",
-  interpretation: "interpreter",
+  translation: "Translators",
+  interpretation: "Interpreters",
 };
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
   const sanitisedServicesProvidedQuery = servicesProvided.map((service) => serviceTypeToNoun[service]).filter(Boolean);
-  const interpretationOnly =
-    sanitisedServicesProvidedQuery.includes(serviceTypeToNoun.interpretation) &&
-    sanitisedServicesProvidedQuery.length === 1;
-  const article = interpretationOnly ? "an" : "a";
-  return `Find ${article} ${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
+  return `${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
 }
 
 interface SwornOutputTypes {
@@ -71,7 +67,6 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
 
   return swornOutput;
 }
-
 
 export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
   const params = getAllRequestParams(req);
