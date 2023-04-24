@@ -50,13 +50,7 @@ module.exports = (on, _config) => {
     },
     worker: async function (options) {
       const childProcess = require("node:child_process");
-
-      let commandArgs = ["run", "scheduler-annual-review-worker"];
-      if (options?.futureDate) {
-        commandArgs = [commandArgs[0], "-e", `TEST_DATE=${options.futureDate}`, commandArgs[1]]
-      }
-
-      return childProcess.execSync(`docker-compose ${commandArgs.join(" ")}`);
+      return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
     },
   });
 };
