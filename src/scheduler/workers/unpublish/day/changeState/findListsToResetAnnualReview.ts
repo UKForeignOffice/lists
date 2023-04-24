@@ -1,11 +1,11 @@
-
+import { startOfToday } from "date-fns";
 import { prisma } from "server/models/db/prisma-client";
 import { schedulerLogger } from "scheduler/logger";
 
-export async function findListsToResetAnnualReview(chosenDate: Date) {
+export async function findListsToResetAnnualReview() {
   const logger = schedulerLogger.child({ method: "findListsToResetAnnualReview", timeframe: "day" });
 
-  const today = chosenDate.toISOString();
+  const today = startOfToday().toISOString();
   const lists = await prisma.list.findMany({
     where: {
       AND: [
@@ -24,7 +24,7 @@ export async function findListsToResetAnnualReview(chosenDate: Date) {
         {
           jsonData: {
             path: ["currentAnnualReview", "keyDates", "unpublished", "UNPUBLISH"],
-            lte: chosenDate.toISOString(),
+            lte: startOfToday().toISOString(),
           },
         },
       ],
