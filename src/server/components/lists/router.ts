@@ -19,7 +19,7 @@ export const listsRouter = express.Router();
 listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, removeLanguageGetController);
-
+listsRouter.get(`${listsRoutes.results}/:serviceType/:country`, csrfRequestHandler, listsResultsController);
 listsRouter.get(listsRoutes.results, (req, res, next) => {
   const isInOldUrlStructure = req.query.serviceType && req.query.country;
   if (isInOldUrlStructure) {
@@ -31,9 +31,6 @@ listsRouter.get(listsRoutes.results, (req, res, next) => {
     next();
   }
 });
-
-listsRouter.get(`${listsRoutes.results}/:serviceType/:country`, csrfRequestHandler, listsResultsController);
-
 listsRouter.get(listsRoutes.confirmApplication, listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, listsGetPrivateBetaPage);
 listsRouter.get(listsRoutes.accessibility, (_req, res) => {
