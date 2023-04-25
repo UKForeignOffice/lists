@@ -166,26 +166,35 @@ export function removeQueryParameter(
 export const getCountryLawyerRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string =>
-    get(pagesByCountry, lowerCase(countryName), `/no-list-exists?serviceType=lawyers&country=${countryName}`);
+  return (countryName: CountryName): string => {
+    return get(pagesByCountry, lowerCase(countryName), "https://www.gov.uk/government/collections/list-of-lawyers");
+  };
 })();
 
 export const getCountryFuneralDirectorsRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoFuneralDirectorsByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string =>
-    get(pagesByCountry, lowerCase(countryName), `/no-list-exists?serviceType=funeralDirectors&country=${countryName}`);
+  return (countryName: CountryName): string => {
+    return get(
+      pagesByCountry,
+      lowerCase(countryName),
+      "https://www.gov.uk/government/collections/funeral-directors-worldwide-list"
+    );
+  };
 })();
 
 export const getCountryTranslatorsInterpretersRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoTranslatorsInterpretersByCountry, (_, key) => lowerCase(key));
 
-  return (countryName: CountryName): string =>
-    get(
+  return (countryName: CountryName): string => {
+    const test = get(
       pagesByCountry,
       lowerCase(countryName),
-      `/no-list-exists?serviceType=translatorsInterpreters&country=${countryName}`
+      "https://www.gov.uk/government/collections/lists-of-translators-and-interpreters"
     );
+    debugger
+    return test;
+  };
 })();
 
 export const countryHasLegalAid = (() => {

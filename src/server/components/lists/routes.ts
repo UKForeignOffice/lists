@@ -6,7 +6,6 @@ export const listsRoutes = {
   feedback: "/feedback",
   feedbackSuccess: "/feedback/success",
   privateBeta: "/private-beta",
-  noListExists: "/no-list-exists",
   formRunnerWebhook: "/ingest/:serviceType",
   formRunnerCallback: "/ingest/:serviceType/:id",
   confirmApplication: "/confirm/:reference",
