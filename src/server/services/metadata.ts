@@ -439,6 +439,7 @@ export const fcdoLawyersPagesByCountry = {
   Vietnam: "https://www.gov.uk/government/publications/vietnam-lists-of-interpretation-and-translation-companies",
   Yemen: "https://www.gov.uk/government/publications/yemen-list-of-lawyers",
   Zambia: "https://www.gov.uk/government/publications/zambia-list-of-lawyers",
+  "American Samoa": "https://www.gov.uk/world/organisations/british-consulate-general-los-angeles",
   Aruba: "https://www.gov.uk/world/organisations/british-embassy-the-hague",
   Benin: "https://www.gov.uk/government/publications/benin-lawyers",
   Bhutan: "https://www.gov.uk/world/organisations/british-deputy-high-commission-kolkata",
