@@ -318,7 +318,10 @@ export const countriesList = [
 
 export const fcdoLawyersPagesByCountry = {
   Albania: "https://www.gov.uk/government/publications/albania-list-of-lawyers--2",
+  Algeria: "https://www.gov.uk/government/publications/algeria-list-of-lawyers",
+  Angola: "https://www.gov.uk/government/publications/angola-list-of-lawyers",
   "Antigua and Barbuda": "https://www.gov.uk/government/publications/antigua-list-of-lawyers--2",
+  Argentina: "https://www.gov.uk/government/publications/argentina-list-of-lawyers",
   Armenia: "https://www.gov.uk/government/publications/armenia-list-of-lawyers",
   Australia: "https://www.gov.uk/government/publications/australia-list-of-lawyers",
   Bahamas: "https://www.gov.uk/government/publications/bahamas-list-of-lawyers",
