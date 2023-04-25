@@ -148,10 +148,13 @@ describe("Lawyers List:", () => {
   });
 
   describe("getCountryLawyerRedirectLink", () => {
-    test("redirect link is for countries are correct", () => {
+    test("redirect link is for Spain correct", () => {
       [
         "ghana",
         "myanmar",
+        "spain",
+        "italy",
+        "thailand",
         "Antigua and Barbuda",
         "Côte d'Ivoire",
       ].forEach((country: any) => {
@@ -170,7 +173,7 @@ describe("Lawyers List:", () => {
 
     test("redirect link for unknown country is correct", () => {
       expect(getCountryLawyerRedirectLink("Tycho" as any)).toBe(
-        "/no-list-exists?serviceType=lawyers&country=Tycho"
+        "https://www.gov.uk/government/collections/list-of-lawyers"
       );
     });
   });

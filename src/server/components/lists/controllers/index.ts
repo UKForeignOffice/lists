@@ -44,6 +44,7 @@ import serviceName from "server/utils/service-name";
 
 export async function listsPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   let params = getAllRequestParams(req);
+
   // clean parameters
   params = preProcessParams(params, req);
   const { country, newLanguage } = params;
@@ -52,16 +53,16 @@ export async function listsPostController(req: Request, res: Response, next: Nex
   let { serviceType } = params;
   const serviceTypeName = getServiceTypeName(serviceType);
 
-  if (country && serviceType) {
+  if (country !== undefined && country !== "" && serviceType !== undefined) {
     try {
       serviceType = serviceTypeName as ServiceType;
       params = { ...params, serviceType };
       const countryName: string = formatCountryParam(country);
 
-      const countryHasListItems = await some(countryName as CountryName, serviceType);
+      const hasItems = await some(countryName as CountryName, serviceType);
       let redirectLink: string | undefined;
 
-      if (!countryHasListItems) {
+      if (!hasItems) {
         switch (serviceType) {
           case ServiceType.lawyers:
             redirectLink = getCountryLawyerRedirectLink(countryName as CountryName);
@@ -80,13 +81,11 @@ export async function listsPostController(req: Request, res: Response, next: Nex
         }
 
         if (redirectLink !== undefined) {
-          res.redirect(redirectLink);
-          return;
+          return res.redirect(redirectLink);
         }
       }
     } catch (error) {
-      next(error);
-      return;
+      return next(error);
     }
   }
 
@@ -94,15 +93,12 @@ export async function listsPostController(req: Request, res: Response, next: Nex
     languagesProvided = setLanguagesProvided(newLanguage, languagesProvided as string);
     params.languagesProvided = languagesProvided;
   }
-
   if (params?.continueButton) {
     delete params.continueButton;
   }
-
   const queryString = queryStringFromParams(params);
   let url = `${listsRoutes.finder}?${queryString}`;
   const languagesPopulated = !!continueButton;
-
   if (languagesPopulated && params.languagesProvided) {
     url = url.concat(`&languagesPopulated=true`);
   }
@@ -132,8 +128,7 @@ export function listsGetController(req: Request, res: Response): void {
   let languagesRows: LanguageRows = { rows: [] };
   let languageNamesProvided: string | undefined = "";
   let serviceNamesProvided: string[] = [];
-  let questionsSequence: QuestionName[];
-  let partialData: QuestionDataSet[] | QuestionData[] = [];
+  let questionsSequence: QuestionName[], partialData: QuestionDataSet[] | QuestionData[];
 
   if (languagesProvided) {
     const cleanedLanguagesProvided = getLanguageNames(languagesProvided as string);
@@ -225,6 +220,7 @@ export function listsGetController(req: Request, res: Response): void {
       languageNamesProvided,
       serviceNamesProvided,
       serviceApplyUrl,
+      // @ts-ignore
       partialData,
       languagesRows,
       backUrl,
@@ -348,23 +344,5 @@ export function listsGetPrivateBetaPage(req: Request, res: Response, next: NextF
   res.render("lists/private-beta-page", {
     serviceType: getServiceTypeName(serviceType as string),
     ServiceType,
-  });
-}
-
-export function listsGetNonExistent(req: Request, res: Response) {
-  const { serviceType, country } = req.query;
-  const backLink = `/find?serviceType=${serviceType}&readNotice=ok`;
-  const typedServiceType = serviceType as "translatorsInterpreters" | "lawyers" | "funeralDirectors";
-
-  const serviceTypes = {
-    translatorsInterpreters: "translators or interpreters",
-    lawyers: "lawyers",
-    funeralDirectors: "funeral directors",
-  };
-
-  res.render("lists/non-existent-list", {
-    serviceType: serviceTypes[typedServiceType],
-    country,
-    backLink,
   });
 }

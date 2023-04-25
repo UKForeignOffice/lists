@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import * as Controllers from "./controllers";
+import {
+  listsGetController,
+  listsPostController,
+  listsResultsController,
+  listsGetPrivateBetaPage,
+  listsConfirmApplicationController,
+  removeLanguageGetController
+} from "./controllers";
 import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
@@ -8,14 +15,20 @@ import annualReviewRouter from "server/components/annual-review/router";
 
 export const listsRouter = express.Router();
 
-listsRouter.get(listsRoutes.finder, csrfRequestHandler, Controllers.listsGetController);
-listsRouter.post(listsRoutes.finder, csrfRequestHandler, Controllers.listsPostController);
-listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
-listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
+listsRouter.get(listsRoutes.finder, csrfRequestHandler, listsGetController);
+listsRouter.post(listsRoutes.finder, csrfRequestHandler, listsPostController);
+listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, removeLanguageGetController);
+listsRouter.get(
+  listsRoutes.results,
+  csrfRequestHandler,
+  listsResultsController
+);
 
-listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
-listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);
-listsRouter.get(listsRoutes.noListExists, Controllers.listsGetNonExistent);
+listsRouter.get(
+  listsRoutes.confirmApplication,
+  listsConfirmApplicationController
+);
+listsRouter.get(listsRoutes.privateBeta, listsGetPrivateBetaPage);
 listsRouter.get(listsRoutes.accessibility, (req, res) => {
   res.render("help/accessibility-statement");
 });

@@ -1,8 +1,8 @@
-import type { Request } from "express";
+import { Request } from "express";
 import { startCase, kebabCase } from "lodash";
 import { ServiceType } from "server/models/types";
 import { parseListValues, getServiceLabel, getAllRequestParams } from "./helpers";
-import type { QuestionName, Question, QuestionData } from "./types";
+import { QuestionName, Question, QuestionData } from "./types";
 import {
   interpretationServices,
   languages,
