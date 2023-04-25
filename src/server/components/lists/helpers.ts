@@ -155,7 +155,10 @@ export function getParameterValue(
   return searchParams.get(parameterName) ?? "";
 }
 
-export function removeQueryParameter(queryString: string, parameterName: string): string {
+export function removeQueryParameter(
+  queryString: string,
+  parameterName: string
+): string {
   const params = omit(querystring.parse(queryString), parameterName);
   return `${querystring.stringify(params)}`;
 }
@@ -187,10 +190,14 @@ export const getCountryTranslatorsInterpretersRedirectLink = (() => {
 
 export const countryHasLegalAid = (() => {
   const countriesWithLegalAid = listOfCountriesWithLegalAid.map(lowerCase);
-  return (country?: string): boolean => countriesWithLegalAid.includes(lowerCase(country));
+  return (country?: string): boolean =>
+    countriesWithLegalAid.includes(lowerCase(country));
 })();
 
-export function createConfirmationLink(req: Request, reference: string): string {
+export function createConfirmationLink(
+  req: Request,
+  reference: string
+): string {
   const protocol = isLocalHost ? "http" : "https";
   const host = `${protocol}://${SERVICE_DOMAIN}`;
   const path = listsRoutes.confirmApplication.replace(":reference", reference);
