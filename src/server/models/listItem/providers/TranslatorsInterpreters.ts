@@ -36,14 +36,14 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
       ).replace(/"/g, "'")}`
     );
   }
-  if (Array.isArray(props.interpreterServices?.length) && !props.interpreterServices?.includes("all")) {
+  if (props.interpreterServices && !props.interpreterServices?.includes("all")) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(
         props.interpreterServices
       ).replace(/"/g, "'")}`
     );
   }
-  if (Array.isArray(props.translationSpecialties?.length) && !props.translationSpecialties?.includes("all")) {
+  if (props.translationSpecialties && !props.translationSpecialties?.includes("all")) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
         props.translationSpecialties

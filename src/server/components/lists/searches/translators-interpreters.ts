@@ -53,18 +53,13 @@ function makeResultsTitle(country: string, servicesProvided: string[]): string {
 interface SwornOutputTypes {
   translators: boolean;
   interpreters: boolean;
-  translatorsAndInterpreters?: boolean;
 }
 
 function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutputTypes {
-  let swornOutput: SwornOutputTypes = {
+  return {
     translators: results.some((result) => result.jsonData.swornTranslations === "Yes"),
     interpreters: results.some((result) => result.jsonData.swornInterpretations === "Yes"),
   };
-
-  swornOutput = { ...swornOutput, translatorsAndInterpreters: swornOutput.translators && swornOutput.interpreters };
-
-  return swornOutput;
 }
 
 export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
