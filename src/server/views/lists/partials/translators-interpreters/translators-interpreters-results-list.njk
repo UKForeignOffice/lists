@@ -18,16 +18,17 @@
       <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
       <strong class="govuk-warning-text__text">
         <span class="govuk-warning-text__assistive">Warning</span>
-        {% if hasSworn.interpreters and hasSworn.translators %}
-          In {{ country }}, translators and interpreters must be authorised to carry out legal or official services.
-          <p>These are known as ‘sworn’, ‘certified’ or ‘court’ translators or interpreters and are listed in the results as providing official services.</p>
-        {% elif hasSworn.interpreters %}
-          In {{ country }}, interpreters must be authorised to carry out legal or official services.
-          <p>These are known as ‘sworn’, ‘certified’ or ‘court’ interpreters and are listed in the results as providing official services.</p>
-        {% elif hasSworn.translators %}
-          In {{ country }}, translators must be authorised to carry out legal or official services.
-          <p>These translators are known as ‘sworn’ or ‘certified’ translators and are listed in the results as providing official services.</p>
-        {% endif %}
+        {% set swornServices %}
+          {% if hasSworn.interpreters and hasSworn.translators %}
+            translators and interpreters
+          {% elif hasSworn.interpreters %}
+            interpreters
+          {% elif hasSworn.translators %}
+            translators
+          {% endif %}
+        {% endset %}
+        In {{ country }}, {{swornServices}} must be authorised to carry out legal or official services.
+        <p>These are known as ‘sworn’, ‘certified’ {{ "or 'court'" if hasSworn.interpreters else "" }} {{ swornServices }} and are listed in the results as providing official services.</p>
       </strong>
     </div>
   {% else %}
