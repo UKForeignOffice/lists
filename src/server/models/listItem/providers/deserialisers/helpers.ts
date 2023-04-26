@@ -5,9 +5,7 @@ function trim(string: string): string {
   return string.trim();
 }
 
-export function checkboxCSVToArray<T extends string | string[] = string>(
-  checkboxValue: T
-): string[] {
+export function checkboxCSVToArray<T extends string | string[] = string>(checkboxValue: T): string[] {
   if (Array.isArray(checkboxValue)) {
     return checkboxValue.map(trim);
   }
@@ -16,11 +14,16 @@ export function checkboxCSVToArray<T extends string | string[] = string>(
   return uniq((checkboxValue ?? "").split(",").map(trim));
 }
 
-export function trimAnswer(
-  answer: FormRunner.Field["answer"]
-): FormRunner.Field["answer"] {
+export function trimAnswer(answer: FormRunner.Field["answer"]): FormRunner.Field["answer"] {
   if (typeof answer === "string") {
     return answer.trim();
   }
   return answer;
+}
+
+export function convertBooleanToText(value: string | boolean) {
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  return value;
 }
