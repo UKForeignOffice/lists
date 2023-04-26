@@ -54,11 +54,14 @@ interface SwornOutputTypes {
   translators: boolean;
   interpreters: boolean;
 }
-
 function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutputTypes {
   return {
-    translators: results.some((result) => result.jsonData.swornTranslations === "Yes"),
-    interpreters: results.some((result) => result.jsonData.swornInterpretations === "Yes"),
+    translators: results.some(
+      (result) => result.jsonData.swornTranslations === "Yes" || result.jsonData.swornTranslations
+    ),
+    interpreters: results.some(
+      (result) => result.jsonData.swornInterpretations === "Yes" || result.jsonData.swornInterpretations
+    ),
   };
 }
 

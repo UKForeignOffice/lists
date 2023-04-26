@@ -1,6 +1,6 @@
 import { WebhookDeserialisers } from "./types";
 import { ServiceType } from "server/models/types";
-import { checkboxCSVToArray, convertBooleanToText } from "server/models/listItem/providers/deserialisers/helpers";
+import { checkboxCSVToArray } from "server/models/listItem/providers/deserialisers/helpers";
 
 export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType.translatorsInterpreters] =
   (webhookData) => {
@@ -11,8 +11,6 @@ export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType
     translationSpecialties = [],
     interpreterServices = [],
     languagesProvided = [],
-    swornInterpretations,
-    swornTranslations,
     ...rest
   } = webhookData;
   return {
@@ -21,8 +19,6 @@ export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType
     translationSpecialties: checkboxCSVToArray(translationSpecialties),
     interpreterServices: checkboxCSVToArray(interpreterServices),
     languagesProvided: checkboxCSVToArray(languagesProvided),
-    swornInterpretations: convertBooleanToText(swornInterpretations),
-    swornTranslations: convertBooleanToText(swornTranslations),
     ...rest,
   };
 };

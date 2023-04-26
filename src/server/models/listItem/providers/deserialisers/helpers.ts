@@ -20,10 +20,3 @@ export function trimAnswer(answer: FormRunner.Field["answer"]): FormRunner.Field
   }
   return answer;
 }
-
-export function convertBooleanToText(value: string | boolean) {
-  if (typeof value === "boolean") {
-    return value ? "Yes" : "No";
-  }
-  return value;
-}
