@@ -16,7 +16,7 @@
           "name": "QLkbfP",
           "options": {},
           "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">If you have feedback specifically about this digital service, the FCDO welcomes your views.</p>\n\n<p class=\"govuk-body\">Email: <a href=\"mailto:digitalservicesfeedback@fco.gov.uk\" class=\"govuk-link\">digitalservicesfeedback@fco.gov.uk</a></p>",
+          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
           "schema": {}
         }
       ],
@@ -1687,7 +1687,9 @@
       "title": "Company details"
     }
   ],
-  "phaseBanner": {},
+  "phaseBanner": {
+    "phase": "beta"
+  },
   "metadata": {
     "type": "funeralDirectors"
   },

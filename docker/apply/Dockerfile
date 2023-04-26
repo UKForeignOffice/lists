@@ -22,5 +22,5 @@ ENV PORT=3001
 ENV SERVICE_URL="apply:${PORT}"
 ENV SANDBOX="false"
 ENV LOG_PRETTY_PRINT="false"
-ENV FEEDBACK_LINK="mailto:digitalservicesfeedback@fco.gov.uk"
+ENV FEEDBACK_LINK="https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/"
 CMD [ "yarn", "runner", "start"]
