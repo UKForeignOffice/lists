@@ -1,4 +1,5 @@
-import { TranslatorInterpreterListItemGetObject, ServiceType } from "server/models/types";
+import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import { ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
@@ -35,14 +36,14 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
       ).replace(/"/g, "'")}`
     );
   }
-  if (props.interpreterServices && props.interpreterServices.length > 0 && !props.interpreterServices.includes("all")) {
+  if (props.interpreterServices && !props.interpreterServices?.includes("all")) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(
         props.interpreterServices
       ).replace(/"/g, "'")}`
     );
   }
-  if (!props?.translationSpecialties?.includes("all")) {
+  if (props.translationSpecialties && !props.translationSpecialties?.includes("all")) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
         props.translationSpecialties

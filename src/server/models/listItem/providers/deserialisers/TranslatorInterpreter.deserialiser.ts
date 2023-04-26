@@ -5,7 +5,14 @@ import { checkboxCSVToArray } from "server/models/listItem/providers/deserialise
 export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType.translatorsInterpreters] =
   (webhookData) => {
 
-  const { deliveryOfServices = [], servicesProvided = [], translationSpecialties = [], interpreterServices = [], languagesProvided = [], ...rest } = webhookData;
+  const {
+    deliveryOfServices = [],
+    servicesProvided = [],
+    translationSpecialties = [],
+    interpreterServices = [],
+    languagesProvided = [],
+    ...rest
+  } = webhookData;
   return {
     deliveryOfServices: checkboxCSVToArray(deliveryOfServices),
     servicesProvided: checkboxCSVToArray(servicesProvided),

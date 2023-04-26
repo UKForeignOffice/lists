@@ -12,16 +12,37 @@
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
   <h2 class="govuk-heading-l govuk-!-margin-bottom-4">{{resultsTitle}}</h2>
-  <p class="govuk-body">You should carry out your own research before choosing a service provider.</p>
 
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      Translators and interpreters must be authorised to operate in some countries (known as sworn translators).
-      Check providers are qualified to carry out the service you need in the country you have selected.
-    </strong>
-  </div>
+  {% if hasSworn.interpreters or hasSworn.translators %}
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        {% set swornServices %}
+          {% if hasSworn.interpreters and hasSworn.translators %}
+            translators and interpreters
+          {% elif hasSworn.interpreters %}
+            interpreters
+          {% elif hasSworn.translators %}
+            translators
+          {% endif %}
+        {% endset %}
+        In {{ country }}, {{swornServices}} must be authorised to carry out legal or official services.
+        <p>These are known as ‘sworn’, ‘certified’ {{ "or 'court'" if hasSworn.interpreters else "" }} {{ swornServices }} and are listed in the results as providing official services.</p>
+      </strong>
+    </div>
+  {% else %}
+    <div class="govuk-body govuk-!-margin-bottom-4">Check that
+      {% if filterProps.interpreterServices and filterProps.translationSpecialties %}
+        translators and interpreters
+      {% elif filterProps.interpreterServices %}
+        interpreters
+      {% elif filterProps.translationSpecialties %}
+        translators
+      {% endif %}
+      can carry out the service you need in the language of your choosing before hiring them.
+    </div>
+  {% endif %}
 
 {% if (print !== "yes") %}
   <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual service providers.</p>
@@ -51,4 +72,3 @@
     {{ macros.paginationSection(pagination) }}
   {% endif %}
 {% endif %}
-
