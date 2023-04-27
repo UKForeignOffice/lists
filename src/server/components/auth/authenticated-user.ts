@@ -1,4 +1,5 @@
-import { List, User, UserRoles } from "server/models/types";
+import type { List, User } from "server/models/types";
+import { UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
