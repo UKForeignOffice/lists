@@ -56,24 +56,19 @@ export function getNewSessionWebhookData(
 
 export async function generateFormRunnerWebhookData(
   list: Pick<List, "type">,
-  listItem: ListItem,
-  isUnderTest: boolean
+  listItem: ListItem
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
   switch (list.type) {
     case ServiceType.lawyers:
-      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject);
       break;
     case ServiceType.funeralDirectors:
-      questions = await funeralDirectors.generateFormRunnerWebhookData(
-        listItem as FuneralDirectorListItemGetObject,
-        isUnderTest
-      );
+      questions = await funeralDirectors.generateFormRunnerWebhookData(listItem as FuneralDirectorListItemGetObject);
       break;
     case ServiceType.translatorsInterpreters:
       questions = await translatorsInterpreters.generateFormRunnerWebhookData(
-        listItem as TranslatorInterpreterListItemGetObject,
-        isUnderTest
+        listItem as TranslatorInterpreterListItemGetObject
       );
       break;
     default:
@@ -145,7 +140,7 @@ export async function initialiseFormRunnerSession({
     },
   };
 
-  const questions = await generateFormRunnerWebhookData(list, listItemForInit, isUnderTest);
+  const questions = await generateFormRunnerWebhookData(list, listItemForInit);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
     listItem.id,

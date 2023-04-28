@@ -514,14 +514,12 @@ describe("Form Runner Service:", () => {
     };
 
     test("generated form runner webhook data is correct", async () => {
-      const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject);
 
       expect(result).toMatchObject(expectedListOutput);
     });
     test("generated object is correct", async () => {
-      const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject);
       const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text");
 
       expect(newSessionWebhookData.questions).toMatchObject(expectedNewSessionWebhookData.questions);
