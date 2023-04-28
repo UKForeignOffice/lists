@@ -22,20 +22,23 @@ ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM base AS main
+FROM dependencies AS main
 
 # as root, remove all unnecessary binaries
 WORKDIR /usr/bin
+USER root
 RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanelf
 
 # continue as appuser (1001)
 USER 1001
-WORKDIR /usr/src/app
+WORKDIR /usr/dist/app
 
 # copy neccesary files only
-COPY --from=build /usr/src/app/dist ./dist/
-COPY --from=build /usr/src/app/node_modules ./node_modules/
-COPY --from=build /usr/src/app/docker/apply/forms-json ./docker/apply/forms-json/
+COPY package.json ./
+COPY --from=build /usr/src/app/dist dist
+COPY --from=build /usr/src/app/node_modules node_modules
+COPY src/server/models/db/ src/server/models/db/
+
 
 ARG NODE_ENV
 ARG DOCKER_TAG
@@ -55,5 +58,5 @@ CMD ["npm", "run", "start:prod"]
 # docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
 FROM base AS scheduled
 WORKDIR /usr/src/scheduler
-COPY --from=main /usr/src/app/dist/scheduler ./dist/
+COPY --from=main /usr/dist/app/dist/scheduler ./dist/
 COPY docker/scheduler/package.json ./package.json
