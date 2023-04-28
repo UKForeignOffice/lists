@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 USER 1001
 COPY package.json package-lock.json ./
 RUN npm i
-RUN cp package-lock.json package-lock-cache.json
+COPY package-lock.json package-lock-cache.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
@@ -22,15 +22,15 @@ COPY ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
-FROM base AS prodBase
-
-# as root, remove all unnecessary binaries
+FROM base AS prod
+# as root, remove all unnecessary binaries for production
+# use this stage as the "base" for production images
 WORKDIR /usr/bin
 USER root
 RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanelf
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM prodBase as main
+FROM prod as main
 USER 1001
 WORKDIR /usr/dist/app
 
@@ -57,7 +57,8 @@ ENV CI_SMOKE_TEST=true
 CMD ["npm", "run", "start:prod"]
 
 # docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
-FROM prodBase AS scheduled
+FROM prod AS scheduled
+USER 1001
 WORKDIR /usr/dist/scheduler
 COPY --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
 COPY --from=build /usr/src/app/node_modules node_modules
