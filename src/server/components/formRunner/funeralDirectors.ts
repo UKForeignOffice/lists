@@ -41,10 +41,9 @@ const FormRunnerFields: Record<string, string> = {
 
 // TODO: use the SerialisedWebhookData as the return type
 export async function generateFormRunnerWebhookData(
-  listItem: FuneralDirectorListItemGetObject,
-  isUnderTest: boolean = false
+  listItem: FuneralDirectorListItemGetObject
 ): Promise<Array<Partial<Question>>> {
-  const questions = await parseJsonFormData(ServiceType.funeralDirectors, isUnderTest);
+  const questions = await parseJsonFormData(ServiceType.funeralDirectors);
   questions.forEach((question) => {
     question.fields?.forEach((field: Field) => {
       field.answer = get(listItem, FormRunnerFields[field.key]);

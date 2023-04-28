@@ -1,8 +1,5 @@
 import { getNewSessionWebhookData } from "../helpers";
-import {
-  LawyerListItemGetObject,
-  BaseListItemGetObject, ServiceType,
-} from "server/models/types";
+import { LawyerListItemGetObject, BaseListItemGetObject, ServiceType } from "server/models/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
 import * as FormRunner from "./../types";
@@ -37,13 +34,11 @@ describe("Form Runner Service:", () => {
             index: 0,
           },
           {
-            question:
-              "Are you qualified to provide  Covid-19 tests in your country?",
+            question: "Are you qualified to provide  Covid-19 tests in your country?",
             fields: [
               {
                 key: "isQualified",
-                title:
-                  "Are you qualified to provide  Covid-19 tests in your country?",
+                title: "Are you qualified to provide  Covid-19 tests in your country?",
                 type: "text",
                 answer: true,
               },
@@ -51,13 +46,11 @@ describe("Form Runner Service:", () => {
             index: 0,
           },
           {
-            question:
-              "Are you a member of a local regulatory authority or body?",
+            question: "Are you a member of a local regulatory authority or body?",
             fields: [
               {
                 key: "memberOfRegulatoryAuthority",
-                title:
-                  "Are you a member of a local bar association or other regulatory authority/body?",
+                title: "Are you a member of a local bar association or other regulatory authority/body?",
                 type: "text",
                 answer: true,
               },
@@ -296,7 +289,7 @@ describe("Form Runner Service:", () => {
       websiteAddress: "https://www.alassistenzalegale.it/?lang=en",
       organisationName: "AL Assistenza Legale",
       representedBritishNationals: true,
-      postCode: "999999"
+      postCode: "999999",
     };
 
     const getObject: BaseListItemGetObject = {
@@ -318,7 +311,7 @@ describe("Form Runner Service:", () => {
       isBlocked: false,
       listId: 1,
       status: Status.NEW,
-      isAnnualReview: false
+      isAnnualReview: false,
     };
 
     const expectedListOutput: Array<Partial<FormRunner.Question>> = [
@@ -329,8 +322,7 @@ describe("Form Runner Service:", () => {
             key: "speakEnglish",
           },
         ],
-        question:
-          "Can you provide legal services and support to customers in English?",
+        question: "Can you provide legal services and support to customers in English?",
       },
       {
         fields: [
@@ -461,8 +453,7 @@ describe("Form Runner Service:", () => {
             key: "regulators",
           },
         ],
-        question:
-          "Which legal regulator or local bar associations are you registered with?",
+        question: "Which legal regulator or local bar associations are you registered with?",
       },
       {
         fields: [
@@ -524,29 +515,16 @@ describe("Form Runner Service:", () => {
 
     test("generated form runner webhook data is correct", async () => {
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject,
-        isUnderTest
-      );
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
 
       expect(result).toMatchObject(expectedListOutput);
     });
     test("generated object is correct", async () => {
       const isUnderTest = true;
-      const result = await generateFormRunnerWebhookData(
-        getObject as LawyerListItemGetObject,
-        isUnderTest
-      );
-      const newSessionWebhookData = getNewSessionWebhookData(
-        "lawyers",
-        111,
-        result,
-        "Change the text"
-      );
+      const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject, isUnderTest);
+      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text");
 
-      expect(newSessionWebhookData.questions).toMatchObject(
-        expectedNewSessionWebhookData.questions
-      );
+      expect(newSessionWebhookData.questions).toMatchObject(expectedNewSessionWebhookData.questions);
     });
   });
 });
