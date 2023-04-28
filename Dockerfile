@@ -22,7 +22,7 @@ ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM dependencies AS main
+FROM base AS main
 
 # as root, remove all unnecessary binaries
 WORKDIR /usr/bin
@@ -56,7 +56,7 @@ ENV CI_SMOKE_TEST=true
 CMD ["npm", "run", "start:prod"]
 
 # docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
-FROM base AS scheduled
-WORKDIR /usr/src/scheduler
+FROM base AS scheduler
+WORKDIR /usr/dist/scheduler
 COPY --from=main /usr/dist/app/dist/scheduler ./dist/
 COPY docker/scheduler/package.json ./package.json
