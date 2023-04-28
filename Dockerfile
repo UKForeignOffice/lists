@@ -12,24 +12,25 @@ WORKDIR /usr/src/app
 USER 1001
 COPY package.json package-lock.json ./
 RUN npm i
-COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
-COPY docker/apply/forms-json ./docker/apply/forms-json
-COPY ./src ./src/
+RUN cp package-lock.json package-lock-cache.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
+COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
+COPY docker/apply/forms-json ./docker/apply/forms-json
+COPY ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
-# docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM base AS main
+FROM base AS prodBase
 
 # as root, remove all unnecessary binaries
 WORKDIR /usr/bin
 USER root
 RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanelf
 
-# continue as appuser (1001)
+# docker build --target main -t main --build-arg BUILD_MODE=ci .
+FROM prodBase as main
 USER 1001
 WORKDIR /usr/dist/app
 
@@ -55,8 +56,9 @@ ENV CI_SMOKE_TEST=true
 
 CMD ["npm", "run", "start:prod"]
 
-# docker build --target main -t scheduled --build-arg BUILD_MODE=ci .
-FROM base AS scheduler
+# docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
+FROM prodBase AS scheduled
 WORKDIR /usr/dist/scheduler
-COPY --from=main /usr/dist/app/dist/scheduler ./dist/
+COPY --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
+COPY --from=build /usr/src/app/node_modules node_modules
 COPY docker/scheduler/package.json ./package.json
