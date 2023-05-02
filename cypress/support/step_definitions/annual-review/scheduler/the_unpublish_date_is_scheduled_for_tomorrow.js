@@ -1,7 +1,7 @@
 import { subDays, startOfDay } from "date-fns";
 
-When("annual review date was {int} days ago", async (daysAfterAnnualReview) => {
-  const annualReviewDate = startOfDay(subDays(new Date(), daysAfterAnnualReview))
+When("the unpublished date is scheduled for tomorrow", async () => {
+  const annualReviewDate = startOfDay(subDays(new Date(), 41))
 
   cy.task("db", {
     operation: "list.findFirst",
