@@ -47,7 +47,13 @@ const serviceTypeToNoun: Record<string, string> = {
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
   const sanitisedServicesProvidedQuery = servicesProvided.map((service) => serviceTypeToNoun[service]).filter(Boolean);
+<<<<<<< Updated upstream
   return `${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
+=======
+  const formattedService =
+    sanitisedServicesProvidedQuery.length > 1 ? "Translators and interpreters" : sanitisedServicesProvidedQuery[0];
+  return `${formattedService} in ${country}`;
+>>>>>>> Stashed changes
 }
 
 interface SwornOutputTypes {
