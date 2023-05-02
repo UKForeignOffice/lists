@@ -1,5 +1,4 @@
 /* eslint-disable */
-const TOTAL_NO_UNPUBLISH_WEEKS = 5
 Then("the unpublish reminder email for {int} days is sent to eligible providers", async (noOfDays) => {
   cy.task("db", {
     operation: "list.findFirst",
