@@ -6,6 +6,3 @@ create view "FirstPublishedOnList" as (
  from "List" l
           inner join "ListItem" li ON li."listId" = l.id
           inner join (select time, type, id, "listItemId" from "Event" where type = 'PUBLISHED') e on li.id = "listItemId");
-
-
-
