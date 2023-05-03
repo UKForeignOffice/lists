@@ -70,6 +70,19 @@ export interface List extends PrismaClient.List {
   lastAnnualReviewStartDate: Date | null;
 }
 
+export interface ListsForDashboard extends PrismaClient.ListsForDashboard {
+  listId: number;
+  type: string;
+  country: string;
+  nextAnnualReviewStartDate: Date;
+  lastAnnualReviewStartDate: Date | null;
+  isOverdue: boolean;
+  live: number;
+  admins: number;
+  actionNeeded: number;
+  jsonData: ListJsonData;
+}
+
 export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
   jsonData: ListJsonData;
 }

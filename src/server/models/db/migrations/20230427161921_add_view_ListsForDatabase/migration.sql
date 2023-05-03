@@ -6,6 +6,7 @@ create view "ListsForDashboard" as (
     c.name "country",
     l."nextAnnualReviewStartDate" "nextAnnualReviewStartDate",
     l."lastAnnualReviewStartDate" "lastAnnualReviewStartDate",
+    l."jsonData" "jsonData",
     (coalesce(l."nextAnnualReviewStartDate", fp."firstPublished")  + interval '18 months' < current_date) as "isOverdue",
     count(li.*) filter (where li."isPublished") as "live",
     jsonb_array_length(l."jsonData" -> 'users') as "admins",
@@ -16,5 +17,4 @@ create view "ListsForDashboard" as (
       inner join "FirstPublishedOnList" fp on fp."listId" = l.id
       left join "ListItem" li on li."listId" = l.id
   group by l.id, c.name, fp."firstPublished"
-  order by l.id asc
 );

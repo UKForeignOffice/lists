@@ -31,13 +31,10 @@ export default class AuthenticatedUser {
       },
     };
 
-    const lists = await prisma.list.findMany({
+    const lists = await prisma.listsForDashboard.findMany({
       ...(notSuperAdmin && whereInputForUser),
       orderBy: {
-        id: "asc",
-      },
-      include: {
-        country: true,
+        listId: "asc",
       },
     });
 

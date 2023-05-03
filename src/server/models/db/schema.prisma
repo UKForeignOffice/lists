@@ -201,12 +201,12 @@ view ListsForDashboard {
   listId                      Int
   type                        String
   country                     String
-  totalLiveProviders          Int
-  totalUsers                  Int
-  totalActionNeedeProviders   Int
-  annualReviewOverdue         Boolean @default(false)
-  firstPublished              DateTime
+  admins                      Int
+  live                        Int
+  actionNeeded                Int
+  isOverdue                   Boolean @default(false)
   nextAnnualReviewStartDate   DateTime? @db.Date
   lastAnnualReviewStartDate   DateTime? @db.Date
+  jsonData                    Json
   @@unique([listId])
 }

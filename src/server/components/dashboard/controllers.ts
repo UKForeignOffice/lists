@@ -17,7 +17,7 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 import serviceName from "server/utils/service-name";
 
-import type { List } from "server/models/types";
+import type { List, ListsForDashboard } from "server/models/types";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -150,7 +150,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       title: pageTitles[dashboardRoutes.lists],
       req,
       isNewUser,
-      lists: listsWithFormattedDates(lists as List[]),
+      lists: listsWithFormattedDates(lists as ListsForDashboard[]),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
