@@ -16,12 +16,14 @@
       "client/*": ["client/*"],
       "server/*": ["server/*"],
       "scheduler/*": ["scheduler/*"],
-      "@jest/*": ["./../.jest/*"]
+      "@jest/*": ["./../.jest/*"],
+      "@forms/*": ["./../docker/apply/forms-json/*"]
     },
     "useUnknownInCatchVariables": false,
   },
   "include": [
     ".jest/*",
+    "docker/apply/forms-json/*",
     "src",
     "src/server/**/*",
     "src/scheduler/**/*",

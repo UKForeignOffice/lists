@@ -52,6 +52,6 @@ export interface Page {
   path: string;
   controller: string;
   components?: Component[];
-  section: string; // the section ID
+  section?: string; // the section ID
   next?: Array<{ path: string; condition?: string }>;
 }

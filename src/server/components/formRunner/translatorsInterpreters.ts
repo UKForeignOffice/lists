@@ -48,7 +48,7 @@ export async function generateFormRunnerWebhookData(
   listItem: TranslatorInterpreterListItemGetObject,
   isUnderTest?: boolean
 ): Promise<Array<Partial<Question>>> {
-  const questions = await parseJsonFormData(ServiceType.translatorsInterpreters, isUnderTest);
+  const questions = await parseJsonFormData(ServiceType.translatorsInterpreters);
   questions.forEach((question) => {
     question.fields?.forEach((field: Field) => {
       field.answer = get(listItem, FormRunnerFields[field.key]);

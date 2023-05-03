@@ -1,6 +1,4 @@
 import * as FormRunner from "./types";
-import path from "path";
-import fs from "fs";
 import {
   FuneralDirectorListItemGetObject,
   LawyerListItemGetObject,
@@ -12,7 +10,6 @@ import {
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
-import { kebabCase } from "lodash";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
@@ -20,7 +17,7 @@ import { logger } from "server/services/logger";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
-
+import { forms } from "./forms";
 export function getNewSessionWebhookData(
   listType: string,
   listItemId: number,
@@ -59,24 +56,19 @@ export function getNewSessionWebhookData(
 
 export async function generateFormRunnerWebhookData(
   list: Pick<List, "type">,
-  listItem: ListItem,
-  isUnderTest: boolean
+  listItem: ListItem
 ): Promise<Array<Partial<FormRunner.Question>> | undefined> {
   let questions: Array<Partial<FormRunner.Question>> | undefined;
   switch (list.type) {
     case ServiceType.lawyers:
-      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject, isUnderTest);
+      questions = await lawyers.generateFormRunnerWebhookData(listItem as LawyerListItemGetObject);
       break;
     case ServiceType.funeralDirectors:
-      questions = await funeralDirectors.generateFormRunnerWebhookData(
-        listItem as FuneralDirectorListItemGetObject,
-        isUnderTest
-      );
+      questions = await funeralDirectors.generateFormRunnerWebhookData(listItem as FuneralDirectorListItemGetObject);
       break;
     case ServiceType.translatorsInterpreters:
       questions = await translatorsInterpreters.generateFormRunnerWebhookData(
-        listItem as TranslatorInterpreterListItemGetObject,
-        isUnderTest
+        listItem as TranslatorInterpreterListItemGetObject
       );
       break;
     default:
@@ -87,30 +79,16 @@ export async function generateFormRunnerWebhookData(
 }
 
 export async function parseJsonFormData(
-  listType: string,
-  isUnderTest: boolean = false
+  listType: "funeralDirectors" | "lawyers" | "translatorsInterpreters"
 ): Promise<Array<Partial<FormRunner.Question>>> {
-  /**
-   * TODO:- Ideally we can do a require.resolve(..) which will look in the current directory for the target, then in the parent etc
-   * so that we don't need the isUnderTest flag. However, I suspect an issue to do with webpack is preventing us from
-   * doing this properly. See branch `origin/fix/containers` rev 1e76...6bb.
-   * For now, we need to keep ./forms-json in sync with /docker/apply/forms-json.
-   * I have tried doing a babel/tsc/webpack/jest moduleNameMapping change but it is still causing errors.
-   * Giving up. Enjoy
-   */
-  let baseDir = __dirname.replace("dist", "dist/src/server/components/formRunner");
-  if (!baseDir.includes("dist")) {
-    baseDir = baseDir.replace("/src/server/components/formRunner", "/dist/src/server/components/formRunner");
-  }
-  const formsJsonFile = `/forms-json/${kebabCase(listType)}.json`;
+  const formJsonData = forms[listType];
+  const pages = formJsonData.pages as FormRunner.Page[];
 
-  const fileContents = await fs.promises.readFile(path.join(baseDir, formsJsonFile), "utf8");
-  const formJsonData = JSON.parse(fileContents);
-  const questions: Array<Partial<FormRunner.Question>> = formJsonData.pages
-    .map((page: FormRunner.Page) => {
+  const questions: Array<Partial<FormRunner.Question>> = pages
+    .map((page) => {
       const fields: FormRunner.Field[] | undefined = page.components
-        ?.filter((component: FormRunner.Component) => component.type !== "Html")
-        ?.map((component: FormRunner.Component) => {
+        ?.filter((component) => component.type !== "Html")
+        ?.map((component) => {
           const field: FormRunner.Field = {
             answer: "",
             key: component.name,
@@ -119,11 +97,11 @@ export async function parseJsonFormData(
           return field;
         });
       return {
-        fields: fields,
+        fields: fields ?? [],
         question: page.title,
       };
     })
-    .filter((question: FormRunner.Question) => question.fields.length > 0);
+    ?.filter((question) => question.fields.length > 0);
 
   return questions;
 }
@@ -162,7 +140,7 @@ export async function initialiseFormRunnerSession({
     },
   };
 
-  const questions = await generateFormRunnerWebhookData(list, listItemForInit, isUnderTest);
+  const questions = await generateFormRunnerWebhookData(list, listItemForInit);
   const formRunnerWebhookData = getNewSessionWebhookData(
     listItem.type,
     listItem.id,
