@@ -7,6 +7,6 @@ Then("the provider with reference {string} should be unpublished", (reference) =
       },
     },
   }).then((listItem) => {
-    cy.expect(listItem.isPublished).to.be.false();
+    cy.expect(listItem.isPublished).to.be.false;
   });
 });
