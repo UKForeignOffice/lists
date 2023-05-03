@@ -1,9 +1,9 @@
 Feature: Check correct email is sent to provider this is about to be unpublished
 
-  Background: Setup list and provider
+  Background:
     Given A "lawyers" list exists for Eurasia
     And eurasia lawyers are due to begin annual review
-    And a list item has been with the provider for 100 days
+    And a list item has been with the provider for 100 days with the reference "SCHEDULER"
 
   Scenario: Provider is sent a reminder email the day before they're unpublished
     When 1 days before unpublish

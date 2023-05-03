@@ -1,11 +1,12 @@
-When("a list item has been with the provider for {int} days", (days) => {
+When("a list item has been with the provider for {int} days with the reference {string}", (days, reference) => {
   const publishedDate = new Date();
   publishedDate.setDate(publishedDate.getDate() - days);
+
   cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
-        reference: "SCHEDULER_TESTS",
+        reference,
         type: "lawyers",
         isApproved: true,
         isPublished: true,
@@ -15,6 +16,9 @@ When("a list item has been with the provider for {int} days", (days) => {
         jsonData: {
           emailAddress: "test@test.com",
           contactName: "Buster",
+          metadata: {
+            emailVerified: true,
+          },
         },
         list: {
           connect: {
