@@ -31,6 +31,6 @@ Then("the unpublish reminder email for {int} days is sent to eligible providers"
       },
     }).then((result) => {
       cy.expect(result.length).to.be.gt(0);
-    })
-  })
+    });
+  });
 });

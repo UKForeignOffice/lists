@@ -1,5 +1,3 @@
-/* eslint-disable */
-const TOTAL_NO_UNPUBLISH_WEEKS = 5
 Then("the unpublish reminder email is not sent", async () => {
   cy.task("db", {
     operation: "list.findFirst",
@@ -10,28 +8,42 @@ Then("the unpublish reminder email is not sent", async () => {
     },
   }).then((list) => {
     cy.task("db", {
-      operation: "event.findMany",
+      operation: "audit.findFirst",
       variables: {
         where: {
-          type: "REMINDER",
-          AND: [
-            {
-              jsonData: {
-                path: ["notes"],
-                array_contains: ['sent reminder for'],
-              },
-            },
-            {
-              jsonData: {
-                path: ["reference"],
-                equals: list.jsonData.currentAnnualReview.reference,
-              },
-            },
-          ],
+          type: "list",
+          auditEvent: "ANNUAL_REVIEW",
+          jsonData: {
+            path: ["itemId"],
+            equals: list.id,
+          },
         },
       },
-    }).then((result) => {
-      cy.expect(result.length).equals(0);
-    })
-  })
+    }).then((audit) => {
+      cy.task("db", {
+        operation: "event.findMany",
+        variables: {
+          where: {
+            type: "REMINDER",
+            AND: [
+              {
+                jsonData: {
+                  path: ["notes"],
+                  array_contains: ["sent reminder for"],
+                },
+              },
+              {
+                jsonData: {
+                  path: ["reference"],
+                  equals: audit.jsonData.annualReviewRef,
+                },
+              },
+            ],
+          },
+        },
+      }).then((result) => {
+        cy.expect(result.length).equals(0);
+      });
+    });
+  });
 });

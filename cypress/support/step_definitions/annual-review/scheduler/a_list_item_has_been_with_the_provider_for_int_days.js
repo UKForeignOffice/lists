@@ -5,6 +5,7 @@ When("a list item has been with the provider for {int} days", (days) => {
     operation: "listItem.create",
     variables: {
       data: {
+        reference: "SCHEDULER_TESTS",
         type: "lawyers",
         isApproved: true,
         isPublished: true,
@@ -13,7 +14,7 @@ When("a list item has been with the provider for {int} days", (days) => {
         status: "OUT_WITH_PROVIDER",
         jsonData: {
           emailAddress: "test@test.com",
-          contactName: "Buster"
+          contactName: "Buster",
         },
         list: {
           connect: {
