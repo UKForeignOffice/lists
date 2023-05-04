@@ -19,8 +19,7 @@ const cucumber = require("cypress-cucumber-preprocessor").default;
 /**
  * @type {Cypress.PluginConfig}
  */
-// eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+module.exports = (on, _config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
