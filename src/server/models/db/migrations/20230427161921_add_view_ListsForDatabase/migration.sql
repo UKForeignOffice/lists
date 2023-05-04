@@ -7,14 +7,14 @@ create view "ListsForDashboard" as (
     l."nextAnnualReviewStartDate" "nextAnnualReviewStartDate",
     l."lastAnnualReviewStartDate" "lastAnnualReviewStartDate",
     l."jsonData" "jsonData",
-    (coalesce(l."nextAnnualReviewStartDate", fp."firstPublished")  + interval '18 months' < current_date) as "isOverdue",
+    (case when coalesce(l."nextAnnualReviewStartDate", fp."firstPublished")  + interval '18 months' < current_date then true else false end) as "isOverdue",
     count(li.*) filter (where li."isPublished") as "live",
     jsonb_array_length(l."jsonData" -> 'users') as "admins",
     sum(case when li."status" in ('EDITED', 'CHECK_ANNUAL_REVIEW', 'NEW') then 1 else 0 end) as "actionNeeded"
   from
     "List" l
       inner join "Country" c on  c.id = l."countryId"
-      inner join "FirstPublishedOnList" fp on fp."listId" = l.id
+      left outer join "FirstPublishedOnList" fp on fp."listId" = l.id
       left join "ListItem" li on li."listId" = l.id
   group by l.id, c.name, fp."firstPublished"
 );
