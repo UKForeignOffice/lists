@@ -282,3 +282,30 @@ $two-thirds: $one-third * 2;
   border-color: 	#AA2A16;
   background-color: 	#AA2A16;
 }
+
+.dashboard-table {
+  font-size: 18px;
+}
+
+.dashboard-table > .govuk-table__head .govuk-table__header {
+  vertical-align: bottom;
+  color: #1d70b8;
+}
+
+.govuk-\!-width-one-seventh {
+  width: 100% !important;
+}
+@media (min-width: 40.0625em) {
+  .govuk-\!-width-one-seventh {
+    width: 14.286% !important;
+  }
+}
+
+.govuk-\!-width-one-fifth {
+  width: 100% !important;
+}
+@media (min-width: 40.0625em) {
+  .govuk-\!-width-one-fifth {
+    width: 20% !important;
+  }
+}

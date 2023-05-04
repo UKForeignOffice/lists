@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
@@ -6,7 +6,7 @@ import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { QuestionError } from "server/components/lists";
+import type { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -158,7 +158,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
   }
 }
 
-function listsWithFormattedDates(lists: List[]): List[] {
+function listsWithFormattedDates(lists: ListsForDashboard[]): ListsForDashboard[] {
   return lists.map((list) => {
     const nextAnnualReviewStartDateString = formatAnnualReviewDate(list, "nextAnnualReviewStartDate");
     const lastAnnualReviewStartDateString = formatAnnualReviewDate(list, "lastAnnualReviewStartDate");
@@ -181,7 +181,7 @@ function listsWithFormattedDates(lists: List[]): List[] {
   });
 }
 
-function formatAnnualReviewDate(list: List, field: string): Date | null {
+function formatAnnualReviewDate(list: ListsForDashboard, field: string): Date | null {
   if (["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"].includes(field)) {
     // @ts-ignore
     return list[field];

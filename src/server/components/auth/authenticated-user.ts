@@ -33,9 +33,14 @@ export default class AuthenticatedUser {
 
     const lists = await prisma.listsForDashboard.findMany({
       ...(notSuperAdmin && whereInputForUser),
-      orderBy: {
-        listId: "asc",
-      },
+      orderBy: [
+        {
+          country: "asc",
+        },
+        {
+          type: "asc",
+        },
+      ],
     });
 
     if (!lists) {
