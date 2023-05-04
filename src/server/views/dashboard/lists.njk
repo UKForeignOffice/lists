@@ -16,10 +16,18 @@
     </div>
 
     <div class="govuk-grid-row govuk-!-margin-top-2">
-      <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--green">
-        <strong class="govuk-body govuk-!-font-weight-bold">Administrators</strong>
-        <p class="govuk-body">All lists have administrators</p>
+      {% for dashboardBox in dashboardBoxes %}
+      <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{dashboardBox.cssClass}}">
+        <strong class="govuk-body govuk-!-font-weight-bold">{{dashboardBox.name}}</strong>
+        {% if dashboardBox.cssClass === "red" %}
+          <p class="govuk-body">
+            <a href="#" class="govuk-body">{{dashboardBox.text}}</a>
+          </p>
+        {% else %}
+          <p class="govuk-body">{{dashboardBox.text}}</p>
+        {% endif %}
       </div>
+      {% endfor %}
     </div>
     <table class="govuk-table govuk-!-margin-top-4 dashboard-table">
       <thead class="govuk-table__head">

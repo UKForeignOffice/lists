@@ -320,4 +320,12 @@ $two-thirds: $one-third * 2;
       color: #005A30;
     }
   }
+
+  &--red {
+    background-color: #f6d7d2;
+
+    .govuk-body {
+      color: #942514;
+    }
+  }
 }

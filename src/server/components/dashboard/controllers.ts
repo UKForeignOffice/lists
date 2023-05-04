@@ -148,7 +148,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       {
         name: "Administrators",
         text: "All lists have administrators",
-        cssClass: "green",
+        cssClass: "red",
       },
     ];
 
