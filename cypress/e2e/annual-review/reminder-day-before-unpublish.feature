@@ -1,4 +1,16 @@
-Feature: Check correct email is sent to provider this is about to be unpublished
+Feature: Check that a provider is sent a reminder email only on the day before they are unpublished
+
+  As a provider,
+  if I have not responded, I want to be sent a "final reminder" the day before I am unpublished,
+  So that I have a chance to update my details and stay on the list
+
+  As a provider,
+  if I have not responded, I do not want to be sent a "final reminder" the day before I am unpublished,
+  Since I would already be unpublished and will have conflicting emails
+
+  As a provider,
+  if I have responded, I do not want to be sent a "final reminder",
+  Since I have responded in the correct timeframe
 
   Background:
     Given A "lawyers" list exists for Eurasia
