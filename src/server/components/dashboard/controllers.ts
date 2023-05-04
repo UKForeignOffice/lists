@@ -144,6 +144,13 @@ export async function listsController(req: Request, res: Response, next: NextFun
 
     const lists = await req.user?.getLists();
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
+    const dashboardBoxes = [
+      {
+        name: "Administrators",
+        text: "All lists have administrators",
+        cssClass: "green",
+      },
+    ];
 
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
@@ -152,6 +159,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       isNewUser,
       lists,
       csrfToken: getCSRFToken(req),
+      dashboardBoxes,
     });
   } catch (error) {
     next(error);
