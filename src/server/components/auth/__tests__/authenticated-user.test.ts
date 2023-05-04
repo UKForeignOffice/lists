@@ -27,31 +27,35 @@ test("isAdministrator evaluation is correct", () => {
 test("getLists query is correct for administrator", async () => {
   await administrator.getLists();
 
-  expect(prisma.list.findMany).toHaveBeenCalledWith({
-    orderBy: {
-      id: "asc",
-    },
-    include: {
-      country: true,
-    },
+  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
+    orderBy: [
+      {
+        country: "asc",
+      },
+      {
+        type: "asc",
+      },
+    ],
   });
 });
 
 test("getLists query is correct for user", async () => {
   await user.getLists();
-  expect(prisma.list.findMany).toHaveBeenCalledWith({
+  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
     where: {
       jsonData: {
         path: ["users"],
         array_contains: ["test@gov.uk"],
       },
     },
-    orderBy: {
-      id: "asc",
-    },
-    include: {
-      country: true,
-    },
+    orderBy: [
+      {
+        country: "asc",
+      },
+      {
+        type: "asc",
+      },
+    ],
   });
 });
 
