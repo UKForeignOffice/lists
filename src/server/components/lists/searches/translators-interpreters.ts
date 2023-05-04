@@ -41,13 +41,13 @@ export const translatorsInterpretersQuestionsSequence = [
 ];
 
 const serviceTypeToNoun: Record<string, string> = {
-  translation: "Translators",
-  interpretation: "Interpreters",
+  translation: "translators",
+  interpretation: "interpreters",
 };
 
 function makeResultsTitle(country: string, servicesProvided: string[]): string {
   const sanitisedServicesProvidedQuery = servicesProvided.map((service) => serviceTypeToNoun[service]).filter(Boolean);
-  return `${sanitisedServicesProvidedQuery.join(" or ")} in ${country}`;
+  return `${sanitisedServicesProvidedQuery.join(" and ")} in ${country}`;
 }
 
 interface SwornOutputTypes {
