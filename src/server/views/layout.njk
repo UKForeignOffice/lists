@@ -25,7 +25,7 @@
     n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-PCZSN93');</script>
 
-    <script>
+    <script nonce="{{cspNonce}}">
       window.dataLayer = window.dataLayer || []; window.dataLayer.push({ "event": "virtualPageview", "page-title": document.title });
     </script>
     <!-- End Google Tag Manager -->
@@ -98,5 +98,3 @@
 {% block footer %}
     {% include "includes/footer.njk" %}
 {% endblock %}
-
-
