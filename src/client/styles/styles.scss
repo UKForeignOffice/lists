@@ -309,3 +309,15 @@ $two-thirds: $one-third * 2;
     width: 20%;
   }
 }
+
+.dashboard-box {
+  padding-top: 1rem;
+
+  &--green {
+    background-color: #cbe2d8;
+
+    .govuk-body {
+      color: #005A30;
+    }
+  }
+}
