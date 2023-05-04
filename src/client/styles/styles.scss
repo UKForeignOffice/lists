@@ -287,25 +287,25 @@ $two-thirds: $one-third * 2;
   font-size: 18px;
 }
 
-.dashboard-table > .govuk-table__head .govuk-table__header {
+.govuk-table__header--dashboard {
   vertical-align: bottom;
   color: #1d70b8;
 }
 
-.govuk-\!-width-one-seventh {
-  width: 100% !important;
+.govuk-\!-width-one-sixth {
+  width: 100%;
 }
 @media (min-width: 40.0625em) {
-  .govuk-\!-width-one-seventh {
-    width: 14.286% !important;
+  .govuk-\!-width-one-sixth {
+    width: 16.667%;
   }
 }
 
 .govuk-\!-width-one-fifth {
-  width: 100% !important;
+  width: 100%;
 }
 @media (min-width: 40.0625em) {
   .govuk-\!-width-one-fifth {
-    width: 20% !important;
+    width: 20%;
   }
 }

@@ -17,7 +17,8 @@ import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/h
 import { UserRoles, ServiceType } from "server/models/types";
 import serviceName from "server/utils/service-name";
 
-import type { List, ListsForDashboard } from "server/models/types";
+import type { List } from "server/models/types";
+import type { ListsForDashboard } from "@prisma/client";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
