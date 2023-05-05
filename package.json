@@ -34,6 +34,7 @@
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open"
   },
   "dependencies": {
+    "@googleapis/sheets": "^4.0.2",
     "@prisma/client": "^4.11.0",
     "@types/csurf": "^1.11.2",
     "accessible-autocomplete": "^2.0.3",

@@ -141,6 +141,7 @@ enum AuditEvent {
   DELETED
   UNDEFINED
   REMINDER
+  ANALYTICS
 }
 
 enum Status {
