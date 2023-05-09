@@ -21,7 +21,7 @@
           <strong class="govuk-body govuk-!-font-weight-bold">{{ _.startCase(dashboardBox.name)}}</strong>
           {% if dashboardBox.cssClass === "red" %}
             <p class="govuk-body">
-              <a href="#" class="govuk-body">{{dashboardBox.text}}</a>
+              <a href="?{{dashboardBox.name}}=asc" class="govuk-body">{{dashboardBox.text}}</a>
             </p>
           {% else %}
             <p class="govuk-body">{{dashboardBox.text}}</p>
