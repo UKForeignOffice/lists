@@ -7,7 +7,7 @@ import { schedulerLogger } from "scheduler/logger";
 
 export async function main() {
   schedulerLogger.info("Starting analytics process");
-  // if
+
   const tasks = await Promise.allSettled([
     lawareasof(),
     fdservicesprovided(),
