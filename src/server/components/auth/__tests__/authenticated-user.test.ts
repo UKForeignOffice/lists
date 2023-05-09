@@ -39,7 +39,7 @@ test("getLists query is correct for administrator", async () => {
   });
 });
 
-test("getLists query is correct for user", async () => {
+test("should call prisma.listsForDashboard.findMany with default sortOrder when orderByInput is undefined", async () => {
   await user.getLists();
   expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
     where: {
@@ -55,6 +55,23 @@ test("getLists query is correct for user", async () => {
       {
         type: "asc",
       },
+    ],
+  });
+});
+
+test("should call prisma.listsForDashboard.findMany with custom sortOrder when orderByInput is defined", async () => {
+  await user.getLists({ administrators: "asc" });
+  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
+    where: {
+      jsonData: {
+        path: ["users"],
+        array_contains: ["test@gov.uk"],
+      },
+    },
+    orderBy: [
+      {
+        admins: "asc",
+      }
     ],
   });
 });

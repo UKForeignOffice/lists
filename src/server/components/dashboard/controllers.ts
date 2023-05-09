@@ -141,8 +141,9 @@ export async function listsController(req: Request, res: Response, next: NextFun
     if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
-
-    const orderBy = Object.hasOwn(req.query, "administrators") ? req.query : undefined;
+    // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+    // eslint-disable-next-line no-prototype-builtins
+    const orderBy = req.query?.hasOwnProperty("administrators") ? req.query : undefined;
     const lists = await req.user?.getLists(orderBy as Record<string, string>);
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
 
