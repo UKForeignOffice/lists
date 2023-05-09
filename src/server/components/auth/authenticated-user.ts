@@ -3,6 +3,7 @@ import { UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
+
 export default class AuthenticatedUser {
   readonly userData: User;
   readonly emailAddress: User["email"];
@@ -20,7 +21,7 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.Administrator);
   }
 
-  async getLists(orderByInput?: Array<Record<string, "asc" | "desc">>) {
+  async getLists(orderByInput?: Record<string, string>) {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
@@ -31,7 +32,20 @@ export default class AuthenticatedUser {
       },
     };
 
-    const orderBy = orderByInput ?? [
+    const lists = await prisma.listsForDashboard.findMany({
+      ...(notSuperAdmin && whereInputForUser),
+      orderBy: AuthenticatedUser.calculateSortOrder(orderByInput),
+    });
+
+    if (!lists) {
+      logger.warn(`User.getLists - no lists found for ${this.emailAddress}`);
+    }
+
+    return lists ?? [];
+  }
+
+  static calculateSortOrder(customSortOrder?: Record<string, string>): Array<Record<string, string>> {
+    const defaultSortOrder: Array<Record<string, string>> = [
       {
         country: "asc",
       },
@@ -40,16 +54,26 @@ export default class AuthenticatedUser {
       },
     ];
 
-    const lists = await prisma.listsForDashboard.findMany({
-      ...(notSuperAdmin && whereInputForUser),
-      orderBy,
+    if (!customSortOrder) return defaultSortOrder;
+
+    const queryParamToColumnNames = {
+      administrators: "admins",
+      serviceProviders: "live",
+      annualReview: "isOverdue",
+    };
+
+    type QueryParamKeys = keyof typeof queryParamToColumnNames;
+
+    const formatCustomSortOrder = Object.entries(customSortOrder).map(([key, value]) => {
+      const columnName = queryParamToColumnNames[key as QueryParamKeys];
+      const checkedValue = value === "asc" || value === "desc" ? value : "asc";
+
+      return {
+        [columnName]: checkedValue,
+      };
     });
 
-    if (!lists) {
-      logger.warn(`User.getLists - no lists found for ${this.emailAddress}`);
-    }
-
-    return lists ?? [];
+    return formatCustomSortOrder;
   }
 
   async hasAccessToList(id: List["id"] | "new") {

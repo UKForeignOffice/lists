@@ -142,7 +142,8 @@ export async function listsController(req: Request, res: Response, next: NextFun
       return res.redirect(authRoutes.logout);
     }
 
-    const lists = await req.user?.getLists();
+    const orderBy = Object.hasOwn(req.query, "administrators") ? req.query : undefined;
+    const lists = await req.user?.getLists(orderBy as Record<string, string>);
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
 
     res.render("dashboard/lists", {
