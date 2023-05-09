@@ -3,7 +3,6 @@ import { UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
-
 export default class AuthenticatedUser {
   readonly userData: User;
   readonly emailAddress: User["email"];
