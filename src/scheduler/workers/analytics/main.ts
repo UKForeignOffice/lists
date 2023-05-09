@@ -1,9 +1,12 @@
-import { lawareasof } from "./views/lawareasof";
-import { fdservicesprovided } from "./views/fdservicesprovided";
-import { LiveLists } from "./views/LiveLists";
-import { allproviderstatus } from "./views/allproviderstatus";
-import { ALLwhereproviderrequired } from "./views/ALLwhereproviderrequired";
 import { schedulerLogger } from "scheduler/logger";
+import {
+  allproviderstatus,
+  ALLwhereproviderrequired,
+  fdservicesprovided,
+  intservicesprovided,
+  lawareasof,
+  LiveLists,
+} from "./views";
 
 export async function main() {
   schedulerLogger.info("Starting analytics process");
@@ -14,6 +17,7 @@ export async function main() {
     LiveLists(),
     allproviderstatus(),
     ALLwhereproviderrequired(),
+    intservicesprovided(),
   ]);
   schedulerLogger.info("Analytics process ended");
   return tasks;
