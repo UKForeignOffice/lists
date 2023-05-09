@@ -8,7 +8,7 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "lib": ["es2015"],
+    "lib": ["es2022"],
     "esModuleInterop": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
