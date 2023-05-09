@@ -17,16 +17,16 @@
 
     <div class="govuk-grid-row govuk-!-margin-top-2">
       {% for dashboardBox in dashboardBoxes %}
-      <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{dashboardBox.cssClass}}">
-        <strong class="govuk-body govuk-!-font-weight-bold">{{dashboardBox.name}}</strong>
-        {% if dashboardBox.cssClass === "red" %}
-          <p class="govuk-body">
-            <a href="#" class="govuk-body">{{dashboardBox.text}}</a>
-          </p>
-        {% else %}
-          <p class="govuk-body">{{dashboardBox.text}}</p>
-        {% endif %}
-      </div>
+        <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{dashboardBox.cssClass}}">
+          <strong class="govuk-body govuk-!-font-weight-bold">{{ _.startCase(dashboardBox.name)}}</strong>
+          {% if dashboardBox.cssClass === "red" %}
+            <p class="govuk-body">
+              <a href="#" class="govuk-body">{{dashboardBox.text}}</a>
+            </p>
+          {% else %}
+            <p class="govuk-body">{{dashboardBox.text}}</p>
+          {% endif %}
+        </div>
       {% endfor %}
     </div>
     <table class="govuk-table govuk-!-margin-top-4 dashboard-table">
