@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import pluralize from "pluralize";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
@@ -18,6 +19,7 @@ import { UserRoles, ServiceType } from "server/models/types";
 import serviceName from "server/utils/service-name";
 
 import type { List } from "server/models/types";
+import type { ListsForDashboard, Prisma } from "@prisma/client";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -143,8 +145,9 @@ export async function listsController(req: Request, res: Response, next: NextFun
     }
     // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
     // eslint-disable-next-line no-prototype-builtins
-    const orderBy = req.query?.hasOwnProperty("administrators") ? req.query : undefined;
-    const lists = await req.user?.getLists(orderBy as Record<string, string>);
+    const orderBy = calculateSortOrder(req.query);
+
+    const lists = await req.user?.getLists(orderBy);
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
 
     res.render("dashboard/lists", {
@@ -161,6 +164,36 @@ export async function listsController(req: Request, res: Response, next: NextFun
   }
 }
 
+function calculateSortOrder(
+  queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
+): Record<string, string> {
+  const defaultSortOrder = {
+    country: "asc",
+    type: "asc",
+  };
+
+  // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
+  // eslint-disable-next-line no-prototype-builtins
+  if (!queryParamSortOrder.hasOwnProperty("administrators")) return defaultSortOrder;
+
+  const queryParamToColumnNames = {
+    administrators: "admins",
+    serviceProviders: "live",
+    annualReview: "isOverdue",
+  };
+
+  type QueryParamKeys = keyof typeof queryParamToColumnNames;
+
+  const [key, value] = Object.entries(queryParamSortOrder)[0];
+  const columnName = queryParamToColumnNames[key as QueryParamKeys];
+  const formattedCustomSortOrder = { [columnName]: value === "desc" ? "desc" : "asc" };
+
+  return {
+    ...defaultSortOrder,
+    ...formattedCustomSortOrder,
+  };
+}
+
 function calculateDashboardBoxes(lists: ListsForDashboard[]) {
   return [calculateAdminDashboardBox(lists)];
 }
@@ -172,10 +205,13 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
     cssClass: "green",
   };
 
-  const listsWithNoAdmins = lists.filter((list) => list.admins === 0);
+  const { length: listsWithNoAdmins } = lists.filter((list) => list.admins === 0);
 
-  if (listsWithNoAdmins.length > 0) {
-    adminBox.text = `${listsWithNoAdmins.length} lists have no administrators`;
+  if (listsWithNoAdmins > 0) {
+    adminBox.text = `${pluralize("list", listsWithNoAdmins, true)} ${pluralize(
+      "have",
+      listsWithNoAdmins
+    )} no administrators`;
     adminBox.cssClass = "red";
   }
 
