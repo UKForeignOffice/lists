@@ -151,43 +151,12 @@ export async function listsController(req: Request, res: Response, next: NextFun
       title: pageTitles[dashboardRoutes.lists],
       req,
       isNewUser,
-      lists: listsWithFormattedDates(lists as ListsForDashboard[]),
+      lists,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
   }
-}
-
-function listsWithFormattedDates(lists: ListsForDashboard[]): ListsForDashboard[] {
-  return lists.map((list) => {
-    const nextAnnualReviewStartDateString = formatAnnualReviewDate(list, "nextAnnualReviewStartDate");
-    const lastAnnualReviewStartDateString = formatAnnualReviewDate(list, "lastAnnualReviewStartDate");
-    let returnObj = {
-      ...list,
-    };
-    if (nextAnnualReviewStartDateString) {
-      returnObj = {
-        ...returnObj,
-        nextAnnualReviewStartDate: nextAnnualReviewStartDateString,
-      };
-    }
-    if (lastAnnualReviewStartDateString) {
-      returnObj = {
-        ...returnObj,
-        lastAnnualReviewStartDate: lastAnnualReviewStartDateString,
-      };
-    }
-    return returnObj;
-  });
-}
-
-function formatAnnualReviewDate(list: ListsForDashboard, field: string): Date | null {
-  if (["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"].includes(field)) {
-    // @ts-ignore
-    return list[field];
-  }
-  return null;
 }
 
 // TODO: test
