@@ -1,7 +1,23 @@
+import { logger } from "scheduler/logger";
+
+function getFrequencyInDays() {
+  const { ANALYTICS_FREQUENCY_IN_DAYS = 7 } = process.env;
+  if (Number.isNaN(ANALYTICS_FREQUENCY_IN_DAYS)) {
+    logger.warn(
+      `ANALYTICS_FREQUENCY_IN_DAYS is set to ${ANALYTICS_FREQUENCY_IN_DAYS}, it is not a number, using 7 instead`
+    );
+    return 7;
+  }
+
+  return Number(ANALYTICS_FREQUENCY_IN_DAYS);
+}
+
+const frequencyInDays = getFrequencyInDays();
+
 export const config = {
   spreadsheetId: process.env.ANALYTICS_SPREADSHEET_ID,
   projectId: process.env.ANALYTICS_PROJECT_ID,
-  frequencyInDays: process.env.ANALYTICS_FREQUENCY_IN_DAYS ?? 7,
+  frequencyInDays,
   auth: {
     type: process.env.ANALYTICS_TYPE,
     private_key_id: process.env.ANALYTICS_PRIVATE_KEY_ID,
