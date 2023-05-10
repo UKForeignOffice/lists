@@ -19,9 +19,9 @@
       {% for dashboardBox in dashboardBoxes %}
         <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{dashboardBox.cssClass}}">
           <strong class="govuk-body govuk-!-font-weight-bold">{{ _.startCase(dashboardBox.name)}}</strong>
-          {% if dashboardBox.cssClass === "red" %}
+          {% if dashboardBox.cssClass === "error" %}
             <p class="govuk-body">
-              <a href="?{{dashboardBox.name}}=asc" class="govuk-body">{{dashboardBox.text}}</a>
+              <a href="?{{dashboardBox.queryParam}}=asc" class="govuk-body">{{dashboardBox.text}}</a>
             </p>
           {% else %}
             <p class="govuk-body">{{dashboardBox.text}}</p>

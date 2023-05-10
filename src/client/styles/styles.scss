@@ -313,7 +313,7 @@ $two-thirds: $one-third * 2;
 .dashboard-box {
   padding-top: 1rem;
 
-  &--green {
+  &--success {
     background-color: #cbe2d8;
 
     .govuk-body {
@@ -321,7 +321,7 @@ $two-thirds: $one-third * 2;
     }
   }
 
-  &--red {
+  &--error {
     background-color: #f6d7d2;
 
     .govuk-body {
