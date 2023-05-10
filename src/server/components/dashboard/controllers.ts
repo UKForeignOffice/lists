@@ -161,6 +161,27 @@ export async function listsController(req: Request, res: Response, next: NextFun
   }
 }
 
+function calculateDashboardBoxes(lists: ListsForDashboard[]) {
+  return [calculateAdminDashboardBox(lists)];
+}
+
+function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
+  const adminBox = {
+    name: "administrators",
+    text: "All lists have administrators",
+    cssClass: "green",
+  };
+
+  const listsWithNoAdmins = lists.filter((list) => list.admins === 0);
+
+  if (listsWithNoAdmins.length > 0) {
+    adminBox.text = `${listsWithNoAdmins.length} lists have no administrators`;
+    adminBox.cssClass = "red";
+  }
+
+  return adminBox;
+}
+
 // TODO: test
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
