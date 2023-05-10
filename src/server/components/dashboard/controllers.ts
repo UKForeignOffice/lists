@@ -174,19 +174,10 @@ function calculateSortOrder(
 
   // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
   // eslint-disable-next-line no-prototype-builtins
-  if (!queryParamSortOrder.hasOwnProperty("administrators")) return defaultSortOrder;
-
-  const queryParamToColumnNames = {
-    administrators: "admins",
-    serviceProviders: "live",
-    annualReview: "isOverdue",
-  };
-
-  type QueryParamKeys = keyof typeof queryParamToColumnNames;
+  if (!queryParamSortOrder.hasOwnProperty("admins")) return defaultSortOrder;
 
   const [key, value] = Object.entries(queryParamSortOrder)[0];
-  const columnName = queryParamToColumnNames[key as QueryParamKeys];
-  const formattedCustomSortOrder = { [columnName]: value === "desc" ? "desc" : "asc" };
+  const formattedCustomSortOrder = { [key]: value === "desc" ? "desc" : "asc" };
 
   return {
     ...defaultSortOrder,
@@ -201,8 +192,9 @@ function calculateDashboardBoxes(lists: ListsForDashboard[]) {
 function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
   const adminBox = {
     name: "administrators",
+    queryParam: "admins",
     text: "All lists have administrators",
-    cssClass: "green",
+    cssClass: "success",
   };
 
   const { length: listsWithNoAdmins } = lists.filter((list) => list.admins === 0);
@@ -212,7 +204,7 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
       "have",
       listsWithNoAdmins
     )} no administrators`;
-    adminBox.cssClass = "red";
+    adminBox.cssClass = "error";
   }
 
   return adminBox;
