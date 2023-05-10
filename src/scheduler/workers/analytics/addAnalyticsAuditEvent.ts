@@ -28,7 +28,8 @@ function truncateString(string: string, maxByteLength: number, hasTruncated = fa
   /**
    * Recursive function which will keep removing characters until the string is the byte under limit.
    * JS (node 14) does not natively support truncating/slicing by byte length, and due to UTF-16,
-   * characters may be 2-5+ bytes long, hence "estimatedMaxCharLength"
+   * characters may be 2-5+ bytes long, hence "estimatedMaxCharLength".
+   * TODO: refactor to use `Blob` available in node 15+.
    */
   const stringByteLength = getByteLength(string);
   if (stringByteLength <= maxByteLength) {
