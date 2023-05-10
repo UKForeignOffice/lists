@@ -1,4 +1,5 @@
-import { List, User, UserRoles } from "server/models/types";
+import type { List, User } from "server/models/types";
+import { UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
@@ -30,14 +31,16 @@ export default class AuthenticatedUser {
       },
     };
 
-    const lists = await prisma.list.findMany({
+    const lists = await prisma.listsForDashboard.findMany({
       ...(notSuperAdmin && whereInputForUser),
-      orderBy: {
-        id: "asc",
-      },
-      include: {
-        country: true,
-      },
+      orderBy: [
+        {
+          country: "asc",
+        },
+        {
+          type: "asc",
+        },
+      ],
     });
 
     if (!lists) {

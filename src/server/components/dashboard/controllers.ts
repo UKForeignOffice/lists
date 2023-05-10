@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "./routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
@@ -6,7 +6,7 @@ import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { QuestionError } from "server/components/lists";
+import type { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -150,43 +150,12 @@ export async function listsController(req: Request, res: Response, next: NextFun
       title: pageTitles[dashboardRoutes.lists],
       req,
       isNewUser,
-      lists: listsWithFormattedDates(lists as List[]),
+      lists,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
   }
-}
-
-function listsWithFormattedDates(lists: List[]): List[] {
-  return lists.map((list) => {
-    const nextAnnualReviewStartDateString = formatAnnualReviewDate(list, "nextAnnualReviewStartDate");
-    const lastAnnualReviewStartDateString = formatAnnualReviewDate(list, "lastAnnualReviewStartDate");
-    let returnObj = {
-      ...list,
-    };
-    if (nextAnnualReviewStartDateString) {
-      returnObj = {
-        ...returnObj,
-        nextAnnualReviewStartDate: nextAnnualReviewStartDateString,
-      };
-    }
-    if (lastAnnualReviewStartDateString) {
-      returnObj = {
-        ...returnObj,
-        lastAnnualReviewStartDate: lastAnnualReviewStartDateString,
-      };
-    }
-    return returnObj;
-  });
-}
-
-function formatAnnualReviewDate(list: List, field: string): Date | null {
-  if (["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"].includes(field)) {
-    // @ts-ignore
-    return list[field];
-  }
-  return null;
 }
 
 // TODO: test

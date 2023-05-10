@@ -196,3 +196,17 @@ model GeoLocation {
 
   @@index([location])
 }
+
+view ListsForDashboard {
+  listId                      Int
+  type                        String
+  country                     String
+  admins                      Int
+  live                        Int
+  actionNeeded                Int
+  isOverdue                   Boolean @default(false)
+  nextAnnualReviewStartDate   DateTime? @db.Date
+  lastAnnualReviewStartDate   DateTime? @db.Date
+  jsonData                    Json
+  @@unique([listId])
+}

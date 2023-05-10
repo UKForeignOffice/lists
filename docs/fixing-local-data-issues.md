@@ -27,7 +27,7 @@ docker compose up postgres
 4. Once that's going, in a new tab, make sure you run migrations on the lists app. To do so run this command:
 
 ```bash
-npm run prisma:migrate
+npm run prisma:deploy
 ```
 
 5. Now start the app:
