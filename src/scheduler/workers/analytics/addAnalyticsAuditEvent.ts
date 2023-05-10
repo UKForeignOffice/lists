@@ -3,7 +3,7 @@ import { prisma } from "scheduler/workers/model";
 const truncateMessage = "... truncated due to max length";
 const MAX_BYTES = 7000 - Buffer.byteLength(truncateMessage);
 
-export async function addAnalyticsAuditEvent(view: string, dataSent: any[], response: any) {
+export async function addAnalyticsAuditEvent(view: string, dataSent: unknown[], response: unknown) {
   const maxSize = MAX_BYTES - getByteLength(JSON.stringify({ data: "", response }));
   const truncatedData = truncateString(JSON.stringify(dataSent), maxSize);
 
