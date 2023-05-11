@@ -108,7 +108,7 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
 }
 
 function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
-  const providersBox = {
+  const reviewsBox = {
     name: "Service providers",
     queryParam: "live",
     text: "All lists have live providers",
@@ -118,12 +118,30 @@ function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
   const { length: liveServiceProviders } = lists.filter((list) => list.live === 0);
 
   if (liveServiceProviders > 0) {
-    providersBox.text = `${pluralize("list", liveServiceProviders, true)} ${pluralize(
+    reviewsBox.text = `${pluralize("list", liveServiceProviders, true)} ${pluralize(
       "have",
       liveServiceProviders
     )} no live ${pluralize("providers", liveServiceProviders)}`;
-    providersBox.cssClass = "error";
+    reviewsBox.cssClass = "error";
   }
 
-  return providersBox;
+  return reviewsBox;
+}
+
+function calculateReviewsDashboardBox(lists: ListsForDashboard[]) {
+  const reviewsBox = {
+    name: "Reviews",
+    queryParam: "isOverdue",
+    text: "All lists reviewed within past 18 months",
+    cssClass: "success",
+  };
+
+  const { length: listsOverdue } = lists.filter((list) => list.isOverdue);
+
+  if (listsOverdue > 0) {
+    reviewsBox.text = `${pluralize("list", listsOverdue, true)} by 6+ months}`;
+    reviewsBox.cssClass = "error";
+  }
+
+  return reviewsBox;
 }
