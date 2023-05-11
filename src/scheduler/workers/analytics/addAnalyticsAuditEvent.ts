@@ -14,7 +14,7 @@ export async function addAnalyticsAuditEvent(view: string, dataSent: unknown[], 
       jsonData: {
         view,
         dataSent: truncatedData,
-        response,
+        response: JSON.stringify(response),
       },
     },
   });
