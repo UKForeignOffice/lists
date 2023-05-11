@@ -157,7 +157,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       isNewUser,
       lists,
       csrfToken: getCSRFToken(req),
-      dashboardBoxes: calculateDashboardBoxes(lists as ListsForDashboard[]),
+      dashboardBoxes: calculateDashboardBoxes(lists as ListsForDashboard[], !req.user?.isAdministrator),
     });
   } catch (error) {
     next(error);
