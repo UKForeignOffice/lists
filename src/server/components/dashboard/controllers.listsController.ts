@@ -106,3 +106,24 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
 
   return adminBox;
 }
+
+function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
+  const providersBox = {
+    name: "Service providers",
+    queryParam: "live",
+    text: "All lists have live providers",
+    cssClass: "success",
+  };
+
+  const { length: liveServiceProviders } = lists.filter((list) => list.live === 0);
+
+  if (liveServiceProviders > 0) {
+    providersBox.text = `${pluralize("list", liveServiceProviders, true)} ${pluralize(
+      "have",
+      liveServiceProviders
+    )} no live ${pluralize("providers", liveServiceProviders)}`;
+    providersBox.cssClass = "error";
+  }
+
+  return providersBox;
+}
