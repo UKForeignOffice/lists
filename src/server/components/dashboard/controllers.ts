@@ -166,7 +166,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
 
 function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
-): Record<string, string> {
+): Array<Record<string, string>> {
   const defaultSortOrder = {
     country: "asc",
     type: "asc",
@@ -174,15 +174,20 @@ function calculateSortOrder(
 
   // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
   // eslint-disable-next-line no-prototype-builtins
-  if (!queryParamSortOrder.hasOwnProperty("admins")) return defaultSortOrder;
+  if (!queryParamSortOrder.hasOwnProperty("admins")) {
+    return Object.entries(defaultSortOrder).map(entryToObject);
+  }
 
-  const [key, value] = Object.entries(queryParamSortOrder)[0];
-  const formattedCustomSortOrder = { [key]: value === "desc" ? "desc" : "asc" };
-
-  return {
+  const newSortOrder = {
+    ...queryParamSortOrder,
     ...defaultSortOrder,
-    ...formattedCustomSortOrder,
   };
+
+  return Object.entries(newSortOrder).map(entryToObject);
+}
+
+function entryToObject([key, value]: [string, string]) {
+  return { [key]: value === "desc" ? "desc" : "asc" };
 }
 
 function calculateDashboardBoxes(lists: ListsForDashboard[]) {

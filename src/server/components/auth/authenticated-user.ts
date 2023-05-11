@@ -20,7 +20,7 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.Administrator);
   }
 
-  async getLists(orderBy: Record<string, string>) {
+  async getLists(orderBy: Array<Record<string, string>>) {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
