@@ -20,7 +20,7 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.Administrator);
   }
 
-  async getLists(orderBy: Array<Record<string, string>>) {
+  async getLists(orderBy?: Array<Record<string, string>>) {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
@@ -33,7 +33,7 @@ export default class AuthenticatedUser {
 
     const lists = await prisma.listsForDashboard.findMany({
       ...(notSuperAdmin && whereInputForUser),
-      orderBy,
+      ...(orderBy && { orderBy }),
     });
 
     if (!lists) {

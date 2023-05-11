@@ -27,40 +27,11 @@ test("isAdministrator evaluation is correct", () => {
 test("getLists query is correct for administrator", async () => {
   await administrator.getLists();
 
-  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
-    orderBy: [
-      {
-        country: "asc",
-      },
-      {
-        type: "asc",
-      },
-    ],
-  });
+  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({});
 });
 
-test("should call prisma.listsForDashboard.findMany with default sortOrder when orderByInput is undefined", async () => {
-  await user.getLists();
-  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
-    where: {
-      jsonData: {
-        path: ["users"],
-        array_contains: ["test@gov.uk"],
-      },
-    },
-    orderBy: [
-      {
-        country: "asc",
-      },
-      {
-        type: "asc",
-      },
-    ],
-  });
-});
-
-test("should call prisma.listsForDashboard.findMany with custom sortOrder when orderByInput is defined", async () => {
-  await user.getLists({ administrators: "asc" });
+test("should call order by same value that is passed in as argument", async () => {
+  await user.getLists([{ admins: "asc" }]);
   expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
     where: {
       jsonData: {

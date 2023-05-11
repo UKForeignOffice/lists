@@ -157,14 +157,14 @@ export async function listsController(req: Request, res: Response, next: NextFun
       isNewUser,
       lists,
       csrfToken: getCSRFToken(req),
-      dashboardBoxes: calculateDashboardBoxes(lists as ListsForDashboard[]),
+      dashboardBoxes: calculateDashboardBoxes(lists as ListsForDashboard[], !req.user?.isAdministrator),
     });
   } catch (error) {
     next(error);
   }
 }
 
-function calculateSortOrder(
+export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
 ): Array<Record<string, string>> {
   const defaultSortOrder = {
@@ -175,7 +175,7 @@ function calculateSortOrder(
   // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
   // eslint-disable-next-line no-prototype-builtins
   if (!queryParamSortOrder.hasOwnProperty("admins")) {
-    return Object.entries(defaultSortOrder).map(entryToObject);
+    return Object.entries(defaultSortOrder).map(convertEntryToObject);
   }
 
   const newSortOrder = {
@@ -183,14 +183,16 @@ function calculateSortOrder(
     ...defaultSortOrder,
   };
 
-  return Object.entries(newSortOrder).map(entryToObject);
+  return Object.entries(newSortOrder).map(convertEntryToObject);
 }
 
-function entryToObject([key, value]: [string, string]) {
+function convertEntryToObject([key, value]: [string, string]) {
   return { [key]: value === "desc" ? "desc" : "asc" };
 }
 
-function calculateDashboardBoxes(lists: ListsForDashboard[]) {
+function calculateDashboardBoxes(lists: ListsForDashboard[], userIsAdmin: boolean) {
+  if (userIsAdmin) return [];
+
   return [calculateAdminDashboardBox(lists)];
 }
 
