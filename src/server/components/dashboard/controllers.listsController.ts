@@ -25,7 +25,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
     }
     const orderBy = calculateSortOrder(value);
 
-    const lists = await req.user?.getLists(orderBy);
+    const lists = (await req.user?.getLists(orderBy)) ?? [];
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
 
     res.render("dashboard/lists", {
