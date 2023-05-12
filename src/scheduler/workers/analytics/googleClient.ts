@@ -28,15 +28,15 @@ const googleSheets = sheets({
 });
 
 export async function updateSheet(view: string, values: any[], valueInputOption = "RAW") {
-  logger.info(
-    `sending view data for ${view} with headers: ${JSON.stringify(values[0])}. See Audit table to view all data sent`
-  );
-
   const viewIsScheduledToBeExported = await shouldExportViewName(view);
 
   if (!viewIsScheduledToBeExported) {
     return;
   }
+
+  logger.info(
+    `sending view data for ${view} with headers: ${JSON.stringify(values[0])}. See Audit table to view all data sent`
+  );
 
   try {
     const res = await googleSheets.spreadsheets.values.update({

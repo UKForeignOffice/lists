@@ -21,7 +21,7 @@ export async function shouldExportViewName(viewName: string) {
 
   if (!shouldExport) {
     logger.info(
-      `Has only been ${daysSinceLastExport} days. Exports are scheduled every ${config.frequencyInDays} days`
+      `Has only been ${daysSinceLastExport} days since ${viewName}'s last export. Exports are scheduled every ${config.frequencyInDays} days`
     );
   }
 
