@@ -6,15 +6,24 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
+import Joi from "joi";
+import { logger } from "server/services/logger";
 
-export async function listsController(req: Request, res: Response, next: NextFunction): Promise<void> {
+type DashboardOrderByInput = Omit<Prisma.ListsForDashboardOrderByWithRelationInput, "listId" | "jsonData">;
+
+export async function listsController(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
-    // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
-    // eslint-disable-next-line no-prototype-builtins
-    const orderBy = calculateSortOrder(req.query);
+
+    const { value, error } = sanitiseQuery(req.query);
+    if (error) {
+      logger.info(`${req.originalUrl}, query was invalid. ${error.message}`);
+      res.redirect(new URL(req.originalUrl).pathname);
+      return;
+    }
+    const orderBy = calculateSortOrder(value);
 
     const lists = await req.user?.getLists(orderBy);
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
@@ -26,13 +35,30 @@ export async function listsController(req: Request, res: Response, next: NextFun
       isNewUser,
       lists,
       csrfToken: getCSRFToken(req),
-      dashboardBoxes: calculateDashboardBoxes(lists as ListsForDashboard[], !req.user?.isAdministrator),
+      dashboardBoxes: calculateDashboardBoxes(lists),
     });
   } catch (error) {
     next(error);
   }
 }
 
+function sanitiseQuery(query: Request["query"]) {
+  const sortString = Joi.string().allow("asc", "desc").lowercase();
+  const schema = Joi.object<DashboardOrderByInput>({
+    actionNeeded: sortString,
+    admins: sortString,
+    country: sortString,
+    isOverdue: sortString,
+    lastAnnualReviewStartDate: sortString,
+    live: sortString,
+    nextAnnualReviewStartDate: sortString,
+    type: sortString,
+  });
+  return schema.validate(query, {
+    stripUnknown: true,
+    convert: true,
+  });
+}
 export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
 ): Array<Record<string, string>> {
@@ -41,28 +67,22 @@ export function calculateSortOrder(
     type: "asc",
   };
 
-  // TODO: Object.hasOwn is recommended but is not currently supported by tsc.
-  // eslint-disable-next-line no-prototype-builtins
-  if (!queryParamSortOrder.hasOwnProperty("admins")) {
-    return Object.entries(defaultSortOrder).map(convertEntryToObject);
-  }
-
-  const newSortOrder = {
-    ...queryParamSortOrder,
+  const sortOrder = {
     ...defaultSortOrder,
+    ...queryParamSortOrder,
   };
 
-  return Object.entries(newSortOrder).map(convertEntryToObject);
+  return Object.entries(sortOrder).map(convertEntryToObject);
 }
 
 function convertEntryToObject([key, value]: [string, string]) {
-  return { [key]: value === "desc" ? "desc" : "asc" };
+  return { [key]: value };
 }
 
-function calculateDashboardBoxes(lists: ListsForDashboard[], userIsAdmin: boolean) {
-  if (userIsAdmin) return [];
-
-  return [calculateAdminDashboardBox(lists)];
+function calculateDashboardBoxes(lists: ListsForDashboard[]) {
+  return {
+    administrators: calculateAdminDashboardBox(lists),
+  };
 }
 
 function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
@@ -70,7 +90,7 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
     name: "administrators",
     queryParam: "admins",
     text: "All lists have administrators",
-    cssClass: "success",
+    status: "success",
   };
 
   const { length: listsWithNoAdmins } = lists.filter((list) => list.admins === 0);
@@ -80,7 +100,7 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
       "have",
       listsWithNoAdmins
     )} no administrators`;
-    adminBox.cssClass = "error";
+    adminBox.status = "error";
   }
 
   return adminBox;
