@@ -31,7 +31,7 @@ export async function shouldExportViewName(viewName: string) {
 async function findLastSuccessfulExportForView(viewName: string) {
   return await prisma.audit.findFirst({
     where: {
-      type: "ANALYTICS",
+      auditEvent: "ANALYTICS",
       AND: [
         {
           jsonData: {
