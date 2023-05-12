@@ -19,7 +19,7 @@ import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
 import { HttpException } from "../../../middlewares/error-handlers";
 import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
-import { calculateSortOrder, listsController } from "../controllers.listsController";
+import { listsController } from "../controllers.listsController";
 
 jest.useFakeTimers("modern");
 

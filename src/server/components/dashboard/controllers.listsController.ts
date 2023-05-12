@@ -5,25 +5,24 @@ import { authRoutes } from "server/components/auth";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
 import Joi from "joi";
 import { logger } from "server/services/logger";
+import { countriesList } from "server/services/metadata";
+import { ServiceType } from "server/models/types";
 
 type DashboardOrderByInput = Omit<Prisma.ListsForDashboardOrderByWithRelationInput, "listId" | "jsonData">;
-
+export const DEFAULT_VIEW_PROPS = {
+  dashboardRoutes,
+  countriesList,
+  ServiceType,
+};
 export async function listsController(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.isUnauthenticated()) {
       return res.redirect(authRoutes.logout);
     }
 
-    const { value, error } = sanitiseQuery(req.query);
-    if (error) {
-      logger.info(`${req.originalUrl}, query was invalid. ${error.message}`);
-      res.redirect(new URL(req.originalUrl).pathname);
-      return;
-    }
-    const orderBy = calculateSortOrder(value);
+    const orderBy = calculateSortOrder(req.query);
 
     const lists = (await req.user?.getLists(orderBy)) ?? [];
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
@@ -67,9 +66,11 @@ export function calculateSortOrder(
     type: "asc",
   };
 
+  const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
+
   const sortOrder = {
     ...defaultSortOrder,
-    ...queryParamSortOrder,
+    ...sanitisedQueryParams,
   };
 
   return Object.entries(sortOrder).map(convertEntryToObject);
