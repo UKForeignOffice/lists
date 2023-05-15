@@ -57,6 +57,7 @@ function sanitiseQuery(query: Request["query"]) {
     convert: true,
   });
 }
+
 export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
 ): Array<Record<string, string>> {
@@ -68,8 +69,8 @@ export function calculateSortOrder(
   const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
 
   const sortOrder = {
-    ...defaultSortOrder,
     ...sanitisedQueryParams,
+    ...defaultSortOrder,
   };
 
   return Object.entries(sortOrder).map(convertEntryToObject);

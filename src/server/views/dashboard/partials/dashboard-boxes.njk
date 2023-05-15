@@ -2,7 +2,9 @@
   <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{options.status}}">
     <strong class="govuk-body govuk-!-font-weight-bold">{{ _.startCase(options.name)}}</strong>
     {% if options.status === "error" %}
-      <a href="?{{options.queryParam}}=asc" class="govuk-body">{{options.text}}</a>
+      <p class="govuk-body">
+        <a href="?{{options.queryParam}}=asc" class="govuk-link govuk-link--red">{{options.text}}</a>
+      </p>
     {% else %}
       <p class="govuk-body">{{options.text}}</p>
     {% endif %}
