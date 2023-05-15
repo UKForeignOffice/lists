@@ -14,13 +14,13 @@ describe("calculateSortOrder", () => {
   test("returns correct sort order with desc sort direction", () => {
     const queryParamSortOrder: { admins: "desc" } = { admins: "desc" };
 
-    const expectedResult = [{ country: "asc" }, { type: "asc" }, { admins: "desc" }];
+    const expectedResult = [{ admins: "desc" }, { country: "asc" }, { type: "asc" }];
     expect(calculateSortOrder(queryParamSortOrder)).toEqual(expectedResult);
   });
 
   test("returns correct sort order with asc sort direction", () => {
     const queryParamSortOrder: { admins: "asc" } = { admins: "asc" };
-    const expectedResult = [{ country: "asc" }, { type: "asc" }, { admins: "asc" }];
+    const expectedResult = [{ admins: "asc" }, { country: "asc" }, { type: "asc" }];
     expect(calculateSortOrder(queryParamSortOrder)).toEqual(expectedResult);
   });
 });
