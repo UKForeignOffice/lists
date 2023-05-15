@@ -14,10 +14,9 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
-import { UserRoles, ServiceType } from "server/models/types";
-import serviceName from "server/utils/service-name";
-
 import type { List } from "server/models/types";
+import { ServiceType, UserRoles } from "server/models/types";
+import serviceName from "server/utils/service-name";
 
 export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
 
@@ -109,7 +108,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
       text: "You need to ask another administrator to change this for you.",
     };
 
-      req.flash("errorText", error.text);
+    req.flash("errorText", error.text);
     req.flash("errorTitle", error.title);
     return res.redirect(`/dashboard/users/${userEmail}`);
   }
@@ -134,28 +133,6 @@ export async function usersEditPostController(req: Request, res: Response, next:
   req.flash("userUpdatedNotificationColour", updateSuccessful ? "green" : "red");
 
   return res.redirect("/dashboard/users");
-}
-
-export async function listsController(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    if (req.isUnauthenticated()) {
-      return res.redirect(authRoutes.logout);
-    }
-
-    const lists = await req.user?.getLists();
-    const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
-
-    res.render("dashboard/lists", {
-      ...DEFAULT_VIEW_PROPS,
-      title: pageTitles[dashboardRoutes.lists],
-      req,
-      isNewUser,
-      lists,
-      csrfToken: getCSRFToken(req),
-    });
-  } catch (error) {
-    next(error);
-  }
 }
 
 // TODO: test

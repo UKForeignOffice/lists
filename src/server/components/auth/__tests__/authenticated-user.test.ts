@@ -27,20 +27,11 @@ test("isAdministrator evaluation is correct", () => {
 test("getLists query is correct for administrator", async () => {
   await administrator.getLists();
 
-  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
-    orderBy: [
-      {
-        country: "asc",
-      },
-      {
-        type: "asc",
-      },
-    ],
-  });
+  expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({});
 });
 
-test("getLists query is correct for user", async () => {
-  await user.getLists();
+test("should call order by same value that is passed in as argument", async () => {
+  await user.getLists([{ admins: "asc" }]);
   expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
     where: {
       jsonData: {
@@ -50,11 +41,8 @@ test("getLists query is correct for user", async () => {
     },
     orderBy: [
       {
-        country: "asc",
-      },
-      {
-        type: "asc",
-      },
+        admins: "asc",
+      }
     ],
   });
 });

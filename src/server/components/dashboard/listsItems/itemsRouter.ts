@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import {
-  listsController,
   listsEditController,
   listsItemsController,
   listsEditPostController,
@@ -18,6 +17,7 @@ import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
 import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
+import { listsController } from "server/components/dashboard/controllers.listsController";
 
 export const listRouter = express.Router();
 

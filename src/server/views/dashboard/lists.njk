@@ -14,7 +14,10 @@
         </div>
       {% endif %}
     </div>
-    <table class="govuk-table dashboard-table">
+
+    {% include "./partials/dashboard-boxes.njk" %}
+
+    <table class="govuk-table govuk-!-margin-top-4 dashboard-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th scope="col" class="govuk-table__header govuk-table__header--dashboard govuk-!-width-one-fifth">Type</th>

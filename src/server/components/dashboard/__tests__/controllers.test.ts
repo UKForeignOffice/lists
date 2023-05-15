@@ -5,7 +5,6 @@ import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
 
 import {
-  listsController,
   listsItemsController,
   startRouteController,
   usersEditController,
@@ -20,6 +19,7 @@ import { Status } from "@prisma/client";
 import { requestValidation } from "../listsItems/requestValidation";
 import { HttpException } from "../../../middlewares/error-handlers";
 import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
+import { listsController } from "../controllers.listsController";
 
 jest.useFakeTimers("modern");
 

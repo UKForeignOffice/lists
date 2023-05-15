@@ -1,0 +1,20 @@
+{% macro dashboardBox(options) %}
+  <div class="govuk-grid-column-one-third govuk-!-padding-top-3 dashboard-box--{{options.status}}">
+    <strong class="govuk-body govuk-!-font-weight-bold">{{ _.startCase(options.name)}}</strong>
+    {% if options.status === "error" %}
+      <p class="govuk-body">
+        <a href="?{{options.queryParam}}=asc" class="govuk-link govuk-link--red">{{options.text}}</a>
+      </p>
+    {% else %}
+      <p class="govuk-body">{{options.text}}</p>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+<div class="govuk-grid-row govuk-!-margin-top-2">
+  <div class="govuk-width-container">
+    {% if dashboardBoxes.administrators and req.user.isAdministrator %}
+      {{ dashboardBox(dashboardBoxes.administrators) }}
+    {% endif %}
+  </div>
+</div>

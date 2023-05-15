@@ -2,6 +2,7 @@ import type { List, User } from "server/models/types";
 import { UserRoles } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
+import type { Prisma } from "@prisma/client";
 
 export default class AuthenticatedUser {
   readonly userData: User;
@@ -20,7 +21,7 @@ export default class AuthenticatedUser {
     return this.roles.includes(UserRoles.Administrator);
   }
 
-  async getLists() {
+  async getLists(orderBy?: Prisma.ListsForDashboardFindManyArgs["orderBy"]) {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
@@ -33,14 +34,7 @@ export default class AuthenticatedUser {
 
     const lists = await prisma.listsForDashboard.findMany({
       ...(notSuperAdmin && whereInputForUser),
-      orderBy: [
-        {
-          country: "asc",
-        },
-        {
-          type: "asc",
-        },
-      ],
+      ...(orderBy && { orderBy }),
     });
 
     if (!lists) {
