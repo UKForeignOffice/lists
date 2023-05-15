@@ -1,6 +1,6 @@
-import { ListsForDashboard, Prisma } from "@prisma/client";
+import type { ListsForDashboard, Prisma } from "@prisma/client";
 import pluralize from "pluralize";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { authRoutes } from "server/components/auth";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
@@ -18,7 +18,8 @@ export const DEFAULT_VIEW_PROPS = {
 export async function listsController(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.isUnauthenticated()) {
-      return res.redirect(authRoutes.logout);
+      res.redirect(authRoutes.logout);
+      return;
     }
 
     const orderBy = calculateSortOrder(req.query);
@@ -83,6 +84,8 @@ function convertEntryToObject([key, value]: [string, string]) {
 function calculateDashboardBoxes(lists: ListsForDashboard[]) {
   return {
     administrators: calculateAdminDashboardBox(lists),
+    serviceProviders: calculateProvidersDashboardBox(lists),
+    reviews: calculateReviewsDashboardBox(lists),
   };
 }
 
@@ -112,7 +115,7 @@ function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
     name: "Service providers",
     queryParam: "live",
     text: "All lists have live providers",
-    cssClass: "success",
+    status: "success",
   };
 
   const { length: liveServiceProviders } = lists.filter((list) => list.live === 0);
@@ -122,7 +125,7 @@ function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
       "have",
       liveServiceProviders
     )} no live ${pluralize("providers", liveServiceProviders)}`;
-    reviewsBox.cssClass = "error";
+    reviewsBox.status = "error";
   }
 
   return reviewsBox;
@@ -133,14 +136,14 @@ function calculateReviewsDashboardBox(lists: ListsForDashboard[]) {
     name: "Reviews",
     queryParam: "isOverdue",
     text: "All lists reviewed within past 18 months",
-    cssClass: "success",
+    status: "success",
   };
 
   const { length: listsOverdue } = lists.filter((list) => list.isOverdue);
 
   if (listsOverdue > 0) {
     reviewsBox.text = `${pluralize("list", listsOverdue, true)} by 6+ months}`;
-    reviewsBox.cssClass = "error";
+    reviewsBox.status = "error";
   }
 
   return reviewsBox;
