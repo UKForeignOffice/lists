@@ -6,7 +6,6 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import Joi from "joi";
-import { logger } from "server/services/logger";
 import { countriesList } from "server/services/metadata";
 import { ServiceType } from "server/models/types";
 
