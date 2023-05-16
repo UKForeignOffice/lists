@@ -96,7 +96,7 @@ function sanitiseQuery(query: Request["query"]) {
 
 export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
-): Array<Record<string, string>> {
+): Prisma.ListsForDashboardFindManyArgs["orderBy"] {
   const defaultSortOrder: Pick<Prisma.ListsForDashboardOrderByWithRelationInput, "country" | "type"> = {
     country: "asc",
     type: "asc",
@@ -120,7 +120,16 @@ export function calculateSortOrder(
   return Object.entries(sortOrder).map(convertEntryToObject);
 }
 
-function convertEntryToObject([key, value]: [string, string]) {
+function convertEntryToObject([key, value]: [string, Prisma.SortOrder]) {
+  const dateKeys = ["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"];
+  if (dateKeys.includes(key)) {
+    return {
+      [key]: {
+        sort: value,
+        nulls: value === "asc" ? "first" : "last",
+      },
+    };
+  }
   return { [key]: value };
 }
 

@@ -2,7 +2,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native"]
-  previewFeatures = ["fieldReference", "views"]
+  previewFeatures = ["fieldReference", "views", "orderByNulls"]
 }
 
 datasource db {
