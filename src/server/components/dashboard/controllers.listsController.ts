@@ -76,7 +76,7 @@ function tableHeaders(query: Request["query"]) {
 }
 
 function sanitiseQuery(query: Request["query"]) {
-  const sortString = Joi.string().allow("asc", "desc").lowercase();
+  const sortString = Joi.string().valid("asc", "desc");
   const stringSchema = Joi.alternatives().try(sortString, Joi.any().strip());
   const schema = Joi.object<DashboardOrderByInput>({
     actionNeeded: stringSchema,
