@@ -40,7 +40,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
   }
 }
 
-function tableHeaders(query) {
+function tableHeaders(query: Request["query"]) {
   const headers: Array<keyof Prisma.ListsForDashboardOrderByWithRelationInput> = [
     "type",
     "country",
