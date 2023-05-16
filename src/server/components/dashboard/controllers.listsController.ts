@@ -23,15 +23,14 @@ export async function listsController(req: Request, res: Response, next: NextFun
     }
 
     const orderBy = calculateSortOrder(req.query);
-
     const lists = (await req.user?.getLists(orderBy)) ?? [];
     const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
-
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
       req,
       isNewUser,
+      tableHeaders: tableHeaders(req.query),
       lists,
       csrfToken: getCSRFToken(req),
       dashboardBoxes: calculateDashboardBoxes(lists),
@@ -41,17 +40,54 @@ export async function listsController(req: Request, res: Response, next: NextFun
   }
 }
 
+function tableHeaders(query) {
+  const headers: Array<keyof Prisma.ListsForDashboardOrderByWithRelationInput> = [
+    "type",
+    "country",
+    "live",
+    "actionNeeded",
+    "lastAnnualReviewStartDate",
+    "nextAnnualReviewStartDate",
+    "admins",
+    "listId",
+  ];
+
+  const { value: orderBy } = sanitiseQuery(query);
+
+  return headers.map((cell) => {
+    // @ts-ignore
+    const currentlySortedBy = orderBy[cell] ?? "none";
+
+    let nextSortButton;
+
+    if (currentlySortedBy === "asc") {
+      nextSortButton = "desc";
+    }
+
+    if (currentlySortedBy === "none") {
+      nextSortButton = "asc";
+    }
+
+    return {
+      name: cell,
+      currentlySortedBy,
+      nextSortButton,
+    };
+  });
+}
+
 function sanitiseQuery(query: Request["query"]) {
   const sortString = Joi.string().allow("asc", "desc").lowercase();
+  const stringSchema = Joi.alternatives().try(sortString, Joi.any().strip());
   const schema = Joi.object<DashboardOrderByInput>({
-    actionNeeded: sortString,
-    admins: sortString,
-    country: sortString,
-    isOverdue: sortString,
-    lastAnnualReviewStartDate: sortString,
-    live: sortString,
-    nextAnnualReviewStartDate: sortString,
-    type: sortString,
+    actionNeeded: stringSchema,
+    admins: stringSchema,
+    country: stringSchema,
+    isOverdue: stringSchema,
+    lastAnnualReviewStartDate: stringSchema,
+    live: stringSchema,
+    nextAnnualReviewStartDate: stringSchema,
+    type: stringSchema,
   });
   return schema.validate(query, {
     stripUnknown: true,
@@ -68,10 +104,10 @@ export function calculateSortOrder(
   };
 
   const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
-
+  console.log({ sanitisedQueryParams });
   const sortOrder = {
-    ...sanitisedQueryParams,
     ...defaultSortOrder,
+    ...sanitisedQueryParams,
   };
 
   return Object.entries(sortOrder).map(convertEntryToObject);

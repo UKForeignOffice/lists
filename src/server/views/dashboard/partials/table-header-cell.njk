@@ -1,0 +1,34 @@
+{% set nameToTitleMap = {
+  type: "Type",
+  country: "Country",
+  live: "Live",
+  actionNeeded: "Action needed",
+  lastAnnualReviewStartDate: "Last review",
+  nextAnnualReviewStartDate: "Next review",
+  admins: "Admins",
+  listId: "Settings"
+} %}
+
+{% set orderByToAriaAttributeMap = {
+  asc: "ascending",
+  desc: "descending",
+  'none': "none"
+} %}
+
+{% macro tableHeaderCell(cell) %}
+  {% set aria = orderByToAriaAttributeMap[cell.currentlySortedBy] %}
+  <th scope="col" class="govuk-table__header govuk-table__header--dashboard dashboard-table__header" aria-sort="{{ aria }}">
+    {% if cell.name == "listId" %}
+      <span class="govuk-visually-hidden">{{ nameToTitleMap[cell.name] }}</span>
+    {% else %}
+
+      <a href="?{{ cell.name }}={{ cell.nextSortButton }}"
+         class="govuk-link govuk-link--no-visited-state dashboard-table__header-link">
+          <span class="dashboard-table__header-text">
+            {{ nameToTitleMap[cell.name] }}
+          </span>
+        <span class="dashboard-table__icon dashboard-table__icon--{{ cell.currentlySortedBy }}"></span>
+      </a>
+    {% endif %}
+  </th>
+{% endmacro %}
