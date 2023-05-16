@@ -20,10 +20,14 @@
     {% include "./partials/dashboard-boxes.njk" %}
 
     <table class="govuk-table dashboard-table">
+
       <thead class="govuk-table__head">
+      <caption class="govuk-visually-hidden">Your lists</caption>
         {% for cell in tableHeaders %}
             {{ tableHeaderCell(cell) }}
         {% endfor %}
+        {{ tableHeaderCell({name: "listId"}) }}
+
       </thead>
       <tbody class="govuk-table__body">
         {% for list in lists %}
