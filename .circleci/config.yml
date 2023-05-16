@@ -15,7 +15,7 @@ jobs:
     <<: *defaults
 
     docker:
-      - image: cimg/node:14.17.0-browsers
+      - image: cimg/node:18.15.0-browsers
 
     steps:
       - checkout
@@ -59,7 +59,7 @@ jobs:
       - checkout
       - node/install:
           install-yarn: true
-          node-version: '14'
+          node-version: '18'
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
 
