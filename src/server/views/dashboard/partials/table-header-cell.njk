@@ -21,7 +21,6 @@
     {% if cell.name == "listId" %}
       <span class="govuk-visually-hidden">{{ nameToTitleMap[cell.name] }}</span>
     {% else %}
-
       <a href="?{{ cell.name }}={{ cell.nextSortButton }}"
          class="govuk-link govuk-link--no-visited-state dashboard-table__header-link">
           <span class="dashboard-table__header-text">

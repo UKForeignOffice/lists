@@ -24,12 +24,12 @@ export async function listsController(req: Request, res: Response, next: NextFun
 
     const orderBy = calculateSortOrder(req.query);
     const lists = (await req.user?.getLists(orderBy)) ?? [];
-    const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
+
     res.render("dashboard/lists", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.lists],
       req,
-      isNewUser,
+      isNewUser: lists.length === 0,
       tableHeaders: tableHeaders(req.query),
       lists,
       csrfToken: getCSRFToken(req),
@@ -41,7 +41,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
 }
 
 function tableHeaders(query: Request["query"]) {
-  const headers: Array<keyof Prisma.ListsForDashboardOrderByWithRelationInput> = [
+  const headers: Array<keyof DashboardOrderByInput> = [
     "type",
     "country",
     "live",
@@ -49,7 +49,6 @@ function tableHeaders(query: Request["query"]) {
     "lastAnnualReviewStartDate",
     "nextAnnualReviewStartDate",
     "admins",
-    "listId",
   ];
 
   const { value: orderBy } = sanitiseQuery(query);
@@ -98,16 +97,24 @@ function sanitiseQuery(query: Request["query"]) {
 export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
 ): Array<Record<string, string>> {
-  const defaultSortOrder = {
+  const defaultSortOrder: Pick<Prisma.ListsForDashboardOrderByWithRelationInput, "country" | "type"> = {
     country: "asc",
     type: "asc",
   };
 
-  const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
+  const { value: sanitisedQueryParams = {} } = sanitiseQuery(queryParamSortOrder);
+
+  if (sanitisedQueryParams.type) {
+    delete defaultSortOrder.type;
+  }
+
+  if (sanitisedQueryParams.country) {
+    delete defaultSortOrder.country;
+  }
 
   const sortOrder = {
-    ...defaultSortOrder,
     ...sanitisedQueryParams,
+    ...defaultSortOrder,
   };
 
   return Object.entries(sortOrder).map(convertEntryToObject);
