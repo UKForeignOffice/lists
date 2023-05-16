@@ -9,12 +9,10 @@ RUN mkdir -p /usr/src/app && \
     apk upgrade
 
 FROM base AS dependencies
-USER node
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
+COPY --chown=appuser:node package.json package-lock.json ./
 RUN npm i
-COPY package-lock.json package-lock-cache.json
-RUN chown -R appuser:appuser /usr/src/app
+COPY --chown=appuser:node package-lock.json package-lock-cache.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
@@ -37,7 +35,7 @@ USER 1001
 WORKDIR /usr/dist/app
 
 # copy neccesary files only
-COPY package.json ./
+COPY --chown=1001:node package.json ./
 COPY --from=build /usr/src/app/dist dist
 COPY --from=build /usr/src/app/node_modules node_modules
 COPY src/server/models/db/ src/server/models/db/
