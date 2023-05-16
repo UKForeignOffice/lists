@@ -91,7 +91,7 @@ function calculateDashboardBoxes(lists: ListsForDashboard[]) {
 
 function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
   const adminBox = {
-    name: "administrators",
+    name: "Administrators",
     queryParam: "admins",
     text: "All lists have administrators",
     status: "success",

@@ -311,6 +311,8 @@ $two-thirds: $one-third * 2;
 }
 
 .dashboard-box {
+  min-height: 5rem;
+
   &--success {
     background-color: #cbe2d8;
 
