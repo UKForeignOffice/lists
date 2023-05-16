@@ -135,7 +135,7 @@ function calculateReviewsDashboardBox(lists: ListsForDashboard[]) {
   const reviewsBox = {
     name: "Reviews",
     queryParam: "isOverdue",
-    text: "All lists reviewed within past 18 months",
+    text: "All lists reviewed within the past 18 months",
     status: "success",
   };
 
