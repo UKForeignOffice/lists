@@ -104,7 +104,7 @@ export function calculateSortOrder(
   };
 
   const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
-  console.log({ sanitisedQueryParams });
+
   const sortOrder = {
     ...defaultSortOrder,
     ...sanitisedQueryParams,
