@@ -1,6 +1,7 @@
 @use "sass:math";
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
+@import './dashboard-table';
 
 .answers-box {
   background-color: govuk-colour("light-grey");
@@ -281,15 +282,6 @@ $two-thirds: $one-third * 2;
 .govuk-notification-banner--error {
   border-color: 	#AA2A16;
   background-color: 	#AA2A16;
-}
-
-.dashboard-table {
-  font-size: 18px;
-}
-
-.govuk-table__header--dashboard {
-  vertical-align: bottom;
-  color: $govuk-link-colour;
 }
 
 .govuk-\!-width-one-sixth {
