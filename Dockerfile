@@ -9,8 +9,8 @@ RUN mkdir -p /usr/src/app && \
     apk upgrade
 
 FROM base AS dependencies
-WORKDIR /usr/src/app
 USER node
+WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm i
 COPY package-lock.json package-lock-cache.json
