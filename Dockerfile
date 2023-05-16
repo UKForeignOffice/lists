@@ -1,7 +1,7 @@
 FROM node:18-alpine AS base
 RUN mkdir -p /usr/src/app && \
-    addgroup -g node appuser && \
-    adduser -S -u node -G appuser appuser && \
+    addgroup -g 1001 appuser && \
+    adduser -S -u 1001 -G appuser appuser && \
     chown -R appuser:appuser /usr/src/app && \
     chmod -R +x  /usr/src/app && \
     chmod -R 755 /usr/src && \
@@ -33,7 +33,7 @@ RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanel
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
 FROM prod as main
-USER node
+USER 1001
 WORKDIR /usr/dist/app
 
 # copy neccesary files only
@@ -60,7 +60,7 @@ CMD ["npm", "run", "start:prod"]
 
 # docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
 FROM prod AS scheduled
-USER node
+USER 1001
 WORKDIR /usr/dist/scheduler
 COPY --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
 COPY --from=build /usr/src/app/node_modules node_modules
