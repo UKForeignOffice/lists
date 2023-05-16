@@ -18,7 +18,7 @@ FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY docker/apply/forms-json ./docker/apply/forms-json
-COPY ./src ./src/
+COPY --chown=1001:node ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
