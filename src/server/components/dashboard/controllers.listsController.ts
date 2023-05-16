@@ -142,7 +142,7 @@ function calculateReviewsDashboardBox(lists: ListsForDashboard[]) {
   const { length: listsOverdue } = lists.filter((list) => list.isOverdue);
 
   if (listsOverdue > 0) {
-    reviewsBox.text = `${pluralize("list", listsOverdue, true)} by 6+ months}`;
+    reviewsBox.text = `${pluralize("list", listsOverdue, true)} overdue by 6+ months`;
     reviewsBox.status = "error";
   }
 
