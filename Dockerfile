@@ -4,6 +4,7 @@ RUN mkdir -p /usr/src/app && \
     adduser -S -u 1001 -G appuser appuser && \
     chown -R appuser:appuser /usr/src/app && \
     chmod -R +x  /usr/src/app && \
+    chmod -R 755 /usr/src && \
     apk update && \
     apk upgrade
 
@@ -13,6 +14,7 @@ USER 1001
 COPY package.json package-lock.json ./
 RUN npm i
 COPY package-lock.json package-lock-cache.json
+RUN chown -R appuser:appuser /usr/src/app
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
