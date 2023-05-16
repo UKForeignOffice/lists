@@ -10,9 +10,9 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY --chown=appuser:node package.json package-lock.json ./
+COPY --chown=1001:node package.json package-lock.json ./
 RUN npm i
-COPY --chown=appuser:node package-lock.json package-lock-cache.json
+COPY --chown=1001:node package-lock.json package-lock-cache.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
