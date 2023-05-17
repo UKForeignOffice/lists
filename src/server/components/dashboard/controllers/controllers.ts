@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
-import { dashboardRoutes } from "./routes";
+import { dashboardRoutes } from "../routes";
 import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
@@ -18,7 +18,7 @@ import type { List } from "server/models/types";
 import { ServiceType, UserRoles } from "server/models/types";
 import serviceName from "server/utils/service-name";
 
-export { listItemsIndexController as listsItemsController } from "./listsItems/listItemsIndexController";
+export { listItemsIndexController as listsItemsController } from "../listsItems/listItemsIndexController";
 
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,

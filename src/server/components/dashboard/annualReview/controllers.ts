@@ -4,7 +4,7 @@ import { startCase } from "lodash";
 import { findListById } from "server/models/list";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { logger } from "server/services/logger";
-import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
+import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import * as Helpers from "server/components/dashboard/annualReview/helpers";
 import { sendAnnualReviewDateChangeEmail } from "server/services/govuk-notify";
 

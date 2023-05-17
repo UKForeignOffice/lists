@@ -8,7 +8,7 @@ import {
   usersEditController,
   helpPageController,
   usersEditPostController,
-} from "./controllers";
+} from "./controllers/controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler, addUrlToSession } from "server/components/cookies/helpers";
 

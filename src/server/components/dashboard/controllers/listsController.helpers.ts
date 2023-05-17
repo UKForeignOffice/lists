@@ -1,46 +1,11 @@
-import type { ListsForDashboard, Prisma } from "@prisma/client";
-import pluralize from "pluralize";
-import type { NextFunction, Request, Response } from "express";
-import { authRoutes } from "server/components/auth";
-import { pageTitles } from "server/components/dashboard/helpers";
-import { dashboardRoutes } from "server/components/dashboard/routes";
-import { getCSRFToken } from "server/components/cookies/helpers";
+import { Request } from "express";
 import Joi from "joi";
-import { countriesList } from "server/services/metadata";
-import { ServiceType } from "server/models/types";
+import { ListsForDashboard, Prisma } from "@prisma/client";
+import pluralize from "pluralize";
 
 type DashboardOrderByInput = Omit<Prisma.ListsForDashboardOrderByWithRelationInput, "listId" | "jsonData">;
-export const DEFAULT_VIEW_PROPS = {
-  dashboardRoutes,
-  countriesList,
-  ServiceType,
-};
-export async function listsController(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (req.isUnauthenticated()) {
-      res.redirect(authRoutes.logout);
-      return;
-    }
 
-    const orderBy = calculateSortOrder(req.query);
-    const lists = (await req.user?.getLists(orderBy)) ?? [];
-
-    res.render("dashboard/lists", {
-      ...DEFAULT_VIEW_PROPS,
-      title: pageTitles[dashboardRoutes.lists],
-      req,
-      isNewUser: lists.length === 0,
-      tableHeaders: tableHeaders(req.query),
-      lists,
-      csrfToken: getCSRFToken(req),
-      dashboardBoxes: calculateDashboardBoxes(lists),
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-function tableHeaders(query: Request["query"]) {
+export function tableHeaders(query: Request["query"]) {
   const headers: Array<keyof DashboardOrderByInput> = [
     "type",
     "country",
@@ -75,7 +40,7 @@ function tableHeaders(query: Request["query"]) {
   });
 }
 
-function sanitiseQuery(query: Request["query"]) {
+export function sanitiseQuery(query: Request["query"]) {
   const sortString = Joi.string().valid("asc", "desc");
   const stringSchema = Joi.alternatives().try(sortString, Joi.any().strip());
   const schema = Joi.object<DashboardOrderByInput>({
@@ -120,9 +85,9 @@ export function calculateSortOrder(
   return Object.entries(sortOrder).map(convertEntryToObject);
 }
 
-function convertEntryToObject([key, value]: [string, Prisma.SortOrder]) {
-  const dateKeys = ["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"];
-  if (dateKeys.includes(key)) {
+const DATE_KEYS = ["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"];
+export function convertEntryToObject([key, value]: [string, Prisma.SortOrder | Prisma.SortOrderInput]) {
+  if (DATE_KEYS.includes(key)) {
     return {
       [key]: {
         sort: value,
@@ -133,7 +98,7 @@ function convertEntryToObject([key, value]: [string, Prisma.SortOrder]) {
   return { [key]: value };
 }
 
-function calculateDashboardBoxes(lists: ListsForDashboard[]) {
+export function calculateDashboardBoxes(lists: ListsForDashboard[]) {
   return {
     administrators: calculateAdminDashboardBox(lists),
     serviceProviders: calculateProvidersDashboardBox(lists),

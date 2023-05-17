@@ -11,15 +11,16 @@ import {
   usersEditPostController,
   usersListController,
 } from "../controllers";
-import * as govukNotify from "../../../services/govuk-notify";
+
+import * as govukNotify from "../../../../services/govuk-notify";
 import * as helpers from "server/components/dashboard/helpers";
 import { NextFunction } from "express";
 import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
-import { requestValidation } from "../listsItems/requestValidation";
-import { HttpException } from "../../../middlewares/error-handlers";
+import { requestValidation } from "../../listsItems/requestValidation";
+import { HttpException } from "../../../../middlewares/error-handlers";
 import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
-import { listsController } from "../controllers.listsController";
+import { listsController } from "../listsController";
 
 jest.useFakeTimers("modern");
 
