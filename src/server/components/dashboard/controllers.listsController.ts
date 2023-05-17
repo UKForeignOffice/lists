@@ -1,6 +1,6 @@
-import { ListsForDashboard, Prisma } from "@prisma/client";
+import type { ListsForDashboard, Prisma } from "@prisma/client";
 import pluralize from "pluralize";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { authRoutes } from "server/components/auth";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
@@ -18,7 +18,8 @@ export const DEFAULT_VIEW_PROPS = {
 export async function listsController(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.isUnauthenticated()) {
-      return res.redirect(authRoutes.logout);
+      res.redirect(authRoutes.logout);
+      return;
     }
 
     const orderBy = calculateSortOrder(req.query);
@@ -83,12 +84,14 @@ function convertEntryToObject([key, value]: [string, string]) {
 function calculateDashboardBoxes(lists: ListsForDashboard[]) {
   return {
     administrators: calculateAdminDashboardBox(lists),
+    serviceProviders: calculateProvidersDashboardBox(lists),
+    reviews: calculateReviewsDashboardBox(lists),
   };
 }
 
 function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
   const adminBox = {
-    name: "administrators",
+    name: "Administrators",
     queryParam: "admins",
     text: "All lists have administrators",
     status: "success",
@@ -105,4 +108,43 @@ function calculateAdminDashboardBox(lists: ListsForDashboard[]) {
   }
 
   return adminBox;
+}
+
+function calculateProvidersDashboardBox(lists: ListsForDashboard[]) {
+  const reviewsBox = {
+    name: "Service providers",
+    queryParam: "live",
+    text: "All lists have live providers",
+    status: "success",
+  };
+
+  const { length: liveServiceProviders } = lists.filter((list) => list.live === 0);
+
+  if (liveServiceProviders > 0) {
+    reviewsBox.text = `${pluralize("list", liveServiceProviders, true)} ${pluralize(
+      "have",
+      liveServiceProviders
+    )} no live ${pluralize("providers", liveServiceProviders)}`;
+    reviewsBox.status = "error";
+  }
+
+  return reviewsBox;
+}
+
+function calculateReviewsDashboardBox(lists: ListsForDashboard[]) {
+  const reviewsBox = {
+    name: "Reviews",
+    queryParam: "isOverdue",
+    text: "All lists reviewed within the past 18 months",
+    status: "success",
+  };
+
+  const { length: listsOverdue } = lists.filter((list) => list.isOverdue);
+
+  if (listsOverdue > 0) {
+    reviewsBox.text = `${pluralize("list", listsOverdue, true)} overdue by 6+ months`;
+    reviewsBox.status = "error";
+  }
+
+  return reviewsBox;
 }
