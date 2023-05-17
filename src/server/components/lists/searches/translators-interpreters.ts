@@ -185,10 +185,20 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
     searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
-        listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map((language: string) => {
-          return metaData.languages[language];
-        });
+        listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map(
+          (language: string) => metaData.languages[language]
+        );
       }
+
+      if (listItem.jsonData.deliveryOfServices?.includes("inPerson")) {
+        listItem.jsonData = {
+          ...listItem.jsonData,
+          deliveryOfServices: listItem.jsonData.deliveryOfServices.map((service) =>
+            service === "inPerson" ? "In person" : service
+          ),
+        };
+      }
+
       return listItem;
     });
   }
