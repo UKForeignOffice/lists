@@ -111,7 +111,7 @@ jobs:
             DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
             CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           name: Run smoke tests
-          command: npm run smoke-tests
+          command: npx cypress install && npm run smoke-tests
             -
 
       - save_cache:
