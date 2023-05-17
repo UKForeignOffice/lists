@@ -4,7 +4,6 @@ RUN mkdir -p /usr/src/app && \
     adduser -S -u 1001 -G appuser appuser && \
     chown -R appuser:appuser /usr/src/app && \
     chmod -R +x  /usr/src/app && \
-    chmod -R 755 /usr/src && \
     apk update && \
     apk upgrade
 
