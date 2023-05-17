@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
-import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
+import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { Action } from "./types";
 import { actionHandlers } from "./actionHandlers";
