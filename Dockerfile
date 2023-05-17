@@ -14,7 +14,7 @@ COPY --chown=1001:node package.json package-lock.json ./
 RUN npm i && npm config set cache /tmp --global
 COPY --chown=1001:node package-lock.json package-lock-cache.json
 
-RUN chown -R appuser:appuser /usr/src/app/node_modules
+RUN chown -R 1001:node /usr/src/app/node_modules
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
