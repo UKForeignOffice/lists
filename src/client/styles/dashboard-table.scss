@@ -1,16 +1,26 @@
 $icon-size: 18px;
+$icon-up = $icon-up
+$icon-down = $icon-down
+
+.dashboard-table {
+  &__header {
+    vertical-align: bottom;
+    margin-right: 10px;
+  }
+}
 
 .dashboard-table {
   &__header-link {
     text-decoration: none;
     position: relative;
-
   }
+}
+
+.dashboard-table {
   &__header-text {
     margin-right: calc($icon-size + 0.5em)
   }
 }
-
 
 
 .dashboard-table {
@@ -18,13 +28,18 @@ $icon-size: 18px;
     position: relative;
     left: -$icon-size;
     text-decoration: none;
-    &:before, &:after {
+
+    &:before,
+    &:after {
       font-size: $icon-size;
       color: $govuk-link-colour;
       text-decoration: none;
       position: absolute;
       :focus & {
         color: $govuk-focus-text-colour;
+      }
+      .dashboard-table__header-link:hover & {
+        color: $govuk-link-hover-colour;
       }
     }
 
@@ -35,32 +50,26 @@ $icon-size: 18px;
         position: absolute;
       }
       &:before {
-        content: "\25bc";
+        content: $icon-down;
         top: 9px;
       }
       &:after {
-        content: "\25b2";
+        content: $icon-up;
         top: 1px;
       }
     }
 
     &--asc {
       &:after {
-        content: "\25b2";
+        content: $icon-up;
       }
     }
 
     &--desc {
       &:after {
-        content: "\25bc";
+        content: $icon-down;
       }
     }
   }
 }
 
-.dashboard-table {
-  &__header {
-    vertical-align: bottom;
-    margin-right: 10px;
-  }
-}
