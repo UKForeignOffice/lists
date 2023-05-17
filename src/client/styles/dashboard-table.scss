@@ -3,30 +3,26 @@ $icon-size: 18px;
 .dashboard-table {
   &__header-link {
     text-decoration: none;
-    margin-right: 20px;
-    &:after {
-      content: "";
-      padding-left: $icon-size;
-      position: relative;
-      left: 14px;
-    }
+    position: relative;
+
+  }
+  &__header-text {
+    margin-right: calc($icon-size + 0.5em)
   }
 }
+
 
 
 .dashboard-table {
   &__icon {
     position: relative;
+    left: -$icon-size;
     text-decoration: none;
-    left: 4px;
-    padding-right: 18px;
     &:before, &:after {
       font-size: $icon-size;
       color: $govuk-link-colour;
       text-decoration: none;
-      left: 50%;
       position: absolute;
-      transform: translateX(-50%);
       :focus & {
         color: $govuk-focus-text-colour;
       }
