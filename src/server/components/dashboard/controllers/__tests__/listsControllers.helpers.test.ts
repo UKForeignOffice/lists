@@ -100,13 +100,13 @@ test("tableHeaders does not include jsonData or listId cells", () => {
 describe("tableHeaders", () => {
   test("currentlySortedBy is none if not present in query params", () => {
     const headers = tableHeaders({});
-    const adminCell = headers.find((header) => header.name);
+    const adminCell = headers.find((header) => header.name === "admins");
     expect(adminCell.currentlySortedBy).toEqual("none");
   });
 
   test("currentlySortedBy matches query parameter", () => {
     const headers = tableHeaders({ admins: "asc", live: "desc" });
-    const adminCell = headers.find((header) => header.name);
+    const adminCell = headers.find((header) => header.name === "admins");
     expect(adminCell.currentlySortedBy).toEqual("asc");
     const liveCell = headers.find((header) => header.name === "live");
     expect(liveCell.currentlySortedBy).toEqual("desc");
