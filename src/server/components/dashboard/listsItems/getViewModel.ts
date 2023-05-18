@@ -108,7 +108,13 @@ function parseValue<T extends KeyOfJsonData>(field: T, jsonData: ListItemJsonDat
       .filter((line) => line)
       .join(`\n`);
   }
-  return jsonData?.updatedJsonData?.[field] ?? jsonData?.[field];
+
+  if (field === "languagesProvided") {
+    const languagesProvided = jsonData.updatedJsonData?.languagesProvided ?? jsonData.languagesProvided;
+    return languagesProvided.map((item: string) => languages[item]);
+  }
+
+  return jsonData.updatedJsonData?.[field] ?? jsonData[field];
 }
 
 function hasUpdate(field: KeyOfJsonData, listItem: ListItemJsonData) {
@@ -238,11 +244,6 @@ function formatRowsForTranslators(
 
   if (jsonData.deliveryOfServices) {
     jsonData.deliveryOfServices = DeliveryOfServices[jsonData.deliveryOfServices];
-  }
-
-  if (jsonData.languagesProvided) {
-    const languagesArray = jsonData.languagesProvided.map((item: string) => languages[item] ?? item);
-    jsonData.languagesProvided = languagesArray;
   }
 
   jsonData.swornInterpretations ??= jsonData.updatedJsonData?.swornInterpretations;
