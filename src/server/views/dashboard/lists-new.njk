@@ -32,7 +32,7 @@
 
       <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
       <h1 class="govuk-heading-l">
-          Create new list
+          Create a new list
       </h1>
 
       <form class="form" action="{{ listsEditUrl }}" method="post" required>
@@ -42,7 +42,7 @@
           <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
               <h3 class="govuk-fieldset__heading govuk-heading-m">
-                Service Type?
+                Service a service type
               </h3>
             </legend>
             {% if error.field === 'serviceType' %}
@@ -62,7 +62,7 @@
                     {{-" checked" if list.type === serviceType }}
                   >
                   <label class="govuk-label govuk-radios__label" for="serviceType-{{ serviceType }}">
-                    {{ _.startCase(serviceType) }}
+                    {{ _.capitalize(_.startCase(serviceType)) }}
                   </label>
                 </div>
               {% endfor %}
@@ -94,7 +94,7 @@
             <fieldset class="govuk-fieldset">
               <h3 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--m" for="publisher">
-                  Users
+                  Add an administrator
                 </label>
               </h3>
               {% if error.field === 'publisher' %}
@@ -103,10 +103,10 @@
                 </span>
               {% endif %}
               <div id="publisher-hint" class="govuk-body">
-                All users can accept and publish service providers on the {{ _.startCase(list.type).toLowerCase()}} list in {{list.country.name}}.
+                New lists must have at least one administrator. Administrators can accept and publish service providers on this list.
               </div>
                 <label class="govuk-label" for="publisher">
-                  Enter an email address
+                  Enter an FCDO email address
                 </label>
                 <input class="govuk-input" id="publisher" name="publisher" type="email" aria-describedby="publisher-hint">
             </fieldset>

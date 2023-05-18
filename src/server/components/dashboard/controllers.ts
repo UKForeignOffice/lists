@@ -158,6 +158,10 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
+      ServiceType: {
+        ...ServiceType,
+        translatorsInterpreters: "translatorsAndInterpreters",
+      },
       annualReviewStartDate,
       lastAnnualReviewStartDate,
       listId,
