@@ -32,16 +32,16 @@
       <tbody class="govuk-table__body">
         {% for list in lists %}
           <tr class="govuk-table__row">
-            <td scope="row" class="govuk-table__header">
+            <td scope="row" class="govuk-table__header  dashboard-table__cell">
                 <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.listId) }}" class="govuk-link">{{ "Translators and Interpreters" if list.type === 'translatorsInterpreters' else _.startCase(list.type) }}</a>
             </td>
-            <td class="govuk-table__cell">{{ list.country }}</td>
-            <td class="govuk-table__cell">{{ list.live }}</td>
-            <td class="govuk-table__cell">{{ list.actionNeeded }}</td>
-            <td class="govuk-table__cell">{{ list.lastAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.lastAnnualReviewStartDate else "No review"}}</td>
-            <td class="govuk-table__cell">{{ list.nextAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.nextAnnualReviewStartDate else "No review"}}</td>
-            <td class="govuk-table__cell">{{ list.admins }}</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.country }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.live }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.actionNeeded }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.lastAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.lastAnnualReviewStartDate else "No review"}}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.nextAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.nextAnnualReviewStartDate else "No review"}}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.admins }}</td>
+            <td class="govuk-table__cell dashboard-table__cell govuk-table__cell--numeric">
               <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.listId) }}" class="govuk-link">Settings</a>
             </td>
           </tr>

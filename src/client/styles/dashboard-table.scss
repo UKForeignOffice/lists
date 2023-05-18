@@ -10,6 +10,12 @@ $icon-down: "\25bc";
 }
 
 .dashboard-table {
+  &__cell {
+    padding: 15px 20px 15px 0px;
+  }
+}
+
+.dashboard-table {
   &__header-link {
     text-decoration: none;
     position: relative;
