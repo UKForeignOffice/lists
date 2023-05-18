@@ -9,6 +9,8 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
+# Node user provided by default with correct priviledges for noed packages
+# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
 COPY --chown=1001:node package.json package-lock.json ./
 RUN npm i && npm config set cache /tmp --global
 COPY --chown=1001:node package-lock.json package-lock-cache.json
