@@ -302,7 +302,29 @@ $two-thirds: $one-third * 2;
   }
 }
 
+.dashboard-box {
+  min-height: 5rem;
+
+  &--success {
+    background-color: #cbe2d8;
+
+    .govuk-body {
+      color: #005A30;
+    }
+  }
+
+  &--error {
+    background-color: #f6d7d2;
+
+    .govuk-body {
+      color: #942514;
+    }
+  }
+}
+
 .govuk-link--red,
 .govuk-link--red:visited  {
   color: #942514;
 }
+
+

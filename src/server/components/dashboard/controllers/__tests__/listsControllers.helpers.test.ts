@@ -105,23 +105,10 @@ describe("tableHeaders", () => {
   });
 
   test("currentlySortedBy matches query parameter", () => {
-    const headers = tableHeaders({ admin: "asc" });
+    const headers = tableHeaders({ admins: "asc", live: "desc" });
     const adminCell = headers.find((header) => header.name);
     expect(adminCell.currentlySortedBy).toEqual("asc");
+    const liveCell = headers.find((header) => header.name === "live");
+    expect(liveCell.currentlySortedBy).toEqual("desc");
   });
-
-  test.each`
-    queryParameterValue | currentlySortedBy | nextSortedButton
-    ${"asc"}            | ${"asc"}          | ${"desc"}
-    ${"desc"}           | ${"desc"}         | ${undefined}
-    ${undefined}        | ${"none"}         | ${"asc"}
-  `(
-    "when admin=$queryParameterValue currentlySortedBy is $currentlySortedBy and nextSortedButton is $nextSortedButton",
-    ({ queryParameterValue, currentlySortedBy, nextSortedButton }) => {
-      const headers = tableHeaders({ admin: queryParameterValue });
-      const adminCell = headers.find((header) => header.name);
-
-      expect();
-    }
-  );
 });
