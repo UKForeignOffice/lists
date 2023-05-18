@@ -43,7 +43,7 @@
                   class="govuk-label govuk-checkboxes__label"
                   for="roles-{{ role }}"
                 >
-                  {{ _.startCase(role) }}
+                  {{ "Super admin" if role === "Administrator" else role }}
                 </label>
               </div>
           {% endfor %}

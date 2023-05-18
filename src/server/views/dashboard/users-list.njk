@@ -22,7 +22,7 @@
       {% for user in users %}
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header">{{ user.email }}</th>
-          <td class="govuk-table__cell">{{ "Super admin" if user.jsonData.roles.length > 0 else "" }}</td>
+          <td class="govuk-table__cell">{{ "Super admin" if user.jsonData.roles.includes("Administrator") else "" }}</td>
           <td class="govuk-table__cell govuk-table__cell--numeric">
             {% if req.user.email != user.email %}
             <a href="{{ dashboardRoutes.usersEdit.replace(':userEmail', user.email) }}" class="govuk-link">Edit</a>

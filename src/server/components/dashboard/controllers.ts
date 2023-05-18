@@ -78,10 +78,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.usersEdit],
-      UserRoles: {
-        ...UserRoles,
-        Administrator: "Super admin",
-      },
+      UserRoles,
       user,
       req,
       error,
