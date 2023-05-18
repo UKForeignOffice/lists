@@ -3,9 +3,32 @@ $icon-up: "\25b2";
 $icon-down: "\25bc";
 
 .dashboard-table {
+  margin-top: 30px;
   &__header {
     vertical-align: bottom;
     margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    &--even {
+      background-color: govuk-colour("light-grey");
+      padding-left: 10px;
+      position: relative;
+    }
+    &:first-child {
+      left: 0;
+    }
+    &--even {
+    }
+  }
+}
+
+.dashboard-table {
+  &__cell {
+    padding-left: 10px;
+    padding-right: 10px;
+    &--even {
+      background-color: govuk-colour("light-grey");
+    }
   }
 }
 
