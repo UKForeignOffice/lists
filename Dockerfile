@@ -1,4 +1,4 @@
-FROM node:14-alpine AS base
+FROM node:18-alpine AS base
 RUN mkdir -p /usr/src/app && \
     addgroup -g 1001 appuser && \
     adduser -S -u 1001 -G appuser appuser && \
@@ -9,16 +9,19 @@ RUN mkdir -p /usr/src/app && \
 
 FROM base AS dependencies
 WORKDIR /usr/src/app
-USER 1001
-COPY package.json package-lock.json ./
-RUN npm i
-COPY package-lock.json package-lock-cache.json
+# Node user provided by default with correct priviledges for noed packages
+# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
+COPY --chown=1001:node package.json package-lock.json ./
+RUN npm i && npm config set cache /tmp --global
+COPY --chown=1001:node package-lock.json package-lock-cache.json
+
+RUN chown -R 1001:node /usr/src/app/node_modules
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
 COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
 COPY docker/apply/forms-json ./docker/apply/forms-json
-COPY ./src ./src/
+COPY --chown=1001:node ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
@@ -35,7 +38,7 @@ USER 1001
 WORKDIR /usr/dist/app
 
 # copy neccesary files only
-COPY package.json ./
+COPY --chown=1001:node package.json ./
 COPY --from=build /usr/src/app/dist dist
 COPY --from=build /usr/src/app/node_modules node_modules
 COPY src/server/models/db/ src/server/models/db/

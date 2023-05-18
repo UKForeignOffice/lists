@@ -15,7 +15,7 @@ jobs:
     <<: *defaults
 
     docker:
-      - image: cimg/node:14.17.0-browsers
+      - image: cimg/node:18.15.0-browsers
 
     steps:
       - checkout
@@ -59,7 +59,7 @@ jobs:
       - checkout
       - node/install:
           install-yarn: true
-          node-version: '14'
+          node-version: '18'
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
 
@@ -111,7 +111,7 @@ jobs:
             DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
             CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           name: Run smoke tests
-          command: npm run smoke-tests
+          command: npx cypress install && npm run smoke-tests
             -
 
       - save_cache:
@@ -124,7 +124,7 @@ jobs:
 
       # - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
       #     path: ~/repo/cypress/videos
-          # destination: videos
+      #     destination: videos
 
 
   publish:
