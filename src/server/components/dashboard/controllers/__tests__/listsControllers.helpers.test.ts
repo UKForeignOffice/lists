@@ -76,7 +76,7 @@ test("convertObjectToEntry returns SortOrderInput when a date key is passed with
   });
 
   expect(convertEntryToObject(["nextAnnualReviewStartDate", "desc"])).toEqual({
-    firstAnnualReviewStartDate: {
+    nextAnnualReviewStartDate: {
       sort: "desc",
       nulls: "last",
     },
