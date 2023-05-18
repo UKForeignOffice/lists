@@ -244,7 +244,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("a SuperAdmin is not a new user", async () => {
-      mockReq.user.getLists.mockResolvedValueOnce([]);
+      mockReq.user.getLists.mockResolvedValueOnce([{ id: 1 }, { id: 2 }]);
       mockReq.user.isAdministrator = true;
 
       await listsController(mockReq, mockRes, mockNext);
