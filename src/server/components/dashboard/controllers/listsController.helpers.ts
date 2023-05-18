@@ -22,20 +22,9 @@ export function tableHeaders(query: Request["query"]) {
     // @ts-ignore
     const currentlySortedBy = orderBy[cell] ?? "none";
 
-    let nextSortButton;
-
-    if (currentlySortedBy === "asc") {
-      nextSortButton = "desc";
-    }
-
-    if (currentlySortedBy === "none") {
-      nextSortButton = "asc";
-    }
-
     return {
       name: cell,
       currentlySortedBy,
-      nextSortButton,
     };
   });
 }
