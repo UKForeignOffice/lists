@@ -34,6 +34,11 @@ $icon-down: "\25bc";
 
 
 .dashboard-table {
+  /**
+   * MIT License
+   * Copyright (c) 2019 Ministry of Justice
+   * Below code is inspired by https://github.com/ministryofjustice/moj-frontend/blob/cd75b00b740917c5e1a74660061728ab69cf41aa/src/moj/components/sortable-table/_sortable-table.scss.
+   */
   &__icon {
     position: relative;
     left: - calc($icon-size * 1.25);

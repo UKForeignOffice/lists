@@ -1,6 +1,6 @@
-import { Request } from "express";
+import type { Request } from "express";
 import Joi from "joi";
-import { ListsForDashboard, Prisma } from "@prisma/client";
+import type { ListsForDashboard, Prisma } from "@prisma/client";
 import pluralize from "pluralize";
 
 type DashboardOrderByInput = Omit<Prisma.ListsForDashboardOrderByWithRelationInput, "listId" | "jsonData">;
