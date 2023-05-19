@@ -11,6 +11,7 @@ import {
   displayOneMonthAnnualReviewWarning,
   displayUnpublishWarning,
 } from "server/models/listItem/summary.helpers";
+import { ServiceType } from "server/models/types";
 
 /**
  * TODO:- rename file to listItems. Currently lists items for parity with existing code.
@@ -117,6 +118,13 @@ function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
   };
 }
 
+export const serviceTypeIndexHeading: Record<ServiceType | string, string> = {
+  covidTestProviders: "Covid test provider",
+  funeralDirectors: "Funeral directors",
+  lawyers: "Lawyers",
+  translatorsInterpreters: "Translators and interpreters",
+};
+
 export async function listItemsIndexController(
   req: Request<IndexParams, Record<string, unknown>, Record<string, unknown>, IndexQuery>,
   res: ListItemRes,
@@ -156,12 +164,14 @@ export async function listItemsIndexController(
       "nextAnnualReviewStartDate"
     );
     const unpublishDate = AnnualReviewHelpers.calculateNewDateAfterPeriod(annualReviewDate, { weeks: 6 });
-
+    const type = res.locals.list!.type;
+    const title = serviceTypeIndexHeading[type];
     const bannerToggles = await annualReviewBannerToggles(res.locals.list as ListWithJsonData);
     res.render("dashboard/lists-items", {
       ...DEFAULT_VIEW_PROPS,
       list,
       req,
+      ...{ title },
       activityStatus: filtersViewModel.activityStatus.map(withCheckedAttributeFromQuery),
       publishingStatus: filtersViewModel.publishingStatus.map(withCheckedAttributeFromQuery),
       annualReviewDate,
