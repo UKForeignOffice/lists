@@ -3,6 +3,10 @@ $icon-up: "\25b2";
 $icon-down: "\25bc";
 
 .dashboard-table {
+  @include govuk-responsive-margin(6, "top");
+}
+
+.dashboard-table {
   &__header {
     vertical-align: bottom;
     margin-right: 10px;
