@@ -18,7 +18,7 @@ describe("calculateSortOrder", () => {
 
   test("returns correct sort order with asc sort direction", () => {
     const expectedResult = [{ admins: "asc" }, { country: "asc" }, { type: "asc" }];
-    expect(calculateSortOrder({ admins: "desc" })).toEqual(expectedResult);
+    expect(calculateSortOrder({ admins: "asc" })).toEqual(expectedResult);
   });
 
   test("unknown values are stripped", () => {
