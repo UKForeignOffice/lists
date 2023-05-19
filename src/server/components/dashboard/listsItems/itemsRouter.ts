@@ -18,7 +18,6 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 import { listsController } from "server/components/dashboard/controllers";
-import { ServiceType } from "server/models/types";
 
 export const listRouter = express.Router();
 
