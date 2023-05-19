@@ -36,7 +36,7 @@ $icon-down: "\25bc";
 .dashboard-table {
   &__icon {
     position: relative;
-    left: -$icon-size;
+    left: - calc($icon-size * 1.25);
     text-decoration: none;
 
     &:before,

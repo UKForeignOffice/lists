@@ -33,7 +33,10 @@
         {% for list in lists %}
           <tr class="govuk-table__row">
             <td scope="row" class="govuk-table__header  dashboard-table__cell">
-                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.listId) }}" class="govuk-link">{{ "Translators and Interpreters" if list.type === 'translatorsInterpreters' else _.startCase(list.type) }}</a>
+                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.listId) }}" class="govuk-link">
+                  {{ "Translators and Interpreters" if list.type === 'translatorsInterpreters' else _.startCase(list.type) }}
+                  <span class="govuk-visually-hidden">in {{ list.country }}</span>
+                </a>
             </td>
             <td class="govuk-table__cell dashboard-table__cell">{{ list.country }}</td>
             <td class="govuk-table__cell dashboard-table__cell">{{ list.live }}</td>
