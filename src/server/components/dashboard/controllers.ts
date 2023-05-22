@@ -156,8 +156,14 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
+    const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
+
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
+      ServiceType: {
+        ...updatedServiceType,
+        translatorsInterpreters: "translatorsAndInterpreters",
+      },
       annualReviewStartDate,
       lastAnnualReviewStartDate,
       listId,

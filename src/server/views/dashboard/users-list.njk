@@ -10,11 +10,11 @@
     {{ dashboardMacros.successBanner(successBannerTitle, messages.userUpdatedEmail + notificationMessage, messages.userUpdatedNotificationColour) }}
   {% endif %}
   <table class="govuk-table">
-    <caption class="govuk-table__caption govuk-table__caption--l">Users</caption>
+    <caption class="govuk-table__caption govuk-table__caption--l">List administrators</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Email</th>
-        <th scope="col" class="govuk-table__header">Roles</th>
+        <th scope="col" class="govuk-table__header">Permission</th>
         <th scope="col" class="govuk-table__header govuk-table__header--numeric"></th>
       </tr>
     </thead>
@@ -22,7 +22,7 @@
       {% for user in users %}
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header">{{ user.email }}</th>
-          <td class="govuk-table__cell">{{ user.jsonData.roles.join(", ") }}</td>
+          <td class="govuk-table__cell">{{ "Super admin" if user.jsonData.roles.includes("Administrator") else "" }}</td>
           <td class="govuk-table__cell govuk-table__cell--numeric">
             {% if req.user.email != user.email %}
             <a href="{{ dashboardRoutes.usersEdit.replace(':userEmail', user.email) }}" class="govuk-link">Edit</a>

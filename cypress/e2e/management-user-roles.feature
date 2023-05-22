@@ -18,4 +18,4 @@ Feature: List management actions for lists creators
     Scenario: super user should be able to access
       Given I am logged in as a "Administrator"
       When I visit the "/dashboard/users" url
-      Then I should see the table "Users"
+      Then I should see the table "List administrators"

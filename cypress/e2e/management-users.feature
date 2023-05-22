@@ -9,15 +9,15 @@ Feature: List management role changing for super Admins
         Given I am viewing the users page
 
 
-    Scenario: Make a role-less user a Administrator
+    Scenario: Make a role-less user a Super admin
       When I click the edit link for user with email "no.role@cautionyourblast.com"
-      And check the "Administrator" checkbox
+      And check the "Super admin" checkbox
       And I click the "Save" button
       And go back to the users page
-      Then I "should" see the "Administrator" role assigned to "no.role@cautionyourblast.com"
+      Then I "should" see the "Super admin" role assigned to "no.role@cautionyourblast.com"
 
-    Scenario: Remove Administrator role from another Administrator
+    Scenario: Remove Super admin role from another Super admin
       When I navigate to "/dashboard/users/super.admin@cautionyourblast.com"
-      And uncheck the "Administrator" checkbox
+      And uncheck the "Super admin" checkbox
       And I click the "Save" button
-      Then I "should not" see the "Administrator" role assigned to "no.role@cautionyourblast.com"
+      Then I "should not" see the "Super admin" role assigned to "super.admin@cautionyourblast.com"

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block dashboard %}
-  <h1 class="govuk-heading-l">Editing User</h1>
+  <h1 class="govuk-heading-l">Change administrative access</h1>
   <h4 class="govuk-heading-s">{{ user.email }}</h4>
 
   {% if error.field %}
@@ -19,7 +19,7 @@
       <fieldset class="govuk-fieldset" aria-describedby="roles">
         <h3 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--m" for="roles">
-            Roles
+            Select access
           </label>
         </h3>
         {% if error.field === 'roles' %}
@@ -43,13 +43,8 @@
                   class="govuk-label govuk-checkboxes__label"
                   for="roles-{{ role }}"
                 >
-                  {{ _.startCase(role) }}
+                  {{ "Super admin" if role === "Administrator" else role }}
                 </label>
-                <div id="roles-{{role}}-hint" class="govuk-hint govuk-checkboxes__hint">
-                  {% if role === UserRoles.Administrator %}
-                    Set user roles, create new lists and assign users to lists
-                  {% endif %}
-                </div>
               </div>
           {% endfor %}
         </div>
