@@ -5,7 +5,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { Prisma, Status } from "@prisma/client";
 import { findListById, updateList } from "server/models/list";
 import { HttpException } from "server/middlewares/error-handlers";
-import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers";
+import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import { getDetailsViewModel } from "./getViewModel";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListIndexRes, ListItemRes } from "server/components/dashboard/listsItems/types";

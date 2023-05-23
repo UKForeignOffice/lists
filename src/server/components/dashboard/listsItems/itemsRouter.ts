@@ -4,6 +4,7 @@ import {
   listsEditController,
   listsItemsController,
   listsEditPostController,
+  listsController,
 } from "server/components/dashboard/controllers";
 import * as controllers from "server/components/dashboard/listsItems/controllers";
 import * as annualReview from "server/components/dashboard/annualReview/controllers";
@@ -17,7 +18,6 @@ import { findListItemById } from "server/models/listItem";
 import { HttpException } from "server/middlewares/error-handlers";
 import { updateRouter } from "./item/update/updateRouter";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
-import { listsController } from "server/components/dashboard/controllers.listsController";
 
 export const listRouter = express.Router();
 

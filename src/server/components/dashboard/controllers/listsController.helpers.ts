@@ -1,57 +1,46 @@
+import type { Request } from "express";
+import Joi from "joi";
 import type { ListsForDashboard, Prisma } from "@prisma/client";
 import pluralize from "pluralize";
-import type { NextFunction, Request, Response } from "express";
-import { authRoutes } from "server/components/auth";
-import { pageTitles } from "server/components/dashboard/helpers";
-import { dashboardRoutes } from "server/components/dashboard/routes";
-import { getCSRFToken } from "server/components/cookies/helpers";
-import Joi from "joi";
-import { countriesList } from "server/services/metadata";
-import { ServiceType } from "server/models/types";
 
 type DashboardOrderByInput = Omit<Prisma.ListsForDashboardOrderByWithRelationInput, "listId" | "jsonData">;
-export const DEFAULT_VIEW_PROPS = {
-  dashboardRoutes,
-  countriesList,
-  ServiceType,
-};
-export async function listsController(req: Request, res: Response, next: NextFunction) {
-  try {
-    if (req.isUnauthenticated()) {
-      res.redirect(authRoutes.logout);
-      return;
-    }
 
-    const orderBy = calculateSortOrder(req.query);
+export function tableHeaders(query: Request["query"]) {
+  const headers: Array<keyof DashboardOrderByInput> = [
+    "type",
+    "country",
+    "live",
+    "actionNeeded",
+    "lastAnnualReviewStartDate",
+    "nextAnnualReviewStartDate",
+    "admins",
+  ];
 
-    const lists = (await req.user?.getLists(orderBy)) ?? [];
-    const isNewUser = !req.user?.isAdministrator && lists?.length === 0;
+  const { value: orderBy } = sanitiseQuery(query);
 
-    res.render("dashboard/lists", {
-      ...DEFAULT_VIEW_PROPS,
-      title: pageTitles[dashboardRoutes.lists],
-      req,
-      isNewUser,
-      lists,
-      csrfToken: getCSRFToken(req),
-      dashboardBoxes: calculateDashboardBoxes(lists),
-    });
-  } catch (error) {
-    next(error);
-  }
+  return headers.map((cell) => {
+    // @ts-ignore
+    const currentlySortedBy = orderBy[cell] ?? "none";
+
+    return {
+      name: cell,
+      currentlySortedBy,
+    };
+  });
 }
 
-function sanitiseQuery(query: Request["query"]) {
-  const sortString = Joi.string().allow("asc", "desc").lowercase();
+export function sanitiseQuery(query: Request["query"]) {
+  const sortString = Joi.string().valid("asc", "desc");
+  const stringSchema = Joi.alternatives().try(sortString, Joi.any().strip());
   const schema = Joi.object<DashboardOrderByInput>({
-    actionNeeded: sortString,
-    admins: sortString,
-    country: sortString,
-    isOverdue: sortString,
-    lastAnnualReviewStartDate: sortString,
-    live: sortString,
-    nextAnnualReviewStartDate: sortString,
-    type: sortString,
+    actionNeeded: stringSchema,
+    admins: stringSchema,
+    country: stringSchema,
+    isOverdue: stringSchema,
+    lastAnnualReviewStartDate: stringSchema,
+    live: stringSchema,
+    nextAnnualReviewStartDate: stringSchema,
+    type: stringSchema,
   });
   return schema.validate(query, {
     stripUnknown: true,
@@ -61,13 +50,21 @@ function sanitiseQuery(query: Request["query"]) {
 
 export function calculateSortOrder(
   queryParamSortOrder: Prisma.ListsForDashboardOrderByWithRelationInput
-): Array<Record<string, string>> {
-  const defaultSortOrder = {
+): Prisma.ListsForDashboardFindManyArgs["orderBy"] {
+  const defaultSortOrder: Pick<Prisma.ListsForDashboardOrderByWithRelationInput, "country" | "type"> = {
     country: "asc",
     type: "asc",
   };
 
-  const { value: sanitisedQueryParams } = sanitiseQuery(queryParamSortOrder);
+  const { value: sanitisedQueryParams = {} } = sanitiseQuery(queryParamSortOrder);
+
+  if (sanitisedQueryParams.type) {
+    delete defaultSortOrder.type;
+  }
+
+  if (sanitisedQueryParams.country) {
+    delete defaultSortOrder.country;
+  }
 
   const sortOrder = {
     ...sanitisedQueryParams,
@@ -77,11 +74,20 @@ export function calculateSortOrder(
   return Object.entries(sortOrder).map(convertEntryToObject);
 }
 
-function convertEntryToObject([key, value]: [string, string]) {
+const DATE_KEYS = ["lastAnnualReviewStartDate", "nextAnnualReviewStartDate"];
+export function convertEntryToObject([key, value]: [string, Prisma.SortOrder | Prisma.SortOrderInput]) {
+  if (DATE_KEYS.includes(key)) {
+    return {
+      [key]: {
+        sort: value,
+        nulls: value === "asc" ? "first" : "last",
+      },
+    };
+  }
   return { [key]: value };
 }
 
-function calculateDashboardBoxes(lists: ListsForDashboard[]) {
+export function calculateDashboardBoxes(lists: ListsForDashboard[]) {
   return {
     administrators: calculateAdminDashboardBox(lists),
     serviceProviders: calculateProvidersDashboardBox(lists),

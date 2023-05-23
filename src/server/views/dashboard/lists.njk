@@ -1,4 +1,6 @@
 {% extends "./dashboard.njk" %}
+{% from "table/macro.njk" import govukTable %}
+{% from "./partials/table-header-cell.njk" import tableHeaderCell %}
 
 {% block dashboard %}
   {% if isNewUser %}
@@ -17,32 +19,31 @@
 
     {% include "./partials/dashboard-boxes.njk" %}
 
-    <table class="govuk-table govuk-!-margin-top-4 dashboard-table">
+    <table class="govuk-table dashboard-table">
+
       <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard govuk-!-width-one-fifth">Type</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard">Country</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard">Live</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard">Action needed</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard govuk-!-width-one-sixth">Last review</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard govuk-!-width-one-sixth">Next review</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard">Admins</th>
-          <th scope="col" class="govuk-table__header govuk-table__header--dashboard govuk-table__header--numeric"></th>
-        </tr>
+      <caption class="govuk-visually-hidden">Your lists</caption>
+        {% for cell in tableHeaders %}
+            {{ tableHeaderCell(cell) }}
+        {% endfor %}
+        {{ tableHeaderCell({name: "listId"}) }}
       </thead>
       <tbody class="govuk-table__body">
         {% for list in lists %}
           <tr class="govuk-table__row">
-            <td scope="row" class="govuk-table__header">
-                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.listId) }}" class="govuk-link">{{ _.startCase(list.type) }}</a>
+            <td scope="row" class="govuk-table__header  dashboard-table__cell">
+                <a href="{{ dashboardRoutes.listsItems.replace(':listId', list.listId) }}" class="govuk-link">
+                  {{ "Translators and Interpreters" if list.type === 'translatorsInterpreters' else _.startCase(list.type) }}
+                  <span class="govuk-visually-hidden">in {{ list.country }}</span>
+                </a>
             </td>
-            <td class="govuk-table__cell">{{ list.country }}</td>
-            <td class="govuk-table__cell">{{ list.live }}</td>
-            <td class="govuk-table__cell">{{ list.actionNeeded }}</td>
-            <td class="govuk-table__cell">{{ list.lastAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) if list.lastAnnualReviewStartDate else "No review"}}</td>
-            <td class="govuk-table__cell">{{ list.nextAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) if list.nextAnnualReviewStartDate else "No review"}}</td>
-            <td class="govuk-table__cell">{{ list.admins }}</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.country }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.live }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.actionNeeded }}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.lastAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.lastAnnualReviewStartDate else "None"}}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.nextAnnualReviewStartDate.toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: '2-digit' }) if list.nextAnnualReviewStartDate else "No review"}}</td>
+            <td class="govuk-table__cell dashboard-table__cell">{{ list.admins }}</td>
+            <td class="govuk-table__cell dashboard-table__cell govuk-table__cell--numeric">
               <a href="{{ dashboardRoutes.listsEdit.replace(':listId', list.listId) }}" class="govuk-link">Settings</a>
             </td>
           </tr>

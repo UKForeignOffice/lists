@@ -1,0 +1,90 @@
+$icon-size: 18px;
+$icon-up: "\25b2";
+$icon-down: "\25bc";
+
+.dashboard-table {
+  @include govuk-responsive-margin(6, "top");
+}
+
+.dashboard-table {
+  &__header {
+    vertical-align: bottom;
+    margin-right: 10px;
+  }
+}
+
+.dashboard-table {
+  &__cell {
+    padding: 15px 20px 15px 0px;
+  }
+}
+
+.dashboard-table {
+  &__header-link {
+    text-decoration: none;
+    position: relative;
+  }
+}
+
+.dashboard-table {
+  &__header-text {
+    margin-right: calc($icon-size + 0.5em)
+  }
+}
+
+
+.dashboard-table {
+  /**
+   * MIT License
+   * Copyright (c) 2019 Ministry of Justice
+   * Below code is inspired by https://github.com/ministryofjustice/moj-frontend/blob/cd75b00b740917c5e1a74660061728ab69cf41aa/src/moj/components/sortable-table/_sortable-table.scss.
+   */
+  &__icon {
+    position: relative;
+    left: - calc($icon-size * 1.25);
+    text-decoration: none;
+
+    &:before,
+    &:after {
+      font-size: $icon-size;
+      color: $govuk-link-colour;
+      text-decoration: none;
+      position: absolute;
+      :focus & {
+        color: $govuk-focus-text-colour;
+      }
+      .dashboard-table__header-link:hover & {
+        color: $govuk-link-hover-colour;
+      }
+    }
+
+    &--none {
+      &:before,
+      &:after {
+        font-size: $icon-size / 2;
+        position: absolute;
+      }
+      &:before {
+        content: $icon-down;
+        top: 9px;
+      }
+      &:after {
+        content: $icon-up;
+        top: 1px;
+      }
+    }
+
+    &--asc {
+      &:after {
+        content: $icon-up;
+      }
+    }
+
+    &--desc {
+      &:after {
+        content: $icon-down;
+      }
+    }
+  }
+}
+
