@@ -36,7 +36,7 @@
   </div>
 
 {% if (print !== "yes") %}
-  <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual funeral directors or this service.</p>
+  <p class="govuk-body">Links to funeral director websites will open in a new tab. You can give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual funeral directors or this service.</p>
 {% endif %}
 {% if (print === "yes") %}
 {% include 'includes/disclaimer.njk' %}
@@ -63,4 +63,3 @@
     {{ macros.paginationSection(pagination) }}
   {% endif %}
 {% endif %}
-
