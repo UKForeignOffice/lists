@@ -25,7 +25,7 @@
   </div>
 
 {% if (print !== "yes") %}
-  <p class="govuk-body">Give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual lawyers or this service.</p>
+  <p class="govuk-body">Links to lawyer websites will open in a new tab. You can give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual lawyers or this service.</p>
 {% endif %}
 {% if (print === "yes") %}
 {% include 'includes/disclaimer.njk' %}
@@ -52,4 +52,3 @@
     {{ macros.paginationSection(pagination) }}
   {% endif %}
 {% endif %}
-
