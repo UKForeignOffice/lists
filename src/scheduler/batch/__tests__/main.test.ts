@@ -1,5 +1,5 @@
 import { DateContext, getDateContexts, schedulerMilestoneDays, SchedulerDateContexts } from "../helpers";
-import { List, ListItem } from "../../../server/models/types";
+import type { ListItem, List } from "../../../shared/types";
 
 jest.mock("server/services/logger");
 

@@ -8,6 +8,7 @@ import {
   TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
+import type { ListItem, List } from "shared/types";
 
 export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
@@ -21,7 +22,6 @@ export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
-
 // List
 export interface AnnualReviewKeyDates extends JsonObject {
   POST_ONE_MONTH: string;
@@ -56,20 +56,6 @@ export interface ListJsonData extends JsonObject {
   currentAnnualReview?: CurrentAnnualReview;
 }
 
-export interface List extends PrismaClient.List {
-  id: number;
-  reference: string;
-  createdAt: Date;
-  updatedAt: Date;
-  type: string;
-  countryId: number;
-  jsonData: ListJsonData;
-  country?: Partial<Country>;
-  isAnnualReview: boolean;
-  nextAnnualReviewStartDate: Date;
-  lastAnnualReviewStartDate: Date | null;
-}
-
 export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
   jsonData: ListJsonData;
 }
@@ -77,9 +63,6 @@ export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
 export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
   jsonData: ListJsonData;
 }
-
-// ListItem
-export type ListItem = PrismaClient.ListItem;
 
 export interface BaseListItemGetObject extends PrismaClient.ListItem {
   address: {
