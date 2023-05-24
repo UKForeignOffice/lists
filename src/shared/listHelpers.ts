@@ -1,8 +1,9 @@
 import { subMonths } from "date-fns";
-import { prisma } from "shared/prisma";
-import type { Status } from "@prisma/client";
+import { Status } from "@prisma/client";
+import type { Prisma, ListItemEvent, AuditEvent } from "@prisma/client";
 import type { Logger } from "winston";
-import type { List, CurrentAnnualReview } from "shared/types";
+import { prisma } from "shared/prisma";
+import type { List, CurrentAnnualReview, ListItemWithHistory, AuditListItemEventName } from "shared/types";
 import type { ListUpdateInput } from "server/models/types";
 
 export async function findListItems(options: {
@@ -141,4 +142,58 @@ export async function findListsWithCurrentAnnualReview(logger: Logger): Promise<
     logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
     return { error: new Error("Unable to get lists in annual review") };
   }
+}
+
+/**
+ * Updates the isAnnualReview flag for list items and adds a ListItemEvent record.
+ * @param listItems
+ * @param status
+ * @param eventName
+ * @param auditEvent
+ */
+export async function updateIsAnnualReview(
+  list: List,
+  listItems: ListItemWithHistory[],
+  listItemEvent: ListItemEvent,
+  eventName: AuditListItemEventName,
+  auditEvent: AuditEvent,
+  logger: Logger
+): Promise<Result<ListItemWithHistory[]>> {
+  const updatedListItems: ListItemWithHistory[] = [];
+
+  if (!listItems?.length) {
+    const message = `List item ids must be provided to update list items for list ${list.id}`;
+    logger.error(message);
+    return { error: new Error(message) };
+  }
+  for (const listItem of listItems) {
+    const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
+      where: {
+        id: listItem.id,
+      },
+      data: {
+        isAnnualReview: listItem.status !== Status.UNPUBLISHED,
+        status: Status.OUT_WITH_PROVIDER,
+        // history: EVENTS[listItemEvent](),
+        history: {
+          create: {
+            type: listItemEvent,
+            jsonData: {
+              eventName: eventName,
+              itemId: listItem.id,
+            },
+          },
+        },
+      },
+    };
+    try {
+      logger.debug(`updating isAnnualReview for list item ${listItem.id}`);
+      await prisma.listItem.update(updateListItemPrismaStatement);
+      updatedListItems.push(listItem);
+    } catch (err) {
+      const message = `could not update list item ${listItem.id} due to ${err.message}.`;
+      logger.error(message);
+    }
+  }
+  return { result: updatedListItems };
 }

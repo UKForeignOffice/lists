@@ -1,4 +1,5 @@
-import { ServiceType, TranslatorInterpreterListItemGetObject } from "server/models/types";
+import { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { Field, Question } from "server/components/formRunner/types";
 import { parseJsonFormData } from "server/components/formRunner/helpers";
 import { get } from "lodash";

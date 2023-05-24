@@ -4,9 +4,9 @@ import {
   LawyerListItemGetObject,
   List,
   ListItem,
-  ServiceType,
   TranslatorInterpreterListItemGetObject,
 } from "server/models/types";
+import { ServiceType } from "shared/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";

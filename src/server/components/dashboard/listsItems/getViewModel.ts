@@ -1,4 +1,5 @@
-import { ListItemGetObject, ServiceType } from "server/models/types";
+import { ListItemGetObject } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";

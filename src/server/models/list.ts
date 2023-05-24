@@ -4,8 +4,8 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "shared/prisma";
 
-import type { CountryName, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
-import type { CurrentAnnualReview } from "shared/types";
+import type { CountryName, List, ListCreateInput, ListUpdateInput } from "./types";
+import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {

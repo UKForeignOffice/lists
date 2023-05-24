@@ -1,6 +1,7 @@
 import { findListById, findListByCountryAndType, createList, updateList } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
-import { List, ServiceType } from "../types";
+import { List } from "../types";
+import { ServiceType } from "../../../shared/types";
 import { compact } from "lodash";
 import { logger } from "../../services/logger";
 

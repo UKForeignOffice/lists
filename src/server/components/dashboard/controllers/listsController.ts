@@ -4,7 +4,7 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { countriesList } from "server/services/metadata";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { calculateDashboardBoxes, calculateSortOrder, tableHeaders } from "./listsController.helpers";
 
 export const DEFAULT_VIEW_PROPS = {

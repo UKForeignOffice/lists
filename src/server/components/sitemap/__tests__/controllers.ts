@@ -1,5 +1,5 @@
 import { getServiceLabel } from "server/components/lists";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { sitemapController } from "../controllers";
 
 describe("SiteMap", () => {

@@ -2,7 +2,7 @@ import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date
 import { lowerCase, startCase } from "lodash";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 
-import { findListsWithCurrentAnnualReview, findListItems } from "shared/listHelpers";
+import { findListsWithCurrentAnnualReview, findListItems, updateIsAnnualReview } from "shared/listHelpers";
 import { logger } from "scheduler/logger";
 import type {
   Audit,
@@ -18,10 +18,9 @@ import {
   sendAnnualReviewPostEmail,
   sendAnnualReviewProviderEmail,
 } from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
-
-import { findAuditEvents, recordListItemEvent } from "server/models/audit";
-import type { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { updateIsAnnualReview } from "server/models/listItem";
+import { findAuditEvents } from "./audit";
+import { recordListItemEvent } from "shared/audit";
+import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
 
 async function processPostEmailsForList(
   list: List,
@@ -225,7 +224,8 @@ export async function updateIsAnnualReviewForListItems(
     listItems,
     ListItemEvent.ANNUAL_REVIEW_STARTED,
     "startAnnualReview",
-    AuditEvent.REMINDER
+    AuditEvent.REMINDER,
+    logger
   );
 
   if (updatedListItems.error) {

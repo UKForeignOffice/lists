@@ -1,20 +1,20 @@
 import { WebhookData } from "server/components/formRunner";
-import { AuditListItemEventName, List, ListItem, Point, ServiceType, User } from "server/models/types";
+import { List, ListItem, Point, User } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
-import { recordListItemEvent } from "server/models/audit";
+import { recordListItemEvent } from "shared/audit";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
 import pgescape from "pg-escape";
 import { prisma } from "shared/prisma";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
+import { AuditEvent, ListItem as PrismaListItem, Prisma, Status } from "@prisma/client";
 import { merge } from "lodash";
 import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
 import { subMonths } from "date-fns";
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
@@ -453,59 +453,6 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
     updateLogger.error(`listItem.update transactional error - rolling back ${err.message}`);
     throw err;
   }
-}
-
-/**
- * Updates the isAnnualReview flag for list items and adds a ListItemEvent record.
- * @param listItems
- * @param status
- * @param eventName
- * @param auditEvent
- */
-export async function updateIsAnnualReview(
-  list: List,
-  listItems: ListItemWithHistory[],
-  listItemEvent: ListItemEvent,
-  eventName: AuditListItemEventName,
-  auditEvent: AuditEvent
-): Promise<Result<ListItemWithHistory[]>> {
-  const updatedListItems: ListItemWithHistory[] = [];
-
-  if (!listItems?.length) {
-    const message = `List item ids must be provided to update list items for list ${list.id}`;
-    logger.error(message);
-    return { error: new Error(message) };
-  }
-  for (const listItem of listItems) {
-    const updateListItemPrismaStatement: Prisma.ListItemUpdateArgs = {
-      where: {
-        id: listItem.id,
-      },
-      data: {
-        isAnnualReview: listItem.status !== Status.UNPUBLISHED,
-        status: Status.OUT_WITH_PROVIDER,
-        // history: EVENTS[listItemEvent](),
-        history: {
-          create: {
-            type: listItemEvent,
-            jsonData: {
-              eventName: eventName,
-              itemId: listItem.id,
-            },
-          },
-        },
-      },
-    };
-    try {
-      logger.debug(`updating isAnnualReview for list item ${listItem.id}`);
-      await prisma.listItem.update(updateListItemPrismaStatement);
-      updatedListItems.push(listItem);
-    } catch (err) {
-      const message = `could not update list item ${listItem.id} due to ${err.message}.`;
-      logger.error(message);
-    }
-  }
-  return { result: updatedListItems };
 }
 
 export async function deleteListItem(id: number, userId: User["id"]): Promise<void> {

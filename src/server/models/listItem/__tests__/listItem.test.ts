@@ -2,7 +2,7 @@ import { prisma } from "./../../db/__mocks__/prisma-client";
 import * as locationService from "server/services/location";
 
 import * as audit from "./../../audit";
-import { ServiceType } from "./../../types";
+import { ServiceType } from "../../../../shared/types";
 import * as helpers from "./../../helpers";
 import { logger } from "server/services/logger";
 import { findPublishedLawyersPerCountry } from "../providers/Lawyers";

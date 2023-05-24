@@ -1,5 +1,6 @@
 import { Request } from "express";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName } from "server/models/types";
+import { ServiceType } from "shared/types";
 
 export enum QuestionName {
   "readNotice" = "readNotice",

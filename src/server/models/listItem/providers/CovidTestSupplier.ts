@@ -1,9 +1,10 @@
 // Covid Test Suppliers
 // TODO: Test
-import { LawyerListItemGetObject, ServiceType } from "server/models/types";
+import { LawyerListItemGetObject } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import pgescape from "pg-escape";
 import { fetchPublishedListItemQuery } from "./helpers";
 

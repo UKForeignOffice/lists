@@ -7,7 +7,7 @@ import { sendEditDetailsEmail } from "server/services/govuk-notify";
 import { AuditEvent, Status } from "@prisma/client";
 import { prisma } from "shared/prisma";;
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { recordListItemEvent } from "server/models/audit";
+import { recordListItemEvent } from "shared/audit";
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { Request } from "express";
 import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";

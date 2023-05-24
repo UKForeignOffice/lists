@@ -1,4 +1,4 @@
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { getServiceTypeName } from "server/components/lists/helpers";
 
 const serviceName = (name: string): string => {

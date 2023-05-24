@@ -1,5 +1,5 @@
 import { getNewSessionWebhookData } from "../helpers";
-import { LawyerListItemGetObject, BaseListItemGetObject, ServiceType } from "server/models/types";
+import { LawyerListItemGetObject, BaseListItemGetObject, ServiceType } from "shared/types";
 import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
 import * as FormRunner from "./../types";

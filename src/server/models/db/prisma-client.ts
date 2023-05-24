@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 
-import {prisma} from "shared/prisma";
+import { prisma } from "shared/prisma";
 
 prisma.$connect().catch((error) => {
   logger.error(`Prisma Connect Error ${error.message}`);

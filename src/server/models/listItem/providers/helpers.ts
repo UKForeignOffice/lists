@@ -1,4 +1,5 @@
-import { Address, CountryName, ListItem, Point, ServiceType } from "server/models/types";
+import { Address, CountryName, ListItem, Point } from "server/models/types";
+import { ServiceType } from "shared/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";

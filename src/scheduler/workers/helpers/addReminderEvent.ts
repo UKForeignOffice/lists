@@ -1,13 +1,8 @@
-import {SendEmailResponse} from "notifications-node-client";
+import type { SendEmailResponse } from "notifications-node-client";
 import { prisma } from "shared/prisma";
-import {EVENTS} from "server/models/listItem/listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 
-export async function addReminderEvent(
-  id: number,
-  response: SendEmailResponse,
-  notes?: string[],
-  reference?: string
-) {
+export async function addReminderEvent(id: number, response: SendEmailResponse, notes?: string[], reference?: string) {
   return await prisma.listItem.update({
     where: {
       id,

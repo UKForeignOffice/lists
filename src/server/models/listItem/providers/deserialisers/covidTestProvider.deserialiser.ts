@@ -4,7 +4,7 @@ import {
   TestType,
   turnaroundTimeProperties,
 } from "./types";
-import { ServiceType } from "server/models/types";
+import type { ServiceType } from "shared/types";
 
 export const covidTestProviderDeserialiser: WebhookDeserialisers[ServiceType.covidTestProviders] =
   (webhookData) => {

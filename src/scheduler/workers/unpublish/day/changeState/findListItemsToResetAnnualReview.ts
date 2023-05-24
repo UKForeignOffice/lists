@@ -1,6 +1,6 @@
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import { schedulerLogger } from "scheduler/logger";
-import { List } from "@prisma/client";
+import type { List } from "@prisma/client";
 
 export async function findListItemsToResetAnnualReview(list: List) {
   const logger = schedulerLogger.child({

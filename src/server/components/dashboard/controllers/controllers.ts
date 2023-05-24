@@ -15,7 +15,8 @@ import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import type { List } from "server/models/types";
-import { ServiceType, UserRoles } from "server/models/types";
+import { UserRoles } from "server/models/types";
+import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 
 export { listItemsIndexController as listsItemsController } from "../listsItems/listItemsIndexController";

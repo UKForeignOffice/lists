@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { listsRoutes } from "./../routes";
 import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { SERVICE_DOMAIN } from "server/config";
 import { kebabCase } from "lodash";
 import {

@@ -1,6 +1,13 @@
 import type * as PrismaClient from "@prisma/client";
 import type * as ServerTypes from "server/models/types";
-// ListItem
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+
+export enum ServiceType {
+  "covidTestProviders" = "covidTestProviders",
+  "lawyers" = "lawyers",
+  "funeralDirectors" = "funeralDirectors",
+  "translatorsInterpreters" = "translatorsInterpreters",
+}
 
 export type ListItem = PrismaClient.ListItem;
 
@@ -43,3 +50,38 @@ export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
 }
 
 export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";
+
+export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
+  type: "user" | "list" | "listItem";
+  jsonData: ServerTypes.AuditEventJsonData;
+}
+
+export interface ListItemEventJsonData extends ServerTypes.BaseAuditEventJsonData {
+  eventName: AuditListItemEventName;
+  requestedChanges?: string;
+  updatedJsonData?: ListItemJsonData;
+  annualReviewRef?: string;
+  reminderType?:
+    | ListItemAnnualReviewProviderReminderType
+    | ServerTypes.ListItemUnpublishedPostReminderType
+    | ServerTypes.ListItemUnpublishedProviderReminderType;
+}
+
+export type AuditListItemEventName =
+  | "edit"
+  | "new"
+  | "requestChange"
+  | "approve"
+  | "delete"
+  | "pin"
+  | "unpin"
+  | "disapprove"
+  | "publish"
+  | "unpublish"
+  | "startAnnualReview"
+  | "reminder";
+
+export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
+  users?: string[];
+  currentAnnualReview?: CurrentAnnualReview;
+}

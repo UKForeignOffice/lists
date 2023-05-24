@@ -1,4 +1,4 @@
-import { ServiceType } from "server/models/types";
+import type { ServiceType } from "shared/types";
 import { List, ListItem } from "@prisma/client";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { createAnnualReviewProviderUrl } from "../../createAnnualReviewProviderUrl";
