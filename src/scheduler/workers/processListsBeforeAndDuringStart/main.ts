@@ -1,22 +1,27 @@
-import { findListsWithCurrentAnnualReview } from "server/models/list";
-import { logger } from "server/services/logger";
-import {
+import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+import { lowerCase, startCase } from "lodash";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+
+import { findListsWithCurrentAnnualReview, findListItems } from "shared/listHelpers";
+import { logger } from "scheduler/logger";
+import type {
   Audit,
   List,
   ListAnnualReviewPostReminderType,
   ListItemAnnualReviewProviderReminderType,
-} from "server/models/types";
-import { lowerCase, startCase } from "lodash";
-import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "server/services/govuk-notify";
-import { findAuditEvents, recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
-import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { findListItems, updateIsAnnualReview } from "server/models/listItem";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { MilestoneTillAnnualReview } from "../../batch/helpers";
-import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+  ListItemWithHistory,
+} from "shared/types";
+import type { MilestoneTillAnnualReview } from "../../batch/helpers";
 import { formatDate, isEmailSentBefore } from "./helpers";
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
+import {
+  sendAnnualReviewPostEmail,
+  sendAnnualReviewProviderEmail,
+} from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
+
+import { findAuditEvents, recordListItemEvent } from "server/models/audit";
+import type { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import { updateIsAnnualReview } from "server/models/listItem";
 
 async function processPostEmailsForList(
   list: List,
@@ -244,7 +249,7 @@ export async function updateIsAnnualReviewForListItems(
 }
 
 export async function processAnnualReview(): Promise<void> {
-  const listResult = await findListsWithCurrentAnnualReview();
+  const listResult = await findListsWithCurrentAnnualReview(logger);
 
   // validate list results
   if (!listResult.result?.length) {

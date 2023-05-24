@@ -1,10 +1,10 @@
-import {
+import type {
   Audit,
   ListAnnualReviewPostReminderType,
   ListEventJsonData,
   ListItemAnnualReviewProviderReminderType,
-} from "server/models/types";
-import { logger } from "server/services/logger";
+} from "shared/types";
+import { logger } from "scheduler/logger";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
@@ -18,7 +18,7 @@ export function isEmailSentBefore(
   audit: Audit | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {
-  if (!audit || !audit.jsonData) {
+  if (!audit?.jsonData) {
     return false;
   }
   const subsequentEmailsForReminderType = {
