@@ -1,4 +1,4 @@
-import { recordListItemEvent } from "../audit";
+import { recordListItemEvent } from "../../../shared/audit";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { AuditEvent } from "@prisma/client";
 

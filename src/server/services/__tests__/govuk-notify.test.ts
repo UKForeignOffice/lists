@@ -1,6 +1,8 @@
 import { NotifyClient } from "notifications-node-client";
-import * as GovUKNotify from "../govuk-notify";
-import { logger } from "server/services/logger";
+import { getNotifyClient } from "../../../shared/getNotifyClient";
+import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "../../../scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
+import { sendAuthenticationEmail, sendApplicationConfirmationEmail, sendEditDetailsEmail, sendDataPublishedEmail } from "../../../server/services/govuk-notify";
+import { logger } from "../../../server/services/logger";
 import { NOTIFY } from "../../config";
 
 const {
@@ -96,7 +98,7 @@ describe("GOVUK Notify service:", () => {
     test("it throws when Server config variable NOTIFY.apiKey is missing", () => {
       mockNotify.apiKey = "";
 
-      expect(() => GovUKNotify.getNotifyClient()).toThrowError(
+      expect(() => getNotifyClient()).toThrowError(
         "Server config variable NOTIFY.apiKey is missing"
       );
 
@@ -106,7 +108,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendAuthenticationEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -115,7 +117,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
+      const result = await sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -133,7 +135,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@google.com";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
+      const result = await sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -143,7 +145,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -151,7 +153,7 @@ describe("GOVUK Notify service:", () => {
       const emailAddress = "testemail@gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
-      const result = await GovUKNotify.sendAuthenticationEmail(
+      const result = await sendAuthenticationEmail(
         emailAddress,
         authenticationLink
       );
@@ -165,7 +167,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendApplicationConfirmationEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -177,7 +179,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Italy";
       const type = "lawyers";
 
-      const result = await GovUKNotify.sendApplicationConfirmationEmail(
+      const result = await sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
         type,
@@ -201,7 +203,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -212,7 +214,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Italy";
       const type = "lawyers";
 
-      const result = await GovUKNotify.sendApplicationConfirmationEmail(
+      const result = await sendApplicationConfirmationEmail(
         contactName,
         emailAddress,
         type,
@@ -229,7 +231,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendDataPublishedEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -242,7 +244,7 @@ describe("GOVUK Notify service:", () => {
       const searchLink =
         "http://localhost:3000/find?serviceType=covidTestProviders";
 
-      const result = await GovUKNotify.sendDataPublishedEmail(
+      const result = await sendDataPublishedEmail(
         contactName,
         emailAddress,
         type,
@@ -268,7 +270,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -279,7 +281,7 @@ describe("GOVUK Notify service:", () => {
       const country = "Germany";
       const searchLink = "http://localhost:3000/find?serviceType=lawyers";
 
-      const result = await GovUKNotify.sendDataPublishedEmail(
+      const result = await sendDataPublishedEmail(
         contactName,
         emailAddress,
         type,
@@ -296,7 +298,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendRequestEditsEmail", () => {
     test("notify.sendEmail command is correct", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -309,7 +311,7 @@ describe("GOVUK Notify service:", () => {
       const changeLink =
         "http://localhost:3001/session/TOKEN-ABC123";
 
-      const { result } = await GovUKNotify.sendEditDetailsEmail(
+      const { result } = await sendEditDetailsEmail(
         contactName,
         emailAddress,
         typePlural,
@@ -334,7 +336,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -346,7 +348,7 @@ describe("GOVUK Notify service:", () => {
       const changeLink =
         "http://localhost:3001/session/TOKEN-ABC123";
 
-      const result = await GovUKNotify.sendEditDetailsEmail(
+      const result = await sendEditDetailsEmail(
         contactName,
         emailAddress,
         typePlural,
@@ -363,7 +365,7 @@ describe("GOVUK Notify service:", () => {
 
   describe("sendAnnualReviewPostEmail", () => {
     test("notify.sendEmail command is correct for POST_ONE_MONTH milestone", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -374,7 +376,7 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+      const { result } = await sendAnnualReviewPostEmail(
         "POST_ONE_MONTH",
         emailAddress,
         typePlural,
@@ -398,7 +400,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("notify.sendEmail command is correct for POST_ONE_WEEK milestone", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -409,7 +411,7 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+      const { result } = await sendAnnualReviewPostEmail(
         "POST_ONE_WEEK",
         emailAddress,
         typePlural,
@@ -433,7 +435,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("notify.sendEmail command is correct for POST_ONE_DAY milestone", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -444,7 +446,7 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+      const { result } = await sendAnnualReviewPostEmail(
         "POST_ONE_DAY",
         emailAddress,
         typePlural,
@@ -468,7 +470,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("notify.sendEmail command is correct for START milestone", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -479,7 +481,7 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await GovUKNotify.sendAnnualReviewPostEmail(
+      const { result } = await sendAnnualReviewPostEmail(
         "START",
         emailAddress,
         typePlural,
@@ -503,7 +505,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -513,7 +515,7 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const result = await GovUKNotify.sendAnnualReviewPostEmail(
+      const result = await sendAnnualReviewPostEmail(
         "POST_ONE_MONTH",
         emailAddress,
         typePlural,
@@ -531,7 +533,7 @@ describe("GOVUK Notify service:", () => {
   describe("sendAnnualReviewProviderEmail", () => {
 
     test("notify.sendEmail command is correct for START milestone", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
         statusText: "Created",
@@ -544,7 +546,7 @@ describe("GOVUK Notify service:", () => {
       const deletionDate = "01-Mar-2023";
       const changeLink = "http://localhost:3000/annualReview/check/TOKENABC123";
 
-      const { result } = await GovUKNotify.sendAnnualReviewProviderEmail(
+      const { result } = await sendAnnualReviewProviderEmail(
         emailAddress,
         typePlural,
         country,
@@ -570,7 +572,7 @@ describe("GOVUK Notify service:", () => {
     });
 
     test("it returns false when sendEmail rejects", async () => {
-      const notifyClient = GovUKNotify.getNotifyClient();
+      const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
@@ -582,7 +584,7 @@ describe("GOVUK Notify service:", () => {
       const deletionDate = "01-Mar-2023";
       const changeLink = "http://localhost:3000/annualReview/check/TOKENABC123";
 
-      const result = await GovUKNotify.sendAnnualReviewProviderEmail(
+      const result = await sendAnnualReviewProviderEmail(
         emailAddress,
         typePlural,
         country,
