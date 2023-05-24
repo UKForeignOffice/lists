@@ -1,4 +1,4 @@
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
 export async function unpublishListItems(ids: number[], reference?: string) {

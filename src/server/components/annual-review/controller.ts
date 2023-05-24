@@ -8,7 +8,7 @@ import { findListItemByReference } from "server/models/listItem/listItem";
 import { getDetailsViewModel } from "server/components/dashboard/listsItems/getViewModel";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List, ListJsonData } from "server/models/types";

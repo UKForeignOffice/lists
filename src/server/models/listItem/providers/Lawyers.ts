@@ -1,7 +1,7 @@
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
 export async function findPublishedLawyersPerCountry(props: {

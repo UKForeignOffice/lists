@@ -1,5 +1,5 @@
 import {SendEmailResponse} from "notifications-node-client";
-import {prisma} from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";
 import {EVENTS} from "server/models/listItem/listItemEvent";
 
 export async function addReminderEvent(

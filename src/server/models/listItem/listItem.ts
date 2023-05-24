@@ -8,7 +8,7 @@ import { recordListItemEvent } from "server/models/audit";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
 import pgescape from "pg-escape";
-import { prisma } from "../db/prisma-client";
+import { prisma } from "shared/prisma";
 import { logger } from "server/services/logger";
 import { AuditEvent, ListItem as PrismaListItem, ListItemEvent, Prisma, Status } from "@prisma/client";
 import { merge } from "lodash";

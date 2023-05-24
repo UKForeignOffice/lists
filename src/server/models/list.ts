@@ -2,10 +2,10 @@ import { compact, toLower, trim } from "lodash";
 import { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { prisma } from "./db/prisma-client";
+import { prisma } from "shared/prisma";
 
-import type { CountryName, CurrentAnnualReview, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
-import { subMonths } from "date-fns";
+import type { CountryName, List, ListCreateInput, ListUpdateInput, ServiceType } from "./types";
+import type { CurrentAnnualReview } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -136,32 +136,4 @@ export async function updateAnnualReviewDate(listId: string, nextAnnualReviewSta
       nextAnnualReviewStartDate,
     },
   });
-}
-
-export async function updateListForAnnualReview(
-  list: List,
-  listData: {
-    currentAnnualReview?: CurrentAnnualReview;
-  }
-): Promise<Result<List>> {
-  try {
-    const data: ListUpdateInput = {
-      jsonData: {
-        ...list.jsonData,
-        currentAnnualReview: listData.currentAnnualReview,
-      },
-    };
-
-    const result = (await prisma.list.update({
-      where: {
-        id: list.id,
-      },
-      data,
-    })) as List;
-    return { result };
-  } catch (error) {
-    const errorMessage = `Unable to update list for annual review: ${(error as Error).message}`;
-    logger.error(errorMessage);
-    return { error: new Error(errorMessage) };
-  }
 }

@@ -2,7 +2,7 @@ import { logger } from "server/services/logger";
 
 import type { NextFunction, Request } from "express";
 import { HttpException } from "server/middlewares/error-handlers";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import { ListItem, ServiceType, User } from "server/models/types";
 import { recordListItemEvent } from "server/models/audit";

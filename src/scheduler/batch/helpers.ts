@@ -1,5 +1,5 @@
 import { addDays, startOfDay, subDays } from "date-fns";
-import { CurrentAnnualReview } from "server/models/types";
+import type { CurrentAnnualReview } from "shared/types";
 import crypto from "crypto";
 
 export const schedulerMilestoneDays = {

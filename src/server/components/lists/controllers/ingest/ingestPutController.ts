@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { recordListItemEvent } from "server/models/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";

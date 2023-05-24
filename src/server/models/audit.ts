@@ -1,4 +1,4 @@
-import { prisma } from "./db/prisma-client";
+import { prisma } from "shared/prisma";
 import { AuditEvent } from "@prisma/client";
 
 import {
@@ -67,4 +67,3 @@ export async function findAuditEvents(
     return { error: new Error(message) };
   }
 }
-

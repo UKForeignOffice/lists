@@ -1,34 +1,7 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
-import { isLocalHost } from "server/config";
 
-const logLevel: Prisma.LogDefinition[] = [
-  {
-    emit: "event",
-    level: "error",
-  },
-  {
-    emit: "event",
-    level: "warn",
-  },
-];
-
-if (isLocalHost) {
-  logLevel.push(
-    {
-      emit: "event",
-      level: "query",
-    },
-    {
-      emit: "event",
-      level: "info",
-    }
-  );
-}
-
-export const prisma = new PrismaClient({
-  log: logLevel,
-});
+import {prisma} from "shared/prisma";
 
 prisma.$connect().catch((error) => {
   logger.error(`Prisma Connect Error ${error.message}`);

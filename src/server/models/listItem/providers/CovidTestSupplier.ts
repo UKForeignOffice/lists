@@ -3,7 +3,7 @@
 import { LawyerListItemGetObject, ServiceType } from "server/models/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import pgescape from "pg-escape";
 import { fetchPublishedListItemQuery } from "./helpers";
 

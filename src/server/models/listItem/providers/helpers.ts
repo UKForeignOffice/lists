@@ -2,7 +2,7 @@ import { Address, CountryName, ListItem, Point, ServiceType } from "server/model
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";

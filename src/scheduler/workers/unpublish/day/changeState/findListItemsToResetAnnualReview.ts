@@ -1,4 +1,4 @@
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "shared/prisma";;
 import { schedulerLogger } from "scheduler/logger";
 import { List } from "@prisma/client";
 
