@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import { recordListItemEvent } from "shared/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { ListJsonData, ServiceType } from "shared/types";
+import { ListJsonData, ServiceType } from "server/models/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";

@@ -1,6 +1,6 @@
 import * as location from "server/services/location";
 import * as listItem from "./../listItem";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 
 jest.mock("../../db/prisma-client");
 

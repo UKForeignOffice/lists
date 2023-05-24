@@ -1,6 +1,6 @@
 import type { List, User } from "server/models/types";
 import { UserRoles } from "server/models/types";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import { logger } from "server/services/logger";
 import type { Prisma } from "@prisma/client";
 

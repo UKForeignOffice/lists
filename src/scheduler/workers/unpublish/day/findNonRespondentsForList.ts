@@ -1,4 +1,4 @@
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import { schedulerLogger } from "scheduler/logger";
 import { List, Prisma } from "@prisma/client";
 import { ListJsonData } from "server/models/types";

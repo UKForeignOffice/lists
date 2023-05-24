@@ -1,5 +1,5 @@
 import { startOfToday } from "date-fns";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 
 export async function findListsInAnnualReview() {
   const today = startOfToday().toISOString();

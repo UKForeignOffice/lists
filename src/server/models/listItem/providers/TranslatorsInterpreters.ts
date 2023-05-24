@@ -3,7 +3,7 @@ import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
-import { prisma } from "shared/prisma";;
+import { prisma } from "shared/prisma";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
 export async function findPublishedTranslatorsInterpretersPerCountry(props: {
