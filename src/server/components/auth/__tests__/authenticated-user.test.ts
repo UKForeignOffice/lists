@@ -1,6 +1,6 @@
 import AuthenticatedUser from "../authenticated-user";
 import { prisma } from "../../../models/db/__mocks__/prisma-client";
-jest.mock("./../../../models/db/prisma-client");
+jest.mock("../../../../shared/prisma");
 
 let user;
 let administrator;
