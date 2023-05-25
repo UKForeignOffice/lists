@@ -67,7 +67,8 @@ async function processPostEmailsForList(
       reminderType,
     },
     AuditEvent.REMINDER,
-    "list"
+    "list",
+    "scheduler"
   );
 }
 
@@ -115,7 +116,8 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
             reminderType: "sendStartedProviderEmail",
           },
           AuditEvent.REMINDER,
-          "listItem"
+          "listItem",
+          "scheduler"
         );
       }
     }
@@ -277,6 +279,7 @@ export async function processAnnualReview(): Promise<void> {
   }
   const { result: listItems } = listItemsResult;
   for (const list of listsWithCurrentAnnualReview) {
+    // @ts-ignore
     const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
     await processList(list, listItemsForList);
   }

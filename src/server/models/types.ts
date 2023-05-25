@@ -50,9 +50,7 @@ export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
   jsonData: ListJsonData;
 }
 
-export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
-  jsonData: ListJsonData;
-}
+export type ListUpdateInput = SharedTypes.ListUpdateInput;
 
 export interface BaseListItemGetObject extends PrismaClient.ListItem {
   address: {

@@ -1,4 +1,4 @@
-import { prisma } from "shared/prisma";
+import { prisma } from "scheduler/prismaClient";
 import { EVENTS } from "shared/listItemEvent";
 
 export async function unpublishListItems(ids: number[], reference?: string) {

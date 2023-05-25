@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { EventJsonData, ListItem, User } from "server/models/types";
 import { logger } from "server/services/logger";
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";

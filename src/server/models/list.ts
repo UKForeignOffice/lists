@@ -2,7 +2,7 @@ import { compact, toLower, trim } from "lodash";
 import { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 
 import type { CountryName, List, ListCreateInput, ListUpdateInput } from "./types";
 import type { ServiceType } from "shared/types";

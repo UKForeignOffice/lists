@@ -85,3 +85,7 @@ export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
   users?: string[];
   currentAnnualReview?: CurrentAnnualReview;
 }
+
+export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
+  jsonData: ListJsonData;
+}

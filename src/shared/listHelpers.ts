@@ -2,9 +2,14 @@ import { subMonths } from "date-fns";
 import { Status } from "@prisma/client";
 import type { Prisma, ListItemEvent, AuditEvent } from "@prisma/client";
 import type { Logger } from "winston";
-import { prisma } from "shared/prisma";
-import type { List, CurrentAnnualReview, ListItemWithHistory, AuditListItemEventName } from "shared/types";
-import type { ListUpdateInput } from "server/models/types";
+import { prisma } from "scheduler/prismaClient";
+import type {
+  List,
+  CurrentAnnualReview,
+  ListItemWithHistory,
+  AuditListItemEventName,
+  ListUpdateInput,
+} from "shared/types";
 
 export async function findListItems(options: {
   listIds?: number[];

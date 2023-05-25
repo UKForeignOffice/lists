@@ -1,4 +1,4 @@
-import { prisma } from "shared/prisma";
+import { prisma } from "scheduler/prismaClient";
 import { AuditEvent, List } from "@prisma/client";
 import { ListJsonData } from "shared/types";
 import { addYears } from "date-fns";

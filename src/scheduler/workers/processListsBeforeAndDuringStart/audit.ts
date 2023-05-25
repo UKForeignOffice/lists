@@ -1,4 +1,4 @@
-import { prisma } from "shared/prisma";
+import { prisma } from "scheduler/prismaClient";
 import type { AuditEvent } from "@prisma/client";
 
 export async function findAuditEvents(

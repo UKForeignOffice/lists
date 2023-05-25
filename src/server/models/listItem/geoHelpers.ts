@@ -1,6 +1,6 @@
 // Helpers
 import { Country, Point } from "server/models/types";
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { rawInsertGeoLocation } from "server/models/helpers";

@@ -2,7 +2,7 @@ import { ListIndexRes } from "server/components/dashboard/listsItems/types";
 import { List, ListJsonData, ScheduledProcessKeyDates } from "server/models/types";
 import { differenceInWeeks, eachWeekOfInterval, parseISO, startOfDay, startOfToday } from "date-fns";
 
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 import { Request } from "express";
 import { logger } from "server/services/logger";
 import { createKeyDatesFromISODate } from "server/components/dashboard/annualReview/helpers.keyDates";

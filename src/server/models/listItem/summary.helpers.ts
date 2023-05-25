@@ -4,7 +4,7 @@ import type { ActivityStatusViewModel, AnnualReviewBanner } from "server/models/
 import * as DateFns from "date-fns";
 import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 
 /**
  * Additions to Status type to help with rendering

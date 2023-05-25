@@ -1,4 +1,4 @@
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent, Prisma } from "@prisma/client";
 import { Event, EventCreateInput, EventJsonData } from "./types";
 import { logger } from "server/services/logger";

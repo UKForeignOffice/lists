@@ -1,7 +1,7 @@
 import { addDays, parseISO, subDays } from "date-fns";
 import { ScheduledProcessKeyDates } from "server/models/types";
 import { INTERVALS_IN_DAYS } from "server/config";
-import { prisma } from "shared/prisma";
+import { prisma } from "server/models/db/prisma-client";
 import { ListWithJsonData } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
 
