@@ -272,7 +272,7 @@ export async function processAnnualReview(): Promise<void> {
     return;
   }
   // get list items eligible for annual review for all lists
-  const listItemsResult = await findListItems({ ...listItemIds, logger });
+  const listItemsResult = await findListItems({ listItemIds, logger });
   if (listItemsResult.error ?? !listItemsResult.result.length) {
     logger.info(`No list items found for any of the list Ids ${listIds}`);
     return;
