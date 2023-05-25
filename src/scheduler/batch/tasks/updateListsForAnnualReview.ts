@@ -1,4 +1,4 @@
-import { findListByAnnualReviewDate, updateListForAnnualReview } from "shared/listHelpers";
+import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/dbHelpers";
 import type { List } from "server/models/types";
 import { logger } from "scheduler/logger";
 import { findListItems } from "server/models/listItem";

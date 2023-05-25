@@ -2,7 +2,7 @@ import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date
 import { lowerCase, startCase } from "lodash";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 
-import { findListsWithCurrentAnnualReview, findListItems, updateIsAnnualReview } from "shared/listHelpers";
+import { findListsWithCurrentAnnualReview, findListItems, updateIsAnnualReview } from "server/dbHelpers";
 import { logger } from "scheduler/logger";
 import type {
   Audit,
