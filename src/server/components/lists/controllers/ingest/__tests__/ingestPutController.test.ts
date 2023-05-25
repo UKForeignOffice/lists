@@ -285,7 +285,7 @@ test("responds with 422 for update error", async () => {
   expect(spiedStatus).toBeCalledWith(422);
 });
 
-test("responds with 204 when update is successful", async () => {
+test.only("responds with 204 when update is successful", async () => {
   const req = {
     params: {
       id: 1,

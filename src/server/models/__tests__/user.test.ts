@@ -2,8 +2,7 @@ import { omit, pick } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { UserRoles } from "../types";
 import { findUserByEmail, createUser, updateUser, findUsers } from "../user";
-
-jest.mock("../../db/prisma-client");
+jest.mock("../../../shared/prisma");
 
 describe("User Model:", () => {
   const sampleUser: any = {

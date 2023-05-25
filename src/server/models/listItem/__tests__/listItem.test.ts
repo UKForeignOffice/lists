@@ -19,7 +19,7 @@ import {
 import { deserialise, listItemCreateInputFromWebhook } from "../listItemCreateInputFromWebhook";
 import { WebhookData } from "../../../components/formRunner";
 
-jest.mock("../../db/prisma-client");
+jest.mock("../../../../shared/prisma");
 
 const lawyerWebhookData = {
   questions: [

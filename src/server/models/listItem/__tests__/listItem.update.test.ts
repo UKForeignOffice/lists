@@ -2,7 +2,7 @@ import * as location from "../../../../server/services/location";
 import * as listItem from "./../listItem";
 import { prisma } from "../../../models/db/__mocks__/prisma-client";
 
-jest.mock("../../db/prisma-client");
+jest.mock("../../../../shared/prisma");
 
 test("throws when the requested id does not exist", async () => {
   // @ts-expect-error

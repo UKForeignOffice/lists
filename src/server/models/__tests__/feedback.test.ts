@@ -1,7 +1,7 @@
 import { prisma } from "../db/__mocks__/prisma-client";
 import { createFeedback, findFeedbackByType } from "../feedback";
 
-jest.mock("../db/prisma-client");
+jest.mock("../../../shared/prisma");
 
 describe("Feedback Model:", () => {
   let questionsAndAnswers: any;
