@@ -1,4 +1,3 @@
-import { logger } from "scheduler/logger";
-import addLogsToPrismaClient from "shared/prisma";
+import { PrismaClient } from "@prisma/client";
 
-export const prisma = addLogsToPrismaClient(logger);
+export const prisma = new PrismaClient();

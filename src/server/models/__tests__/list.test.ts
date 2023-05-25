@@ -5,7 +5,7 @@ import { List } from "../types";
 import { ServiceType } from "../../../shared/types";
 import { logger } from "../../services/logger";
 
-jest.mock("../../../shared/prisma");
+jest.mock("../db/prisma-client");
 jest.mock("server/services/logger");
 
 describe("List Model:", () => {

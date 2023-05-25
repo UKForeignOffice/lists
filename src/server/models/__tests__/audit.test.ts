@@ -2,7 +2,7 @@ import { recordListItemEvent } from "../../../shared/audit";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { AuditEvent } from "@prisma/client";
 
-jest.mock("../../../shared/prisma");
+jest.mock("../db/prisma-client");
 
 describe("Audit Model:", () => {
   const sampleAuditObject: any = {};
