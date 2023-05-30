@@ -58,7 +58,7 @@
                     id="serviceType-{{ serviceType }}"
                     name="serviceType"
                     type="radio"
-                    value="{{ serviceType }}"
+                    value="{{ 'translatorsInterpreters' if serviceType === 'translatorsAndInterpreters' else serviceType }}"
                     {{-" checked" if list.type === serviceType }}
                   >
                   <label class="govuk-label govuk-radios__label" for="serviceType-{{ serviceType }}">
