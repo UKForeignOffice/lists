@@ -225,9 +225,7 @@ export async function updateIsAnnualReviewForListItems(
     list,
     listItems,
     ListItemEvent.ANNUAL_REVIEW_STARTED,
-    "startAnnualReview",
-    AuditEvent.REMINDER,
-    logger
+    "startAnnualReview"
   );
 
   if (updatedListItems.error) {

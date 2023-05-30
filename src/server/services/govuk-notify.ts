@@ -4,10 +4,7 @@ import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
-
-interface NotifyResult {
-  statusText: string;
-}
+import type { NotifyResult } from "shared/types";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();

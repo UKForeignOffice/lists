@@ -89,3 +89,7 @@ export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
 export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
   jsonData: ListJsonData;
 }
+
+export interface NotifyResult {
+  statusText: string;
+}

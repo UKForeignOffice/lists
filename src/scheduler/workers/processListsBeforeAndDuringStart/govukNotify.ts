@@ -2,6 +2,7 @@ import * as config from "server/config";
 import { logger } from "scheduler/logger";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { MilestoneTillAnnualReview } from "scheduler/batch/helpers";
+import type { NotifyResult } from "shared/types";
 
 export async function sendAnnualReviewProviderEmail(
   emailAddress: string,
@@ -29,7 +30,7 @@ export async function sendAnnualReviewProviderEmail(
         config.NOTIFY.templates.annualReviewNotices.providerStart
       }, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    await getNotifyClient().sendEmail(config.NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, { personalisation });
+    await getNotifyClient().sendEmail(config.NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, { personalisation, reference: "" });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
     logger.error(message);
@@ -70,8 +71,8 @@ export async function sendAnnualReviewPostEmail(
         personalisation
       )}`
     );
-    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation });
-    return { result: result.statusText === "Created" };
+    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference: "" });
+    return { result: (result as NotifyResult).statusText === "Created" };
   } catch (error) {
     const message = `Unable to send annual review post email: ${error.message}`;
     logger.error(message);
