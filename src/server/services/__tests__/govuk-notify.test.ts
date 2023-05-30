@@ -144,7 +144,7 @@ describe("GOVUK Notify service:", () => {
       expect(notifyClient.sendEmail).not.toHaveBeenCalled();
     });
 
-    test.skip("it returns false when sendEmail rejects", async () => {
+    test("it returns false when sendEmail rejects", async () => {
       const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
@@ -202,7 +202,7 @@ describe("GOVUK Notify service:", () => {
       );
     });
 
-    test.skip("it returns false when sendEmail rejects", async () => {
+    test("it returns false when sendEmail rejects", async () => {
       const notifyClient = getNotifyClient();
       const error = new Error("sendEmail error message");
 
@@ -524,9 +524,6 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result.error?.message).toBe("Unable to send annual review post email: sendEmail error message");
-      // expect(logger.error).toHaveBeenCalledWith(
-      //   "Unable to send annual review post email: sendEmail error message"
-      // );
     });
   });
 
@@ -594,9 +591,6 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result.error?.message).toBe("Unable to send annual review provider email: sendEmail error message");
-      // expect(logger.error).toHaveBeenCalledWith(
-      //   "Unable to send annual review provider email: sendEmail error message"
-      // );
     });
   });
 });

@@ -1,8 +1,9 @@
 import { subMonths } from "date-fns";
-import { Status } from "@prisma/client";
-import type { Prisma, ListItemEvent, AuditEvent } from "@prisma/client";
-import type { Logger } from "winston";
 import { prisma } from "scheduler/prismaClient";
+import { logger } from "scheduler/logger";
+import { Status } from "@prisma/client";
+
+import type { Prisma, ListItemEvent } from "@prisma/client";
 import type {
   List,
   CurrentAnnualReview,
@@ -16,10 +17,9 @@ export async function findListItems(options: {
   listItemIds?: number[];
   statuses?: Status[];
   isAnnualReview?: boolean;
-  logger: Logger;
 }) {
   try {
-    const { listIds, listItemIds, statuses, isAnnualReview, logger } = options;
+    const { listIds, listItemIds, statuses, isAnnualReview } = options;
     if (!listIds?.length && !listItemIds?.length) {
       const message = "List ids or list item ids must be specified to find list items";
       logger.error(message);
@@ -50,8 +50,30 @@ export async function findListItems(options: {
     });
     return { result };
   } catch (error) {
-    options.logger.error(`findListItemsForLists Error ${(error as Error).stack}`);
+    logger.error(`findListItemsForLists Error ${(error as Error).stack}`);
     return { error: Error("Unable to get list items") };
+  }
+}
+
+export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>> {
+  try {
+    const result = (await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ["currentAnnualReview", "eligibleListItems"],
+          not: "",
+        },
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+    return { result };
+  } catch (error) {
+    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
+    return { error: new Error("Unable to get lists in annual review") };
   }
 }
 
@@ -59,8 +81,7 @@ export async function updateListForAnnualReview(
   list: List,
   listData: {
     currentAnnualReview?: CurrentAnnualReview;
-  },
-  logger: Logger
+  }
 ): Promise<Result<List>> {
   try {
     const data: ListUpdateInput = {
@@ -84,7 +105,7 @@ export async function updateListForAnnualReview(
   }
 }
 
-export async function findListByAnnualReviewDate(annualReviewStartDate: Date, logger: Logger): Promise<Result<List[]>> {
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date): Promise<Result<List[]>> {
   try {
     logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
 
@@ -127,28 +148,6 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date, lo
   }
 }
 
-export async function findListsWithCurrentAnnualReview(logger: Logger): Promise<Result<List[]>> {
-  try {
-    const result = (await prisma.list.findMany({
-      where: {
-        jsonData: {
-          path: ["currentAnnualReview", "eligibleListItems"],
-          not: "",
-        },
-      },
-      include: {
-        country: true,
-      },
-    })) as List[];
-
-    logger.debug(`direct from query, found [${result.length}] lists`);
-    return { result };
-  } catch (error) {
-    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
-    return { error: new Error("Unable to get lists in annual review") };
-  }
-}
-
 /**
  * Updates the isAnnualReview flag for list items and adds a ListItemEvent record.
  * @param listItems
@@ -160,9 +159,7 @@ export async function updateIsAnnualReview(
   list: List,
   listItems: ListItemWithHistory[],
   listItemEvent: ListItemEvent,
-  eventName: AuditListItemEventName,
-  auditEvent: AuditEvent,
-  logger: Logger
+  eventName: AuditListItemEventName
 ): Promise<Result<ListItemWithHistory[]>> {
   const updatedListItems: ListItemWithHistory[] = [];
 

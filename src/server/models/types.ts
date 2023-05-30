@@ -42,7 +42,7 @@ export interface ScheduledProcessKeyDates extends JsonObject {
   unpublished: UnpublishedKeyDates;
 }
 
-export type CurrentAnnualReview = ListItem;
+export type CurrentAnnualReview = SharedTypes.CurrentAnnualReview;
 
 export type ListJsonData = SharedTypes.ListJsonData;
 

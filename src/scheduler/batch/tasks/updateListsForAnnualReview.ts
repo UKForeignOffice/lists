@@ -1,7 +1,6 @@
-import { findListByAnnualReviewDate, updateListForAnnualReview } from "server/dbHelpers";
+import { findListByAnnualReviewDate, updateListForAnnualReview, findListItems } from "scheduler/dbHelpers";
 import type { List } from "server/models/types";
 import { logger } from "scheduler/logger";
-import { findListItems } from "server/models/listItem";
 import * as helpers from "../helpers";
 import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
 import type { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
