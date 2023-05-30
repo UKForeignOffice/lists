@@ -44,6 +44,87 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
+export async function findListsByCountry(country: CountryName): Promise<List[] | undefined> {
+  try {
+    const lists = (await prisma.list.findMany({
+      where: {
+        country: {
+          name: country,
+        },
+      },
+    })) as List[];
+    return lists;
+  } catch (error) {
+    logger.error(`findListsByCountry Error: ${(error as Error).message}`);
+    return undefined;
+  }
+}
+
+export async function findListByAnnualReviewDate(annualReviewStartDate: Date): Promise<Result<List[]>> {
+  try {
+    logger.debug(`searching for lists matching date [${annualReviewStartDate}]`);
+
+    const result = (await prisma.list.findMany({
+      where: {
+        nextAnnualReviewStartDate: {
+          lte: annualReviewStartDate,
+        },
+      },
+      include: {
+        country: true,
+        items: {
+          where: {
+            history: {
+              some: {
+                type: "PUBLISHED",
+                time: {
+                  lte: subMonths(Date.now(), 1),
+                },
+              },
+            },
+          },
+          include: {
+            history: {
+              orderBy: {
+                time: "desc",
+              },
+            },
+          },
+        },
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+
+    return { result };
+  } catch (error) {
+    logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
+    return { error: Error("Unable to get lists") };
+  }
+}
+
+export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>> {
+  try {
+    const result = (await prisma.list.findMany({
+      where: {
+        jsonData: {
+          path: ["currentAnnualReview", "eligibleListItems"],
+          not: "",
+        },
+      },
+      include: {
+        country: true,
+      },
+    })) as List[];
+
+    logger.debug(`direct from query, found [${result.length}] lists`);
+    return { result };
+  } catch (error) {
+    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
+    return { error: new Error("Unable to get lists in annual review") };
+  }
+}
+
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
