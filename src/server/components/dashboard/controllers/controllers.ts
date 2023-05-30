@@ -19,8 +19,6 @@ import { UserRoles } from "server/models/types";
 import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 
-export { listItemsIndexController as listsItemsController } from "../listsItems/listItemsIndexController";
-
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
