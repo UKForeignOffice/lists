@@ -126,7 +126,7 @@ describe("GOVUK Notify service:", () => {
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         NOTIFY.templates.auth,
         emailAddress,
-        { personalisation: { authenticationLink } }
+        { personalisation: { authenticationLink }, reference: "" }
       );
     });
 
@@ -198,6 +198,7 @@ describe("GOVUK Notify service:", () => {
             country,
             type,
           },
+          reference: ""
         }
       );
     });
@@ -265,6 +266,7 @@ describe("GOVUK Notify service:", () => {
             type: "COVID-19 test provider",
             typePlural: "COVID-19 test providers",
           },
+          reference: ""
         }
       );
     });
@@ -331,6 +333,7 @@ describe("GOVUK Notify service:", () => {
             message,
             changeLink,
           },
+          reference: ""
         }
       );
     });
@@ -395,6 +398,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
+          reference: ""
         },
       );
     });
@@ -430,6 +434,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
+          reference: ""
         },
       );
     });
@@ -465,6 +470,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
+          reference: ""
         },
       );
     });
@@ -500,6 +506,7 @@ describe("GOVUK Notify service:", () => {
             annualReviewDate,
             typePluralCapitalised: typePlural.toUpperCase(),
           },
+          reference: ""
         },
       );
     });
@@ -564,6 +571,7 @@ describe("GOVUK Notify service:", () => {
             deletionDate,
             changeLink,
           },
+          reference: ""
         },
       );
     });
