@@ -5,6 +5,10 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 
+interface NotifyResult {
+  statusText: string;
+}
+
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
   const isGovEmailAddress = isGovUKEmailAddress(emailAddress);
@@ -18,9 +22,10 @@ export async function sendAuthenticationEmail(email: string, authenticationLink:
       personalisation: {
         authenticationLink,
       },
+      reference: "",
     });
 
-    return result.statusText === "Created";
+    return (result as NotifyResult).statusText === "Created";
   } catch (error) {
     logger.error(`sendAuthenticationEmail Error: ${error.message}`);
     return false;
@@ -35,16 +40,17 @@ export async function sendApplicationConfirmationEmail(
   confirmationLink: string
 ): Promise<boolean> {
   try {
-    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.emailConfirmation, emailAddress, {
+    const result = await getNotifyClient().sendEmail(NOTIFY.templates.emailConfirmation, emailAddress, {
       personalisation: {
         confirmationLink,
         contactName,
         country,
         type,
       },
+      reference: "",
     });
 
-    return statusText === "Created";
+    return (result as NotifyResult).statusText === "Created";
   } catch (error) {
     logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
     return false;
@@ -60,7 +66,7 @@ export async function sendDataPublishedEmail(
 ): Promise<boolean> {
   try {
     const type = pluralize.singular(typePlural);
-    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.published, emailAddress, {
+    const result = await getNotifyClient().sendEmail(NOTIFY.templates.published, emailAddress, {
       personalisation: {
         country,
         contactName,
@@ -68,9 +74,10 @@ export async function sendDataPublishedEmail(
         type,
         typePlural,
       },
+      reference: "",
     });
 
-    return statusText === "Created";
+    return (result as NotifyResult).statusText === "Created";
   } catch (error) {
     logger.error(`sendDataPublishedEmail Error: ${error.message}`);
     return false;
@@ -99,7 +106,7 @@ export async function sendEditDetailsEmail(
 
     message = message.replace(/(?:\r\n)/g, "\n^");
 
-    const { statusText } = await getNotifyClient().sendEmail(NOTIFY.templates.edit, emailAddress, {
+    const result = await getNotifyClient().sendEmail(NOTIFY.templates.edit, emailAddress, {
       personalisation: {
         typeSingular,
         typePlural,
@@ -107,8 +114,10 @@ export async function sendEditDetailsEmail(
         message,
         changeLink,
       },
+      reference: "",
     });
-    return { result: statusText === "Created" };
+
+    return { result: (result as NotifyResult).statusText === "Created" };
   } catch (error) {
     const message = `Unable to send change request email: ${error.message}`;
     logger.error(message);
@@ -134,7 +143,7 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       annualReviewDate: options.annualReviewDate,
     };
     logger.info(`personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${options.emailAddress}`);
-    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation });
+    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation, reference: "", });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
   }
@@ -162,6 +171,7 @@ export async function sendAnnualReviewCompletedEmail(
     );
     await getNotifyClient().sendEmail(NOTIFY.templates.annualReviewNotices.annualReviewCompleted, emailAddress, {
       personalisation,
+      reference: "",
     });
   } catch (error) {
     logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
