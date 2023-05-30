@@ -11,8 +11,9 @@ export function getNotifyClient() {
 
   if (notifyClient === undefined) {
     const requiredTemplateIds = ["NOTIFY.apiKey"];
-    notifyClient = new NotifyClient(config.NOTIFY.apiKey);
     requiredTemplateIds.forEach(throwIfConfigVarIsUndefined);
+
+    notifyClient = new NotifyClient(config.NOTIFY.apiKey);
   }
 
   return notifyClient;
