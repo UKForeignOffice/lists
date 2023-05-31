@@ -8,7 +8,7 @@ import {
   getParameterValue,
   queryStringFromParams,
   formatCountryParam,
-  getLinksOfOtherServices,
+  getLinksOfRelatedLists,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -68,7 +68,7 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
     searchResults = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
   }
   const results = print === "yes" ? allRows : searchResults;
-  const relatedLinks = await getLinksOfOtherServices(country as CountryName, serviceType!);
+  const relatedLinks = await getLinksOfRelatedLists(country as CountryName, serviceType!);
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

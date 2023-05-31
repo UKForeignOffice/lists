@@ -8,7 +8,7 @@ import {
   getCountryLawyerRedirectLink,
   createConfirmationLink,
   createListSearchBaseLink,
-  getLinksOfOtherServices
+  getLinksOfRelatedLists
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { assign, get } from "lodash";
@@ -242,7 +242,7 @@ describe("Lawyers List:", () => {
 });
 
 
-describe('getLinksOfOtherServices', () => {
+describe('getLinksOfRelatedLists', () => {
   const mockLists = [
     {
       id: 1,
@@ -287,7 +287,7 @@ describe('getLinksOfOtherServices', () => {
     ];
 
     spy.mockResolvedValue(mockLists);
-    const links = await getLinksOfOtherServices(country, serviceType);
+    const links = await getLinksOfRelatedLists(country, serviceType);
 
     expect(links.length).toBeGreaterThan(0);
     expect(links).toEqual(expectedLinks);
@@ -298,7 +298,7 @@ describe('getLinksOfOtherServices', () => {
     const serviceType = 'funeralDirectors';
 
     spy.mockResolvedValue([]);
-    const links = await getLinksOfOtherServices(country, serviceType);
+    const links = await getLinksOfRelatedLists(country, serviceType);
 
     expect(links.length).toBe(0);
     expect(links).toEqual([]);

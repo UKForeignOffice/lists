@@ -261,7 +261,7 @@ export function formatCountryParam(country: string): string {
   return countryName;
 }
 
-export async function getLinksOfOtherServices(
+export async function getLinksOfRelatedLists(
   countryName: CountryName,
   serviceType: ServiceType
 ): Promise<Array<{ name: string; href: string }>> {
