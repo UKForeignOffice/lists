@@ -8,11 +8,13 @@ import {
   getCountryLawyerRedirectLink,
   createConfirmationLink,
   createListSearchBaseLink,
+  getLinksOfOtherServices
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { assign, get } from "lodash";
 import { SERVICE_DOMAIN } from "server/config";
 import * as serverConfig from "server/config/server-config";
+import * as serverModels from "server/models/list";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {
@@ -236,5 +238,69 @@ describe("Lawyers List:", () => {
       assign(serverConfig, { isLocalHost: false });
       jest.resetModules();
     });
+  });
+});
+
+
+describe.only('getLinksOfOtherServices', () => {
+  const mockLists = [
+    {
+      id: 1,
+      type: 'funeralDirectors',
+      country: {
+        name: 'Argentina',
+      },
+    },
+    {
+      id: 2,
+      type: 'translatorsInterpreters',
+      country: {
+        name: 'Argentina',
+      },
+    },
+    {
+      id: 3,
+      type: 'lawyers',
+      country: {
+        name: 'Argentina',
+      },
+    },
+  ];
+  const spy = jest.spyOn(serverModels, 'findListsByCountry');
+
+  afterAll(() => {
+    spy.mockRestore();
+  });
+
+  test('returns an array of related link options for a given country and service type', async () => {
+    const country = 'Argentina';
+    const serviceType = 'lawyers';
+    const expectedLinks = [
+      {
+        href: '/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina',
+        name: 'Find a funeral director in Argentina',
+      },
+      {
+        href: '/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina',
+        name: 'Find a translator or interpreter in Argentina',
+      },
+    ];
+
+    spy.mockResolvedValue(mockLists);
+    const links = await getLinksOfOtherServices(country, serviceType);
+
+    expect(links.length).toBeGreaterThan(0);
+    expect(links).toEqual(expectedLinks);
+  });
+
+  it('returns an empty array if no related links are found', async () => {
+    const country = 'France';
+    const serviceType = 'funeralDirectors';
+
+    spy.mockResolvedValue([]);
+    const links = await getLinksOfOtherServices(country, serviceType);
+
+    expect(links.length).toBe(0);
+    expect(links).toEqual([]);
   });
 });
