@@ -24,13 +24,6 @@
       {% include "lists/partials/answers-box.njk" %}
     </div>
   </div>
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    {% if print === "yes" %}
-      window.onload = function() {
-      window.print();
-    }
-    {% endif %}
-  </script>
   <div class="govuk-grid-column-one-third">
     {% include "lists/partials/answers-box.njk" %}
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
