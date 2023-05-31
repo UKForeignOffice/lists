@@ -11,6 +11,7 @@ import { ensureAuthenticated } from "server/components/auth";
 import { HttpException } from "server/middlewares/error-handlers";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 import { listItemsRouter } from "./listsItems/listItemsRouter";
+import { relatedLinksRouter } from "server/components/dashboard/relatedLinks/router";
 
 export const listRouter = express.Router();
 
@@ -55,6 +56,8 @@ listRouter.post("/:listId/annual-review-date", annualReview.editDatePostControll
 
 listRouter.get("/:listId", listsEditController);
 listRouter.post("/:listId", listsEditPostController);
+
+listRouter.use("/:listId/related-links", relatedLinksRouter);
 
 listRouter.all("/:listId/*", validateAccessToList);
 
