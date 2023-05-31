@@ -1,0 +1,28 @@
+{% extends "./../dashboard.njk" %}
+{% from "input/macro.njk" import govukInput %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% set backLink = '/dashboard/lists/' + list.id  %}
+
+ {% block aside %}
+   <aside class="govuk-grid-column-one-quarter back-links__aside">
+     <div class="back-links__item">
+       <a class="govuk-link govuk-back-link" href="/dashboard/lists/{{ list.id }}">Back</a>
+     </div>
+   </aside>
+ {% endblock %}
+
+{% block dashboard %}
+  <div class="govuk-grid-row">
+    <span class="govuk-caption-xl">{{ list.country.name }}</span>
+    {% block relatedLinksBefore %}
+    {% endblock %}
+  </div>
+
+  {% block relatedLinksContent %}
+  {% endblock %}
+
+
+{% endblock %}
+

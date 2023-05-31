@@ -146,6 +146,10 @@ main.govuk-main-wrapper {
 
 .confirmation-focus-box {
   background-color: govuk-colour("light-grey");
+  &--related-links {
+    padding: govuk-spacing(4) govuk-spacing(2);
+    margin-bottom: govuk-spacing(4);
+  }
 }
 
 @media print {

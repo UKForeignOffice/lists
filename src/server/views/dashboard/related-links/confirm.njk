@@ -1,0 +1,32 @@
+{% extends "./layout.njk" %}
+
+{% block relatedLinksBefore %}
+  <h1 class="govuk-heading-xl">Check this link is correct</h1>
+{% endblock %}
+
+{% block relatedLinksContent %}
+    <div class="govuk-grid-row confirmation-focus-box confirmation-focus-box--related-links">
+      <div class="govuk-grid-column-full">
+        <p class="govuk-body">Check the:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Link works</li>
+          <li>Title is correct</li>
+        </ul>
+
+        <a href="{{ relatedLink.url }}" class="govuk-link govuk-body">{{ relatedLink.text }}</a>
+      </div>
+    </div>
+  <div class="govuk-grid-row govuk-button-group">
+    {{ govukButton({
+      text: "Continue"
+    }) }}
+
+    {{ govukButton({
+      text: "Back",
+      element: "a",
+      classes: "govuk-button--secondary",
+      href: backLink + '/related-links/' + relatedLink.relatedLinkIndex
+    }) }}
+  </div>
+
+{% endblock %}

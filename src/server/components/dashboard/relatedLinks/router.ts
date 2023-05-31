@@ -2,19 +2,24 @@ import express from "express";
 
 export const relatedLinksRouter = express.Router();
 
-relatedLinksRouter.param("/:relatedLinkIndex", (req, res, next) => {
+relatedLinksRouter.param("relatedLinkIndex", (req, res, next) => {
   const { relatedLinkIndex } = req.params;
 
   const { list } = res.locals;
   const { relatedLinks = [] } = list.jsonData;
 
-  const relatedLinkToEdit = list.jsonData.relatedLinks[relatedLinkIndex];
+  let relatedLink = {
+    relatedLinkIndex,
+    ...req.session.relatedLink,
+  };
 
-  if (!relatedLinkToEdit) {
-    next();
+  if (!req.session.relatedLink || relatedLinkIndex === "new") {
+    res.locals.relatedLink = relatedLink;
+    return next();
   }
 
-  res.locals.relatedLink = relatedLinkToEdit;
+  res.locals.relatedLink = { ...relatedLink, ...list.jsonData.relatedLinks[relatedLinkIndex] };
+  next();
 });
 
 relatedLinksRouter.use("*", (req, res, next) => {
@@ -27,7 +32,19 @@ relatedLinksRouter.get("/:relatedLinkIndex", (req, res, next) => {
 });
 
 relatedLinksRouter.post("/:relatedLinkIndex", (req, res, next) => {
-  // res.render("dashboard/related-links/edit");
+  const { text, url } = req.body;
+  const { relatedLinkIndex } = req.params;
 
-  res.redirect(req.originalUrl);
+  req.session.relatedLink = {
+    text,
+    url,
+  };
+
+  res.redirect(`${relatedLinkIndex}/confirm`);
+});
+
+relatedLinksRouter.get("/:relatedLinkIndex/confirm", (req, res, next) => {
+  res.locals.relatedLink = { ...res.locals.relatedLink, ...req.session.relatedLink };
+
+  res.render("dashboard/related-links/confirm");
 });
