@@ -32,7 +32,7 @@
     <ul class="govuk-list">
       {% for link in relatedLinks %}
         <li>
-          <a class="govuk-link" href="{{ link.href }}" target="_blank">{{ link.name }}</a>
+          <a class="govuk-link" href="{{ link.href }}" target="_blank" rel="noopener noreferrer">{{ link.name }}</a>
         </li>
       {% endfor %}
     </ul>
