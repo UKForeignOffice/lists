@@ -9,6 +9,7 @@ import {
   queryStringFromParams,
   parseListValues,
   formatCountryParam,
+  getLinksOfOtherServices,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -40,7 +41,7 @@ export async function searchLawyers(
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
-  let allRows:LawyerListItemGetObject[] = [];
+  let allRows: LawyerListItemGetObject[] = [];
   let practiceArea: string[] | undefined = [];
   try {
     practiceArea = parseListValues("practiceArea", params);
@@ -68,11 +69,9 @@ export async function searchLawyers(
     listRequestParams: params,
   });
 
-  const offset =
-    ROWS_PER_PAGE * pagination.results.currentPage -
-    ROWS_PER_PAGE;
+  const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
 
-  let searchResults:LawyerListItemGetObject[] = [];
+  let searchResults: LawyerListItemGetObject[] = [];
 
   if (allRows.length > 0) {
     searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
@@ -83,6 +82,7 @@ export async function searchLawyers(
     });
   }
   const results = print === "yes" ? allRows : searchResults;
+  const relatedLinks = await getLinksOfOtherServices(country as CountryName, serviceType!);
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
@@ -97,5 +97,6 @@ export async function searchLawyers(
     pagination,
     print,
     csrfToken: getCSRFToken(req),
+    relatedLinks,
   });
 }

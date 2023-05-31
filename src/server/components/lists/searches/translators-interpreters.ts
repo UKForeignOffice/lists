@@ -8,12 +8,13 @@ import {
   getParameterValue,
   queryStringFromParams,
   parseListValues,
+  getLinksOfOtherServices,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
-import type { TranslatorInterpreterListItemGetObject,  ServiceType, CountryName } from "server/models/types";
+import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import {
   getLanguageNames,
   cleanTranslatorInterpreterServices,
@@ -26,7 +27,6 @@ import { camelCase } from "lodash";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import type { countriesList } from "server/services/metadata";
-import { findListsByCountry } from "server/models/list";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -226,22 +226,4 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     csrfToken: getCSRFToken(req),
     relatedLinks,
   });
-}
-
-async function getLinksOfOtherServices(countryName: CountryName, serviceType: ServiceType): Promise<any> {
-  const relatedLinkOptions = {
-    lawyers: {
-      name: `Find a lawyer in ${countryName}`,
-      href: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
-    },
-  };
-  const lists = await findListsByCountry(countryName);
-
-  if (!lists) return [];
-
-  const filteredLists = lists
-    .filter((list) => list.type !== serviceType)
-    .map((list) => relatedLinkOptions[list.type as keyof typeof relatedLinkOptions]);
-
-  return filteredLists;
 }
