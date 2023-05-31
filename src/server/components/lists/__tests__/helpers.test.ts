@@ -242,7 +242,7 @@ describe("Lawyers List:", () => {
 });
 
 
-describe.only('getLinksOfOtherServices', () => {
+describe('getLinksOfOtherServices', () => {
   const mockLists = [
     {
       id: 1,
