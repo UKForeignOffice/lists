@@ -11,7 +11,7 @@ import {
 } from "./controllers/controllers";
 import { dashboardRoutes } from "./routes";
 import { csrfRequestHandler, addUrlToSession } from "server/components/cookies/helpers";
-import { listRouter } from "server/components/dashboard/listsItems/listRouter";
+import { listRouter } from "./listRouter";
 
 export const dashboardRouter = express.Router();
 
