@@ -1,0 +1,83 @@
+{% extends "./../dashboard.njk" %}
+{% from "input/macro.njk" import govukInput %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% set backLink = '/dashboard/lists/' + list.id  %}
+
+ {% block aside %}
+   <aside class="govuk-grid-column-one-quarter back-links__aside">
+     <div class="back-links__item">
+       <a class="govuk-link govuk-back-link" href="/dashboard/lists/{{ list.id }}">Back</a>
+     </div>
+   </aside>
+{% endblock %}
+
+{% block dashboard %}
+  <div class="govuk-grid-row">
+    <span class="govuk-caption-xl">{{ list.country.name }}</span>
+    <h1 class="govuk-heading-xl">Add a related link</h1>
+    <p class="govuk-body">Add links on the results page to related content on GOV.UK.</p>
+  </div>
+
+  <div class="govuk-grid-row">
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+      {% if relatedLink.text.error or relatedLink.url.error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: "The date your passport was issued must be in the past",
+            href: "title"
+          },
+          {
+            text: "Enter a postcode, like AA1 1AA",
+            href: "url"
+          }
+        ]
+      }) }}
+      {% endif %}
+
+      {{ govukInput({
+        label: {
+          text: "Page title"
+        },
+        id: "title",
+        name: "title",
+        value: relatedLink.text,
+        errorMessage: relatedLink.text.error
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "URL"
+        },
+        id: "url",
+        name: "url",
+        value: relatedLink.url,
+        errorMessage: relatedLink.url.error
+      }) }}
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+        {{ govukButton({
+          text: "Cancel",
+          element: "a",
+          classes: "govuk-button--secondary",
+          href: backLink
+        }) }}
+      </div>
+
+
+    </form>
+
+  </div>
+
+
+{% endblock %}
+
