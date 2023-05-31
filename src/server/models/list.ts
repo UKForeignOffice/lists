@@ -91,6 +91,7 @@ export async function createList(listData: {
       },
       jsonData: {
         users,
+        relatedLinks: getRelatedLinks(listData.serviceType),
         createdBy: listData.createdBy,
       },
     };
@@ -107,6 +108,74 @@ export async function createList(listData: {
     }
     throw error;
   }
+}
+
+function getRelatedLinks(serviceType: ServiceType) {
+  const lawyersLinks = [
+    {
+      url: "gov.uk/guidance/arrested-or-detained-abroad",
+      text: "Arrested or detained abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/guidance/what-to-do-after-a-british-national-dies-abroad",
+      text: "What to do after a British national dies abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/guidance/victim-of-crime-abroad",
+      text: "Victim of crime abroad",
+      eventId: "123",
+    },
+  ];
+  const funeralDirectorLinks = [
+    {
+      url: "gov.uk/guidance/what-to-do-after-a-british-national-dies-abroad",
+      text: "What to do after a British national dies abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/government/publications/international-funeral-directors-in-the-uk/list-of-uk-based-international-funeral-directors--2",
+      text: "UK-based international funeral directors",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once",
+      text: "Tell us once",
+      eventId: "123",
+    },
+  ];
+
+  const translatorLinks = [
+    {
+      url: "gov.uk/guidance/arrested-or-detained-abroad",
+      text: "Arrested or detained abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/guidance/what-to-do-after-a-british-national-dies-abroad",
+      text: "What to do after a British national dies abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/guidance/in-hospital-abroad",
+      text: "In hospital abroad",
+      eventId: "123",
+    },
+    {
+      url: "gov.uk/guidance/victim-of-crime-abroad",
+      text: "Victim of crime abroad",
+      eventId: "123",
+    },
+  ];
+
+  const linksServices = {
+    lawyers: lawyersLinks,
+    funeralDirectors: funeralDirectorLinks,
+    translators: translatorLinks,
+  };
+
+  return linksServices[serviceType as keyof typeof linksServices];
 }
 
 export async function updateList(
