@@ -10,7 +10,7 @@ import { getListOverview, serviceTypeDetailsHeading } from "server/components/da
 import { ensureAuthenticated } from "server/components/auth";
 import { HttpException } from "server/middlewares/error-handlers";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
-import { listItemsRouter } from "./listItemsRouter";
+import { listItemsRouter } from "./listsItems/listItemsRouter";
 
 export const listRouter = express.Router();
 
