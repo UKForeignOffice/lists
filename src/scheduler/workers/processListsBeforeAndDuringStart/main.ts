@@ -1,22 +1,26 @@
-import { findListsWithCurrentAnnualReview } from "server/models/list";
-import { logger } from "server/services/logger";
-import {
+import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+import { lowerCase, startCase } from "lodash";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+
+import { findListItems, findListsWithCurrentAnnualReview, updateIsAnnualReview } from "scheduler/dbHelpers";
+import { logger } from "scheduler/logger";
+import type {
   Audit,
   List,
   ListAnnualReviewPostReminderType,
   ListItemAnnualReviewProviderReminderType,
-} from "server/models/types";
-import { lowerCase, startCase } from "lodash";
-import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "server/services/govuk-notify";
-import { findAuditEvents, recordListItemEvent } from "server/models/audit";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
-import { BaseDeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { findListItems, updateIsAnnualReview } from "server/models/listItem";
-import { ListItemWithHistory } from "server/components/dashboard/listsItems/types";
-import { MilestoneTillAnnualReview } from "../../batch/helpers";
-import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+  ListItemWithHistory,
+} from "shared/types";
+import type { MilestoneTillAnnualReview } from "../../batch/helpers";
 import { formatDate, isEmailSentBefore } from "./helpers";
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
+import {
+  sendAnnualReviewPostEmail,
+  sendAnnualReviewProviderEmail,
+} from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
+import { findAuditEvents } from "./audit";
+import { recordListItemEvent } from "shared/audit";
+import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
 
 async function processPostEmailsForList(
   list: List,
@@ -63,7 +67,8 @@ async function processPostEmailsForList(
       reminderType,
     },
     AuditEvent.REMINDER,
-    "list"
+    "list",
+    "scheduler"
   );
 }
 
@@ -111,7 +116,8 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
             reminderType: "sendStartedProviderEmail",
           },
           AuditEvent.REMINDER,
-          "listItem"
+          "listItem",
+          "scheduler"
         );
       }
     }
@@ -219,8 +225,7 @@ export async function updateIsAnnualReviewForListItems(
     list,
     listItems,
     ListItemEvent.ANNUAL_REVIEW_STARTED,
-    "startAnnualReview",
-    AuditEvent.REMINDER
+    "startAnnualReview"
   );
 
   if (updatedListItems.error) {
@@ -272,6 +277,7 @@ export async function processAnnualReview(): Promise<void> {
   }
   const { result: listItems } = listItemsResult;
   for (const list of listsWithCurrentAnnualReview) {
+    // @ts-ignore
     const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
     await processList(list, listItemsForList);
   }

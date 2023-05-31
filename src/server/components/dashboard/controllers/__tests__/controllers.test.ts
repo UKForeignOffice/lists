@@ -1,5 +1,6 @@
 import { authRoutes } from "server/components/auth";
-import { List, BaseListItemGetObject, ServiceType, UserRoles } from "server/models/types";
+import { List, BaseListItemGetObject } from "server/models/types";
+import {ServiceType} from "shared/types";
 import * as userModel from "server/models/user";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";

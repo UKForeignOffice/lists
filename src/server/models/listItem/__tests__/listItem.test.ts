@@ -1,25 +1,25 @@
 import { prisma } from "./../../db/__mocks__/prisma-client";
-import * as locationService from "server/services/location";
+import * as locationService from "../../../../server/services/location";
 
-import * as audit from "./../../audit";
-import { ServiceType } from "./../../types";
+import * as audit from "../../../../shared/audit";
+import { ServiceType } from "../../../../shared/types";
 import * as helpers from "./../../helpers";
-import { logger } from "server/services/logger";
+import { logger } from "../../../../server/services/logger";
 import { findPublishedLawyersPerCountry } from "../providers/Lawyers";
-import { checkListItemExists, getListItemContactInformation, some } from "server/models/listItem/providers/helpers";
-import { findPublishedCovidTestSupplierPerCountry } from "server/models/listItem/providers/CovidTestSupplier";
+import { checkListItemExists, getListItemContactInformation, some } from "../../../../server/models/listItem/providers/helpers";
+import { findPublishedCovidTestSupplierPerCountry } from "../../../../server/models/listItem/providers/CovidTestSupplier";
 import {
   togglerListItemIsPublished,
   setEmailIsVerified,
   findListItemsForList,
   deleteListItem,
   createListItem,
-} from "server/models/listItem/listItem";
+} from "../../../../server/models/listItem/listItem";
 
 import { deserialise, listItemCreateInputFromWebhook } from "../listItemCreateInputFromWebhook";
 import { WebhookData } from "../../../components/formRunner";
 
-jest.mock("../../db/prisma-client");
+jest.mock("./../../../models/db/prisma-client");
 
 const lawyerWebhookData = {
   questions: [

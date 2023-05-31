@@ -1,4 +1,4 @@
-import { prisma } from "./db/prisma-client";
+import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { Feedback, FeedbackCreateInput } from "./types";
 

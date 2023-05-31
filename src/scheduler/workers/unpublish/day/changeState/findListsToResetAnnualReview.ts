@@ -1,5 +1,5 @@
 import { startOfToday } from "date-fns";
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
 
 export async function findListsToResetAnnualReview() {

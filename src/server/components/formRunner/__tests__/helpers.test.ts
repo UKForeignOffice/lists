@@ -1,6 +1,7 @@
 import { getNewSessionWebhookData } from "../helpers";
-import { LawyerListItemGetObject, BaseListItemGetObject, ServiceType } from "server/models/types";
-import { generateFormRunnerWebhookData } from "server/components/formRunner/lawyers";
+import { LawyerListItemGetObject, BaseListItemGetObject } from "../../../../server/models/types";
+import { ServiceType } from "../../../../shared/types";
+import { generateFormRunnerWebhookData } from "../../../../server/components/formRunner/lawyers";
 import { Status } from "@prisma/client";
 import * as FormRunner from "./../types";
 import { deserialise } from "../../../models/listItem/listItemCreateInputFromWebhook";
@@ -520,7 +521,7 @@ describe("Form Runner Service:", () => {
     });
     test("generated object is correct", async () => {
       const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject);
-      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text");
+      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text", false, '112');
 
       expect(newSessionWebhookData.questions).toMatchObject(expectedNewSessionWebhookData.questions);
     });

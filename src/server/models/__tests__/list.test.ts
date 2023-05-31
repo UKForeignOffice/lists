@@ -1,7 +1,8 @@
+import { compact } from "lodash";
 import { findListById, findListByCountryAndType, createList, updateList } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
-import { List, ServiceType } from "../types";
-import { compact } from "lodash";
+import { List } from "../types";
+import { ServiceType } from "../../../shared/types";
 import { logger } from "../../services/logger";
 
 jest.mock("../db/prisma-client");

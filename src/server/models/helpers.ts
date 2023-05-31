@@ -1,6 +1,7 @@
 import { isNumber, isArray } from "lodash";
 import { getDbPool } from "./db/database";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { findListByCountryAndType } from "server/models/list";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";

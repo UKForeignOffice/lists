@@ -1,9 +1,9 @@
 import Joi from "joi";
-import { get } from "lodash";
 import { countriesList } from "server/services/metadata";
 import * as config from "server/config";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
-import { AuditListItemEventName } from "server/models/types";
+import type { AuditEvent, ListItemEvent } from "@prisma/client";
+import type { AuditListItemEventName } from "server/models/types";
+import { throwIfConfigVarIsUndefined as throwIfUndefined } from "shared/getNotifyClient";
 
 const GOV_UK_EMAIL_REGEX = /gov\.uk$/i;
 
@@ -26,11 +26,7 @@ export function isCountryNameValid(countryName: string): boolean {
   return countriesList.some((country) => country.value === countryName);
 }
 
-export function throwIfConfigVarIsUndefined(varName: string): void {
-  if (!get(config, varName)) {
-    throw new Error(`Server config variable ${varName} is missing`);
-  }
-}
+export const throwIfConfigVarIsUndefined = throwIfUndefined;
 
 export interface EventMetaData {
   auditEvent: AuditEvent | ListItemEvent;

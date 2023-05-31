@@ -1,5 +1,5 @@
 import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";

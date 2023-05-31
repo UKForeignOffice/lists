@@ -1,6 +1,6 @@
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "scheduler/prismaClient";
 import { AuditEvent, List } from "@prisma/client";
-import { ListJsonData } from "server/models/types";
+import { ListJsonData } from "shared/types";
 import { addYears } from "date-fns";
 import { addAudit } from "./addAudit";
 import { Meta } from "../types";

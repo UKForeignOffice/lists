@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";

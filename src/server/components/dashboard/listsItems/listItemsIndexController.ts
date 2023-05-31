@@ -11,7 +11,7 @@ import {
   displayOneMonthAnnualReviewWarning,
   displayUnpublishWarning,
 } from "server/models/listItem/summary.helpers";
-import { ServiceType } from "server/models/types";
+import type { ServiceType } from "shared/types";
 
 /**
  * TODO:- rename file to listItems. Currently lists items for parity with existing code.

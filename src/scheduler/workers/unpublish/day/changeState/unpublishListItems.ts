@@ -1,5 +1,5 @@
-import { prisma } from "server/models/db/prisma-client";
-import { EVENTS } from "server/models/listItem/listItemEvent";
+import { prisma } from "scheduler/prismaClient";
+import { EVENTS } from "shared/listItemEvent";
 
 export async function unpublishListItems(ids: number[], reference?: string) {
   return ids.map(async (listItemId: number) => {

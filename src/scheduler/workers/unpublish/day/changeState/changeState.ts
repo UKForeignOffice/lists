@@ -1,6 +1,6 @@
-import { ListWithCountryName } from "scheduler/workers/unpublish/types";
+import type { ListWithCountryName } from "scheduler/workers/unpublish/types";
 import { schedulerLogger } from "scheduler/logger";
-import { ListJsonData } from "server/models/types";
+import type { ListJsonData } from "shared/types";
 import { getMetaForList } from "../getMetaForList";
 import { findListItemsToResetAnnualReview } from "./findListItemsToResetAnnualReview";
 import { unpublishListItems } from "./unpublishListItems";

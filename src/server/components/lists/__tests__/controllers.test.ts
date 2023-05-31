@@ -8,7 +8,7 @@ import { ingestPostController } from "../controllers/ingest";
 import * as listItem from "server/models/listItem/listItem";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "../../../../shared/types";
 import * as lawyers from "../searches/lawyers";
 import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";

@@ -6,7 +6,8 @@ import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
 import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
-import { CountryName, ServiceType } from "server/models/types";
+import { CountryName } from "server/models/types";
+import { ServiceType } from "shared/types";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,

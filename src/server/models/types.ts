@@ -8,20 +8,17 @@ import {
   TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
 import { Event } from "./listItem/types";
+import * as SharedTypes from "shared/types";
 
-export enum ServiceType {
-  "covidTestProviders" = "covidTestProviders",
-  "lawyers" = "lawyers",
-  "funeralDirectors" = "funeralDirectors",
-  "translatorsInterpreters" = "translatorsInterpreters",
-}
+export type List = SharedTypes.List;
+export type ListItem = SharedTypes.ListItem;
+export type Audit = SharedTypes.Audit;
 
 export type JsonObject = PrismaClient.Prisma.JsonObject;
 export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
-
 // List
 export interface AnnualReviewKeyDates extends JsonObject {
   POST_ONE_MONTH: string;
@@ -45,41 +42,15 @@ export interface ScheduledProcessKeyDates extends JsonObject {
   unpublished: UnpublishedKeyDates;
 }
 
-export interface CurrentAnnualReview extends JsonObject {
-  reference: string;
-  eligibleListItems: number[];
-  keyDates: ScheduledProcessKeyDates;
-}
+export type CurrentAnnualReview = SharedTypes.CurrentAnnualReview;
 
-export interface ListJsonData extends JsonObject {
-  users?: string[];
-  currentAnnualReview?: CurrentAnnualReview;
-}
-
-export interface List extends PrismaClient.List {
-  id: number;
-  reference: string;
-  createdAt: Date;
-  updatedAt: Date;
-  type: string;
-  countryId: number;
-  jsonData: ListJsonData;
-  country?: Partial<Country>;
-  isAnnualReview: boolean;
-  nextAnnualReviewStartDate: Date;
-  lastAnnualReviewStartDate: Date | null;
-}
+export type ListJsonData = SharedTypes.ListJsonData;
 
 export interface ListCreateInput extends PrismaClient.Prisma.ListCreateInput {
   jsonData: ListJsonData;
 }
 
-export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
-  jsonData: ListJsonData;
-}
-
-// ListItem
-export type ListItem = PrismaClient.ListItem;
+export type ListUpdateInput = SharedTypes.ListUpdateInput;
 
 export interface BaseListItemGetObject extends PrismaClient.ListItem {
   address: {
@@ -107,37 +78,37 @@ type AsJsonObject<T> = T & JsonObject;
 type StringLike<T extends string> = T | `${T}` | string;
 
 export interface LawyerListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
-  type: StringLike<ServiceType.lawyers>;
+  type: StringLike<SharedTypes.ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface LawyerListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<ServiceType.lawyers>;
+  type: StringLike<SharedTypes.ServiceType.lawyers>;
   jsonData: AsJsonObject<LawyerJsonData>;
 }
 
 export interface FuneralDirectorListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
-  type: StringLike<ServiceType.funeralDirectors>;
+  type: StringLike<SharedTypes.ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface FuneralDirectorListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<ServiceType.funeralDirectors>;
+  type: StringLike<SharedTypes.ServiceType.funeralDirectors>;
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
 export interface CovidTestSupplierListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
-  type: StringLike<ServiceType.covidTestProviders>;
+  type: StringLike<SharedTypes.ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
 export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<ServiceType.translatorsInterpreters>;
+  type: StringLike<SharedTypes.ServiceType.translatorsInterpreters>;
   jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
 }
 
 export interface CovidTestSupplierListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<ServiceType.covidTestProviders>;
+  type: StringLike<SharedTypes.ServiceType.covidTestProviders>;
   jsonData: AsJsonObject<CovidTestSupplierJsonData>;
 }
 
@@ -183,29 +154,11 @@ export interface UserUpdateInput extends PrismaClient.Prisma.UserUpdateInput {
 // Audit
 export type AuditEventName = "edit" | "new";
 
-export type AuditListItemEventName =
-  | "edit"
-  | "new"
-  | "requestChange"
-  | "approve"
-  | "delete"
-  | "pin"
-  | "unpin"
-  | "disapprove"
-  | "publish"
-  | "unpublish"
-  | "startAnnualReview"
-  | "reminder";
-
 export type AuditListEventName = "edit" | "new" | "reminder" | "endAnnualReview";
 
-export type ListAnnualReviewPostReminderType =
-  | "sendOneMonthPostEmail"
-  | "sendOneWeekPostEmail"
-  | "sendOneDayPostEmail"
-  | "sendStartedPostEmail";
+export type ListAnnualReviewPostReminderType = SharedTypes.ListAnnualReviewPostReminderType;
 
-export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";
+export type ListItemAnnualReviewProviderReminderType = SharedTypes.ListItemAnnualReviewProviderReminderType;
 
 export type ListItemUnpublishedPostReminderType =
   | "sendUnpublishedPostEmail"
@@ -218,6 +171,8 @@ export type ListItemUnpublishedProviderReminderType =
   | "sendUnpublishWeeklyProviderEmail";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
+
+export type AuditListItemEventName = SharedTypes.AuditListItemEventName;
 
 export interface EventJsonData extends JsonObject {
   eventName: AuditListItemEventName | AuditListEventName;
@@ -232,7 +187,7 @@ export interface EventJsonData extends JsonObject {
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
-interface BaseAuditEventJsonData extends JsonObject {
+export interface BaseAuditEventJsonData extends JsonObject {
   userId?: User["id"];
   itemId: ListItem["id"];
 }
@@ -248,22 +203,11 @@ export interface ListItemEventJsonData extends BaseAuditEventJsonData {
     | ListItemUnpublishedProviderReminderType;
 }
 
-export interface ListEventJsonData extends BaseAuditEventJsonData {
-  eventName: AuditListEventName;
-  annualReviewRef?: string;
-  reminderType?: ListAnnualReviewPostReminderType | ListItemUnpublishedPostReminderType;
-}
+export type ListEventJsonData = SharedTypes.ListEventJsonData;
 
 export type AuditEventJsonData = ListItemEventJsonData | ListEventJsonData;
 
-export interface Audit extends PrismaClient.Audit {
-  jsonData: AuditEventJsonData;
-}
-
-export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
-  type: "user" | "list" | "listItem";
-  jsonData: AuditEventJsonData;
-}
+export type AuditCreateInput = SharedTypes.AuditCreateInput;
 
 export interface AuditUpdateInput extends PrismaClient.Prisma.AuditUpdateInput {
   jsonData: AuditEventJsonData;

@@ -1,4 +1,4 @@
-import { prisma } from "server/models/db/prisma-client";
+import { prisma } from "scheduler/prismaClient";
 import { AuditCreateInput, ListEventJsonData } from "server/models/types";
 import { AuditEvent } from "@prisma/client";
 

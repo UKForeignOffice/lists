@@ -1,4 +1,4 @@
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import {
   CovidTestSupplierFormWebhookData,
   LawyersFormWebhookData,

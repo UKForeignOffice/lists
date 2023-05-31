@@ -1,6 +1,6 @@
-import { prisma } from "server/models/db/prisma-client";
-import { AuditCreateInput, ListEventJsonData } from "server/models/types";
-import { AuditEvent } from "@prisma/client";
+import { prisma } from "scheduler/prismaClient";
+import type { AuditCreateInput, ListEventJsonData } from "shared/types";
+import type { AuditEvent } from "@prisma/client";
 
 export async function addAudit(eventData: ListEventJsonData, auditEvent: AuditEvent) {
   const data: AuditCreateInput = {

@@ -1,6 +1,6 @@
 import * as FormRunner from "server/components/formRunner";
 import { BaseDeserialisedWebhookData, WebhookDeserialiser } from "./types";
-import { ServiceType } from "server/models/types";
+import { ServiceType } from "shared/types";
 import { lawyerDeserialiser } from "server/models/listItem/providers/deserialisers/Lawyer.deserialiser";
 import { covidTestProviderDeserialiser } from "server/models/listItem/providers/deserialisers/covidTestProvider.deserialiser";
 import { trimAnswer } from "./helpers";
