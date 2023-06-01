@@ -20,17 +20,28 @@
         {% include "lists/partials/translators-interpreters/translators-interpreters-results-list.njk" %}
       {% endif %}
     </div>
-    <div class="govuk-grid-column-one-third">
-      {% include "lists/partials/answers-box.njk" %}
+      <div class="govuk-grid-column-one-third">
+        {% include "lists/partials/answers-box.njk" %}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"/>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Related Content</h2>
+        <div class="govuk-body">The following links open in a new tab</div>
+        <ul class="govuk-list">
+          {% for link in relatedLinks %}
+            <li>
+              <a class="govuk-link" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.text }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    {% if print === "yes" %}
-      window.onload = function() {
-      window.print();
-    }
-    {% endif %}
-  </script>
+
+<script type="text/javascript" nonce="{{ cspNonce }}">
+  {% if print === "yes" %}
+    window.onload = function() {
+    window.print();
+  }
+  {% endif %}
+</script>
 
 {% endblock %}
-

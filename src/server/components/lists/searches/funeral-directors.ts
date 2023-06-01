@@ -8,6 +8,7 @@ import {
   getParameterValue,
   queryStringFromParams,
   formatCountryParam,
+  getLinksOfRelatedLists,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -25,10 +26,7 @@ export const funeralDirectorsQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchFuneralDirectors(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function searchFuneralDirectors(req: Request, res: Response): Promise<void> {
   let params = getAllRequestParams(req);
   const { serviceType, country, region, repatriation, print = "no" } = params;
   let countryName: string | undefined = formatCountryParam(country as string);
@@ -51,7 +49,7 @@ export async function searchFuneralDirectors(
 
   let allRows: FuneralDirectorListItemGetObject[] = [];
   if (countryName) {
-     allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
+    allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
   }
   const count = allRows.length;
 
@@ -61,9 +59,7 @@ export async function searchFuneralDirectors(
     listRequestParams: params,
   });
 
-  const offset =
-    ROWS_PER_PAGE * pagination.results.currentPage -
-    ROWS_PER_PAGE;
+  const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
 
   filterProps.offset = offset;
 
@@ -72,6 +68,7 @@ export async function searchFuneralDirectors(
     searchResults = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
   }
   const results = print === "yes" ? allRows : searchResults;
+  const relatedLinks = await getLinksOfRelatedLists(country as CountryName, serviceType!);
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
@@ -86,5 +83,6 @@ export async function searchFuneralDirectors(
     pagination,
     print,
     csrfToken: getCSRFToken(req),
+    relatedLinks,
   });
 }

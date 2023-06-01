@@ -44,6 +44,22 @@ export async function findListByCountryAndType(country: CountryName, type: Servi
   }
 }
 
+export async function findListsByCountry(country: CountryName): Promise<List[] | undefined> {
+  try {
+    const lists = (await prisma.list.findMany({
+      where: {
+        country: {
+          name: country,
+        },
+      },
+    })) as List[];
+    return lists;
+  } catch (error) {
+    logger.error(`findListsByCountry Error: ${(error as Error).message}`);
+    return undefined;
+  }
+}
+
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;

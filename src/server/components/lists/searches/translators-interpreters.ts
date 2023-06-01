@@ -8,6 +8,7 @@ import {
   getParameterValue,
   queryStringFromParams,
   parseListValues,
+  getLinksOfRelatedLists,
 } from "../helpers";
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -203,6 +204,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     });
   }
   const results = print === "yes" ? allRows : searchResults;
+  const relatedLinks = await getLinksOfRelatedLists(country, serviceType!);
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,
@@ -222,5 +224,6 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     pagination,
     print,
     csrfToken: getCSRFToken(req),
+    relatedLinks,
   });
 }

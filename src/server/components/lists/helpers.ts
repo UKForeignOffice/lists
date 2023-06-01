@@ -8,6 +8,7 @@ import { listsRoutes } from "./routes";
 import { ListsRequestParams } from "./types";
 import { CountryName } from "server/models/types";
 import { ServiceType } from "shared/types";
+import { findListsByCountry } from "server/models/list";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
@@ -258,4 +259,33 @@ export function formatCountryParam(country: string): string {
     });
   }
   return countryName;
+}
+
+export async function getLinksOfRelatedLists(
+  countryName: CountryName,
+  serviceType: ServiceType
+): Promise<Array<{ text: string; url: string }>> {
+  const relatedLinkOptions = {
+    lawyers: {
+      text: `Find a lawyer in ${countryName}`,
+      url: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
+    },
+    funeralDirectors: {
+      text: `Find a funeral director in ${countryName}`,
+      url: `/find?serviceType=funeralDirectors&readNotice=ok&country=${countryName}`,
+    },
+    translatorsInterpreters: {
+      text: `Find a translator or interpreter in ${countryName}`,
+      url: `/find?serviceType=translatorsInterpreters&readNotice=ok&country=${countryName}`,
+    },
+  };
+  const lists = await findListsByCountry(countryName);
+
+  if (!lists) return [];
+
+  const filteredLists = lists
+    .filter((list) => list.type !== serviceType)
+    .map((list) => relatedLinkOptions[list.type as keyof typeof relatedLinkOptions]);
+
+  return filteredLists;
 }
