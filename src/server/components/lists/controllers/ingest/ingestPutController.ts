@@ -10,7 +10,7 @@ import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { getObjectDiff } from "./helpers";
+import { getObjectDiff, sendProviderChangeDetailsEmailToAdmins } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 
 export async function ingestPutController(req: Request, res: Response) {
@@ -79,6 +79,8 @@ export async function ingestPutController(req: Request, res: Response) {
         jsonData: jsonDataWithUpdatedJsonData,
       },
     };
+
+    await sendProviderChangeDetailsEmailToAdmins(listItem.listId);
 
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),

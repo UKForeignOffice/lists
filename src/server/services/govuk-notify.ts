@@ -139,8 +139,15 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       country: options.country,
       annualReviewDate: options.annualReviewDate,
     };
-    logger.info(`personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${options.emailAddress}`);
-    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation, reference: "", });
+    logger.info(
+      `personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${options.emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, {
+      personalisation,
+      reference: "",
+    });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
   }
@@ -172,6 +179,40 @@ export async function sendAnnualReviewCompletedEmail(
     });
   } catch (error) {
     logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
+
+export async function sendProviderChangedDetailsEmail({
+  emailAddress,
+  serviceType,
+  country,
+}: {
+  emailAddress: string;
+  serviceType: string;
+  country: string;
+}) {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    const personalisation = {
+      typeSingular: pluralize.singular(serviceType),
+      country: country,
+    };
+
+    logger.info(
+      `personalisation for sendProviderChangedDetailsEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.editProviderDetails, emailAddress, {
+      personalisation,
+      reference: "",
+    });
+  } catch (error) {
+    logger.error(`The provider changed details email could not be sent due to error: ${(error as Error).message}`);
   }
 }
 

@@ -1,3 +1,6 @@
+import { findListById } from "server/models/list";
+import { sendProviderChangedDetailsEmail } from "server/services/govuk-notify";
+
 interface getObjectDiffOptions {
   ignore?: string[]; // keys to ignore
 }
@@ -64,4 +67,19 @@ export function getObjectDiff<T extends Record<string, any>>(
       ...(valueDidChange && { [key]: nestedDiff ?? newValue ?? null }),
     };
   }, {});
+}
+
+export async function sendProviderChangeDetailsEmailToAdmins(listId: number) {
+  const list = await findListById(listId);
+  // TODO: only send if listItem has the status EDITED
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendProviderChangedDetailsEmail({
+        emailAddress: user,
+        serviceType: list.type,
+        country: list.country! as string,
+      });
+    });
+    await Promise.allSettled(tasks);
+  }
 }
