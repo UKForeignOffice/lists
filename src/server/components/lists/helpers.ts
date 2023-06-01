@@ -264,19 +264,19 @@ export function formatCountryParam(country: string): string {
 export async function getLinksOfRelatedLists(
   countryName: CountryName,
   serviceType: ServiceType
-): Promise<Array<{ name: string; href: string }>> {
+): Promise<Array<{ text: string; url: string }>> {
   const relatedLinkOptions = {
     lawyers: {
-      name: `Find a lawyer in ${countryName}`,
-      href: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
+      text: `Find a lawyer in ${countryName}`,
+      url: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
     },
     funeralDirectors: {
-      name: `Find a funeral director in ${countryName}`,
-      href: `/find?serviceType=funeralDirectors&readNotice=ok&country=${countryName}`,
+      text: `Find a funeral director in ${countryName}`,
+      url: `/find?serviceType=funeralDirectors&readNotice=ok&country=${countryName}`,
     },
     translatorsInterpreters: {
-      name: `Find a translator or interpreter in ${countryName}`,
-      href: `/find?serviceType=translatorsInterpreters&readNotice=ok&country=${countryName}`,
+      text: `Find a translator or interpreter in ${countryName}`,
+      url: `/find?serviceType=translatorsInterpreters&readNotice=ok&country=${countryName}`,
     },
   };
   const lists = await findListsByCountry(countryName);

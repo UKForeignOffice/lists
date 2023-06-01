@@ -277,12 +277,12 @@ describe('getLinksOfRelatedLists', () => {
     const serviceType = 'lawyers';
     const expectedLinks = [
       {
-        href: '/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina',
-        name: 'Find a funeral director in Argentina',
+        url: '/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina',
+        text: 'Find a funeral director in Argentina',
       },
       {
-        href: '/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina',
-        name: 'Find a translator or interpreter in Argentina',
+        url: '/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina',
+        text: 'Find a translator or interpreter in Argentina',
       },
     ];
 
