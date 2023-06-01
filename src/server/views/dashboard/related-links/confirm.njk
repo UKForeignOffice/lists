@@ -16,17 +16,23 @@
         <a href="{{ relatedLink.url }}" class="govuk-link govuk-body">{{ relatedLink.text }}</a>
       </div>
     </div>
-  <div class="govuk-grid-row govuk-button-group">
-    {{ govukButton({
-      text: "Continue"
-    }) }}
 
-    {{ govukButton({
-      text: "Back",
-      element: "a",
-      classes: "govuk-button--secondary",
-      href: backLink + '/related-links/' + relatedLink.relatedLinkIndex
-    }) }}
-  </div>
+  <form method="post">
+    <div class="govuk-grid-row govuk-button-group">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+
+      {{ govukButton({
+        text: "Back",
+        element: "a",
+        classes: "govuk-button--secondary",
+        href: backLink + '/related-links/' + relatedLinkIndex
+      }) }}
+    </div>
+  </form>
+
 
 {% endblock %}

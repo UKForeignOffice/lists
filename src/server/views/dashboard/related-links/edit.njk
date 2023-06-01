@@ -14,21 +14,16 @@
     <form method="post" novalidate>
       <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-      {% if relatedLink.text.error or relatedLink.url.error %}
+      {% if relatedLinkErrorSummary.length %}
         {{ govukErrorSummary({
           titleText: "There is a problem",
-          errorList: [
-            {
-              text: "The date your passport was issued must be in the past",
-              href: "title"
-            },
-            {
-              text: "Enter a postcode, like AA1 1AA",
-              href: "url"
-            }
-          ]
+          errorList: relatedLinkErrorSummary
         }) }}
       {% endif %}
+
+      {% set textError = messages.relatedLinkError_text[0] %}
+      {% set urlError = messages.relatedLinkError_url[0] %}
+
 
       {{ govukInput({
         label: {
@@ -37,7 +32,7 @@
         id: "text",
         name: "text",
         value: relatedLink.text,
-        errorMessage: relatedLink.text.error
+        errorMessage: { text: textError } if textError
       }) }}
 
       {{ govukInput({
@@ -47,8 +42,10 @@
         id: "url",
         name: "url",
         value: relatedLink.url,
-        errorMessage: relatedLink.url.error
+        errorMessage: { text: urlError } if urlError
       }) }}
+
+
 
       <div class="govuk-button-group">
         {{ govukButton({

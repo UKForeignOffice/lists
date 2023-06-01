@@ -1,6 +1,7 @@
 import type * as PrismaClient from "@prisma/client";
 import type * as ServerTypes from "server/models/types";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import * as string_decoder from "string_decoder";
 
 export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
@@ -81,9 +82,15 @@ export type AuditListItemEventName =
   | "startAnnualReview"
   | "reminder";
 
+export interface RelatedLink extends PrismaClient.Prisma.JsonObject {
+  url: string;
+  text: string;
+}
+
 export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
   users?: string[];
   currentAnnualReview?: CurrentAnnualReview;
+  relatedLinks?: RelatedLink[];
 }
 
 export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
