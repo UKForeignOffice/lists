@@ -335,3 +335,7 @@ $two-thirds: $one-third * 2;
   border-color: govuk-colour("blue");
   border-width: 2px;
 }
+
+.related-links__container {
+  border-bottom: 1px solid govuk-colour("dark-grey");
+}
