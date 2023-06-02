@@ -41,6 +41,22 @@
     </div>
   {% endfor %}
 
+  {% for link in automatedRelatedLinks %}
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <a href="{{ link.url }}" class="govuk-link">
+          {{ link.text }}
+          <span class="govuk-visually-hidden">
+            (opens in a new tab)
+          </span>
+        </a>
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        Automated
+      </dd>
+    </div>
+  {% endfor %}
+
   </dl>
 
 </div>

@@ -14,10 +14,11 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
-import type { List } from "server/models/types";
+import type { CountryName, List } from "server/models/types";
 import { UserRoles } from "server/models/types";
 import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
+import { getLinksOfRelatedLists } from "server/components/lists/helpers";
 
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -157,6 +158,11 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
+    const automatedRelatedLinks = await getLinksOfRelatedLists(
+      list!.country!.name as CountryName,
+      list!.type as ServiceType
+    );
+
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
       ServiceType: updatedServiceType,
@@ -166,6 +172,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       user: req.user?.userData,
       list,
       req,
+      automatedRelatedLinks,
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
