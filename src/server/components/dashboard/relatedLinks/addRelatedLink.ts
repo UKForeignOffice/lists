@@ -1,8 +1,8 @@
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import { List } from "shared/types";
+import type { List, RelatedLink } from "shared/types";
 
-export async function addRelatedLink(listId, update) {
+export async function addRelatedLink(listId: List["id"], update: RelatedLink) {
   const list = await prisma.list.findUnique({
     where: {
       id: listId,

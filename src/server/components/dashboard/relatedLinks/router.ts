@@ -2,21 +2,33 @@ import express from "express";
 import { addRelatedLink } from "server/components/dashboard/relatedLinks/addRelatedLink";
 import { logger } from "server/services/logger";
 import { relatedLinkSchema } from "server/components/dashboard/relatedLinks/relatedLinkSchema";
+import Joi from "joi";
 
 export const relatedLinksRouter = express.Router();
 
 relatedLinksRouter.param("relatedLinkIndex", (req, res, next) => {
   const { relatedLinkIndex } = req.params;
+
+  const schema = Joi.number().allow("new");
+  const { value, error } = schema.validate(relatedLinkIndex);
+
+  if (error) {
+    return res.redirect(res.locals.listsEditUrl);
+  }
+
   res.locals.relatedLinkIndex = relatedLinkIndex;
 
   if (relatedLinkIndex === "new") {
     res.locals.relatedLink = req.session.relatedLink;
-    next();
+    return next();
   }
 
-  const { list } = res.locals;
-  const { relatedLinks = [] } = list.jsonData;
-  let relatedLink = relatedLinks[Number(relatedLinkIndex)];
+  const { relatedLinks = [] } = res.locals.list.jsonData;
+  const relatedLink = relatedLinks[value];
+
+  if (!relatedLink) {
+    return res.redirect("new");
+  }
 
   res.locals.relatedLink = { ...relatedLink, ...req.session.relatedLink };
   res.locals.relatedLinkIndex = relatedLinkIndex;
@@ -26,6 +38,10 @@ relatedLinksRouter.param("relatedLinkIndex", (req, res, next) => {
 relatedLinksRouter.use("*", (req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
+});
+
+relatedLinksRouter.get("/", (req, res, next) => {
+  res.redirect(res.locals.listsEditUrl);
 });
 
 relatedLinksRouter.get("/:relatedLinkIndex", (req, res, next) => {
@@ -58,7 +74,7 @@ relatedLinksRouter.post("/:relatedLinkIndex", (req, res, next) => {
 
   if (error) {
     error.details.forEach((detail) => {
-      const { key } = detail.context;
+      const { key } = detail.context!;
       const error = {
         text: detail.message,
         href: key,
@@ -80,7 +96,8 @@ relatedLinksRouter.post("/:relatedLinkIndex", (req, res, next) => {
 
 relatedLinksRouter.get("/:relatedLinkIndex/confirm", (req, res, next) => {
   const { relatedLinkIndex } = req.params;
-  const { text, url } = req.session.relatedLink;
+  const { text, url } = req.session.relatedLink ?? {};
+
   if (!text || !url) {
     return res.redirect(`${res.locals.listsEditUrl}/related-links/${relatedLinkIndex}`);
   }
@@ -108,7 +125,7 @@ relatedLinksRouter.post("/:relatedLinkIndex/confirm", async (req, res, next) => 
     req.flash("error", `Adding the link ${update?.text} failed`);
   }
 
-  req.session.relatedLink = {};
+  delete req.session.relatedLink;
 
   await res.redirect(`${res.locals.listsEditUrl}`);
 });
