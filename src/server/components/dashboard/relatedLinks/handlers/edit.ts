@@ -3,6 +3,12 @@ import { relatedLinkSchema } from "../relatedLinkSchema";
 
 export function get(req: Request, res: Response) {
   const relatedLinkErrorSummary = req.flash("relatedLinkErrorSummary") as unknown as string[];
+  const { relatedLinks = [] } = res.locals.list.jsonData;
+
+  if (relatedLinks.length >= 5) {
+    req.flash("error", "You can add up to 5 related links");
+    return res.redirect(res.locals.listsEditUrl);
+  }
 
   res.render("dashboard/related-links/edit", {
     relatedLinkErrorSummary: relatedLinkErrorSummary.map((error) => JSON.parse(error)),
