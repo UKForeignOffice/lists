@@ -24,7 +24,7 @@ export async function post(req: Request, res: Response) {
   }
 
   try {
-    const transaction = await updateRelatedLink(id, { text, url });
+    const transaction = await updateRelatedLink(id, { text, url }, relatedLinkIndex);
     const action = relatedLinkIndex === "new" ? "added" : "updated";
     if (transaction) {
       req.flash("relatedLinkBannerStatus", "success");

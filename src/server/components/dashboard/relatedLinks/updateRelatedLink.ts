@@ -23,7 +23,6 @@ export async function updateRelatedLink(listId: List["id"], update: RelatedLink,
   if (index === "new") {
     relatedLinks.push(update);
   }
-
   if (!Number.isNaN(index)) {
     // @ts-ignore
     relatedLinks[index] = update;
