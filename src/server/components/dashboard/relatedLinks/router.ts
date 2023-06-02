@@ -3,6 +3,7 @@ import { addRelatedLink } from "server/components/dashboard/relatedLinks/addRela
 import { logger } from "server/services/logger";
 import { relatedLinkSchema } from "server/components/dashboard/relatedLinks/relatedLinkSchema";
 import Joi from "joi";
+import { RelatedLink } from "shared/types";
 
 export const relatedLinksRouter = express.Router();
 
@@ -45,7 +46,7 @@ relatedLinksRouter.get("/", (req, res, next) => {
 });
 
 relatedLinksRouter.get("/:relatedLinkIndex", (req, res, next) => {
-  const relatedLinkErrorSummary = req.flash("relatedLinkErrorSummary");
+  const relatedLinkErrorSummary = req.flash("relatedLinkErrorSummary") as unknown as string[];
   res.render("dashboard/related-links/edit", {
     relatedLinkErrorSummary: relatedLinkErrorSummary.map((error) => JSON.parse(error)),
   });
@@ -108,21 +109,27 @@ relatedLinksRouter.get("/:relatedLinkIndex/confirm", (req, res, next) => {
 relatedLinksRouter.post("/:relatedLinkIndex/confirm", async (req, res, next) => {
   const { id } = res.locals.list;
   const { relatedLinkIndex } = req.params;
-  const update = req.session.relatedLink;
-  if (!update) {
+  const { text, url } = req.session.relatedLink ?? {};
+
+  if (!text || !url) {
     await res.redirect(`/related-links/${relatedLinkIndex}`);
   }
+
+  const update: RelatedLink = {
+    text: text!,
+    url: url!,
+  };
 
   try {
     const transaction = await addRelatedLink(id, update);
     if (transaction) {
       req.flash("successBannerHeading", "Success");
-      req.flash("successBannerMessage", `The link ${update?.text} was added successfully`);
+      req.flash("successBannerMessage", `The link ${text} was added successfully`);
     }
   } catch (e) {
     logger.error(`User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
 
-    req.flash("error", `Adding the link ${update?.text} failed`);
+    req.flash("error", `Adding the link ${text} failed`);
   }
 
   delete req.session.relatedLink;
