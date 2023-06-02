@@ -16,7 +16,7 @@ export function get(req: Request, res: Response) {
 
 export async function post(req: Request, res: Response) {
   const { id } = res.locals.list;
-  const { relatedLinkIndex } = req.params;
+  const { relatedLinkIndex } = res.locals;
   const { text, url } = req.session.relatedLink ?? {};
 
   if (!text || !url) {
@@ -24,10 +24,11 @@ export async function post(req: Request, res: Response) {
   }
 
   try {
-    const transaction = await updateRelatedLink(id, { text, url }, res.locals.relatedLinkIndex);
+    const transaction = await updateRelatedLink(id, { text, url });
+    const action = relatedLinkIndex === "new" ? "added" : "updated";
     if (transaction) {
       req.flash("relatedLinkBannerStatus", "success");
-      req.flash("relatedLinkBannerHeading", "A related link has been added or updated");
+      req.flash("relatedLinkBannerAction", action);
       req.flash("relatedLinkText", text);
       req.flash("relatedLinkUrl", url);
     }

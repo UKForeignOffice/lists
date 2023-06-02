@@ -22,7 +22,7 @@
     html: detailsHtml
   }) }}
 
-  <dl class="govuk-summary-list">
+  <dl class="govuk-summary-list govuk-summary-list--no-border">
   {% for link in list.jsonData.relatedLinks %}
     <div class="govuk-summary-list__row">
       <dd class="govuk-summary-list__value">
@@ -34,7 +34,7 @@
         </a>
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="{{ listsEditUrl }}/related-links/{{ loop.index0 }}">
+        <a class="govuk-link govuk-link--no-visited-state" href="{{ listsEditUrl }}/related-links/{{ loop.index0 }}">
           Change<span class="govuk-visually-hidden"> {{ link.text }}</span>
         </a>
       </dd>
