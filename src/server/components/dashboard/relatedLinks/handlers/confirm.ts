@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { addRelatedLink } from "../addRelatedLink";
+import { updateRelatedLink } from "../updateRelatedLink";
 import { logger } from "server/services/logger";
 
 export function get(req: Request, res: Response) {
@@ -24,7 +24,7 @@ export async function post(req: Request, res: Response) {
   }
 
   try {
-    const transaction = await addRelatedLink(id, { text, url });
+    const transaction = await updateRelatedLink(id, { text, url }, res.locals.relatedLinkIndex);
     if (transaction) {
       req.flash("relatedLinkBannerStatus", "success");
       req.flash("relatedLinkBannerHeading", "A related link has been added or updated");
