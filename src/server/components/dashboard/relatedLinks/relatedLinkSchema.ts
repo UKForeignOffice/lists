@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi, { type CustomHelpers } from "joi";
 
 const ERROR_MESSAGES = {
   "string.url.govuk": "You can only link to GOV.UK",
@@ -10,8 +10,7 @@ export const relatedLinkSchema = Joi.object({
   text: Joi.string().label("page title").required().messages(ERROR_MESSAGES),
   url: Joi.string().label("URL").required().custom(govukUrlValidation).messages(ERROR_MESSAGES),
 });
-
-function govukUrlValidation(value, helper) {
+function govukUrlValidation<V extends string>(value: V, helper: CustomHelpers) {
   let stringToValidate = value.toLowerCase();
 
   if (!value.startsWith("https://")) {
