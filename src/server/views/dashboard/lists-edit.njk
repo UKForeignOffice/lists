@@ -1,6 +1,7 @@
 {% extends "./dashboard.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
 
+
 {% block content %}
   <div class="govuk-grid-row back-links__container">
     <aside class="govuk-grid-column-one-quarter back-links__aside">
@@ -15,6 +16,11 @@
     <div class="govuk-grid-column-three-quarters">
       {% if messages.successBannerHeading %}
         {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
+      {% endif %}
+
+
+      {% if messages.relatedLinkBannerStatus %}
+        {% include "./related-links/banner.njk" %}
       {% endif %}
 
       {% if messages.error %}
@@ -100,6 +106,7 @@
             {% endfor %}
           </dl>
       </form>
+      {% include "./related-links/related-content.njk" %}
     </div>
   </div>
 

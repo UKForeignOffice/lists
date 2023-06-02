@@ -26,8 +26,10 @@ export async function post(req: Request, res: Response) {
   try {
     const transaction = await addRelatedLink(id, { text, url });
     if (transaction) {
-      req.flash("successBannerHeading", "Success");
-      req.flash("successBannerMessage", `The link ${text} was added successfully`);
+      req.flash("relatedLinkBannerStatus", "success");
+      req.flash("relatedLinkBannerHeading", "A related link has been added or updated");
+      req.flash("relatedLinkText", text);
+      req.flash("relatedLinkUrl", url);
     }
   } catch (e) {
     logger.error(`User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
