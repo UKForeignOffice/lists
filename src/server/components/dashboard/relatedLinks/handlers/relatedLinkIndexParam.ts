@@ -2,10 +2,11 @@ import Joi from "joi";
 import type { Request, Response, NextFunction } from "express";
 
 export function handleRelatedLinkIndexParam(req: Request, res: Response, next: NextFunction) {
-  const { relatedLinkIndex } = req.locals;
+  const { relatedLinkIndex } = req.params;
 
   const schema = Joi.number().allow("new");
   const { value, error } = schema.validate(relatedLinkIndex);
+  res.locals.relatedLinkIndex = relatedLinkIndex;
 
   if (error) {
     return res.redirect(res.locals.listsEditUrl);
@@ -26,6 +27,5 @@ export function handleRelatedLinkIndexParam(req: Request, res: Response, next: N
   }
 
   res.locals.relatedLink = { ...relatedLink, ...req.session.relatedLink };
-  res.locals.relatedLinkIndex = relatedLinkIndex;
   next();
 }
