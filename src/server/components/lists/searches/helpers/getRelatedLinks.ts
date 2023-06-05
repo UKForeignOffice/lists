@@ -3,7 +3,6 @@ import { logger } from "server/services/logger";
 import { type List, ServiceType } from "shared/types";
 
 export async function getRelatedLinks( countryName: string, serviceType: ServiceType ) {
-  console.log("get related")
   const list = await prisma.list.findFirst({
     where: {
       country: {
@@ -28,7 +27,6 @@ export async function getRelatedLinks( countryName: string, serviceType: Service
     logger.info(`getRelatedLinks for ${list!.id} (${countryName}, ${serviceType}) returned with 0 links`);
   }
 
-  console.log("gr",relatedLinks)
 
   return relatedLinks;
 }
