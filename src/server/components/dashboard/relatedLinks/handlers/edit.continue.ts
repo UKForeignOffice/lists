@@ -1,8 +1,8 @@
-import { relatedLinkSchema } from "server/components/dashboard/relatedLinks/relatedLinkSchema";
-import { type Request, Response, NextFunction } from "express";
+import { relatedLinkSchema } from "./../relatedLinkSchema";
+import { type Request, Response } from "express";
 
-export function editContinue(req: Request, res: Response, next: NextFunction) {
-  const { relatedLinkIndex } = req.params;
+export function editContinue(req: Request, res: Response) {
+  const { relatedLinkIndex } = res.locals;
   const { text, url } = req.body;
 
 

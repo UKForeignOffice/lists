@@ -11,7 +11,7 @@
       {% if messages.relatedLinkBannerAction == 'removed' %}
         {{ messages.relatedLinkText }}
       {% else %}
-        <a class="govuk-notification-banner__link" target="_blank" href="{{ messages.relatedLinkUrl }}">
+        <a class="govuk-notification-banner__link" target="_blank" rel="noopener noreferrer" href="{{ messages.relatedLinkUrl }}">
           {{ messages.relatedLinkText }}
           <span class="govuk-visually-hidden">(opens in a new tab)</span>
         </a>.

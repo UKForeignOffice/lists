@@ -2,7 +2,7 @@ import Joi from "joi";
 import type { Request, Response, NextFunction } from "express";
 
 export function handleRelatedLinkIndexParam(req: Request, res: Response, next: NextFunction) {
-  const { relatedLinkIndex } = req.params;
+  const { relatedLinkIndex } = req.locals;
 
   const schema = Joi.number().allow("new");
   const { value, error } = schema.validate(relatedLinkIndex);
