@@ -607,7 +607,7 @@ describe("GOVUK Notify service:", () => {
     });
   });
 
-  describe.only("sendProviderChangedDetailsEmail", () => {
+  describe("sendProviderChangedDetailsEmail", () => {
     test("notify.sendEmail command is correct", async () => {
       const notifyClient = getNotifyClient();
 

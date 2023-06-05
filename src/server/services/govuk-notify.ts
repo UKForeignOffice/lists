@@ -5,6 +5,8 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
+import { lowerCase, startCase } from "lodash";
+import type { List } from "server/models/types";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -213,5 +215,18 @@ export async function sendProviderChangedDetailsEmail({
     });
   } catch (error) {
     logger.error(`The provider changed details email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
+
+export async function sendProviderChangeDetailsEmailToAdmins(list: Partial<List>) {
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendProviderChangedDetailsEmail({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
   }
 }

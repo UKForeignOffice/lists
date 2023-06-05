@@ -10,8 +10,9 @@ import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { getObjectDiff, sendProviderChangeDetailsEmailToAdmins } from "./helpers";
+import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
+import { sendProviderChangeDetailsEmailToAdmins } from "server/services/govuk-notify";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -82,7 +83,7 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     };
 
-    await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>, listItem.status);
+    await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>);
 
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
