@@ -13,7 +13,10 @@
           <li>Title is correct</li>
         </ul>
 
-        <a href="{{ relatedLink.url }}" class="govuk-link govuk-body">{{ relatedLink.text }}</a>
+        <a href="{{ relatedLink.url }}" class="govuk-link govuk-body" target="_blank">
+          {{ relatedLink.text }}
+          <span class="govuk-visually-hidden">(opens in a new tab)</span>
+        </a>
       </div>
     </div>
 
