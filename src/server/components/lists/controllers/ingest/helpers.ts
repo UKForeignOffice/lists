@@ -1,4 +1,5 @@
 import { Status } from "@prisma/client";
+import { lowerCase, startCase } from "lodash";
 import type { List } from "server/models/types";
 import { sendProviderChangedDetailsEmail } from "server/services/govuk-notify";
 
@@ -70,16 +71,16 @@ export function getObjectDiff<T extends Record<string, any>>(
   }, {});
 }
 
-export async function sendProviderChangeDetailsEmailToAdmins(listId: Partial<List>, listItemStatus: Status) {
+export async function sendProviderChangeDetailsEmailToAdmins(list: Partial<List>, listItemStatus: Status) {
   // 👇 Will it ever NOT be with provider?
   const listItemWithProvider = listItemStatus === Status.OUT_WITH_PROVIDER;
 
-  if (listId?.jsonData?.users && listItemWithProvider) {
-    const tasks = listId.jsonData.users.map(async (user) => {
+  if (list?.jsonData?.users && listItemWithProvider) {
+    const tasks = list.jsonData.users.map(async (user) => {
       await sendProviderChangedDetailsEmail({
         emailAddress: user,
-        serviceType: listId.type!,
-        country: listId.country?.name as string,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
       });
     });
     await Promise.allSettled(tasks);

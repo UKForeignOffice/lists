@@ -199,7 +199,7 @@ export async function sendProviderChangedDetailsEmail({
 
     const personalisation = {
       typeSingular: pluralize.singular(serviceType),
-      country: country,
+      country,
     };
 
     logger.info(

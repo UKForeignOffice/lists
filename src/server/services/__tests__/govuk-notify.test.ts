@@ -1,7 +1,7 @@
 import { NotifyClient } from "notifications-node-client";
 import { getNotifyClient } from "../../../shared/getNotifyClient";
 import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "../../../scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
-import { sendAuthenticationEmail, sendApplicationConfirmationEmail, sendEditDetailsEmail, sendDataPublishedEmail, sendNewListItemSubmittedEmail } from "../../../server/services/govuk-notify";
+import { sendAuthenticationEmail, sendApplicationConfirmationEmail, sendEditDetailsEmail, sendDataPublishedEmail, sendProviderChangedDetailsEmail, sendNewListItemSubmittedEmail } from "../../../server/services/govuk-notify";
 import { logger } from "../../../server/services/logger";
 import { NOTIFY } from "../../config";
 
@@ -15,6 +15,7 @@ const {
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
+  GOVUK_NOTIFY_PROVIDER_EDIT_DETAILS_TEMPLATE_ID
 } = process.env;
 
 const mocks: { [name: string]: undefined | string } = {
@@ -27,6 +28,7 @@ const mocks: { [name: string]: undefined | string } = {
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE,
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_DAY_NOTICE,
   GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED,
+  GOVUK_NOTIFY_PROVIDER_EDIT_DETAILS_TEMPLATE_ID
 };
 
 const mockNotify = NOTIFY;
@@ -59,6 +61,9 @@ jest.mock("server/config", () => {
     },
     get GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED() {
       return mocks.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_STARTED;
+    },
+    get GOVUK_NOTIFY_PROVIDER_EDIT_DETAILS_TEMPLATE_ID() {
+      return mocks.GOVUK_NOTIFY_PROVIDER_EDIT_DETAILS_TEMPLATE_ID;
     },
     NOTIFY: {
       apiKey() {
@@ -602,7 +607,30 @@ describe("GOVUK Notify service:", () => {
     });
   });
 
-  describe("sendNewListItemSubmittedEmail", () => {
+  describe("sendProviderChangedDetailsEmail", () => {
+    test("notify.sendEmail command is correct", async () => {
+      const notifyClient = getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      await sendProviderChangedDetailsEmail({
+        emailAddress,
+        serviceType: "Lawyers",
+        country: "France",
+      });
+
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        NOTIFY.templates.editProviderDetails,
+        emailAddress,
+        { personalisation: { typeSingular: "Lawyer", country: "France" }, reference: "" }
+      );
+    });
+  });
+
+  describe("sendProviderChangedDetailsEmail", () => {
     test("notify.sendEmail command is correct", async () => {
       const notifyClient = getNotifyClient();
 
