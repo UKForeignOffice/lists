@@ -3,8 +3,6 @@ import { logger } from "server/services/logger";
 import type { List, RelatedLink } from "shared/types";
 
 export async function updateRelatedLink(listId: List["id"], update: RelatedLink, index: number | "new" = "new") {
-  console.log("updating..");
-
   const list = await prisma.list.findUnique({
     where: {
       id: listId,
@@ -29,8 +27,6 @@ export async function updateRelatedLink(listId: List["id"], update: RelatedLink,
     // @ts-ignore
     relatedLinks[index] = update;
   }
-
-  console.log("updating..");
 
   return await prisma.list.update({
     where: {
