@@ -82,8 +82,6 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     };
 
-    await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>);
-
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
       recordListItemEvent(
@@ -97,7 +95,10 @@ export async function ingestPutController(req: Request, res: Response) {
 
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
+    } else {
+      await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>);
     }
+
     return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
