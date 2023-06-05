@@ -1,12 +1,11 @@
 import { authRoutes } from "server/components/auth";
 import { List, BaseListItemGetObject } from "server/models/types";
-import {ServiceType} from "shared/types";
+import { ServiceType } from "shared/types";
 import * as userModel from "server/models/user";
 import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
 
 import {
-  listsItemsController,
   startRouteController,
   usersEditController,
   usersEditPostController,
@@ -22,6 +21,7 @@ import { requestValidation } from "../../listsItems/requestValidation";
 import { HttpException } from "../../../../middlewares/error-handlers";
 import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
 import { listsController } from "../listsController";
+import { listItemsIndexController } from "../../listsItems/listItemsIndexController";
 
 jest.useFakeTimers("modern");
 
@@ -269,7 +269,7 @@ describe("Dashboard Controllers", () => {
     });
   });
 
-  describe("listsItemsController", () => {
+  describe("listItemsIndexController", () => {
     let listItems: any[];
 
     let spyFindListItemsForList: jest.SpyInstance;
@@ -286,7 +286,7 @@ describe("Dashboard Controllers", () => {
 
       mockReq.params.listId = 1;
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       const renderCall = mockRes.render.mock.calls[0];
       expect(spyFindListById).toHaveBeenCalledWith(mockReq.params.listId);
@@ -300,7 +300,7 @@ describe("Dashboard Controllers", () => {
     test("it invokes next when list is not found", async () => {
       spyFindListById.mockResolvedValueOnce(undefined);
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
       expect(spyFindListItemsForList).not.toHaveBeenCalled();
@@ -310,7 +310,7 @@ describe("Dashboard Controllers", () => {
       const error = { message: "error" };
       spyFindListById.mockRejectedValueOnce(error);
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
       expect(spyFindListItemsForList).not.toHaveBeenCalled();
@@ -321,7 +321,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemsForList.mockRejectedValueOnce(error);
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
       expect(mockRes.render).not.toHaveBeenCalled();
@@ -332,7 +332,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemsForList.mockResolvedValueOnce(listItems);
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].canApprove).toBeTrue();
       expect(mockRes.render.mock.calls[0][1].canPublish).toBeFalse();
@@ -343,7 +343,7 @@ describe("Dashboard Controllers", () => {
       spyFindListById.mockResolvedValueOnce(list);
       spyFindListItemsForList.mockResolvedValueOnce(listItems);
 
-      await listsItemsController(mockReq, mockRes, mockNext);
+      await listItemsIndexController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].canApprove).toBeFalse();
       expect(mockRes.render.mock.calls[0][1].canPublish).toBeTrue();
