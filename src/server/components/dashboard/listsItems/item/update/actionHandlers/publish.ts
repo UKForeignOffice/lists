@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { EventJsonData, ListItem, User } from "server/models/types";
+import type { EventJsonData, ListItem, User, List } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemEvent } from "@prisma/client";
+import { ListItemEvent, Status } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { sendPublishedEmail } from "./helpers";
+import { sendPublishedEmail, sendUnpublishEmail } from "./helpers";
 import { startCase } from "lodash";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]) {
@@ -57,12 +57,11 @@ export async function publish(req: Request, res: Response) {
   const { action } = update;
   const isPublished = action === "publish";
 
-  const { listItem, listItemUrl, listIndexUrl } = res.locals;
-
+  const { listItem, listItemUrl, listIndexUrl, list } = res.locals;
   const verb = isPublished ? "published" : "unpublished";
   let organisationName = listItem.jsonData.organisationName;
   try {
-    const updatedListItem = await handlePublishListItem(listItem, isPublished, req.user!.id);
+    const updatedListItem = await handlePublishListItem(listItem, isPublished, req.user!.id, list);
     const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
     organisationName = jsonData?.organisationName ?? jsonData.organisationName;
     req.flash("successBannerTitle", `${organisationName} has been ${verb}`);
@@ -75,7 +74,7 @@ export async function publish(req: Request, res: Response) {
   }
 }
 
-export async function handlePublishListItem(listItem: ListItem, isPublished: boolean, userId: User["id"]) {
+export async function handlePublishListItem(listItem: ListItem, isPublished: boolean, userId: User["id"], list: List) {
   const updatedListItem = await togglerListItemIsPublished({
     id: listItem.id,
     isPublished,
@@ -85,6 +84,10 @@ export async function handlePublishListItem(listItem: ListItem, isPublished: boo
 
   if (updatedListItem.isPublished) {
     await sendPublishedEmail(updatedListItem);
+  }
+
+  if (updatedListItem.status === Status.UNPUBLISHED) {
+    await sendUnpublishEmail(list);
   }
   return updatedListItem;
 }
