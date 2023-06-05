@@ -1,4 +1,5 @@
-import { findListById } from "server/models/list";
+import { Status } from "@prisma/client";
+import type { List } from "server/models/types";
 import { sendProviderChangedDetailsEmail } from "server/services/govuk-notify";
 
 interface getObjectDiffOptions {
@@ -69,15 +70,16 @@ export function getObjectDiff<T extends Record<string, any>>(
   }, {});
 }
 
-export async function sendProviderChangeDetailsEmailToAdmins(listId: number) {
-  const list = await findListById(listId);
-  // TODO: only send if listItem has the status EDITED
-  if (list?.jsonData?.users) {
-    const tasks = list.jsonData.users.map(async (user) => {
+export async function sendProviderChangeDetailsEmailToAdmins(listId: Partial<List>, listItemStatus: Status) {
+  // 👇 Will it ever NOT be with provider?
+  const listItemWithProvider = listItemStatus === Status.OUT_WITH_PROVIDER;
+
+  if (listId?.jsonData?.users && listItemWithProvider) {
+    const tasks = listId.jsonData.users.map(async (user) => {
       await sendProviderChangedDetailsEmail({
         emailAddress: user,
-        serviceType: list.type,
-        country: list.country! as string,
+        serviceType: listId.type!,
+        country: listId.country?.name as string,
       });
     });
     await Promise.allSettled(tasks);

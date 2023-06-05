@@ -5,7 +5,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "shared/audit";
 import { AuditEvent, Prisma, Status } from "@prisma/client";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { ListJsonData } from "server/models/types";
+import type { List, ListJsonData } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
@@ -43,6 +43,8 @@ export async function ingestPutController(req: Request, res: Response) {
       list: {
         select: {
           jsonData: true,
+          type: true,
+          country: true,
         },
       },
     },
@@ -80,7 +82,7 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     };
 
-    await sendProviderChangeDetailsEmailToAdmins(listItem.listId);
+    await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>, listItem.status);
 
     await prisma.$transaction([
       prisma.listItem.update(listItemPrismaQuery),
