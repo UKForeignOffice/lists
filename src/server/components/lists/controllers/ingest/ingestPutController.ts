@@ -44,7 +44,6 @@ export async function ingestPutController(req: Request, res: Response) {
       list: {
         select: {
           jsonData: true,
-          type: true,
           country: true,
         },
       },
