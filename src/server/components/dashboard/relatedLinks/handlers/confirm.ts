@@ -4,7 +4,7 @@ import { logger } from "server/services/logger";
 import { addRelatedLinkUpdateAudit } from "./../addRelatedLinkUpdateAudit";
 
 export function get(req: Request, res: Response) {
-  const { relatedLinkIndex } = req.params;
+  const { relatedLinkIndex } = res.locals;
   const { text, url } = req.session.relatedLink ?? {};
 
   if (!text || !url) {

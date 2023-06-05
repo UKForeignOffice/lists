@@ -10,15 +10,14 @@ export function get(req: Request, res: Response) {
   });
 }
 
-export function postController(req: Request, res: Response, next: NextFunction) {
+const POST_ACTIONS = new Map();
+POST_ACTIONS.set("remove", editRemove);
+POST_ACTIONS.set("continue", editContinue);
+
+export async function postController(req: Request, res: Response, next: NextFunction) {
   const { action }: { action: "continue" | "remove" } = req.body;
 
-  const ACTIONS = {
-    remove: editRemove,
-    continue: editContinue,
-  };
-
-  const handler = ACTIONS[action];
+  const handler = POST_ACTIONS.get(action);
 
   if (!handler) {
     logger.warn(`User ${req.user?.id} requested to perform unrecognised ${action} on ${req.originalUrl}`);
@@ -26,5 +25,5 @@ export function postController(req: Request, res: Response, next: NextFunction) 
     res.redirect(`${res.locals.listsEditUrl}`);
   }
 
-  return handler(req, res, next);
+  return await handler(req, res, next);
 }
