@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { updateRelatedLink } from "../updateRelatedLink";
 import { logger } from "server/services/logger";
-import { addRelatedLinkUpdateAudit } from "./addRelatedLinkUpdateAudit";
+import { addRelatedLinkUpdateAudit } from "./../addRelatedLinkUpdateAudit";
 
 export function get(req: Request, res: Response) {
   const { relatedLinkIndex } = req.params;
@@ -12,7 +12,7 @@ export function get(req: Request, res: Response) {
     return;
   }
 
-  res.render("dashboard/related-links/confirm", {});
+  res.render("dashboard/related-links/confirm");
 }
 
 export async function post(req: Request, res: Response) {
