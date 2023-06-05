@@ -20,8 +20,6 @@ export async function post(req: Request, res: Response) {
   const { relatedLinkIndex } = res.locals;
   const { text, url } = req.session.relatedLink ?? {};
 
-  console.log(res.locals);
-
   if (!text || !url) {
     return res.redirect(`/related-links/${relatedLinkIndex}`);
   }
