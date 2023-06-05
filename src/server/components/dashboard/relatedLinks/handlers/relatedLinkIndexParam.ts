@@ -6,7 +6,7 @@ export function handleRelatedLinkIndexParam(req: Request, res: Response, next: N
 
   const schema = Joi.number().allow("new");
   const { value, error } = schema.validate(relatedLinkIndex);
-  res.locals.relatedLinkIndex = relatedLinkIndex;
+  res.locals.relatedLinkIndex = value;
 
   if (error) {
     return res.redirect(res.locals.listsEditUrl);
