@@ -52,9 +52,9 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
     if (isNotifyError) {
       const errors = response.data.errors as RequestError[];
       errors.forEach(({ error, message }) => {
-       ` logger.error(
+        logger.error(
           `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`
-        );`
+        );
       });
       throw e;
     }
