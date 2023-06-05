@@ -1,8 +1,3 @@
-import { Status } from "@prisma/client";
-import { lowerCase, startCase } from "lodash";
-import type { List } from "server/models/types";
-import { sendProviderChangedDetailsEmail } from "server/services/govuk-notify";
-
 interface getObjectDiffOptions {
   ignore?: string[]; // keys to ignore
 }
@@ -69,20 +64,4 @@ export function getObjectDiff<T extends Record<string, any>>(
       ...(valueDidChange && { [key]: nestedDiff ?? newValue ?? null }),
     };
   }, {});
-}
-
-export async function sendProviderChangeDetailsEmailToAdmins(list: Partial<List>, listItemStatus: Status) {
-  // 👇 Will it ever NOT be with provider?
-  const listItemWithProvider = listItemStatus === Status.OUT_WITH_PROVIDER;
-
-  if (list?.jsonData?.users && listItemWithProvider) {
-    const tasks = list.jsonData.users.map(async (user) => {
-      await sendProviderChangedDetailsEmail({
-        emailAddress: user,
-        serviceType: lowerCase(startCase(list.type)),
-        country: list.country?.name as string,
-      });
-    });
-    await Promise.allSettled(tasks);
-  }
 }
