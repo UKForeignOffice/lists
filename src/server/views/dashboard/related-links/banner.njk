@@ -8,9 +8,14 @@
   {% if messages.relatedLinkBannerStatus == 'success' %}
     <p class="govuk-body">
       You {{ messages.relatedLinkBannerAction }} a link to
-      <a class="govuk-notification-banner__link" target="_blank" href="{{ messages.relatedLinkUrl }}">
-        {{ messages.relatedLinkText }} <span class="govuk-visually-hidden">(opens in a new tab)</span>
-      </a>.
+      {% if messages.relatedLinkBannerAction == 'removed' %}
+        {{ messages.relatedLinkText }}
+      {% else %}
+        <a class="govuk-notification-banner__link" target="_blank" href="{{ messages.relatedLinkUrl }}">
+          {{ messages.relatedLinkText }}
+          <span class="govuk-visually-hidden">(opens in a new tab)</span>
+        </a>.
+      {% endif %}
     </p>
   {% endif %}
 {% endset %}

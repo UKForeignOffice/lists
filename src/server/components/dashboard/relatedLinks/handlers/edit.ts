@@ -1,60 +1,30 @@
-import type { Request, Response } from "express";
-import { relatedLinkSchema } from "../relatedLinkSchema";
-
+import type { Request, Response, NextFunction } from "express";
+import { editRemove } from "./edit.remove";
+import { editContinue } from "./edit.continue";
+import { relatedLinksLogger as logger } from "./logger";
 export function get(req: Request, res: Response) {
   const relatedLinkErrorSummary = req.flash("relatedLinkErrorSummary") as unknown as string[];
-  const { relatedLinks = [] } = res.locals.list.jsonData;
-
-  if (relatedLinks.length >= 5) {
-    req.flash("error", "You can add up to 5 related links");
-    return res.redirect(res.locals.listsEditUrl);
-  }
 
   res.render("dashboard/related-links/edit", {
     relatedLinkErrorSummary: relatedLinkErrorSummary.map((error) => JSON.parse(error)),
   });
 }
 
-export function post(req: Request, res: Response) {
-  const { text, url } = req.body;
-  const { relatedLinkIndex } = req.params;
+export function postController(req: Request, res: Response, next: NextFunction) {
+  const { action }: { action: "continue" | "remove" } = req.body;
 
-  req.session.relatedLink = {
-    text,
-    url,
+  const ACTIONS = {
+    remove: editRemove,
+    continue: editContinue,
   };
 
-  const { error } = relatedLinkSchema.validate(
-    { text, url },
-    {
-      abortEarly: false,
-      errors: {
-        wrap: {
-          label: false,
-        },
-      },
-    }
-  );
+  const handler = ACTIONS[action];
 
-  if (error) {
-    error.details.forEach((detail) => {
-      const { key } = detail.context!;
-      const error = {
-        text: detail.message,
-        href: key,
-      };
-      req.flash("relatedLinkErrorSummary", JSON.stringify(error));
-      req.flash(`relatedLinkError_${key}`, detail.message);
-    });
-
-    req.session.relatedLink = {
-      text,
-      url,
-    };
-
-    res.redirect(`${relatedLinkIndex}`);
-    return;
+  if (!handler) {
+    logger.warn(`User ${req.user?.id} requested to perform unrecognised ${action} on ${req.originalUrl}`);
+    req.flash("error", `There was an error editing the link ${res.locals.relatedLink.text}`);
+    res.redirect(`${res.locals.listsEditUrl}`);
   }
 
-  res.redirect(`${relatedLinkIndex}/confirm`);
+  return handler(req, res, next);
 }

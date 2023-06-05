@@ -142,6 +142,7 @@ enum AuditEvent {
   UNDEFINED
   REMINDER
   ANALYTICS
+  LIST_EDIT
 }
 
 enum Status {

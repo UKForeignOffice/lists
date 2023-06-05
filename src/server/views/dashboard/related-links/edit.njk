@@ -49,15 +49,27 @@
 
       <div class="govuk-button-group">
         {{ govukButton({
-          text: "Continue"
+          text: "Continue",
+          name: "action",
+          value: "continue"
         }) }}
 
-        {{ govukButton({
-          text: "Cancel",
-          element: "a",
-          classes: "govuk-button--secondary",
-          href: backLink
-        }) }}
+
+        {% if relatedLinkIndex == 'new' %}
+          {{ govukButton({
+            text: "Cancel",
+            element: "a",
+            classes: "govuk-button--secondary",
+            href: backLink
+          }) }}
+        {% else %}
+          {{ govukButton({
+            text: "Remove",
+            name: "action",
+            value: "remove",
+            classes: "govuk-button--warning"
+          }) }}
+        {% endif %}
       </div>
 
 

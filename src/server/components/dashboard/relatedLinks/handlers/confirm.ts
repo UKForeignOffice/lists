@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { updateRelatedLink } from "../updateRelatedLink";
 import { logger } from "server/services/logger";
+import { addRelatedLinkUpdateAudit } from "./addRelatedLinkUpdateAudit";
 
 export function get(req: Request, res: Response) {
   const { relatedLinkIndex } = req.params;
@@ -15,7 +16,7 @@ export function get(req: Request, res: Response) {
 }
 
 export async function post(req: Request, res: Response) {
-  const { id } = res.locals.list;
+  const { list } = res.locals;
   const { relatedLinkIndex } = res.locals;
   const { text, url } = req.session.relatedLink ?? {};
 
@@ -24,7 +25,18 @@ export async function post(req: Request, res: Response) {
   }
 
   try {
-    const transaction = await updateRelatedLink(id, { text, url }, relatedLinkIndex);
+    const update = {
+      text,
+      url,
+    };
+    const relatedLinkToEdit = list.jsonData.relatedLinks[relatedLinkIndex];
+    const transaction = await updateRelatedLink(list.id, update, relatedLinkIndex);
+    const auditAction = relatedLinkToEdit === "new" ? "Added" : "Edited";
+    await addRelatedLinkUpdateAudit(req.user!.id, list.id, auditAction, {
+      before: relatedLinkToEdit,
+      ...update,
+    });
+
     const action = relatedLinkIndex === "new" ? "added" : "updated";
     if (transaction) {
       req.flash("relatedLinkBannerStatus", "success");

@@ -16,7 +16,7 @@ relatedLinksRouter.get("/", (req, res, next) => {
 
 relatedLinksRouter.get("/:relatedLinkIndex", edit.get);
 
-relatedLinksRouter.post("/:relatedLinkIndex", edit.post);
+relatedLinksRouter.post("/:relatedLinkIndex", edit.postController);
 
 relatedLinksRouter.get("/:relatedLinkIndex/confirm", confirm.get);
 
