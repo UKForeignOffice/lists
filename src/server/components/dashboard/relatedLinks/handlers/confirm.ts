@@ -20,6 +20,8 @@ export async function post(req: Request, res: Response) {
   const { relatedLinkIndex } = res.locals;
   const { text, url } = req.session.relatedLink ?? {};
 
+  console.log(res.locals);
+
   if (!text || !url) {
     return res.redirect(`/related-links/${relatedLinkIndex}`);
   }
@@ -29,11 +31,13 @@ export async function post(req: Request, res: Response) {
       text,
       url,
     };
-    const relatedLinkToEdit = list.jsonData.relatedLinks[relatedLinkIndex];
     const transaction = await updateRelatedLink(list.id, update, relatedLinkIndex);
-    const auditAction = relatedLinkToEdit === "new" ? "Added" : "Edited";
+
+    const isNew = relatedLinkIndex === "new";
+    const auditAction = isNew ? "Added" : "Edited";
+
     await addRelatedLinkUpdateAudit(req.user!.id, list.id, auditAction, {
-      before: relatedLinkToEdit,
+      ...(!isNew && { before: list.jsonData[relatedLinkIndex] }),
       ...update,
     });
 
@@ -45,7 +49,7 @@ export async function post(req: Request, res: Response) {
       req.flash("relatedLinkUrl", url);
     }
   } catch (e) {
-    logger.error(`User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
+    logger.error(`POST - User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
 
     req.flash("error", `Adding the link ${text} failed`);
   }

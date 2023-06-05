@@ -16,7 +16,7 @@ POST_ACTIONS.set("continue", editContinue);
 
 export async function postController(req: Request, res: Response, next: NextFunction) {
   const { action }: { action: "continue" | "remove" } = req.body;
-
+  console.log("action", action);
   const handler = POST_ACTIONS.get(action);
 
   if (!handler) {
