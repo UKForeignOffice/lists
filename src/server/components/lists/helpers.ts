@@ -8,7 +8,6 @@ import { listsRoutes } from "./routes";
 import type { ListsRequestParams } from "./types";
 import type { CountryName } from "server/models/types";
 import { ServiceType } from "shared/types";
-import { findListsByCountry } from "server/models/list";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
