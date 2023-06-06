@@ -2,7 +2,7 @@
 {% from "summary-list/macro.njk" import govukSummaryList %}
 <div class="govuk-row related-links__container">
 
-  <h3 class="govuk-heading-l">Related content</h3>
+  <h3 class="govuk-heading-m">Related content</h3>
   <p class="govuk-body">
     Add, change or remove links on the results page to content on GOV.UK.
     The other ‘Find a professional service abroad’ lists are linked automatically.
@@ -11,9 +11,7 @@
   {% set detailsHtml %}
     <p>Add links to the following GOV.UK guidance:</p>
     <ul class="govuk-bullet-list">
-      <li>When someone dies in [your country]</li>
-      <li>Tell us once</li>
-      <li>International funeral directors in the UK</li>
+      {% include "./guidance/" + list.type + ".njk" %}
     </ul>
   {% endset %}
 
