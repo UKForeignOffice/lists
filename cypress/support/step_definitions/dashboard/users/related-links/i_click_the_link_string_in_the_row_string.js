@@ -1,4 +1,4 @@
-When("I click the link {string} in the row with header {string}", function (link, header) {
+When("I click the link {string} in the row with header {string}", (link, header) => {
   cy.findByRole("cell", { name: header })
     .parent()
     .within(() => {
