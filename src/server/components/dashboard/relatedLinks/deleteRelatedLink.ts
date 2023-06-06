@@ -2,7 +2,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import type { List } from "shared/types";
 
-export async function deleteRelatedLink(listId: List["id"], index: number | "new" = "new") {
+export async function deleteRelatedLink(listId: List["id"], index: number) {
   const list = await prisma.list.findUnique({
     where: {
       id: listId,
