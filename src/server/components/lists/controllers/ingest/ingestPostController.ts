@@ -1,25 +1,21 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ServiceType } from "shared/types";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { createListItem } from "server/models/listItem/listItem";
 import serviceName from "server/utils/service-name";
-import {
-  createConfirmationLink,
-  getServiceTypeName,
-} from "server/components/lists/helpers";
+import { createConfirmationLink, getServiceTypeName } from "server/components/lists/helpers";
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { sendNewSubmissionEmail } from "./helpers";
+import type { ListDataForSubmissionEmail } from "./helpers";
 
-export async function ingestPostController(
-  req: Request,
-  res: Response
-): Promise<void> {
+
+export async function ingestPostController(req: Request, res: Response): Promise<void> {
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   if (!serviceType) {
     res.status(500).send({
-      error:
-        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
     return;
   }
@@ -27,8 +23,7 @@ export async function ingestPostController(
 
   if (!serviceType || !(serviceType in ServiceType)) {
     res.status(500).send({
-      error:
-        "serviceType is incorrect, please make sure form's webhook output configuration is correct",
+      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
     });
     return;
   }
@@ -58,13 +53,8 @@ export async function ingestPostController(
 
     const confirmationLink = createConfirmationLink(req, reference);
 
-    await sendApplicationConfirmationEmail(
-      contactName,
-      email,
-      typeName,
-      country.name,
-      confirmationLink
-    );
+    await sendApplicationConfirmationEmail(contactName, email, typeName, country.name, confirmationLink);
+    await sendNewSubmissionEmail(item.list as ListDataForSubmissionEmail);
 
     res.send({});
   } catch (error) {

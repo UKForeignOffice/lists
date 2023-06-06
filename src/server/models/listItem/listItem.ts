@@ -1,7 +1,7 @@
 import { WebhookData } from "server/components/formRunner";
 import { List, ListItem, Point, User } from "server/models/types";
 import { ServiceType } from "shared/types";
-import { ListItemWithAddressCountry, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import { ListItemWithAddressCountry, ListItemWithAddressCountryAndList, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
@@ -113,7 +113,7 @@ export async function findListItems(options: {
 }) {
   try {
     const { listIds, listItemIds, statuses, isAnnualReview } = options;
-    if (!(listIds?.length) && !(listItemIds?.length)) {
+    if (!listIds?.length && !listItemIds?.length) {
       const message = "List ids or list item ids must be specified to find list items";
       logger.error(message);
       return { error: Error(message) };
@@ -192,7 +192,7 @@ export async function togglerListItemIsPublished({
 }: {
   id: number;
   isPublished: boolean;
-  jsonData: ListItemJsonData,
+  jsonData: ListItemJsonData;
   userId: User["id"];
 }): Promise<ListItemWithAddressCountry> {
   if (userId === undefined) {
@@ -290,13 +290,20 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
   }
 }
 
-export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountry> {
+export async function createListItem(webhookData: WebhookData): Promise<ListItemWithAddressCountryAndList> {
   try {
     const data = await listItemCreateInputFromWebhook(webhookData);
 
     const listItem = await prisma.listItem.create({
       data,
       include: {
+        list: {
+          select: {
+            jsonData: true,
+            country: true,
+            type: true,
+          },
+        },
         address: {
           include: {
             country: true,

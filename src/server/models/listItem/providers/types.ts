@@ -11,6 +11,22 @@ export type ListItemWithAddressCountry = Prisma.ListItemGetPayload<{
     };
   };
 }>;
+export type ListItemWithAddressCountryAndList = Prisma.ListItemGetPayload<{
+  include: {
+    list: {
+      select: {
+        jsonData: true;
+        country: true;
+        type: true;
+      };
+    };
+    address: {
+      include: {
+        country: true;
+      };
+    };
+  };
+}>;
 
 export interface ListItemWithJsonData extends ListItemWithAddressCountry {
   address: Address & {

@@ -13,6 +13,7 @@ import * as lawyers from "../searches/lawyers";
 import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
+import * as ingestHelpers from "../controllers/ingest/helpers";
 
 const webhookPayload = {
   metadata: {
@@ -117,25 +118,15 @@ describe("Lists Controllers", () => {
     return spy;
   }
 
-  function spyListItemCreateInputFromWebhook(
-    createdListItem = {},
-    shouldReject = false
-  ): any {
-    const spy = jest.spyOn(listItem, "createFromWebhook");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(new Error("Ops.. something went wrong"));
-    } else {
-      spy.mockResolvedValue(createdListItem as any);
-    }
-
-    return spy;
-  }
-
   function spySendApplicationConfirmationEmail(): any {
     return jest
       .spyOn(notify, "sendApplicationConfirmationEmail")
       .mockResolvedValue(true);
+  }
+
+  function spySendNewSubmissionEmail() {
+    return jest
+      .spyOn(ingestHelpers, "sendNewSubmissionEmail");
   }
 
   describe("listsGetController", () => {
@@ -205,6 +196,47 @@ describe("Lists Controllers", () => {
         "Italy",
         `https://${SERVICE_DOMAIN}/confirm/123ABC`
       );
+    });
+
+    test("calls the sendNewSubmissionEmail function", async () => {
+      req.params.serviceType = "lawyers";
+      req.body.questions = webhookPayload.questions;
+
+      const createdListItem = {
+        address: {
+          country: {
+            name: "Italy",
+          },
+        },
+        list: {
+          jsonData: { users: ['bilyBob@huckleberry.com'], relatedLinks: [] },
+          country: {
+            id: 22,
+            name: 'Italy'
+          },
+          type: "lawyers",
+        },
+        reference: "123ABC",
+        type: "lawyers",
+        jsonData: {
+          contactName: "Test User",
+          emailAddress: "test@email.com",
+        },
+      };
+
+      spyCreateListItem(createdListItem);
+      const spy = spySendNewSubmissionEmail();
+
+      await ingestPostController(req, res);
+
+      expect(spy).toHaveBeenCalledWith({
+        jsonData: { users: ['bilyBob@huckleberry.com'], relatedLinks: [] },
+        country: {
+          id: 22,
+          name: 'Italy'
+        },
+        type: "lawyers",
+      });
     });
 
     test("it responds with 422 when createListItem fails", async () => {
