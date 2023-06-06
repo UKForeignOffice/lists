@@ -3,6 +3,9 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
 
+
+{% set title = title + " - Add a related link" %}
+
 {% block relatedLinksBefore %}
   <h1 class="govuk-heading-xl">Add a related link</h1>
   <p class="govuk-body">Add links on the results page to related content on GOV.UK.</p>
