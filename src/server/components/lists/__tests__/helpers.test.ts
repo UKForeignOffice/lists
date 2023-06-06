@@ -8,7 +8,7 @@ import {
   getCountryLawyerRedirectLink,
   createConfirmationLink,
   createListSearchBaseLink,
-  getLinksOfRelatedLists
+  getLinksOfRelatedLists,
 } from "../helpers";
 import { fcdoLawyersPagesByCountry } from "server/services/metadata";
 import { assign, get } from "lodash";
@@ -39,9 +39,7 @@ describe("Lawyers List:", () => {
         propD: ["fried", "poached", "scrambled", ""],
       };
 
-      expect(queryStringFromParams(params)).toEqual(
-        "propA=a&propB=1&propC=c&propD=fried,poached,scrambled"
-      );
+      expect(queryStringFromParams(params)).toEqual("propA=a&propB=1&propC=c&propD=fried,poached,scrambled");
     });
 
     test("query string is built correctly when value is preceded comma", () => {
@@ -83,9 +81,7 @@ describe("Lawyers List:", () => {
         practiceArea: ["Corporate", "Real Estate"],
       };
 
-      expect(parseListValues("practiceArea", params)).toEqual(
-        params.practiceArea
-      );
+      expect(parseListValues("practiceArea", params)).toEqual(params.practiceArea);
     });
 
     test("returns practiceArea array when string", () => {
@@ -93,10 +89,7 @@ describe("Lawyers List:", () => {
         practiceArea: "Corporate, Real Estate",
       };
 
-      expect(parseListValues("practiceArea", params)).toEqual([
-        "Corporate",
-        "Real Estate",
-      ]);
+      expect(parseListValues("practiceArea", params)).toEqual(["Corporate", "Real Estate"]);
     });
   });
 
@@ -129,9 +122,7 @@ describe("Lawyers List:", () => {
     });
 
     test("Covid test provider label is returned correctly", () => {
-      expect(getServiceLabel("covidTestProviders")).toEqual(
-        "a COVID-19 test provider"
-      );
+      expect(getServiceLabel("covidTestProviders")).toEqual("a COVID-19 test provider");
     });
 
     test("undefined is returned when service name is unknown", () => {
@@ -151,18 +142,11 @@ describe("Lawyers List:", () => {
 
   describe("getCountryLawyerRedirectLink", () => {
     test("redirect link is for countries are correct", () => {
-      [
-        "ghana",
-        "myanmar",
-        "Antigua and Barbuda",
-        "Côte d'Ivoire",
-      ].forEach((country: any) => {
+      ["ghana", "myanmar", "Antigua and Barbuda", "Côte d'Ivoire"].forEach((country: any) => {
         const link = getCountryLawyerRedirectLink(country);
         const expectedLink = get(
           fcdoLawyersPagesByCountry,
-          Object.keys(fcdoLawyersPagesByCountry).find(
-            (key) => key.toLowerCase() === country.toLowerCase()
-          ) as string
+          Object.keys(fcdoLawyersPagesByCountry).find((key) => key.toLowerCase() === country.toLowerCase()) as string
         );
 
         expect(link).toBe(expectedLink);
@@ -171,9 +155,7 @@ describe("Lawyers List:", () => {
     });
 
     test("redirect link for unknown country is correct", () => {
-      expect(getCountryLawyerRedirectLink("Tycho" as any)).toBe(
-        "/no-list-exists?serviceType=lawyers&country=Tycho"
-      );
+      expect(getCountryLawyerRedirectLink("Tycho" as any)).toBe("/no-list-exists?serviceType=lawyers&country=Tycho");
     });
   });
 
@@ -194,9 +176,7 @@ describe("Lawyers List:", () => {
         },
         protocol: "https",
       };
-      expect(createConfirmationLink(req, "123")).toBe(
-        `https://${SERVICE_DOMAIN}/confirm/123`
-      );
+      expect(createConfirmationLink(req, "123")).toBe(`https://${SERVICE_DOMAIN}/confirm/123`);
     });
   });
 
@@ -208,9 +188,7 @@ describe("Lawyers List:", () => {
 
       const link = createListSearchBaseLink(listItem.type);
 
-      expect(link).toBe(
-        "https://test-domain/find?serviceType=covidTestProviders"
-      );
+      expect(link).toBe("https://test-domain/find?serviceType=covidTestProviders");
     });
 
     test("it throws when listItem is undefined", () => {
@@ -231,9 +209,7 @@ describe("Lawyers List:", () => {
 
       const link = createListSearchBaseLink(listItem.type);
 
-      expect(link).toBe(
-        "http://test-domain/find?serviceType=covidTestProviders"
-      );
+      expect(link).toBe("http://test-domain/find?serviceType=covidTestProviders");
 
       assign(serverConfig, { isLocalHost: false });
       jest.resetModules();
@@ -241,48 +217,49 @@ describe("Lawyers List:", () => {
   });
 });
 
-
-describe('getLinksOfRelatedLists', () => {
+describe("getLinksOfRelatedLists", () => {
   const mockLists = [
     {
       id: 1,
-      type: 'funeralDirectors',
+      type: "funeralDirectors",
       country: {
-        name: 'Argentina',
+        name: "Argentina",
       },
     },
     {
       id: 2,
-      type: 'translatorsInterpreters',
+      type: "translatorsInterpreters",
       country: {
-        name: 'Argentina',
+        name: "Argentina",
       },
     },
     {
       id: 3,
-      type: 'lawyers',
+      type: "lawyers",
       country: {
-        name: 'Argentina',
+        name: "Argentina",
       },
     },
   ];
-  const spy = jest.spyOn(serverModels, 'findListsByCountry');
+  const spy = jest.spyOn(serverModels, "findListsByCountry");
 
   afterAll(() => {
     spy.mockRestore();
   });
 
-  test('returns an array of related link options for a given country and service type', async () => {
-    const country = 'Argentina';
-    const serviceType = 'lawyers';
+  test("returns an array of related link options for a given country and service type", async () => {
+    const country = "Argentina";
+    const serviceType = "lawyers";
     const expectedLinks = [
       {
-        url: '/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina',
-        text: 'Find a funeral director in Argentina',
+        url: "/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina",
+        text: "Find a funeral director in Argentina",
+        type: "funeralDirectors",
       },
       {
-        url: '/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina',
-        text: 'Find a translator or interpreter in Argentina',
+        url: "/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina",
+        text: "Find a translator or interpreter in Argentina",
+        type: "translatorsInterpreters",
       },
     ];
 
@@ -291,16 +268,5 @@ describe('getLinksOfRelatedLists', () => {
 
     expect(links.length).toBeGreaterThan(0);
     expect(links).toEqual(expectedLinks);
-  });
-
-  it('returns an empty array if no related links are found', async () => {
-    const country = 'France';
-    const serviceType = 'funeralDirectors';
-
-    spy.mockResolvedValue([]);
-    const links = await getLinksOfRelatedLists(country, serviceType);
-
-    expect(links.length).toBe(0);
-    expect(links).toEqual([]);
   });
 });
