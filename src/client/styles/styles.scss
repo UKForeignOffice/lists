@@ -327,4 +327,7 @@ $two-thirds: $one-third * 2;
   color: #942514;
 }
 
-
+.govuk-section-break--blue {
+  border-color: govuk-colour("blue");
+  border-width: 2px;
+}
