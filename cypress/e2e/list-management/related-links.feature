@@ -7,7 +7,6 @@ Feature: List management change annual review date
 
   Scenario: Links to related lists are shown
     When a related list exists
-    And I click the link "Lists"
     And I click the link "Settings" in the row with header "Lawyers in Eurasia"
     Then I see "Find a funeral director in Eurasia"
 
