@@ -158,11 +158,14 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
-    const automatedRelatedLinks = await getLinksOfRelatedLists(
-      list!.country!.name as CountryName,
-      list!.type as ServiceType
-    );
+    let automatedRelatedLinks = [];
 
+    if (list) {
+      automatedRelatedLinks = await getLinksOfRelatedLists(
+        list!.country!.name as CountryName,
+        list!.type as ServiceType
+      );
+    }
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
       ServiceType: updatedServiceType,
