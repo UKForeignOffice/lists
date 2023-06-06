@@ -4,7 +4,7 @@ Feature: List management users
     Given I am logged in as a "user"
     And a list exists with users
     And I click the link "Lists"
-    And I click the link "Settings" for "Eurasia"
+    And I click the link "Settings" in the row with header "Lawyers in Eurasia"
 
 
   Scenario: Add emails to list of users
