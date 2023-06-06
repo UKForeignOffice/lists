@@ -36,10 +36,6 @@ jobs:
           command: npm run lint
 
       - run:
-          name: Build
-          command: npm run build:ci
-
-      - run:
           name: Run tests
           command: npm run test
 
@@ -57,11 +53,7 @@ jobs:
 
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: '18'
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
+
 
       - restore_cache:
           keys:
@@ -71,27 +63,15 @@ jobs:
             - v1-deps-
 
       - run:
-          name: Check install
-          command: |
-            google-chrome --version
-            chromedriver --version
-
-      - run: npm i
-
-      - run:
-          name: Prisma generate
-          command: npm run prisma:generate
-      - run:
           name: build postgres
           command: |
             docker-compose build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
 
       - run:
-          name: build and run  lists
+          name: build lists
           command: |
             docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
-            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build lists apply
-            docker-compose up -d lists apply
+            COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache lists apply
             docker ps
 
 
@@ -100,19 +80,11 @@ jobs:
           command: |
             docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
 
-#      - run: # this will let you view logs from the apply and lists docker containers
-#          name: logs
-#          background: true
-#          command: docker-compose logs -f lists apply
-
-
-      - run:
-          environment:
-            DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
-            CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
-          name: Run smoke tests
-          command: npx cypress install && npm run smoke-tests
-            -
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - app
+            - .cache/Cypress
 
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
@@ -122,9 +94,50 @@ jobs:
             - ~/.cache
 
 
+
       # - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
       #     path: ~/repo/cypress/videos
       #     destination: videos
+
+
+  smoke-run:
+    <<: *defaults
+    machine:
+      image: ubuntu-2004:202111-02
+      docker_layer_caching: true
+    parallelism: 2
+    steps:
+      - attach_workspace:
+          at: ~/
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - checkout
+      - run:
+          name:  run lists
+          command: |
+            docker-compose up -d lists apply
+            docker ps
+
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-
+
+
+      - run: # this will let you view logs from the apply and lists docker containers
+          name: logs
+          background: true
+          command: docker-compose logs -f lists apply
+
+      - run:
+          environment:
+            DATABASE_URL: "postgresql://master:postgrespass@localhost:5432/lists"
+            CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+            CI_SMOKE_TEST: true
+            CYPRESS_BASE_URL: http://localhost:3000
+          name: Run smoke tests
+          command: npx -y cypress run --env split=true
+
 
 
   publish:
@@ -363,6 +376,9 @@ workflows:
               only: /.*/
 
       - smoke
+      - smoke-run:
+          requires:
+            - smoke
 
       - publish:
           name: publish-lists

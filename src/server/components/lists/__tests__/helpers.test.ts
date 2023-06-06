@@ -252,21 +252,45 @@ describe("getLinksOfRelatedLists", () => {
     const serviceType = "lawyers";
     const expectedLinks = [
       {
-        url: "/find?serviceType=funeralDirectors&readNotice=ok&country=Argentina",
+        url: "/find?serviceType=funeralDirectors&country=Argentina",
         text: "Find a funeral director in Argentina",
-        type: "funeralDirectors",
       },
       {
-        url: "/find?serviceType=translatorsInterpreters&readNotice=ok&country=Argentina",
+        url: "/find?serviceType=translatorsInterpreters&country=Argentina",
         text: "Find a translator or interpreter in Argentina",
-        type: "translatorsInterpreters",
       },
     ];
 
     spy.mockResolvedValue(mockLists);
     const links = await getLinksOfRelatedLists(country, serviceType);
 
-    expect(links.length).toBeGreaterThan(0);
     expect(links).toEqual(expectedLinks);
+  });
+
+  it("It returns a link without the country parameter if a related list does not exist in the database", async () => {
+    const country = "France";
+    const serviceType = "funeralDirectors";
+
+    spy.mockResolvedValue([
+      {
+        id: 1,
+        type: "lawyers",
+        country: {
+          name: "France",
+        },
+      },
+    ]);
+    const links = await getLinksOfRelatedLists(country, serviceType);
+
+    expect(links).toEqual([
+      {
+        url: "/find?serviceType=lawyers&country=France",
+        text: "Find a lawyer in France",
+      },
+      {
+        url: "/find?serviceType=translatorsInterpreters",
+        text: "Find a translator or interpreter in France",
+      },
+    ]);
   });
 });

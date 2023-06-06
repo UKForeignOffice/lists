@@ -15,7 +15,7 @@ Given("a list exists with users", () => {
       operation: "list.upsert",
       variables: {
         create: {
-          type: "Lawyers",
+          type: "lawyers",
           reference: "SMOKE",
           jsonData,
           country: {

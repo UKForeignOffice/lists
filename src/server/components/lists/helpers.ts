@@ -20,6 +20,7 @@ import {
   FORM_RUNNER_URL,
   FORM_RUNNER_PUBLIC_URL,
 } from "server/components/formRunner/constants";
+import { findListsByCountry } from "server/models/list";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
@@ -257,20 +258,32 @@ export async function getLinksOfRelatedLists(
   const relatedLinkOptions = [
     {
       text: `Find a lawyer in ${countryName}`,
-      url: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
+      url: `/find?serviceType=lawyers`,
       type: "lawyers",
     },
     {
       text: `Find a funeral director in ${countryName}`,
-      url: `/find?serviceType=funeralDirectors&readNotice=ok&country=${countryName}`,
+      url: `/find?serviceType=funeralDirectors`,
       type: "funeralDirectors",
     },
     {
       text: `Find a translator or interpreter in ${countryName}`,
-      url: `/find?serviceType=translatorsInterpreters&readNotice=ok&country=${countryName}`,
+      url: `/find?serviceType=translatorsInterpreters`,
       type: "translatorsInterpreters",
     },
   ];
 
-  return relatedLinkOptions.filter((link) => serviceType !== link.type);
+  const lists = await findListsByCountry(countryName);
+  const existingListTypes = lists?.map((list) => list.type) ?? [];
+
+  return relatedLinkOptions
+    .filter((link) => serviceType !== link.type)
+    .map(({ text, url, type }) => {
+      const countryParam = `&country=${countryName}`;
+      const relatedListExists = existingListTypes.includes(type);
+      return {
+        text,
+        url: `${url}${relatedListExists ? countryParam : ""}`,
+      };
+    });
 }

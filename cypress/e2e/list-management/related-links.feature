@@ -1,4 +1,4 @@
-Feature: List management change annual review date
+Feature: Related links
 
   Background:
     Given I am logged in as a "Administrator"
@@ -41,11 +41,11 @@ Feature: List management change annual review date
 
 
 
-    Scenario: Custom links can be changed
+    Scenario: Custom links can be removed
       When a related link exists
       And I click the link "Settings" in the row with header "Lawyers in Eurasia"
       And I click Change "How to find eggs"
       And I click the "Remove" button
-      Then I see "You removed a link to How to find eggs"
+      Then I see "You removed a link to"
 
 

@@ -1,3 +1,5 @@
+const cypressSplit = require("cypress-split");
+
 export default {
   chromeWebSecurity: false,
   video: true,

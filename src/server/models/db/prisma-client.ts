@@ -37,14 +37,13 @@ prisma.$connect().catch((error) => {
   logger.error(`Prisma Connect Error ${error.message}`);
 });
 
-// @ts-expect-error
-prisma.$on("query", (e: Prisma.QueryEvent) => {
-  logger.info(`
-      Prisma Query: ${e.query} \r\n
-      Duration: ${e.duration}ms \r\n
-      Params: ${e.params}
-    `);
-});
+// prisma.$on("query", (e: Prisma.QueryEvent) => {
+//   logger.info(`
+//       Prisma Query: ${e.query} \r\n
+//       Duration: ${e.duration}ms \r\n
+//       Params: ${e.params}
+//     `);
+// });
 
 // @ts-expect-error
 prisma.$on("warn", (e) => {

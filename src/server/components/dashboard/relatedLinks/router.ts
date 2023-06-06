@@ -6,7 +6,7 @@ export const relatedLinksRouter = express.Router();
 relatedLinksRouter.param("relatedLinkIndex", handleRelatedLinkIndexParam);
 
 relatedLinksRouter.use("*", (req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = req?.csrfToken?.() ?? "";
   next();
 });
 
