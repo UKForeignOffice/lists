@@ -17,7 +17,7 @@ Feature: List management change annual review date
     And I enter "https://gov.uk" for "URL"
     And I click the link "Continue"
     Then I see "Where to find eggs"
-    When I click the link "Continue"
+    When I click the link "Save"
     Then I see "A related link has been added"
 
     Scenario: Custom links can be changed
@@ -27,8 +27,7 @@ Feature: List management change annual review date
       And I enter " (international guide)" for "Page title"
       And I enter "/government/organisations/foreign-commonwealth-development-office" for "URL"
       When I click the link "Continue"
-      And I click the link "Continue"
-      Then I see the link "How to find eggs (international guide)"
+      And I click the link "Save"
       Then I see "A related link has been updated"
 
 
