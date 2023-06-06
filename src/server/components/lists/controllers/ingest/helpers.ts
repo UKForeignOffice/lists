@@ -1,3 +1,7 @@
+import { lowerCase, startCase } from "lodash";
+import { sendNewListItemSubmittedEmail } from "server/services/govuk-notify";
+import type { List } from "shared/types";
+
 interface getObjectDiffOptions {
   ignore?: string[]; // keys to ignore
 }
@@ -64,4 +68,19 @@ export function getObjectDiff<T extends Record<string, any>>(
       ...(valueDidChange && { [key]: nestedDiff ?? newValue ?? null }),
     };
   }, {});
+}
+
+export type ListDataForSubmissionEmail = Pick<List, "jsonData" | "country" | "type">;
+
+export async function sendNewSubmissionEmail(list: ListDataForSubmissionEmail) {
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendNewListItemSubmittedEmail({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
+  }
 }

@@ -174,3 +174,38 @@ export async function sendAnnualReviewCompletedEmail(
     logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
   }
 }
+
+export async function sendNewListItemSubmittedEmail({
+  emailAddress,
+  serviceType,
+  country,
+}: {
+  emailAddress: string;
+  serviceType: string;
+  country: string;
+}) {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    const personalisation = {
+      typePlural: serviceType,
+      type: pluralize.singular(serviceType),
+      country,
+    };
+
+    logger.info(
+      `personalisation for sendNewListItemSubmittedEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.newListItemSubmitted, emailAddress, {
+      personalisation,
+      reference: "",
+    });
+  } catch (error) {
+    logger.error(`The new list item submitted email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
