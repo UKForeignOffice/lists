@@ -1,25 +1,25 @@
 import querystring from "querystring";
-import { Express, Request } from "express";
+import type { Express, Request } from "express";
 import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
 import { listsRoutes } from "./routes";
-import { ListsRequestParams } from "./types";
-import { CountryName } from "server/models/types";
+import type { ListsRequestParams } from "./types";
+import type { CountryName } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { findListsByCountry } from "server/models/list";
 import {
   fcdoFuneralDirectorsByCountry,
   fcdoLawyersPagesByCountry,
   fcdoTranslatorsInterpretersByCountry,
-  listOfCountriesWithLegalAid
+  listOfCountriesWithLegalAid,
 } from "server/services/metadata";
 import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
-  FORM_RUNNER_PUBLIC_URL
+  FORM_RUNNER_PUBLIC_URL,
 } from "server/components/formRunner/constants";
 
 export async function initLists(server: Express): Promise<void> {
@@ -71,10 +71,7 @@ export function preProcessParams(params: Record<string, any>, req: Request): Rec
   };
 }
 
-export function queryStringFromParams(
-  params: Record<string, any>,
-  removeEmptyValues?: boolean
-): string {
+export function queryStringFromParams(params: Record<string, any>, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .filter((param) => param !== "page")
     .map((key) => {
@@ -98,10 +95,7 @@ export function queryStringFromParams(
     .join("&");
 }
 
-export function parseListValues(
-  paramName: string,
-  params: ListsRequestParams
-): string[] | undefined {
+export function parseListValues(paramName: string, params: ListsRequestParams): string[] | undefined {
   if (!(`${paramName}` in params)) {
     return undefined;
   }
@@ -115,9 +109,7 @@ export function parseListValues(
   }
 }
 
-export function getServiceLabel(
-  serviceType: string | undefined
-): string | undefined {
+export function getServiceLabel(serviceType: string | undefined): string | undefined {
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
@@ -132,9 +124,7 @@ export function getServiceLabel(
   }
 }
 
-export function getServiceTypeName(
-  serviceType: string | undefined
-): string | undefined {
+export function getServiceTypeName(serviceType: string | undefined): string | undefined {
   if (!serviceType) {
     return undefined;
   }
@@ -149,10 +139,7 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
   };
 }
 
-export function getParameterValue(
-  parameterName: string,
-  queryString: string
-): string {
+export function getParameterValue(parameterName: string, queryString: string): string {
   const searchParams = new URLSearchParams(queryString);
   return searchParams.get(parameterName) ?? "";
 }
@@ -236,7 +223,10 @@ function restoreSpecialCharacter(specialCharacter: string, country: string, coun
   const index = country.indexOf(specialCharacter);
   if (index > 0) {
     const before = countryName.substring(0, index);
-    const after = specialCharacter === "," || specialCharacter === "." ? countryName.substring(index) : countryName.substring(index+1);
+    const after =
+      specialCharacter === "," || specialCharacter === "."
+        ? countryName.substring(index)
+        : countryName.substring(index + 1);
     countryName = before.concat(specialCharacter, after);
   }
   return countryName;
@@ -246,7 +236,7 @@ export function formatCountryParam(country: string): string {
   let countryName: string = country;
 
   if (countryName) {
-    countryName = startCase(country)
+    countryName = startCase(country);
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
@@ -254,7 +244,7 @@ export function formatCountryParam(country: string): string {
       countryName = "Côte d'Ivoire";
     }
     const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
-    specialChars.forEach(specialChar => {
+    specialChars.forEach((specialChar) => {
       countryName = restoreSpecialCharacter(specialChar, country, countryName);
     });
   }
@@ -265,27 +255,23 @@ export async function getLinksOfRelatedLists(
   countryName: CountryName,
   serviceType: ServiceType
 ): Promise<Array<{ text: string; url: string }>> {
-  const relatedLinkOptions = {
-    lawyers: {
+  const relatedLinkOptions = [
+    {
       text: `Find a lawyer in ${countryName}`,
       url: `/find?serviceType=lawyers&readNotice=ok&country=${countryName}`,
+      type: "lawyers",
     },
-    funeralDirectors: {
+    {
       text: `Find a funeral director in ${countryName}`,
       url: `/find?serviceType=funeralDirectors&readNotice=ok&country=${countryName}`,
+      type: "funeralDirectors",
     },
-    translatorsInterpreters: {
+    {
       text: `Find a translator or interpreter in ${countryName}`,
       url: `/find?serviceType=translatorsInterpreters&readNotice=ok&country=${countryName}`,
+      type: "translatorsInterpreters",
     },
-  };
-  const lists = await findListsByCountry(countryName);
+  ];
 
-  if (!lists) return [];
-
-  const filteredLists = lists
-    .filter((list) => list.type !== serviceType)
-    .map((list) => relatedLinkOptions[list.type as keyof typeof relatedLinkOptions]);
-
-  return filteredLists;
+  return relatedLinkOptions.filter((link) => serviceType !== link.type);
 }
