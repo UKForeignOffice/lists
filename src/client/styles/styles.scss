@@ -339,3 +339,13 @@ $two-thirds: $one-third * 2;
 .related-links__container {
   border-bottom: 1px solid govuk-colour("dark-grey");
 }
+
+.govuk-button--link {
+  background-color: transparent;
+  border: none;
+  @extend .govuk-link;
+  color: $govuk-link-colour;
+  &:hover {
+    cursor: pointer;
+  }
+}
