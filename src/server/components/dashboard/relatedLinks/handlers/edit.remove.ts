@@ -1,8 +1,8 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { deleteRelatedLink } from "./../deleteRelatedLink";
 import { addRelatedLinkUpdateAudit } from "./../addRelatedLinkUpdateAudit";
 
-export async function editRemove(req: Request, res: Response, next: NextFunction) {
+export async function editRemove(req: Request, res: Response) {
   const { relatedLinkIndex, list, listsEditUrl } = res.locals;
   const relatedLinkToEdit = list.jsonData.relatedLinks[relatedLinkIndex];
 

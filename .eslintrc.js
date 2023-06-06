@@ -12,7 +12,7 @@ module.exports = {
     },
   ],
   rules: {
-    "prettier/prettier": 1,
+    "prettier/prettier": 2,
     "no-console": ["error"],
     "eol-last": ["error"],
     "@typescript-eslint/explicit-function-return-type": 0, // prisma delegates are really difficult to handle otherwise.
