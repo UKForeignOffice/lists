@@ -16,7 +16,7 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import type { CountryName, List } from "server/models/types";
 import { UserRoles } from "server/models/types";
-import { ServiceType } from "shared/types";
+import { RelatedLink, ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 import { getLinksOfRelatedLists } from "server/components/lists/helpers";
 
@@ -145,11 +145,17 @@ export async function listsEditController(req: Request, res: Response, next: Nex
     let lastAnnualReviewStartDate = "";
     let templateUrl = "dashboard/lists-new";
 
+    let automatedRelatedLinks: RelatedLink[] = [];
     if (listId !== "new") {
       list = await findListById(listId);
       annualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "nextAnnualReviewStartDate");
       lastAnnualReviewStartDate = AnnualReviewHelpers.formatAnnualReviewDate(list as List, "lastAnnualReviewStartDate");
       templateUrl = "dashboard/lists-edit";
+
+      automatedRelatedLinks = await getLinksOfRelatedLists(
+        list!.country!.name as CountryName,
+        list!.type as ServiceType
+      );
 
       if (list === undefined) {
         return next();
@@ -158,14 +164,6 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
-    let automatedRelatedLinks = [];
-
-    if (list) {
-      automatedRelatedLinks = await getLinksOfRelatedLists(
-        list!.country!.name as CountryName,
-        list!.type as ServiceType
-      );
-    }
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
       ServiceType: updatedServiceType,
