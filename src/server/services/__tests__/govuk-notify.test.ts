@@ -1,7 +1,7 @@
 import { NotifyClient } from "notifications-node-client";
 import { getNotifyClient } from "../../../shared/getNotifyClient";
 import { sendAnnualReviewPostEmail, sendAnnualReviewProviderEmail } from "../../../scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
-import { sendAuthenticationEmail, sendApplicationConfirmationEmail, sendEditDetailsEmail, sendDataPublishedEmail } from "../../../server/services/govuk-notify";
+import { sendAuthenticationEmail, sendApplicationConfirmationEmail, sendEditDetailsEmail, sendDataPublishedEmail, sendNewListItemSubmittedEmail } from "../../../server/services/govuk-notify";
 import { logger } from "../../../server/services/logger";
 import { NOTIFY } from "../../config";
 
@@ -599,6 +599,29 @@ describe("GOVUK Notify service:", () => {
       );
 
       expect(result.error?.message).toBe("Unable to send annual review provider email: sendEmail error message");
+    });
+  });
+
+  describe("sendNewListItemSubmittedEmail", () => {
+    test("notify.sendEmail command is correct", async () => {
+      const notifyClient = getNotifyClient();
+
+      jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
+        statusText: "Created",
+      });
+
+      const emailAddress = "testemail@gov.uk";
+      await sendNewListItemSubmittedEmail({
+        emailAddress,
+        serviceType: "Lawyers",
+        country: "France",
+      });
+
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+        NOTIFY.templates.newListItemSubmitted,
+        emailAddress,
+        { personalisation: { typePlural: "Lawyers", type: "Lawyer", country: "France" }, reference: "" }
+      );
     });
   });
 });
