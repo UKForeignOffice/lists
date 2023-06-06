@@ -20,6 +20,7 @@ export async function addRelatedLinkUpdateAudit(
         user: userId,
         notes: [`${action} a related link`],
         update,
+        listId,
       },
     },
   });
