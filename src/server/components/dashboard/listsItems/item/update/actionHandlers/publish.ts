@@ -57,7 +57,7 @@ export async function publish(req: Request, res: Response) {
   const { action } = update;
   const isPublished = action === "publish";
 
-  const { listItem, listItemUrl, listIndexUrl, list } = res.locals;
+  const { listItem, listItemUrl, listIndexUrl } = res.locals;
   const verb = isPublished ? "published" : "unpublished";
   let organisationName = listItem.jsonData.organisationName;
   try {
@@ -87,7 +87,7 @@ export async function handlePublishListItem(listItem: ListItem, isPublished: boo
   }
 
   if (updatedListItem.status === Status.UNPUBLISHED) {
-    await sendUnpublishEmail(list);
+    await sendUnpublishEmail(listItem.listId);
   }
   return updatedListItem;
 }
