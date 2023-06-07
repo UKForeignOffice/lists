@@ -42,6 +42,7 @@ import {
 } from "server/components/lists/searches/translators-interpreters";
 import { LanguageRows } from "server/models/listItem/providers/types";
 import serviceName from "server/utils/service-name";
+import { sendNewSubmissionEmail } from "../helpers";
 
 export async function listsPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   let params = getAllRequestParams(req);
@@ -304,7 +305,7 @@ export async function listsConfirmApplicationController(
   const { reference } = req.params;
 
   try {
-    const { type } = await setEmailIsVerified({
+    const { type, listId } = await setEmailIsVerified({
       reference,
     });
 
@@ -329,6 +330,8 @@ export async function listsConfirmApplicationController(
         default:
           serviceName = "Find a professional service abroad";
       }
+
+      await sendNewSubmissionEmail(listId);
 
       res.render("lists/application-confirmation-page", {
         serviceName,

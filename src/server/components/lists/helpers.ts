@@ -21,6 +21,9 @@ import {
   FORM_RUNNER_URL,
   FORM_RUNNER_PUBLIC_URL
 } from "server/components/formRunner/constants";
+import { sendNewListItemSubmittedEmail } from "server/services/govuk-notify";
+import type { List } from "shared/types";
+import { prisma } from "server/models/db/prisma-client";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
@@ -71,10 +74,7 @@ export function preProcessParams(params: Record<string, any>, req: Request): Rec
   };
 }
 
-export function queryStringFromParams(
-  params: Record<string, any>,
-  removeEmptyValues?: boolean
-): string {
+export function queryStringFromParams(params: Record<string, any>, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .filter((param) => param !== "page")
     .map((key) => {
@@ -149,10 +149,7 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
   };
 }
 
-export function getParameterValue(
-  parameterName: string,
-  queryString: string
-): string {
+export function getParameterValue(parameterName: string, queryString: string): string {
   const searchParams = new URLSearchParams(queryString);
   return searchParams.get(parameterName) ?? "";
 }
@@ -236,7 +233,10 @@ function restoreSpecialCharacter(specialCharacter: string, country: string, coun
   const index = country.indexOf(specialCharacter);
   if (index > 0) {
     const before = countryName.substring(0, index);
-    const after = specialCharacter === "," || specialCharacter === "." ? countryName.substring(index) : countryName.substring(index+1);
+    const after =
+      specialCharacter === "," || specialCharacter === "."
+        ? countryName.substring(index)
+        : countryName.substring(index + 1);
     countryName = before.concat(specialCharacter, after);
   }
   return countryName;
@@ -246,7 +246,7 @@ export function formatCountryParam(country: string): string {
   let countryName: string = country;
 
   if (countryName) {
-    countryName = startCase(country)
+    countryName = startCase(country);
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
@@ -254,7 +254,7 @@ export function formatCountryParam(country: string): string {
       countryName = "Côte d'Ivoire";
     }
     const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
-    specialChars.forEach(specialChar => {
+    specialChars.forEach((specialChar) => {
       countryName = restoreSpecialCharacter(specialChar, country, countryName);
     });
   }
@@ -288,4 +288,26 @@ export async function getLinksOfRelatedLists(
     .map((list) => relatedLinkOptions[list.type as keyof typeof relatedLinkOptions]);
 
   return filteredLists;
+}
+
+export async function sendNewSubmissionEmail(listId: number) {
+  const list = (await prisma.list.findFirst({
+    where: {
+      id: listId,
+    },
+    include: {
+      country: true,
+    },
+  })) as List;
+
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendNewListItemSubmittedEmail({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
+  }
 }
