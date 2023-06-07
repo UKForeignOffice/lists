@@ -218,7 +218,7 @@ export async function sendProviderChangedDetailsEmail({
   }
 }
 
-export async function sendProviderChangeDetailsEmailToAdmins(list: Partial<List>) {
+export async function sendProviderChangeDetailsEmailToAdmins(list: Pick<List, "jsonData" | "country" | "type">) {
   if (list?.jsonData?.users) {
     const tasks = list.jsonData.users.map(async (user) => {
       await sendProviderChangedDetailsEmail({

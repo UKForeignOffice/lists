@@ -45,6 +45,7 @@ export async function ingestPutController(req: Request, res: Response) {
         select: {
           jsonData: true,
           country: true,
+          type: true,
         },
       },
     },
@@ -96,7 +97,7 @@ export async function ingestPutController(req: Request, res: Response) {
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     } else {
-      await sendProviderChangeDetailsEmailToAdmins(listItem.list as Partial<List>);
+      await sendProviderChangeDetailsEmailToAdmins(listItem.list as Pick<List, "jsonData" | "country" | "type">);
     }
 
     return res.status(204).send();
