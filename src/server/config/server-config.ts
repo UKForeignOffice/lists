@@ -31,7 +31,7 @@ export const NOTIFY = {
     published: process.env.GOVUK_NOTIFY_DATA_PUBLISHED_TEMPLATE_ID?.trim() ?? "",
     edit: process.env.GOVUK_NOTIFY_EDIT_DETAILS_TEMPLATE_ID?.trim() ?? "",
     editAnnualReviewDate: process.env.GOVUK_NOTIFY_EDIT_ANNUAL_REVIEW_DATE_TEMPLATE_ID?.trim() ?? "",
-    editProviderDetails: process.env.GOVUK_NOTIFY_PROVIDER_EDIT_DETAILS_TEMPLATE_ID?.trim() ?? "",
+    editProviderDetails: process.env.GOVUK_NOTIFY_EDIT_PROVIDER_DETAILS_TEMPLATE_ID?.trim() ?? "",
 
     annualReviewNotices: {
       postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim() ?? "",
