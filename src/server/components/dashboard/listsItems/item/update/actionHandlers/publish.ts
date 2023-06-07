@@ -61,7 +61,7 @@ export async function publish(req: Request, res: Response) {
   const verb = isPublished ? "published" : "unpublished";
   let organisationName = listItem.jsonData.organisationName;
   try {
-    const updatedListItem = await handlePublishListItem(listItem, isPublished, req.user!.id, list);
+    const updatedListItem = await handlePublishListItem(listItem, isPublished, req.user!.id);
     const jsonData = updatedListItem?.jsonData ?? listItem.jsonData;
     organisationName = jsonData?.organisationName ?? jsonData.organisationName;
     req.flash("successBannerTitle", `${organisationName} has been ${verb}`);
@@ -74,7 +74,7 @@ export async function publish(req: Request, res: Response) {
   }
 }
 
-export async function handlePublishListItem(listItem: ListItem, isPublished: boolean, userId: User["id"], list: List) {
+export async function handlePublishListItem(listItem: ListItem, isPublished: boolean, userId: User["id"]) {
   const updatedListItem = await togglerListItemIsPublished({
     id: listItem.id,
     isPublished,
