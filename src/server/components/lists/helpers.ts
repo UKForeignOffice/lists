@@ -21,6 +21,9 @@ import {
   FORM_RUNNER_PUBLIC_URL,
 } from "server/components/formRunner/constants";
 import { findListsByCountry } from "server/models/list";
+import { sendNewListItemSubmittedEmail } from "server/services/govuk-notify";
+import type { List } from "shared/types";
+import { prisma } from "server/models/db/prisma-client";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
@@ -286,4 +289,26 @@ export async function getLinksOfRelatedLists(
         url: `${url}${relatedListExists ? countryParam : ""}`,
       };
     });
+}
+
+export async function sendNewSubmissionEmail(listId: number) {
+  const list = (await prisma.list.findFirst({
+    where: {
+      id: listId,
+    },
+    include: {
+      country: true,
+    },
+  })) as List;
+
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendNewListItemSubmittedEmail({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
+  }
 }

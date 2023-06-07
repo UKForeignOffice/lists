@@ -246,6 +246,7 @@ export async function togglerListItemIsPublished({
 
 interface SetEmailIsVerified {
   type?: ServiceType;
+  listId?: number;
 }
 
 export async function setEmailIsVerified({ reference }: { reference: string }): Promise<SetEmailIsVerified> {
@@ -259,7 +260,7 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
     }
 
     // TODO: Can we use Prisma enums to correctly type the item type in order to avoid typecasting further on?
-    const { type, jsonData } = item as ListItemWithJsonData;
+    const { type, jsonData, listId } = item as ListItemWithJsonData;
     const { metadata } = jsonData;
     const serviceType = type as ServiceType;
 
@@ -283,6 +284,7 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
 
     return {
       type: serviceType,
+      listId,
     };
   } catch (error) {
     logger.error(error);

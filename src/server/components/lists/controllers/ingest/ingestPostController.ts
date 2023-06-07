@@ -7,8 +7,6 @@ import { createConfirmationLink, getServiceTypeName } from "server/components/li
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { sendNewSubmissionEmail } from "./helpers";
-import type { ListDataForSubmissionEmail } from "./helpers";
 
 
 export async function ingestPostController(req: Request, res: Response): Promise<void> {
@@ -54,7 +52,6 @@ export async function ingestPostController(req: Request, res: Response): Promise
     const confirmationLink = createConfirmationLink(req, reference);
 
     await sendApplicationConfirmationEmail(contactName, email, typeName, country.name, confirmationLink);
-    await sendNewSubmissionEmail(item.list as ListDataForSubmissionEmail);
 
     res.send({});
   } catch (error) {
