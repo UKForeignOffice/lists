@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
 
@@ -14,7 +14,6 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
     server.set("trust proxy", false);
   }
 
-
   server.use(
     `/application/*`,
     proxy(FORM_RUNNER_URL, {
@@ -25,25 +24,21 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
-        return proxyResData
-          .toString("utf8")
-          .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
+        return proxyResData.toString("utf8").replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
       },
       userResHeaderDecorator(headers, userReq, userRes) {
-        const isApplicationRequest = userReq.originalUrl.startsWith('/application');
+        const isApplicationRequest = userReq.originalUrl.startsWith("/application");
 
         if (userRes.statusCode === 302 && isApplicationRequest) {
-            const prefix = headers.location?.startsWith('?view=') ? `/${userReq.params[0]}` : ""
+          const prefix = headers.location?.startsWith("?view=") ? `/${userReq.params[0]}` : "";
           return {
             ...headers,
-            location: `/application${prefix}${headers.location}`
+            location: `/application${prefix}${headers.location}`,
           };
         }
 
         return headers;
-      }
+      },
     })
   );
 }
-
-
