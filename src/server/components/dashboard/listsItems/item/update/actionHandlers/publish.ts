@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import type { EventJsonData, ListItem, User, List } from "server/models/types";
+import type { EventJsonData, ListItem, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent, Status } from "@prisma/client";

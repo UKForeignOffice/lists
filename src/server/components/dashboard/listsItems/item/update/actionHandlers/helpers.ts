@@ -24,7 +24,12 @@ export async function sendPublishedEmail(listItem: ListItemWithAddressCountry) {
 
 export async function sendUnpublishEmail(listId: number) {
   const list = (await prisma.list.findFirst({
-    where: { id: listId },
+    where: {
+      id: listId,
+    },
+    include: {
+      country: true,
+    },
   })) as List;
 
   const users = list.jsonData.users as string[];
