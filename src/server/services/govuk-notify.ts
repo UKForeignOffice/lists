@@ -218,6 +218,53 @@ export async function sendManualUnpublishedEmail({
   }
 }
 
+export async function sendProviderChangedDetailsEmail({
+  emailAddress,
+  serviceType,
+  country,
+}: {
+  emailAddress: string;
+  serviceType: string;
+  country: string;
+}) {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    const personalisation = {
+      typeSingular: pluralize.singular(serviceType),
+      country,
+    };
+
+    logger.info(
+      `personalisation for sendProviderChangedDetailsEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.editProviderDetails, emailAddress, {
+      personalisation,
+      reference: "",
+    });
+  } catch (error) {
+    logger.error(`The provider changed details email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
+
+export async function sendProviderChangeDetailsEmailToAdmins(list: Pick<List, "jsonData" | "country" | "type">) {
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await sendProviderChangedDetailsEmail({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
+  }
+}
+
 export async function sendNewListItemSubmittedEmail({
   emailAddress,
   serviceType,
