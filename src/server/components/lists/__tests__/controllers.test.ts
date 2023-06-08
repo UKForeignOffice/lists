@@ -13,7 +13,7 @@ import * as lawyers from "../searches/lawyers";
 import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
-import * as listHelpers from "server/components/lists/helpers";
+import * as notifyEmails from "server/services/govuk-notify";
 
 const webhookPayload = {
   metadata: {
@@ -232,6 +232,7 @@ describe("Lists Controllers", () => {
       jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({
         type: ServiceType.covidTestProviders,
       });
+      jest.spyOn(notifyEmails, "sendManualActionNotificationToPost").mockResolvedValue({});
 
       await listsConfirmApplicationController(req, res, next);
 
