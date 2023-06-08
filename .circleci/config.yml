@@ -136,7 +136,7 @@ jobs:
             CI_SMOKE_TEST: true
             CYPRESS_BASE_URL: http://localhost:3000
           name: Run smoke tests
-          command: npx -y cypress run --env split=true
+          command: npx -y cypress run
 
 
 

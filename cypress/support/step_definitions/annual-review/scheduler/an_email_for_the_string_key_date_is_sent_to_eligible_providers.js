@@ -39,6 +39,7 @@ Then("an email for the {string} key date is sent to eligible providers", async f
       },
     }).then((result) => {
       audits = result;
+      cy.log(audits);
       cy.expect(audits.length).to.be.gt(0);
       audits.forEach((audit) => {
         cy.expect(audit.jsonData.itemId).to.be.oneOf(list.jsonData.currentAnnualReview.eligibleListItems);
