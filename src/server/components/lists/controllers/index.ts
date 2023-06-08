@@ -21,7 +21,7 @@ import {
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
+import type { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
 import { languages, translationInterpretationServices } from "server/services/metadata";
 import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
 import { covidTestProviderQuestionsSequence, searchCovidTestProvider } from "./../searches/covid-test-provider";
@@ -331,7 +331,7 @@ export async function listsConfirmApplicationController(
           serviceName = "Find a professional service abroad";
       }
 
-      await sendNewSubmissionEmail(listId);
+      await sendNewSubmissionEmail(listId as number);
 
       res.render("lists/application-confirmation-page", {
         serviceName,
