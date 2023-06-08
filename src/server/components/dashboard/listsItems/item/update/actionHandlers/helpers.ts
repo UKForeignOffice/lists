@@ -41,14 +41,12 @@ export async function sendUnpublishEmail(listId: number) {
 
   logger.info(`Sending unpublish email to ${users.length} users`);
 
-  if (users) {
-    const tasks = users.map(async (user) => {
-      await sendManualUnpublishedEmail({
-        emailAddress: user,
-        serviceType: lowerCase(startCase(list.type)),
-        country: list.country?.name as string,
-      });
+  const tasks = users.map(async (user) => {
+    await sendManualUnpublishedEmail({
+      emailAddress: user,
+      serviceType: lowerCase(startCase(list.type)),
+      country: list.country?.name as string,
     });
-    await Promise.allSettled(tasks);
-  }
+  });
+  await Promise.allSettled(tasks);
 }
