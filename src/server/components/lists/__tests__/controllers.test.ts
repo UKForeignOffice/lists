@@ -13,7 +13,7 @@ import * as lawyers from "../searches/lawyers";
 import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
-import * as ingestHelpers from "../controllers/ingest/helpers";
+import * as listHelpers from "server/components/lists/helpers";
 
 const webhookPayload = {
   metadata: {
@@ -124,11 +124,6 @@ describe("Lists Controllers", () => {
       .mockResolvedValue(true);
   }
 
-  function spySendNewSubmissionEmail() {
-    return jest
-      .spyOn(ingestHelpers, "sendNewSubmissionEmail");
-  }
-
   describe("listsGetController", () => {
     test("it renders question page when serviceType is undefined", () => {
       listsGetController(req, res);
@@ -198,47 +193,6 @@ describe("Lists Controllers", () => {
       );
     });
 
-    test("calls the sendNewSubmissionEmail function", async () => {
-      req.params.serviceType = "lawyers";
-      req.body.questions = webhookPayload.questions;
-
-      const createdListItem = {
-        address: {
-          country: {
-            name: "Italy",
-          },
-        },
-        list: {
-          jsonData: { users: ['bilyBob@huckleberry.com'], relatedLinks: [] },
-          country: {
-            id: 22,
-            name: 'Italy'
-          },
-          type: "lawyers",
-        },
-        reference: "123ABC",
-        type: "lawyers",
-        jsonData: {
-          contactName: "Test User",
-          emailAddress: "test@email.com",
-        },
-      };
-
-      spyCreateListItem(createdListItem);
-      const spy = spySendNewSubmissionEmail();
-
-      await ingestPostController(req, res);
-
-      expect(spy).toHaveBeenCalledWith({
-        jsonData: { users: ['bilyBob@huckleberry.com'], relatedLinks: [] },
-        country: {
-          id: 22,
-          name: 'Italy'
-        },
-        type: "lawyers",
-      });
-    });
-
     test("it responds with 422 when createListItem fails", async () => {
       req.params.serviceType = "covidTestProviders";
       req.body.questions = webhookPayload.questions;
@@ -279,6 +233,8 @@ describe("Lists Controllers", () => {
         type: ServiceType.covidTestProviders,
       });
 
+      jest.spyOn(listHelpers, "sendNewSubmissionEmail").mockResolvedValue({});
+
       await listsConfirmApplicationController(req, res, next);
 
       expect(res.render).toHaveBeenCalledWith(
@@ -305,6 +261,25 @@ describe("Lists Controllers", () => {
       await listsConfirmApplicationController(req, res, next);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+
+    function spySetEmailIsVerified() {
+      return jest
+        .spyOn(listItem, "setEmailIsVerified")
+        .mockResolvedValue({ type: "lawyers", listId: 123 });
+    }
+
+    test("calls the sendNewSubmissionEmail function", async () => {
+      req.params.serviceType = "lawyers";
+      req.params.reference = 123;
+
+      spySetEmailIsVerified();
+      const spy = jest.spyOn(listHelpers, "sendNewSubmissionEmail");
+
+      await listsConfirmApplicationController(req, res, next);
+
+
+      expect(spy).toHaveBeenCalledWith(123);
     });
   });
 
