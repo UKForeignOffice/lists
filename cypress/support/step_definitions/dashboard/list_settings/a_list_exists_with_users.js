@@ -25,7 +25,7 @@ Given("a list exists with users", () => {
           },
         },
         update: {
-          type: "Lawyers",
+          type: "lawyers",
           jsonData: {
             ...result.jsonData,
             ...jsonData,
