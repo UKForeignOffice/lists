@@ -1,9 +1,9 @@
 {
-  "startPage": "/",
+  "startPage": "/contact-us",
   "pages": [
     {
       "title": "Contact us",
-      "path": "/",
+      "path": "/contact-us",
       "components": [
         {
           "name": "dtptUh",
@@ -70,7 +70,8 @@
         }
       ],
       "next": []
-    }
+    },
+    { "path": "/summary", "title": "Summary", "components": [], "next": [], "controller": "./pages/summary.js" }
   ],
   "lists": [
     {
