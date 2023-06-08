@@ -42,7 +42,7 @@ import {
 } from "server/components/lists/searches/translators-interpreters";
 import { LanguageRows } from "server/models/listItem/providers/types";
 import serviceName from "server/utils/service-name";
-import { sendNewSubmissionEmail } from "../helpers";
+import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
 
 export async function listsPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   let params = getAllRequestParams(req);
@@ -331,7 +331,7 @@ export async function listsConfirmApplicationController(
           serviceName = "Find a professional service abroad";
       }
 
-      await sendNewSubmissionEmail(listId as number);
+      await sendManualActionNotificationToPost(listId as number, "sendNewSubmissionEmail");
 
       res.render("lists/application-confirmation-page", {
         serviceName,

@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { EventJsonData, ListItem, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { ListItemEvent, Status } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { sendPublishedEmail, sendUnpublishEmail } from "./helpers";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { sendPublishedEmail } from "./helpers";
 import { startCase } from "lodash";
+import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]) {
   logger.info(`${userId} looking for ${id} to update`);
@@ -87,7 +88,7 @@ export async function handlePublishListItem(listItem: ListItem, isPublished: boo
   }
 
   if (updatedListItem.status === Status.UNPUBLISHED) {
-    await sendUnpublishEmail(listItem.listId);
+    await sendManualActionNotificationToPost(listItem.listId, "sendManualUnpublishedEmail");
   }
   return updatedListItem;
 }

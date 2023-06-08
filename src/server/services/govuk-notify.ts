@@ -7,6 +7,7 @@ import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
 import { lowerCase, startCase } from "lodash";
 import type { List } from "server/models/types";
+import { prisma } from "server/models/db/prisma-client";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -252,19 +253,6 @@ export async function sendProviderChangedDetailsEmail({
   }
 }
 
-export async function sendProviderChangeDetailsEmailToAdmins(list: Pick<List, "jsonData" | "country" | "type">) {
-  if (list?.jsonData?.users) {
-    const tasks = list.jsonData.users.map(async (user) => {
-      await sendProviderChangedDetailsEmail({
-        emailAddress: user,
-        serviceType: lowerCase(startCase(list.type)),
-        country: list.country?.name as string,
-      });
-    });
-    await Promise.allSettled(tasks);
-  }
-}
-
 export async function sendNewListItemSubmittedEmail({
   emailAddress,
   serviceType,
@@ -297,5 +285,33 @@ export async function sendNewListItemSubmittedEmail({
     });
   } catch (error) {
     logger.error(`The new list item submitted email could not be sent due to error: ${(error as Error).message}`);
+  }
+}
+
+export async function sendManualActionNotificationToPost(listId: number, action: string) {
+  const actions = {
+    sendNewListItemSubmittedEmail,
+    sendProviderChangedDetailsEmail,
+    sendManualUnpublishedEmail,
+  };
+
+  const list = (await prisma.list.findFirst({
+    where: {
+      id: listId,
+    },
+    include: {
+      country: true,
+    },
+  })) as List;
+
+  if (list?.jsonData?.users) {
+    const tasks = list.jsonData.users.map(async (user) => {
+      await actions[action as keyof typeof actions]({
+        emailAddress: user,
+        serviceType: lowerCase(startCase(list.type)),
+        country: list.country?.name as string,
+      });
+    });
+    await Promise.allSettled(tasks);
   }
 }

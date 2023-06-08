@@ -15,7 +15,6 @@ import { assign, get } from "lodash";
 import { SERVICE_DOMAIN } from "server/config";
 import * as serverConfig from "server/config/server-config";
 import * as serverModels from "server/models/list";
-import * as ingestHelpers from "../controllers/ingest/helpers";
 
 describe("Lawyers List:", () => {
   describe("countryHasLegalAid", () => {

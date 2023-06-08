@@ -233,8 +233,6 @@ describe("Lists Controllers", () => {
         type: ServiceType.covidTestProviders,
       });
 
-      jest.spyOn(listHelpers, "sendNewSubmissionEmail").mockResolvedValue({});
-
       await listsConfirmApplicationController(req, res, next);
 
       expect(res.render).toHaveBeenCalledWith(
@@ -268,19 +266,6 @@ describe("Lists Controllers", () => {
         .spyOn(listItem, "setEmailIsVerified")
         .mockResolvedValue({ type: "lawyers", listId: 123 });
     }
-
-    test("calls the sendNewSubmissionEmail function", async () => {
-      req.params.serviceType = "lawyers";
-      req.params.reference = 123;
-
-      spySetEmailIsVerified();
-      const spy = jest.spyOn(listHelpers, "sendNewSubmissionEmail");
-
-      await listsConfirmApplicationController(req, res, next);
-
-
-      expect(spy).toHaveBeenCalledWith(123);
-    });
   });
 
   describe("listsGetPrivateBetaPage", () => {
