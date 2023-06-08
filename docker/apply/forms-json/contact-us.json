@@ -1,9 +1,9 @@
 {
-  "startPage": "/contact-us",
+  "startPage": "/",
   "pages": [
     {
       "title": "Contact us",
-      "path": "/contact-us",
+      "path": "/",
       "components": [
         {
           "name": "dtptUh",
@@ -140,5 +140,5 @@
     }
   ],
   "version": 2,
-  "skipSummary": false
+  "skipSummary": true
 }
