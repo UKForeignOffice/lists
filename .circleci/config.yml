@@ -49,10 +49,14 @@ jobs:
     <<: *defaults
     machine:
       image: ubuntu-2004:202111-02
-      docker_layer_caching: true
 
     steps:
       - checkout
+
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-
 
       - run:
           name: build postgres
@@ -72,53 +76,23 @@ jobs:
           command: |
             docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - .
-
-      - save_cache:
-          key: v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
-            - ~/.npm
-            - ~/.cache
-            - .cache/Cypress
-
-
-
-      # - store_artifacts: # store videos so they are accessible via circleci. Only use when necessary since it will add additional time to the run.
-      #     path: ~/repo/cypress/videos
-      #     destination: videos
-
-
-  smoke-run:
-    <<: *defaults
-    machine:
-      image: ubuntu-2004:202111-02
-      docker_layer_caching: true
-    steps:
-      - attach_workspace:
-          at: ~/
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - checkout
       - run:
           name:  run lists
           command: |
             docker-compose up -d lists apply
             docker ps
 
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-            - v1-deps-
+      - run: npm i
+
+      - run:
+          name: Prisma generate
+          command: npm run prisma:generate
 
       - run:
           name: install cypress
           command: |
             npm install -D cypress
-            
+
       - run: # this will let you view logs from the apply and lists docker containers
           name: logs
           background: true
@@ -131,7 +105,13 @@ jobs:
             CI_SMOKE_TEST: true
             CYPRESS_BASE_URL: http://localhost:3000
           name: Run smoke tests
-          command: npx -y cypress run
+          command: npm run smoke-tests
+
+
+      # store videos so they are accessible via circleci UI. You must turn on video recording via cypress.config.ts first (video: true).
+      # - store_artifacts:
+      #     path: ~/repo/cypress/videos
+      #     destination: videos
 
 
 
@@ -371,9 +351,6 @@ workflows:
               only: /.*/
 
       - smoke
-      - smoke-run:
-          requires:
-            - smoke
 
       - publish:
           name: publish-lists
