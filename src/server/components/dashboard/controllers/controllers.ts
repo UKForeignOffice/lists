@@ -278,7 +278,10 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
 
   const newUsers = [...(list.jsonData.users ?? []), publisher];
 
-  await updateList(Number(listId), { users: newUsers });
+  await updateList(Number(listId), {
+    ...list.jsonData,
+    users: newUsers,
+  });
   res.redirect(res.locals.listsEditUrl);
 }
 
