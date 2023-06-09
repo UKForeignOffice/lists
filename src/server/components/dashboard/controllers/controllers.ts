@@ -16,7 +16,8 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import type { CountryName, List } from "server/models/types";
 import { UserRoles } from "server/models/types";
-import { RelatedLink, ServiceType } from "shared/types";
+import type { RelatedLink } from "shared/types";
+import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 import { getLinksOfRelatedLists } from "server/components/lists/helpers";
 
@@ -29,7 +30,8 @@ export const DEFAULT_VIEW_PROPS = {
 export async function startRouteController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.isUnauthenticated()) {
-      return res.redirect(authRoutes.logout);
+      res.redirect(authRoutes.logout);
+      return;
     }
 
     res.redirect(dashboardRoutes.lists);
@@ -60,7 +62,8 @@ export async function usersEditController(req: Request, res: Response, next: Nex
     const errorTitle = req?.flash("errorTitle");
 
     if (typeof userEmail !== "string") {
-      return next();
+      next();
+      return;
     }
 
     let error = {};
@@ -98,7 +101,8 @@ export async function usersEditPostController(req: Request, res: Response, next:
   if (!isAdminUser) {
     // disallow editing of SuperAdmins
     logger.warn(`non-admin user ${req.user?.userData.id} attempted to edit user ${userEmail}`);
-    return next(new HttpException(405, "405", "You do not have access to edit users"));
+    next(new HttpException(405, "405", "You do not have access to edit users"));
+    return;
   }
   if (emailAddress === userEmail) {
     // disallow editing of SuperAdmins
@@ -110,7 +114,8 @@ export async function usersEditPostController(req: Request, res: Response, next:
 
     req.flash("errorText", error.text);
     req.flash("errorTitle", error.title);
-    return res.redirect(`/dashboard/users/${userEmail}`);
+    res.redirect(`/dashboard/users/${userEmail}`);
+    return;
   }
 
   if (Array.isArray(usersRoles)) {
@@ -132,7 +137,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
   req.flash("userUpdatedSuccessful", `${updateSuccessful}`);
   req.flash("userUpdatedNotificationColour", updateSuccessful ? "green" : "red");
 
-  return res.redirect("/dashboard/users");
+  res.redirect("/dashboard/users");
 }
 
 // TODO: test
@@ -158,11 +163,14 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       );
 
       if (list === undefined) {
-        return next();
+        next();
+        return;
       }
     }
 
     const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
+
+    const error = req.flash("error")[0] as unknown as string;
 
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
@@ -174,6 +182,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       list,
       req,
       automatedRelatedLinks,
+      error: error && JSON.parse(error),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
@@ -186,7 +195,8 @@ export async function listsEditPostController(req: Request, res: Response, next:
   try {
     const removeButtonClicked = "userEmail" in req.body;
 
-    return removeButtonClicked ? await listEditRemovePublisher(req, res) : await listEditAddPublisher(req, res, next);
+    removeButtonClicked ? await listEditRemovePublisher(req, res) : await listEditAddPublisher(req, res, next);
+    return;
   } catch (error) {
     logger.error(`listsEditPostController error: ${(error as Error).message}`);
     next(error);
@@ -227,8 +237,6 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     }
   }
 
-  const user = req.user;
-
   // TODO: rename to "newUser"
   const publisher: string = req.body.publisher;
 
@@ -245,7 +253,8 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const list = await findListById(listId);
 
   if (!list) {
-    return next(new HttpException(404, "404", "List could not be found."));
+    next(new HttpException(404, "404", "List could not be found."));
+    return;
   }
 
   if (list?.jsonData.users?.includes?.(publisher)) {
@@ -259,15 +268,9 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const errorExists = "field" in error;
   // TODO:- implement post redirect get.
   if (errorExists) {
-    return res.render("dashboard/lists-edit", {
-      ...DEFAULT_VIEW_PROPS,
-      listId,
-      user: user?.userData,
-      error,
-      list,
-      req,
-      csrfToken: getCSRFToken(req),
-    });
+    req.flash("error", JSON.stringify(error));
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
   req.flash("successBannerHeading", "Success");
@@ -276,7 +279,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const newUsers = [...(list.jsonData.users ?? []), publisher];
 
   await updateList(Number(listId), { users: newUsers });
-  return res.redirect(res.locals.listsEditUrl);
+  res.redirect(res.locals.listsEditUrl);
 }
 
 export async function listEditRemovePublisher(req: Request, res: Response): Promise<void> {
