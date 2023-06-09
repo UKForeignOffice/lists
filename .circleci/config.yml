@@ -54,14 +54,6 @@ jobs:
     steps:
       - checkout
 
-
-      - restore_cache:
-          keys:
-            - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v1-deps-{{ checksum "package-lock.json" }}
-            - v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v1-deps-
-
       - run:
           name: build postgres
           command: |
@@ -79,6 +71,12 @@ jobs:
           name: build scheduler images
           command: |
             docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
+
+
+      - run:
+          name: install cypress
+          command: |
+            npm install -D cypress
 
       - persist_to_workspace:
           root: ~/
