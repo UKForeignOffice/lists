@@ -91,6 +91,7 @@ jobs:
             - node_modules
             - ~/.npm
             - ~/.cache
+            - .cache/Cypress
 
 
 
