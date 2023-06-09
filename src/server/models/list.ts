@@ -182,6 +182,7 @@ export async function updateList(
 
     const data: ListUpdateInput = {
       jsonData: {
+        ...listData,
         users,
       },
     };

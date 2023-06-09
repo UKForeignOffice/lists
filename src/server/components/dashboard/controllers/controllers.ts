@@ -170,7 +170,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 
     const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
-    const error = req.flash("error")[0] as unknown as string;
+    const questionError = req.flash("questionError")[0] as unknown as string;
 
     res.render(templateUrl, {
       ...DEFAULT_VIEW_PROPS,
@@ -182,10 +182,12 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       list,
       req,
       automatedRelatedLinks,
-      error: error && JSON.parse(error),
+      error: questionError && JSON.parse(questionError),
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
+    logger.error("listsEditController, list could not be found", error);
+
     const err = new HttpException(404, "404", "List could not be found.");
     next(err);
   }
@@ -221,7 +223,6 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     const newList = await createList(data);
 
     const isDuplicateListError = "duplicateListError" in newList!;
-
     if (isDuplicateListError) {
       const formattedService = _.upperFirst(serviceName(data.serviceType));
       req.flash("error", `A list of ${formattedService} in ${data.country} already exists`);
@@ -253,6 +254,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const list = await findListById(listId);
 
   if (!list) {
+    logger.error("listEditAddPublisher, List could not be found");
     next(new HttpException(404, "404", "List could not be found."));
     return;
   }
@@ -268,7 +270,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const errorExists = "field" in error;
   // TODO:- implement post redirect get.
   if (errorExists) {
-    req.flash("error", JSON.stringify(error));
+    req.flash("questionError", JSON.stringify(error));
     res.redirect(res.locals.listsEditUrl);
     return;
   }
