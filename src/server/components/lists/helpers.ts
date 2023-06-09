@@ -21,9 +21,6 @@ import {
   FORM_RUNNER_PUBLIC_URL,
 } from "server/components/formRunner/constants";
 import { findListsByCountry } from "server/models/list";
-import { sendNewListItemSubmittedEmail } from "server/services/govuk-notify";
-import type { List } from "shared/types";
-import { prisma } from "server/models/db/prisma-client";
 
 export async function initLists(server: Express): Promise<void> {
   server.use(listsRouter);
