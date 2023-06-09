@@ -265,3 +265,29 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   return results;
 }
+export async function sendContactUsEmail(emails: string[], personalisation: Record<string, string>) {
+  try {
+    if (config.isSmokeTest) {
+      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
+      return;
+    }
+
+    const tasks = emails.map(async (email) => {
+      logger.info(
+        `personalisation for sendContactUsEmail: ${JSON.stringify(personalisation)}, API key ${
+          NOTIFY.apiKey
+        }, email address ${email}`
+      );
+
+      await getNotifyClient().sendEmail(NOTIFY.templates.contactUsApplyJourney, email, {
+        personalisation,
+        reference: "",
+      });
+    });
+
+    await Promise.allSettled(tasks);
+  } catch (error) {
+    logger.error(`sendContactUsEmail Error: ${error.message}`);
+    return false;
+  }
+}

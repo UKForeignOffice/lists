@@ -1082,7 +1082,7 @@
       "title": "Email to Post",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "/feedback"
+        "url": "http://lists:3000/feedback"
       }
     }
   ],
