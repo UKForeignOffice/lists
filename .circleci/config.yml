@@ -72,12 +72,6 @@ jobs:
           command: |
             docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
 
-
-      - run:
-          name: install cypress
-          command: |
-            npm install -D cypress
-
       - persist_to_workspace:
           root: ~/
           paths:
@@ -103,7 +97,6 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
       docker_layer_caching: true
-    parallelism: 2
     steps:
       - attach_workspace:
           at: ~/
@@ -121,7 +114,11 @@ jobs:
             - v1-deps-{{ checksum "package-lock.json" }}
             - v1-deps-
 
-
+      - run:
+          name: install cypress
+          command: |
+            npm install -D cypress
+            
       - run: # this will let you view logs from the apply and lists docker containers
           name: logs
           background: true
