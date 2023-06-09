@@ -14,7 +14,9 @@ export async function editRemove(req: Request, res: Response) {
     req.flash("relatedLinkBannerStatus", "success");
     req.flash("relatedLinkBannerAction", "removed");
     req.flash("relatedLinkText", relatedLinkToEdit.text);
-    return res.redirect(listsEditUrl);
+    req.flash("relatedLinkUrl", relatedLinkToEdit.url);
+    res.redirect(listsEditUrl);
+    return;
   }
 
   res.redirect(listsEditUrl);

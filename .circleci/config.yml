@@ -82,9 +82,6 @@ jobs:
 
       - persist_to_workspace:
           root: ~/
-          paths:
-            - app
-            - .cache/Cypress
 
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
