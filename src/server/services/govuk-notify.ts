@@ -265,7 +265,10 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   return results;
 }
-export async function sendContactUsEmail(emails: string[], personalisation: Record<string, string>) {
+export async function sendContactUsEmail(
+  emails: string[],
+  personalisation: Record<"emailSubject" | "emailPayload", string>
+) {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}]`);
