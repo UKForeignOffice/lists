@@ -1,3 +1,3 @@
 export const feedbackRoutes = {
-  postFeedback: "/feedback"
+  postFeedback: "/feedback",
 };

@@ -34,6 +34,7 @@ export const NOTIFY = {
     newListItemSubmitted: process.env.GOVUK_NOTIFY_NEW_LIST_ITEM_SUBMISSION_TEMPLATE_ID?.trim() ?? "",
     editProviderDetails: process.env.GOVUK_NOTIFY_EDIT_PROVIDER_DETAILS_TEMPLATE_ID?.trim() ?? "",
     listItemUnpublished: process.env.GOVUK_NOTIFY_ITEM_UNPUBLISHED_TEMPLATE_ID?.trim() ?? "",
+    contactUsApplyJourney: process.env.GOVUK_NOTIFY_CONTACT_US_APPLY_TEMPLATE_ID?.trim() ?? "",
     annualReviewNotices: {
       postOneMonth: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_MONTH_NOTICE?.trim() ?? "",
       postOneWeek: process.env.GOVUK_NOTIFY_ANNUAL_REVIEW_POST_ONE_WEEK_NOTICE?.trim() ?? "",
