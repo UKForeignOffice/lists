@@ -146,6 +146,10 @@ main.govuk-main-wrapper {
 
 .confirmation-focus-box {
   background-color: govuk-colour("light-grey");
+  &--related-links {
+    padding: govuk-spacing(4) govuk-spacing(2);
+    margin-bottom: govuk-spacing(4);
+  }
 }
 
 @media print {
@@ -330,4 +334,18 @@ $two-thirds: $one-third * 2;
 .govuk-section-break--blue {
   border-color: govuk-colour("blue");
   border-width: 2px;
+}
+
+.related-links__container {
+  border-bottom: 1px solid govuk-colour("dark-grey");
+}
+
+.govuk-button--link {
+  background-color: transparent;
+  border: none;
+  @extend .govuk-link;
+  color: $govuk-link-colour;
+  &:hover {
+    cursor: pointer;
+  }
 }

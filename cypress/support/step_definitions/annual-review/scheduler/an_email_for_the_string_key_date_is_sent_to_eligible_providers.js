@@ -1,5 +1,5 @@
-Then("an email for the {string} key date is sent to eligible providers", async function (keyDate) {
-  let list, audits;
+Then("an email for the {string} key date is sent to eligible providers", async function () {
+  let list;
   cy.task("db", {
     operation: "list.findFirst",
     variables: {
@@ -9,9 +9,6 @@ Then("an email for the {string} key date is sent to eligible providers", async f
     },
   }).then((result) => {
     list = result;
-    const keyDateReminders = {
-      START: "sendStartedProviderEmail",
-    };
     cy.task("db", {
       operation: "audit.findMany",
       variables: {
@@ -22,7 +19,7 @@ Then("an email for the {string} key date is sent to eligible providers", async f
             {
               jsonData: {
                 path: ["reminderType"],
-                equals: keyDateReminders[keyDate],
+                equals: "sendStartedProviderEmail",
               },
             },
             {
@@ -38,9 +35,9 @@ Then("an email for the {string} key date is sent to eligible providers", async f
         },
       },
     }).then((result) => {
-      audits = result;
-      cy.expect(audits.length).to.be.gt(0);
-      audits.forEach((audit) => {
+      cy.log(result);
+      cy.expect(result.length).to.be.gt(0);
+      result.forEach((audit) => {
         cy.expect(audit.jsonData.itemId).to.be.oneOf(list.jsonData.currentAnnualReview.eligibleListItems);
       });
     });

@@ -1,9 +1,5 @@
 FROM node:18-alpine AS base
 RUN mkdir -p /usr/src/app && \
-    addgroup -g 1001 appuser && \
-    adduser -S -u 1001 -G appuser appuser && \
-    chown -R appuser:appuser /usr/src/app && \
-    chmod -R +x  /usr/src/app && \
     apk update && \
     apk upgrade
 
@@ -11,17 +7,17 @@ FROM base AS dependencies
 WORKDIR /usr/src/app
 # Node user provided by default with correct priviledges for noed packages
 # https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
-COPY --chown=1001:node package.json package-lock.json ./
-RUN npm i && npm config set cache /tmp --global
-COPY --chown=1001:node package-lock.json package-lock-cache.json
+COPY --chown=node package.json package-lock.json ./
+RUN npm i
+COPY --chown=node package-lock.json package-lock-cache.json
 
-RUN chown -R 1001:node /usr/src/app/node_modules
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
-COPY tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
-COPY docker/apply/forms-json ./docker/apply/forms-json
-COPY --chown=1001:node ./src ./src/
+COPY --chown=node tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
+COPY --chown=node docker/apply/forms-json ./docker/apply/forms-json
+COPY --from=dependencies /usr/src/app/node_modules node_modules
+COPY ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
@@ -34,14 +30,14 @@ RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanel
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
 FROM prod as main
-USER 1001
+USER node
 WORKDIR /usr/dist/app
 
 # copy neccesary files only
-COPY --chown=1001:node package.json ./
-COPY --from=build /usr/src/app/dist dist
-COPY --from=build /usr/src/app/node_modules node_modules
-COPY src/server/models/db/ src/server/models/db/
+COPY --chown=node package.json ./
+COPY --chown=node --from=build /usr/src/app/dist dist
+COPY --chown=node --from=build /usr/src/app/node_modules node_modules
+COPY --chown=node src/server/models/db/ src/server/models/db/
 
 
 ARG NODE_ENV
@@ -61,8 +57,8 @@ CMD ["npm", "run", "start:prod"]
 
 # docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
 FROM prod AS scheduled
-USER 1001
+USER node
 WORKDIR /usr/dist/scheduler
-COPY --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
-COPY --from=build /usr/src/app/node_modules node_modules
-COPY docker/scheduler/package.json ./package.json
+COPY --chown=node --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
+COPY --chown=node --from=build /usr/src/app/node_modules node_modules
+COPY --chown=node docker/scheduler/package.json ./package.json

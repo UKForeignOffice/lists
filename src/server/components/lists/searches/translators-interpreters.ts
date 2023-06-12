@@ -27,6 +27,8 @@ import { camelCase } from "lodash";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import type { countriesList } from "server/services/metadata";
+import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import { CountryName } from "server/models/types";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -204,7 +206,11 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     });
   }
   const results = print === "yes" ? allRows : searchResults;
-  const relatedLinks = await getLinksOfRelatedLists(country, serviceType!);
+
+  const relatedLinks = [
+    ...(await getRelatedLinks(country!, serviceType!)),
+    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+  ];
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

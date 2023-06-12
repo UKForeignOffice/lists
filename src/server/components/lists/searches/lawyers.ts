@@ -17,6 +17,7 @@ import { LawyerListItem } from "server/models/listItem/providers";
 import { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { cleanLegalPracticeAreas, validateCountry } from "server/models/listItem/providers/helpers";
 import { logger } from "server/services/logger";
+import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -26,10 +27,7 @@ export const lawyersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchLawyers(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function searchLawyers(req: Request, res: Response): Promise<void> {
   let params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no" } = params;
   let countryName: string | undefined = formatCountryParam(country as string);
@@ -82,7 +80,11 @@ export async function searchLawyers(
     });
   }
   const results = print === "yes" ? allRows : searchResults;
-  const relatedLinks = await getLinksOfRelatedLists(country as CountryName, serviceType!);
+
+  const relatedLinks = [
+    ...(await getRelatedLinks(countryName!, serviceType!)),
+    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+  ];
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

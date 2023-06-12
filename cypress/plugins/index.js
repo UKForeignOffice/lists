@@ -15,11 +15,10 @@
 const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 const cucumber = require("cypress-cucumber-preprocessor").default;
-
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = (on, _config) => {
+module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on("file:preprocessor", cucumber());
@@ -52,4 +51,6 @@ module.exports = (on, _config) => {
       return childProcess.execSync("docker-compose run scheduler-annual-review-worker");
     },
   });
+
+  return config;
 };

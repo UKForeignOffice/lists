@@ -4,8 +4,7 @@ Feature: List management users
     Given I am logged in as a "user"
     And a list exists with users
     And I click the link "Lists"
-    And I click the link "Settings" for "Eurasia"
-
+    And I click the link "Settings" in the row with header "Lawyers in Eurasia"
 
   Scenario: Add emails to list of users
     When I add "julia@cautionyourblast.com" as a user
@@ -21,7 +20,6 @@ Feature: List management users
     And I see page with heading "Confirm the removal of this user"
     And I click the "Remove" button
     Then I should see the error "You cannot remove yourself as a user. Contact an administrator to remove your email address from this list."
-
 
   Scenario: Prevent adding duplicate user
     When I add "smoke@cautionyourblast.com" as a user

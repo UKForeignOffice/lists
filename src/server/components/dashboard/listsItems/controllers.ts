@@ -1,19 +1,20 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
-import { EventJsonData, ListItem, ListItemGetObject } from "server/models/types";
+import type { EventJsonData, ListItem, ListItemGetObject } from "server/models/types";
 import { getCSRFToken } from "server/components/cookies/helpers";
-import { Prisma, Status } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
+import { Status } from "@prisma/client";
 import { findListById, updateList } from "server/models/list";
 import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import { getDetailsViewModel } from "./getViewModel";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListIndexRes, ListItemRes } from "server/components/dashboard/listsItems/types";
 import { serviceTypeDetailsHeading } from "server/components/dashboard/listsItems/helpers";
 import { getActivityStatus, getPublishingStatus } from "server/models/listItem/summary.helpers";
 import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
-import { Action } from "server/components/dashboard/listsItems/item/update/types";
+import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
 
 function mapUpdatedAuditJsonDataToListItem(
@@ -129,12 +130,14 @@ export async function listItemPostController(req: Request, res: Response, next: 
 
   if (!action) {
     req.flash("errorMsg", "You must select an action");
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
+    return;
   }
 
   if (action === "requestChanges" && !message) {
     req.flash("errorMsg", "You must provide a message to request a change");
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
+    return;
   }
 
   req.session.update = {
@@ -145,10 +148,11 @@ export async function listItemPostController(req: Request, res: Response, next: 
   const allowedSkipConfirmationActions = ["pin", "unpin"];
 
   if (skipConfirmation && allowedSkipConfirmationActions.includes(action)) {
-    return actionHandlers[action as Action](req, res, next);
+    actionHandlers[action as Action](req, res, next);
+    return;
   }
 
-  return res.redirect(`${listItemUrl}/confirm`);
+  res.redirect(`${listItemUrl}/confirm`);
 }
 
 export async function listPublisherDelete(req: Request, res: ListIndexRes, next: NextFunction): Promise<void> {
@@ -159,8 +163,10 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 
   if (!list) {
     // TODO: this should never happen. findByListId should probably throw.
+    logger.error("listPublisherDelete, list could not be found");
     const err = new HttpException(404, "404", "List could not be found.");
-    return next(err);
+    next(err);
+    return;
   }
 
   if (userHasRemovedOwnEmail) {
@@ -170,7 +176,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
       href: "#publishers",
     };
 
-    return res.render("dashboard/list-edit-confirm-delete-user", {
+    res.render("dashboard/list-edit-confirm-delete-user", {
       ...DEFAULT_VIEW_PROPS,
       listId: list.id,
       userEmail,
@@ -179,14 +185,17 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
       req,
       csrfToken: getCSRFToken(req),
     });
+    return;
   }
 
-  const updatedUsers = list.jsonData?.users?.filter((u) => u !== userEmail) ?? [];
+  const { jsonData = {} } = list;
 
-  await updateList(list.id, { users: updatedUsers });
+  const updatedUsers = jsonData.users?.filter((u) => u !== userEmail) ?? [];
+
+  await updateList(list.id, { ...jsonData, users: updatedUsers });
 
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);
 
-  return res.redirect(res.locals.listsEditUrl);
+  res.redirect(res.locals.listsEditUrl);
 }

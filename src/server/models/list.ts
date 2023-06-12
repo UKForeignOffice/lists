@@ -131,7 +131,7 @@ function getRelatedLinks(serviceType: ServiceType) {
       text: "What to do after a British national dies abroad",
     },
     {
-      url: "https://gov.uk/government/publications/international-funeral-directors-in-the-uk/list-of-uk-based-international-funeral-directors--2",
+      url: "https://www.gov.uk/government/publications/international-funeral-directors-in-the-uk",
       text: "UK-based international funeral directors",
     },
     {
@@ -182,6 +182,7 @@ export async function updateList(
 
     const data: ListUpdateInput = {
       jsonData: {
+        ...listData,
         users,
       },
     };

@@ -11,6 +11,7 @@ import * as helpers from "server/models/listItem/providers/helpers";
 import * as lawyers from "../models/listItem/providers/Lawyers";
 import { LawyerListItem } from "server/models/listItem/providers";
 import { findPublishedLawyersPerCountry } from "../models/listItem/providers/Lawyers";
+import * as getRelatedLinksModule from "../components/lists/searches/helpers/getRelatedLinks";
 
 describe("Lawyers List:", () => {
   let server: Express;
@@ -23,9 +24,14 @@ describe("Lawyers List:", () => {
     return jest.spyOn(LawyerListItem, "findPublishedLawyersPerCountry");
   }
 
+  function mockFindRelatedListItems(): jest.SpyInstance {
+    return jest.spyOn(getRelatedLinksModule, "getRelatedLinks").mockResolvedValue([]);
+  }
+
   beforeAll(async () => {
     mockListItemSome();
     mockFindPublishedLawyersPerCountry();
+    mockFindRelatedListItems();
     server = await getServer();
   }, 30000);
 
@@ -51,9 +57,7 @@ describe("Lawyers List:", () => {
     });
 
     test("lawyer's land page POST request is correct", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ readNotice: "ok" });
+      const { status, header } = await request(server).post(pageLink).send({ readNotice: "ok" });
 
       expect(status).toBe(302);
       expect(header.location).toBe(`${pageLink}&readNotice=ok`);
@@ -71,25 +75,19 @@ describe("Lawyers List:", () => {
       const pageHeader = $main.find("h1");
       const continueButton = $main.find("button");
 
-      expect(pageHeader.text().trim()).toBe(
-        "In which country do you need a lawyer?"
-      );
+      expect(pageHeader.text().trim()).toBe("In which country do you need a lawyer?");
       expect(continueButton.text()).toBe("Continue");
     });
 
     test("POST request is correct", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ country: "spain" });
+      const { status, header } = await request(server).post(pageLink).send({ country: "spain" });
 
       expect(status).toBe(302);
       expect(header.location).toBe(`${pageLink}&country=spain`);
     });
 
     test("POST request is correct for country name starting with lowercase letter", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ country: "northern Cyprus" });
+      const { status, header } = await request(server).post(pageLink).send({ country: "northern Cyprus" });
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("northern Cyprus", "lawyers");
@@ -97,9 +95,7 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct for country name with special character ô", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ country: "Côte d'Ivoire" });
+      const { status, header } = await request(server).post(pageLink).send({ country: "Côte d'Ivoire" });
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("Côte d'Ivoire", "lawyers");
@@ -107,9 +103,7 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct for country name with special character -", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ country: "Guinea-Bissau" });
+      const { status, header } = await request(server).post(pageLink).send({ country: "Guinea-Bissau" });
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("Guinea-Bissau", "lawyers");
@@ -117,15 +111,11 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct for country name with special character ã, í and é", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ country: "São Tomé and Príncipe" });
+      const { status, header } = await request(server).post(pageLink).send({ country: "São Tomé and Príncipe" });
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("São Tomé And Príncipe", "lawyers");
-      expect(header.location).toBe(
-        `${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`
-      );
+      expect(header.location).toBe(`${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`);
     });
 
     test("accessibility", async () => {
@@ -137,8 +127,7 @@ describe("Lawyers List:", () => {
 
   describe("lawyer's region question page", () => {
     const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain";
-    const pageLinkLowercaseCountry =
-      "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
+    const pageLinkLowercaseCountry = "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -148,32 +137,24 @@ describe("Lawyers List:", () => {
       const pageHeader = $main.find("h1");
       const continueButton = $main.find("button");
 
-      expect(pageHeader.text().trim()).toBe(
-        "Where in Spain do you want to find a lawyer? (Optional)"
-      );
+      expect(pageHeader.text().trim()).toBe("Where in Spain do you want to find a lawyer? (Optional)");
       expect(continueButton.text()).toBe("Continue");
     });
 
     test("GET request is correct for country starting with lowercase letter", async () => {
-      const { text } = await request(server)
-        .get(pageLinkLowercaseCountry)
-        .type("text/html");
+      const { text } = await request(server).get(pageLinkLowercaseCountry).type("text/html");
 
       const $html = $.load(text);
       const $main = $html("main");
       const pageHeader = $main.find("h1");
       const continueButton = $main.find("button");
 
-      expect(pageHeader.text().trim()).toBe(
-        "Where in Northern Cyprus do you want to find a lawyer? (Optional)"
-      );
+      expect(pageHeader.text().trim()).toBe("Where in Northern Cyprus do you want to find a lawyer? (Optional)");
       expect(continueButton.text()).toBe("Continue");
     });
 
     test("POST request is correct", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ region: "madrid" });
+      const { status, header } = await request(server).post(pageLink).send({ region: "madrid" });
 
       expect(status).toBe(302);
       expect(header.location).toBe(`${pageLink}&region=madrid`);
@@ -187,8 +168,7 @@ describe("Lawyers List:", () => {
   });
 
   describe("Lawyer's legal areas question page", () => {
-    const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid";
+    const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -198,9 +178,7 @@ describe("Lawyers List:", () => {
       const pageHeader = $main.find("h1");
       const continueButton = $main.find("button");
 
-      expect(pageHeader.text().trim()).toBe(
-        "In what areas of law do you need legal help?"
-      );
+      expect(pageHeader.text().trim()).toBe("In what areas of law do you need legal help?");
       expect(continueButton.text()).toBe("Continue");
     });
 
@@ -210,9 +188,7 @@ describe("Lawyers List:", () => {
         .send({ practiceArea: ["maritime", "real estate"] });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(
-        `${pageLink}&practiceArea=maritime,real%20estate`
-      );
+      expect(header.location).toBe(`${pageLink}&practiceArea=maritime,real%20estate`);
     });
 
     test("accessibility", async () => {
@@ -239,9 +215,7 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct", async () => {
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ readDisclaimer: "ok" });
+      const { status, header } = await request(server).post(pageLink).send({ readDisclaimer: "ok" });
 
       expect(status).toBe(302);
       expect(header.location).toBe(`${pageLink}&readDisclaimer=ok`);
@@ -249,9 +223,7 @@ describe("Lawyers List:", () => {
 
     test("accessibility", async () => {
       const { text } = await request(server)
-        .get(
-          "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate"
-        )
+        .get("/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate")
         .type("text/html");
 
       expect(await axe(text)).toHaveNoViolations();
@@ -280,9 +252,7 @@ describe("Lawyers List:", () => {
         )
         .type("text/html");
 
-      expect(
-        await LawyerListItem.findPublishedLawyersPerCountry
-      ).toBeCalledWith({
+      expect(await LawyerListItem.findPublishedLawyersPerCountry).toBeCalledWith({
         countryName: "Spain",
         region: "madrid",
         practiceArea: ["maritime", "real estate"],
@@ -367,8 +337,6 @@ describe("Lawyers List:", () => {
 
     expect(status).toBe(302);
     expect(helpers.some).toBeCalledWith("Belize", "lawyers");
-    expect(header.location).toBe(
-      "https://www.gov.uk/government/publications/belize-list-of-lawyers"
-    );
+    expect(header.location).toBe("https://www.gov.uk/government/publications/belize-list-of-lawyers");
   });
 });

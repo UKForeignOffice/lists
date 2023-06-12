@@ -81,9 +81,15 @@ export type AuditListItemEventName =
   | "startAnnualReview"
   | "reminder";
 
+export interface RelatedLink extends PrismaClient.Prisma.JsonObject {
+  url: string;
+  text: string;
+}
+
 export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
   users?: string[];
   currentAnnualReview?: CurrentAnnualReview;
+  relatedLinks?: RelatedLink[];
 }
 
 export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {

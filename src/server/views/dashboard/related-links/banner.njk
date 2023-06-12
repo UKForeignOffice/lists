@@ -1,0 +1,22 @@
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% set relatedLinkBannerHtml %}
+  <h3 class="govuk-notification-banner__heading">
+    A related link has been {{ messages.relatedLinkBannerAction }}
+  </h3>
+
+  {% if messages.relatedLinkBannerStatus == 'success' %}
+    <p class="govuk-body">
+      You {{ messages.relatedLinkBannerAction }} a link to
+        <a class="govuk-notification-banner__link"
+           target="_blank" rel="noopener noreferrer"
+           href="{{ messages.relatedLinkUrl }}">{{ messages.relatedLinkText }}<span class="govuk-visually-hidden">(opens in a new tab)</span></a>.
+    </p>
+  {% endif %}
+{% endset %}
+
+
+{{ govukNotificationBanner({
+  html: relatedLinkBannerHtml,
+  type:  messages.relatedLinkBannerStatus
+}) }}

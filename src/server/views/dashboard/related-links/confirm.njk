@@ -1,0 +1,43 @@
+{% extends "./layout.njk" %}
+
+{% set title = title + " - Check this link is correct" %}
+
+{% block relatedLinksBefore %}
+  <h1 class="govuk-heading-xl">Check this link is correct</h1>
+{% endblock %}
+
+{% block relatedLinksContent %}
+    <div class="govuk-grid-row confirmation-focus-box confirmation-focus-box--related-links">
+      <div class="govuk-grid-column-full">
+        <p class="govuk-body">Check the:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>link works</li>
+          <li>page title is correct</li>
+        </ul>
+
+        <a href="{{ relatedLink.url }}" class="govuk-link govuk-body" target="_blank" rel="noopener noreferrer">
+          {{ relatedLink.text }}
+          <span class="govuk-visually-hidden">(opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+
+  <form method="post">
+    <div class="govuk-grid-row govuk-button-group">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+      {{ govukButton({
+        text: "Save"
+      }) }}
+
+      {{ govukButton({
+        text: "Back",
+        element: "a",
+        classes: "govuk-button--secondary",
+        href: backLink + '/related-links/' + relatedLinkIndex
+      }) }}
+    </div>
+  </form>
+
+
+{% endblock %}

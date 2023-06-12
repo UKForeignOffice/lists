@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 
-import { isLocalHost } from "server/config";
+import { isLocalHost, isSmokeTest } from "server/config";
 
 import { logger } from "server/services/logger";
 
@@ -39,11 +39,13 @@ prisma.$connect().catch((error) => {
 
 // @ts-expect-error
 prisma.$on("query", (e: Prisma.QueryEvent) => {
-  logger.info(`
+  if (!isSmokeTest) {
+    logger.info(`
       Prisma Query: ${e.query} \r\n
       Duration: ${e.duration}ms \r\n
       Params: ${e.params}
     `);
+  }
 });
 
 // @ts-expect-error

@@ -1,0 +1,82 @@
+{% extends "./layout.njk" %}
+{% from "input/macro.njk" import govukInput %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% set titleAction = "Add" if relatedLinkIndex == 'new' else "Change or remove"  %}
+{% set title = title + " - Add a related link" %}
+
+{% block relatedLinksBefore %}
+  <h1 class="govuk-heading-xl">{{ titleAction }} a related link</h1>
+  <p class="govuk-body">Add links on the results page to related content on GOV.UK.</p>
+{% endblock %}
+
+
+{% block relatedLinksContent %}
+  <div class="govuk-grid-row">
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+      {% if relatedLinkErrorSummary.length %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: relatedLinkErrorSummary
+        }) }}
+      {% endif %}
+
+      {% set textError = messages.relatedLinkError_text[0] %}
+      {% set urlError = messages.relatedLinkError_url[0] %}
+
+
+      {{ govukInput({
+        label: {
+          text: "Page title"
+        },
+        id: "text",
+        name: "text",
+        value: relatedLink.text,
+        errorMessage: { text: textError } if textError
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "URL"
+        },
+        id: "url",
+        name: "url",
+        value: relatedLink.url,
+        errorMessage: { text: urlError } if urlError
+      }) }}
+
+
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue",
+          name: "action",
+          value: "continue"
+        }) }}
+
+
+        {% if relatedLinkIndex == 'new' %}
+          {{ govukButton({
+            text: "Cancel",
+            element: "a",
+            classes: "govuk-button--secondary",
+            href: backLink
+          }) }}
+        {% else %}
+          {{ govukButton({
+            text: "Remove",
+            name: "action",
+            value: "remove",
+            classes: "govuk-button--warning"
+          }) }}
+        {% endif %}
+      </div>
+
+
+    </form>
+
+  </div>
+{% endblock %}

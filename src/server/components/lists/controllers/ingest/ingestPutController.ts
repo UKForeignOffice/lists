@@ -94,6 +94,7 @@ export async function ingestPutController(req: Request, res: Response) {
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     }
+
     return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);

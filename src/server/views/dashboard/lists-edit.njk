@@ -1,6 +1,7 @@
 {% extends "./dashboard.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
 
+
 {% block content %}
   <div class="govuk-grid-row back-links__container">
     <aside class="govuk-grid-column-one-quarter back-links__aside">
@@ -15,6 +16,11 @@
     <div class="govuk-grid-column-three-quarters">
       {% if messages.successBannerHeading %}
         {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
+      {% endif %}
+
+
+      {% if messages.relatedLinkBannerStatus %}
+        {% include "./related-links/banner.njk" %}
       {% endif %}
 
       {% if messages.error %}
@@ -92,14 +98,15 @@
                   {{ user }}
                 </dt>
                 <dd class="govuk-summary-list__actions">
-                    <button class="govuk-button govuk-button--secondary govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user }}">
-                      Remove<span class="govuk-visually-hidden"> publisher</span>
+                    <button class="govuk-button--link govuk-body govuk-link govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user }}">
+                      Remove<span class="govuk-visually-hidden"> {{ user }}</span>
                     </button>
                 </dd>
               </div>
             {% endfor %}
           </dl>
       </form>
+      {% include "./related-links/related-content.njk" %}
     </div>
   </div>
 

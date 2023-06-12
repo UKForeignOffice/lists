@@ -175,7 +175,7 @@ describe("List Model:", () => {
       createdBy: "test@gov.uk",
     };
 
-    test("create call is correct", async () => {
+    test("create update is correct", async () => {
       prisma.list.update.mockResolvedValue(sampleList);
 
       await updateList(listId, listData);
@@ -186,7 +186,10 @@ describe("List Model:", () => {
         },
         data: {
           jsonData: {
-            users: compact(listData.users),
+            country: "United Kingdom",
+            serviceType: ServiceType.covidTestProviders,
+            users: ["test@gov.uk", "publisher@gov.uk"],
+            createdBy: "test@gov.uk",
           },
         },
       });

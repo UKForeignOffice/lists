@@ -13,8 +13,9 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
-import {CountryName, FuneralDirectorListItemGetObject} from "server/models/types";
+import { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
+import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
@@ -68,7 +69,11 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
     searchResults = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
   }
   const results = print === "yes" ? allRows : searchResults;
-  const relatedLinks = await getLinksOfRelatedLists(country as CountryName, serviceType!);
+
+  const relatedLinks = [
+    ...(await getRelatedLinks(countryName!, serviceType!)),
+    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+  ];
 
   res.render("lists/results-page", {
     ...DEFAULT_VIEW_PROPS,

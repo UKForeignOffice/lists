@@ -4,7 +4,7 @@ Feature: List management change annual review date
     Given I am logged in as a "Administrator"
     And A "lawyers" list exists for Eurasia
     And I click the link "Lists"
-    And I click the link "Settings" for "Eurasia"
+    And I click the link "Settings" in the row with header "Lawyers in Eurasia"
     And I click the link "Change"
     And I see page with heading "Change annual review start date"
 
