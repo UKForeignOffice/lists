@@ -331,7 +331,7 @@ export async function listsConfirmApplicationController(
           serviceName = "Find a professional service abroad";
       }
 
-      await sendManualActionNotificationToPost(listId as number, "sendNewSubmissionEmail");
+      await sendManualActionNotificationToPost(listId as number, "PROVIDER_SUBMITTED");
 
       res.render("lists/application-confirmation-page", {
         serviceName,
