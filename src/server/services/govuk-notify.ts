@@ -5,7 +5,6 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
-import { lowerCase, startCase } from "lodash";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
