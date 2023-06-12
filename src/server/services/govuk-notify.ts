@@ -8,6 +8,7 @@ import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
+import { lowerCase, startCase } from "lodash";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -205,16 +206,7 @@ async function sendEmails<P extends { [key: string]: any }>(
 }
 
 type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
-interface ManualActionNotificationPersonalisation {
-  emailAddress: string;
-  serviceType: string;
-  country: string;
-}
-export async function sendManualActionNotificationToPost(
-  listId: number,
-  trigger: NotificationTrigger,
-  personalisation: ManualActionNotificationPersonalisation
-) {
+export async function sendManualActionNotificationToPost(listId: number, trigger: NotificationTrigger) {
   const list = await prisma.list.findFirst({
     where: {
       id: listId,
@@ -247,6 +239,11 @@ export async function sendManualActionNotificationToPost(
 
   const { jsonData = {} } = list as List;
   const { users = [] } = jsonData;
+
+  const personalisation = {
+    serviceType: lowerCase(startCase(list.type)),
+    country: list.country?.name,
+  };
 
   const results = await sendEmails(templateId, users, { personalisation, reference: "" });
 

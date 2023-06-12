@@ -95,7 +95,7 @@ export async function ingestPutController(req: Request, res: Response) {
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     } else {
-      await sendManualActionNotificationToPost(listItem.listId, "sendProviderChangedDetailsEmail");
+      await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS", { serviceType });
     }
 
     return res.status(204).send();
