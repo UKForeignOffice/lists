@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { listsRoutes } from "./../routes";
 import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
-import { CountryName } from "server/models/types";
+import type { CountryName } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { SERVICE_DOMAIN } from "server/config";
 import { kebabCase } from "lodash";
@@ -40,7 +40,7 @@ import {
   searchTranslatorsInterpreters,
   translatorsInterpretersQuestionsSequence,
 } from "server/components/lists/searches/translators-interpreters";
-import { LanguageRows } from "server/models/listItem/providers/types";
+import type { LanguageRows } from "server/models/listItem/providers/types";
 import serviceName from "server/utils/service-name";
 import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
 
@@ -346,7 +346,8 @@ export function listsGetPrivateBetaPage(req: Request, res: Response, next: NextF
   const { serviceType } = req.query;
 
   if (serviceType === undefined) {
-    return next();
+    next();
+    return;
   }
 
   res.render("lists/private-beta-page", {
