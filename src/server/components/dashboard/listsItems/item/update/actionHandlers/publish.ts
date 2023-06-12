@@ -44,13 +44,13 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
     // @ts-ignore
-    return update(id, userId, auditJsonData.updatedJsonData);
+    return await update(id, userId, auditJsonData.updatedJsonData);
   }
 
   const listItemJsonData = listItem.jsonData as ListItemJsonData;
 
   logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItemJsonData.updatedJsonData)}`);
-  return update(id, userId);
+  return await update(id, userId);
 }
 
 export async function publish(req: Request, res: Response) {
@@ -68,10 +68,11 @@ export async function publish(req: Request, res: Response) {
     req.flash("successBannerTitle", `${organisationName} has been ${verb}`);
     req.flash("successBannerHeading", startCase(verb));
     req.flash("successBannerColour", "green");
-    return res.redirect(listIndexUrl);
+    res.redirect(listIndexUrl);
+    return;
   } catch (error: any) {
     req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
   }
 }
 
@@ -88,7 +89,7 @@ export async function handlePublishListItem(listItem: ListItem, isPublished: boo
   }
 
   if (updatedListItem.status === Status.UNPUBLISHED) {
-    await sendManualActionNotificationToPost(listItem.listId, "sendManualUnpublishedEmail");
+    await sendManualActionNotificationToPost(listItem.listId, "UNPUBLISHED");
   }
   return updatedListItem;
 }
