@@ -8,6 +8,7 @@ import type { NotifyResult } from "shared/types";
 import { lowerCase, startCase } from "lodash";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
+import type { SendEmailOptions } from "notifications-node-client";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -185,133 +186,81 @@ export async function sendAnnualReviewCompletedEmail(
   }
 }
 
-export async function sendManualUnpublishedEmail({
-  emailAddress,
-  serviceType,
-  country,
-}: {
+async function sendEmails<P extends { [key: string]: any }>(
+  templateId: string,
+  emailAddresses: string[],
+  options: SendEmailOptions<P>
+) {
+  const notifyClient = getNotifyClient();
+
+  logger.info(
+    `Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(options)}`,
+    { method: "sendEmails" }
+  );
+
+  const requests = emailAddresses.map(async (emailAddress) => {
+    return await notifyClient.sendEmail(templateId, emailAddress, options);
+  });
+
+  return await Promise.allSettled(requests);
+}
+
+type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
+interface ManualActionNotificationPersonalisation {
   emailAddress: string;
   serviceType: string;
   country: string;
-}) {
-  try {
-    if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
-      return;
-    }
-
-    const personalisation = {
-      type: pluralize.singular(serviceType),
-      country,
-    };
-
-    logger.info(
-      `personalisation for sendManualUnpublishedEmail: ${JSON.stringify(personalisation)}, API key ${
-        NOTIFY.apiKey
-      }, email address ${emailAddress}`
-    );
-    await getNotifyClient().sendEmail(NOTIFY.templates.listItemUnpublished, emailAddress, {
-      personalisation,
-      reference: "",
-    });
-  } catch (error) {
-    logger.error(`The provider manual unpublish email could not be sent due to error: ${(error as Error).message}`);
-  }
 }
-
-export async function sendProviderChangedDetailsEmail({
-  emailAddress,
-  serviceType,
-  country,
-}: {
-  emailAddress: string;
-  serviceType: string;
-  country: string;
-}) {
-  try {
-    if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
-      return;
-    }
-
-    const personalisation = {
-      typeSingular: pluralize.singular(serviceType),
-      country,
-    };
-
-    logger.info(
-      `personalisation for sendProviderChangedDetailsEmail: ${JSON.stringify(personalisation)}, API key ${
-        NOTIFY.apiKey
-      }, email address ${emailAddress}`
-    );
-    await getNotifyClient().sendEmail(NOTIFY.templates.editProviderDetails, emailAddress, {
-      personalisation,
-      reference: "",
-    });
-  } catch (error) {
-    logger.error(`The provider changed details email could not be sent due to error: ${(error as Error).message}`);
-  }
-}
-
-export async function sendNewListItemSubmittedEmail({
-  emailAddress,
-  serviceType,
-  country,
-}: {
-  emailAddress: string;
-  serviceType: string;
-  country: string;
-}) {
-  try {
-    if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
-      return;
-    }
-
-    const personalisation = {
-      typePlural: serviceType,
-      type: pluralize.singular(serviceType),
-      country,
-    };
-
-    logger.info(
-      `personalisation for sendNewListItemSubmittedEmail: ${JSON.stringify(personalisation)}, API key ${
-        NOTIFY.apiKey
-      }, email address ${emailAddress}`
-    );
-    await getNotifyClient().sendEmail(NOTIFY.templates.newListItemSubmitted, emailAddress, {
-      personalisation,
-      reference: "",
-    });
-  } catch (error) {
-    logger.error(`The new list item submitted email could not be sent due to error: ${(error as Error).message}`);
-  }
-}
-
-export async function sendManualActionNotificationToPost(listId: number, action: string) {
-  const actions = {
-    sendNewListItemSubmittedEmail,
-    sendProviderChangedDetailsEmail,
-    sendManualUnpublishedEmail,
-  };
-
-  const list = (await prisma.list.findFirst({
+export async function sendManualActionNotificationToPost(
+  listId: number,
+  trigger: NotificationTrigger,
+  personalisation: ManualActionNotificationPersonalisation
+) {
+  const list = await prisma.list.findFirst({
     where: {
       id: listId,
     },
     include: {
       country: true,
     },
-  })) as List;
+  });
 
-  if (list?.jsonData?.users) {
-    const tasks = list.jsonData.users.map(async (user) => {
-      await actions[action as keyof typeof actions]({
-        emailAddress: user,
-        serviceType: lowerCase(startCase(list.type)),
-        country: list.country?.name as string,
-      });
+  if (!list) {
+    logger.error(`${listId} could not be found, could not send notification for ${trigger}`, {
+      method: "sendManualActionNotificationToPost",
     });
-    await Promise.allSettled(tasks);
+    return { error: `invalid ${listId}` };
   }
+
+  const notificationTypeToTemplateId: Record<NotificationTrigger, string> = {
+    PROVIDER_SUBMITTED: NOTIFY.templates.newListItemSubmitted,
+    CHANGED_DETAILS: NOTIFY.templates.editProviderDetails,
+    UNPUBLISHED: NOTIFY.templates.listItemUnpublished,
+  };
+
+  const templateId = notificationTypeToTemplateId[trigger];
+
+  if (!templateId) {
+    logger.error(`Trigger was ${trigger} but the associated email could not be found`, {
+      method: "sendManualActionNotificationToPost",
+    });
+  }
+
+  const { jsonData = {} } = list as List;
+  const { users = [] } = jsonData;
+
+  const results = await sendEmails(templateId, users, { personalisation, reference: "" });
+
+  results
+    .filter((result) => result.status !== "fulfilled")
+    .forEach((failedResult) => {
+      // @ts-ignore
+      logger.error(`Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`);
+    });
+
+  if (results.find((result) => result.status === "fulfilled")) {
+    logger.info(`sending to ${trigger} - ${templateId} succeeded at least once`);
+  }
+
+  return results;
 }
