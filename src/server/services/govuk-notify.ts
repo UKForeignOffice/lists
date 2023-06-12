@@ -8,7 +8,7 @@ import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
-import { lowerCase, startCase } from "lodash";
+import { startCase } from "lodash";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -239,9 +239,11 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   const { jsonData = {} } = list as List;
   const { users = [] } = jsonData;
+  const serviceType = startCase(list.type);
 
   const personalisation = {
-    serviceType: lowerCase(startCase(list.type)),
+    typePlural: serviceType,
+    type: pluralize.singular(serviceType),
     country: list.country?.name,
   };
 
