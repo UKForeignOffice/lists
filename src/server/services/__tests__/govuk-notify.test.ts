@@ -16,6 +16,7 @@ import { NOTIFY } from "../../config";
 import { prisma } from "../../models/db/__mocks__/prisma-client";
 import { before } from "lodash";
 import resetAllMocks = jest.resetAllMocks;
+import { getCommonPersonalisations } from "../govuk-notify.helpers";
 jest.mock("../../models/db/prisma-client");
 
 const {
@@ -506,7 +507,7 @@ describe("GOVUK Notify service:", () => {
       await sendManualActionNotificationToPost(1, trigger);
 
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(`${trigger}_TEMPLATE_ID`, "test@gov.uk", {
-        personalisation: { typePlural: "Lawyers", type: "Lawyer", country: "France" },
+        personalisation: { typeSingular: "lawyer", type: "lawyers", country: "France" },
         reference: "",
       });
     });
@@ -532,4 +533,20 @@ describe("GOVUK Notify service:", () => {
       ]);
     });
   });
+
+  test.each`
+    listType                     | typeSingular                   | type
+    ${"translatorsInterpreters"} | ${"translator or interpreter"} | ${"translators and interpreters"}
+    ${"lawyers"}                 | ${"lawyer"}                    | ${"lawyers"}
+    ${"funeralDirectors"}        | ${"funeral director"}          | ${"funeral directors"}
+  `(
+    "getCommonPersonalisations returns correct personalisation when listType is $listType",
+    ({ listType, typeSingular, type }) => {
+      expect(getCommonPersonalisations(listType, "United Kingdom")).toEqual({
+        typeSingular,
+        type,
+        country: "United Kingdom",
+      });
+    }
+  );
 });
