@@ -253,8 +253,8 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   results
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
-      // @ts-ignore
       logger.error(
+        // @ts-ignore
         `sendManualActionNotificationToPost - Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`
       );
     });
