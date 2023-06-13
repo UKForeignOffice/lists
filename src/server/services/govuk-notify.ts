@@ -8,7 +8,6 @@ import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
-import { startCase } from "lodash";
 import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {

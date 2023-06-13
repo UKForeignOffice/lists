@@ -14,7 +14,6 @@ import {
 import { logger } from "../../../server/services/logger";
 import { NOTIFY } from "../../config";
 import { prisma } from "../../models/db/__mocks__/prisma-client";
-import { before } from "lodash";
 import resetAllMocks = jest.resetAllMocks;
 import { getCommonPersonalisations } from "../govuk-notify.helpers";
 jest.mock("../../models/db/prisma-client");

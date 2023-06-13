@@ -1,4 +1,4 @@
-import type { List, ServiceType } from "shared/types";
+import type { ServiceType } from "shared/types";
 
 const listTypeToTypeSingular: Record<ServiceType, string> = {
   covidTestProviders: "covid test provider",
