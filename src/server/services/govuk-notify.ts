@@ -9,6 +9,7 @@ import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
 import { startCase } from "lodash";
+import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -186,7 +187,7 @@ export async function sendAnnualReviewCompletedEmail(
   }
 }
 
-async function sendEmails<P extends { [key: string]: any }>(
+export async function sendEmails<P extends { [key: string]: any }>(
   templateId: string,
   emailAddresses: string[],
   options: SendEmailOptions<P>
@@ -206,6 +207,12 @@ async function sendEmails<P extends { [key: string]: any }>(
 }
 
 type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
+
+/**
+ * Use `sendManualActionNotificationToPost` to send multiple emails to all the users of a list.
+ * `serviceType` (plural), `type`, and `country` are available in the personalisation.
+ * Add a `NotificationTrigger` if a new email type should be sent to all List.jsonData.user.
+ */
 export async function sendManualActionNotificationToPost(listId: number, trigger: NotificationTrigger) {
   const list = await prisma.list.findFirst({
     where: {
@@ -216,10 +223,10 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
     },
   });
 
+  logger.error(
+    `sendManualActionNotificationToPost - ${listId} could not be found, could not send notification for ${trigger}`
+  );
   if (!list) {
-    logger.error(`${listId} could not be found, could not send notification for ${trigger}`, {
-      method: "sendManualActionNotificationToPost",
-    });
     return { error: `invalid ${listId}` };
   }
 
@@ -232,20 +239,15 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   const templateId = notificationTypeToTemplateId[trigger];
 
   if (!templateId) {
-    logger.error(`Trigger was ${trigger} but the associated email could not be found`, {
-      method: "sendManualActionNotificationToPost",
-    });
+    logger.error(
+      `sendManualActionNotificationToPost - Trigger was ${trigger} but the associated email could not be found`
+    );
   }
 
   const { jsonData = {} } = list as List;
   const { users = [] } = jsonData;
-  const serviceType = startCase(list.type);
 
-  const personalisation = {
-    typePlural: serviceType,
-    type: pluralize.singular(serviceType),
-    country: list.country?.name,
-  };
+  const personalisation = getCommonPersonalisations(list.type, list.country.name);
 
   const results = await sendEmails(templateId, users, { personalisation, reference: "" });
 
@@ -253,11 +255,13 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
       // @ts-ignore
-      logger.error(`Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`);
+      logger.error(
+        `sendManualActionNotificationToPost - Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`
+      );
     });
 
   if (results.find((result) => result.status === "fulfilled")) {
-    logger.info(`sending to ${trigger} - ${templateId} succeeded at least once`);
+    logger.info(`sendManualActionNotificationToPost- sending to ${trigger} - ${templateId} succeeded at least once`);
   }
 
   return results;
