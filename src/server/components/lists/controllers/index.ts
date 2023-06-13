@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { listsRoutes } from "./../routes";
 import { setEmailIsVerified } from "server/models/listItem/listItem";
 import { DEFAULT_VIEW_PROPS } from "./../constants";
-import { CountryName } from "server/models/types";
+import type { CountryName } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { SERVICE_DOMAIN } from "server/config";
 import { kebabCase } from "lodash";
@@ -21,7 +21,7 @@ import {
 } from "./../helpers";
 import { questions } from "./../questionnaire";
 import { logger } from "server/services/logger";
-import { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
+import type { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
 import { languages, translationInterpretationServices } from "server/services/metadata";
 import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
 import { covidTestProviderQuestionsSequence, searchCovidTestProvider } from "./../searches/covid-test-provider";
@@ -40,8 +40,9 @@ import {
   searchTranslatorsInterpreters,
   translatorsInterpretersQuestionsSequence,
 } from "server/components/lists/searches/translators-interpreters";
-import { LanguageRows } from "server/models/listItem/providers/types";
+import type { LanguageRows } from "server/models/listItem/providers/types";
 import serviceName from "server/utils/service-name";
+import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
 
 export async function listsPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   let params = getAllRequestParams(req);
@@ -304,7 +305,7 @@ export async function listsConfirmApplicationController(
   const { reference } = req.params;
 
   try {
-    const { type } = await setEmailIsVerified({
+    const { type, listId } = await setEmailIsVerified({
       reference,
     });
 
@@ -330,6 +331,8 @@ export async function listsConfirmApplicationController(
           serviceName = "Find a professional service abroad";
       }
 
+      await sendManualActionNotificationToPost(listId as number, "PROVIDER_SUBMITTED");
+
       res.render("lists/application-confirmation-page", {
         serviceName,
       });
@@ -343,7 +346,8 @@ export function listsGetPrivateBetaPage(req: Request, res: Response, next: NextF
   const { serviceType } = req.query;
 
   if (serviceType === undefined) {
-    return next();
+    next();
+    return;
   }
 
   res.render("lists/private-beta-page", {

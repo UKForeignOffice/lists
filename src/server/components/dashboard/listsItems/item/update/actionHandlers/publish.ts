@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
-import { EventJsonData, ListItem, User } from "server/models/types";
+import type { Request, Response } from "express";
+import type { EventJsonData, ListItem, User } from "server/models/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemEvent } from "@prisma/client";
+import { ListItemEvent, Status } from "@prisma/client";
 import { togglerListItemIsPublished, update } from "server/models/listItem";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { sendPublishedEmail } from "./helpers";
 import { startCase } from "lodash";
+import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
 
 export async function handleListItemUpdate(id: number, userId: User["id"]) {
   logger.info(`${userId} looking for ${id} to update`);
@@ -43,13 +44,13 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
     // @ts-ignore
-    return update(id, userId, auditJsonData.updatedJsonData);
+    return await update(id, userId, auditJsonData.updatedJsonData);
   }
 
   const listItemJsonData = listItem.jsonData as ListItemJsonData;
 
   logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItemJsonData.updatedJsonData)}`);
-  return update(id, userId);
+  return await update(id, userId);
 }
 
 export async function publish(req: Request, res: Response) {
@@ -58,7 +59,6 @@ export async function publish(req: Request, res: Response) {
   const isPublished = action === "publish";
 
   const { listItem, listItemUrl, listIndexUrl } = res.locals;
-
   const verb = isPublished ? "published" : "unpublished";
   let organisationName = listItem.jsonData.organisationName;
   try {
@@ -68,10 +68,11 @@ export async function publish(req: Request, res: Response) {
     req.flash("successBannerTitle", `${organisationName} has been ${verb}`);
     req.flash("successBannerHeading", startCase(verb));
     req.flash("successBannerColour", "green");
-    return res.redirect(listIndexUrl);
+    res.redirect(listIndexUrl);
+    return;
   } catch (error: any) {
     req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
   }
 }
 
@@ -85,6 +86,10 @@ export async function handlePublishListItem(listItem: ListItem, isPublished: boo
 
   if (updatedListItem.isPublished) {
     await sendPublishedEmail(updatedListItem);
+  }
+
+  if (updatedListItem.status === Status.UNPUBLISHED) {
+    await sendManualActionNotificationToPost(listItem.listId, "UNPUBLISHED");
   }
   return updatedListItem;
 }

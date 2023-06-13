@@ -1,17 +1,19 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { recordListItemEvent } from "shared/audit";
-import { AuditEvent, Prisma, Status } from "@prisma/client";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
-import { ListJsonData } from "server/models/types";
+import type { Prisma } from "@prisma/client";
+import { AuditEvent, Status } from "@prisma/client";
+import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
+import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
+import type { ListJsonData } from "server/models/types";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -93,6 +95,8 @@ export async function ingestPutController(req: Request, res: Response) {
 
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
+    } else {
+      await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
     }
 
     return res.status(204).send();

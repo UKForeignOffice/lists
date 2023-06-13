@@ -1,17 +1,11 @@
 import { relatedLinkSchema } from "./../relatedLinkSchema";
-import { type Request, Response } from "express";
+import type { Response, Request } from "express";
 
 export function editContinue(req: Request, res: Response) {
   const { relatedLinkIndex } = res.locals;
   const { text, url } = req.body;
 
-
-  req.session.relatedLink = {
-    text,
-    url,
-  };
-
-  const { error } = relatedLinkSchema.validate(
+  const { value, error } = relatedLinkSchema.validate(
     { text, url },
     {
       abortEarly: false,
@@ -23,6 +17,11 @@ export function editContinue(req: Request, res: Response) {
     }
   );
 
+  req.session.relatedLink = {
+    text,
+    url: value.url ?? url,
+  };
+
   if (error) {
     error.details.forEach((detail) => {
       const { key } = detail.context!;
@@ -33,11 +32,6 @@ export function editContinue(req: Request, res: Response) {
       req.flash("relatedLinkErrorSummary", JSON.stringify(error));
       req.flash(`relatedLinkError_${key}`, detail.message);
     });
-
-    req.session.relatedLink = {
-      text,
-      url,
-    };
 
     res.redirect(`${relatedLinkIndex}`);
     return;

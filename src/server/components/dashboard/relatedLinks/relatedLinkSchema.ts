@@ -30,5 +30,5 @@ function govukUrlValidation<V extends string>(value: V, helper: CustomHelpers) {
     return helper.error("string.url.govuk");
   }
 
-  return url;
+  return url.toString();
 }

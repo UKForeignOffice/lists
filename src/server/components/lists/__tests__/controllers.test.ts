@@ -13,6 +13,7 @@ import * as lawyers from "../searches/lawyers";
 import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
+import * as notifyEmails from "server/services/govuk-notify";
 
 const webhookPayload = {
   metadata: {
@@ -107,21 +108,6 @@ describe("Lists Controllers", () => {
 
   function spyCreateListItem(createdListItem = {}, shouldReject = false): any {
     const spy = jest.spyOn(listItem, "createListItem");
-
-    if (shouldReject) {
-      spy.mockRejectedValue(new Error("Ops.. something went wrong"));
-    } else {
-      spy.mockResolvedValue(createdListItem as any);
-    }
-
-    return spy;
-  }
-
-  function spyListItemCreateInputFromWebhook(
-    createdListItem = {},
-    shouldReject = false
-  ): any {
-    const spy = jest.spyOn(listItem, "createFromWebhook");
 
     if (shouldReject) {
       spy.mockRejectedValue(new Error("Ops.. something went wrong"));
@@ -246,6 +232,7 @@ describe("Lists Controllers", () => {
       jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({
         type: ServiceType.covidTestProviders,
       });
+      jest.spyOn(notifyEmails, "sendManualActionNotificationToPost").mockResolvedValue({});
 
       await listsConfirmApplicationController(req, res, next);
 
@@ -274,6 +261,12 @@ describe("Lists Controllers", () => {
 
       expect(next).toHaveBeenCalledWith(error);
     });
+
+    function spySetEmailIsVerified() {
+      return jest
+        .spyOn(listItem, "setEmailIsVerified")
+        .mockResolvedValue({ type: "lawyers", listId: 123 });
+    }
   });
 
   describe("listsGetPrivateBetaPage", () => {

@@ -5,6 +5,10 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
+import type { List } from "server/models/types";
+import { prisma } from "server/models/db/prisma-client";
+import type { SendEmailOptions } from "notifications-node-client";
+import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -139,8 +143,15 @@ export async function sendAnnualReviewDateChangeEmail(options: {
       country: options.country,
       annualReviewDate: options.annualReviewDate,
     };
-    logger.info(`personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${NOTIFY.apiKey}, email address ${options.emailAddress}`);
-    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, { personalisation, reference: "", });
+    logger.info(
+      `personalisation for sendAnnualReviewDateChangeEmail: ${JSON.stringify(personalisation)}, API key ${
+        NOTIFY.apiKey
+      }, email address ${options.emailAddress}`
+    );
+    await getNotifyClient().sendEmail(NOTIFY.templates.editAnnualReviewDate, options.emailAddress, {
+      personalisation,
+      reference: "",
+    });
   } catch (error) {
     throw new Error(`sendAnnualReviewDateChangeEmail Error: ${(error as Error).message}`);
   }
@@ -173,4 +184,84 @@ export async function sendAnnualReviewCompletedEmail(
   } catch (error) {
     logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
   }
+}
+
+export async function sendEmails<P extends { [key: string]: any }>(
+  templateId: string,
+  emailAddresses: string[],
+  options: SendEmailOptions<P>
+) {
+  const notifyClient = getNotifyClient();
+
+  logger.info(
+    `Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(options)}`,
+    { method: "sendEmails" }
+  );
+
+  const requests = emailAddresses.map(async (emailAddress) => {
+    return await notifyClient.sendEmail(templateId, emailAddress, options);
+  });
+
+  return await Promise.allSettled(requests);
+}
+
+type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
+
+/**
+ * Use `sendManualActionNotificationToPost` to send multiple emails to all the users of a list.
+ * `serviceType` (plural), `type`, and `country` are available in the personalisation.
+ * Add a `NotificationTrigger` if a new email type should be sent to all List.jsonData.user.
+ */
+export async function sendManualActionNotificationToPost(listId: number, trigger: NotificationTrigger) {
+  const list = await prisma.list.findFirst({
+    where: {
+      id: listId,
+    },
+    include: {
+      country: true,
+    },
+  });
+
+  logger.error(
+    `sendManualActionNotificationToPost - ${listId} could not be found, could not send notification for ${trigger}`
+  );
+  if (!list) {
+    return { error: `invalid ${listId}` };
+  }
+
+  const notificationTypeToTemplateId: Record<NotificationTrigger, string> = {
+    PROVIDER_SUBMITTED: NOTIFY.templates.newListItemSubmitted,
+    CHANGED_DETAILS: NOTIFY.templates.editProviderDetails,
+    UNPUBLISHED: NOTIFY.templates.listItemUnpublished,
+  };
+
+  const templateId = notificationTypeToTemplateId[trigger];
+
+  if (!templateId) {
+    logger.error(
+      `sendManualActionNotificationToPost - Trigger was ${trigger} but the associated email could not be found`
+    );
+  }
+
+  const { jsonData = {} } = list as List;
+  const { users = [] } = jsonData;
+
+  const personalisation = getCommonPersonalisations(list.type, list.country.name);
+
+  const results = await sendEmails(templateId, users, { personalisation, reference: "" });
+
+  results
+    .filter((result) => result.status !== "fulfilled")
+    .forEach((failedResult) => {
+      logger.error(
+        // @ts-ignore
+        `sendManualActionNotificationToPost - Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`
+      );
+    });
+
+  if (results.find((result) => result.status === "fulfilled")) {
+    logger.info(`sendManualActionNotificationToPost- sending to ${trigger} - ${templateId} succeeded at least once`);
+  }
+
+  return results;
 }
