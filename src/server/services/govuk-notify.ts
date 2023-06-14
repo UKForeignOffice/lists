@@ -190,7 +190,7 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
   templateId: string,
   emailAddresses: string[],
   options: SendEmailOptions<Personalisation>,
-  logLabel?: string = ""
+  logLabel: string = ""
 ) {
   const notifyClient = getNotifyClient();
 
