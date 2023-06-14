@@ -19,7 +19,7 @@ export async function feedbackIngest(req: Request, res: Response, next: NextFunc
     await sendContactUsEmail(personalisation);
     return res.status(200).json({ success: true }).send();
   } catch (error) {
-    logger.error(`feedbackIngest Error: ${error.message}`);
+    logger.error(`feedbackIngest Error: ${error.errors ?? error.message}`);
     res.status(400).json({ error: error.message }).send();
   }
 }
@@ -30,12 +30,11 @@ function formatMessage(webhookData: WebhookData) {
   let serviceType = "";
 
   webhookData?.questions?.forEach((question) => {
-    data.push(`Page: ${question.question}\n`);
     question.fields.forEach((field) => {
       if (field.key === "serviceType") {
         serviceType = field.answer;
       }
-      data.push(`*${field.title?.replace("?", "")}: ${field.answer}\n`);
+      data.push(`${field.title}: ${field.answer}\n`);
     });
   });
 
