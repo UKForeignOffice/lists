@@ -17,7 +17,7 @@ export async function feedbackIngest(req: Request, res: Response, next: NextFunc
 
   try {
     await sendContactUsEmail(personalisation);
-    return res.status(200).send();
+    return res.status(200).json({ success: true }).send();
   } catch (error) {
     logger.error(`feedbackIngest Error: ${error.message}`);
     res.status(400).json({ error: error.message });
@@ -27,21 +27,18 @@ export async function feedbackIngest(req: Request, res: Response, next: NextFunc
 
 function formatMessage(webhookData: WebhookData) {
   const data: string[] = [];
-  const serviceQuestion = "Which service are you contacting us about?";
 
   let serviceType = "";
 
   webhookData?.questions?.forEach((question) => {
-    data.push("---");
     data.push(`Page: ${question.question}\n`);
     question.fields.forEach((field) => {
-      if (field.title === serviceQuestion) {
+      if (field.key === "serviceType") {
         serviceType = field.answer;
       }
       data.push(`*${field.title?.replace("?", "")}: ${field.answer}\n`);
     });
   });
-  data.push("---");
 
   const emailSubject = `Apply service contact form (${serviceType})`;
 

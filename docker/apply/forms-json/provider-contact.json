@@ -12,16 +12,15 @@
           "content": "<p class=\"govuk-body\">Use this form to contact us about this service if you are a lawyer, funeral director, translator or interpreter.</p>\n\n\n\n<p class=\"govuk-body\">Please use the <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\">feedback form</a>\n if you want to leave general feedback, or comments about how this service can be improved.</p>\n\n\n\n\n"
         },
         {
-          "name": "fgFhbG",
+          "name": "serviceType",
           "options": {},
           "type": "RadiosField",
           "title": "Which service are you contacting us about?",
           "list": "hIYsam",
-          "schema": {},
-          "values": { "type": "listRef" }
+          "schema": {}
         },
         {
-          "name": "SGOHzc",
+          "name": "reason",
           "options": { "hideTitle": false },
           "type": "RadiosField",
           "title": "Why are you contacting us?",
@@ -39,22 +38,22 @@
           "schema": {}
         },
         {
-          "name": "gMGUTy",
+          "name": "name",
           "options": { "required": true },
           "type": "TextField",
           "title": "Enter your name",
           "schema": {}
         },
         {
-          "name": "NtoQJi",
+          "name": "companyName",
           "options": { "required": false },
           "type": "TextField",
-          "title": "Enter your company name ",
+          "title": "Enter your company name",
           "hint": "",
           "schema": {}
         },
         {
-          "name": "xHooRE",
+          "name": "emailAddress",
           "options": { "required": true },
           "type": "EmailAddressField",
           "title": "Enter your email address",
