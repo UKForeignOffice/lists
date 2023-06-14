@@ -22,6 +22,8 @@ export const AWS_REGION = "eu-west-1";
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME ?? "fcdo-professional-service-finder";
 
+export const FEEDBACK_EMAIL_ADDRESSES = `${process.env.FEEDBACK_EMAIL_ADDRESSES}`.split(",");
+
 // GOVUK Notify
 export const NOTIFY = {
   apiKey: process.env.GOVUK_NOTIFY_API_KEY?.trim() ?? "",

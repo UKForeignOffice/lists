@@ -8,15 +8,15 @@ export async function feedbackIngest(req: Request, res: Response, next: NextFunc
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (error !== undefined) {
+    logger.error(`${req.originalUrl} validation failed ${error.message}`);
     res.status(400).json({ error: error.message });
     return;
   }
 
   const personalisation = formatMessage(value);
-  const emails = ["digitalservicesfeedback@fco.gov.uk", "richard.bray@cautionyourblast.com"];
 
   try {
-    await sendContactUsEmail(emails, personalisation);
+    await sendContactUsEmail(personalisation);
     return res.status(200).send();
   } catch (error) {
     logger.error(`feedbackIngest Error: ${error.message}`);

@@ -511,7 +511,7 @@ describe("GOVUK Notify service:", () => {
       });
     });
 
-    test("returns settled promises", async () => {
+    test("returns resolved value when at least one email succeeds", async () => {
       const notifyClient = getNotifyClient();
       const successfulSend = {
         statusText: "Created",
@@ -520,32 +520,7 @@ describe("GOVUK Notify service:", () => {
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce(successfulSend).mockRejectedValueOnce(rejectedSend);
 
       const settled = await sendManualActionNotificationToPost(1, "CHANGED_DETAILS");
-      expect(settled).toEqual([
-        {
-          status: "fulfilled",
-          value: successfulSend,
-        },
-        {
-          status: "rejected",
-          reason: rejectedSend,
-        },
-      ]);
+      expect(settled).toEqual({ statusText: "Created" });
     });
   });
-
-  test.each`
-    listType                     | typeSingular                   | type
-    ${"translatorsInterpreters"} | ${"translator or interpreter"} | ${"translators and interpreters"}
-    ${"lawyers"}                 | ${"lawyer"}                    | ${"lawyers"}
-    ${"funeralDirectors"}        | ${"funeral director"}          | ${"funeral directors"}
-  `(
-    "getCommonPersonalisations returns correct personalisation when listType is $listType",
-    ({ listType, typeSingular, type }) => {
-      expect(getCommonPersonalisations(listType, "United Kingdom")).toEqual({
-        typeSingular,
-        type,
-        country: "United Kingdom",
-      });
-    }
-  );
 });

@@ -2,7 +2,7 @@ import pluralize from "pluralize";
 import * as config from "server/config";
 import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { NOTIFY } from "server/config";
+import { FEEDBACK_EMAIL_ADDRESSES, NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
@@ -186,10 +186,11 @@ export async function sendAnnualReviewCompletedEmail(
   }
 }
 
-export async function sendEmails<P extends { [key: string]: any }>(
+export async function sendEmails<Personalisation extends { [key: string]: any }>(
   templateId: string,
   emailAddresses: string[],
-  options: SendEmailOptions<P>
+  options: SendEmailOptions<Personalisation>,
+  logLabel?: string
 ) {
   const notifyClient = getNotifyClient();
 
@@ -202,7 +203,18 @@ export async function sendEmails<P extends { [key: string]: any }>(
     return await notifyClient.sendEmail(templateId, emailAddress, options);
   });
 
-  return await Promise.allSettled(requests);
+  const settled = await Promise.allSettled(requests);
+
+  settled.filter(hasNotifyError).forEach((reject) => {
+    // @ts-ignore
+    logger.error(`${logLabel} Template ID: ${templateId} rejected with ${reject.reason}`, { method: "sendEmails" });
+  });
+
+  return await Promise.any(requests);
+}
+
+function hasNotifyError<T>(settledResult: PromiseSettledResult<T>) {
+  return settledResult.status === "rejected";
 }
 
 type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
@@ -246,51 +258,17 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   const { jsonData = {} } = list as List;
   const { users = [] } = jsonData;
 
+  if (users.length === 0) {
+    return { error: "No email addresses found" };
+  }
+
   const personalisation = getCommonPersonalisations(list.type, list.country.name);
 
-  const results = await sendEmails(templateId, users, { personalisation, reference: "" });
-
-  results
-    .filter((result) => result.status !== "fulfilled")
-    .forEach((failedResult) => {
-      logger.error(
-        // @ts-ignore
-        `sendManualActionNotificationToPost - Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`
-      );
-    });
-
-  if (results.find((result) => result.status === "fulfilled")) {
-    logger.info(`sendManualActionNotificationToPost- sending to ${trigger} - ${templateId} succeeded at least once`);
-  }
-
-  return results;
+  return await sendEmails(templateId, users, { personalisation, reference: "" });
 }
-export async function sendContactUsEmail(
-  emails: string[],
-  personalisation: Record<"emailSubject" | "emailPayload", string>
-) {
-  try {
-    if (config.isSmokeTest) {
-      logger.info(`isSmokeTest[${config.isSmokeTest}]`);
-      return;
-    }
-
-    const tasks = emails.map(async (email) => {
-      logger.info(
-        `personalisation for sendContactUsEmail: ${JSON.stringify(personalisation)}, API key ${
-          NOTIFY.apiKey
-        }, email address ${email}`
-      );
-
-      await getNotifyClient().sendEmail(NOTIFY.templates.contactUsApplyJourney, email, {
-        personalisation,
-        reference: "",
-      });
-    });
-
-    await Promise.allSettled(tasks);
-  } catch (error) {
-    logger.error(`sendContactUsEmail Error: ${error.message}`);
-    return false;
-  }
+export async function sendContactUsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
+  return await sendEmails(NOTIFY.templates.contactUsApplyJourney, FEEDBACK_EMAIL_ADDRESSES, {
+    personalisation,
+    reference: "",
+  });
 }
