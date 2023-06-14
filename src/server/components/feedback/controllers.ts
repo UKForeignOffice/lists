@@ -39,11 +39,11 @@ function formatMessage(webhookData: WebhookData) {
         country = field.answer;
       }
 
-      data.push(`${field.title}: ${field.answer}\n`);
+      data.push(`##${field.title} \n ${field.answer}`);
     });
   });
 
-  const emailSubject = `Apply service contact form (${serviceType})`;
+  const emailSubject = `${serviceType} in ${country}: Apply service contact form`;
 
   return {
     emailSubject,
