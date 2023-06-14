@@ -30,7 +30,7 @@
           "schema": {}
         },
         {
-          "name": "addressCountry",
+          "name": "country",
           "options": {},
           "type": "AutocompleteField",
           "title": "Which country list are you contacting us about?",
