@@ -23,7 +23,7 @@ export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME ?? "fcdo-professional-service-finder";
 
 export const FEEDBACK_EMAIL_ADDRESSES = `${
-  process.env.FEEDBACK_EMAIL_ADDRESSES ?? "digitalservicesfeedback@fco.gov.uk"
+  process.env.FEEDBACK_EMAIL_ADDRESSES ?? "digitalservicesfeedback@fco.gov.uk,list-management@cautionyourblast.com"
 }`.split(",");
 
 // GOVUK Notify

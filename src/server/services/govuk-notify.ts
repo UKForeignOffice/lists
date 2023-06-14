@@ -190,12 +190,14 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
   templateId: string,
   emailAddresses: string[],
   options: SendEmailOptions<Personalisation>,
-  logLabel?: string
+  logLabel?: string = ""
 ) {
   const notifyClient = getNotifyClient();
 
   logger.info(
-    `Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(options)}`,
+    `${logLabel} Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(
+      options
+    )}`,
     { method: "sendEmails" }
   );
 
@@ -207,7 +209,9 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
 
   settled.filter(hasNotifyError).forEach((reject) => {
     // @ts-ignore
-    logger.error(`${logLabel} Template ID: ${templateId} rejected with ${reject.reason}`, { method: "sendEmails" });
+    logger.error(`${logLabel} Template ID: ${templateId} rejected with from notify API ${reject.reason}`, {
+      method: "sendEmails",
+    });
   });
 
   return await Promise.any(requests);

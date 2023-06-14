@@ -20,8 +20,7 @@ export async function feedbackIngest(req: Request, res: Response, next: NextFunc
     return res.status(200).json({ success: true }).send();
   } catch (error) {
     logger.error(`feedbackIngest Error: ${error.message}`);
-    res.status(400).json({ error: error.message });
-    next(error);
+    res.status(400).json({ error: error.message }).send();
   }
 }
 
