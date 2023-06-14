@@ -30,23 +30,24 @@ function formatMessage(webhookData: WebhookData) {
   let serviceType = "";
   let country = "";
 
-  webhookData?.questions?.forEach((question) => {
-    question.fields.forEach((field) => {
-      if (field.key === "serviceType") {
-        serviceType = field.answer;
-      }
-      if (field.key === "country") {
-        country = field.answer;
-      }
+  const fields = webhookData.questions.flatMap((question) => question.fields);
 
-      data.push(`##${field.title} \n ${field.answer}`);
-    });
+  fields.forEach((field) => {
+    if (field.key === "serviceType") {
+      serviceType = field.answer;
+    }
+    if (field.key === "country") {
+      country = field.answer;
+    }
+
+    data.push(`##${field.title}
+       ${field.answer}
+    `);
   });
-
   const emailSubject = `${serviceType} in ${country}: Apply service contact form`;
 
   return {
     emailSubject,
-    emailPayload: data.join("\r\n"),
+    emailPayload: data.join("\r\n\n ## \r\n"),
   };
 }
