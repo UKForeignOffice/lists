@@ -42,7 +42,7 @@ function formatMessage(webhookData: WebhookData) {
       country = field.answer;
     }
     if (field.key === "reason") {
-      answer = `To ${field.answer}`;
+      answer = `To ${field.answer ?? "Not supplied"}`;
     }
 
     data.push(`##${field.title}
