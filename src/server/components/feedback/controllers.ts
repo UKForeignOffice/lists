@@ -1,15 +1,15 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import type { WebhookData } from "server/components/formRunner";
 import { sendContactUsEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 
-export async function feedbackIngest(req: Request, res: Response, next: NextFunction) {
+export async function feedbackIngest(req: Request, res: Response) {
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
-  if (error !== undefined) {
+  if (error) {
     logger.error(`${req.originalUrl} validation failed ${error.message}`);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message }).send();
     return;
   }
 
