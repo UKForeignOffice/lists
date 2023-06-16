@@ -1,0 +1,41 @@
+{% extends "./../question-page.njk" %}
+
+{% block question %}
+<form class="form" method="post">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'country' }}">
+    <h1 class="govuk-label-wrapper">
+      <label class="govuk-label govuk-label--l" for="country-autocomplete">
+        In which country do you need {{ serviceLabel }}?
+      </label>
+    </h1>
+    {% if error.field === 'country' %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
+      </span>
+    {% endif %}
+
+    <div id="country-hint" class="govuk-hint">
+      Select a country or territory
+    </div>
+
+    <select id="country-autocomplete" name="country" className="govuk-input--error">
+      <option value=""></option>
+      {% for country in countriesList %}
+      <option value="{{ country.value }}">{{ country.text }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>
+
+
+  <script nonce="{{cspNonce}}">
+    accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '',
+      selectElement: document.querySelector('#country-autocomplete'),
+      autoselect: true
+    })
+  </script>
+
+{% endblock %}

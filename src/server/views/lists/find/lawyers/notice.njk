@@ -1,10 +1,13 @@
 {% extends "./../../question-page.njk" %}
 
-<h1 class="govuk-heading-l">
-  Find a lawyer {{ "in " + _.startCase(country) if country else "abroad"}}
-</h1>
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Find a lawyer {{ "in " + _.startCase(country) if country else "abroad"}}
+  </h1>
+{% endblock %}
 
 {% block question %}
+
   <p class="govuk-body">
     The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking lawyers abroad to help British
     nationals find the legal support they need.
@@ -26,9 +29,12 @@
       policies you have include legal cover before you contact a lawyer independently.
     </strong>
   </div>
-  <form class="form" method="post">
-    <button class="govuk-button" data-module="govuk-button">Start</button>
-  </form>
+  {% if country %}
+    <a href="{{ find.serviceType }}/{{ country }}/region" class="govuk-button">Start</a>
+  {% else %}
+    <a href="{{ find.serviceType }}/country" class="govuk-button">Start</a>
+  {% endif %}
+
   <h2 class="govuk-heading-m">Disclaimer</h2>
   {% include 'includes/disclaimer.njk' %}
   <h2 class="govuk-heading-m" id="feedback-heading">Feedback on lawyers</h2>
@@ -45,3 +51,4 @@
     You can <a class="govuk-link" href="{{ serviceApplyUrl }}">apply to be added to this service</a> if you are based outside the UK, are qualified to practise law and can provide a service to British nationals in English.
   </p>
 {% endblock %}
+
