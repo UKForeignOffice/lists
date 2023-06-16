@@ -1075,7 +1075,7 @@
   "specialPages": {
     "confirmationPage": {
       "customText": {
-        "title": "We have received your comment  <div class=\"govuk-panel__body\">Thank you for contacting us</div>",
+        "title": "We have received your comment",
         "paymentSkipped": false,
         "nextSteps": "If your comment or query needs a response we will reply as soon as possible."
       },
