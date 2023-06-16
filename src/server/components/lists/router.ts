@@ -10,6 +10,7 @@ import { findRouter } from "./find/router";
 export const listsRouter = express.Router();
 
 listsRouter.use("/find", findRouter);
+listsRouter.use("/find/v1", Controllers.listsGetController);
 listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 
