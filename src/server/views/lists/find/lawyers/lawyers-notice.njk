@@ -1,0 +1,47 @@
+{% extends "./../../question-page.njk" %}
+
+<h1 class="govuk-heading-l">
+  Find a lawyer {{ "in " + _.startCase(country) if country else "abroad"}}
+</h1>
+
+{% block question %}
+  <p class="govuk-body">
+    The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking lawyers abroad to help British
+    nationals find the legal support they need.
+  </p>
+  <p class="govuk-body">You can find lawyers:</p>
+
+  <ul class="govuk-list govuk-list--bullet">
+    <li>by country or a more specific location</li>
+    <li>with a particular area of legal expertise</li>
+  </ul>
+  <p class="govuk-body">
+    All lawyers on the lists have confirmed they can provide services in English.
+  </p>
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      You should do your own research before deciding which provider to use. You may also want to check if any insurance
+      policies you have include legal cover before you contact a lawyer independently.
+    </strong>
+  </div>
+  <form class="form" method="post">
+    <button class="govuk-button" data-module="govuk-button">Start</button>
+  </form>
+  <h2 class="govuk-heading-m">Disclaimer</h2>
+  {% include 'includes/disclaimer.njk' %}
+  <h2 class="govuk-heading-m" id="feedback-heading">Feedback on lawyers</h2>
+  <p class="govuk-body">
+    If you have feedback on lawyers, contact the <a class="govuk-link" href="https://www.gov.uk/world/embassies" target="_blank">British embassy or consulate</a> in
+    the relevant country. Providers will be removed from the list where appropriate.
+  </p>
+  <h2 class="govuk-heading-m">Feedback on this service</h2>
+  <p class="govuk-body">
+    We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service
+  </p>
+  <h2 class="govuk-heading-m">Apply to be added to this service</h2>
+  <p class="govuk-body">
+    You can <a class="govuk-link" href="{{ serviceApplyUrl }}">apply to be added to this service</a> if you are based outside the UK, are qualified to practise law and can provide a service to British nationals in English.
+  </p>
+{% endblock %}

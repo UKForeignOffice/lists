@@ -5,13 +5,13 @@ import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
+import { findRouter } from "./find/router";
 
 export const listsRouter = express.Router();
 
-listsRouter.get(listsRoutes.finder, csrfRequestHandler, Controllers.listsGetController);
-listsRouter.post(listsRoutes.finder, csrfRequestHandler, Controllers.listsPostController);
-listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
+listsRouter.use("/find", findRouter);
 listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
+listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);
