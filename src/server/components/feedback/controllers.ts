@@ -33,17 +33,23 @@ function formatMessage(webhookData: WebhookData) {
   const fields = webhookData.questions.flatMap((question) => question.fields);
 
   fields.forEach((field) => {
+    let answer = field.answer;
+
     if (field.key === "serviceType") {
       serviceType = field.answer;
     }
     if (field.key === "country") {
       country = field.answer;
     }
+    if (field.key === "reason") {
+      answer = `To ${field.answer}`;
+    }
 
     data.push(`##${field.title}
-       ${field.answer}
+       ${answer}
     `);
   });
+
   const emailSubject = `${serviceType} in ${country}: Apply service contact form`;
 
   return {
