@@ -1,6 +1,8 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { countriesList } from "server/services/metadata";
+import { sendContactUsEmail } from "server/services/govuk-notify";
+import { logger } from "server/services/logger";
 
 export function getContactUsPage(req: Request, res: Response) {
   const [errors] = req.flash("errors") as unknown as string[];
@@ -52,7 +54,7 @@ interface ContactUsFormFields {
   serviceType: string;
 }
 
-export function postContactUsPage(req: Request, res: Response) {
+export async function postContactUsPage(req: Request, res: Response, next: NextFunction) {
   const formFields = req.body as ContactUsFormFields;
   const errors: string[] = [];
   const nonRequiredFields = ["providerCompanyName", "_csrf"];
@@ -74,6 +76,15 @@ export function postContactUsPage(req: Request, res: Response) {
     return;
   }
 
-  // email contact us via notify
-  res.redirect("/help/contact-us");
+  try {
+    const personalisation = {
+      emailSubject: `${formFields.serviceType} in ${formFields.country}: Apply service contact form`,
+      emailPayload: Object.entries(formFields),
+    };
+    await sendContactUsEmail(personalisation);
+    res.redirect("/help/contact-us"); // go to the email submitted page
+  } catch (error) {
+    logger.error(`postContactUsPage Error: ${error.errors ?? error.message}`);
+    next(error);
+  }
 }
