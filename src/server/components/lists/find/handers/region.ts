@@ -18,7 +18,7 @@ export function post(req: Request, res: Response) {
 
   req.session.answers.region = region;
 
-  if (params.get("practice-area")) {
+  if (req.session.answers?.disclaimer === true) {
     res.redirect(`result?${params.toString()}`);
     return;
   }
