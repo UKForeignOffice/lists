@@ -12,6 +12,7 @@ export async function get(req: Request, res: Response) {
     country,
     region: req.query.region as string,
     practiceAreas: req.query["practice-area"] as string,
+    reparation: req.query.reparation as string,
   };
 
   res.locals.answers = {
@@ -22,7 +23,6 @@ export async function get(req: Request, res: Response) {
     lawyers: searchLawyers,
     "funeral-directors": searchFuneralDirectors,
   };
-
 
   const searchMethod = serviceTypeToSearch[serviceType];
 

@@ -11,7 +11,7 @@
         errorList: [
           {
             text: error,
-            href: "#repatriate"
+            href: "#repatriation"
           }
         ]
       }) }}
@@ -23,7 +23,7 @@
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
       {{ govukRadios({
-        name: "repatriate",
+        name: "repatriation",
         fieldset: {
           legend: {
             text: "Do you want to repatriate the person who died to the UK?",

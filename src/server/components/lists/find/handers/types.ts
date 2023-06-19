@@ -1,8 +1,1 @@
-export interface FindSession {
-  answers: {
-    country: string;
-    region: string;
-    practiceAreas: string;
-  };
-  [key: string]: any;
-}
+export type NormalisedServiceTypes = "lawyers" | "funeral-directors" | "translators-interpreters";

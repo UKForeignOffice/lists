@@ -1,6 +1,5 @@
 import { URLSearchParams } from "url";
 import type { Request, Response } from "express";
-import { ServiceType } from "shared/types";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 

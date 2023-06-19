@@ -75,9 +75,6 @@ export async function searchFuneralDirectors(req: Request): Promise<void> {
 
   return {
     searchResults: results,
-    removeQueryParameter,
-    getParameterValue,
-    queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
     limit: ROWS_PER_PAGE,
     offset,
