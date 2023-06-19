@@ -1,5 +1,8 @@
 import { URLSearchParams } from "url";
 import type { Request, Response } from "express";
+import { ServiceType } from "shared/types";
+import { HttpException } from "server/middlewares/error-handlers";
+import { logger } from "server/services/logger";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/region", {
@@ -16,6 +19,8 @@ export function post(req: Request, res: Response) {
     ...(encoded && { region: encoded }),
   });
 
+  const serviceType = req.params.serviceType;
+
   req.session.answers.region = region;
 
   if (req.session.answers?.disclaimer === true) {
@@ -23,5 +28,18 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  res.redirect(`practice-areas?${params.toString()}`);
+  const serviceTypeNextPage = {
+    "funeral-directors": "disclaimer",
+    lawyers: "insurance",
+    translatorsInterpreters: undefined,
+  };
+
+  const nextPage = serviceTypeNextPage[serviceType];
+
+  if (!nextPage) {
+    logger.error(`POST ${req.originalUrl} - user requested next page for invalid service type "${serviceType}"`);
+    throw new HttpException(404, "404", " ");
+  }
+
+  res.redirect(`${nextPage}?${params.toString()}`);
 }

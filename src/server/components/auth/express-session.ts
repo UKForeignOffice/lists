@@ -34,6 +34,7 @@ declare module "express-session" {
       practiceAreas?: string;
       disclaimer?: boolean;
       urlSafeCountry?: string;
+      notice?: boolean;
     };
   }
 }

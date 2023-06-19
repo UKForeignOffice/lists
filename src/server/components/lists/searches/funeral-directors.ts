@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { DEFAULT_VIEW_PROPS } from "../constants";
 import {
   getServiceLabel,
   getAllRequestParams,
@@ -11,9 +10,8 @@ import {
   getLinksOfRelatedLists,
 } from "../helpers";
 import { QuestionName } from "../types";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
-import { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
+import type { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
 
@@ -27,7 +25,7 @@ export const funeralDirectorsQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchFuneralDirectors(req: Request, res: Response): Promise<void> {
+export async function searchFuneralDirectors(req: Request): Promise<void> {
   let params = getAllRequestParams(req);
   const { serviceType, country, region, repatriation, print = "no" } = params;
   let countryName: string | undefined = formatCountryParam(country as string);
@@ -75,9 +73,7 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
     ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
   ];
 
-  res.render("lists/results-page", {
-    ...DEFAULT_VIEW_PROPS,
-    ...params,
+  return {
     searchResults: results,
     removeQueryParameter,
     getParameterValue,
@@ -87,7 +83,6 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
     offset,
     pagination,
     print,
-    csrfToken: getCSRFToken(req),
     relatedLinks,
-  });
+  };
 }
