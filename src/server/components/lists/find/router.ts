@@ -59,10 +59,7 @@ findRouter.param("country", (req: Request, res: Response, next: NextFunction, co
   next();
 });
 
-findRouter.get("/:serviceType", handlers.serviceType.get);
-findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFunction) => {
-  const { serviceType } = req.params;
-
+findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction, serviceType) => {
   const sessionAnswers = req.session.answers ?? {};
 
   const answers = {
@@ -78,9 +75,10 @@ findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFuncti
   const query = new URLSearchParams(req.query);
   res.locals.queryString = query.toString();
   res.locals.serviceType = serviceType;
-
   next();
 });
+
+findRouter.get("/:serviceType", handlers.serviceType.get);
 
 findRouter.get("/:serviceType/country", handlers.country.get);
 findRouter.post("/:serviceType/country", handlers.country.post);
@@ -100,21 +98,23 @@ findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFuncti
 
 findRouter.get("/lawyers/:country", handlers.country.get);
 findRouter.post("/lawyers/:country", handlers.country.post);
-findRouter.get("/lawyers/:country/region", handlers.region.get);
+findRouter.get("/:serviceType/:country/region", handlers.region.get);
 
 findRouter.get("/:serviceType/:country/disclaimer", handlers.disclaimer.get);
 findRouter.post("/:serviceType/:country/disclaimer", handlers.disclaimer.post);
 findRouter.get("/:serviceType/:country/result", handlers.result.get);
 
-findRouter.post("/lawyers/:country/region", handlers.region.post);
+findRouter.post("/:serviceType/:country/region", handlers.region.post);
 
 findRouter.get("/lawyers/:country/practice-areas", handlers.practiceAreas.get);
 findRouter.post("/lawyers/:country/practice-areas", handlers.practiceAreas.post);
 
 findRouter.get("/funeral-directors/insurance", handlers.insurance.get);
+findRouter.post("/funeral-directors/insurance", handlers.insurance.post);
 findRouter.get("/funeral-directors/insurance/contact-insurance", handlers.contactInsurance.get);
 findRouter.get("/funeral-directors/insurance/repatriation", handlers.repatriation.get);
+findRouter.post("/funeral-directors/insurance/repatriation", handlers.repatriation.post);
 findRouter.get("/funeral-directors/country", handlers.country.get);
 findRouter.get("/funeral-directors/country", handlers.country.post);
-findRouter.get("/funeral-directors/:country/region", handlers.region.get);
+
 findRouter.get("/funeral-directors/:country/disclaimer", handlers.disclaimer.get);

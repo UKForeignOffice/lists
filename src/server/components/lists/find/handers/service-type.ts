@@ -1,8 +1,11 @@
 import type { Request, Response } from "express";
 import { formatCountryParam } from "../../helpers";
+import type { NormalisedServiceTypes } from "./types";
 
 export function get(req: Request, res: Response) {
   const country = req.query.country;
+  const { serviceType } = req.params;
+
   if (country) {
     res.locals.country = formatCountryParam(country as string);
   }
@@ -13,7 +16,7 @@ export function get(req: Request, res: Response) {
     return;
   }
 
-  res.render("lists/find/lawyers/notice");
+  res.render(`lists/find/${serviceType}/notice`);
 }
 
 export function post(req: Request, res: Response) {

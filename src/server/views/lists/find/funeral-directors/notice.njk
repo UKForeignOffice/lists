@@ -4,42 +4,40 @@
     Find a funeral director {{ "in " + _.startCase(country) if country else "abroad"}}
   </h1>
 {% endblock %}
+{% block question %}
 
-<p class="govuk-body">
-  The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking funeral directors abroad to
-  help British nationals find the support they need.
-</p>
-<p class="govuk-body">You can search for funeral directors by country or a more specific location.</p>
-<p class="govuk-body">All funeral directors on the lists have confirmed they can provide services in English.</p>
+  <p class="govuk-body">
+    The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking funeral directors abroad to
+    help British nationals find the support they need.
+  </p>
+  <p class="govuk-body">You can search for funeral directors by country or a more specific location.</p>
+  <p class="govuk-body">All funeral directors on the lists have confirmed they can provide services in English.</p>
 
-<div class="govuk-warning-text">
-  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-  <strong class="govuk-warning-text__text">
-    <span class="govuk-warning-text__assistive">Warning</span>
-    You should do your own research before deciding which provider to use. You may also want to check if any insurance
-    policies provide cover for the services you need before you contact a funeral director independently.
-  </strong>
-</div>
-<form class="form" method="post">
-  {% if country %}
-    <a href="{{ findServiceType }}/{{ country }}/region" class="govuk-button">Start</a>
-  {% else %}
-    <a href="{{ findServiceType }}/country" class="govuk-button">Start</a>
-  {% endif %}
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      You should do your own research before deciding which provider to use. You may also want to check if any insurance
+      policies provide cover for the services you need before you contact a funeral director independently.
+    </strong>
+  </div>
+  <form class="form" method="post">
+    <a href="{{ findServiceType }}/insurance" class="govuk-button">Start</a>
+  </form>
+  <h2 class="govuk-heading-m">Disclaimer</h2>
+  {% include 'includes/disclaimer.njk' %}
+  <h2 class="govuk-heading-m" id="feedback-heading">Feedback on service providers</h2>
+  <p class="govuk-body">
+    If you have feedback on any funeral directors, contact the <a class="govuk-link" href="https://www.gov.uk/world/embassies" target="_blank">British embassy or consulate</a> in
+    the relevant country. Providers will be removed from the list where appropriate.
+  </p>
+  <h2 class="govuk-heading-m">Feedback on this service</h2>
+  <p class="govuk-body">
+    We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service
+  </p>
+  <h2 class="govuk-heading-m">Apply to be added to this service</h2>
+  <p class="govuk-body">
+    You can <a class="govuk-link" href="{{ serviceApplyUrl }}">apply to be added to this service</a> if you are based outside the UK and can provide funeral services to British nationals in English.
+  </p>
 
-</form>
-<h2 class="govuk-heading-m">Disclaimer</h2>
-{% include 'includes/disclaimer.njk' %}
-<h2 class="govuk-heading-m" id="feedback-heading">Feedback on service providers</h2>
-<p class="govuk-body">
-  If you have feedback on any funeral directors, contact the <a class="govuk-link" href="https://www.gov.uk/world/embassies" target="_blank">British embassy or consulate</a> in
-  the relevant country. Providers will be removed from the list where appropriate.
-</p>
-<h2 class="govuk-heading-m">Feedback on this service</h2>
-<p class="govuk-body">
-  We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service
-</p>
-<h2 class="govuk-heading-m">Apply to be added to this service</h2>
-<p class="govuk-body">
-  You can <a class="govuk-link" href="{{ serviceApplyUrl }}">apply to be added to this service</a> if you are based outside the UK and can provide funeral services to British nationals in English.
-</p>
+{% endblock %}

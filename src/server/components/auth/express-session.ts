@@ -35,6 +35,9 @@ declare module "express-session" {
       disclaimer?: boolean;
       urlSafeCountry?: string;
       notice?: boolean;
+      reparation?: string;
+      insurance?: boolean;
+      repatriation?: boolean;
     };
   }
 }
