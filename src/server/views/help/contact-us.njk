@@ -1,0 +1,154 @@
+{% from "radios/macro.njk" import govukRadios %}
+{% from "button/macro.njk" import govukButton %}
+{% from "input/macro.njk" import govukInput %}
+{% from "textarea/macro.njk" import govukTextarea %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% extends 'layout.njk' %}
+{% block pageTitle %}
+  Make a complaint about a service provider
+{% endblock %}
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {% if errors %}
+      {{ govukErrorSummary({
+        titleText: "Fix the following errors",
+        errorList: errorList
+      }) }}
+    {% endif %}
+    <h1 class="govuk-heading-l">Make a complaint about a service provider</h1>
+    <p class="govuk-body">
+      You can use this form to make a complaint about a lawyer, funeral director, translator or interpreter on Find a professional service abroad.
+    </p>
+    <p class="govuk-body">
+      If you want to leave general feedback, or tell us how this service can be improved, please use the <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional">feedback form</a> instead.
+    </p>
+
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      {{ govukRadios({
+        name: "serviceType",
+        id: "serviceType",
+        fieldset: {
+          legend: {
+            text: fieldTitles.serviceType,
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        errorMessage: { text: errors.serviceType } if errors.serviceType,
+        items: [
+          {
+            value: "lawyers",
+            text: "Lawyers"
+          },
+          {
+            value: "funeral-directors",
+            text: "Funeral directors"
+          },
+          {
+            value: "translators-interpreters",
+            text: "Translators and interpreters"
+          }
+        ]
+      }) }}
+
+      <div class="govuk-form-group govuk-!-width-two-thirds {{ "govuk-form-group--error" if error.country }}">
+        <h3 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--s" for="country">
+            {{ fieldTitles.country }}
+          </label>
+        </h3>
+        {% if errors.country %}
+          <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ errors.country }}
+          </span>
+        {% endif %}
+        <select id="country" name="country" className="govuk-input--error">
+          <option value=""></option>
+          {% for country in countriesList %}
+            <option value="{{ country.value }}">{{ country.text }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {{ govukInput({
+        label: {
+          text: fieldTitles.providerName,
+          classes: "govuk-label--s"
+        },
+        hint: {
+          text: "Enter the name of the lawyer, funeral director, translator or interpreter"
+        },
+        errorMessage: { text: errors.providerName } if errors.providerName,
+        classes: "govuk-!-width-two-thirds",
+        id: "providerName",
+        name: "providerName"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: fieldTitles.providerCompanyName,
+          classes: "govuk-label--s"
+        },
+        hint: {
+          text: "Enter the company name of the lawyer, funeral director, translator or interpreter"
+        },
+        classes: "govuk-!-width-two-thirds",
+        id: "providerCompanyName",
+        name: "providerCompanyName"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: fieldTitles.name,
+          classes: "govuk-label--s"
+        },
+        errorMessage: { text: errors.name } if errors.name,
+        classes: "govuk-!-width-two-thirds",
+        id: "name",
+        name: "name"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: fieldTitles.email,
+          classes: "govuk-label--s"
+        },
+        errorMessage: { text: errors.email } if errors.email,
+        classes: "govuk-!-width-two-thirds",
+        id: "email",
+        type: "email",
+        name: "email"
+      }) }}
+
+      {{ govukTextarea({
+        name: "detail",
+        id: "detail",
+        label: {
+          text: fieldTitles.detail,
+          classes: "govuk-label--s",
+          isPageHeading: true
+        },
+        errorMessage: { text: errors.detail } if errors.detail,
+        hint: {
+          text: "Do not include personal or financial information, like your National Insurance number or credit card details."
+        }
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+    </form>
+  </div>
+</div>
+
+<script nonce="{{cspNonce}}">
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#country'),
+    autoselect: true
+  })
+</script>
+
+{% endblock %}
