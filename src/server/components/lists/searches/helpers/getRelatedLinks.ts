@@ -6,7 +6,10 @@ export async function getRelatedLinks(countryName: string, serviceType: ServiceT
   const list = await prisma.list.findFirst({
     where: {
       country: {
-        name: countryName,
+        name: {
+          equals: countryName,
+          mode: "insensitive",
+        },
       },
       type: serviceType,
     },

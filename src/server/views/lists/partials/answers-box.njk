@@ -4,33 +4,32 @@
   {% if not country %}
     <p class="govuk-body">Your answers will appear here</p>
   {% endif %}
-  {% if serviceType %}
-    {# until other services are integrated we can hide this #}
-    {# <p class="govuk-body">
-      What are you looking for?<br />
-      <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
-      <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
-    </p> #}
-  {% endif %}
-  {% if region %}
+
     <p class="govuk-body">
+      {% set region = answers.region if answers.region else "Not supplied" %}
+
+      {% if (answers.region) or (not path.includes("region"))  %}
       Location<br />
       <strong>{{ _.upperFirst(region) }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">
+        Change
+      </a>
+      {% endif %}
     </p>
   {% endif %}
-  {% if country %}
+
+  {% if answers.country %}
     <p class="govuk-body">
       Country<br />
-      <strong>{{ country }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}" aria-label="Change country answer">Change</a>{% endif %}
+      <strong>{{ answers.country }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if practiceArea %}
+  {% if answers.practiceAreas %}
     <p class="govuk-body">
       Areas of law<br />
-      <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}" aria-label="Change area of law answer">Change</a>{% endif %}
+      <strong>{{ _.split(answers.practiceAreas, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/practice-areas?{{ removeQueryParameter(queryString, 'practice-area') }}" aria-label="Change area of law answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if resultsTurnaround %}
