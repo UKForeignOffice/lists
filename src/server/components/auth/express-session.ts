@@ -33,6 +33,7 @@ declare module "express-session" {
       region?: string | string[];
       practiceAreas?: string;
       disclaimer?: boolean;
+      urlSafeCountry?: string;
     };
   }
 }

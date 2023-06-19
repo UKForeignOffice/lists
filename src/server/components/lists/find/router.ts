@@ -11,6 +11,9 @@ import { getServiceLabel } from "server/components/lists";
 import serviceName from "server/utils/service-name";
 import { getParameterValue, removeQueryParameter } from "server/components/lists/helpers";
 import { URLSearchParams } from "url";
+import Joi from "joi";
+import { HttpException } from "server/middlewares/error-handlers";
+import { logger } from "server/services/logger";
 
 export const findRouter = express.Router();
 
@@ -23,6 +26,7 @@ findRouter.post("*", (req: Request, res: Response, next: NextFunction) => {
 findRouter.get("*", (req: Request, res: Response, next: NextFunction) => {
   res.locals.path = req.path;
   req.session.answers ??= {};
+  res.locals.csrfToken = req?.csrfToken?.() ?? "";
 
   next();
 });
@@ -31,32 +35,45 @@ function normaliseServiceType(serviceType: string) {
   return kebabCase(serviceType.toLowerCase());
 }
 findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction, serviceType) => {
-  res.locals.findServiceType = normaliseServiceType(serviceType);
-  res.locals.serviceLabel = getServiceLabel(serviceType);
-  res.locals.serviceLabelPlural = serviceName(serviceType);
+  try {
+    const normalisedServiceType = normaliseServiceType(serviceType);
+    const schema = Joi.string().allow("lawyers", "funeral-directors", "translators-interpreters");
+    const { error } = schema.validate(normalisedServiceType);
+    if (error) {
+      throw Error(error.message);
+    }
+
+    res.locals.findServiceType = normalisedServiceType;
+    res.locals.serviceLabel = getServiceLabel(serviceType);
+    res.locals.serviceLabelPlural = serviceName(serviceType);
+  } catch (e) {
+    logger.error(`User requested ${serviceType} but it was not recognised`);
+    throw new HttpException(404, "404", " ");
+  }
+
   res.locals.removeQueryParameter = removeQueryParameter;
   res.locals.getParameterValue = getParameterValue;
+
   next();
 });
 
 findRouter.param("country", (req: Request, res: Response, next: NextFunction, country) => {
   res.locals.urlSafeCountry = encodeURIComponent(country.toLowerCase());
   res.locals.country = decodeURIComponent(country);
+
   next();
 });
 
 findRouter.get("/:serviceType", serviceType.get);
-findRouter.get("/:serviceType/country", country.get);
-findRouter.post("/:serviceType/country", country.post);
-findRouter.get("/:serviceType/:country*", (req: Request, res: Response, next: NextFunction) => {
-  const { country, serviceType } = req.params;
-  const { region } = req.query;
+findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFunction) => {
+  const { serviceType } = req.params;
+
+  const sessionAnswers = req.session.answers ?? {};
 
   const answers = {
-    ...req.session.answers,
-    country,
-    region,
-    practiceAreas: req.query["practice-area"],
+    country: sessionAnswers.country ?? req.params.country,
+    region: sessionAnswers.region ?? req.query.region,
+    practiceAreas: sessionAnswers.practiceAreas ?? req.query["practice-area"],
     serviceType,
   };
 
@@ -69,6 +86,9 @@ findRouter.get("/:serviceType/:country*", (req: Request, res: Response, next: Ne
 
   next();
 });
+
+findRouter.get("/:serviceType/country", country.get);
+findRouter.post("/:serviceType/country", country.post);
 
 findRouter.get("/:serviceType/:country", country.get);
 findRouter.post("/:serviceType/:country", country.post);

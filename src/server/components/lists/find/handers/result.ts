@@ -12,6 +12,10 @@ export async function get(req: Request, res: Response) {
     region: req.query.region as string,
     practiceAreas: req.query["practice-area"] as string,
   };
-  console.log(req.session.answers);
+
+  res.locals.answers = {
+    ...req.session.answers,
+  };
+
   res.render("lists/find/lawyers/results.njk", { ...context, removeQueryParameter, getParameterValue });
 }
