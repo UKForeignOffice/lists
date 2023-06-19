@@ -19,9 +19,10 @@
   {% endif %}
 
   {% if answers.country %}
+    {% set countryAnswer = answers.country if answers.country else session.answers.country %}
     <p class="govuk-body">
       Country<br />
-      <strong>{{ answers.country }}</strong>{% if print !== "yes" %}
+      <strong>{{ countryAnswer }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/country?{{ queryString }}" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
