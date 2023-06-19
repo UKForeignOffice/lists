@@ -16,6 +16,8 @@ export function post(req: Request, res: Response) {
     ...(encoded && { region: encoded }),
   });
 
+  req.session.answers.region = region;
+
   if (params.get("practice-area")) {
     res.redirect(`result?${params.toString()}`);
     return;

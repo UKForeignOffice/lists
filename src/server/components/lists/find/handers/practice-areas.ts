@@ -37,5 +37,10 @@ export function post(req: Request, res: Response) {
 
   const query = new URLSearchParams({ ...req.query, "practice-area": value });
 
+  if (req.session.answers?.disclaimer === true) {
+    res.redirect(`result?${query.toString()}`);
+    return;
+  }
+
   res.redirect(`disclaimer?${query.toString()}`);
 }

@@ -8,7 +8,7 @@
     <p class="govuk-body">
       {% set region = answers.region if answers.region else "Not supplied" %}
 
-      {% if (answers.region) or (not path.includes("region"))  %}
+      {% if answers.region  %}
       Location<br />
       <strong>{{ _.upperFirst(region) }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">
@@ -22,7 +22,7 @@
     <p class="govuk-body">
       Country<br />
       <strong>{{ answers.country }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country" aria-label="Change country answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country?{{ queryString }}" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.practiceAreas %}
