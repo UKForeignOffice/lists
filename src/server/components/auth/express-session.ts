@@ -1,4 +1,5 @@
-import { Express } from "express";
+import type { Express } from "express";
+import type { ParsedQs } from "qs";
 import { random, noop } from "lodash";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -6,8 +7,8 @@ import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
-import { Action } from "server/components/dashboard/listsItems/item/update/types";
-import { RelatedLink } from "shared/types";
+import type { Action } from "server/components/dashboard/listsItems/item/update/types";
+import type { RelatedLink } from "shared/types";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -26,6 +27,13 @@ declare module "express-session" {
     updatesRequired?: boolean;
 
     relatedLink?: RelatedLink;
+
+    answers: {
+      country?: string;
+      region?: string | string[];
+      practiceAreas?: string;
+      disclaimer?: boolean;
+    };
   }
 }
 

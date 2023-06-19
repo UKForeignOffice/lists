@@ -1,0 +1,24 @@
+{% extends "./../question-page.njk" %}
+
+{% block question %}
+  <form class="form" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l" for="area">
+            Where in {{_.startCase(country) }} do you want to find {{ serviceLabel }}? (Optional)
+          </label>
+        </h1>
+        <div id="area-hint" class="govuk-hint">
+          Provide a city, area or postcode to order the results with the nearest first.  Leave blank for an alphabetical list of all
+          {{ serviceLabelPlural }} for the whole country.
+        </div>
+        <input class="govuk-input" id="area" name="region" type="text" value="{{ region }}"/>
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+{% endblock %}

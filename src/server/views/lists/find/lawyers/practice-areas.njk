@@ -1,0 +1,44 @@
+{% extends "./../../question-page.njk" %}
+{% from "checkboxes/macro.njk" import govukCheckboxes %}
+
+{% block question %}
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#practiceArea"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error.field === 'practice-area' }}">
+      {{ govukCheckboxes({
+        name: "practiceArea",
+        fieldset: {
+          legend: {
+            text: "In what areas of law do you need legal help?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          text: "You can choose as many options from the list as you need."
+        },
+        items: practiceAreas
+      }) }}
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+
+{% endblock %}
