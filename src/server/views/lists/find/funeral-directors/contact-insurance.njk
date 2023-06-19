@@ -1,0 +1,24 @@
+{% extends "./../../question-page.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% block question %}
+  <form class="form" method="post">
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset" aria-describedby="insurance-hint">
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l" for="insurance">
+            You should contact the insurance company
+          </label>
+        </h1>
+        <div id="contact-insurance-hint" class="govuk-body">
+          Contact the insurance company as soon as possible. Travel insurance may cover costs such as medical, repatriation,
+          legal, interpretation and translation fees. They may have a list of approved funeral directors to help you bring
+          the person who died home or lay them to rest in the country where they died.
+        </div>
+      </fieldset>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+{% endblock %}

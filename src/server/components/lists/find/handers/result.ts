@@ -1,10 +1,11 @@
 import { searchLawyers } from "server/components/lists/searches/lawyers";
 import { getParameterValue, removeQueryParameter } from "../../helpers";
 import type { Request, Response } from "express";
+import { searchFuneralDirectors } from "server/components/lists/searches/funeral-directors";
+import { HttpException } from "server/middlewares/error-handlers";
 
 export async function get(req: Request, res: Response) {
-  const context = await searchLawyers(req);
-  const { country } = req.params;
+  const { country, serviceType } = req.params;
 
   req.session.answers = {
     ...req.session.answers,
@@ -17,5 +18,19 @@ export async function get(req: Request, res: Response) {
     ...req.session.answers,
   };
 
-  res.render("lists/find/lawyers/results.njk", { ...context, removeQueryParameter, getParameterValue });
+  const serviceTypeToSearch = {
+    lawyers: searchLawyers,
+    "funeral-directors": searchFuneralDirectors,
+  };
+
+
+  const searchMethod = serviceTypeToSearch[serviceType];
+
+  if (!searchMethod) {
+    throw new HttpException(400, "400", "");
+  }
+
+  const context = await searchMethod(req);
+
+  res.render(`lists/find/${serviceType}/results.njk`, { ...context, removeQueryParameter, getParameterValue });
 }
