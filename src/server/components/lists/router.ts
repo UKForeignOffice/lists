@@ -25,5 +25,8 @@ listsRouter.get(listsRoutes.accessibility, (_req, res) => {
 listsRouter.get(listsRoutes.termsAndConditions, (_req, res) => {
   res.render("help/terms-and-conditions");
 });
+listsRouter.get(listsRoutes.contactUsConfirm, (_req, res) => {
+  res.render("help/contact-us-confirm");
+});
 listsRouter.use(ingestRouter);
 listsRouter.use(annualReviewRouter);

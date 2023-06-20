@@ -3,6 +3,7 @@ import { getCSRFToken } from "server/components/cookies/helpers";
 import { countriesList } from "server/services/metadata";
 import { sendContactUsEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
+import Joi from "joi";
 
 export function getContactUsPage(req: Request, res: Response) {
   const [errors] = req.flash("errors") as unknown as string[];
@@ -54,18 +55,30 @@ interface ContactUsFormFields {
   serviceType: string;
 }
 
+const contactUsFormSchema = Joi.object({
+  country: Joi.string(),
+  detail: Joi.string(),
+  email: Joi.string().email(),
+  name: Joi.string(),
+  providerCompanyName: Joi.string().allow(null, ""),
+  providerName: Joi.string(),
+  serviceType: Joi.string().valid("lawyers", "funeral-directors", "translators-interpreters"),
+  _csrf: Joi.string(),
+});
+
 export async function postContactUsPage(req: Request, res: Response, next: NextFunction) {
   const formFields = req.body as ContactUsFormFields;
+  const { value: validatedFormFields, error } = contactUsFormSchema.validate(formFields);
   const errors: string[] = [];
   const nonRequiredFields = ["providerCompanyName", "_csrf"];
-  const formFieldKeys = Object.keys(formFields) as Array<keyof ContactUsFormFields>;
+  const formFieldKeys = Object.keys(validatedFormFields) as Array<keyof ContactUsFormFields>;
 
   if (!formFieldKeys.includes("serviceType")) {
     formFieldKeys.push("serviceType");
   }
 
   formFieldKeys.forEach((key) => {
-    if (!formFields[key] && !nonRequiredFields.includes(key)) {
+    if (!validatedFormFields[key] && !nonRequiredFields.includes(key)) {
       errors.push(key);
     }
   });
@@ -76,13 +89,22 @@ export async function postContactUsPage(req: Request, res: Response, next: NextF
     return;
   }
 
+  if (error) {
+    logger.error(`postContactUsPage Error: Validation failed - ${error.message}`);
+    next(error);
+    return;
+  }
+
+  const { _csrf, ...dataWithoutCSRF } = validatedFormFields;
+
   try {
     const personalisation = {
-      emailSubject: `${formFields.serviceType} in ${formFields.country}: Apply service contact form`,
-      emailPayload: Object.entries(formFields),
+      emailSubject: `${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service contact form`,
+      emailPayload: Object.entries(dataWithoutCSRF).join("\r\n\n ## \r\n"),
     };
+
     await sendContactUsEmail(personalisation);
-    res.redirect("/help/contact-us"); // go to the email submitted page
+    res.redirect("/help/contact-us-confirm");
   } catch (error) {
     logger.error(`postContactUsPage Error: ${error.errors ?? error.message}`);
     next(error);

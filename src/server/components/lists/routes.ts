@@ -13,4 +13,5 @@ export const listsRoutes = {
   accessibility: "/help/accessibility-statement",
   termsAndConditions: "/help/terms-and-conditions",
   contactUs: "/help/contact-us",
+  contactUsConfirm: "/help/contact-us-confirm",
 } as const;
