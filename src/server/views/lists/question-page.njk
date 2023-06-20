@@ -6,31 +6,22 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {% block heading %}
-      {% endblock %}
-    </div>
-
     <div class="govuk-grid-column-two-thirds">
-      {% block questionError %}
-        {% if error.field %}
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: [error]
-          }) }}
-        {% endif %}
-      {% endblock %}
+      {% if error.field %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [error]
+        }) }}
+      {% endif %}
 
-      {% block question %}
-
-      {% endblock %}
+      {% include "lists/partials/" + partialToRender %}
     </div>
 
-    {% block answers %}
+    {# temporary remove answer-box from lawyers start page, until other services are added #}
+    {% if partialToRender.indexOf("-notice") === -1 %}
       <div class="govuk-grid-column-one-third">
         {% include "lists/partials/answers-box.njk" %}
       </div>
-    {% endblock %}
-
+    {% endif %}
   </div>
 {% endblock %}

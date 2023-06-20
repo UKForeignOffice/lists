@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import * as Controllers from "./controllers";
 import { listsRoutes } from "./routes";
@@ -9,10 +10,16 @@ import { findRouter } from "./find/router";
 
 export const listsRouter = express.Router();
 
-listsRouter.use("/find", findRouter);
-listsRouter.use("/find/v1", Controllers.listsGetController);
-listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
-listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
+listsRouter.use("/v2/find", findRouter);
+
+listsRouter.use("/find*", (req: Request, res: Response, next: NextFunction) => {
+  res.locals.csrfToken = req?.csrfToken?.() ?? "";
+  next();
+});
+listsRouter.get("/find", Controllers.listsGetController);
+listsRouter.post("/find", Controllers.listsPostController);
+listsRouter.get(listsRoutes.results, Controllers.listsResultsController);
+listsRouter.get(listsRoutes.removeLanguage, Controllers.removeLanguageGetController);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);

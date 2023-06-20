@@ -1,12 +1,22 @@
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { getAllRequestParams, getLinksOfRelatedLists } from "../helpers";
+import {
+  formatCountryParam,
+  getAllRequestParams,
+  getLinksOfRelatedLists,
+  getParameterValue,
+  getServiceLabel,
+  parseListValues,
+  queryStringFromParams,
+  removeQueryParameter,
+} from "../helpers";
 import { QuestionName } from "../types";
+import { getCSRFToken } from "server/components/cookies/helpers";
 import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
+import { cleanLegalPracticeAreas, validateCountry } from "server/models/listItem/providers/helpers";
 import { logger } from "server/services/logger";
-import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
+import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -16,25 +26,34 @@ export const lawyersQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchLawyers(req: Request) {
-  const params = getAllRequestParams(req);
-  const { serviceType, print = "no", country, region } = params;
+export async function searchLawyers(req: Request, res: Response): Promise<void> {
+  let params = getAllRequestParams(req);
+  const { serviceType, country, region, print = "no" } = params;
+  let countryName: string | undefined = formatCountryParam(country as string);
+  params = { ...params, country: countryName as CountryName };
+  countryName = validateCountry(countryName);
+
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
   let allRows: LawyerListItemGetObject[] = [];
-
-  const validPracticeAreas = sanitisePracticeAreas(params["practice-area"].toLowerCase());
-
+  let practiceArea: string[] | undefined = [];
   try {
-    allRows = await LawyerListItem.findPublishedLawyersPerCountry({
-      countryName: country,
-      region,
-      practiceArea: validPracticeAreas,
-      offset: -1,
-    });
+    practiceArea = parseListValues("practiceArea", params);
+    if (practiceArea != null) {
+      practiceArea = cleanLegalPracticeAreas(practiceArea);
+    }
+
+    if (countryName) {
+      allRows = await LawyerListItem.findPublishedLawyersPerCountry({
+        countryName,
+        region,
+        practiceArea,
+        offset: -1,
+      });
+    }
   } catch (error) {
     logger.error(`Exception caught in searchLawyers`, error);
   }
@@ -43,7 +62,7 @@ export async function searchLawyers(req: Request) {
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
-    listRequestParams: req.query,
+    listRequestParams: params,
   });
 
   const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
@@ -51,29 +70,29 @@ export async function searchLawyers(req: Request) {
   let searchResults: LawyerListItemGetObject[] = [];
 
   if (allRows.length > 0) {
-    /**
-     * TODO: investigate why this runs twice.
-     */
     searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
-      countryName: country,
+      countryName,
       region,
-      practiceArea: validPracticeAreas,
+      practiceArea,
       offset,
     });
   }
   const results = print === "yes" ? allRows : searchResults;
+  const relatedLinks = await getLinksOfRelatedLists(country as CountryName, serviceType!);
 
-  const relatedLinks = [
-    ...(await getRelatedLinks(country, serviceType!)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
-  ];
-
-  return {
+  res.render("lists/results-page", {
+    ...DEFAULT_VIEW_PROPS,
+    ...params,
     searchResults: results,
+    removeQueryParameter,
+    getParameterValue,
+    queryString: queryStringFromParams(params),
+    serviceLabel: getServiceLabel(serviceType),
     limit: ROWS_PER_PAGE,
     offset,
     pagination,
     print,
+    csrfToken: getCSRFToken(req),
     relatedLinks,
-  };
+  });
 }

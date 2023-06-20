@@ -234,7 +234,6 @@ export function listsGetController(req: Request, res: Response): void {
       getParameterValue,
       serviceLabel: getServiceLabel(params.serviceType),
       serviceLabelPlural: serviceName(params.serviceType as string),
-      csrfToken: getCSRFToken(req),
     });
 
     return;
@@ -273,7 +272,7 @@ export function listsResultsController(req: Request, res: Response, next: NextFu
 
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
-      searchLawyers(req).catch((error) => logger.error("Find a lawyer result controller", { error }));
+      searchLawyers(req, res).catch((error) => logger.error("Find a lawyer result controller", { error }));
       break;
     case ServiceType.covidTestProviders:
       searchCovidTestProvider(req, res).catch((error) => {
