@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { URLSearchParams } from "url";
 
-export function get(req: Request, res: Response, Next: NextFunction) {
+export function get(req: Request, res: Response) {
   res.render("lists/find/funeral-directors/insurance.njk");
 }
 
@@ -15,7 +15,7 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers.insurance = insurance === "yes";
+  req.session.answers.insurance = insurance;
 
   // @ts-ignore
   const query = new URLSearchParams({ ...req.query, insurance });
@@ -24,5 +24,5 @@ export function post(req: Request, res: Response) {
     res.redirect(`insurance/contact-insurance`);
     return;
   }
-  res.redirect(`repatriation?${query.toString()}`);
+  res.redirect(`insurance/repatriation?${query.toString()}`);
 }

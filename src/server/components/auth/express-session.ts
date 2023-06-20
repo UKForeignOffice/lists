@@ -29,6 +29,9 @@ declare module "express-session" {
     relatedLink?: RelatedLink;
 
     answers: {
+      /**
+       * Store un-encoded values here.
+       */
       country?: string;
       region?: string | string[];
       practiceAreas?: string;
@@ -36,8 +39,8 @@ declare module "express-session" {
       urlSafeCountry?: string;
       notice?: boolean;
       reparation?: string;
-      insurance?: boolean;
-      repatriation?: boolean;
+      insurance?: string;
+      repatriation?: string;
     };
   }
 }

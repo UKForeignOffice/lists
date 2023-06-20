@@ -1,16 +1,15 @@
 import { URLSearchParams } from "url";
 import type { Request, Response } from "express";
-import { HttpException } from "server/middlewares/error-handlers";
-import { logger } from "server/services/logger";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/region", {
-    region: req.session.answers?.region,
+    answers: req.session.answers,
   });
 }
 
 export function post(req: Request, res: Response) {
-  const { region } = req.body;
+  const { region = "" } = req.body;
+  const { serviceType } = req.params;
   const encoded = encodeURIComponent(region);
 
   const params = new URLSearchParams({
@@ -18,27 +17,22 @@ export function post(req: Request, res: Response) {
     ...(encoded && { region: encoded }),
   });
 
-  const serviceType = req.params.serviceType;
+  const queryString = params.toString();
 
-  req.session.answers.region = region;
+  req.session.answers = {
+    ...req.session.answers,
+    region,
+  };
 
   if (req.session.answers?.disclaimer === true) {
-    res.redirect(`result?${params.toString()}`);
+    res.redirect(`result?${queryString}`);
     return;
   }
 
-  const serviceTypeNextPage = {
-    "funeral-directors": "disclaimer",
-    lawyers: "insurance",
-    translatorsInterpreters: undefined,
-  };
-
-  const nextPage = serviceTypeNextPage[serviceType];
-
-  if (!nextPage) {
-    logger.error(`POST ${req.originalUrl} - user requested next page for invalid service type "${serviceType}"`);
-    throw new HttpException(404, "404", " ");
+  if (serviceType === "lawyers") {
+    res.redirect(`practice-areas?${queryString}`);
+    return;
   }
 
-  res.redirect(`${nextPage}?${params.toString()}`);
+  res.redirect(`disclaimer?${queryString}`);
 }

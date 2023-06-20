@@ -1,11 +1,13 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { URLSearchParams } from "url";
 
-export function get(req: Request, res: Response, Next: NextFunction) {
-  res.render("lists/find/funeral-directors/repatriation");
+export function get(req: Request, res: Response) {
+  res.render("lists/find/funeral-directors/repatriation", {
+    answers: req.session.answers,
+  });
 }
 
-export function post(req: Request, res: Response, Next: NextFunction) {
+export function post(req: Request, res: Response) {
   const { repatriation } = req.body;
   const allowedValues = ["yes", "no"];
 
@@ -15,10 +17,13 @@ export function post(req: Request, res: Response, Next: NextFunction) {
     return;
   }
 
-  req.session.answers.repatriation = repatriation === "yes";
+  req.session.answers = {
+    ...req.session.answers,
+    repatriation,
+  };
 
   // @ts-ignore
   const query = new URLSearchParams({ ...req.query, repatriation });
 
-  res.redirect(`../country?${query.toString()}`);
+  res.redirect(`country?${query.toString()}`);
 }

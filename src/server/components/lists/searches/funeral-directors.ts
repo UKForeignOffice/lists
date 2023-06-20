@@ -1,19 +1,12 @@
 import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import {
-  getServiceLabel,
-  getAllRequestParams,
-  removeQueryParameter,
-  getParameterValue,
-  queryStringFromParams,
-  formatCountryParam,
-  getLinksOfRelatedLists,
-} from "../helpers";
+import { getServiceLabel, getAllRequestParams, formatCountryParam, getLinksOfRelatedLists } from "../helpers";
 import { QuestionName } from "../types";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
 import type { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 
 export const funeralDirectorsQuestionsSequence = [
   QuestionName.readNotice,
@@ -25,9 +18,10 @@ export const funeralDirectorsQuestionsSequence = [
   QuestionName.readDisclaimer,
 ];
 
-export async function searchFuneralDirectors(req: Request): Promise<void> {
+export async function searchFuneralDirectors(req: Request) {
   let params = getAllRequestParams(req);
-  const { serviceType, country, region, repatriation, print = "no" } = params;
+  const { country, region, repatriation, print = "no" } = params;
+  const serviceType = getDbServiceTypeFromParameter(params.serviceType);
   let countryName: string | undefined = formatCountryParam(country as string);
   countryName = validateCountry(countryName);
 
@@ -42,7 +36,7 @@ export async function searchFuneralDirectors(req: Request): Promise<void> {
   const filterProps = {
     countryName,
     region,
-    repatriation: repatriation?.includes("yes") ?? false,
+    repatriation: repatriation?.toLowerCase?.() === "yes",
     offset: -1,
   };
 
@@ -69,8 +63,8 @@ export async function searchFuneralDirectors(req: Request): Promise<void> {
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(countryName!, serviceType!)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+    ...(await getRelatedLinks(countryName!, serviceType)),
+    ...(await getLinksOfRelatedLists(country as CountryName, serviceType)),
   ];
 
   return {

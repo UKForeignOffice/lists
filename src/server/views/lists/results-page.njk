@@ -4,24 +4,27 @@
   {{ SERVICE_NAME }} - Results for {{ _.startCase(serviceType) }} in {{ country }}
 {% endblock %}
 
+{% set isResultsPage = true %}
+
 {% block content %}
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if _.camelCase(serviceType) === ServiceType.lawyers %}
+
+      {% if _.camelCase(serviceType) === "lawyers" %}
         {% include "lists/partials/lawyers/lawyers-results-list.njk" %}
       {% endif %}
-      {% if _.camelCase(serviceType) === ServiceType.covidTestProviders %}
-        {% include "lists/partials/covid-test-providers/covid-test-providers-results-list.njk" %}
-      {% endif %}
-      {% if _.camelCase(serviceType) === ServiceType.funeralDirectors %}
+      {% if _.camelCase(serviceType) === "funeralDirectors" %}
         {% include "lists/partials/funeral-directors/funeral-directors-results-list.njk" %}
       {% endif %}
-      {% if _.camelCase(serviceType) === ServiceType.translatorsInterpreters %}
+      {% if _.camelCase(serviceType) === "translatorsInterpreters" %}
         {% include "lists/partials/translators-interpreters/translators-interpreters-results-list.njk" %}
       {% endif %}
     </div>
-      <div class="govuk-grid-column-one-third">
+
+    <div class="govuk-grid-column-one-third">
         {% include "lists/partials/answers-box.njk" %}
+        {%  block relatedLinks %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-section-break--blue"/>
         <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Related content</h2>
         <div class="govuk-body-s">The following links open in a new tab</div>
@@ -32,6 +35,8 @@
             </li>
           {% endfor %}
         </ul>
+        {% endblock %}
+
       </div>
     </div>
   </div>

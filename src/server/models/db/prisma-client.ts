@@ -37,16 +37,17 @@ prisma.$connect().catch((error) => {
   logger.error(`Prisma Connect Error ${error.message}`);
 });
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-prisma.$on("query", (e: Prisma.QueryEvent) => {
-  if (!isSmokeTest) {
-    logger.info(`
-      Prisma Query: ${e.query} \r\n
-      Duration: ${e.duration}ms \r\n
-      Params: ${e.params}
-    `);
-  }
-});
+// prisma.$on("query", (e: Prisma.QueryEvent) => {
+//   if (!isSmokeTest) {
+//     logger.info(`
+//       Prisma Query: ${e.query} \r\n
+//       Duration: ${e.duration}ms \r\n
+//       Params: ${e.params}
+//     `);
+//   }
+// });
 
 // @ts-expect-error
 prisma.$on("warn", (e) => {

@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { formatCountryParam } from "../../helpers";
-import type { NormalisedServiceTypes } from "./types";
 
 export function get(req: Request, res: Response) {
   const country = req.query.country;
@@ -16,7 +15,9 @@ export function get(req: Request, res: Response) {
     return;
   }
 
-  res.render(`lists/find/${serviceType}/notice`);
+  res.render(`lists/find/${serviceType}/notice`, {
+    answers: req.session.answers,
+  });
 }
 
 export function post(req: Request, res: Response) {

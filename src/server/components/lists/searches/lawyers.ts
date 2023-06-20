@@ -6,6 +6,8 @@ import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import Joi from "joi";
+import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -17,20 +19,21 @@ export const lawyersQuestionsSequence = [
 
 export async function searchLawyers(req: Request) {
   const params = getAllRequestParams(req);
-  const { serviceType, country, region, print = "no" } = params;
-
+  const { serviceType, print = "no", country, region } = params;
   let { page = "1" } = params;
   page = page !== "" ? page : "1";
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
   let allRows: LawyerListItemGetObject[] = [];
-  const practiceArea: string[] | undefined = [];
+
+  const validPracticeAreas = sanitisePracticeAreas(params["practice-area"].toLowerCase());
+
   try {
     allRows = await LawyerListItem.findPublishedLawyersPerCountry({
       countryName: country,
       region,
-      practiceArea,
+      practiceArea: validPracticeAreas,
       offset: -1,
     });
   } catch (error) {
@@ -49,17 +52,20 @@ export async function searchLawyers(req: Request) {
   let searchResults: LawyerListItemGetObject[] = [];
 
   if (allRows.length > 0) {
+    /**
+     * TODO: investigate why this runs twice.
+     */
     searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
       countryName: country,
       region,
-      practiceArea,
+      practiceArea: validPracticeAreas,
       offset,
     });
   }
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country!, serviceType!)),
+    ...(await getRelatedLinks(country, serviceType!)),
     ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
   ];
 
