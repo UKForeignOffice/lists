@@ -6,7 +6,6 @@ import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import Joi from "joi";
 import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 export const lawyersQuestionsSequence = [

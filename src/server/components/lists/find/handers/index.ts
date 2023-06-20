@@ -7,3 +7,4 @@ export * as result from "./result";
 export * as region from "./region";
 export * as repatriation from "./repatriation";
 export * as contactInsurance from "./contact-insurance";
+export * as translatorsInterpreters from "./translators-interpreters";

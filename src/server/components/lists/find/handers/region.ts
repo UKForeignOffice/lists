@@ -34,5 +34,10 @@ export function post(req: Request, res: Response) {
     return;
   }
 
+  if (serviceType === "translators-interpreters") {
+    res.redirect(`services?${queryString}`);
+    return;
+  }
+
   res.redirect(`disclaimer?${queryString}`);
 }
