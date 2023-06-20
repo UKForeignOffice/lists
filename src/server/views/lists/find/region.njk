@@ -14,7 +14,7 @@
           Provide a city, area or postcode to order the results with the nearest first.  Leave blank for an alphabetical list of all
           {{ serviceLabelPlural }} for the whole country.
         </div>
-        <input class="govuk-input" id="area" name="region" type="text" value="{{ region }}"/>
+        <input class="govuk-input" id="area" name="region" type="text" value="{{ region if region else "" }}"/>
       </fieldset>
     </div>
     <button class="govuk-button" data-module="govuk-button">Continue</button>

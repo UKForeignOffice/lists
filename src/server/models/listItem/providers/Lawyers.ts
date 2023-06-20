@@ -4,6 +4,8 @@ import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
+import Joi from "joi";
+import { legalPracticeAreasList } from "server/services/metadata";
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
@@ -19,14 +21,24 @@ export async function findPublishedLawyersPerCountry(props: {
   const offset = props.offset ?? 0;
   const countryName = props.countryName;
   const andWhere: string[] = [];
+  const practiceAreasValidation = Joi.array()
+    .items(...legalPracticeAreasList)
+    .single();
 
-  if ((props.practiceArea?.length ?? 0) > 0) {
+  const { value: validPracticeAreas = [] } = practiceAreasValidation.validate(props.practiceArea, {
+    stripUnknown: { arrays: true },
+    convert: true,
+  });
+
+  if (validPracticeAreas.length) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
-        props.practiceArea
+        validPracticeAreas
       ).replace(/"/g, "'")}`
     );
   }
+
+  console.log(validPracticeAreas, andWhere);
 
   try {
     const fromGeoPoint = await getPlaceGeoPoint({

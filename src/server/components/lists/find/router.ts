@@ -9,6 +9,7 @@ import { URLSearchParams } from "url";
 import Joi from "joi";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
+import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 export const findRouter = express.Router();
 
@@ -40,6 +41,7 @@ findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction
 
     res.locals.findServiceType = normalisedServiceType;
     res.locals.serviceLabel = getServiceLabel(serviceType);
+    res.locals.serviceType = serviceType;
     res.locals.serviceLabelPlural = serviceName(serviceType);
   } catch (e) {
     logger.error(`User requested ${serviceType} but it was not recognised`);
@@ -53,8 +55,13 @@ findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction
 });
 
 findRouter.param("country", (req: Request, res: Response, next: NextFunction, country) => {
-  res.locals.urlSafeCountry = encodeURIComponent(country.toLowerCase());
+  res.locals.urlSafeCountry = encodeURIComponent(country);
   res.locals.country = decodeURIComponent(country);
+  req.session.answers = {
+    ...req.session.answers,
+    country,
+  };
+  res.locals.answers = req.session.answers;
 
   next();
 });
@@ -63,18 +70,15 @@ findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction
   const sessionAnswers = req.session.answers ?? {};
 
   const answers = {
-    country: sessionAnswers.country ?? req.params.country,
-    region: sessionAnswers.region ?? req.query.region,
-    practiceAreas: sessionAnswers.practiceAreas ?? req.query["practice-area"],
-    serviceType,
+    region: req.query.region ?? "",
+    practiceAreas: sessionAnswers.practiceAreas ?? sanitisePracticeAreas(req.query["practice-area"] as string),
+    repatriation: sessionAnswers.repatriation ?? req.query.repatriation,
+    insurance: sessionAnswers.insurance ?? req.query.insurance,
   };
 
   res.locals.answers = answers;
-
-  // @ts-ignore
-  const query = new URLSearchParams(req.query);
-  res.locals.queryString = query.toString();
   res.locals.serviceType = serviceType;
+
   next();
 });
 
@@ -85,7 +89,6 @@ findRouter.post("/:serviceType/country", handlers.country.post);
 
 findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFunction) => {
   const { serviceType } = req.params;
-
   res.locals.answers = req.session.answers;
 
   // @ts-ignore
@@ -96,25 +99,17 @@ findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFuncti
   next();
 });
 
-findRouter.get("/lawyers/:country", handlers.country.get);
-findRouter.post("/lawyers/:country", handlers.country.post);
 findRouter.get("/:serviceType/:country/region", handlers.region.get);
+findRouter.post("/:serviceType/:country/region", handlers.region.post);
 
 findRouter.get("/:serviceType/:country/disclaimer", handlers.disclaimer.get);
 findRouter.post("/:serviceType/:country/disclaimer", handlers.disclaimer.post);
 findRouter.get("/:serviceType/:country/result", handlers.result.get);
+findRouter.get("/:serviceType/:country/practice-areas", handlers.practiceAreas.get);
+findRouter.post("/:serviceType/:country/practice-areas", handlers.practiceAreas.post);
 
-findRouter.post("/:serviceType/:country/region", handlers.region.post);
-
-findRouter.get("/lawyers/:country/practice-areas", handlers.practiceAreas.get);
-findRouter.post("/lawyers/:country/practice-areas", handlers.practiceAreas.post);
-
-findRouter.get("/funeral-directors/insurance", handlers.insurance.get);
-findRouter.post("/funeral-directors/insurance", handlers.insurance.post);
-findRouter.get("/funeral-directors/insurance/contact-insurance", handlers.contactInsurance.get);
-findRouter.get("/funeral-directors/insurance/repatriation", handlers.repatriation.get);
-findRouter.post("/funeral-directors/insurance/repatriation", handlers.repatriation.post);
-findRouter.get("/funeral-directors/country", handlers.country.get);
-findRouter.get("/funeral-directors/country", handlers.country.post);
-
-findRouter.get("/funeral-directors/:country/disclaimer", handlers.disclaimer.get);
+findRouter.get("/:serviceType/insurance", handlers.insurance.get);
+findRouter.post("/:serviceType/insurance", handlers.insurance.post);
+findRouter.get("/:serviceType/insurance/contact-insurance", handlers.contactInsurance.get);
+findRouter.get("/:serviceType/repatriation", handlers.repatriation.get);
+findRouter.post("/:serviceType/repatriation", handlers.repatriation.post);

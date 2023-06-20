@@ -10,10 +10,12 @@ import {
 } from "server/components/lists/helpers";
 import type { CountryName } from "server/models/types";
 import { listsRoutes } from "server/components/lists";
+import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/country", {
     countriesList,
+    answers: req.session.answers,
   });
 }
 
@@ -27,14 +29,21 @@ export async function post(req: Request, res: Response) {
   }
 
   const safe = encodeURIComponent(validatedCountry);
+
+  // @ts-ignore
   req.session.answers.country = country;
-  req.session.answers.urlSafeCountry = country;
+  // @ts-ignore
+  req.session.answers.urlSafeCountry = safe;
 
   const hasQuery = Object.keys(req.query).length;
+
+  // @ts-ignore
   const query = new URLSearchParams(req.query);
   const queryString = hasQuery ? `?${query.toString()}` : "";
 
-  const redirectIfEmptyList = await getRedirectIfListIsEmpty(country, req.params.serviceType);
+  const dbServiceType = getDbServiceTypeFromParameter(req.params.serviceType);
+
+  const redirectIfEmptyList = await getRedirectIfListIsEmpty(country, dbServiceType);
 
   if (redirectIfEmptyList) {
     res.redirect(redirectIfEmptyList);
@@ -42,14 +51,15 @@ export async function post(req: Request, res: Response) {
   }
 
   if (req.session.answers?.disclaimer) {
-    res.redirect(`${safe.toLowerCase()}/result${queryString}`);
+    res.redirect(`${safe}/result${queryString}`);
     return;
   }
 
-  res.redirect(`${safe.toLowerCase()}/region${queryString}`);
+  res.redirect(`${safe}/region${queryString}`);
 }
 
 async function getRedirectIfListIsEmpty(country: string, serviceType: string) {
+  console.log("redirect", country, serviceType);
   if (!country || !serviceType) {
     return;
   }

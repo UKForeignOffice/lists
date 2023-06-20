@@ -1,74 +1,8 @@
-{% extends "./../../question-page.njk" %}
+{% extends "./../../results-page.njk" %}
 
-{% import "./../../partials/funeral-directors/macros.njk" as macros %}
 {% block heading %}
   <h1 class="govuk-heading-l">
     Funeral directors {{ "in " + _.startCase(country) if country else "abroad"}}
   </h1>
 {% endblock %}
 
-
-{% block question %}
-
-  {% set regionIsSet %}
-    {% if region and region !== "Not set" %}
-      yes
-    {% else %}
-      no
-    {% endif %}
-  {% endset %}
-  {% if searchResults.length === 0 %}
-    <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
-  {% else %}
-    <p class="govuk-body">Read the FCDO guidance on
-      <a class="govuk-link"
-         href="https://www.gov.uk/government/publications/coping-with-death-abroad/death-abroad-initial-steps"
-         rel="noopener noreferrer"
-         target="_blank">
-        death abroad</a> before you choose a funeral provider.
-    </p>
-
-    <div class="govuk-warning-text">
-      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-      <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">Warning</span>
-        The FCDO also provides a list of
-        <a class="govuk-link"
-           href="https://www.gov.uk/government/publications/international-funeral-directors-in-the-uk/list-of-uk-based-international-funeral-directors--2"
-           rel="noopener noreferrer"
-           target="_blank">UK-based funeral directors</a>.
-        You may want to contact more than one funeral director to compare costs and for more details on the service they can
-        offer you.  You should always carry out your own research before making a choice.
-      </strong>
-    </div>
-
-    {% if (print !== "yes") %}
-      <p class="govuk-body">Links to funeral director websites will open in a new tab. You can give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual funeral directors or this service.</p>
-    {% endif %}
-    {% if (print === "yes") %}
-      {% include './../../includes/disclaimer.njk' %}
-    {% endif %}
-    <p class="govuk-body">
-      Results are ordered
-      {% if region and region !== "Not set" %}
-        by nearest to <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>.
-      {% else %}
-        alphabetically.
-      {% endif %}
-    </p>
-
-    <ul class="govuk-list">
-      {% for item in searchResults %}
-        <li>
-          {{ macros.funeralDirectorsListItem(item) }}
-          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        </li>
-      {% endfor %}
-    </ul>
-
-    {% if not (print === "yes") %}
-      {{ macros.paginationSection(pagination) }}
-    {% endif %}
-  {% endif %}
-
-{% endblock %}
