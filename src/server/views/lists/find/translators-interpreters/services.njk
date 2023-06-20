@@ -1,0 +1,52 @@
+{% extends "./../../question-page.njk" %}
+{% from "checkboxes/macro.njk" import govukCheckboxes %}
+
+{% block question %}
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#services"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
+      {{ govukCheckboxes({
+        name: "services",
+        fieldset: {
+          legend: {
+            text: "What services do you need?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          text: "Select the services you need"
+        },
+        items: [
+          {
+            text: "Translation of written content",
+            value: "translation"
+          },
+          {
+            text: "Interpretation of spoken language",
+            value: "interpretation"
+          }
+        ]
+      }) }}
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+
+{% endblock %}

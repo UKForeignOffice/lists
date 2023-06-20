@@ -1,0 +1,60 @@
+{% extends "./../../question-page.njk" %}
+{% from "select/macro.njk" import govukSelect %}
+
+{% block question %}
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#languages"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error}}">
+
+      {{ govukSelect({
+        id: "language",
+        name: "language",
+        label: {
+            text: "Which language(s) do you need translating?",
+            classes: "govuk-label--l",
+            isPageHeading: true
+        },
+        hint: {
+          text: "Start typing and select a language. You can select more than one language. All translators can provide services in English."
+        },
+        items: languages
+      }) }}
+    </div>
+    <button class="govuk-button govuk-button govuk-button--secondary" data-module="govuk-button" name="add" id="add">
+      Add to list
+    </button>
+    {% if languagesRows and languagesRows.rows.length > 0 %}
+      {{ govukSummaryList(languagesRows) }}
+      <button class="govuk-button" data-module="govuk-button" name="continue">Continue</button>
+    {% endif %}
+  </form>
+
+
+  <script nonce="{{cspNonce}}">
+    accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '',
+      selectElement: document.querySelector('#language'),
+      autoselect: true
+    })
+  </script>
+{% endblock %}
+
+
+{% from "summary-list/macro.njk" import govukSummaryList %}
+
+

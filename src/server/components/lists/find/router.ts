@@ -113,3 +113,9 @@ findRouter.post("/:serviceType/insurance", handlers.insurance.post);
 findRouter.get("/:serviceType/insurance/contact-insurance", handlers.contactInsurance.get);
 findRouter.get("/:serviceType/repatriation", handlers.repatriation.get);
 findRouter.post("/:serviceType/repatriation", handlers.repatriation.post);
+
+findRouter.get("/:serviceType/:country/services", handlers.translatorsInterpreters.services.get);
+findRouter.post("/:serviceType/:country/services", handlers.translatorsInterpreters.services.post);
+
+findRouter.get("/:serviceType/:country/languages", handlers.translatorsInterpreters.languages.get);
+findRouter.post("/:serviceType/:country/languages", handlers.translatorsInterpreters.languages.post);
