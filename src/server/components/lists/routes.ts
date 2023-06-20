@@ -12,6 +12,6 @@ export const listsRoutes = {
   confirmApplication: "/confirm/:reference",
   accessibility: "/help/accessibility-statement",
   termsAndConditions: "/help/terms-and-conditions",
-  contactUs: "/help/contact-us",
-  contactUsConfirm: "/help/contact-us-confirm",
+  contactUs: "/help/complaints",
+  contactUsConfirm: "/help/complaints-confirm",
 } as const;

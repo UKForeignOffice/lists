@@ -31,7 +31,7 @@ export function getComplaintForm(req: Request, res: Response) {
   const errorList = errors ? (JSON.parse(errors) as Array<Record<string, string>>) : null;
 
   if (!errorList) {
-    res.render("help/contact-us", { csrfToken: getCSRFToken(req), fieldTitles, countriesList });
+    res.render("help/complaints", { csrfToken: getCSRFToken(req), fieldTitles, countriesList });
     return;
   }
 
@@ -43,7 +43,7 @@ export function getComplaintForm(req: Request, res: Response) {
     {}
   ) as Partial<ContactUsFormFields>;
 
-  res.render("help/contact-us", {
+  res.render("help/complaints", {
     csrfToken: getCSRFToken(req),
     fieldTitles,
     countriesList,
@@ -89,18 +89,18 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
     });
     req.flash("errors", JSON.stringify(errors));
     logger.error(`postComplaintForm Error: Validation failed - ${validationError.message}`);
-    res.redirect("/help/contact-us");
+    res.redirect("/help/complaints");
     return;
   }
 
   try {
     const personalisation = {
-      emailSubject: `A ${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service complaint form`,
+      emailSubject: `${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service complaint form`,
       emailPayload: formatFieldData(validatedFormFields).join("\r\n\n ## \r\n"),
     };
 
     await sendContactUsEmail(personalisation);
-    res.redirect("/help/contact-us-confirm");
+    res.redirect("/help/complaints-confirm");
   } catch (error) {
     logger.error(`postComplaintForm Error: ${error.errors ?? error.message}`);
     next(error);

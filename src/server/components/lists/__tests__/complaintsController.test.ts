@@ -1,4 +1,4 @@
-import { getComplaintForm, postComplaintForm } from "server/components/lists/controllers/contactUsController";
+import { getComplaintForm, postComplaintForm } from "server/components/lists/controllers/complaintsController";
 
 describe("Contact Us", () => {
   describe("getComplaintForm", () => {
@@ -9,7 +9,7 @@ describe("Contact Us", () => {
       getComplaintForm(req, res);
 
       expect(req.flash).toHaveBeenCalledWith("errors");
-      expect(res.render).toHaveBeenCalledWith("help/contact-us", {
+      expect(res.render).toHaveBeenCalledWith("help/complaints", {
         csrfToken: expect.any(String),
         fieldTitles: expect.any(Object),
         countriesList: expect.any(Array),
@@ -24,7 +24,7 @@ describe("Contact Us", () => {
       getComplaintForm(req, res);
 
       expect(req.flash).toHaveBeenCalledWith("errors");
-      expect(res.render).toHaveBeenCalledWith("help/contact-us", {
+      expect(res.render).toHaveBeenCalledWith("help/complaints", {
         csrfToken: expect.any(String),
         fieldTitles: expect.any(Object),
         countriesList: expect.any(Array),
@@ -35,7 +35,7 @@ describe("Contact Us", () => {
   });
 
   describe("postComplaintForm", () => {
-    it("should redirect to contact-us-confirm if form fields are valid", async () => {
+    it("should redirect to complaints-confirm if form fields are valid", async () => {
       const req = {
         body: {
           country: "France",
@@ -51,7 +51,7 @@ describe("Contact Us", () => {
 
       await postComplaintForm(req, res, jest.fn());
 
-      expect(res.redirect).toHaveBeenCalledWith("/help/contact-us-confirm");
+      expect(res.redirect).toHaveBeenCalledWith("/help/complaints-confirm");
     });
 
     it("should redirect to contact-us if form fields are invalid", async () => {
@@ -80,7 +80,7 @@ describe("Contact Us", () => {
       await postComplaintForm(req, res, jest.fn());
 
       expect(req.flash).toHaveBeenCalledWith("errors", JSON.stringify(expectedErrors));
-      expect(res.redirect).toHaveBeenCalledWith("/help/contact-us");
+      expect(res.redirect).toHaveBeenCalledWith("/help/complaints");
     });
   });
 });

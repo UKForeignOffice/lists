@@ -4,7 +4,7 @@ import * as Controllers from "./controllers";
 import { listsRoutes } from "./routes";
 import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
-import * as ContactUsController from "server/components/lists/controllers/contactUsController";
+import * as complaintsController from "server/components/lists/controllers/complaintsController";
 import annualReviewRouter from "server/components/annual-review/router";
 
 export const listsRouter = express.Router();
@@ -13,8 +13,8 @@ listsRouter.get(listsRoutes.finder, csrfRequestHandler, Controllers.listsGetCont
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, Controllers.listsPostController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
-listsRouter.get(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.getComplaintForm);
-listsRouter.post(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.postComplaintForm);
+listsRouter.get(listsRoutes.contactUs, csrfRequestHandler, complaintsController.getComplaintForm);
+listsRouter.post(listsRoutes.contactUs, csrfRequestHandler, complaintsController.postComplaintForm);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);
@@ -26,7 +26,7 @@ listsRouter.get(listsRoutes.termsAndConditions, (_req, res) => {
   res.render("help/terms-and-conditions");
 });
 listsRouter.get(listsRoutes.contactUsConfirm, (_req, res) => {
-  res.render("help/contact-us-confirm");
+  res.render("help/complaints-confirm");
 });
 listsRouter.use(ingestRouter);
 listsRouter.use(annualReviewRouter);
