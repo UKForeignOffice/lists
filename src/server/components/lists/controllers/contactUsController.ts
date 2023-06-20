@@ -13,38 +13,34 @@ interface ContactUsFormFields {
   providerCompanyName?: string;
   providerName: string;
   serviceType: string;
+  _csrf?: string;
 }
 
-export function getContactUsPage(req: Request, res: Response) {
-  const fieldTitles = {
-    country: "Which country list are you contacting us about?",
-    detail: "Provide details of why you are contacting us",
-    email: "Enter your email address",
-    name: "Enter your name",
-    providerCompanyName: "What is their company name? (Optional)",
-    providerName: "What is the service provider's name",
-    serviceType: "What service type are you contacting us about?",
-  };
-  const [errors] = req.flash("errors") as unknown as string[];
+const fieldTitles = {
+  country: "Which country list are you contacting us about?",
+  detail: "Provide details of why you are contacting us",
+  email: "Enter your email address",
+  name: "Enter your name",
+  providerCompanyName: "What is their company name? (Optional)",
+  providerName: "What is the service provider's name",
+  serviceType: "What service type are you contacting us about?",
+};
 
-  if (!errors) {
+export function getContactUsPage(req: Request, res: Response) {
+  const [errors] = req.flash("errors") as unknown as string[];
+  const errorList = errors ? (JSON.parse(errors) as Array<Record<string, string>>) : null;
+  if (!errorList) {
     res.render("help/contact-us", { csrfToken: getCSRFToken(req), fieldTitles, countriesList });
     return;
   }
 
-  const errorArray = errors.split(",") as Array<keyof Partial<ContactUsFormFields>>;
-  const errorsObj = errorArray.reduce(
+  const errorsObj = errorList.reduce(
     (acc, error) => ({
       ...acc,
-      [error]: `${fieldTitles[error]} is required`,
+      [error.key]: error.text,
     }),
     {}
   ) as Partial<ContactUsFormFields>;
-
-  const errorList = errorArray.map((error) => ({
-    text: errorsObj[error],
-    href: `#${error}`,
-  }));
 
   res.render("help/contact-us", {
     csrfToken: getCSRFToken(req),
@@ -56,50 +52,54 @@ export function getContactUsPage(req: Request, res: Response) {
 }
 
 export async function postContactUsPage(req: Request, res: Response, next: NextFunction) {
+  const ERROR_MESSAGES = {
+    "string.empty": "{{#label}} is required",
+  };
+
   const contactUsFormSchema = Joi.object({
-    country: Joi.string(),
-    detail: Joi.string(),
-    email: Joi.string().email(),
-    name: Joi.string(),
+    country: Joi.string().label(fieldTitles.country).required().messages(ERROR_MESSAGES),
+    detail: Joi.string().label(fieldTitles.detail).required().messages(ERROR_MESSAGES),
+    email: Joi.string().email().label(fieldTitles.email).required().messages(ERROR_MESSAGES),
+    name: Joi.string().label(fieldTitles.name).required().messages(ERROR_MESSAGES),
     providerCompanyName: Joi.string().allow(null, ""),
-    providerName: Joi.string(),
-    serviceType: Joi.string().valid("lawyers", "funeral-directors", "translators-interpreters"),
-    _csrf: Joi.string(),
+    providerName: Joi.string().label(fieldTitles.providerName).required().messages(ERROR_MESSAGES),
+    serviceType: Joi.string()
+      .valid("lawyers", "funeral-directors", "translators-interpreters")
+      .required()
+      .label(fieldTitles.serviceType)
+      .required()
+      .messages(ERROR_MESSAGES),
   });
-  const formFields = req.body as ContactUsFormFields;
-  const { value: validatedFormFields, error } = contactUsFormSchema.validate(formFields);
-  const { _csrf, ...dataWithoutCSRF } = validatedFormFields;
-  const formFieldKeys = Object.keys(validatedFormFields) as Array<keyof ContactUsFormFields>;
-
-  const errors: string[] = [];
-  const nonRequiredFields = ["providerCompanyName", "_csrf"];
-
-  if (!formFieldKeys.includes("serviceType")) {
-    formFieldKeys.push("serviceType");
-  }
-
-  formFieldKeys.forEach((key) => {
-    if (!validatedFormFields[key] && !nonRequiredFields.includes(key)) {
-      errors.push(key);
-    }
+  const { _csrf, ...formFields } = req.body as ContactUsFormFields;
+  const { value: validatedFormFields, error: validationError } = contactUsFormSchema.validate(formFields, {
+    abortEarly: false,
+    stripUnknown: true,
+    errors: {
+      wrap: {
+        label: false,
+      },
+    },
   });
 
-  if (errors.length) {
-    req.flash("errors", errors.toString());
+  if (validationError) {
+    const errors = validationError.details.map((detail) => {
+      const { key } = detail.context!;
+      return {
+        text: detail.message,
+        href: `#${key}`,
+        key,
+      };
+    });
+    req.flash("errors", JSON.stringify(errors));
+    logger.error(`postContactUsPage Error: Validation failed - ${validationError.message}`);
     res.redirect("/help/contact-us");
-    return;
-  }
-
-  if (error) {
-    logger.error(`postContactUsPage Error: Validation failed - ${error.message}`);
-    next(error);
     return;
   }
 
   try {
     const personalisation = {
-      emailSubject: `${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service contact form`,
-      emailPayload: Object.entries(dataWithoutCSRF).join("\r\n\n ## \r\n"),
+      emailSubject: `A ${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service contact form`,
+      emailPayload: Object.entries(validatedFormFields).join("\r\n\n ## \r\n"),
     };
 
     await sendContactUsEmail(personalisation);
