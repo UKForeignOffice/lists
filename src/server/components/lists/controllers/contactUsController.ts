@@ -16,7 +16,7 @@ interface ContactUsFormFields {
   _csrf?: string;
 }
 
-const fieldTitles = {
+const fieldTitles: ContactUsFormFields = {
   country: "Which country list are you contacting us about?",
   detail: "Provide details of why you are contacting us",
   email: "Enter your email address",
@@ -99,7 +99,7 @@ export async function postContactUsPage(req: Request, res: Response, next: NextF
   try {
     const personalisation = {
       emailSubject: `A ${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service contact form`,
-      emailPayload: Object.entries(validatedFormFields).join("\r\n\n ## \r\n"),
+      emailPayload: formatFieldData(validatedFormFields).join("\r\n\n ## \r\n"),
     };
 
     await sendContactUsEmail(personalisation);
@@ -108,4 +108,10 @@ export async function postContactUsPage(req: Request, res: Response, next: NextF
     logger.error(`postContactUsPage Error: ${error.errors ?? error.message}`);
     next(error);
   }
+}
+
+function formatFieldData(formeFields: ContactUsFormFields) {
+  return Object.entries(formeFields).map(([key, value]) => {
+    return `${fieldTitles[key as keyof ContactUsFormFields]}: ${value}`;
+  });
 }
