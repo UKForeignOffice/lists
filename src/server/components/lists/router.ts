@@ -13,8 +13,8 @@ listsRouter.get(listsRoutes.finder, csrfRequestHandler, Controllers.listsGetCont
 listsRouter.post(listsRoutes.finder, csrfRequestHandler, Controllers.listsPostController);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
-listsRouter.get(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.getContactUsPage);
-listsRouter.post(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.postContactUsPage);
+listsRouter.get(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.getComplaintForm);
+listsRouter.post(listsRoutes.contactUs, csrfRequestHandler, ContactUsController.postComplaintForm);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);

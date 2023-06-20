@@ -16,7 +16,7 @@ interface ContactUsFormFields {
   _csrf?: string;
 }
 
-const fieldTitles: ContactUsFormFields = {
+export const fieldTitles: ContactUsFormFields = {
   country: "Which country list are you contacting us about?",
   detail: "Provide details of why you are contacting us",
   email: "Enter your email address",
@@ -26,9 +26,10 @@ const fieldTitles: ContactUsFormFields = {
   serviceType: "What service type are you contacting us about?",
 };
 
-export function getContactUsPage(req: Request, res: Response) {
+export function getComplaintForm(req: Request, res: Response) {
   const [errors] = req.flash("errors") as unknown as string[];
   const errorList = errors ? (JSON.parse(errors) as Array<Record<string, string>>) : null;
+
   if (!errorList) {
     res.render("help/contact-us", { csrfToken: getCSRFToken(req), fieldTitles, countriesList });
     return;
@@ -51,7 +52,7 @@ export function getContactUsPage(req: Request, res: Response) {
   });
 }
 
-export async function postContactUsPage(req: Request, res: Response, next: NextFunction) {
+export async function postComplaintForm(req: Request, res: Response, next: NextFunction) {
   const ERROR_MESSAGES = {
     "string.empty": "{{#label}} is required",
   };
@@ -63,13 +64,9 @@ export async function postContactUsPage(req: Request, res: Response, next: NextF
     name: Joi.string().label(fieldTitles.name).required().messages(ERROR_MESSAGES),
     providerCompanyName: Joi.string().allow(null, ""),
     providerName: Joi.string().label(fieldTitles.providerName).required().messages(ERROR_MESSAGES),
-    serviceType: Joi.string()
-      .valid("lawyers", "funeral-directors", "translators-interpreters")
-      .required()
-      .label(fieldTitles.serviceType)
-      .required()
-      .messages(ERROR_MESSAGES),
+    serviceType: Joi.string().label(fieldTitles.serviceType).required().messages(ERROR_MESSAGES),
   });
+
   const { _csrf, ...formFields } = req.body as ContactUsFormFields;
   const { value: validatedFormFields, error: validationError } = contactUsFormSchema.validate(formFields, {
     abortEarly: false,
@@ -91,21 +88,21 @@ export async function postContactUsPage(req: Request, res: Response, next: NextF
       };
     });
     req.flash("errors", JSON.stringify(errors));
-    logger.error(`postContactUsPage Error: Validation failed - ${validationError.message}`);
+    logger.error(`postComplaintForm Error: Validation failed - ${validationError.message}`);
     res.redirect("/help/contact-us");
     return;
   }
 
   try {
     const personalisation = {
-      emailSubject: `A ${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service contact form`,
+      emailSubject: `A ${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service complaint form`,
       emailPayload: formatFieldData(validatedFormFields).join("\r\n\n ## \r\n"),
     };
 
     await sendContactUsEmail(personalisation);
     res.redirect("/help/contact-us-confirm");
   } catch (error) {
-    logger.error(`postContactUsPage Error: ${error.errors ?? error.message}`);
+    logger.error(`postComplaintForm Error: ${error.errors ?? error.message}`);
     next(error);
   }
 }
