@@ -85,7 +85,7 @@
               <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
             </span>
           {% endif %}
-          <select id="country-autocomplete" name="country" className="govuk-input--error">
+          <select id="country-autocomplete" name="country" class="govuk-input--error">
             <option value=""></option>
             {% for country in countriesList %}
               <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name === country.value}}>{{ country.text }}</option>

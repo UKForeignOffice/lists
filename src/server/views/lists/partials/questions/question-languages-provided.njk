@@ -17,7 +17,7 @@
           <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
         </span>
       {% endif %}
-      <select id="new-language-autocomplete" name="newLanguage" className="govuk-input--error">
+      <select id="new-language-autocomplete" name="newLanguage" class="govuk-input--error">
         <option value=""></option>
         {% for language in partialData %}
           <option value="{{ language.value }}">{{ language.text }}</option>
