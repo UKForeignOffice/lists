@@ -108,10 +108,10 @@ jobs:
           command: npm run smoke-tests
 
 
-      # store videos so they are accessible via circleci UI. You must turn on video recording via cypress.config.ts first (video: true).
-      # - store_artifacts:
-      #     path: ~/repo/cypress/videos
-      #     destination: videos
+      store videos so they are accessible via circleci UI. You must turn on video recording via cypress.config.ts first (video: true).
+      - store_artifacts:
+          path: ~/repo/cypress/videos
+          destination: videos
 
 
 
