@@ -2,7 +2,7 @@ import pluralize from "pluralize";
 import * as config from "server/config";
 import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
-import { NOTIFY } from "server/config";
+import { FEEDBACK_EMAIL_ADDRESSES, NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
@@ -186,15 +186,18 @@ export async function sendAnnualReviewCompletedEmail(
   }
 }
 
-export async function sendEmails<P extends { [key: string]: any }>(
+export async function sendEmails<Personalisation extends { [key: string]: any }>(
   templateId: string,
   emailAddresses: string[],
-  options: SendEmailOptions<P>
+  options: SendEmailOptions<Personalisation>,
+  logLabel: string = ""
 ) {
   const notifyClient = getNotifyClient();
 
   logger.info(
-    `Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(options)}`,
+    `${logLabel} Template ID: ${templateId}, to emails ${emailAddresses}, with sendEmailOption ${JSON.stringify(
+      options
+    )}`,
     { method: "sendEmails" }
   );
 
@@ -202,7 +205,20 @@ export async function sendEmails<P extends { [key: string]: any }>(
     return await notifyClient.sendEmail(templateId, emailAddress, options);
   });
 
-  return await Promise.allSettled(requests);
+  const settled = await Promise.allSettled(requests);
+
+  settled.filter(hasNotifyError).forEach((reject) => {
+    // @ts-ignore
+    logger.error(`${logLabel} Template ID: ${templateId} rejected with from notify API ${reject.reason}`, {
+      method: "sendEmails",
+    });
+  });
+
+  return await Promise.any(requests);
+}
+
+function hasNotifyError<T>(settledResult: PromiseSettledResult<T>) {
+  return settledResult.status === "rejected";
 }
 
 type NotificationTrigger = "PROVIDER_SUBMITTED" | "CHANGED_DETAILS" | "UNPUBLISHED";
@@ -246,22 +262,17 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   const { jsonData = {} } = list as List;
   const { users = [] } = jsonData;
 
-  const personalisation = getCommonPersonalisations(list.type, list.country.name);
-
-  const results = await sendEmails(templateId, users, { personalisation, reference: "" });
-
-  results
-    .filter((result) => result.status !== "fulfilled")
-    .forEach((failedResult) => {
-      logger.error(
-        // @ts-ignore
-        `sendManualActionNotificationToPost - Sending to ${trigger} - ${templateId} failed due to ${failedResult.reason}`
-      );
-    });
-
-  if (results.find((result) => result.status === "fulfilled")) {
-    logger.info(`sendManualActionNotificationToPost- sending to ${trigger} - ${templateId} succeeded at least once`);
+  if (users.length === 0) {
+    return { error: "No email addresses found" };
   }
 
-  return results;
+  const personalisation = getCommonPersonalisations(list.type, list.country.name);
+
+  return await sendEmails(templateId, users, { personalisation, reference: "" });
+}
+export async function sendContactUsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
+  return await sendEmails(NOTIFY.templates.contactUsApplyJourney, FEEDBACK_EMAIL_ADDRESSES, {
+    personalisation,
+    reference: "",
+  });
 }
