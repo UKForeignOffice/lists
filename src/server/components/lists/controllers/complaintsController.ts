@@ -4,6 +4,7 @@ import { countriesList } from "server/services/metadata";
 import { sendContactUsEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import Joi from "joi";
+import type { ValidationError } from "joi";
 
 interface ContactUsFormFields {
   country: string;
@@ -28,27 +29,31 @@ export const fieldTitles: ContactUsFormFields = {
 
 export function getComplaintForm(req: Request, res: Response) {
   const [errors] = req.flash("errors") as unknown as string[];
-  const errorList = errors ? (JSON.parse(errors) as Array<Record<string, string>>) : null;
+  const errorList = errors ? (JSON.parse(errors) as ValidationError) : null;
 
   if (!errorList) {
     res.render("help/complaints", { csrfToken: getCSRFToken(req), fieldTitles, countriesList });
     return;
   }
 
-  const errorsObj = errorList.reduce(
-    (acc, error) => ({
+  const errorsObj = errorList?.details.reduce?.((acc, detail) => {
+    const { key } = detail.context!;
+
+    return {
       ...acc,
-      [error.key]: error.text,
-    }),
-    {}
-  ) as Partial<ContactUsFormFields>;
+      [key!]: {
+        text: detail.message,
+        href: `#${key}`,
+      },
+    };
+  }, {});
 
   res.render("help/complaints", {
     csrfToken: getCSRFToken(req),
     fieldTitles,
     countriesList,
     errors: errorsObj,
-    errorList,
+    errorList: Object.values(errorsObj),
   });
 }
 
@@ -79,15 +84,7 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
   });
 
   if (validationError) {
-    const errors = validationError.details.map((detail) => {
-      const { key } = detail.context!;
-      return {
-        text: detail.message,
-        href: `#${key}`,
-        key,
-      };
-    });
-    req.flash("errors", JSON.stringify(errors));
+    req.flash("errors", JSON.stringify(validationError));
     logger.error(`postComplaintForm Error: Validation failed - ${validationError.message}`);
     res.redirect("/help/complaints");
     return;
@@ -108,7 +105,7 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
 }
 
 function formatFieldData(formeFields: ContactUsFormFields) {
-  return Object.entries(formeFields).map(([key, value]) => {
-    return `${fieldTitles[key as keyof ContactUsFormFields]}: ${value}`;
-  });
+  return Object.entries(formeFields).map(
+    ([key, value]) => `${fieldTitles[key as keyof ContactUsFormFields]}: ${value}`
+  );
 }
