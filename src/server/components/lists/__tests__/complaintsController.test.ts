@@ -1,4 +1,9 @@
-import { getComplaintForm, postComplaintForm } from "server/components/lists/controllers/complaintsController";
+import {
+  getComplaintForm,
+  postComplaintForm,
+  fieldTitles,
+} from "server/components/lists/controllers/complaintsController";
+import { countriesList } from "server/services/metadata";
 
 describe("Contact Us", () => {
   describe("getComplaintForm", () => {
@@ -17,7 +22,16 @@ describe("Contact Us", () => {
     });
 
     it("should render the contact us page with errors if there are flash errors", () => {
-      const errors = [{ href: "#email", key: "email", text: "Enter your email address is required" }];
+      const errors = {
+        details: [
+          {
+            message: "Enter your email address is required",
+            path: ["email"],
+            type: "string.empty",
+            context: { label: "Enter your email address", value: "", key: "email" },
+          },
+        ],
+      };
       const req = { flash: jest.fn().mockReturnValue([JSON.stringify(errors)]) };
       const res = { render: jest.fn() };
 
@@ -25,11 +39,11 @@ describe("Contact Us", () => {
 
       expect(req.flash).toHaveBeenCalledWith("errors");
       expect(res.render).toHaveBeenCalledWith("help/complaints", {
-        csrfToken: expect.any(String),
-        fieldTitles: expect.any(Object),
-        countriesList: expect.any(Array),
-        errors: { email: "Enter your email address is required" },
-        errorList: errors,
+        csrfToken: "",
+        fieldTitles,
+        countriesList,
+        errors: { email: { text: "Enter your email address is required", href: "#email" } },
+        errorList: [{ text: "Enter your email address is required", href: "#email" }],
       });
     });
   });
@@ -68,18 +82,36 @@ describe("Contact Us", () => {
         flash: jest.fn(),
       };
       const res = { redirect: jest.fn() };
-      const expectedErrors = [
-        { text: "Enter your email address is required", href: "#email", key: "email" },
-        {
-          text: "What service type are you contacting us about? is required",
-          href: "#serviceType",
-          key: "serviceType",
-        },
-      ];
 
       await postComplaintForm(req, res, jest.fn());
 
-      expect(req.flash).toHaveBeenCalledWith("errors", JSON.stringify(expectedErrors));
+      const expectedErrorData = {
+        _original: {
+          country: "USA",
+          detail: "Some details",
+          email: "",
+          name: "John Doe",
+          providerCompanyName: "Company ABC",
+          providerName: "Service Provider",
+          serviceType: "",
+        },
+        details: [
+          {
+            message: "Enter your email address is required",
+            path: ["email"],
+            type: "string.empty",
+            context: { label: "Enter your email address", value: "", key: "email" },
+          },
+          {
+            message: "What service type are you contacting us about? is required",
+            path: ["serviceType"],
+            type: "string.empty",
+            context: { label: "What service type are you contacting us about?", value: "", key: "serviceType" },
+          },
+        ],
+      };
+
+      expect(req.flash).toHaveBeenCalledWith("errors", JSON.stringify(expectedErrorData));
       expect(res.redirect).toHaveBeenCalledWith("/help/complaints");
     });
   });
