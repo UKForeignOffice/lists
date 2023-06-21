@@ -36,7 +36,7 @@ async function createListItem(reference, today) {
   const monthBeforeToday = today;
   monthBeforeToday.setMonth(today.getMonth() - 1);
 
-  return await cy.task("db", {
+  await cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
