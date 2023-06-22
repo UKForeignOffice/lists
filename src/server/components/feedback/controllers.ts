@@ -50,7 +50,7 @@ function formatMessage(webhookData: WebhookData) {
     `);
   });
 
-  const emailSubject = `${serviceType} in ${country}: Apply service contact form`;
+  const emailSubject = `${serviceType} in ${country} contact form`;
 
   return {
     emailSubject,

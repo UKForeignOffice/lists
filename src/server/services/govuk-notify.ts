@@ -270,6 +270,7 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   return await sendEmails(templateId, users, { personalisation, reference: "" });
 }
+
 export async function sendContactUsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
   return await sendEmails(NOTIFY.templates.contactUsApplyJourney, FEEDBACK_EMAIL_ADDRESSES, {
     personalisation,
