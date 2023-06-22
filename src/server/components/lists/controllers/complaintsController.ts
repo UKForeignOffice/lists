@@ -24,7 +24,7 @@ export const fieldTitles: ContactUsFormFields = {
   name: "Enter your name",
   providerCompanyName: "What is their company name? (Optional)",
   providerName: "What is the service provider's name",
-  serviceType: "What service type are you contacting us about?",
+  serviceType: "Which service are you contacting us about??",
 };
 
 export function getComplaintForm(req: Request, res: Response) {
