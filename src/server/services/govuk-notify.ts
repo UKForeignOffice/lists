@@ -277,10 +277,3 @@ export async function sendContactUsEmail(personalisation: Record<"emailSubject" 
     reference: "",
   });
 }
-
-export async function sendComplaintsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
-  return await sendEmails(NOTIFY.templates.complainEmail, FEEDBACK_EMAIL_ADDRESSES, {
-    personalisation,
-    reference: "",
-  });
-}
