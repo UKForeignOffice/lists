@@ -92,7 +92,7 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
 
   try {
     const personalisation = {
-      emailSubject: `${validatedFormFields.serviceType} in ${validatedFormFields.country}: Find service complaint form`,
+      emailSubject: `${validatedFormFields.serviceType} in ${validatedFormFields.country}: complaint form`,
       emailPayload: formatFieldData(validatedFormFields).join("\r\n\n ## \r\n"),
     };
 
@@ -106,6 +106,6 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
 
 function formatFieldData(formeFields: ContactUsFormFields) {
   return Object.entries(formeFields).map(
-    ([key, value]) => `${fieldTitles[key as keyof ContactUsFormFields]}: ${value}`
+    ([key, value]) => `##${fieldTitles[key as keyof ContactUsFormFields]}\n ${value}`
   );
 }
