@@ -91,7 +91,7 @@ jobs:
       - run:
           name: install cypress
           command: |
-            npm install -D cypress
+            npm install -D cypress@12.14.0
 
       - run: # this will let you view logs from the apply and lists docker containers
           name: logs
