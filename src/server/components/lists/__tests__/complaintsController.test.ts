@@ -103,10 +103,10 @@ describe("Contact Us", () => {
             context: { label: "Enter your email address", value: "", key: "email" },
           },
           {
-            message: "Which service are you contacting us about?? is required",
+            message: "Which service are you contacting us about? is required",
             path: ["serviceType"],
             type: "string.empty",
-            context: { label: "Which service are you contacting us about??", value: "", key: "serviceType" },
+            context: { label: "Which service are you contacting us about?", value: "", key: "serviceType" },
           },
         ],
       };
