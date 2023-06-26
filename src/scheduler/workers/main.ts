@@ -4,7 +4,7 @@ import { main as unpublishDayTask } from "./unpublish/day";
 import { processAnnualReview as processListsBeforeAndDuringStart } from "./processListsBeforeAndDuringStart/main";
 import { main as analytics } from "./analytics/main";
 import { logger } from "scheduler/logger";
-import unpublishDelete from "./unpublish/delete";
+import deleteItemsAfterAYear from "./unpublish/delete";
 
 async function main() {
   // if a task needs to be executed first, await them here.
@@ -15,7 +15,13 @@ async function main() {
   }
 
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
-  const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), analytics(), unpublishDelete()];
+  const tasks = [
+    unpublishWeeklyTask(),
+    unpublishDayBeforeTask(),
+    unpublishDayTask(),
+    analytics(),
+    deleteItemsAfterAYear(),
+  ];
 
   return await Promise.allSettled(tasks);
 }

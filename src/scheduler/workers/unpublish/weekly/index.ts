@@ -8,7 +8,6 @@ export async function main() {
   results
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
-      // @ts-ignore
-      logger.error(failedResult.reason);
+      logger.error((failedResult as PromiseRejectedResult).reason);
     });
 }

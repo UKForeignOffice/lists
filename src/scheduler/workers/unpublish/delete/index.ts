@@ -1,51 +1,64 @@
 import { addYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
-import { schedulerLogger as logger } from "scheduler/logger";
+import { schedulerLogger } from "scheduler/logger";
 
-export default async function main() {
-  const itemsUnpublishedByAR = await prisma.listItem.findMany({
-    where: {
-      status: "ANNUAL_REVIEW_OVERDUE",
-      isAnnualReview: false,
-      isPublished: false,
-      AND: [
-        {
-          history: {
-            some: {
-              type: "ANNUAL_REVIEW_OVERDUE",
+export default async function deleteItemsAfterAYear() {
+  const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
+
+  try {
+    const itemsUnpublishedByAR = await prisma.listItem.findMany({
+      where: {
+        status: "ANNUAL_REVIEW_OVERDUE",
+        isAnnualReview: false,
+        isPublished: false,
+        AND: [
+          {
+            history: {
+              some: {
+                type: "ANNUAL_REVIEW_OVERDUE",
+              },
             },
           },
-        },
-        {
-          history: {
-            some: {
-              type: "UNPUBLISHED",
+          {
+            history: {
+              some: {
+                type: "UNPUBLISHED",
+              },
             },
           },
-        },
-      ],
-    },
-    include: {
-      history: {
-        orderBy: {
-          time: "desc",
+        ],
+      },
+      include: {
+        history: {
+          orderBy: {
+            time: "desc",
+          },
         },
       },
-    },
-  });
+    });
+    const today = new Date();
 
-  logger.info(`main: ${itemsUnpublishedByAR.length} list items found that were unpublished by annual review`);
+    const litItemsToDelete = itemsUnpublishedByAR.filter((item) => {
+      const unpublishedHistory = item.history.find((historyItem) => historyItem.type === "UNPUBLISHED");
+      const yearAfterUnpublish = addYears(unpublishedHistory!.time, 1);
+      return today > yearAfterUnpublish;
+    });
 
-  for (const item of itemsUnpublishedByAR) {
-    if (item.history[0].type === "UNPUBLISHED") {
-      const timeLimit = addYears(item.history[0].time, 1);
-      if (new Date() > timeLimit) {
-        await prisma.listItem.delete({
-          where: {
-            id: item.id,
-          },
-        });
-      }
+    if (litItemsToDelete.length === 0) {
+      logger.info("No list items to delete");
+      return;
     }
+
+    // await prisma.listItem.deleteMany({
+    //   where: {
+    //     id: {
+    //       in: litItemsToDelete.map((item) => item.id),
+    //     },
+    //   },
+    // });
+
+    logger.info(`Deleted ${litItemsToDelete.length} list item(s)`);
+  } catch (error) {
+    logger.error(error);
   }
 }
