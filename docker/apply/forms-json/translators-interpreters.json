@@ -18,6 +18,13 @@
           "type": "Html",
           "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
           "schema": {}
+        },
+        {
+          "name": "fhWDrb",
+          "options": {},
+          "type": "Html",
+          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Contact us</p>\n<p class=\"govuk-body\">You can <a class=\"govuk-link\" href=\"/provider-contact//\" target=\"_blank\">contact us</a> to change or remove your details, or make a complaint if you are a translator or interpreter in this service.</p>",
+          "schema": {}
         }
       ],
       "next": [
