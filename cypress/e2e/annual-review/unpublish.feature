@@ -4,8 +4,10 @@ As consular staff,
   So that I know citizens will be able to find responsive providers
 
 
-  Scenario:
+  Background:
     Given A "lawyers" list exists for Eurasia
+
+  Scenario:
     And eurasia lawyers are due to begin annual review
     And a list item has been with the provider for 100 days with the reference "UNPUBLISH_DAY_TEST"
     When 0 days before unpublish
@@ -17,9 +19,7 @@ As consular staff,
     And I see "ANNUAL REVIEW OVERDUE"
     And the provider with reference "UNPUBLISH_DAY_TEST" should be unpublished
 
-# Scenario: A list item is deleted after being unpublished for a year
-#   Given A "lawyers" list exists for Eurasia
-#   And eurasia lawyers have finished annual review
-#   And a list item has been unpuiblished for over a year
-#   And the worker process has run
-#   Then the list item should be deleted
+  Scenario: A list item is deleted after being unpublished for a year
+    And there is a list item unpublished automatically over a year ago
+    And the worker process has run
+    Then the list item should be deleted

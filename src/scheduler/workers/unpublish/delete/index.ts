@@ -38,7 +38,6 @@ export default async function deleteItemsAfterAYear() {
       },
     });
     const today = new Date();
-    const automatedProcessUserId = 0;
     const listItemsToDelete = itemsUnpublishedByAR.filter((item) => {
       const unpublishedHistory = item.history.find((historyItem) => historyItem.type === "UNPUBLISHED");
       const yearAfterUnpublish = addYears(unpublishedHistory!.time, 1);
@@ -51,8 +50,9 @@ export default async function deleteItemsAfterAYear() {
     }
 
     await prisma.$transaction([
-      prisma.event.create({
-        data: listItemsToDelete.map((item) => EVENTS.DELETED(automatedProcessUserId, item.id))[0],
+      prisma.event.createMany({
+        // @ts-ignore
+        data: listItemsToDelete.map((item) => EVENTS.DELETED(undefined, item.id)),
       }),
       prisma.listItem.deleteMany({
         where: {

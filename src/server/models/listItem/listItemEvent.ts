@@ -64,12 +64,12 @@ export const EVENTS = {
     };
   },
 
-  [ListItemEvent.DELETED]: (userId: number, id?: number): EventCreate<"DELETED"> => ({
+  [ListItemEvent.DELETED]: (userId?: number, id?: number): EventCreate<"DELETED"> => ({
     type: ListItemEvent.DELETED,
     ...(id && { listItemId: id }),
     jsonData: {
       eventName: "deleted",
-      userId,
+      ...(userId && { userId }),
     },
   }),
 
