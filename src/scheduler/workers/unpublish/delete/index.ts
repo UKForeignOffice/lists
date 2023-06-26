@@ -1,6 +1,7 @@
 import { addYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
+import { EVENTS } from "server/models/listItem/listItemEvent";
 
 export default async function deleteItemsAfterAYear() {
   const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
@@ -37,27 +38,32 @@ export default async function deleteItemsAfterAYear() {
       },
     });
     const today = new Date();
-
-    const litItemsToDelete = itemsUnpublishedByAR.filter((item) => {
+    const automatedProcessUserId = 0;
+    const listItemsToDelete = itemsUnpublishedByAR.filter((item) => {
       const unpublishedHistory = item.history.find((historyItem) => historyItem.type === "UNPUBLISHED");
       const yearAfterUnpublish = addYears(unpublishedHistory!.time, 1);
       return today > yearAfterUnpublish;
     });
 
-    if (litItemsToDelete.length === 0) {
+    if (listItemsToDelete.length === 0) {
       logger.info("No list items to delete");
       return;
     }
 
-    // await prisma.listItem.deleteMany({
-    //   where: {
-    //     id: {
-    //       in: litItemsToDelete.map((item) => item.id),
-    //     },
-    //   },
-    // });
+    await prisma.$transaction([
+      prisma.event.create({
+        data: listItemsToDelete.map((item) => EVENTS.DELETED(automatedProcessUserId, item.id))[0],
+      }),
+      prisma.listItem.deleteMany({
+        where: {
+          id: {
+            in: listItemsToDelete.map((item) => item.id),
+          },
+        },
+      }),
+    ]);
 
-    logger.info(`Deleted ${litItemsToDelete.length} list item(s)`);
+    logger.info(`Deleted ${listItemsToDelete.length} list item(s)`);
   } catch (error) {
     logger.error(error);
   }
