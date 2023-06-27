@@ -9,6 +9,6 @@ Then("the list item should be deleted", () => {
       },
     },
   }).then((listItem) => {
-    cy.expect(listItem).to.be.false;
+    cy.expect(listItem).to.be.null;
   });
 });
