@@ -3,6 +3,7 @@
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block header %}
   {% include "includes/header-list-mgmt.njk" %}
@@ -98,6 +99,22 @@
           </div>
         </div>
       {% endif %}
+
+      <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Annual review is complete
+          </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <h3 class="govuk-notification-banner__heading">
+            The annual review finished on 14 October.
+          </h3>
+          <p class="govuk-body">
+            2 service providers did not respond and were <a class="govuk-notification-banner__link" href="#">archived</a>.
+          </p>
+        </div>
+      </div>
 
       {% if list.items.length > 1 %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
