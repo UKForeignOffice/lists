@@ -67,7 +67,7 @@ export async function postComplaintForm(req: Request, res: Response, next: NextF
     detail: Joi.string().label(fieldTitles.detail).required().messages(ERROR_MESSAGES),
     email: Joi.string().email().label(fieldTitles.email).required().messages(ERROR_MESSAGES),
     name: Joi.string().label(fieldTitles.name).required().messages(ERROR_MESSAGES),
-    providerCompanyName: Joi.string().allow(null, ""),
+    providerCompanyName: Joi.string().allow(null, "").empty([null, ""]).default("Not entered"),
     providerName: Joi.string().label(fieldTitles.providerName).required().messages(ERROR_MESSAGES),
     serviceType: Joi.string().label(fieldTitles.serviceType).required().messages(ERROR_MESSAGES),
   });
