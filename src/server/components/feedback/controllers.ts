@@ -46,7 +46,7 @@ function formatMessage(webhookData: WebhookData) {
     }
 
     data.push(`##${field.title}
-       ${answer}
+       ${answer ?? "Not entered"}
     `);
   });
 
