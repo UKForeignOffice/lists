@@ -7,12 +7,12 @@ import { ListItemRes } from "server/components/dashboard/listsItems/types";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import { ListWithJsonData } from "../helpers";
 import {
+  displayAnnualReviewCompleteBanner,
   displayEmailsSentBanner,
   displayOneMonthAnnualReviewWarning,
   displayUnpublishWarning,
 } from "server/models/listItem/summary.helpers";
 import type { ServiceType } from "shared/types";
-
 /**
  * TODO:- rename file to listItems. Currently lists items for parity with existing code.
  */
@@ -190,5 +190,6 @@ async function annualReviewBannerToggles(list: ListWithJsonData) {
   banner ??= displayOneMonthAnnualReviewWarning(list);
   banner ??= await displayUnpublishWarning(list);
   banner ??= await displayEmailsSentBanner(list);
+  banner ??= await displayAnnualReviewCompleteBanner(list);
   return banner;
 }

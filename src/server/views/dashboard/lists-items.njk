@@ -100,21 +100,29 @@
         </div>
       {% endif %}
 
-      <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__header">
-          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-            Annual review is complete
-          </h2>
+      {% if bannerToggles.annualReviewComplete %}
+        <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Annual review is complete
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading">
+              The annual review finished on {{ bannerToggles.annualReviewComplete.annualReviewEndDate }}.
+            </h3>
+            <p class="govuk-body">
+              {% if bannerToggles.annualReviewComplete.totalUnpublishedListItems === 0 %}
+                All service providers responded.
+              {% elif  bannerToggles.annualReviewComplete.allUnpublished %}
+                {{ bannerToggles.annualReviewComplete.totalUnpublishedListItems }} service providers were removed from the list as they did not respond by 14 October. Check which providers were <a class="govuk-notification-banner__link" href="#">unpublished</a>.
+              {% else %}
+                {{ bannerToggles.annualReviewComplete.totalUnpublishedListItems }} service providers did not respond and were <a class="govuk-notification-banner__link" href="#">unpublished</a>.
+              {% endif %}
+            </p>
+          </div>
         </div>
-        <div class="govuk-notification-banner__content">
-          <h3 class="govuk-notification-banner__heading">
-            The annual review finished on 14 October.
-          </h3>
-          <p class="govuk-body">
-            2 service providers did not respond and were <a class="govuk-notification-banner__link" href="#">archived</a>.
-          </p>
-        </div>
-      </div>
+      {% endif %}
 
       {% if list.items.length > 1 %}
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">

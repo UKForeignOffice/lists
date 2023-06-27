@@ -5,6 +5,8 @@ import * as DateFns from "date-fns";
 import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
+import { findListItems } from ".";
+import { logger } from "server/services/logger";
 
 /**
  * Additions to Status type to help with rendering
@@ -269,4 +271,69 @@ export async function displayEmailsSentBanner(
   return {
     emailsSent,
   };
+}
+
+export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) {
+  const { id, lastAnnualReviewStartDate } = list;
+  if (!lastAnnualReviewStartDate) {
+    return {};
+  }
+  const annualReviewEndDate = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
+  const twoWeeksFromToday = DateFns.addWeeks(new Date(), 2);
+  const arEndedOverTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksFromToday);
+  if (arEndedOverTwoWeeksAgo) {
+    return {};
+  }
+  const listItemsUnpublishedByAR = await findListItemsUnpublishedByAR(id!, annualReviewEndDate);
+  const listItems = await findListItems({ listIds: [id!] });
+
+  return {
+    annualReviewComplete: {
+      totalUnpublishedListItems: listItemsUnpublishedByAR.length,
+      allUnpublished: listItemsUnpublishedByAR.length === listItems.result!.length,
+      arEndWithinTwoWeeks: !arEndedOverTwoWeeksAgo,
+      annualReviewEndDate,
+    },
+  };
+}
+
+async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate: Date) {
+  try {
+    const result = await prisma.listItem.findMany({
+      where: {
+        listId,
+        status: "ANNUAL_REVIEW_OVERDUE",
+        isAnnualReview: false,
+        isPublished: false,
+        AND: [
+          {
+            history: {
+              some: {
+                type: "ANNUAL_REVIEW_OVERDUE",
+                time: {
+                  gte: annualReviewEndDate,
+                },
+              },
+            },
+          },
+          {
+            history: {
+              some: {
+                type: "UNPUBLISHED",
+                time: {
+                  gte: annualReviewEndDate,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    return result;
+  } catch (e: any) {
+    logger.error(`findListItemsUnpublishedByAR Error ${e.message}`);
+
+    throw new Error(`Failed to find list items`);
+  }
 }
