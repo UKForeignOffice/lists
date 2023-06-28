@@ -16,7 +16,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
   }
 }
 
-export function ensureUserIsAdministrator(req: Request, res: Response, next: NextFunction): void {
+export function ensureUserIsAdministrator(req: Request, _res: Response, next: NextFunction): void {
   if (req.isAuthenticated() && req.user.isAdministrator) {
     next();
   } else {
