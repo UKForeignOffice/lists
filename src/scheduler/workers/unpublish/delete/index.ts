@@ -1,12 +1,12 @@
-import { addYears } from "date-fns";
+import { startOfToday, subYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
-import { EVENTS } from "server/models/listItem/listItemEvent";
 
 export default async function deleteItemsAfterAYear() {
   const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
 
   try {
+    const dateOneYearAgo = subYears(startOfToday(), 1);
     const itemsUnpublishedByAR = await prisma.listItem.findMany({
       where: {
         status: "ANNUAL_REVIEW_OVERDUE",
@@ -17,6 +17,9 @@ export default async function deleteItemsAfterAYear() {
             history: {
               some: {
                 type: "ANNUAL_REVIEW_OVERDUE",
+                time: {
+                  lte: dateOneYearAgo,
+                },
               },
             },
           },
@@ -24,6 +27,9 @@ export default async function deleteItemsAfterAYear() {
             history: {
               some: {
                 type: "UNPUBLISHED",
+                time: {
+                  lte: dateOneYearAgo,
+                },
               },
             },
           },
@@ -37,11 +43,16 @@ export default async function deleteItemsAfterAYear() {
         },
       },
     });
-    const today = new Date();
+
     const listItemsToDelete = itemsUnpublishedByAR.filter((item) => {
-      const unpublishedHistory = item.history.find((historyItem) => historyItem.type === "UNPUBLISHED");
-      const yearAfterUnpublish = addYears(unpublishedHistory!.time, 1);
-      return today > yearAfterUnpublish;
+      const unpublishedIndex = item.history.findIndex((history) => history.type === "UNPUBLISHED");
+      const publishedIndex = item.history.findIndex((history) => history.type === "PUBLISHED");
+
+      if (publishedIndex === -1 || publishedIndex < unpublishedIndex) {
+        return true;
+      }
+
+      return false;
     });
 
     if (listItemsToDelete.length === 0) {
@@ -50,10 +61,19 @@ export default async function deleteItemsAfterAYear() {
     }
 
     await prisma.$transaction([
-      prisma.event.createMany({
-        // @ts-ignore
-        data: listItemsToDelete.map((item) => EVENTS.DELETED(undefined, item.id)),
+      prisma.audit.createMany({
+        data: listItemsToDelete.map((item) => ({
+          auditEvent: "DELETED",
+          type: "listItem",
+          jsonData: {
+            annualReviewRef: item.reference,
+            listId: item.listId,
+            listItemId: item.id,
+            notes: ["automated", "deleted due to non-response to annual review for over a year"],
+          },
+        })),
       }),
+
       prisma.listItem.deleteMany({
         where: {
           id: {

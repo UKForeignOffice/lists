@@ -3,12 +3,11 @@ Then("the list item should be deleted", () => {
     operation: "listItem.findFirst",
     variables: {
       where: {
-        status: "ANNUAL_REVIEW_OVERDUE",
-        isAnnualReview: false,
-        isPublished: false,
+        reference: "AUTO_DELETE"
       },
     },
   }).then((listItem) => {
+    cy.log(listItem, 'listItem');
     cy.expect(listItem).to.be.null;
   });
 });

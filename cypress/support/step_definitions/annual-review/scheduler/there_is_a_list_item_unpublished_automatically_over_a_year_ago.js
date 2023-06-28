@@ -1,4 +1,7 @@
+import { startOfToday, subYears } from "date-fns";
+
 Given("there is a list item unpublished automatically over a year ago", () => {
+  const dateOneYearAgo = subYears(startOfToday(), 1);
   cy.task("db", {
     operation: "listItem.create",
     variables: {
@@ -7,7 +10,14 @@ Given("there is a list item unpublished automatically over a year ago", () => {
         isAnnualReview: false,
         isPublished: false,
         status: "ANNUAL_REVIEW_OVERDUE",
-        jsonData: {},
+        jsonData: {
+          emailAddress: "test@test.com",
+          contactName: "AutoDelete",
+          metadata: {
+            emailVerified: true,
+          },
+        },
+        reference: "AUTO_DELETE",
         list: {
           connect: {
             reference: "SMOKE",
@@ -21,13 +31,13 @@ Given("there is a list item unpublished automatically over a year ago", () => {
         history: {
           create: [
             {
-              type: "UNPUBLISHED",
-              time: new Date("2021-01-01"),
+              type: "ANNUAL_REVIEW_OVERDUE",
+              time: dateOneYearAgo,
               jsonData: {},
             },
             {
-              type: "ANNUAL_REVIEW_OVERDUE",
-              time: new Date("2021-01-01"),
+              type: "UNPUBLISHED",
+              time: dateOneYearAgo,
               jsonData: {},
             },
           ],
