@@ -1,9 +1,9 @@
 {
-  "startPage": "/complaint",
+  "startPage": "/form",
   "pages": [
     {
       "title": "Make a complaint about a service provider",
-      "path": "/complaint",
+      "path": "/form",
       "components": [
         {
           "name": "dtptUh",
@@ -28,7 +28,7 @@
           "schema": {}
         },
         {
-          "name": "name",
+          "name": "providerName",
           "options": { "required": true },
           "type": "TextField",
           "title": "What is the service provider's name",
@@ -36,7 +36,7 @@
           "schema": {}
         },
         {
-          "name": "name",
+          "name": "providerCompany",
           "options": { "required": false },
           "type": "TextField",
           "title": "What is their company name?",

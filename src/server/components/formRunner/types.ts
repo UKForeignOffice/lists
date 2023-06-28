@@ -34,8 +34,8 @@ export interface NewSessionData {
 }
 
 export interface WebhookData {
+  name: string;
   questions: Question[];
-
   /**
    * FormRunner JSON should include in the metadata { type: ServiceType }
    * for easy identification of webhook type at ingest point. Other properties may be used for similar reasons (hence additionalProps)

@@ -41,4 +41,19 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
       },
     })
   );
+
+  server.use(
+    `/complain/*`,
+    proxy(FORM_RUNNER_URL, {
+      proxyReqPathResolver: function (req) {
+        return req.originalUrl.replace("/complain", "");
+      },
+      userResDecorator: function (_, proxyResData, userReq) {
+        if (userReq.baseUrl.includes("assets/")) {
+          return proxyResData;
+        }
+        return proxyResData.toString("utf8").replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/complain/$3`);
+      },
+    })
+  );
 }
