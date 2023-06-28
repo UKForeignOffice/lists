@@ -91,7 +91,7 @@ export interface EventJsonData extends JsonObject {
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
   updatedJsonData?: DeserialisedWebhookData;
-
+  reference?: string;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
