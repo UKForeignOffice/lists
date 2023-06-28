@@ -1,6 +1,7 @@
 import type * as PrismaClient from "@prisma/client";
 import type * as ServerTypes from "server/models/types";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { EventJsonData } from "server/models/listItem/types";
 
 export enum ServiceType {
   "covidTestProviders" = "covidTestProviders",
@@ -98,4 +99,8 @@ export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
 
 export interface NotifyResult {
   statusText: string;
+}
+
+export interface Event extends PrismaClient.Event {
+  jsonData: EventJsonData;
 }

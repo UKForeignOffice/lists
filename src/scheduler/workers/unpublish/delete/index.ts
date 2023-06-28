@@ -1,7 +1,7 @@
 import { startOfToday, subYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
-import type { Event } from "server/models/listItem/types";
+import type { ListItem, Event } from "shared/types";
 
 export default async function deleteItemsAfterAYear() {
   const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
@@ -60,15 +60,13 @@ export default async function deleteItemsAfterAYear() {
       return;
     }
 
-    const indexOfUnpublished = itemsUnpublishedByAR.findIndex((item) => item.history[0].type === "UNPUBLISHED");
-
     await prisma.$transaction([
       prisma.audit.createMany({
         data: itemsUnpublishedByAR.map((item) => ({
           auditEvent: "DELETED",
           type: "listItem",
           jsonData: {
-            annualReviewRef: (item.history[indexOfUnpublished] as Event).jsonData?.reference,
+            annualReviewRef: (item.history[getUnpublishedIndex(item)] as Event).jsonData?.reference,
             listId: item.listId,
             listItemId: item.id,
             notes: ["automated", "deleted due to non-response to annual review for over a year"],
@@ -89,4 +87,8 @@ export default async function deleteItemsAfterAYear() {
   } catch (error) {
     logger.error(error);
   }
+}
+
+function getUnpublishedIndex(item: ListItem & { history: Array<{ type: string }> }) {
+  return item.history.findIndex((history) => history.type === "UNPUBLISHED");
 }
