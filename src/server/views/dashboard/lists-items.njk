@@ -101,7 +101,7 @@
       {% endif %}
 
       {% if bannerToggles.annualReviewComplete %}
-        <div class="govuk-notification-banner govuk-notification-banner--error" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner govuk-notification-banner--{{'error' if bannerToggles.annualReviewComplete.allUnpublished else 'success'}}" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
               Annual review is complete
@@ -109,15 +109,21 @@
           </div>
           <div class="govuk-notification-banner__content">
             <h3 class="govuk-notification-banner__heading">
-              The annual review finished on {{ bannerToggles.annualReviewComplete.annualReviewEndDate }}.
+              {% if bannerToggles.annualReviewComplete.allUnpublished %}
+                None of the service providers responded
+                {% else %}
+                The annual review finished on {{ bannerToggles.annualReviewComplete.annualReviewEndDate }}.
+              {% endif %}
             </h3>
             <p class="govuk-body">
               {% if bannerToggles.annualReviewComplete.totalUnpublishedListItems === 0 %}
                 All service providers responded.
-              {% elif  bannerToggles.annualReviewComplete.allUnpublished %}
-                {{ bannerToggles.annualReviewComplete.totalUnpublishedListItems }} service providers were removed from the list as they did not respond by 14 October. Check which providers were <a class="govuk-notification-banner__link" href="#">unpublished</a>.
+              {% elif bannerToggles.annualReviewComplete.allUnpublished %}
+                {{ bannerToggles.annualReviewComplete.responseText.noneResponded }}
+                <br />
+                Check which providers were <a class="govuk-notification-banner__link" href="?publishing=unpublished">unpublished</a>.
               {% else %}
-                {{ bannerToggles.annualReviewComplete.totalUnpublishedListItems }} service providers did not respond and were <a class="govuk-notification-banner__link" href="#">unpublished</a>.
+                {{ bannerToggles.annualReviewComplete.responseText.someResponded }} <a class="govuk-notification-banner__link" href="?publishing=unpublished">unpublished</a>.
               {% endif %}
             </p>
           </div>

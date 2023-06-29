@@ -7,6 +7,7 @@ import type { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
 import { findListItems } from ".";
 import { logger } from "server/services/logger";
+import pluralize from "pluralize";
 
 /**
  * Additions to Status type to help with rendering
@@ -283,21 +284,32 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   const twoWeeksAgoFromToday = DateFns.subWeeks(DateFns.startOfToday(), 2);
   const arEndedAfterTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksAgoFromToday);
   const arEndedBeforeToday = DateFns.isBefore(annualReviewEndDate, DateFns.startOfToday());
-
   // TODO - refactor
   if ((arEndedAfterTwoWeeksAgo && !arEndedBeforeToday) || (!arEndedAfterTwoWeeksAgo && arEndedBeforeToday)) {
     return {};
   }
 
-  const listItemsUnpublishedByAR = await findListItemsUnpublishedByAR(id!, annualReviewEndDate);
+  const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, annualReviewEndDate);
   const listItems = await findListItems({ listIds: [id!] });
+  const formattedEndDate = DateFns.format(annualReviewEndDate, "dd MMMM");
+  const responseText = {
+    someResponded: `${totalUnpublished} service ${pluralize(
+      "provider",
+      totalUnpublished
+    )} did not respond and ${pluralize("was", totalUnpublished)}`,
+    noneResponded: `${totalUnpublished} service ${pluralize("provider", totalUnpublished)} ${pluralize(
+      "was",
+      totalUnpublished
+    )} removed from the list as they did not respond by ${formattedEndDate}.`,
+  };
 
   return {
     annualReviewComplete: {
-      totalUnpublishedListItems: listItemsUnpublishedByAR.length,
-      allUnpublished: listItemsUnpublishedByAR.length === listItems.result!.length,
+      totalUnpublishedListItems: totalUnpublished,
+      allUnpublished: totalUnpublished === listItems.result!.length,
       arEndWithinTwoWeeks: !arEndedAfterTwoWeeksAgo,
-      annualReviewEndDate,
+      annualReviewEndDate: formattedEndDate,
+      responseText,
     },
   };
 }
