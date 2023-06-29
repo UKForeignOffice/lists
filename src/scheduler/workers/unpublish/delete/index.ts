@@ -2,7 +2,7 @@ import { startOfToday, subYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
 import type { Event } from "shared/types";
-import type { Prisma } from "@prisma/client";
+import type { ListItemEvent, Prisma } from "@prisma/client";
 
 export default async function deleteItemsAfterAYear() {
   const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
@@ -52,10 +52,14 @@ async function findUnpublishedItems() {
       lte: dateOneYearAgo,
     },
   };
-  const histroyFilterEvents: Prisma.ListItemWhereInput[] = ["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"].map((type) => ({
-    type,
-    time: {
-      lte: dateOneYearAgo,
+  const histroyFilterEvents = (["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"] as ListItemEvent[]).map((type) => ({
+    history: {
+      some: {
+        type,
+        time: {
+          lte: dateOneYearAgo,
+        },
+      },
     },
   }));
 
