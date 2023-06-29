@@ -20,6 +20,11 @@ As consular staff,
     And the provider with reference "UNPUBLISH_DAY_TEST" should be unpublished
 
   Scenario: A list item is deleted after being unpublished for a year
-    And there is a list item unpublished automatically over a year ago
+    And there is a list item unpublished automatically "over" a year ago
     And the worker process has run
     Then the list item should be deleted
+
+  Scenario: A list item is NOT deleted after being unpublished for under a year
+    And there is a list item unpublished automatically "under" a year ago
+    And the worker process has run
+    Then the list item should not be deleted

@@ -1,7 +1,8 @@
-import { startOfToday, subYears } from "date-fns";
+import { startOfToday, subMonths } from "date-fns";
 
-Given("there is a list item unpublished automatically over a year ago", () => {
-  const dateOneYearAgo = subYears(startOfToday(), 1);
+Given("there is a list item unpublished automatically {string} a year ago", (timePeriod) => {
+  const noOfMonths = timePeriod === "over" ? 12 : 11;
+  const chosenDate = subMonths(startOfToday(), noOfMonths);
   cy.task("db", {
     operation: "listItem.create",
     variables: {
@@ -32,12 +33,12 @@ Given("there is a list item unpublished automatically over a year ago", () => {
           create: [
             {
               type: "ANNUAL_REVIEW_OVERDUE",
-              time: dateOneYearAgo,
+              time: chosenDate,
               jsonData: {},
             },
             {
               type: "UNPUBLISHED",
-              time: dateOneYearAgo,
+              time: chosenDate,
               jsonData: {},
             },
           ],
