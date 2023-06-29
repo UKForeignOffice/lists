@@ -64,8 +64,12 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
         return proxyResData
           .toString("utf8")
           .replace(/(href|src|value)=('|")([^'"]*privacy[^'"]*)/g, `$1=${FIND_PRIVACY_POLICY_URL}`)
-          .replace(/(href|src|value)=('|")([^'"]*provider-contact[^'"]*)/g, `$1=$2/form`)
-          .replace(/(href|src|value)=(('|")(?!.*help|.*provider-contact|privacy.*))\/([^'"]+)/g, `$1=$2/complain/$4`);
+          .replace(/(href|src|value)=('|")([^'"]*sitemap[^'"]*)/g, `$1="/sitemap"`)
+          .replace(/(href|src|value)=('|")([^'"]*provider-contact([^'"])*)/g, `$1=$2/form`)
+          .replace(
+            /(href|src|value)=(('|")(?!.*help|.*provider-contact|.*privacy|.*sitemap.*))\/([^'"]+)/g,
+            `$1=$2/complain/$4`
+          );
       },
     })
   );
