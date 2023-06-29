@@ -283,9 +283,9 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   const annualReviewEndDate = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
   const twoWeeksAgoFromToday = DateFns.subWeeks(DateFns.startOfToday(), 2);
   const arEndedAfterTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksAgoFromToday);
-  const arEndedBeforeToday = DateFns.isBefore(annualReviewEndDate, DateFns.startOfToday());
-  // TODO - refactor
-  if ((arEndedAfterTwoWeeksAgo && !arEndedBeforeToday) || (!arEndedAfterTwoWeeksAgo && arEndedBeforeToday)) {
+  const arEndedBeforeToday = DateFns.isBefore(annualReviewEndDate, DateFns.addDays(DateFns.startOfToday(), 1));
+
+  if (arEndedAfterTwoWeeksAgo !== arEndedBeforeToday) {
     return {};
   }
 
