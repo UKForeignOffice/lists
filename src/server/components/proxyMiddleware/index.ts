@@ -43,16 +43,29 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   );
 
   server.use(
-    `/complain/*`,
+    `/complain/:path*`,
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
+        const path = req.params.path;
+
+        if (path === "form") {
+          return req.originalUrl.replace("/complain", "/provider-complaint");
+        }
+
         return req.originalUrl.replace("/complain", "");
       },
-      userResDecorator: function (_, proxyResData, userReq) {
+      userResDecorator: function (proxyRes, proxyResData, userReq) {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
-        return proxyResData.toString("utf8").replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/complain/$3`);
+        const FIND_PRIVACY_POLICY_URL =
+          "https://www.gov.uk/government/publications/fcdo-privacy-notice-consular-services-in-the-uk-and-at-british-embassies-high-commissions-and-consulates-overseas?utm_source=CYB&utm_medium=FAP&utm_campaign=privacy";
+
+        return proxyResData
+          .toString("utf8")
+          .replace(/(href|src|value)=('|")([^'"]*privacy[^'"]*)/g, `$1=${FIND_PRIVACY_POLICY_URL}`)
+          .replace(/(href|src|value)=('|")([^'"]*provider-contact[^'"]*)/g, `$1=$2/form`)
+          .replace(/(href|src|value)=(('|")(?!.*help|.*provider-contact|privacy.*))\/([^'"]+)/g, `$1=$2/complain/$4`);
       },
     })
   );
