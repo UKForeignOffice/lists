@@ -275,15 +275,20 @@ export async function displayEmailsSentBanner(
 
 export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) {
   const { id, lastAnnualReviewStartDate } = list;
+
   if (!lastAnnualReviewStartDate) {
     return {};
   }
   const annualReviewEndDate = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
-  const twoWeeksFromToday = DateFns.addWeeks(new Date(), 2);
-  const arEndedOverTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksFromToday);
-  if (arEndedOverTwoWeeksAgo) {
+  const twoWeeksAgoFromToday = DateFns.subWeeks(DateFns.startOfToday(), 2);
+  const arEndedAfterTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksAgoFromToday);
+  const arEndedBeforeToday = DateFns.isBefore(annualReviewEndDate, DateFns.startOfToday());
+
+  // TODO - refactor
+  if ((arEndedAfterTwoWeeksAgo && !arEndedBeforeToday) || (!arEndedAfterTwoWeeksAgo && arEndedBeforeToday)) {
     return {};
   }
+
   const listItemsUnpublishedByAR = await findListItemsUnpublishedByAR(id!, annualReviewEndDate);
   const listItems = await findListItems({ listIds: [id!] });
 
@@ -291,7 +296,7 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
     annualReviewComplete: {
       totalUnpublishedListItems: listItemsUnpublishedByAR.length,
       allUnpublished: listItemsUnpublishedByAR.length === listItems.result!.length,
-      arEndWithinTwoWeeks: !arEndedOverTwoWeeksAgo,
+      arEndWithinTwoWeeks: !arEndedAfterTwoWeeksAgo,
       annualReviewEndDate,
     },
   };
@@ -320,6 +325,16 @@ async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate:
             history: {
               some: {
                 type: "UNPUBLISHED",
+                time: {
+                  gte: annualReviewEndDate,
+                },
+              },
+            },
+          },
+          {
+            history: {
+              none: {
+                type: "PUBLISHED",
                 time: {
                   gte: annualReviewEndDate,
                 },
