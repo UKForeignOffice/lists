@@ -1,59 +1,14 @@
 import { startOfToday, subYears } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
-import type { ListItem, Event } from "shared/types";
+import type { Event } from "shared/types";
+import type { Prisma } from "@prisma/client";
 
 export default async function deleteItemsAfterAYear() {
   const logger = schedulerLogger.child({ method: "deleteItemsAfterAYear" });
 
   try {
-    const dateOneYearAgo = subYears(startOfToday(), 1);
-    const itemsUnpublishedByAR = await prisma.listItem.findMany({
-      where: {
-        status: "ANNUAL_REVIEW_OVERDUE",
-        isAnnualReview: false,
-        isPublished: false,
-        AND: [
-          {
-            history: {
-              some: {
-                type: "UNPUBLISHED",
-                time: {
-                  lte: dateOneYearAgo,
-                },
-              },
-            },
-          },
-          {
-            history: {
-              some: {
-                type: "ANNUAL_REVIEW_OVERDUE",
-                time: {
-                  lte: dateOneYearAgo,
-                },
-              },
-            },
-          },
-          {
-            history: {
-              none: {
-                type: "PUBLISHED",
-                time: {
-                  gte: dateOneYearAgo,
-                },
-              },
-            },
-          },
-        ],
-      },
-      include: {
-        history: {
-          orderBy: {
-            time: "desc",
-          },
-        },
-      },
-    });
+    const itemsUnpublishedByAR = await findUnpublishedItems();
 
     if (itemsUnpublishedByAR.length === 0) {
       logger.info("No list items to delete");
@@ -66,7 +21,7 @@ export default async function deleteItemsAfterAYear() {
           auditEvent: "DELETED",
           type: "listItem",
           jsonData: {
-            annualReviewRef: (item.history[getUnpublishedIndex(item)] as Event).jsonData?.reference,
+            annualReviewRef: (item.history[0] as Event).jsonData?.reference,
             listId: item.listId,
             listItemId: item.id,
             notes: ["automated", "deleted due to non-response to annual review for over a year"],
@@ -89,6 +44,48 @@ export default async function deleteItemsAfterAYear() {
   }
 }
 
-function getUnpublishedIndex(item: ListItem & { history: Array<{ type: string }> }) {
-  return item.history.findIndex((history) => history.type === "UNPUBLISHED");
+async function findUnpublishedItems() {
+  const dateOneYearAgo = subYears(startOfToday(), 1);
+  const unpublishedAYearAgo: Prisma.EventWhereInput = {
+    type: "UNPUBLISHED",
+    time: {
+      lte: dateOneYearAgo,
+    },
+  };
+  const histroyFilterEvents: Prisma.ListItemWhereInput[] = ["UNPUBLISHED", "ANNUAL_REVIEW_OVERDUE"].map((type) => ({
+    type,
+    time: {
+      lte: dateOneYearAgo,
+    },
+  }));
+
+  return await prisma.listItem.findMany({
+    where: {
+      status: "ANNUAL_REVIEW_OVERDUE",
+      isAnnualReview: false,
+      isPublished: false,
+      AND: [
+        ...histroyFilterEvents,
+        {
+          history: {
+            none: {
+              type: "PUBLISHED",
+              time: {
+                gte: dateOneYearAgo,
+              },
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      history: {
+        take: 1,
+        where: unpublishedAYearAgo,
+        orderBy: {
+          time: "desc",
+        },
+      },
+    },
+  });
 }
