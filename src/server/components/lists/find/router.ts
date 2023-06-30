@@ -119,3 +119,4 @@ findRouter.post("/:serviceType/:country/services", handlers.translatorsInterpret
 
 findRouter.get("/:serviceType/:country/languages", handlers.translatorsInterpreters.languages.get);
 findRouter.post("/:serviceType/:country/languages", handlers.translatorsInterpreters.languages.post);
+findRouter.get("/:serviceType/:country/languages/summary", handlers.translatorsInterpreters.languagesSummary.get);

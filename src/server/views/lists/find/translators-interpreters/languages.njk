@@ -10,7 +10,7 @@
         errorList: [
           {
             text: error,
-            href: "#languages"
+            href: "#language"
           }
         ]
       }) }}
@@ -29,18 +29,19 @@
             classes: "govuk-label--l",
             isPageHeading: true
         },
+        errorMessage: error if error,
         hint: {
           text: "Start typing and select a language. You can select more than one language. All translators can provide services in English."
         },
         items: languages
       }) }}
     </div>
-    <button class="govuk-button govuk-button govuk-button--secondary" data-module="govuk-button" name="add" id="add">
+    <button class="govuk-button govuk-button govuk-button--secondary" data-module="govuk-button" name="action" value="add" id="add">
       Add to list
     </button>
     {% if languagesRows and languagesRows.rows.length > 0 %}
       {{ govukSummaryList(languagesRows) }}
-      <button class="govuk-button" data-module="govuk-button" name="continue">Continue</button>
+      <button class="govuk-button" data-module="govuk-button" name="action" value="continue">Continue</button>
     {% endif %}
   </form>
 

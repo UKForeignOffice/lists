@@ -1,18 +1,20 @@
-import { Address, CountryName, ListItem, Point } from "server/models/types";
-import { ServiceType } from "shared/types";
+import type { Address, CountryName, ListItem, Point } from "server/models/types";
+import type { ServiceType } from "shared/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
-import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
-import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
+import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as metaData from "server/services/metadata";
 import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
 import { listsRoutes } from "server/components/lists";
 import { HttpException } from "server/middlewares/error-handlers";
 import { getObjectDiff } from "server/components/lists/controllers/ingest/helpers";
+import { URLSearchParams } from "url";
+import querystring from "querystring";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated
@@ -215,16 +217,21 @@ export function getLanguageNames(languagesProvided: string): string | undefined 
   return languagesProvided;
 }
 
-export function getLanguagesRows(languagesProvided: string, queryString: string): LanguageRows {
+export function getLanguagesRows(languagesProvided: string[], queryString: string, path = "languages"): LanguageRows {
   if (!languagesProvided) {
     const languageRows: LanguageRows = { rows: [] };
     return languageRows;
   }
-  const languagesJson: LanguageRow[] = languagesProvided?.split(",").map((language: string) => {
+
+  const query = querystring.decode(queryString);
+
+  const rows: LanguageRow[] = languagesProvided.map((language: string) => {
     // @ts-ignore
     const languageName: string = languages[language];
-    logger.info(`language name: ${languageName}`);
-    const removeLanguageUrl = listsRoutes.removeLanguage.replace(":language", language);
+    const queryStringWithRemovedLanguage = querystring.encode({
+      ...query,
+      languages: languagesProvided.filter((langProvided) => langProvided !== language),
+    });
 
     const languageRow: LanguageRow = {
       key: {
@@ -238,9 +245,10 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
       actions: {
         items: [
           {
-            href: `${removeLanguageUrl}?${queryString}`,
+            href: `?${queryStringWithRemovedLanguage}`,
             text: "Remove",
             visuallyHiddenText: language,
+            classes: "govuk-link--no-visited-state",
           },
         ],
       },
@@ -248,10 +256,7 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
     return languageRow;
   });
 
-  const languageRows: LanguageRows = {
-    rows: languagesJson,
-  } || { rows: [] };
-  return languageRows;
+  return { rows };
 }
 
 export function validateCountry(countryName: string): string | undefined {
