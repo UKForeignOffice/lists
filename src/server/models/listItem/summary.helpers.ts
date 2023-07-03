@@ -280,18 +280,20 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   if (!lastAnnualReviewStartDate) {
     return {};
   }
-  const annualReviewEndDate = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
-  const twoWeeksAgoFromToday = DateFns.subWeeks(DateFns.startOfToday(), 2);
-  const arEndedAfterTwoWeeksAgo = DateFns.isAfter(annualReviewEndDate, twoWeeksAgoFromToday);
-  const arEndedBeforeToday = DateFns.isBefore(annualReviewEndDate, DateFns.addDays(DateFns.startOfToday(), 1));
+  const endOfAnnualReview = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
+  const twoWeeksAfterEndOfAnnualReview = DateFns.addWeeks(endOfAnnualReview, 2);
+  const dateIsWithinRange = DateFns.isWithinInterval(DateFns.startOfToday(), {
+    start: endOfAnnualReview,
+    end: twoWeeksAfterEndOfAnnualReview,
+  });
 
-  if (arEndedAfterTwoWeeksAgo !== arEndedBeforeToday) {
+  if (dateIsWithinRange) {
     return {};
   }
 
-  const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, annualReviewEndDate);
+  const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, endOfAnnualReview);
   const listItems = await findListItems({ listIds: [id!] });
-  const formattedEndDate = DateFns.format(annualReviewEndDate, "dd MMMM");
+  const formattedEndDate = DateFns.format(endOfAnnualReview, "dd MMMM");
   const responseText = {
     someResponded: `${totalUnpublished} service ${pluralize(
       "provider",
@@ -307,14 +309,13 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
     annualReviewComplete: {
       totalUnpublishedListItems: totalUnpublished,
       allUnpublished: totalUnpublished === listItems.result!.length,
-      arEndWithinTwoWeeks: !arEndedAfterTwoWeeksAgo,
-      annualReviewEndDate: formattedEndDate,
+      endOfAnnualReview: formattedEndDate,
       responseText,
     },
   };
 }
 
-async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate: Date) {
+async function findListItemsUnpublishedByAR(listId: number, endOfAnnualReview: Date) {
   try {
     const result = await prisma.listItem.findMany({
       where: {
@@ -328,7 +329,7 @@ async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate:
               some: {
                 type: "ANNUAL_REVIEW_OVERDUE",
                 time: {
-                  gte: annualReviewEndDate,
+                  gte: endOfAnnualReview,
                 },
               },
             },
@@ -338,7 +339,7 @@ async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate:
               some: {
                 type: "UNPUBLISHED",
                 time: {
-                  gte: annualReviewEndDate,
+                  gte: endOfAnnualReview,
                 },
               },
             },
@@ -348,7 +349,7 @@ async function findListItemsUnpublishedByAR(listId: number, annualReviewEndDate:
               none: {
                 type: "PUBLISHED",
                 time: {
-                  gte: annualReviewEndDate,
+                  gte: endOfAnnualReview,
                 },
               },
             },
