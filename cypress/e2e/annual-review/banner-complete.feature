@@ -6,12 +6,15 @@ Feature: Annual review complete banner
 
   Scenario: Annual review complete banner is displayed
     And eurasia lawyers finished annual review and "all" providers responded
+    When I visit the lawyers list for Eurasia
     Then I should see the complete banner with the "all" responded text
 
-# Scenario: Text is displayed if providers is unpublished
-#   And eurasia lawyers finished annual review and "some" providers responded
-#   Then I should see the complete banner with the "some" responded text
+  Scenario: Text is displayed if providers is unpublished
+    And eurasia lawyers finished annual review and "some" providers responded
+    When I visit the lawyers list for Eurasia
+    Then I should see the complete banner with the "some" responded text
 
-# Scenario: Text is displayed if providers is unpublished
-#   And eurasia lawyers finished annual review and "no" providers responded
-#   Then I should see the complete banner with the "no" responded text
+  Scenario: Text is displayed if providers is unpublished
+    And eurasia lawyers finished annual review and "no" providers responded
+    When I visit the lawyers list for Eurasia
+    Then I should see the complete banner with the "no" responded text

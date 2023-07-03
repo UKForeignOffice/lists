@@ -287,7 +287,7 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
     end: twoWeeksAfterEndOfAnnualReview,
   });
 
-  if (dateIsWithinRange) {
+  if (!dateIsWithinRange) {
     return {};
   }
 

@@ -1,7 +1,8 @@
-import { addYears, startOfToday, subWeeks } from "date-fns";
+import { addYears, startOfToday, subMonths, subWeeks } from "date-fns";
 
-const startOfAnnualReview = subWeeks(startOfToday(), 6);
-/* eslint-disable */
+const today = startOfToday();
+const publishedDate = subMonths(today, 1);
+
 When("eurasia lawyers finished annual review and {string} providers responded", async (respondants) => {
   await setAnnualReview();
 
@@ -16,7 +17,7 @@ When("eurasia lawyers finished annual review and {string} providers responded", 
 });
 
 async function setAnnualReview() {
-
+  const startOfAnnualReview = subWeeks(today, 6);
   const yearAfterStartOfAnnualReview = addYears(startOfAnnualReview, 1);
 
   await cy.task("db", {
@@ -57,12 +58,21 @@ async function createListPublishedItem() {
             id: 329,
           },
         },
+        history: {
+          create: [
+            {
+              type: "PUBLISHED",
+              time: publishedDate,
+              jsonData: {},
+            }
+          ],
+        },
       },
     },
   });
 }
 
-async function createListPublishedItem() {
+async function createListUnpublishedItem() {
   await cy.task("db", {
     operation: "listItem.create",
     variables: {
@@ -78,7 +88,7 @@ async function createListPublishedItem() {
             emailVerified: true,
           },
         },
-        reference: "",
+        reference: "UNPUBLISHED_LIST_ITEM",
         list: {
           connect: {
             reference: "SMOKE",
@@ -93,14 +103,19 @@ async function createListPublishedItem() {
           create: [
             {
               type: "ANNUAL_REVIEW_OVERDUE",
-              time: startOfAnnualReview,
+              time: today,
               jsonData: {},
             },
             {
               type: "UNPUBLISHED",
-              time: startOfAnnualReview,
+              time: today,
               jsonData: {},
             },
+            {
+              type: "PUBLISHED",
+              time: publishedDate,
+              jsonData: {},
+            }
           ],
         },
       },
