@@ -1,6 +1,6 @@
 {% set contactUsURL %}
     {% if currentLocation %}
-        {{ "/complain/form" if 'find' in currentLocation else "/application/provider-contact" }}
+        {{ "/complain/provider-complaint/form" if 'find' in currentLocation else "/application/provider-contact" }}
     {% else %}
         "/application/provider-contact"
     {% endif %}
