@@ -52,6 +52,6 @@ export async function updateSheet(view: string, values: any[], valueInputOption 
 
     return res;
   } catch (e) {
-    logger.error(`sending data for ${view} failed with error ${e}`);
+    logger.error(`updateSheet: sending data for ${view} failed with error ${e}`);
   }
 }

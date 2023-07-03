@@ -22,8 +22,11 @@ export async function main() {
   updates
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
-      // @ts-ignore
-      logger.error(failedResult.reason);
+      logger.error(
+        `populateMissingAnnualReviewDates: Unable to add annual review start dates due to ${
+          (failedResult as PromiseRejectedResult).reason
+        }`
+      );
     });
 
   return updates;
