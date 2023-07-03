@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import express from "express";
 import { kebabCase } from "lodash";
-import * as handlers from "./handers";
+import * as handlers from "./handlers";
 import { getServiceLabel } from "server/components/lists";
 import serviceName from "server/utils/service-name";
 import { getParameterValue, removeQueryParameter } from "server/components/lists/helpers";

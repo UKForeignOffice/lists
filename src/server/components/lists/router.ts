@@ -6,8 +6,8 @@ import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
 import { findRouter } from "./find/router";
-import { loadQueryParametersIntoSession } from "server/components/lists/find/helpers/loadQueryParametersIntoSession";
 import { redirectToFindResource } from "server/components/lists/find/helpers/redirectToFindResource";
+import { loadQueryParametersIntoSession } from "server/components/lists/find/middleware/loadQueryParametersIntoSession";
 
 export const listsRouter = express.Router();
 

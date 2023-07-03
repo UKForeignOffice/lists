@@ -6,7 +6,6 @@ import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 export const lawyersQuestionsSequence = [
   QuestionName.readNotice,
@@ -26,13 +25,13 @@ export async function searchLawyers(req: Request) {
 
   let allRows: LawyerListItemGetObject[] = [];
 
-  const validPracticeAreas = sanitisePracticeAreas(params["practice-area"].toLowerCase());
+  const { practiceAreas } = req.session.answers;
 
   try {
     allRows = await LawyerListItem.findPublishedLawyersPerCountry({
       countryName: country,
       region,
-      practiceArea: validPracticeAreas,
+      practiceArea: practiceAreas,
       offset: -1,
     });
   } catch (error) {
@@ -57,7 +56,7 @@ export async function searchLawyers(req: Request) {
     searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
       countryName: country,
       region,
-      practiceArea: validPracticeAreas,
+      practiceArea: practiceAreas,
       offset,
     });
   }
