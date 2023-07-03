@@ -8,6 +8,10 @@ import {
   LiveLists,
 } from "./views";
 
+/**
+ * This task queries tables and pushes them into google sheets.
+ * note: currently disabled due to drive/information ownership dispute.
+ */
 export async function main() {
   schedulerLogger.info("Starting analytics process");
 

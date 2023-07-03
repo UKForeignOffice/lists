@@ -5,8 +5,7 @@ import {
   ListItemJsonData,
 } from "server/models/listItem/providers/deserialisers/types";
 import { Status } from "@prisma/client";
-
-
+import * as SharedTypes from "shared/types";
 
 export enum ACTIVITY_TAGS {
   to_do = "to_do",
@@ -18,7 +17,7 @@ export enum PUBLISHING_TAGS {
   new = "new",
   live = "live",
   unpublished = "unpublished",
-  archived = "archived"
+  archived = "archived",
 }
 
 export type Tags = typeof TAGS;
@@ -38,9 +37,9 @@ export const ORDER_BY = {
 export type OrderBy = typeof ORDER_BY;
 
 export interface ActivityStatusViewModel {
-  type: "to_do" | "out_with_provider" | "no_action_needed",
-  text: string,
-  colour?: string
+  type: "to_do" | "out_with_provider" | "no_action_needed";
+  text: string;
+  colour?: string;
 }
 
 export type IndexListItem = Pick<ListItemJsonData, "organisationName" | "contactName" | "id"> & {
@@ -63,8 +62,8 @@ export interface PaginationOptions {
 export type ListIndexOptions = {
   listId: List["id"];
   userId?: User["id"];
-  activity?: Array<keyof Tags>,
-  publishing?: Array<keyof Tags>,
+  activity?: Array<keyof Tags>;
+  publishing?: Array<keyof Tags>;
   sort?: keyof OrderBy;
   reqQuery?: Record<string, any>;
 } & PaginationOptions;
@@ -91,13 +90,11 @@ export interface EventJsonData extends JsonObject {
   userId?: User["id"];
   itemId: User["id"] | List["id"] | ListItem["id"];
   updatedJsonData?: DeserialisedWebhookData;
-
+  reference?: string;
   metadata?: PrismaClient.Prisma.JsonObject;
 }
 
-export interface Event extends PrismaClient.Event {
-  jsonData: EventJsonData;
-}
+export type Event = SharedTypes.Event;
 
 export interface EventCreateInput extends PrismaClient.Prisma.EventCreateInput {
   jsonData: EventJsonData;
