@@ -5,7 +5,6 @@ import * as handlers from "./handers";
 import { getServiceLabel } from "server/components/lists";
 import serviceName from "server/utils/service-name";
 import { getParameterValue, removeQueryParameter } from "server/components/lists/helpers";
-import { URLSearchParams } from "url";
 import Joi from "joi";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
@@ -123,26 +122,3 @@ findRouter.get("/:serviceType/:country/languages/summary", handlers.translatorsI
 
 findRouter.get("/:serviceType/:country/types", handlers.translatorsInterpreters.types.get);
 findRouter.post("/:serviceType/:country/types", handlers.translatorsInterpreters.types.post);
-
-function loadQueryParametersIntoSession(req: Request, res: Response, next: NextFunction) {
-  // find-a-professional-service-abroad.service.csd.fcdo.gov.uk/results?serviceType=lawyers&readNotice=ok&country=Italy&region=lake%20como&practiceArea=Bankruptcy,Corporate,Criminal&readDisclaimer=ok
-  // https://find-a-professional-service-abroad.service.csd.fcdo.gov.uk/results?serviceType=translatorsInterpreters&readNotice=ok&country=Italy&region=lake%20Como&servicesProvided=translation,interpretation&languagesProvided=it&newLanguage=&languagesPopulated=true&languagesConfirmed=true&translationSpecialties=All&interpreterServices=All,Medical%20assistance,Police%20and%20local%20authorities&interpreterTranslationServices=&readDisclaimer=ok
-  // https:
-  // https://find-a-professional-service-abroad.service.csd.fcdo.gov.uk/results?serviceType=funeralDirectors&readNotice=ok&insurance=yes&contactInsurance=done&repatriation=yes&country=Italy&region=lake%20como&readDisclaimer=ok
-
-  const { serviceType } = req.query;
-  if (serviceType === "funeralDirectors") {
-    req.session.answers = {
-      practiceAreas: sanitisePracticeAreas(req.query["practice-area"] as string),
-      repatriation: req.query.repatriation,
-      insurance: req.query.insurance,
-    };
-  }
-
-  if (serviceType === "translatorsInterpreters") {
-    req.session.answers = {};
-  }
-  if (req.session.answers) {
-    next();
-  }
-}

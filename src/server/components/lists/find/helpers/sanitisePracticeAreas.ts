@@ -12,7 +12,7 @@ export function sanitisePracticeAreas(practiceAreas: string | string[]): string[
 
   const { value = [] } = validPracticeAreas.validate(practiceAreasAsArray, {
     stripUnknown: { arrays: true },
-    covert: true,
+    convert: true,
   });
   return value;
 }

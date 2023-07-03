@@ -86,14 +86,14 @@
     <p class="govuk-body">
       Translation types<br />
       <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services#translation" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.interpretationTypes or isResultsPage %}
     <p class="govuk-body">
       Interpretation types<br />
       <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services#interpretation" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
 {% endif %}

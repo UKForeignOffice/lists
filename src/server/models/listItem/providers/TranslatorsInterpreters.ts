@@ -47,10 +47,11 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
   if (servicesProvided) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'servicesProvided'))) && ARRAY ${JSON.stringify(
-        ["translation"]
+        servicesProvided
       ).replace(/"/g, "'")}`
     );
   }
+
   if (!interpreterServices.includes("all") && interpreterServices.length > 0) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(

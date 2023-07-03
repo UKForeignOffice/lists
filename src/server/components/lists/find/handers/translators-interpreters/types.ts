@@ -4,10 +4,9 @@ import type { QuestionData } from "server/components/lists";
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
 import querystring from "querystring";
-import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseServices";
 
 export function get(req: Request, res: Response) {
-  const services = sanitiseServices(req.query.services);
+  const services = req.session.answers?.services ?? [];
 
   res.render("lists/find/translators-interpreters/types.njk", {
     ...(services.includes("translation") && {
@@ -26,7 +25,7 @@ export function get(req: Request, res: Response) {
 export function post(req: Request, res: Response) {
   const translationTypes = sanitiseTranslationTypes(req.body.translation);
   const interpretationTypes = sanitiseInterpretationTypes(req.body.interpretation);
-  const services = req.query.services;
+  const services = req.session.answers?.services ?? [];
 
   let shouldRedirectToTypes = false;
   if (services.includes("translation") && translationTypes.length === 0) {
@@ -39,21 +38,15 @@ export function post(req: Request, res: Response) {
     req.flash("error-interpretation", "Select at least one situation you need an interpreter for");
   }
 
-  const query = querystring.encode({
-    ...req.query,
-  });
-
   if (shouldRedirectToTypes) {
-    res.redirect(`types?${query}`);
+    res.redirect("types");
     return;
   }
 
-  req.session.answers = {
-    ...req.session.answers,
-    translationTypes,
-    interpretationTypes,
-  };
-  res.redirect(`disclaimer?${query}`);
+  req.session.answers.translationTypes = translationTypes;
+  req.session.answers.interpretationTypes = interpretationTypes;
+
+  res.redirect("disclaimer");
 }
 
 function TranslationTypesItemsVM() {

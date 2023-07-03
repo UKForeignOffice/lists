@@ -11,7 +11,6 @@
 {% if searchResults.length === 0 %}
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-4">{{_.upperFirst(resultsTitle)}}</h2>
 
   {% if hasSworn.interpreters or hasSworn.translators %}
     <div class="govuk-warning-text">

@@ -6,12 +6,13 @@ import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
 import { findRouter } from "./find/router";
+import { loadQueryParametersIntoSession } from "server/components/lists/find/helpers/loadQueryParametersIntoSession";
+import { redirectToFindResource } from "server/components/lists/find/helpers/redirectToFindResource";
 
 export const listsRouter = express.Router();
 
 listsRouter.use("/find", findRouter);
-listsRouter.use("/find/v1", Controllers.listsGetController);
-listsRouter.get(listsRoutes.results, csrfRequestHandler, Controllers.listsResultsController);
+listsRouter.get("/results", loadQueryParametersIntoSession, redirectToFindResource);
 listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);

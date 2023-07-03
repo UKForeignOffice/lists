@@ -1,9 +1,8 @@
 import type { Request, Response } from "express";
 import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseServices";
-import querystring from "querystring";
 
 export function get(req: Request, res: Response) {
-  res.render("lists/find/translators-interpreters/services.njk");
+  res.render("lists/find/translators-interpreters/services.njk", { values: req.session.answers?.services ?? [] });
 }
 
 export function post(req: Request, res: Response) {
@@ -17,15 +16,7 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers = {
-    ...req.session.answers,
-    services,
-  };
+  req.session.answers!.services = sanitisedServices;
 
-  const params = querystring.encode({
-    ...req.query,
-    services: sanitisedServices,
-  });
-
-  res.redirect(`languages?${params}`);
+  res.redirect(`languages`);
 }

@@ -1,11 +1,9 @@
 import { legalPracticeAreasList } from "server/services/metadata";
-import Joi from "joi";
-import { URLSearchParams } from "url";
 import type { Request, Response } from "express";
 import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 export function get(req: Request, res: Response) {
-  const answeredPracticeAreas = req.session.answers?.practiceAreas?.split?.(",") ?? [];
+  const answeredPracticeAreas = req.session.answers?.practiceAreas ?? [];
 
   const items = legalPracticeAreasList.map((area) => ({
     value: area,
@@ -31,17 +29,15 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  const query = new URLSearchParams({ ...req.query, "practice-area": sanitisedPracticeAreas });
-
   req.session.answers = {
     ...req.session.answers,
-    practiceAreas: sanitisedPracticeAreas.toString(),
+    practiceAreas: sanitisedPracticeAreas,
   };
 
   if (req.session.answers?.disclaimer === true) {
-    res.redirect(`result?${query.toString()}`);
+    res.redirect(`result`);
     return;
   }
 
-  res.redirect(`disclaimer?${query.toString()}`);
+  res.redirect(`disclaimer`);
 }

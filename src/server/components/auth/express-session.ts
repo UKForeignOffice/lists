@@ -21,30 +21,30 @@ interface FuneralDirectorAnswers {
   practiceAreas: string[];
   repatriation: boolean;
   insurance: boolean;
-  serviceType: "funeral-directors";
 }
 
-interface TranslatorsInterpretersAnswers {
+export interface TranslatorsInterpretersAnswers {
   languages: string[];
   languagesReadable: string[];
-  services: Array<"translation" | "interpretation">;
+  services: string[];
   interpretationTypes: string[];
   translationTypes: string[];
 }
 
 interface LawyersAnswers {
   practiceAreas: string[];
-  serviceType: "lawyers";
 }
 
 interface BaseAnswers {
-  country: string;
+  country?: string;
+  serviceType?: "lawyers" | "translators-interpreters" | "funeral-directors";
+
   region?: string;
   notice?: boolean;
   disclaimer?: boolean;
 }
 
-type Answers = BaseAnswers &
+export type Answers = BaseAnswers &
   Partial<FuneralDirectorAnswers> &
   Partial<TranslatorsInterpretersAnswers> &
   Partial<LawyersAnswers>;

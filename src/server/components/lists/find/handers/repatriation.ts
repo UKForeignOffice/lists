@@ -16,7 +16,7 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers!.funeralDirectors.repatriation = repatriation === "yes";
+  req.session.answers!.repatriation = repatriation === "yes";
 
   res.redirect("country");
 }

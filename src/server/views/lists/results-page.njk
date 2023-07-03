@@ -8,8 +8,12 @@
 
 {% block content %}
 
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+      {% block heading %}
+      {% endblock %}
 
       {% if _.camelCase(serviceType) === "lawyers" %}
         {% include "lists/partials/lawyers/lawyers-results-list.njk" %}

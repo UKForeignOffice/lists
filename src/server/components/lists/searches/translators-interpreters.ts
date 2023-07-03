@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { getServiceLabel, getAllRequestParams, queryStringFromParams, getLinksOfRelatedLists } from "../helpers";
+import { getServiceLabel, getLinksOfRelatedLists } from "../helpers";
 import { QuestionName } from "../types";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
-import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import type { CountryName, TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
@@ -14,6 +14,7 @@ import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseS
 import { sanitiseLanguages } from "server/components/lists/find/helpers/sanitiseLanguages";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
+import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -54,37 +55,27 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
 }
 
 export async function searchTranslatorsInterpreters(req: Request, res: Response) {
-  const params = getAllRequestParams(req);
-  const { serviceType, country, region, print = "no" } = params;
-  const page = params.page || 1;
-
-  const pageNum = parseInt(page);
-  params.page = pageNum.toString();
+  const { answers = {} } = req.session;
+  const { country, serviceType } = answers;
+  const { print = "no", page = 1 } = req.query;
+  const pageNum = parseInt(page as string);
 
   if (!country) {
     const query = querystring.encode(req.query as Record<string, string>);
-    res.redirect(`${listsRoutes.finder}/country?${query}`);
+    res.redirect(`${listsRoutes.finder}/${answers?.serviceType}?country=${query}`);
     return;
   }
 
   let servicesProvided;
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
-  const filterProps: {
-    countryName?: string;
-    region?: string;
-    servicesProvided: string[] | undefined;
-    languagesProvided: string[] | undefined;
-    interpreterServices: string[] | undefined;
-    translationSpecialties: string[] | undefined;
-    offset: number;
-  } = {
+  const filterProps = {
     countryName: validateCountry(country),
-    region: decodeURIComponent(region),
-    servicesProvided: sanitiseServices(params.services),
-    languagesProvided: sanitiseLanguages(params.languages),
-    interpreterServices: sanitiseInterpretationTypes(params.interpreterTypes),
-    translationSpecialties: sanitiseTranslationTypes(params.translationTypes),
+    region: decodeURIComponent(answers.region ?? ""),
+    servicesProvided: sanitiseServices(answers.services),
+    languagesProvided: sanitiseLanguages(answers.languages),
+    interpreterServices: sanitiseInterpretationTypes(answers.interpretationTypes ?? []),
+    translationSpecialties: sanitiseTranslationTypes(answers.translationTypes ?? []),
     offset: -1,
   };
 
@@ -100,7 +91,6 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
-    listRequestParams: params,
   });
 
   const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
@@ -108,8 +98,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   filterProps.offset = offset;
 
   if (allRows.length > 0) {
-    searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
-    searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
+    searchResults = allRows.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
         listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map(
           (language: string) => metaData.languages[language]
@@ -129,18 +118,17 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     });
   }
   const results = print === "yes" ? allRows : searchResults;
+  const type = getDbServiceTypeFromParameter(answers.serviceType);
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country, serviceType!)),
-    ...(await getLinksOfRelatedLists(country, serviceType!)),
+    ...(await getRelatedLinks(country, type)),
+    ...(await getLinksOfRelatedLists(country as CountryName, type)),
   ];
 
   return {
-    resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
     hasSworn: hasSworn(results),
     filterProps,
-    queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
     limit: ROWS_PER_PAGE,
     offset,
