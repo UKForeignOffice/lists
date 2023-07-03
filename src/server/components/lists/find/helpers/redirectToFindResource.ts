@@ -5,7 +5,8 @@ import { getDbServiceTypeFromParameter } from "server/components/lists/searches/
 export async function redirectToFindResource(req: Request, res: Response, next: NextFunction) {
   const { serviceType, country } = req.session.answers ?? {};
   if (!serviceType) {
-    res.status(400).send();
+    res.status(400);
+    next();
     return;
   }
 

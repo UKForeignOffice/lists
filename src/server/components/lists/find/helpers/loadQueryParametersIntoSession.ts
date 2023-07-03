@@ -81,6 +81,7 @@ function loadLawyersQueryParameters(req: Request, res: Response, next: NextFunct
   const practiceArea = (req.query.practiceArea ?? "") as string;
 
   req.session.answers!.practiceAreas = sanitisePracticeAreas(practiceArea.split(","));
+  req.session.answers!.serviceType = "lawyers";
 
   next();
 }
