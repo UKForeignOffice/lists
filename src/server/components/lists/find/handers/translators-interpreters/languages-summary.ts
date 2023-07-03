@@ -16,5 +16,6 @@ export function get(req: Request, res: Response) {
 
   res.render("lists/find/translators-interpreters/languages-summary.njk", {
     languagesRows: getLanguagesRows(sanitisedLanguages, query),
+    query,
   });
 }

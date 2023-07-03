@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { URLSearchParams } from "url";
+import querystring from "querystring";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/disclaimer");
@@ -15,9 +15,9 @@ export function post(req: Request, res: Response) {
   req.session.answers!.disclaimer = true;
 
   // @ts-ignore
-  const params = new URLSearchParams({
+  const params = querystring.encode({
     ...req.query,
-  }).toString();
+  });
 
   res.redirect(`result?${params}`);
 }

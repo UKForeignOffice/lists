@@ -56,7 +56,7 @@
         {% endif %}
       </p>
     {% endif %}
-    {% if answers.insurance or isAnswersPage %}
+    {% if answers.insurance or isResultsPage %}
       <p class="govuk-body">
         Has insurance<br />
         <strong> {{ _.startCase(answers.insurance) }} </strong>
@@ -65,42 +65,38 @@
         {% endif %}
       </p>
     {% endif %}
-
-
   {% endif %}
 
-
-  {% if serviceNamesProvided and serviceNamesProvided.length %}
+{% if serviceType === 'translators-interpreters' %}
+  {% if answers.services or isResultsPage %}
     <p class="govuk-body">
       Services needed<br />
-      <strong>{{ _.split(serviceNamesProvided, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'servicesProvided') }}" aria-label="Change what services do you need answer">Change</a>{% endif %}
+      <strong>{{ answers.services.join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services" aria-label="Change what services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if languageNamesProvided %}
+  {% if answers.languages or isResultsPage %}
     <p class="govuk-body">
       Languages needed<br />
-      <strong>{{ languageNamesProvided }}</strong>{% if print !== "yes" %}
-      {% set trimmedQueryString = removeQueryParameter(queryString, 'languageNamesProvided') %}
-      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesPopulated') %}
-      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesConfirmed') %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ trimmedQueryString }}" aria-label="Change has insurance answer">Change</a>{% endif %}
+      <strong>{{ answers.languagesReadable.join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if translationSpecialties %}
+  {% if answers.translationTypes or isResultsPage %}
     <p class="govuk-body">
       Translation types<br />
-      <strong>{{ _.split(translationSpecialties, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'translationSpecialties') }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
+      <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services#translation" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if interpreterServices %}
+  {% if answers.interpretationTypes or isResultsPage %}
     <p class="govuk-body">
       Interpretation types<br />
-      <strong>{{ _.split(interpreterServices, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'interpreterServices') }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
+      <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services#interpretation" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
+{% endif %}
   {% if print !== "yes" and country %}
     <p class="govuk-body noprint">
         <a

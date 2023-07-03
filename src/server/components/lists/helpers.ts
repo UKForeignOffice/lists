@@ -258,17 +258,17 @@ export async function getLinksOfRelatedLists(
   const relatedLinkOptions = [
     {
       text: `Find a lawyer in ${countryName}`,
-      url: `/find?serviceType=lawyers`,
+      url: `/find/lawyers`,
       type: "lawyers",
     },
     {
       text: `Find a funeral director in ${countryName}`,
-      url: `/find?serviceType=funeralDirectors`,
+      url: `/find/funeral-directors`,
       type: "funeralDirectors",
     },
     {
       text: `Find a translator or interpreter in ${countryName}`,
-      url: `/find?serviceType=translatorsInterpreters`,
+      url: `/find/translators-interpreters`,
       type: "translatorsInterpreters",
     },
   ];
@@ -279,7 +279,7 @@ export async function getLinksOfRelatedLists(
   return relatedLinkOptions
     .filter((link) => serviceType !== link.type)
     .map(({ text, url, type }) => {
-      const countryParam = `&country=${countryName}`;
+      const countryParam = `/${countryName}`;
       const relatedListExists = existingListTypes.includes(type);
       return {
         text,

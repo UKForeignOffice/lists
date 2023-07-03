@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import { searchFuneralDirectors } from "server/components/lists/searches/funeral-directors";
 import { HttpException } from "server/middlewares/error-handlers";
 import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
+import { searchTranslatorsInterpreters } from "server/components/lists/searches/translators-interpreters";
 
 export async function get(req: Request, res: Response) {
   const { country, serviceType } = req.params;
@@ -27,6 +28,7 @@ export async function get(req: Request, res: Response) {
   const serviceTypeToSearch: { [key: string]: (req: Request) => any } = {
     lawyers: searchLawyers,
     "funeral-directors": searchFuneralDirectors,
+    "translators-interpreters": searchTranslatorsInterpreters,
   };
 
   const searchMethod = serviceTypeToSearch[serviceType];

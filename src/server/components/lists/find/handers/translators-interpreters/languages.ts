@@ -18,16 +18,25 @@ export function get(req: Request, res: Response) {
 }
 
 export function post(req: Request, res: Response) {
-  const languages = sanitiseLanguages(req.query.languages);
+  let selectedLanguages = sanitiseLanguages(req.query.languages);
   const { language, action } = req.body;
-  console.log(action);
   if (action === "add") {
-    languages.push(language);
-    req.session.languages = languages;
+    selectedLanguages.push(language);
+    selectedLanguages = sanitiseLanguages(selectedLanguages);
+
+    if (selectedLanguages.length === 0) {
+      req.flash("error", "You must enter the language(s) you need translating or interpreting");
+    }
+
+    req.session.answers = {
+      ...req.session.answers,
+      languages: selectedLanguages,
+      languagesReadable: selectedLanguages.map((lang) => languages[lang]),
+    };
 
     const query = querystring.encode({
       ...req.query,
-      languages: sanitiseLanguages(languages),
+      languages: selectedLanguages,
     });
 
     res.redirect(`languages?${query}`);
@@ -36,7 +45,7 @@ export function post(req: Request, res: Response) {
 
   const query = querystring.encode({
     ...req.query,
-    languages,
+    languages: selectedLanguages,
   });
 
   res.redirect(`languages/summary?${query}`);

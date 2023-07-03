@@ -948,37 +948,37 @@ export const translationSpecialties: QuestionData[] = [
   {
     text: "Legal",
     value: "Legal",
-    description: "e.g. property, visas, death certificates, notarised documents",
+    description: "For example property, visas, death certificates, notarised documents",
   },
   {
     text: "Medical",
     value: "Medical",
-    description: "e.g. medical records, autopsy reports",
+    description: "For example medical records, autopsy reports",
   },
   {
     text: "Events",
     value: "Events",
-    description: "e.g. weddings, conferences",
+    description: "For example weddings, conferences",
   },
   {
     text: "Publishing",
     value: "Publishing",
-    description: "e.g. scientific, technical, medical, educational, fictional",
+    description: "For example scientific, technical, medical, educational, fictional",
   },
   {
     text: "Business and commercial",
     value: "Business and commercial",
-    description: "e.g. contracts, transcripts, documents",
+    description: "For example contracts, transcripts, documents",
   },
   {
     text: "Digital media",
     value: "Digital media",
-    description: "e.g. subtitling, captioning, voiceovers, dubbing",
+    description: "For example subtitling, captioning, voiceovers, dubbing",
   },
   {
     text: "General translation ",
     value: "General translation",
-    description: " e.g. informal, personal text",
+    description: " For example informal, personal text",
   },
 ];
 
@@ -986,37 +986,37 @@ export const interpretationServices: QuestionData[] = [
   {
     text: "Medical assistance",
     value: "Medical assistance",
-    description: "e.g. hospitalisations, doctor's appointments",
+    description: "For example hospitalisations, doctor's appointments",
   },
   {
     text: "Police and local authorities",
     value: "Police and local authorities",
-    description: "e.g. arrests, immigration issues",
+    description: "For example arrests, immigration issues",
   },
   {
     text: "Courts and legal",
     value: "Courts and legal",
-    description: "e.g. hearings, trials",
+    description: "For example hearings, trials",
   },
   {
     text: "Events",
     value: "Events",
-    description: "e.g. conferences, weddings",
+    description: "For example conferences, weddings",
   },
   {
     text: "Media and communications",
     value: "Media and communications",
-    description: "e.g. TV, radio",
+    description: "For example TV, radio",
   },
   {
     text: "Business and commercial",
     value: "Business and commerce",
-    description: "e.g. negotiations, meetings",
+    description: "For example negotiations, meetings",
   },
   {
     text: "General interpretation",
     value: "General interpretation ",
-    description: "e.g. informal, conversational",
+    description: "For example informal, conversational",
   },
 ];
 

@@ -6,47 +6,62 @@ import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
 
-export async function findPublishedTranslatorsInterpretersPerCountry(props: {
+export interface FindPublishedTranslatorsInterpretersOptions {
   countryName?: string;
-  region?: string | "";
+  region?: string;
   servicesProvided?: string[];
   languagesProvided?: string[];
   interpreterServices?: string[];
   translationSpecialties?: string[];
   offset?: number;
-}): Promise<TranslatorInterpreterListItemGetObject[]> {
+}
+
+type Options = FindPublishedTranslatorsInterpretersOptions;
+
+export async function findPublishedTranslatorsInterpretersPerCountry(
+  props: Options
+): Promise<TranslatorInterpreterListItemGetObject[]> {
   if (props.countryName === undefined) {
     throw new Error("Country name is missing");
   }
-  const offset = props.offset ?? 0;
+
+  const {
+    region,
+    servicesProvided = ["translation", "interpretation"],
+    languagesProvided,
+    interpreterServices = [],
+    translationSpecialties = [],
+    offset = 0,
+  } = props;
+
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
 
-  if (props.languagesProvided) {
+  if (languagesProvided) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'languagesProvided'))) && ARRAY ${JSON.stringify(
-        props.languagesProvided
+        languagesProvided
       ).replace(/"/g, "'")}`
     );
   }
-  if (props.servicesProvided && props.servicesProvided.length > 0 && !props.servicesProvided.includes("all")) {
+  if (servicesProvided) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'servicesProvided'))) && ARRAY ${JSON.stringify(
-        props.servicesProvided
+        ["translation"]
       ).replace(/"/g, "'")}`
     );
   }
-  if (props.interpreterServices && !props.interpreterServices?.includes("all")) {
+  if (!interpreterServices.includes("all") && interpreterServices.length > 0) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(
-        props.interpreterServices
+        interpreterServices
       ).replace(/"/g, "'")}`
     );
   }
-  if (props.translationSpecialties && !props.translationSpecialties?.includes("all")) {
+  if (!translationSpecialties.includes("all") && translationSpecialties.length > 0) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
-        props.translationSpecialties
+        translationSpecialties
       ).replace(/"/g, "'")}`
     );
   }
@@ -54,13 +69,13 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
   try {
     const fromGeoPoint = await getPlaceGeoPoint({
       countryName,
-      text: props.region,
+      text: region,
     });
 
     const query = fetchPublishedListItemQuery({
       type: ServiceType.translatorsInterpreters,
       countryName,
-      region: props.region,
+      region: region,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
       offset,

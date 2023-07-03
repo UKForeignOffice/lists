@@ -14,7 +14,7 @@ import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
-import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import type { TranslatorInterpreterListItemGetObject, CountryName } from "server/models/types";
 import {
   getLanguageNames,
   cleanTranslatorInterpreterServices,
@@ -28,6 +28,11 @@ import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import type { countriesList } from "server/services/metadata";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import querystring from "querystring";
+import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseServices";
+import { sanitiseLanguages } from "server/components/lists/find/helpers/sanitiseLanguages";
+import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
+import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -67,28 +72,25 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
   };
 }
 
-export async function searchTranslatorsInterpreters(req: Request, res: Response): Promise<void> {
+export async function searchTranslatorsInterpreters(req: Request, res: Response) {
   const params = getAllRequestParams(req);
   const { serviceType, country, region, print = "no" } = params;
-  let { page = "1" } = params;
-  page = page !== "" ? page : "1";
+  const page = params.page || 1;
 
   const pageNum = parseInt(page);
   params.page = pageNum.toString();
 
   if (!country) {
-    const query = new URLSearchParams(req.query as Record<string, string>);
-    res.redirect(`${listsRoutes.finder}?${query.toString()}`);
+    const query = querystring.encode(req.query as Record<string, string>);
+    res.redirect(`${listsRoutes.finder}/country?${query}`);
     return;
   }
 
-  let languageNamesProvided;
-  let serviceNamesProvided;
   let servicesProvided;
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
-  let filterProps: {
-    countryName: typeof countriesList[number]["value"] | undefined;
+  const filterProps: {
+    countryName?: string;
     region?: string;
     servicesProvided: string[] | undefined;
     languagesProvided: string[] | undefined;
@@ -96,78 +98,20 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     translationSpecialties: string[] | undefined;
     offset: number;
   } = {
-    countryName: undefined,
-    region: "",
-    servicesProvided: [],
-    languagesProvided: [],
-    interpreterServices: [],
-    translationSpecialties: [],
+    countryName: validateCountry(country),
+    region: decodeURIComponent(region),
+    servicesProvided: sanitiseServices(params.services),
+    languagesProvided: sanitiseLanguages(params.languages),
+    interpreterServices: sanitiseInterpretationTypes(params.interpreterTypes),
+    translationSpecialties: sanitiseTranslationTypes(params.translationTypes),
     offset: -1,
   };
 
   try {
-    const countryName = validateCountry(country);
-
-    servicesProvided = parseListValues("servicesProvided", params);
-    if (servicesProvided != null) {
-      servicesProvided = cleanTranslatorInterpreterServices(servicesProvided);
-    }
-
-    let translationSpecialties = parseListValues("translationSpecialties", params);
-    if (translationSpecialties != null) {
-      translationSpecialties = cleanTranslatorSpecialties(translationSpecialties);
-    }
-
-    let interpreterServices = parseListValues("interpreterServices", params);
-    if (interpreterServices != null) {
-      interpreterServices = cleanInterpreterServices(interpreterServices);
-    }
-
-    let languagesProvidedArray = parseListValues("languagesProvided", params);
-    if (languagesProvidedArray != null) {
-      languagesProvidedArray = cleanLanguagesProvided(languagesProvidedArray);
-    }
-
-    if (languagesProvidedArray) {
-      const cleanedLanguagesProvided = getLanguageNames(languagesProvidedArray.join(","));
-      params.languagesProvided = cleanedLanguagesProvided ?? undefined;
-
-      // populate filtered language names
-      languageNamesProvided = cleanedLanguagesProvided
-        ?.split(",")
-        .map((language: string) => {
-          return metaData.languages[language];
-        })
-        .join(", ");
-    }
-
-    if (servicesProvided) {
-      serviceNamesProvided = servicesProvided.map((service) => {
-        if (service.includes("all")) {
-          return camelCase(service);
-        }
-        const serviceName = metaData.translationInterpretationServices.find(
-          (metaDataService) => metaDataService.value.toLowerCase() === service
-        )?.value;
-        return camelCase(serviceName);
-      });
-    }
-
-    filterProps = {
-      countryName: country,
-      region,
-      servicesProvided,
-      languagesProvided: languagesProvidedArray,
-      interpreterServices,
-      translationSpecialties,
-      offset: -1,
-    };
-
-    if (countryName) {
-      allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
-    }
+    allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
   } catch (e) {
-    logger.error(`searchTranslatorsInterpreters: ${e.message}. Using these search params ${JSON.stringify(params)}`);
+    // continue with empty allRows[]
+    logger.error(`Exception searching for translators or interpreters`, e);
   }
 
   const count = allRows.length;
@@ -210,24 +154,17 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     ...(await getLinksOfRelatedLists(country, serviceType!)),
   ];
 
-  res.render("lists/results-page", {
-    ...DEFAULT_VIEW_PROPS,
-    ...params,
+  return {
     resultsTitle: makeResultsTitle(country, servicesProvided ?? []),
     searchResults: results,
     hasSworn: hasSworn(results),
     filterProps,
-    removeQueryParameter,
-    getParameterValue,
-    languageNamesProvided,
-    serviceNamesProvided,
     queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
     limit: ROWS_PER_PAGE,
     offset,
     pagination,
     print,
-    csrfToken: getCSRFToken(req),
     relatedLinks,
-  });
+  };
 }

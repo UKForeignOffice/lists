@@ -11,8 +11,8 @@
     {% if languagesRows and languagesRows.rows.length > 0 %}
       {{ govukSummaryList(languagesRows) }}
       <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button" name="continue">Continue</button>
-        <a class="govuk-button govuk-button--secondary" href="../languages?{{ queryString }}">Add another</a>
+        <a class="govuk-button govuk-button" href="../types?{{ query }}">Continue</a>
+        <a class="govuk-button govuk-button--secondary" href="../languages?{{ query }}">Add another</a>
       </div>
 
     {% endif %}
