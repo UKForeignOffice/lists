@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { URLSearchParams } from "url";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/funeral-directors/repatriation", {
@@ -17,13 +16,7 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers = {
-    ...req.session.answers,
-    repatriation,
-  };
+  req.session.answers!.funeralDirectors.repatriation = repatriation === "yes";
 
-  // @ts-ignore
-  const query = new URLSearchParams({ ...req.query, repatriation });
-
-  res.redirect(`country?${query.toString()}`);
+  res.redirect("country");
 }

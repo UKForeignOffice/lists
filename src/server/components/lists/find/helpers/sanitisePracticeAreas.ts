@@ -10,6 +10,9 @@ export function sanitisePracticeAreas(practiceAreas: string | string[]): string[
     practiceAreasAsArray = decodeURIComponent(practiceAreas).split(",");
   }
 
-  const { value = [] } = validPracticeAreas.validate(practiceAreasAsArray, { stripUnknown: { arrays: true } });
+  const { value = [] } = validPracticeAreas.validate(practiceAreasAsArray, {
+    stripUnknown: { arrays: true },
+    covert: true,
+  });
   return value;
 }

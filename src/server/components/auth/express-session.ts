@@ -9,6 +9,7 @@ import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import type { RelatedLink } from "shared/types";
+import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -16,6 +17,37 @@ const FOUR_HOURS = 4 * ONE_HOUR;
 const ONE_DAY = 24 * ONE_HOUR;
 const SECRET_NAME = "SESSION_SECRET";
 
+interface FuneralDirectorAnswers {
+  practiceAreas: string[];
+  repatriation: boolean;
+  insurance: boolean;
+  serviceType: "funeral-directors";
+}
+
+interface TranslatorsInterpretersAnswers {
+  languages: string[];
+  languagesReadable: string[];
+  services: Array<"translation" | "interpretation">;
+  interpretationTypes: string[];
+  translationTypes: string[];
+}
+
+interface LawyersAnswers {
+  practiceAreas: string[];
+  serviceType: "lawyers";
+}
+
+interface BaseAnswers {
+  country: string;
+  region?: string;
+  notice?: boolean;
+  disclaimer?: boolean;
+}
+
+type Answers = BaseAnswers &
+  Partial<FuneralDirectorAnswers> &
+  Partial<TranslatorsInterpretersAnswers> &
+  Partial<LawyersAnswers>;
 declare module "express-session" {
   export interface SessionData {
     returnTo?: string;
@@ -25,23 +57,9 @@ declare module "express-session" {
     };
     currentUrl?: string;
     updatesRequired?: boolean;
-
     relatedLink?: RelatedLink;
 
-    answers: {
-      /**
-       * Store un-encoded values here.
-       */
-      country?: string;
-      region?: string | string[];
-      practiceAreas?: string;
-      disclaimer?: boolean;
-      urlSafeCountry?: string;
-      notice?: boolean;
-      reparation?: string;
-      insurance?: string;
-      repatriation?: string;
-    };
+    answers: Answers;
   }
 }
 

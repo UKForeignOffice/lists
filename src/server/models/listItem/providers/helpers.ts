@@ -217,21 +217,15 @@ export function getLanguageNames(languagesProvided: string): string | undefined 
   return languagesProvided;
 }
 
-export function getLanguagesRows(languagesProvided: string[], queryString: string, path = "languages"): LanguageRows {
+export function getLanguagesRows(languagesProvided: string[], path = "languages"): LanguageRows {
   if (!languagesProvided) {
     const languageRows: LanguageRows = { rows: [] };
     return languageRows;
   }
 
-  const query = querystring.decode(queryString);
-
   const rows: LanguageRow[] = languagesProvided.map((language: string) => {
     // @ts-ignore
     const languageName: string = languages[language];
-    const queryStringWithRemovedLanguage = querystring.encode({
-      ...query,
-      languages: languagesProvided.filter((langProvided) => langProvided !== language),
-    });
 
     const languageRow: LanguageRow = {
       key: {
@@ -245,7 +239,7 @@ export function getLanguagesRows(languagesProvided: string[], queryString: strin
       actions: {
         items: [
           {
-            href: `?${queryStringWithRemovedLanguage}`,
+            href: `?remove=${language}`,
             text: "Remove",
             visuallyHiddenText: language,
             classes: "govuk-link--no-visited-state",

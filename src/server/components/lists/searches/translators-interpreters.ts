@@ -1,32 +1,13 @@
 import type { Request, Response } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { DEFAULT_VIEW_PROPS } from "../constants";
-import {
-  getServiceLabel,
-  getAllRequestParams,
-  removeQueryParameter,
-  getParameterValue,
-  queryStringFromParams,
-  parseListValues,
-  getLinksOfRelatedLists,
-} from "../helpers";
+import { getServiceLabel, getAllRequestParams, queryStringFromParams, getLinksOfRelatedLists } from "../helpers";
 import { QuestionName } from "../types";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
-import type { TranslatorInterpreterListItemGetObject, CountryName } from "server/models/types";
-import {
-  getLanguageNames,
-  cleanTranslatorInterpreterServices,
-  cleanTranslatorSpecialties,
-  cleanInterpreterServices,
-  cleanLanguagesProvided,
-  validateCountry,
-} from "server/models/listItem/providers/helpers";
-import { camelCase } from "lodash";
+import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
+import { validateCountry } from "server/models/listItem/providers/helpers";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
-import type { countriesList } from "server/services/metadata";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
 import querystring from "querystring";
 import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseServices";

@@ -14,11 +14,10 @@ export async function get(req: Request, res: Response) {
    * set `session.answers` if user landed on results page directly
    */
   req.session.answers = {
-    ...req.session.answers,
     country,
     region: decodeURIComponent(region as string),
-    practiceAreas: sanitisePracticeAreas(req.query["practice-area"] as string).toString(),
-    repatriation: req.query.repatriation as string,
+    practiceAreas: sanitisePracticeAreas(req.query["practice-area"] as string),
+    repatriation: req.query.repatriation === "yes",
   };
 
   res.locals.answers = {

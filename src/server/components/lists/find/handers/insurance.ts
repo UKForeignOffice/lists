@@ -15,14 +15,11 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers.insurance = insurance;
-
-  // @ts-ignore
-  const query = new URLSearchParams({ ...req.query, insurance });
-
+  req.session.answers.insurance = insurance === "yes";
+  console.log(insurance);
   if (insurance === "yes") {
     res.redirect(`insurance/contact-insurance`);
     return;
   }
-  res.redirect(`insurance/repatriation?${query.toString()}`);
+  res.redirect(`repatriation`);
 }
