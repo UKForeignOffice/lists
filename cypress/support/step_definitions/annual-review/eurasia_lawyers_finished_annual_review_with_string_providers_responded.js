@@ -1,7 +1,7 @@
 import { addYears, startOfToday, subMonths, subWeeks } from "date-fns";
 
 const today = startOfToday();
-const publishedDate = subMonths(today, 1);
+const publishedDate = subWeeks(today, 6);
 
 When("eurasia lawyers finished annual review and {string} providers responded", async (respondants) => {
   await setAnnualReview();
@@ -114,6 +114,11 @@ async function createListUnpublishedItem() {
             {
               type: "UNPUBLISHED",
               time: today,
+              jsonData: {},
+            },
+            {
+              type: "ANNUAL_REVIEW_STARTED",
+              time: publishedDate,
               jsonData: {},
             },
             {
