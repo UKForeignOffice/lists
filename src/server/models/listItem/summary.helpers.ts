@@ -291,7 +291,7 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   }
 
   const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, endOfAnnualReview);
-  const listItems = await findListItemsUsedForAnnualReview(id!, endOfAnnualReview);
+  const listItems = await findListItemsUsedForAnnualReview(id!, lastAnnualReviewStartDate);
   const formattedEndDate = DateFns.format(endOfAnnualReview, "dd MMMM");
   const responseText = {
     someResponded: `${totalUnpublished} service ${pluralize(
@@ -376,17 +376,7 @@ async function findListItemsUsedForAnnualReview(listId: number, lastAnnualReview
               some: {
                 type: "ANNUAL_REVIEW_STARTED",
                 time: {
-                  lte: lastAnnualReviewStartDate,
-                },
-              },
-            },
-          },
-          {
-            history: {
-              some: {
-                type: "PUBLISHED",
-                time: {
-                  lte: lastAnnualReviewStartDate,
+                  gte: lastAnnualReviewStartDate,
                 },
               },
             },
@@ -396,7 +386,7 @@ async function findListItemsUsedForAnnualReview(listId: number, lastAnnualReview
     });
     return { results };
   } catch (error) {
-    logger.error(`findListItemsUsedForAnnualReview Error ${(error as Error).stack}`);
+    logger.error(`findListItemsUsedForAnnualReview Error ${(error as Error).message}`);
     return { error: "Unable to get list items used for annual review" };
   }
 }
