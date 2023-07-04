@@ -42,8 +42,8 @@ export async function post(req: Request, res: Response) {
     return;
   }
 
-  if (req.session.answers?.disclaimer) {
-    res.redirect(`${safe}/result${queryString}`);
+  if (req.query.return === "results") {
+    res.redirect("result");
     return;
   }
 

@@ -12,6 +12,7 @@ export function loadQueryParametersIntoSession(req: Request, res: Response, next
   req.session.answers = {
     region: region as string,
     country: country as string,
+    disclaimer: true,
   };
 
   if (serviceType === "funeralDirectors") {

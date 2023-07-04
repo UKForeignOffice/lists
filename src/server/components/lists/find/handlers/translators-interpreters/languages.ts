@@ -41,5 +41,10 @@ export function post(req: Request, res: Response) {
     return;
   }
 
+  if (req.query.return === "results") {
+    res.redirect("result");
+    return;
+  }
+
   res.redirect(`languages/summary`);
 }

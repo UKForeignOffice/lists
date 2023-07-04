@@ -12,7 +12,7 @@
     <p class="govuk-body">
       Location<br />
       <strong>{{ _.upperFirst(answers.region) if answers.region else "Not supplied" }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region?return=results" aria-label="Change country's area answer">
         Change
       </a>
       {% endif %}
@@ -25,7 +25,7 @@
     <p class="govuk-body">
       Country<br />
       <strong>{{ countryAnswer }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country?{{ queryString }}" aria-label="Change country answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country?return=results" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if serviceType === 'lawyers' %}
@@ -33,24 +33,23 @@
       <p class="govuk-body">
         Areas of law<br />
         <strong>{{ _.split(answers.practiceAreas, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-        <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/practice-areas?{{ removeQueryParameter(queryString, 'practice-area') }}" aria-label="Change area of law answer">Change</a>{% endif %}
+        <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/practice-areas?return=results" aria-label="Change area of law answer">Change</a>{% endif %}
       </p>
     {% endif %}
   {% endif %}
   {% if serviceType === 'funeral-directors' %}
 
     {% if answers.repatriation or isResultsPage %}
-      {% set repatriationAnswer = answers.repatriation if answers.repatriation else "No" %}
 
       <p class="govuk-body">
         Repatriation needed<br />
         <strong>
-          {{ _.startCase(answers.repatriation) }}
+          {{ _.startCase("Yes" if answers.repatriation else "No") }}
         </strong>
         {% if print !== "yes" %}
           <a
             class="govuk-link noprint"
-            href="/find/{{ serviceType }}/repatriation?{{ removeQueryParameter(queryString, 'repatriation') }}"
+            href="/find/{{ serviceType }}/repatriation?return=results"
             aria-label="Change repatriation answer"
           >Change</a>
         {% endif %}
@@ -59,9 +58,9 @@
     {% if answers.insurance or isResultsPage %}
       <p class="govuk-body">
         Has insurance<br />
-        <strong> {{ _.startCase(answers.insurance) }} </strong>
+        <strong> {{ _.startCase("Yes" if answers.insurance else "No") }} </strong>
         {% if print !== "yes" %}
-          <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'insurance') }}" aria-label="Change has insurance answer">Change</a>
+          <a class="govuk-link noprint" href="/find/{{ serviceType }}/insurance?return=results" aria-label="Change has insurance answer">Change</a>
         {% endif %}
       </p>
     {% endif %}
@@ -72,28 +71,28 @@
     <p class="govuk-body">
       Services needed<br />
       <strong>{{ answers.services.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services" aria-label="Change what services do you need answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services?return=results" aria-label="Change what services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.languages or isResultsPage %}
     <p class="govuk-body">
       Languages needed<br />
       <strong>{{ answers.languagesReadable.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages" aria-label="Change has insurance answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages?return=results" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.translationTypes or isResultsPage %}
     <p class="govuk-body">
       Translation types<br />
       <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation?return=results" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.interpretationTypes or isResultsPage %}
     <p class="govuk-body">
       Interpretation types<br />
       <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation?return=results" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
 {% endif %}

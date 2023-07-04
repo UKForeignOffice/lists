@@ -21,7 +21,6 @@
   <form class="form" method="post">
 
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-    <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
       {{ govukRadios({
         name: "insurance",
         fieldset: {
@@ -46,7 +45,6 @@
           }
         ]
       }) }}
-    </div>
     <button class="govuk-button" data-module="govuk-button">Continue</button>
   </form>
 

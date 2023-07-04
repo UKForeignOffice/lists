@@ -1,11 +1,7 @@
-import Joi from "joi";
-import { interpretationServices } from "server/services/metadata";
+import { translatorsInterpretersSchema } from "./translatorsInterpretersSchema";
 
-const validInterpretationTypes = Joi.array()
-  .items("all", ...interpretationServices.map((type) => type.value))
-  .single();
-export function sanitiseInterpretationTypes(practiceAreas: string | string[]): string[] {
-  const { value = [] } = validInterpretationTypes.validate(practiceAreas, {
+export function sanitiseInterpretationTypes(interpretationTypes: string | string[]): string[] {
+  const { value = [] } = translatorsInterpretersSchema.extract("interpretationTypes").validate(interpretationTypes, {
     stripUnknown: { arrays: true },
     convert: true,
   });

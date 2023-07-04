@@ -69,14 +69,11 @@ findRouter.param("country", (req: Request, res: Response, next: NextFunction, co
 findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction, serviceType) => {
   const sessionAnswers = req.session.answers ?? {};
 
-  const answers = {
-    region: req.query.region ?? "",
-    practiceAreas: sessionAnswers.practiceAreas ?? sanitisePracticeAreas(req.query["practice-area"] as string),
-    repatriation: sessionAnswers.repatriation ?? req.query.repatriation,
-    insurance: sessionAnswers.insurance ?? req.query.insurance,
-  };
+  if (req.query.country) {
+    req.session.answers.country = req.query.country;
+  }
 
-  res.locals.answers = answers;
+  res.locals.answers = req.session.answers;
   res.locals.serviceType = serviceType;
 
   next();

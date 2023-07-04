@@ -46,6 +46,11 @@ export function post(req: Request, res: Response) {
   req.session.answers.translationTypes = translationTypes;
   req.session.answers.interpretationTypes = interpretationTypes;
 
+  if (req.query.return === "results") {
+    res.redirect("result");
+    return;
+  }
+
   res.redirect("disclaimer");
 }
 

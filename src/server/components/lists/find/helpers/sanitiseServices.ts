@@ -1,9 +1,8 @@
-import Joi from "joi";
 import type { ParsedQs } from "qs";
+import { translatorsInterpretersSchema } from "./translatorsInterpretersSchema";
 
-const validPracticeAreas = Joi.array().items("translation", "interpretation").single();
-export function sanitiseServices(practiceAreas: string | ParsedQs | string[] | ParsedQs[] = []): string[] {
-  const { value = [] } = validPracticeAreas.validate(practiceAreas, {
+export function sanitiseServices(services: string | ParsedQs | string[] | ParsedQs[] = []): string[] {
+  const { value = [] } = translatorsInterpretersSchema.extract("services").validate(services, {
     stripUnknown: { arrays: true },
     convert: true,
   });

@@ -16,7 +16,12 @@ export function post(req: Request, res: Response) {
   }
 
   req.session.answers.insurance = insurance === "yes";
-  console.log(insurance);
+
+  if (req.query.return === "results") {
+    res.redirect("result");
+    return;
+  }
+
   if (insurance === "yes") {
     res.redirect(`insurance/contact-insurance`);
     return;

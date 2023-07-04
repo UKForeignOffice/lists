@@ -24,6 +24,11 @@ export function post(req: Request, res: Response) {
     region,
   };
 
+  if (req.query.return === "results") {
+    res.redirect("result");
+    return;
+  }
+
   if (req.session.answers?.disclaimer === true) {
     res.redirect(`result?${queryString}`);
     return;

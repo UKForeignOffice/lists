@@ -2,6 +2,10 @@ import type { Request, Response } from "express";
 import querystring from "querystring";
 
 export function get(req: Request, res: Response) {
+  if (req.session.answers?.disclaimer) {
+    res.redirect("result");
+    return;
+  }
   res.render("lists/find/disclaimer");
 }
 

@@ -259,6 +259,14 @@ export function validateCountry(countryName: string): string | undefined {
   return matchingCountryName;
 }
 
+export function validateCountryLower(countryName: string): string | undefined {
+  const matchingCountryName = countriesList.find(
+    (country) => country.value.toLowerCase() === countryName.toLowerCase()
+  )?.value;
+  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
+  return matchingCountryName;
+}
+
 export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined = []): string[] {
   const lowercasedPracticeAreas = practiceAreas.map((area) => area.toLowerCase());
   const lowercasedAllLegalPracticeAreas: string[] = legalPracticeAreasList.map((area) => area.toLowerCase());

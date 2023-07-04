@@ -279,7 +279,7 @@ export async function getLinksOfRelatedLists(
   return relatedLinkOptions
     .filter((link) => serviceType !== link.type)
     .map(({ text, url, type }) => {
-      const countryParam = `/${countryName}`;
+      const countryParam = `?country=${countryName}`;
       const relatedListExists = existingListTypes.includes(type);
       return {
         text,

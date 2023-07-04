@@ -5,7 +5,7 @@ import { QuestionName } from "../types";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
 import type { CountryName, TranslatorInterpreterListItemGetObject } from "server/models/types";
-import { validateCountry } from "server/models/listItem/providers/helpers";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
@@ -60,17 +60,11 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   const { print = "no", page = 1 } = req.query;
   const pageNum = parseInt(page as string);
 
-  if (!country) {
-    const query = querystring.encode(req.query as Record<string, string>);
-    res.redirect(`${listsRoutes.finder}/${answers?.serviceType}?country=${query}`);
-    return;
-  }
-
   let servicesProvided;
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
   const filterProps = {
-    countryName: validateCountry(country),
+    countryName: validateCountryLower(country),
     region: decodeURIComponent(answers.region ?? ""),
     servicesProvided: sanitiseServices(answers.services),
     languagesProvided: sanitiseLanguages(answers.languages),
@@ -87,7 +81,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   }
 
   const count = allRows.length;
-
+  console.log(2);
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
@@ -98,6 +92,8 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   filterProps.offset = offset;
 
   if (allRows.length > 0) {
+    searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
+    console.log(searchResults);
     searchResults = allRows.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
         listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map(
@@ -126,6 +122,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   ];
 
   return {
+    resultsTitle: makeResultsTitle(country, filterProps.servicesProvided),
     searchResults: results,
     hasSworn: hasSworn(results),
     filterProps,
@@ -137,3 +134,4 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     relatedLinks,
   };
 }
+// http://localhost:3000/results?serviceType=translatorsInterpreters&readNotice=ok&country=poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&readDisclaimer=ok
