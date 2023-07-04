@@ -61,6 +61,11 @@ async function createListPublishedItem() {
         history: {
           create: [
             {
+              type: "ANNUAL_REVIEW_STARTED",
+              time: publishedDate,
+              jsonData: {},
+            },
+            {
               type: "PUBLISHED",
               time: publishedDate,
               jsonData: {},

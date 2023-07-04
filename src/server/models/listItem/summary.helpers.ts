@@ -5,7 +5,6 @@ import * as DateFns from "date-fns";
 import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
-import { findListItems } from ".";
 import { logger } from "server/services/logger";
 import pluralize from "pluralize";
 
@@ -292,7 +291,7 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   }
 
   const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, endOfAnnualReview);
-  const listItems = await findListItems({ listIds: [id!] });
+  const listItems = await findListItemsUsedForAnnualReview(id!, endOfAnnualReview);
   const formattedEndDate = DateFns.format(endOfAnnualReview, "dd MMMM");
   const responseText = {
     someResponded: `${totalUnpublished} service ${pluralize(
@@ -308,7 +307,7 @@ export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) 
   return {
     annualReviewComplete: {
       totalUnpublishedListItems: totalUnpublished,
-      allUnpublished: totalUnpublished === listItems.result!.length,
+      allUnpublished: totalUnpublished === listItems.results!.length,
       endOfAnnualReview: formattedEndDate,
       responseText,
     },
@@ -363,5 +362,41 @@ async function findListItemsUnpublishedByAR(listId: number, endOfAnnualReview: D
     logger.error(`findListItemsUnpublishedByAR Error ${e.message}`);
 
     throw new Error(`Failed to find list items`);
+  }
+}
+
+async function findListItemsUsedForAnnualReview(listId: number, lastAnnualReviewStartDate: Date) {
+  try {
+    const results = await prisma.listItem.findMany({
+      where: {
+        listId,
+        AND: [
+          {
+            history: {
+              some: {
+                type: "ANNUAL_REVIEW_STARTED",
+                time: {
+                  lte: lastAnnualReviewStartDate,
+                },
+              },
+            },
+          },
+          {
+            history: {
+              some: {
+                type: "PUBLISHED",
+                time: {
+                  lte: lastAnnualReviewStartDate,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+    return { results };
+  } catch (error) {
+    logger.error(`findListItemsUsedForAnnualReview Error ${(error as Error).stack}`);
+    return { error: "Unable to get list items used for annual review" };
   }
 }
