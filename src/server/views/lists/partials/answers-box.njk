@@ -7,7 +7,7 @@
 
   {% set region = answers.region if answers.region else "Not supplied" %}
   {% if answers.region or answers.region === "" or isResultsPage %}
-  {% set returnParam = "{{ returnParam }}" if isAnswersPage else "" %}
+  {% set returnParam = "?return=results" if isResultsPage else "" %}
     <p class="govuk-body">
       Location<br />
       <strong>{{ _.upperFirst(answers.region) if answers.region else "Not supplied" }}</strong>{% if print !== "yes" %}
@@ -66,10 +66,11 @@
   {% endif %}
 
 {% if serviceType === 'translators-interpreters' %}
+  {% set services = answers.services if answers.services else [] %}
   {% if answers.services or isResultsPage %}
     <p class="govuk-body">
       Services needed<br />
-      <strong>{{ answers.services.join(", ") }}</strong>{% if print !== "yes" %}
+      <strong>{{ services.join(", ") }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services{{ returnParam }}" aria-label="Change what services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
@@ -80,19 +81,23 @@
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages{{ returnParam }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
-  {% if answers.translationTypes or isResultsPage %}
-    <p class="govuk-body">
-      Translation types<br />
-      <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation{{ returnParam }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
-    </p>
+  {% if services.includes('translation') %}
+    {% if answers.translationTypes or isResultsPage %}
+      <p class="govuk-body">
+        Translation types<br />
+        <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+        <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation{{ returnParam }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
+      </p>
+    {% endif %}
   {% endif %}
-  {% if answers.interpretationTypes or isResultsPage %}
-    <p class="govuk-body">
-      Interpretation types<br />
-      <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation{{ returnParam }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
-    </p>
+  {% if services.includes('interpretation') %}
+    {% if answers.interpretationTypes  or isResultsPage %}
+      <p class="govuk-body">
+        Interpretation types<br />
+        <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+        <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation{{ returnParam }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
+      </p>
+    {% endif %}
   {% endif %}
 {% endif %}
   {% if print !== "yes" and country %}

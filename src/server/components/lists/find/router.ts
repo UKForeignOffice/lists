@@ -8,22 +8,13 @@ import { getParameterValue, removeQueryParameter } from "server/components/lists
 import Joi from "joi";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
-import querystring from "querystring";
 import { checkIncompleteState } from "./middleware/checkIncompleteState";
 
 export const findRouter = express.Router();
 
-findRouter.post("*", (req: Request, res: Response, next: NextFunction) => {
+findRouter.all("*", (req: Request, res: Response, next: NextFunction) => {
   req.session.answers ??= {};
   res.locals.csrfToken = req?.csrfToken?.() ?? "";
-  next();
-});
-
-findRouter.get("*", (req: Request, res: Response, next: NextFunction) => {
-  res.locals.path = req.path;
-  req.session.answers ??= {};
-  res.locals.csrfToken = req?.csrfToken?.() ?? "";
-
   next();
 });
 
@@ -67,10 +58,8 @@ findRouter.param("country", (req: Request, res: Response, next: NextFunction, co
 });
 
 findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction, serviceType) => {
-  const sessionAnswers = req.session.answers ?? {};
-
   if (req.query.country) {
-    req.session.answers.country = req.query.country;
+    req.session.answers!.country = req.query.country as string;
   }
 
   res.locals.answers = req.session.answers;
@@ -87,9 +76,6 @@ findRouter.post("/:serviceType/country", handlers.country.post);
 findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFunction) => {
   const { serviceType } = req.params;
   res.locals.answers = req.session.answers;
-
-  const query = querystring.encode(req.query);
-  res.locals.queryString = query;
   res.locals.serviceType = serviceType;
 
   next();

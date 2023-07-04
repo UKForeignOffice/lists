@@ -25,7 +25,7 @@ export async function searchLawyers(req: Request) {
 
   let allRows: LawyerListItemGetObject[] = [];
 
-  const { practiceAreas } = req.session.answers;
+  const { practiceAreas } = req.session.answers!;
 
   try {
     allRows = await LawyerListItem.findPublishedLawyersPerCountry({
@@ -63,7 +63,7 @@ export async function searchLawyers(req: Request) {
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country, serviceType!)),
+    ...(await getRelatedLinks(country as CountryName, serviceType!)),
     ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
   ];
 

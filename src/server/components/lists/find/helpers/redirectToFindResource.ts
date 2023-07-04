@@ -21,7 +21,6 @@ export async function redirectToFindResource(req: Request, res: Response, next: 
     res.redirect(redirectIfEmptyList);
     return;
   }
-  console.log("redirecting to result");
 
   res.redirect(`/find/${serviceType}/${encodeURIComponent(country)}/result`);
 }

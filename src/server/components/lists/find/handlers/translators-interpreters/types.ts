@@ -8,15 +8,22 @@ import querystring from "querystring";
 export function get(req: Request, res: Response) {
   const services = req.session.answers?.services ?? [];
 
+  if (!services.length) {
+    res.redirect("services");
+    return;
+  }
+
   res.render("lists/find/translators-interpreters/types.njk", {
     ...(services.includes("translation") && {
       translationTypes: {
         items: TranslationTypesItemsVM(),
+        values: req.session.answers?.translationTypes ?? [],
       },
     }),
     ...(services.includes("interpretation") && {
       interpretationTypes: {
         items: InterpretationTypesItemsVM(),
+        values: req.session.answers?.interpretationTypes ?? [],
       },
     }),
   });
@@ -33,7 +40,7 @@ export function post(req: Request, res: Response) {
     req.flash("error-translation", "Select at least one type of translation");
   }
 
-  if (services.includes("interpretation") && translationTypes.length === 0) {
+  if (services.includes("interpretation") && interpretationTypes.length === 0) {
     shouldRedirectToTypes = true;
     req.flash("error-interpretation", "Select at least one situation you need an interpreter for");
   }

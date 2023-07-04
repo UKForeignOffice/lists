@@ -81,7 +81,6 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   }
 
   const count = allRows.length;
-  console.log(2);
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
@@ -93,7 +92,6 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
 
   if (allRows.length > 0) {
     searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
-    console.log(searchResults);
     searchResults = allRows.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
         listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map(

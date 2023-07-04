@@ -12,7 +12,7 @@ const validReadableLanguages = Joi.array()
   .items(...languageValues)
   .single();
 
-const validServices = Joi.array().items("translation", "interpretation").single();
+const validServices = Joi.array().items("translation", "interpretation").single().min(1);
 
 const validInterpretationTypes = Joi.array()
   .items("all", ...interpretationServices.map((type) => type.value))
@@ -23,9 +23,17 @@ const validTranslationTypes = Joi.array()
   .single();
 
 export const translatorsInterpretersSchema = Joi.object({
-  languages: validLanguages,
-  languageReadable: validReadableLanguages,
-  services: validServices,
-  interpretationTypes: validInterpretationTypes,
-  translationTypes: validTranslationTypes,
+  languages: validLanguages.required(),
+  languagesReadable: validReadableLanguages.required(),
+  services: validServices.required(),
+  interpretationTypes: Joi.when("$services", {
+    is: Joi.array().items("translation").only(),
+    then: validInterpretationTypes.optional(),
+    otherwise: validInterpretationTypes.required(),
+  }),
+  translationTypes: validTranslationTypes.when("$services", {
+    is: Joi.array().items("interpretation").only(),
+    then: validInterpretationTypes.optional(),
+    otherwise: validTranslationTypes.required(),
+  }),
 });
