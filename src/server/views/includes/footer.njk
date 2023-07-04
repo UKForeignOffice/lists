@@ -1,3 +1,11 @@
+{% set contactUsURL %}
+    {% if currentLocation %}
+        {{ "/complain/provider-complaint/form" if 'find' in currentLocation else "/application/provider-contact" }}
+    {% else %}
+        "/application/provider-contact"
+    {% endif %}
+{% endset %}
+
 {{ govukFooter({
     meta: {
         items: [
@@ -22,7 +30,7 @@
                 text: 'Sitemap'
             },
             {
-                href: '/application/provider-contact',
+                href: contactUsURL,
                 text: 'Contact Us'
             }
         ]

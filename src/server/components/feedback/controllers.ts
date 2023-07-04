@@ -26,6 +26,7 @@ export async function feedbackIngest(req: Request, res: Response) {
 
 function formatMessage(webhookData: WebhookData) {
   const data: string[] = [];
+  const isComplaintForm = webhookData.name.includes("complaint");
 
   let serviceType = "";
   let country = "";
@@ -50,7 +51,7 @@ function formatMessage(webhookData: WebhookData) {
     `);
   });
 
-  const emailSubject = `${serviceType} in ${country} contact form`;
+  const emailSubject = `${serviceType} in ${country} ${isComplaintForm ? "complaint" : "contact"} form`;
 
   return {
     emailSubject,

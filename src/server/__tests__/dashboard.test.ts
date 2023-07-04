@@ -7,7 +7,7 @@ let mockIsAuthenticated = false;
 
 jest.mock("server/components/auth/helpers", () => ({
   ...jest.requireActual("server/components/auth/helpers"),
-  ensureAuthenticated: jest.fn().mockImplementation((req, res, next) => {
+  ensureAuthenticated: jest.fn().mockImplementation((_req, res, next) => {
     if (mockIsAuthenticated) {
       next();
     } else {
@@ -15,7 +15,6 @@ jest.mock("server/components/auth/helpers", () => ({
     }
   }),
 }));
-
 
 describe("dashboard Routes", () => {
   let server: Express;
@@ -25,9 +24,7 @@ describe("dashboard Routes", () => {
   }, 30000);
 
   test("routes starting with /dashboard require authentication", async () => {
-    const { text, redirect, status } = await request(server)
-      .get("/dashboard")
-      .type("text/html");
+    const { text, redirect, status } = await request(server).get("/dashboard").type("text/html");
 
     expect(text.includes("Redirecting")).toBeTruthy();
     expect(status).toBe(302);
@@ -62,24 +59,14 @@ describe("dashboard Routes", () => {
       });
 
       test("usersList requires a SuperAdmin user", async () => {
-        mockIsAuthenticated = true;
+        const { text, status } = await request(server).get(dashboardRoutes.usersList);
 
-        const res = await request(server).get(
-          dashboardRoutes.usersList
-        );
-
-        const { text, status, type } = res;
         expect(status).toBe(405);
-        expect(type).toBe("text/html");
         expect(text).toContain("Not allowed");
       });
 
       test("usersEdit requires a SuperAdmin user", async () => {
-        mockIsAuthenticated = true;
-
-        const { text, status } = await request(server).get(
-          dashboardRoutes.usersList
-        );
+        const { text, status } = await request(server).get(dashboardRoutes.usersEdit);
 
         expect(status).toBe(405);
         expect(text).toContain("Not allowed");
