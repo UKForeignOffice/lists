@@ -15,3 +15,4 @@ Feature:
       | profession | country | city | filters               | found           |
       | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
       | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
+

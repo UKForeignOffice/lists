@@ -2,7 +2,6 @@
 import express from "express";
 import * as Controllers from "./controllers";
 import { listsRoutes } from "./routes";
-import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
 import { findRouter } from "./find/router";

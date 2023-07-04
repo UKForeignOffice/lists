@@ -9,7 +9,6 @@ export async function get(req: Request, res: Response) {
   const { serviceType } = req.params;
 
   res.locals.answers = req.session.answers;
-
   const serviceTypeToSearch: { [key: string]: (req: Request) => any } = {
     lawyers: searchLawyers,
     "funeral-directors": searchFuneralDirectors,

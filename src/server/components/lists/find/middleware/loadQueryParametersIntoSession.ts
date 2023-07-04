@@ -50,19 +50,21 @@ function loadTranslatorsInterpretersQueryParameters(req: Request, res: Response,
     servicesProvided = "",
     languagesProvided = "",
     translationSpecialties = "",
-    interpretationServices = "",
+    interpreterServices = "",
   }: {
     servicesProvided?: string;
     languagesProvided?: string;
     translationSpecialties?: string;
-    interpretationServices?: string;
+    interpreterServices?: string;
   } = req.query;
+
+  console.log(req.query);
 
   const validatedQueryParams = {
     servicesProvided: sanitiseServices(servicesProvided.split(",")),
     languagesProvided: sanitiseLanguages(languagesProvided.split(",")),
     translationSpecialties: sanitiseTranslationTypes(translationSpecialties.split(",")),
-    interpretationServices: sanitiseInterpretationTypes(interpretationServices.split(",")),
+    interpretationServices: sanitiseInterpretationTypes(interpreterServices.split(",")),
   };
 
   req.session.answers = {
@@ -70,19 +72,24 @@ function loadTranslatorsInterpretersQueryParameters(req: Request, res: Response,
     languages: validatedQueryParams.languagesProvided,
     languagesReadable: languageCodesToReadable(validatedQueryParams.languagesProvided),
     interpretationTypes: validatedQueryParams.interpretationServices,
-    translationTypes: validatedQueryParams.interpretationServices,
+    translationTypes: validatedQueryParams.translationSpecialties,
     services: validatedQueryParams.servicesProvided,
     serviceType: "translators-interpreters",
   };
+
+  console.log(req.session.answers);
+  console.log("spec", translationSpecialties, validatedQueryParams.translationSpecialties);
+  console.log("spec2", interpreterServices, validatedQueryParams.interpretationServices);
 
   next();
 }
 
 function loadLawyersQueryParameters(req: Request, res: Response, next: NextFunction) {
   const practiceArea = (req.query.practiceArea ?? "") as string;
-
+  console.log(practiceArea);
   req.session.answers!.practiceAreas = sanitisePracticeAreas(practiceArea.split(","));
   req.session.answers!.serviceType = "lawyers";
+  console.log(req.session.answers);
 
   next();
 }

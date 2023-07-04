@@ -11,7 +11,7 @@ export async function redirectToFindResource(req: Request, res: Response, next: 
   }
 
   if (!country) {
-    res.redirect(`/find/${serviceType}/country`);
+    res.redirect(301, `/find/${serviceType}`);
     return;
   }
 
@@ -22,5 +22,5 @@ export async function redirectToFindResource(req: Request, res: Response, next: 
     return;
   }
 
-  res.redirect(`/find/${serviceType}/${encodeURIComponent(country)}/result`);
+  res.redirect(301, `/find/${serviceType}/${encodeURIComponent(country)}/result`);
 }

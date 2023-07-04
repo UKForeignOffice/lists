@@ -9,8 +9,8 @@
   {% if answers.region or answers.region === "" or isResultsPage %}
   {% set returnParam = "?return=results" if isResultsPage else "" %}
     <p class="govuk-body">
-      Location<br />
-      <strong>{{ _.upperFirst(answers.region) if answers.region else "Not supplied" }}</strong>{% if print !== "yes" %}
+      <span id="location">Location<br /></span>
+      <strong aria-labelledby="location">{{ _.upperFirst(answers.region) if answers.region else "Not supplied" }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region{{ returnParam }}" aria-label="Change country's area answer">
         Change
       </a>
@@ -21,16 +21,16 @@
   {% if answers.country or isResultsPage %}
     {% set countryAnswer = answers.country %}
     <p class="govuk-body">
-      Country<br />
-      <strong>{{ countryAnswer }}</strong>{% if print !== "yes" %}
+      <span id="country">Country<br /></span>
+      <strong aria-labelledby="country">{{ countryAnswer }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/country{{ returnParam }}" aria-label="Change country answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if serviceType === 'lawyers' %}
     {% if answers.practiceAreas or isResultsPage %}
       <p class="govuk-body">
-        Areas of law<br />
-        <strong>{{ _.split(answers.practiceAreas, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
+        <span id="areas-of-law">Areas of law<br /></span>
+        <strong aria-labelledby="areas-of-law">{{ _.split(answers.practiceAreas, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
         <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/practice-areas{{ returnParam }}" aria-label="Change area of law answer">Change</a>{% endif %}
       </p>
     {% endif %}
@@ -40,8 +40,10 @@
     {% if answers.repatriation or isResultsPage %}
 
       <p class="govuk-body">
-        Repatriation needed<br />
-        <strong>
+        <span id="repatriation">
+          Repatriation needed<br />
+        </span>
+        <strong aria-labelledby="repatriation">
           {{ _.startCase("Yes" if answers.repatriation else "No") }}
         </strong>
         {% if print !== "yes" %}
@@ -55,8 +57,10 @@
     {% endif %}
     {% if answers.insurance or isResultsPage %}
       <p class="govuk-body">
-        Has insurance<br />
-        <strong> {{ _.startCase("Yes" if answers.insurance else "No") }} </strong>
+        <span id="insurance">
+          Has insurance<br />
+        </span>
+        <strong aria-labelledby="insurance"> {{ _.startCase("Yes" if answers.insurance else "No") }} </strong>
         {% if print !== "yes" %}
           <a class="govuk-link noprint" href="/find/{{ serviceType }}/insurance{{ returnParam }}" aria-label="Change has insurance answer">Change</a>
         {% endif %}
@@ -68,23 +72,30 @@
   {% set services = answers.services if answers.services else [] %}
   {% if answers.services or isResultsPage %}
     <p class="govuk-body">
-      Services needed<br />
-      <strong>{{ services.join(", ") }}</strong>{% if print !== "yes" %}
+      <span id="services">
+        Services needed<br />
+      </span>
+      <strong aria-labelledby="services">{{ services.join(", ") }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services{{ returnParam }}" aria-label="Change what services do you need answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {% if answers.languages or isResultsPage %}
     <p class="govuk-body">
-      Languages needed<br />
-      <strong>{{ answers.languagesReadable.join(", ") }}</strong>{% if print !== "yes" %}
+      <span id="languages">
+        Languages needed<br />
+      </span>
+      <strong aria-labelledby="languages">{{ answers.languagesReadable.join(", ") }}</strong>{% if print !== "yes" %}
       <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages{{ returnParam }}" aria-label="Change has insurance answer">Change</a>{% endif %}
     </p>
   {% endif %}
+  {{ answers | dump }}
   {% if services.includes('translation') %}
     {% if answers.translationTypes or isResultsPage %}
       <p class="govuk-body">
-        Translation types<br />
-        <strong>{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+        <span id="translation-types">
+          Translation types<br />
+        </span>
+        <strong aria-labelledby="translation-types">{{ answers.translationTypes.join(", ") }}</strong>{% if print !== "yes" %}
         <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation{{ returnParam }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
       </p>
     {% endif %}
@@ -92,8 +103,10 @@
   {% if services.includes('interpretation') %}
     {% if answers.interpretationTypes  or isResultsPage %}
       <p class="govuk-body">
-        Interpretation types<br />
-        <strong>{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
+        <span id="interpretation-types">
+          Interpretation types<br />
+        </span>
+        <strong aria-labelledby="interpretation-types">{{ answers.interpretationTypes.join(", ") }}</strong>{% if print !== "yes" %}
         <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation{{ returnParam }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
       </p>
     {% endif %}

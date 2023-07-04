@@ -9,6 +9,8 @@ import Joi from "joi";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { checkIncompleteState } from "./middleware/checkIncompleteState";
+import { validateCountry } from "server/models/listItem/providers/helpers";
+import querystring from "querystring";
 
 export const findRouter = express.Router();
 
@@ -20,7 +22,13 @@ findRouter.all("*", (req: Request, res: Response, next: NextFunction) => {
 
 findRouter.get("/", (req: Request, res: Response) => {
   const serviceType = req.query.serviceType as string;
-  res.redirect(301, `find/${normaliseServiceType(serviceType)}`);
+  const country = validateCountry(req.query.country as string);
+  let query = "";
+  if (country) {
+    query = `?${querystring.encode({ country })}`;
+  }
+
+  res.redirect(301, `find/${normaliseServiceType(serviceType)}${query}`);
 });
 
 function normaliseServiceType(serviceType: string) {

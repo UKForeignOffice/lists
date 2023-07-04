@@ -54,16 +54,12 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
 
   if (!interpreterServices.includes("all") && interpreterServices.length > 0) {
     andWhere.push(
-      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && ARRAY ${JSON.stringify(
-        interpreterServices
-      ).replace(/"/g, "'")}`
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'interpreterServices'))) && lower('{${interpreterServices}}')::text[]`
     );
   }
   if (!translationSpecialties.includes("all") && translationSpecialties.length > 0) {
     andWhere.push(
-      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && ARRAY ${JSON.stringify(
-        translationSpecialties
-      ).replace(/"/g, "'")}`
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'translationSpecialties'))) && lower('{${translationSpecialties}}')::text[]`
     );
   }
 

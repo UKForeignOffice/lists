@@ -131,4 +131,3 @@ export async function searchTranslatorsInterpreters(req: Request) {
     relatedLinks,
   };
 }
-// http://localhost:3000/results?serviceType=translatorsInterpreters&readNotice=ok&country=poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&readDisclaimer=ok
