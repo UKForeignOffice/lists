@@ -6,7 +6,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { searchTranslatorsInterpreters } from "server/components/lists/searches/translators-interpreters";
 
 export async function get(req: Request, res: Response) {
-  const { country, serviceType } = req.params;
+  const { serviceType } = req.params;
 
   res.locals.answers = req.session.answers;
 

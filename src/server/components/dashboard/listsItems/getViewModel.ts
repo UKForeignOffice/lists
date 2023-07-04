@@ -9,8 +9,7 @@ interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
   adminUseOnly: Types.govukSummaryList;
-
-  [key: string]: Types.govukSummaryList;
+  headerField: string;
 }
 
 /**

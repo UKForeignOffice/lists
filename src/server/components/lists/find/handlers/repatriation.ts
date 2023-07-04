@@ -17,7 +17,7 @@ export function post(req: Request, res: Response) {
   }
 
   req.session.answers!.repatriation = repatriation === "yes";
-  const { country } = req.session.answers;
+  const { country } = req.session.answers!;
 
   if (req.query.return === "results") {
     res.redirect("result");

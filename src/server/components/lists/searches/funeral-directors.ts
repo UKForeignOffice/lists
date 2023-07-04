@@ -21,7 +21,7 @@ export const funeralDirectorsQuestionsSequence = [
 export async function searchFuneralDirectors(req: Request) {
   let params = getAllRequestParams(req);
   const { country, region, repatriation, print = "no" } = params;
-  const serviceType = getDbServiceTypeFromParameter(params.serviceType);
+  const serviceType = getDbServiceTypeFromParameter(params.serviceType!);
   let countryName: string | undefined = formatCountryParam(country as string);
   countryName = validateCountry(countryName);
 

@@ -54,17 +54,16 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
   };
 }
 
-export async function searchTranslatorsInterpreters(req: Request, res: Response) {
+export async function searchTranslatorsInterpreters(req: Request) {
   const { answers = {} } = req.session;
   const { country, serviceType } = answers;
   const { print = "no", page = 1 } = req.query;
   const pageNum = parseInt(page as string);
 
-  let servicesProvided;
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
   const filterProps = {
-    countryName: validateCountryLower(country),
+    countryName: validateCountryLower(country!),
     region: decodeURIComponent(answers.region ?? ""),
     servicesProvided: sanitiseServices(answers.services),
     languagesProvided: sanitiseLanguages(answers.languages),
@@ -112,15 +111,15 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
     });
   }
   const results = print === "yes" ? allRows : searchResults;
-  const type = getDbServiceTypeFromParameter(answers.serviceType);
+  const type = getDbServiceTypeFromParameter(answers.serviceType!);
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country, type)),
+    ...(await getRelatedLinks(country!, type)),
     ...(await getLinksOfRelatedLists(country as CountryName, type)),
   ];
 
   return {
-    resultsTitle: makeResultsTitle(country, filterProps.servicesProvided),
+    resultsTitle: makeResultsTitle(country!, filterProps.servicesProvided),
     searchResults: results,
     hasSworn: hasSworn(results),
     filterProps,

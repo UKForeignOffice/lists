@@ -3,7 +3,6 @@ import { translationSpecialties, interpretationServices } from "server/services/
 import type { QuestionData } from "server/components/lists";
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
-import querystring from "querystring";
 
 export function get(req: Request, res: Response) {
   const services = req.session.answers?.services ?? [];
@@ -50,8 +49,8 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers.translationTypes = translationTypes;
-  req.session.answers.interpretationTypes = interpretationTypes;
+  req.session.answers!.translationTypes = translationTypes;
+  req.session.answers!.interpretationTypes = interpretationTypes;
 
   if (req.query.return === "results") {
     res.redirect("result");

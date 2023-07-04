@@ -15,7 +15,7 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  req.session.answers.insurance = insurance === "yes";
+  req.session.answers!.insurance = insurance === "yes";
 
   if (req.query.return === "results") {
     res.redirect("result");
