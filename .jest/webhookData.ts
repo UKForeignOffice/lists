@@ -44,46 +44,9 @@ export const lawyer = {
     type: ServiceType.lawyers,
   },
 };
-export const covidTestProvider = {
-  declaration: ["confirm"],
-  publishEmail: "",
-  regulators: "",
-  size: "",
-  speakEnglish: true,
-  isQualified: true,
-  affiliatedWithRegulatoryAuthority: true,
-  regulatoryAuthority: "Health Authority",
-  meetUKstandards: true,
-  provideResultsInEnglishFrenchSpanish: true,
-  provideTestResultsIn72Hours: true,
-  providedTests:
-    "Antigen, Loop-mediated Isothermal Amplification (LAMP), Polymerase Chain Reaction (PCR)",
-  turnaroundTimeAntigen: "1",
-  turnaroundTimeLamp: "48",
-  turnaroundTimePCR: "24",
-  organisationName: "Covid Test Provider Name",
-  locationName: "London",
-  contactName: "Contact Name",
-  emailAddress: "aa@aa.com",
-  phoneNumber: "777654321",
-  websiteAddress: "www.website.com",
-  publicEmailAddress: "contact@email.com",
-  "address.firstLine": "70 King Charles Street",
-  city: "London",
-  postCode: "SW1A 2AH",
-  country: "france",
-  resultsReadyFormat: "Email,SMS",
-  resultsFormat: "Email,SMS",
-  bookingOptions: "Website,In Person",
-  declarationConfirm: "confirm",
-  metadata: {
-    type: ServiceType.covidTestProviders,
-  },
-};
 
 declare global {
   var webhookData: {
     lawyer: LawyersFormWebhookData;
-    covidTestProvider: CovidTestSupplierFormWebhookData;
   };
 }
