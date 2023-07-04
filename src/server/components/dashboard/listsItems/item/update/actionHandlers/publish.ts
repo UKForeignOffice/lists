@@ -73,7 +73,7 @@ export async function publish(req: Request, res: Response) {
     res.redirect(listIndexUrl);
     return;
   } catch (error: any) {
-    req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${organisationName} could not be updated.`);
     res.redirect(listItemUrl);
   }
 }

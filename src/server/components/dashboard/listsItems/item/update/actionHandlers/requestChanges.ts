@@ -39,7 +39,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
     req.flash("successBannerColour", "blue");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${jsonData?.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${jsonData?.organisationName} could not be updated.`);
     return res.redirect(listItemUrl);
   }
 }

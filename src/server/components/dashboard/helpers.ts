@@ -21,21 +21,16 @@ export async function getInitiateFormRunnerSessionToken(
   const token = await axios
     .post(`http://${formRunnerNewSessionUrl}`, formRunnerWebhookData)
     .then((response) => {
-      logger.info(`response received from formRunnerNewSessionUrl: data ${response?.data}`);
-      Object.entries(response).map(([key, value]) =>
-        logger.info(`formRunnerNewSessionUrl response ${key} + ":" ${value}`)
-      );
-      Object.entries(response?.data).map(([key, value]) =>
-        logger.info(`formRunnerNewSessionUrl response.data ${key} + ":" ${value}`)
-      );
       return response?.data?.token;
     })
     .catch((error) => {
-      logger.error(`Error received after calling formRunnerNewSessionUrl ${error}`);
+      logger.error(
+        `getInitiateFormRunnerSessionToken: Error received after calling form runner URL ${formRunnerNewSessionUrl}. ${error}`
+      );
       throw new Error("Unable to initiate form runner session");
     });
 
-  logger.info(`token: ${token}`);
+  logger.info(`getInitiateFormRunnerSessionToken: formRunner responded with ${token}`);
   return token;
 }
 
