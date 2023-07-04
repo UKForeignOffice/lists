@@ -243,7 +243,9 @@ export async function updateIsAnnualReviewForListItems(
     logger.error(
       `updateIsAnnualReviewForListItems: List items ${listItemsNotUpdated
         .map((listItem) => listItem.id)
-        .join(", ")} were not updated for annual review`
+        .join(
+          ", "
+        )} were not updated for annual review because they do not have a correct listItem id. This will run again tomorrow.`
     );
   }
   return updatedListItems.result;
