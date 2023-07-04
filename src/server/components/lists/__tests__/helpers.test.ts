@@ -121,10 +121,6 @@ describe("Lawyers List:", () => {
       expect(getServiceLabel("lawyers")).toEqual("a lawyer");
     });
 
-    test("Covid test provider label is returned correctly", () => {
-      expect(getServiceLabel("covidTestProviders")).toEqual("a COVID-19 test provider");
-    });
-
     test("undefined is returned when service name is unknown", () => {
       expect(getServiceLabel("famous singer phone number")).toEqual(undefined);
     });

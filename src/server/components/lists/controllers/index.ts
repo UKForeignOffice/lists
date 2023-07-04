@@ -8,6 +8,7 @@ import { sendManualActionNotificationToPost } from "server/services/govuk-notify
 /**
  * removing DEFAULT_VIEW_PROPS from this file causes the compiler to crash??
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const FIX = { ...DEFAULT_VIEW_PROPS };
 
 export async function listsConfirmApplicationController(

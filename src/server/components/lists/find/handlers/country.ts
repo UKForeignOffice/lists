@@ -8,7 +8,9 @@ export async function redirectIfEmpty(req: Request, res: Response, next: NextFun
   if (!req.session.answers?.country) {
     next();
   }
-  const { country, serviceType } = req.params;
+  const country = req.session.answers?.country ?? req.params.country;
+  const serviceType = req.session.answers?.serviceType ?? req.params.serviceType;
+
   const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
   if (redirect) {
     res.redirect(redirect);
@@ -32,11 +34,17 @@ export async function post(req: Request, res: Response) {
     res.redirect(req.originalUrl);
     return;
   }
+  const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(req.params.serviceType));
+  if (redirect) {
+    res.redirect("redirect");
+    return;
+  }
 
   const safe = encodeURIComponent(validatedCountry);
 
   // @ts-ignore
   req.session.answers.country = country;
+
   // @ts-ignore
   req.session.answers.urlSafeCountry = safe;
 

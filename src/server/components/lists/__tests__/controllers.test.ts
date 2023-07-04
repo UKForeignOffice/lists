@@ -122,7 +122,7 @@ describe("Lists Controllers", () => {
   }
 
   describe("listsGetController", () => {
-    test.todo("it renders question page when serviceType is undefined", () => {
+    test("it renders question page when serviceType is undefined", () => {
       //listsGetController(req, res);
       req.params.page = "";
 

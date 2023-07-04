@@ -19,12 +19,12 @@ findRouter.all("*", (req: Request, res: Response, next: NextFunction) => {
 });
 
 findRouter.get("/", (req: Request, res: Response) => {
-  const serviceType = req.params.serviceType;
-  res.redirect(serviceType);
+  const serviceType = req.query.serviceType as string;
+  res.redirect(301, `find/${normaliseServiceType(serviceType)}`);
 });
 
 function normaliseServiceType(serviceType: string) {
-  return kebabCase(serviceType.toLowerCase());
+  return kebabCase(serviceType).toLowerCase();
 }
 findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction, serviceType) => {
   try {
