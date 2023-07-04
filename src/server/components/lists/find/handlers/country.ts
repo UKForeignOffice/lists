@@ -1,10 +1,23 @@
 import { countriesList } from "server/services/metadata";
 import { validateCountry } from "server/models/listItem/providers/helpers";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 import { getRedirectIfListIsEmpty } from "server/components/lists/find/helpers/getRedirectIfListIsEmpty";
 
-export function get(req: Request, res: Response) {
+export async function redirectIfEmpty(req: Request, res: Response, next: NextFunction) {
+  if (!req.session.answers?.country) {
+    next();
+  }
+  const { country, serviceType } = req.params;
+  const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
+  if (redirect) {
+    res.redirect(redirect);
+    return;
+  }
+  next();
+}
+
+export async function get(req: Request, res: Response) {
   res.render("lists/find/country", {
     countriesList,
     answers: req.session.answers,
@@ -27,25 +40,10 @@ export async function post(req: Request, res: Response) {
   // @ts-ignore
   req.session.answers.urlSafeCountry = safe;
 
-  const hasQuery = Object.keys(req.query).length;
-
-  // @ts-ignore
-  const query = new URLSearchParams(req.query);
-  const queryString = hasQuery ? `?${query.toString()}` : "";
-
-  const dbServiceType = getDbServiceTypeFromParameter(req.params.serviceType);
-
-  const redirectIfEmptyList = await getRedirectIfListIsEmpty(country, dbServiceType);
-
-  if (redirectIfEmptyList) {
-    res.redirect(redirectIfEmptyList);
-    return;
-  }
-
   if (req.query.return === "results") {
     res.redirect("result");
     return;
   }
 
-  res.redirect(`${safe}/region${queryString}`);
+  res.redirect(`${safe}/region`);
 }

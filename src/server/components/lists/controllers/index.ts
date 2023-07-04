@@ -24,7 +24,6 @@ import { logger } from "server/services/logger";
 import type { QuestionData, QuestionDataSet, QuestionError, QuestionName } from "./../types";
 import { languages, translationInterpretationServices } from "server/services/metadata";
 import { lawyersQuestionsSequence, searchLawyers } from "./../searches/lawyers";
-import { covidTestProviderQuestionsSequence, searchCovidTestProvider } from "./../searches/covid-test-provider";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import {
   getLanguageNames,

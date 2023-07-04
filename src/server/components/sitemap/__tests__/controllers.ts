@@ -1,6 +1,7 @@
 import { getServiceLabel } from "server/components/lists";
 import { ServiceType } from "shared/types";
 import { sitemapController } from "../controllers";
+import { kebabCase } from "lodash";
 
 describe("SiteMap", () => {
   let mockReq: any;
@@ -14,12 +15,7 @@ describe("SiteMap", () => {
     mockRes = {
       render: jest.fn(),
     };
-
-    exclusions = [ServiceType.covidTestProviders];
-
-    serviceTypes = Object.keys(ServiceType).filter(
-      (name) => !exclusions.includes(name)
-    );
+    serviceTypes = Object.keys(ServiceType).filter((name) => !exclusions.includes(name));
   });
 
   test("a section is rendered for each service type", () => {
@@ -35,9 +31,7 @@ describe("SiteMap", () => {
     const sections = mockRes.render.mock.calls[0][1].sections;
     sections.forEach((section: any, index: any) => {
       const serviceType = serviceTypes[index];
-      expect(section.title).toBe(
-        `Find ${getServiceLabel(serviceType)} per country`
-      );
+      expect(section.title).toBe(`Find ${getServiceLabel(serviceType)} per country`);
     });
   });
 
@@ -47,9 +41,9 @@ describe("SiteMap", () => {
     const sections = mockRes.render.mock.calls[0][1].sections;
     sections.forEach((section: any, index: any) => {
       const serviceType = serviceTypes[index];
-      expect(section.links[0].href).toBe(
-        `/find?country=Afghanistan&serviceType=${serviceType}`
-      );
+      const normalisedServiceType = kebabCase(serviceType.toLowerCase());
+
+      expect(section.links[0].href).toBe(`/find/${normalisedServiceType}/Afghanistan`);
     });
   });
 });

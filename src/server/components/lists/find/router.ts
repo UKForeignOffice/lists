@@ -18,6 +18,11 @@ findRouter.all("*", (req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+findRouter.get("/", (req: Request, res: Response) => {
+  const serviceType = req.params.serviceType;
+  res.redirect(serviceType);
+});
+
 function normaliseServiceType(serviceType: string) {
   return kebabCase(serviceType.toLowerCase());
 }
@@ -71,6 +76,7 @@ findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction
 findRouter.get("/:serviceType", handlers.serviceType.get);
 
 findRouter.get("/:serviceType/country", handlers.country.get);
+findRouter.get("/:serviceType/:country*", handlers.country.redirectIfEmpty);
 findRouter.post("/:serviceType/country", handlers.country.post);
 
 findRouter.get("/:serviceType/*", (req: Request, res: Response, next: NextFunction) => {

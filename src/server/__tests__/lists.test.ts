@@ -10,28 +10,23 @@ describe("Lists routes", () => {
   }, 30000);
 
   test("lists finder route is ready", async () => {
-    const { status } = await request(server).get(
-      "/find?serviceType=covidTestProviders"
-    );
+    const { status } = await request(server).get("/find/lawyers");
     expect(status).toEqual(200);
   });
 
-  test("lists results route is ready", async () => {
+  test("lists results redirect route is ready", async () => {
     const { status } = await request(server).get(
-      "/results?serviceType=covidTestProviders&readNotice=ok&country=Italy&region=Rome&resultsTurnaround=1&readDisclaimer=ok"
+      "/results?serviceType=lawyers&readNotice=ok&country=Italy&region=Rome&resultsTurnaround=1&readDisclaimer=ok"
     );
-    expect(status).toEqual(200);
+    expect(status).toEqual(302);
+  });
+  test("lists results route is ready", async () => {
+    const { status } = await request(server).get("/find/lawyers/italy/results");
+    expect(status).toEqual(302);
   });
 
   test("lists formRunnerWebhook route is ready", async () => {
     const { status } = await request(server).post("/ingest/covidTestProviders");
     expect(status).toEqual(422);
-  });
-
-  test("lists private-beta route is ready", async () => {
-    const { status } = await request(server).get(
-      "/private-beta?serviceType=covidTestProviders"
-    );
-    expect(status).toEqual(200);
   });
 });

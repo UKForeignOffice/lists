@@ -36,7 +36,13 @@ describe("Lawyers List:", () => {
   }, 30000);
 
   describe("Lawyer's land page", () => {
-    const pageLink = "/find?serviceType=lawyers";
+    const pageLink = "/find/lawyers";
+
+    test("old URL is redirected to new URL", async () => {
+      const res = await request(server).get("/find?serviceType=lawyers");
+      const { status } = res;
+      expect(status).toBe(302);
+    });
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -44,7 +50,7 @@ describe("Lawyers List:", () => {
       const $html = $.load(text);
       const $main = $html("main");
       const pageHeader = $main.find("h1");
-      const continueButton = $main.find("button");
+      const continueButton = $main.find("a[href='lawyers/country']");
 
       expect(pageHeader.text().trim()).toBe("Find a lawyer abroad");
       expect(continueButton.text()).toBe("Start");
@@ -55,17 +61,10 @@ describe("Lawyers List:", () => {
 
       expect(await axe(text)).toHaveNoViolations();
     });
-
-    test("lawyer's land page POST request is correct", async () => {
-      const { status, header } = await request(server).post(pageLink).send({ readNotice: "ok" });
-
-      expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readNotice=ok`);
-    });
   });
 
   describe("lawyer's country question page", () => {
-    const pageLink = "/find?serviceType=lawyers&readNotice=ok";
+    const pageLink = "/find/lawyers/country";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -80,10 +79,10 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct", async () => {
-      const { status, header } = await request(server).post(pageLink).send({ country: "spain" });
+      const { status, header, text } = await request(server).post(pageLink).send({ country: "Spain" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&country=spain`);
+      expect(header.location).toBe("Spain/region");
     });
 
     test("POST request is correct for country name starting with lowercase letter", async () => {
@@ -91,7 +90,7 @@ describe("Lawyers List:", () => {
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("northern Cyprus", "lawyers");
-      expect(header.location).toBe(`${pageLink}&country=northern%20Cyprus`);
+      expect(header.location).toBe(`northern%20Cyprus/region`);
     });
 
     test("POST request is correct for country name with special character ô", async () => {
@@ -99,7 +98,7 @@ describe("Lawyers List:", () => {
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("Côte d'Ivoire", "lawyers");
-      expect(header.location).toBe(`${pageLink}&country=C%C3%B4te%20d'Ivoire`);
+      expect(header.location).toBe(`C%C3%B4te%20d'Ivoire/region`);
     });
 
     test("POST request is correct for country name with special character -", async () => {
@@ -107,7 +106,7 @@ describe("Lawyers List:", () => {
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("Guinea-Bissau", "lawyers");
-      expect(header.location).toBe(`${pageLink}&country=Guinea-Bissau`);
+      expect(header.location).toBe(`Guinea-Bissau/region`);
     });
 
     test("POST request is correct for country name with special character ã, í and é", async () => {
@@ -115,7 +114,7 @@ describe("Lawyers List:", () => {
 
       expect(status).toBe(302);
       expect(helpers.some).toBeCalledWith("São Tomé And Príncipe", "lawyers");
-      expect(header.location).toBe(`${pageLink}&country=S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe`);
+      expect(header.location).toBe(`S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe/region`);
     });
 
     test("accessibility", async () => {
@@ -126,8 +125,8 @@ describe("Lawyers List:", () => {
   });
 
   describe("lawyer's region question page", () => {
-    const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain";
-    const pageLinkLowercaseCountry = "/find?serviceType=lawyers&readNotice=ok&country=northern%20Cyprus";
+    const pageLink = "/find/lawyers/Spain/region";
+    const pageLinkLowercaseCountry = "/find/lawyers/northern%20Cyprus/region";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -157,7 +156,7 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ region: "madrid" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&region=madrid`);
+      expect(header.location).toBe(`practice-areas?region=madrid`);
     });
 
     test("accessibility", async () => {
@@ -168,7 +167,7 @@ describe("Lawyers List:", () => {
   });
 
   describe("Lawyer's legal areas question page", () => {
-    const pageLink = "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid";
+    const pageLink = "/find/lawyers/spain/practice-areas?region=madrid";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -183,12 +182,12 @@ describe("Lawyers List:", () => {
     });
 
     test("POST request is correct", async () => {
-      const { status, header } = await request(server)
+      const { status, text, header } = await request(server)
         .post(pageLink)
-        .send({ practiceArea: ["maritime", "real estate"] });
+        .send({ practiceArea: ["Maritime", "Real estate"] });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&practiceArea=maritime,real%20estate`);
+      expect(header.location).toBe(`disclaimer`);
     });
 
     test("accessibility", async () => {
@@ -199,8 +198,7 @@ describe("Lawyers List:", () => {
   });
 
   describe("Lawyer's disclaimer question page", () => {
-    const pageLink =
-      "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate";
+    const pageLink = "/find/lawyers/spain/disclaimer";
 
     test("GET request is correct", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
@@ -218,39 +216,23 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ readDisclaimer: "ok" });
 
       expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}&readDisclaimer=ok`);
+      expect(header.location).toBe(`${pageLink}`);
     });
 
     test("accessibility", async () => {
-      const { text } = await request(server)
-        .get("/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate")
-        .type("text/html");
+      const { text } = await request(server).get(pageLink).type("text/html");
 
       expect(await axe(text)).toHaveNoViolations();
     });
   });
 
-  test("Lawyer's final questionary page GET request is correct", async () => {
-    // here the controller will check all parameters are correct and if so the user will be redirected to /results with the same query parameters
-    const { status, header } = await request(server)
-      .get(
-        "/find?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
-      )
-      .type("text/html");
-
-    expect(status).toBe(302);
-    expect(header.location).toBe(
-      "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
-    );
-  });
-
   describe("Lawyers results page", () => {
     test("GET request answers box is correct", async () => {
-      const { text } = await request(server)
-        .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok"
-        )
-        .type("text/html");
+      const { header } = await request(server).get(
+        "/results?serviceType=lawyers&practiceArea=maritime%2Creal%20estate&readNotice=ok&country=Spain&region=madrid"
+      );
+
+      const res = await request(server).get(header.location);
 
       expect(await LawyerListItem.findPublishedLawyersPerCountry).toBeCalledWith({
         countryName: "Spain",
@@ -259,7 +241,7 @@ describe("Lawyers List:", () => {
         offset: -1,
       });
 
-      const $html = $.load(text);
+      const $html = $.load(res.text);
       const $main = $html("main");
       const $answerBox = $($main.find(".answers-box"));
 
@@ -273,7 +255,7 @@ describe("Lawyers List:", () => {
     `);
 
       expect(answers.eq(1).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=Spain&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&practiceArea=maritime%2Creal%20estate"
       );
 
       // region answer
@@ -283,7 +265,7 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(2).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&readDisclaimer=ok"
+        "/find?serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate"
       );
 
       // legal practice areas
@@ -293,34 +275,14 @@ describe("Lawyers List:", () => {
       Change
     `);
       expect(answers.eq(3).find("a").attr("href")).toEqual(
-        "/find?serviceType=lawyers&readNotice=ok&country=Spain&region=madrid&readDisclaimer=ok"
-      );
-    });
-
-    test.skip("GET request pageination next when current page is 2", async () => {
-      const { text } = await request(server)
-        .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=2"
-        )
-        .type("text/html");
-
-      const $html = $.load(text);
-      const $main = $html("main");
-      const $prevLink = $main.find("#prevButton > a");
-      expect($prevLink.attr("href")).toEqual(
-        `results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=1`
-      );
-
-      const $nextLink = $($main.find("#nextButton > a"));
-      expect($nextLink.attr("href")).toEqual(
-        `results?serviceType=lawyers&readNotice=ok&country=italy&region=milan&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=3`
+        "/find?serviceType=lawyers&readNotice=ok&country=Spain&region=madrid"
       );
     });
 
     test("accessibility", async () => {
       const { text } = await request(server)
         .get(
-          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&readDisclaimer=ok&page=1"
+          "/results?serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime,real%20estate&page=1"
         )
         .type("text/html");
 
@@ -332,7 +294,8 @@ describe("Lawyers List:", () => {
     mockListItemSome(false);
 
     const { status, header } = await request(server)
-      .post("/find?serviceType=lawyers&readNotice=ok&country=belize")
+      .post("/find/lawyers/country")
+      .send({ country: "belize" })
       .type("text/html");
 
     expect(status).toBe(302);

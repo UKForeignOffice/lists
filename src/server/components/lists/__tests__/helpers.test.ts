@@ -252,11 +252,11 @@ describe("getLinksOfRelatedLists", () => {
     const serviceType = "lawyers";
     const expectedLinks = [
       {
-        url: "/find?serviceType=funeralDirectors&country=Argentina",
+        url: "/find/funeral-directors?country=Argentina",
         text: "Find a funeral director in Argentina",
       },
       {
-        url: "/find?serviceType=translatorsInterpreters&country=Argentina",
+        url: "/find/translators-interpreters?country=Argentina",
         text: "Find a translator or interpreter in Argentina",
       },
     ];
@@ -284,11 +284,11 @@ describe("getLinksOfRelatedLists", () => {
 
     expect(links).toEqual([
       {
-        url: "/find?serviceType=lawyers&country=France",
+        url: "/find/lawyers?country=France",
         text: "Find a lawyer in France",
       },
       {
-        url: "/find?serviceType=translatorsInterpreters",
+        url: "/find/translators-interpreters",
         text: "Find a translator or interpreter in France",
       },
     ]);

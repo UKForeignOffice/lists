@@ -10,7 +10,6 @@ import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
 import { ServiceType } from "../../../../shared/types";
 import * as lawyers from "../searches/lawyers";
-import * as covidTestProviders from "../searches/covid-test-provider";
 import { DEFAULT_VIEW_PROPS } from "../constants";
 import { getServiceLabel } from "../helpers";
 import * as notifyEmails from "server/services/govuk-notify";
@@ -119,9 +118,7 @@ describe("Lists Controllers", () => {
   }
 
   function spySendApplicationConfirmationEmail(): any {
-    return jest
-      .spyOn(notify, "sendApplicationConfirmationEmail")
-      .mockResolvedValue(true);
+    return jest.spyOn(notify, "sendApplicationConfirmationEmail").mockResolvedValue(true);
   }
 
   describe("listsGetController", () => {
@@ -162,7 +159,7 @@ describe("Lists Controllers", () => {
     test.todo("createListItem is invoked correctly");
 
     test("sendApplicationConfirmationEmail is invoked correctly", async () => {
-      req.params.serviceType = "covidTestProviders";
+      req.params.serviceType = "lawyers";
       req.body.questions = webhookPayload.questions;
 
       const createdListItem = {
@@ -236,12 +233,9 @@ describe("Lists Controllers", () => {
 
       await listsConfirmApplicationController(req, res, next);
 
-      expect(res.render).toHaveBeenCalledWith(
-        "lists/application-confirmation-page",
-        {
-          serviceName: "Find a COVID-19 test provider abroad",
-        }
-      );
+      expect(res.render).toHaveBeenCalledWith("lists/application-confirmation-page", {
+        serviceName: "Find a COVID-19 test provider abroad",
+      });
     });
 
     test("should return 404 if no item is found", async () => {
@@ -263,9 +257,7 @@ describe("Lists Controllers", () => {
     });
 
     function spySetEmailIsVerified() {
-      return jest
-        .spyOn(listItem, "setEmailIsVerified")
-        .mockResolvedValue({ type: "lawyers", listId: 123 });
+      return jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({ type: "lawyers", listId: 123 });
     }
   });
 
@@ -298,18 +290,6 @@ describe("Lists Controllers", () => {
       listsResultsController(req, res, next);
 
       expect(spySearchLawyers).toHaveBeenCalledWith(req, res);
-    });
-
-    test("it invokes searchCovidTestProvider with correct parameters", () => {
-      const spySearchCovidTestProviders = jest.spyOn(
-        covidTestProviders,
-        "searchCovidTestProvider"
-      );
-      req.params.serviceType = ServiceType.covidTestProviders;
-
-      listsResultsController(req, res, next);
-
-      expect(spySearchCovidTestProviders).toHaveBeenCalledWith(req, res);
     });
 
     test("it invokes next when serviceType is unknown", () => {

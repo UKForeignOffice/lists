@@ -10,8 +10,6 @@ import { legalPracticeAreasList } from "server/services/metadata";
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
   region?: string | "";
-  legalAid?: "yes" | "no" | "";
-  proBono?: "yes" | "no" | "";
   practiceArea?: string[];
   offset?: number;
 }): Promise<LawyerListItemGetObject[]> {
