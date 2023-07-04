@@ -23,7 +23,9 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   });
 
   if (listItem === null) {
-    logger.error(`${userId} tried to look for ${id}, listItem could not be found`);
+    logger.error(
+      `handleListItemUpdate: User with id ${userId} tried to update listItem ${id}, but it could not be found`
+    );
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 

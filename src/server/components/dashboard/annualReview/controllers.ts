@@ -102,7 +102,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
     try {
       await updateAnnualReviewWithKeyDates(list, annualReviewDate.toISOString());
     } catch (e) {
-      logger.error(e);
+      logger.error(`updateNewAnnualReviewDate: ${e}`);
       req.flash("error", "There was a problem updating the annual review date");
       return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
     }

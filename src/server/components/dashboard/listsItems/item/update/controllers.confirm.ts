@@ -44,7 +44,9 @@ export function post(req: Request, res: ListItemRes, next: NextFunction) {
 
   if (!action || !actionHandlers[action]) {
     req.flash("errorMsg", "This action is not recognised");
-    logger.error(`${req.user!.id} attempted to perform an unrecognised action "${action}" on ${req.params.listId}`);
+    logger.error(
+      `listItem update: ${req.user!.id} attempted to perform an unrecognised action "${action}" on ${req.params.listId}`
+    );
     return res.redirect(res.locals.listItemUrl);
   }
 

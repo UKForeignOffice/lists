@@ -13,7 +13,7 @@ export async function deleteRelatedLink(listId: List["id"], index: number) {
   });
 
   if (!list) {
-    logger.error(`updateRelatedLink failed, list ${listId} could not be found`);
+    logger.error(`deleteRelatedLink: list ${listId} could not be found`);
     return;
   }
 

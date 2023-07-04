@@ -35,9 +35,7 @@ export const configureErrorHandlers = (server: Express): void => {
         error: "The resource you where looking for is not available.",
       });
     } else {
-      res
-        .type("txt")
-        .send("The resource you where looking for is not available.");
+      res.type("txt").send("The resource you where looking for is not available.");
     }
   });
 
@@ -48,7 +46,7 @@ export const configureErrorHandlers = (server: Express): void => {
     if (acceptsHTML(req)) {
       res.render("errors/generic-error", {
         message: err.message ?? "",
-        status: err.status
+        status: err.status,
       });
     } else if (acceptsJSON(req)) {
       res.json({

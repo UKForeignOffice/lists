@@ -22,7 +22,7 @@ export function getMetaForList(list: ListWithCountryName): Meta | undefined {
   const { currentAnnualReview } = jsonData;
 
   if (!currentAnnualReview) {
-    logger.error(`list ${list.id} does not have a fully qualified currentAnnualReview.keyDates object`);
+    logger.error(`list ${list.id} does not have a valid currentAnnualReview.keyDates object`);
     return;
   }
 

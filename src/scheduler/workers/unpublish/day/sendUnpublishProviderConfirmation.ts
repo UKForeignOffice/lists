@@ -40,7 +40,7 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
 
     if (!event) {
       logger.error(
-        `unpublish reminder event failed to create. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
+        `unpublish reminder event failed to create for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
     }
 

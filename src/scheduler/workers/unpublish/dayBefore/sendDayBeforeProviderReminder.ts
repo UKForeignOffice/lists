@@ -41,7 +41,7 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
 
     if (!event) {
       logger.error(
-        `unpublish reminder event failed to create. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
+        `failed to create unpublish reminder event for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
     }
 

@@ -186,7 +186,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    logger.error("listsEditController, list could not be found", error);
+    logger.error("listsEditController: list to edit could not be found", error);
 
     const err = new HttpException(404, "404", "List could not be found.");
     next(err);
@@ -254,7 +254,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const list = await findListById(listId);
 
   if (!list) {
-    logger.error("listEditAddPublisher, List could not be found");
+    logger.error("listEditAddPublisher: List could not be found");
     next(new HttpException(404, "404", "List could not be found."));
     return;
   }

@@ -46,8 +46,8 @@ export function getRedisClient(): RedisClient {
     }
 
     redisClient.on("error", (error) => {
-      logger.error(`Redis Error: ${error.message}`);
-      throw Error("Redis is not configured, exiting");  
+      logger.error(`getRedisClient: ${error.message}`);
+      throw Error("Redis is not configured, exiting");
     });
   }
 

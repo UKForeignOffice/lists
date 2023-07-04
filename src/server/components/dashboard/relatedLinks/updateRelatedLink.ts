@@ -13,7 +13,7 @@ export async function updateRelatedLink(listId: List["id"], update: RelatedLink,
   });
 
   if (!list) {
-    logger.error(`updateRelatedLink failed, list ${listId} could not be found`);
+    logger.error(`updateRelatedLink: list ${listId} could not be found`);
     return;
   }
 

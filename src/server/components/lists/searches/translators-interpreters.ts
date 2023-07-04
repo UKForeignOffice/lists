@@ -28,7 +28,6 @@ import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import type { countriesList } from "server/services/metadata";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import { CountryName } from "server/models/types";
 
 export const translatorsInterpretersQuestionsSequence = [
   QuestionName.readNotice,
@@ -168,8 +167,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
       allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
     }
   } catch (e) {
-    // continue with empty allRows[]
-    logger.error(`Exception searching for translators or interpreters`, e);
+    logger.error(`searchTranslatorsInterpreters: Exception searching for translators or interpreters`, e);
   }
 
   const count = allRows.length;
@@ -208,8 +206,8 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country!, serviceType!)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+    ...(await getRelatedLinks(country, serviceType!)),
+    ...(await getLinksOfRelatedLists(country, serviceType!)),
   ];
 
   res.render("lists/results-page", {

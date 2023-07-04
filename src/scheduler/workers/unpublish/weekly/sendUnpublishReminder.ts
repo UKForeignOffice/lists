@@ -40,7 +40,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     if (!event) {
       logger.error(
-        `${meta.weeksUntilUnpublish} weeks until unpublish reminder event failed to create for ${listItem.id}. for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
+        `'${meta.weeksUntilUnpublish} weeks until unpublish' reminder event failed to create for ${listItem.id} for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created`
       );
       logger.warn(
         `Query for event insertion: insert into "Event"("listItemId", type, "jsonData") values (${listItem.id}, 'REMINDER', '{"eventName": "reminder", "notes": ["sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)"], "reference": "${meta.reference}"}');`

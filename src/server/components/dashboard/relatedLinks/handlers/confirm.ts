@@ -47,7 +47,7 @@ export async function post(req: Request, res: Response) {
       req.flash("relatedLinkUrl", url);
     }
   } catch (e) {
-    logger.error(`POST - User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
+    logger.error(`relatedLinks: POST - User ${req.user?.id} attempted to update ${req.originalUrl} failed with ${e}`);
 
     req.flash("error", `Adding the link ${text} failed`);
   }

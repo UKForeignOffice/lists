@@ -163,7 +163,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 
   if (!list) {
     // TODO: this should never happen. findByListId should probably throw.
-    logger.error("listPublisherDelete, list could not be found");
+    logger.error("listPublisherDelete: list could not be found");
     const err = new HttpException(404, "404", "List could not be found.");
     next(err);
     return;

@@ -53,7 +53,7 @@ async function processPostEmailsForList(
 
   if (!emailSent) {
     logger.error(
-      `Unable to send annual review email to post contacts ${list.jsonData.users} for list ${list.id} ${milestoneTillAnnualReview} before annual review start`
+      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.jsonData.users} for list ${list.id} ${milestoneTillAnnualReview} before annual review start`
     );
     return;
   }
@@ -238,11 +238,12 @@ export async function updateIsAnnualReviewForListItems(
   }
   if (updatedListItems.result.length < listItems.length) {
     const listItemsNotUpdated = listItems.filter((listItem) => {
-      // @ts-ignore
-      return !updatedListItems.result.map((updatedListItem) => updatedListItem.id).includes(listItem.id);
+      return updatedListItems.result!.map((updatedListItem) => updatedListItem.id).includes(listItem.id);
     });
     logger.error(
-      `List items ${listItemsNotUpdated.map((listItem) => listItem.id)} were not updated for annual review start`
+      `updateIsAnnualReviewForListItems: List items ${listItemsNotUpdated
+        .map((listItem) => listItem.id)
+        .join(", ")} were not updated for annual review`
     );
   }
   return updatedListItems.result;

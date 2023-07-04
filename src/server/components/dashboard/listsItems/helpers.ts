@@ -92,7 +92,7 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
 
     return listItem;
   } catch (e: any) {
-    logger.error(`deleteListItem Error ${e.message}`);
+    logger.error(`handlePinListItem Error: ${e.message}`);
 
     throw new Error(`Failed to ${isPinned ? "pin" : "unpinned"} item`);
   }

@@ -273,21 +273,23 @@ export function listsResultsController(req: Request, res: Response, next: NextFu
 
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
-      searchLawyers(req, res).catch((error) => logger.error("Find a lawyer result controller", { error }));
+      searchLawyers(req, res).catch((error) =>
+        logger.error("listsResultsController: Find a lawyer result controller", { error })
+      );
       break;
     case ServiceType.covidTestProviders:
       searchCovidTestProvider(req, res).catch((error) => {
-        logger.error("Find a COVID test provider result controller", { error });
+        logger.error("listsResultsController: Find a COVID test provider result controller", { error });
       });
       break;
     case ServiceType.funeralDirectors:
       searchFuneralDirectors(req, res).catch((error) =>
-        logger.error("Find a funeral director result controller", { error })
+        logger.error("listsResultsController: Find a funeral director result controller", { error })
       );
       break;
     case ServiceType.translatorsInterpreters:
       searchTranslatorsInterpreters(req, res).catch((error) => {
-        logger.error("Find a translator or interpreter result controller", {
+        logger.error("listsResultsController: Find a translator or interpreter result controller", {
           error,
         });
       });

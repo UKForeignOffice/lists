@@ -16,7 +16,7 @@ export async function archive(req: Request, res: Response): Promise<void> {
     return res.redirect(listIndexUrl);
   } catch (error: unknown) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be archived.`);
-    logger.error(`${error}`);
+    logger.error(`listItem archive: ${error}`);
     return res.redirect(listItemUrl);
   }
 }
