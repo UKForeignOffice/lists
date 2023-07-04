@@ -29,16 +29,11 @@ export async function findPublishedLawyersPerCountry(props: {
     stripUnknown: { arrays: true },
     convert: true,
   });
-
   if (validPracticeAreas.length) {
     andWhere.push(
-      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
-        validPracticeAreas
-      ).replace(/"/g, "'")}`
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && lower('{${validPracticeAreas}}')::text[]`
     );
   }
-
-  console.log(validPracticeAreas, andWhere);
 
   try {
     const fromGeoPoint = await getPlaceGeoPoint({

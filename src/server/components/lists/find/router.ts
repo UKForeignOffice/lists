@@ -8,8 +8,8 @@ import { getParameterValue, removeQueryParameter } from "server/components/lists
 import Joi from "joi";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
-import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
 import querystring from "querystring";
+import { checkIncompleteState } from "./middleware/checkIncompleteState";
 
 export const findRouter = express.Router();
 
@@ -100,7 +100,7 @@ findRouter.post("/:serviceType/:country/region", handlers.region.post);
 
 findRouter.get("/:serviceType/:country/disclaimer", handlers.disclaimer.get);
 findRouter.post("/:serviceType/:country/disclaimer", handlers.disclaimer.post);
-findRouter.get("/:serviceType/:country/result", handlers.result.get);
+findRouter.get("/:serviceType/:country/result", checkIncompleteState, handlers.result.get);
 findRouter.get("/:serviceType/:country/practice-areas", handlers.practiceAreas.get);
 findRouter.post("/:serviceType/:country/practice-areas", handlers.practiceAreas.post);
 

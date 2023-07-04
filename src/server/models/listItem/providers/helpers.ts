@@ -10,11 +10,8 @@ import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/m
 import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import * as metaData from "server/services/metadata";
 import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
-import { listsRoutes } from "server/components/lists";
 import { HttpException } from "server/middlewares/error-handlers";
 import { getObjectDiff } from "server/components/lists/controllers/ingest/helpers";
-import { URLSearchParams } from "url";
-import querystring from "querystring";
 
 /**
  * Constructs SQL for querying published list items.  If the region is not populated

@@ -1,32 +1,39 @@
 import type { NextFunction, Request, Response } from "express";
-import Joi from "joi";
+import type { ValidationOptions } from "joi";
+import { translatorsInterpretersSchema } from "server/components/lists/find/helpers/translatorsInterpretersSchema";
+import { lawyersSchema } from "server/components/lists/find/helpers/lawyersSchema";
+import { funeralDirectorsSchema } from "server/components/lists/find/helpers/funeralDirectorsSchema";
+import type Joi from "joi";
+
+const DEFAULT_VALIDATION_OPTIONS: ValidationOptions = {
+  stripUnknown: { arrays: true },
+  allowUnknown: true,
+  convert: true,
+};
 
 export function checkIncompleteState(req: Request, res: Response, next: NextFunction) {
-  const { serviceType } = req.params;
+  const { serviceType, country } = req.params;
   const { answers = {} } = req.session;
 
-  if (serviceType === "translators-interpreters") {
-    const { services, interpretationTypes, translationTypes, languages } = answers;
-  }
-}
+  const serviceTypeParamToSchema: { [key: string]: Joi.ObjectSchema } = {
+    "translators-interpreters": translatorsInterpretersSchema,
+    lawyers: lawyersSchema,
+    "funeral-directors": funeralDirectorsSchema,
+  };
 
-/**
- *
- * interface FuneralDirectorAnswers {
- *   practiceAreas: string[];
- *   repatriation: boolean;
- *   insurance: boolean;
- * }
- *
- * export interface TranslatorsInterpretersAnswers {
- *   languages: string[];
- *   languagesReadable: string[];
- *   services: string[];
- *   interpretationTypes: string[];
- *   translationTypes: string[];
- * }
- *
- * interface LawyersAnswers {
- *   practiceAreas: string[];
- * }
- */
+  const schema = serviceTypeParamToSchema[serviceType];
+
+  if (!schema) {
+    next(404);
+    return;
+  }
+
+  const { error } = schema.validate(answers, DEFAULT_VALIDATION_OPTIONS);
+
+  if (error) {
+    res.redirect(`/find/${serviceType}?country=${country}`);
+    return;
+  }
+
+  next();
+}
