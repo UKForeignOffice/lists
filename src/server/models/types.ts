@@ -1,7 +1,6 @@
 import type * as PrismaClient from "@prisma/client";
 import type { countriesList } from "server/services/metadata";
 import type {
-  CovidTestSupplierJsonData,
   FuneralDirectorJsonData,
   LawyerJsonData,
   ListItemJsonData,
@@ -102,13 +101,7 @@ export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetO
   jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
 }
 
-export interface CovidTestSupplierListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<SharedTypes.ServiceType.covidTestProviders>;
-  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
-}
-
 export type ListItemGetObject =
-  | CovidTestSupplierListItemGetObject
   | LawyerListItemGetObject
   | FuneralDirectorListItemGetObject
   | TranslatorInterpreterListItemGetObject;

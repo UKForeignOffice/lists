@@ -168,7 +168,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
-    const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
+    const { ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
     const questionError = req.flash("questionError")[0] as unknown as string;
 

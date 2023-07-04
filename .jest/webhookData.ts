@@ -1,8 +1,5 @@
 import { ServiceType } from "shared/types";
-import {
-  CovidTestSupplierFormWebhookData,
-  LawyersFormWebhookData,
-} from "server/models/listItem/providers/deserialisers/types";
+import { LawyersFormWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export const lawyer = {
   country: "Spain",

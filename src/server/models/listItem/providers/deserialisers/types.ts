@@ -1,5 +1,5 @@
 import type { ServiceType } from "shared/types";
-import type {BaseDeserialisedWebhookData as BD} from "shared/deserialiserTypes";
+import type { BaseDeserialisedWebhookData as BD } from "shared/deserialiserTypes";
 /**
  * Type describing a function that converts {@link BaseDeserialisedWebhookData} to {@link ListItemJsonData}
  * @example
@@ -9,10 +9,9 @@ import type {BaseDeserialisedWebhookData as BD} from "shared/deserialiserTypes";
    function lawyersDeserialiser(webhook: DeserialisedLawyerWebhookData): LawyerJsonData
  * ```
  */
-export type WebhookDeserialiser<
-  Input extends DeserialisedWebhookData,
-  Output extends ListItemJsonData
-> = (webhookData: Input) => {
+export type WebhookDeserialiser<Input extends DeserialisedWebhookData, Output extends ListItemJsonData> = (
+  webhookData: Input
+) => {
   [Properties in keyof Output]: Output[Properties];
 };
 
@@ -20,18 +19,8 @@ export type WebhookDeserialiser<
  * Convenience type which maps ServiceType to the relevant WebhookDeserialiser<Input, Output>
  */
 export interface WebhookDeserialisers {
-  [ServiceType.lawyers]: WebhookDeserialiser<
-    LawyersFormWebhookData,
-    LawyerJsonData
-  >;
-  [ServiceType.funeralDirectors]: WebhookDeserialiser<
-    FuneralDirectorFormWebhookData,
-    FuneralDirectorJsonData
-    >;
-  [ServiceType.covidTestProviders]: WebhookDeserialiser<
-    CovidTestSupplierFormWebhookData,
-    CovidTestSupplierJsonData
-  >;
+  [ServiceType.lawyers]: WebhookDeserialiser<LawyersFormWebhookData, LawyerJsonData>;
+  [ServiceType.funeralDirectors]: WebhookDeserialiser<FuneralDirectorFormWebhookData, FuneralDirectorJsonData>;
   [ServiceType.translatorsInterpreters]: WebhookDeserialiser<
     TranslatorInterpreterFormWebhookData,
     TranslatorInterpreterJsonData
@@ -49,26 +38,6 @@ export interface LawyersFormWebhookData extends BaseDeserialisedWebhookData {
   proBono?: boolean;
   addressCountry: string;
   representedBritishNationals: boolean;
-}
-
-export interface CovidTestSupplierFormWebhookData
-  extends BaseDeserialisedWebhookData {
-  type: ServiceType.covidTestProviders;
-
-  isQualified: boolean;
-  affiliatedWithRegulatoryAuthority: boolean;
-  regulatoryAuthority: string;
-  meetUKstandards: boolean;
-  provideResultsInEnglishFrenchSpanish: boolean;
-  provideTestResultsIn72Hours: boolean;
-  locationName: string;
-  providedTests: string;
-  turnaroundTimeAntigen: string;
-  turnaroundTimeLamp: string;
-  turnaroundTimePCR: string;
-  resultsFormat: string;
-  resultsReadyFormat: string;
-  bookingOptions: string;
 }
 
 export interface FuneralDirectorFormWebhookData extends BaseDeserialisedWebhookData {
@@ -103,7 +72,6 @@ export interface TranslatorInterpreterFormWebhookData extends BaseDeserialisedWe
 
 export type DeserialisedWebhookData =
   | LawyersFormWebhookData
-  | CovidTestSupplierFormWebhookData
   | FuneralDirectorFormWebhookData
   | TranslatorInterpreterFormWebhookData;
 
@@ -119,45 +87,7 @@ export type DeserialisedWebhookData =
    }
  * ```
  */
-export type Deserialiser = Readonly<
-  Record<ServiceType, WebhookDeserialiser<any, any>>
->;
-
-export enum TestType {
-  Antigen = "Antigen",
-  LAMP = "Loop-mediated Isothermal Amplification (LAMP)",
-  PCR = "Polymerase Chain Reaction (PCR)",
-}
-
-export type TurnaroundTimeProperties = keyof Pick<
-  CovidTestSupplierFormWebhookData,
-  "turnaroundTimeAntigen" | "turnaroundTimeLamp" | "turnaroundTimePCR"
->;
-
-export const turnaroundTimeProperties: Record<
-  TestType,
-  TurnaroundTimeProperties
-> = {
-  [TestType.Antigen]: "turnaroundTimeAntigen",
-  [TestType.LAMP]: "turnaroundTimeLamp",
-  [TestType.PCR]: "turnaroundTimePCR",
-};
-
-export interface ProvidedTest {
-  type: TestType;
-  turnaroundTime: number;
-}
-
-export type CovidTestSupplierJsonData = Omit<
-  CovidTestSupplierFormWebhookData,
-  TurnaroundTimeProperties
-> & {
-  providedTests: ProvidedTest[];
-  fastestTurnaround: number;
-  resultsFormat: string[];
-  resultsReadyFormat: string[];
-  bookingOptions: string[];
-};
+export type Deserialiser = Readonly<Record<ServiceType, WebhookDeserialiser<any, any>>>;
 
 export type FuneralDirectorJsonData = FuneralDirectorFormWebhookData;
 
@@ -174,7 +104,7 @@ export type TranslatorInterpreterJsonData = TranslatorInterpreterFormWebhookData
  * It will mean that your code can not be handled in a "generic" way, and you will have to write a deserialiser and serialiser.
  * The deserialised and serialised types should match as closely as possible.
  */
-export type ListItemJsonData = LawyerJsonData | CovidTestSupplierJsonData | FuneralDirectorJsonData | TranslatorInterpreterJsonData;
+export type ListItemJsonData = LawyerJsonData | FuneralDirectorJsonData | TranslatorInterpreterJsonData;
 
 /**
  * converts {@link DeserialisedWebhookData} to {@link Questions[]}

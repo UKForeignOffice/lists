@@ -1,8 +1,8 @@
 import type { ServiceType } from "shared/types";
-import { ListItem } from "@prisma/client";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItem } from "@prisma/client";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
-import { Meta } from "scheduler/workers/types";
+import type { Meta } from "scheduler/workers/types";
 
 export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
@@ -17,7 +17,6 @@ export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
 }
 
 const serviceDisplayString: Record<ServiceType, string> = {
-  covidTestProviders: "Covid test providers",
   funeralDirectors: "Funeral directors",
   lawyers: "Lawyers",
   translatorsInterpreters: "Translator or interpreters",

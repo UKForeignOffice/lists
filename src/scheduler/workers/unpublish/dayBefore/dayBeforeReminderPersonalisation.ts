@@ -1,8 +1,8 @@
 import type { ServiceType } from "shared/types";
-import { List, ListItem } from "@prisma/client";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { List, ListItem } from "@prisma/client";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { createAnnualReviewProviderUrl } from "../../createAnnualReviewProviderUrl";
-import { Meta } from "./types";
+import type { Meta } from "./types";
 
 export function providerReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
@@ -28,7 +28,6 @@ export function postReminderPersonalisation(list: List, numberNotResponded: numb
 }
 
 const serviceDisplayString: Record<ServiceType, string> = {
-  covidTestProviders: "Covid test providers",
   funeralDirectors: "Funeral directors",
   lawyers: "Lawyers",
   translatorsInterpreters: "Translator or interpreters",

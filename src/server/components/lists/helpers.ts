@@ -113,8 +113,6 @@ export function getServiceLabel(serviceType: string | undefined): string | undef
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
-    case ServiceType.covidTestProviders:
-      return "a COVID-19 test provider";
     case ServiceType.funeralDirectors:
       return "a funeral director";
     case ServiceType.translatorsInterpreters:

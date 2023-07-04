@@ -13,7 +13,6 @@ export const listsRouter = express.Router();
 
 listsRouter.use("/find", findRouter);
 listsRouter.get("/results", loadQueryParametersIntoSession, redirectToFindResource);
-listsRouter.get(listsRoutes.removeLanguage, csrfRequestHandler, Controllers.removeLanguageGetController);
 
 listsRouter.get(listsRoutes.confirmApplication, Controllers.listsConfirmApplicationController);
 listsRouter.get(listsRoutes.privateBeta, Controllers.listsGetPrivateBetaPage);
