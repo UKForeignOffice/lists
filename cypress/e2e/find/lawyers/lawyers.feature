@@ -2,17 +2,17 @@ Feature:
 
   I want to search for lawyers
 
-  Background:
 
-  Scenario Outline:
-    Given I am searching for "<profession>" in "<country>" in "<city>"
-    When I select <filters>
+  Scenario: searching for a populated list
+    Given I am searching for "lawyers" in "Italy" in "Rome"
+    When I select [Bankruptcy,Criminal]
     And I continue
     And I have read the disclaimer
-    Then I see "<found>"
+    Then I see "Vegna Mendola"
 
-    Examples:
-      | profession | country | city | filters               | found           |
-      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
-      | lawyers    | Italy   | Rome | [Bankruptcy,Criminal] | Vegna Mendola   |
+
+  Scenario: searching for a country with an empty lawyers list
+    Given I am searching for "lawyers" in "Belize" in ""
+    Then I am on the url "gov.uk/government/publications"
+
 

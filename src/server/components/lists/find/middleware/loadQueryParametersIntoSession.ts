@@ -77,10 +77,6 @@ function loadTranslatorsInterpretersQueryParameters(req: Request, res: Response,
     serviceType: "translators-interpreters",
   };
 
-  console.log(req.session.answers);
-  console.log("spec", translationSpecialties, validatedQueryParams.translationSpecialties);
-  console.log("spec2", interpreterServices, validatedQueryParams.interpretationServices);
-
   next();
 }
 

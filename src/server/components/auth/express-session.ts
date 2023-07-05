@@ -37,6 +37,7 @@ interface LawyersAnswers {
 
 interface BaseAnswers {
   country?: string;
+  urlSafeCountry?: string;
   serviceType?: "lawyers" | "translators-interpreters" | "funeral-directors";
 
   region?: string;
