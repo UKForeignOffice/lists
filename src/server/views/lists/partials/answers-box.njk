@@ -85,7 +85,7 @@
         Languages needed<br />
       </span>
       <strong aria-labelledby="languages">{{ answers.languagesReadable.join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages{{ returnParam }}" aria-label="Change has insurance answer">Change</a>{% endif %}
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages{{ returnParam }}" aria-label="Change languages answer">Change</a>{% endif %}
     </p>
   {% endif %}
   {{ answers | dump }}

@@ -5,13 +5,16 @@ import { sanitiseLanguages } from "./../../helpers/sanitiseLanguages";
 import { getLanguagesRows } from "server/models/listItem/providers/helpers";
 
 export function get(req: Request, res: Response) {
+  const shouldReturn = req.query.return === "results";
+
   if (req.query.remove) {
     const { languages: sessionLanguages = [] } = req.session.answers!;
     const languagesAfterRemoving = sessionLanguages.filter((language) => language !== req.query.remove);
 
     req.session.answers!.languages = languagesAfterRemoving;
     req.session.answers!.languagesReadable = languagesAfterRemoving.map((lang) => languages[lang]);
-    res.redirect("languages");
+    res.redirect(`languages${shouldReturn ? "?return=results" : ""}`);
+
     return;
   }
   const languagesVM = Object.entries(languages).map(([value, text]) => ({ value, text }));
@@ -26,6 +29,7 @@ export function get(req: Request, res: Response) {
 export function post(req: Request, res: Response) {
   let selectedLanguages = sanitiseLanguages(req.session.answers!.languages);
   const { language, action } = req.body;
+  const shouldReturn = req.query.return === "results";
   if (action === "add") {
     selectedLanguages.push(language);
     selectedLanguages = sanitiseLanguages(selectedLanguages);
@@ -36,12 +40,11 @@ export function post(req: Request, res: Response) {
 
     req.session.answers!.languages = selectedLanguages;
     req.session.answers!.languagesReadable = selectedLanguages.map((lang) => languages[lang]);
-
-    res.redirect(`languages`);
+    res.redirect(`languages${shouldReturn ? "?return=results" : ""}`);
     return;
   }
 
-  if (req.query.return === "results") {
+  if (shouldReturn) {
     res.redirect("result");
     return;
   }
