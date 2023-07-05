@@ -59,6 +59,12 @@ findRouter.param("serviceType", (req: Request, res: Response, next: NextFunction
 });
 
 findRouter.param("country", (req: Request, res: Response, next: NextFunction, country) => {
+  const funeralDirectorsParamsToSkip = ["insurance", "repatriation"];
+  if (funeralDirectorsParamsToSkip.includes(country)) {
+    next();
+    return;
+  }
+
   res.locals.urlSafeCountry = encodeURIComponent(country);
   res.locals.country = decodeURIComponent(country);
   req.session.answers = {

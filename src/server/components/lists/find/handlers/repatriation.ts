@@ -20,7 +20,7 @@ export function post(req: Request, res: Response) {
   const { country } = req.session.answers!;
 
   if (req.query.return === "results") {
-    res.redirect("result");
+    res.redirect(`${country}/result`);
     return;
   }
 

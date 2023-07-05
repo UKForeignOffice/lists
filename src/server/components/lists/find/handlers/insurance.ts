@@ -1,5 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
-import { URLSearchParams } from "url";
+import type { Request, Response } from "express";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/funeral-directors/insurance.njk");
@@ -18,7 +17,7 @@ export function post(req: Request, res: Response) {
   req.session.answers!.insurance = insurance === "yes";
 
   if (req.query.return === "results") {
-    res.redirect("result");
+    res.redirect(`${req.session.answers!.urlSafeCountry}/result`);
     return;
   }
 

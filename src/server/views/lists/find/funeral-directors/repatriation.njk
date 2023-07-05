@@ -19,6 +19,14 @@
   {% endblock %}
 
   <form class="form" method="post">
+    {% set value %}
+      {% if answers.repatriation === true %}
+        yes
+      {% endif %}
+      {% if ansewrs.repatriation === false %}
+        no
+      {% endif %}
+    {% endset %}
 
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
@@ -44,7 +52,7 @@
             text: "No, I do not want to bring the body or ashes back to the UK."
           }
         ],
-        value: "yes" if answers.repatriation else "no"
+        value: "yes" if answers.repatriation === true
       }) }}
     </div>
     <button class="govuk-button" data-module="govuk-button">Continue</button>

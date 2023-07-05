@@ -19,6 +19,14 @@
   {% endblock %}
 
   <form class="form" method="post">
+    {% set value %}
+      {% if answers.insurance === true %}
+        yes
+      {% endif %}
+      {% if ansewrs.insurance === false %}
+        no
+      {% endif %}
+    {% endset %}
 
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
       {{ govukRadios({
@@ -43,7 +51,8 @@
             value: "no",
             text: "No"
           }
-        ]
+        ],
+        value: value
       }) }}
     <button class="govuk-button" data-module="govuk-button">Continue</button>
   </form>
