@@ -1,33 +1,17 @@
-import type { Request, Response } from "express";
+import type { Request } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
 import { getServiceLabel, getLinksOfRelatedLists } from "../helpers";
-import { QuestionName } from "../types";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
 import type { CountryName, TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
-import { listsRoutes } from "../routes";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import querystring from "querystring";
 import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseServices";
 import { sanitiseLanguages } from "server/components/lists/find/helpers/sanitiseLanguages";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
-
-export const translatorsInterpretersQuestionsSequence = [
-  QuestionName.readNotice,
-  QuestionName.country,
-  QuestionName.region,
-  QuestionName.servicesProvided,
-  QuestionName.languagesProvided,
-  QuestionName.languagesSummary,
-  QuestionName.translationSpecialties,
-  QuestionName.interpreterServices,
-  QuestionName.interpreterTranslationServices,
-  QuestionName.readDisclaimer,
-];
 
 const serviceTypeToNoun: Record<string, string> = {
   translation: "translators",

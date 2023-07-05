@@ -1,5 +1,4 @@
 import type { Express, RequestHandler } from "express";
-import { isTest } from "server/config";
 
 enum PathType {
   Application = "application",

@@ -58,8 +58,6 @@ function loadTranslatorsInterpretersQueryParameters(req: Request, res: Response,
     interpreterServices?: string;
   } = req.query;
 
-  console.log(req.query);
-
   const validatedQueryParams = {
     servicesProvided: sanitiseServices(servicesProvided.split(",")),
     languagesProvided: sanitiseLanguages(languagesProvided.split(",")),
@@ -82,10 +80,8 @@ function loadTranslatorsInterpretersQueryParameters(req: Request, res: Response,
 
 function loadLawyersQueryParameters(req: Request, res: Response, next: NextFunction) {
   const practiceArea = (req.query.practiceArea ?? "") as string;
-  console.log(practiceArea);
   req.session.answers!.practiceAreas = sanitisePracticeAreas(practiceArea.split(","));
   req.session.answers!.serviceType = "lawyers";
-  console.log(req.session.answers);
 
   next();
 }

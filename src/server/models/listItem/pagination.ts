@@ -1,5 +1,4 @@
 import type { ListsRequestParams, PaginationItem, PaginationResults } from "server/components/lists";
-import { listsRoutes } from "server/components/lists";
 import { queryStringFromParams } from "server/components/lists/helpers";
 
 export const ROWS_PER_PAGE: number = 10;
