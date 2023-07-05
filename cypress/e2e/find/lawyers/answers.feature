@@ -29,6 +29,6 @@ Feature:
     And I choose the country "France"
     And I continue
     Then I see "Results for Lawyers in France"
-    And the answer for "Country" is "Spain"
+    And the answer for "Country" is "France"
     And the answer for "Location" is "Not supplied"
 
