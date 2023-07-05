@@ -16,7 +16,7 @@ Feature:
     And I enter the language "Spanish"
     And I continue
     And I click the link "Continue"
-    And I check the "Select all" checkbox for "Select the type of translation that you need"
+    And I "check" the "Select all" checkbox for "Select the type of translation that you need"
     And I continue
     And I have read the disclaimer
 
@@ -28,7 +28,7 @@ Feature:
     And I enter the language "Spanish"
     And I continue
     And I click the link "Continue"
-    And I check the "Select all" checkbox for "Select the situation that you need an interpreter for"
+    And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     And I have read the disclaimer
 
@@ -41,7 +41,7 @@ Feature:
     And I enter the language "Spanish"
     And I continue
     And I click the link "Continue"
-    And I check the "Select all" checkbox for "Select the type of translation that you need"
-    And I check the "Select all" checkbox for "Select the situation that you need an interpreter for"
+    And I "check" the "Select all" checkbox for "Select the type of translation that you need"
+    And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     And I have read the disclaimer

@@ -3,9 +3,11 @@ import { languages } from "server/services/metadata";
 
 import { sanitiseLanguages } from "./../../helpers/sanitiseLanguages";
 import { getLanguagesRows } from "server/models/listItem/providers/helpers";
+import querystring from "querystring";
 
 export function get(req: Request, res: Response) {
   const shouldReturn = req.query.return === "results";
+  const queryString = querystring.encode({ ...(shouldReturn && { return: "results" }) });
 
   if (req.query.remove) {
     const { languages: sessionLanguages = [] } = req.session.answers!;
@@ -13,7 +15,7 @@ export function get(req: Request, res: Response) {
 
     req.session.answers!.languages = languagesAfterRemoving;
     req.session.answers!.languagesReadable = languagesAfterRemoving.map((lang) => languages[lang]);
-    res.redirect(`languages${shouldReturn ? "?return=results" : ""}`);
+    res.redirect(`languages?${queryString}`);
 
     return;
   }
@@ -29,7 +31,8 @@ export function get(req: Request, res: Response) {
 export function post(req: Request, res: Response) {
   let selectedLanguages = sanitiseLanguages(req.session.answers!.languages);
   const { language, action } = req.body;
-  const shouldReturn = req.query.return === "results";
+  const shouldReturn = req.session.answers?.disclaimer;
+  const queryString = querystring.encode({ ...(shouldReturn && { return: "results" }) });
   if (action === "add") {
     selectedLanguages.push(language);
     selectedLanguages = sanitiseLanguages(selectedLanguages);
@@ -40,7 +43,7 @@ export function post(req: Request, res: Response) {
 
     req.session.answers!.languages = selectedLanguages;
     req.session.answers!.languagesReadable = selectedLanguages.map((lang) => languages[lang]);
-    res.redirect(`languages${shouldReturn ? "?return=results" : ""}`);
+    res.redirect(`languages?${queryString}`);
     return;
   }
 
