@@ -43,15 +43,9 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   );
 
   server.use(
-    `/complain/:path*`,
+    `/complain/*`,
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
-        const path = req.params.path;
-
-        if (path === "form") {
-          return req.originalUrl.replace("/complain", "/provider-complaint");
-        }
-
         return req.originalUrl.replace("/complain", "");
       },
       userResDecorator: function (proxyRes, proxyResData, userReq) {
@@ -63,13 +57,27 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
 
         return proxyResData
           .toString("utf8")
-          .replace(/(href|src|value)=('|")([^'"]*privacy[^'"]*)/g, `$1=${FIND_PRIVACY_POLICY_URL}`)
-          .replace(/(href|src|value)=('|")([^'"]*sitemap[^'"]*)/g, `$1="/sitemap"`)
-          .replace(/(href|src|value)=('|")([^'"]*provider-contact([^'"])*)/g, `$1=$2/form`)
+          .replace("/help/privacy", `${FIND_PRIVACY_POLICY_URL}`)
+          .replace(/(href|src|value)=('|")([^'"])(.*sitemap)[^'"]/g, `$1=/sitemap`)
+          .replace(/(href|src|value)=('|")([^'"]*provider-contact([^'"])*)/g, `$1=$2/provider-complaint`)
+          .replace(/(href|src|value)=('|")([^'"]*cookies([^'"])*)/g, `$1=$2/complain/help/cookies`)
           .replace(
             /(href|src|value)=(('|")(?!.*help|.*provider-contact|.*privacy|.*sitemap.*))\/([^'"]+)/g,
             `$1=$2/complain/$4`
           );
+      },
+      userResHeaderDecorator(headers, userReq, userRes) {
+        const isComplainRequest = userReq.originalUrl.startsWith("/complain");
+
+        if (userRes.statusCode === 302 && isComplainRequest) {
+          const prefix = headers.location?.startsWith("?view=") ? `/${userReq.params[0]}` : "";
+          return {
+            ...headers,
+            location: `/complain${prefix}${headers.location}`,
+          };
+        }
+
+        return headers;
       },
     })
   );
