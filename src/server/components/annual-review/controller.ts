@@ -139,13 +139,8 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
   const result = await findListItemByReference(listItemRef);
 
   if (!result) {
-    next(
-      new HttpException(
-        404,
-        "404",
-        `The list item with reference ${listItemRef} cannot be found when trying to redirect to form runner`
-      )
-    );
+    logger.error(`redirectToFormRunner: List item with reference ${listItemRef} cannot be found`);
+    next(new HttpException(404, "404", `List item could be found when trying to redirect.`));
     return;
   }
 

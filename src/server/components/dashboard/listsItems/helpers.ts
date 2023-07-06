@@ -19,9 +19,10 @@ export async function redirectIfUnauthorised(req: Request, res: ListItemRes, nex
     const userHasAccessToList = await req.user?.hasAccessToList(list!.id);
 
     if (!userHasAccessToList) {
+      logger.error(`redirectIfUnauthorised Error: User with id ${req.user?.id} is not authorised to access this list.`);
       const err = new HttpException(403, "403", "User is not authorised to access this list.");
       next(err);
-      throw new Error(`User with id ${req.user?.id} is not authorised to access this list.`);
+      return;
     }
 
     next();

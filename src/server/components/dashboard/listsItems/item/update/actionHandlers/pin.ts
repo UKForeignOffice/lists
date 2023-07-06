@@ -27,7 +27,7 @@ export async function pin(req: Request, res: Response) {
     return res.redirect(listIndexUrl);
   } catch (error) {
     logger.error(`listItemPinController: ${userId} failed to ${action} user, ${error}`);
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.}`);
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
     return res.redirect(listItemUrl);
   }
 }
