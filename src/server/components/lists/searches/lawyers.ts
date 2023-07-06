@@ -1,19 +1,10 @@
 import type { Request } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
 import { getAllRequestParams, getLinksOfRelatedLists } from "../helpers";
-import { QuestionName } from "../types";
 import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-
-export const lawyersQuestionsSequence = [
-  QuestionName.readNotice,
-  QuestionName.country,
-  QuestionName.region,
-  QuestionName.practiceArea,
-  QuestionName.readDisclaimer,
-];
 
 export async function searchLawyers(req: Request) {
   const params = getAllRequestParams(req);

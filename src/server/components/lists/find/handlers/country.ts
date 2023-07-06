@@ -45,7 +45,7 @@ export async function post(req: Request, res: Response) {
   const validatedCountry = validateCountry(country);
   if (!validatedCountry) {
     req.flash("error", "You must enter a country name");
-    res.redirect(req.originalUrl);
+    res.redirect("country");
     return;
   }
   const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(req.params.serviceType));
