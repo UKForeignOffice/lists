@@ -57,7 +57,7 @@ export async function searchLawyers(req: Request, res: Response): Promise<void> 
     }
   } catch (error) {
     // continue processing with an empty allRows[]
-    logger.error(`searchLawyers: ${error}`);
+    logger.error(`searchLawyers: ${error}. Search params used: ${JSON.stringify(params)}`);
   }
   const count = allRows.length;
 

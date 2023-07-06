@@ -142,9 +142,9 @@ export async function usersEditPostController(req: Request, res: Response, next:
 
 // TODO: test
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const { listId } = req.params;
+  const { listId } = req.params;
 
+  try {
     let list: List | undefined;
     let annualReviewStartDate = "";
     let lastAnnualReviewStartDate = "";
@@ -186,7 +186,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       csrfToken: getCSRFToken(req),
     });
   } catch (error) {
-    logger.error("listsEditController: list to edit could not be found", error);
+    logger.error(`listsEditController: list to edit with id ${listId} could not be found`, error);
 
     const err = new HttpException(404, "404", "List could not be found.");
     next(err);

@@ -167,7 +167,7 @@ export async function searchTranslatorsInterpreters(req: Request, res: Response)
       allRows = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
     }
   } catch (e) {
-    logger.error(`searchTranslatorsInterpreters: Exception searching for translators or interpreters`, e);
+    logger.error(`searchTranslatorsInterpreters: ${e.message}. Using these search params ${JSON.stringify(params)}`);
   }
 
   const count = allRows.length;

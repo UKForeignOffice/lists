@@ -25,7 +25,7 @@ export async function getInitiateFormRunnerSessionToken(
     })
     .catch((error) => {
       logger.error(
-        `getInitiateFormRunnerSessionToken: Error received after calling form runner URL ${formRunnerNewSessionUrl}. ${error}`
+        `getInitiateFormRunnerSessionToken: Error received after calling form runner URL ${formRunnerNewSessionUrl}. ${error.message}`
       );
       throw new Error("Unable to initiate form runner session");
     });
