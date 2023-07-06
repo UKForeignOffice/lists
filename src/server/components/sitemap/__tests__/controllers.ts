@@ -7,7 +7,6 @@ describe("SiteMap", () => {
   let mockReq: any;
   let mockRes: any;
   let serviceTypes: string[];
-  let exclusions: string[];
 
   beforeEach(() => {
     mockReq = {};
@@ -15,7 +14,7 @@ describe("SiteMap", () => {
     mockRes = {
       render: jest.fn(),
     };
-    serviceTypes = Object.keys(ServiceType).filter((name) => !exclusions.includes(name));
+    serviceTypes = Object.keys(ServiceType);
   });
 
   test("a section is rendered for each service type", () => {
