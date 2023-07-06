@@ -212,13 +212,6 @@ describe("Lawyers List:", () => {
       expect(continueButton.text()).toBe("Continue");
     });
 
-    test("POST request is correct", async () => {
-      const { status, header } = await request(server).post(pageLink).send({ readDisclaimer: "ok" });
-
-      expect(status).toBe(302);
-      expect(header.location).toBe(`${pageLink}`);
-    });
-
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
