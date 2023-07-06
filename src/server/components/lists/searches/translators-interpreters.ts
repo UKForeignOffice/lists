@@ -75,7 +75,7 @@ export async function searchTranslatorsInterpreters(req: Request) {
 
   if (allRows.length > 0) {
     searchResults = await TranslatorInterpreterListItem.findPublishedTranslatorsInterpretersPerCountry(filterProps);
-    searchResults = allRows.map((listItem: TranslatorInterpreterListItemGetObject) => {
+    searchResults = searchResults.map((listItem: TranslatorInterpreterListItemGetObject) => {
       if (listItem.jsonData.languagesProvided) {
         listItem.jsonData.languagesProvided = listItem.jsonData.languagesProvided?.map(
           (language: string) => metaData.languages[language]
