@@ -1,22 +1,11 @@
-import type { Request, Response } from "express";
+import type { Request } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
 import { getServiceLabel, getAllRequestParams, formatCountryParam, getLinksOfRelatedLists } from "../helpers";
-import { QuestionName } from "../types";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
 import type { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
-
-export const funeralDirectorsQuestionsSequence = [
-  QuestionName.readNotice,
-  QuestionName.insurance,
-  QuestionName.contactInsurance,
-  QuestionName.repatriation,
-  QuestionName.country,
-  QuestionName.region,
-  QuestionName.readDisclaimer,
-];
 
 export async function searchFuneralDirectors(req: Request) {
   let params = getAllRequestParams(req);
