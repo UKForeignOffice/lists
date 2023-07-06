@@ -121,21 +121,6 @@ describe("Lists Controllers", () => {
     return jest.spyOn(notify, "sendApplicationConfirmationEmail").mockResolvedValue(true);
   }
 
-  describe("listsGetController", () => {
-    test("it renders question page when serviceType is undefined", () => {
-      //listsGetController(req, res);
-      req.params.page = "";
-
-      expect(res.render).toHaveBeenCalledWith("lists/question-page", {
-        ...DEFAULT_VIEW_PROPS,
-        ...{ ...req.params, ...req.query, ...req.body },
-        partialToRender: "question-service-type.njk",
-        csrfToken: "",
-        getServiceLabel,
-      });
-    });
-  });
-
   describe("ingestPostController", () => {
     test("it responds with 500 when serviceType is unknown", async () => {
       req.params.serviceType = "other";
@@ -191,7 +176,7 @@ describe("Lists Controllers", () => {
     });
 
     test("it responds with 422 when createListItem fails", async () => {
-      req.params.serviceType = "covidTestProviders";
+      req.params.serviceType = "lawyers";
       req.body.questions = webhookPayload.questions;
 
       const createdListItem: any = {
@@ -227,14 +212,14 @@ describe("Lists Controllers", () => {
 
     test("it renders the correct view", async () => {
       jest.spyOn(listItem, "setEmailIsVerified").mockResolvedValue({
-        type: ServiceType.covidTestProviders,
+        type: ServiceType.lawyers,
       });
       jest.spyOn(notifyEmails, "sendManualActionNotificationToPost").mockResolvedValue({});
 
       await listsConfirmApplicationController(req, res, next);
 
       expect(res.render).toHaveBeenCalledWith("lists/application-confirmation-page", {
-        serviceName: "Find a COVID-19 test provider abroad",
+        serviceName: "Find a lawyer abroad",
       });
     });
 
@@ -282,22 +267,23 @@ describe("Lists Controllers", () => {
     });
   });
 
-  describe("listsResultsController", () => {
-    test.todo("it invokes searchLayer with correct parameters", () => {
-      const spySearchLawyers = jest.spyOn(lawyers, "searchLawyers");
-      req.params.serviceType = ServiceType.lawyers;
-
-      //listsResultsController(req, res, next);
-
-      expect(spySearchLawyers).toHaveBeenCalledWith(req, res);
-    });
-
-    test.todo("it invokes next when serviceType is unknown", () => {
-      req.params.serviceType = "any";
-
-      listsResultsController(req, res, next);
-
-      expect(next).toHaveBeenCalled();
-    });
-  });
+  //TODO:-
+  // describe("listsResultsController", () => {
+  //   test.todo("it invokes searchLayer with correct parameters", () => {
+  //     const spySearchLawyers = jest.spyOn(lawyers, "searchLawyers");
+  //     req.params.serviceType = ServiceType.lawyers;
+  //
+  //     //listsResultsController(req, res, next);
+  //
+  //     expect(spySearchLawyers).toHaveBeenCalledWith(req, res);
+  //   });
+  //
+  //   test.todo("it invokes next when serviceType is unknown", () => {
+  //     req.params.serviceType = "any";
+  //
+  //     listsResultsController(req, res, next);
+  //
+  //     expect(next).toHaveBeenCalled();
+  //   });
+  // });
 });

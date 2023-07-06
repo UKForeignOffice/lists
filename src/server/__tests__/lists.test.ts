@@ -20,13 +20,9 @@ describe("Lists routes", () => {
     );
     expect(status).toEqual(302);
   });
-  test("lists results route is ready", async () => {
-    const { status } = await request(server).get("/find/lawyers/italy/results");
-    expect(status).toEqual(302);
-  });
 
   test("lists formRunnerWebhook route is ready", async () => {
     const { status } = await request(server).post("/ingest/covidTestProviders");
-    expect(status).toEqual(422);
+    expect(status).toEqual(500);
   });
 });

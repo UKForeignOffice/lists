@@ -6,7 +6,7 @@ import { pageTitles } from "server/components/dashboard/helpers";
 import { kebabCase } from "lodash";
 
 function normaliseServiceType(serviceType: string) {
-  return kebabCase(serviceType.toLowerCase());
+  return kebabCase(serviceType).toLowerCase();
 }
 export function sitemapController(_req: Request, res: Response): void {
   const sections = Object.keys(ServiceType).map((serviceType) => {

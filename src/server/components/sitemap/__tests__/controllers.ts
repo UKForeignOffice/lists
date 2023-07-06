@@ -40,9 +40,9 @@ describe("SiteMap", () => {
     const sections = mockRes.render.mock.calls[0][1].sections;
     sections.forEach((section: any, index: any) => {
       const serviceType = serviceTypes[index];
-      const normalisedServiceType = kebabCase(serviceType.toLowerCase());
+      const normalisedServiceType = kebabCase(serviceType).toLowerCase();
 
-      expect(section.links[0].href).toBe(`/find/${normalisedServiceType}/Afghanistan`);
+      expect(section.links[0].href).toBe(`/find/${normalisedServiceType}?country=Afghanistan`);
     });
   });
 });

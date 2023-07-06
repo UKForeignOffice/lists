@@ -41,7 +41,7 @@ describe("Lawyers List:", () => {
     test("old URL is redirected to new URL", async () => {
       const res = await request(server).get("/find?serviceType=lawyers");
       const { status } = res;
-      expect(status).toBe(302);
+      expect(status).toBe(301);
     });
 
     test("GET request is correct", async () => {
