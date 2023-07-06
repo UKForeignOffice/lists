@@ -12,7 +12,7 @@ export function get(req: Request, res: Response) {
 export function post(req: Request, res: Response) {
   if (req.body.readDisclaimer !== "on") {
     req.flash("error", "You must accept the disclaimer to use this service");
-    res.redirect(req.originalUrl);
+    res.redirect(`disclaimer`);
     return;
   }
 

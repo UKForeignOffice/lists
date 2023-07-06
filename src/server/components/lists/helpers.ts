@@ -27,50 +27,8 @@ export async function initLists(server: Express): Promise<void> {
 }
 
 /**
- * To support the select all option for checkbox fields, this function does the following:
- *   - detects if the value "All" is provided and will remove all other options in the event "Select All" and any
- *     additional checkboxes were selected by the user.  Currently this is only required for lawyers.practiceArea
- *     (Areas of law field).
- *   - detects if the region field is empty and sets to the value "Not set" to enable searching for by the entire country.
- *   - detects the presence of the _csrf property and deletes it.
- * @param params
+ * TODO: - Refactor so this uses querystring.decode or .encode.
  */
-export function preProcessParams(params: Record<string, any>, req: Request): Record<string, any> {
-  const { _csrf, ...paramsCopy } = params;
-
-  // select all
-  const hasSelectedAll: boolean = paramsCopy?.practiceArea?.includes("All") ?? false;
-
-  // region validation
-  const noRegionSelected = paramsCopy?.region === "";
-
-  // country validation
-  let { country } = paramsCopy || "";
-  if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
-    delete paramsCopy.country;
-    country = null;
-  } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
-    country = "United Kingdom";
-  }
-
-  // translation services validation
-  if (paramsCopy.servicesProvided) {
-    if (!paramsCopy.servicesProvided.includes("translation")) {
-      delete paramsCopy.translationSpecialties;
-    }
-    if (!paramsCopy.servicesProvided.includes("interpretation")) {
-      delete paramsCopy.interpreterServices;
-    }
-  }
-
-  return {
-    ...paramsCopy,
-    ...(hasSelectedAll && { practiceArea: "All" }),
-    ...(noRegionSelected && { region: "Not set" }),
-    ...(country && { country: country }),
-  };
-}
-
 export function queryStringFromParams(params: Record<string, any>, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .filter((param) => param !== "page")
@@ -95,6 +53,9 @@ export function queryStringFromParams(params: Record<string, any>, removeEmptyVa
     .join("&");
 }
 
+/**
+ * TODO: - Refactor so this uses querystring.decode or .encode.
+ */
 export function parseListValues(paramName: string, params: ListsRequestParams): string[] | undefined {
   if (!(`${paramName}` in params)) {
     return undefined;

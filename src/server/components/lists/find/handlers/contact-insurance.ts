@@ -1,7 +1,5 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 
-export function get(req: Request, res: Response, Next: NextFunction) {
+export function get(req: Request, res: Response) {
   res.render("lists/find/funeral-directors/contact-insurance.njk");
 }
-
-export function post(req: Request, res: Response, Next: NextFunction) {}
