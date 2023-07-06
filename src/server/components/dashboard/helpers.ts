@@ -1,7 +1,7 @@
 import { logger } from "server/services/logger";
 import axios from "axios";
-import { List, ListJsonData } from "server/models/types";
-import { NewSessionData } from "../formRunner/types";
+import type { List, ListJsonData } from "server/models/types";
+import type { NewSessionData } from "../formRunner/types";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";

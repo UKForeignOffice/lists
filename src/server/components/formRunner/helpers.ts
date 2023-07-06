@@ -118,7 +118,6 @@ export async function initialiseFormRunnerSession({
   list,
   listItem,
   message,
-  isUnderTest,
   isAnnualReview,
 }: initialiseFormRunnerInput): Promise<string> {
   logger.info(
@@ -151,6 +150,8 @@ export async function initialiseFormRunnerSession({
   );
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
+
+  logger.info(`form runner session initialised for list item id: ${listItem.id} with token ${token}`);
 
   return createFormRunnerEditListItemLink(token);
 }
