@@ -25,7 +25,7 @@ export function post(req: Request, res: Response) {
 
   if (sanitisedPracticeAreas?.length === 0) {
     req.flash("error", "You must select at least one area of law");
-    res.redirect(req.originalUrl);
+    res.redirect("practice-area");
     return;
   }
 
