@@ -23,7 +23,9 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   });
 
   if (listItem === null) {
-    logger.error(`${userId} tried to look for ${id}, listItem could not be found`);
+    logger.error(
+      `handleListItemUpdate: User with id ${userId} tried to update listItem ${id}, but it could not be found`
+    );
     throw new Error(`Unable to store updates - listItem could not be found`);
   }
 
@@ -71,7 +73,7 @@ export async function publish(req: Request, res: Response) {
     res.redirect(listIndexUrl);
     return;
   } catch (error: any) {
-    req.flash("errorMsg", `${organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${organisationName} could not be updated.`);
     res.redirect(listItemUrl);
   }
 }

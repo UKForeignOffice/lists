@@ -109,7 +109,7 @@ export async function post(req: Request, res: ListIndexRes) {
   try {
     newDates = parseKeyDatesFromBodyRequest(req.body);
   } catch (e) {
-    logger.error(e);
+    logger.error(`listsItems post: ${e}`);
     req.flash("error", "The date must be a valid ISO Date string for example 2019-09-18 (YYYY-MM-DD)");
     return res.redirect(`${res.locals.listsEditUrl}/development`);
   }

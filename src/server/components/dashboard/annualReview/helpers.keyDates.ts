@@ -44,7 +44,7 @@ export async function updateAnnualReviewWithKeyDates(list: ListWithJsonData, iso
   try {
     newDates = createKeyDatesFromISODate(isoDate);
   } catch (e) {
-    logger.error(e);
+    logger.error(`updateAnnualReviewWithKeyDates ${e}`);
     throw e;
   }
 

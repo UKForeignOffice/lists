@@ -16,7 +16,12 @@ export async function sendDayBeforePostReminder(
   numberNotResponded: number,
   meta: Meta
 ) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforePostReminder", timeframe: "dayBefore", template });
+  const logger = schedulerLogger.child({
+    listId: list.id,
+    method: "sendDayBeforePostReminder",
+    timeframe: "dayBefore",
+    template,
+  });
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   logger.silly(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
@@ -39,7 +44,7 @@ export async function sendDayBeforePostReminder(
 
     if (!updateAudit) {
       logger.error(
-        `unpublish reminder event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
+        `failed to add npublish reminder event for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
       );
     }
 

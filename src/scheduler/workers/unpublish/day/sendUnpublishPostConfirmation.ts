@@ -42,7 +42,7 @@ export async function sendUnpublishPostConfirmation(
 
     if (!updateAudit) {
       logger.error(
-        `unpublish reminder event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
+        `unpublish reminder audit event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
       );
     }
 

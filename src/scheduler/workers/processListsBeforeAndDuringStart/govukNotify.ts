@@ -30,10 +30,13 @@ export async function sendAnnualReviewProviderEmail(
         config.NOTIFY.templates.annualReviewNotices.providerStart
       }, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    await getNotifyClient().sendEmail(config.NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, { personalisation, reference: "" });
+    await getNotifyClient().sendEmail(config.NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
+      personalisation,
+      reference: "",
+    });
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
-    logger.error(message);
+    logger.error(`sendAnnualReviewProviderEmail: ${message}`);
     return { error: new Error(message) };
   }
   return { result: true };
@@ -74,7 +77,7 @@ export async function sendAnnualReviewPostEmail(
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference: "" });
     return { result: (result as NotifyResult).statusText === "Created" };
   } catch (error) {
-    const message = `Unable to send annual review post email: ${error.message}`;
+    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }

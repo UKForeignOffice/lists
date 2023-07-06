@@ -1,6 +1,6 @@
 import { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
 import { PaginationResults } from "server/components/lists";
-import { calculatePagination, queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
+import { queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
@@ -84,7 +84,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   // TODO:- need to investigate bug to do with take/skip on related entries. Seems to pull all of them regardless!
   // note: we are applying take/skip on List (i.e. take 20 Lists) rather than take 20 Items
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const paginationOptions: Record<string, unknown> | { take: number; skip: number } = calculatePagination(options);
+  // const paginationOptions: Record<string, unknown> | { take: number; skip: number } = calculatePagination(options);
 
   const OR = reqQueries.map((tag) => queryToPrismaQueryMap[tag]).filter(Boolean);
 
@@ -112,7 +112,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
   });
 
   if (result?.length === 0) {
-    logger.error(`Failed to find list items for list ${listId}`);
+    logger.error(`findIndexListItems: Failed to find list items for list ${listId}`);
   }
 
   const pagination = await getPaginationValues({

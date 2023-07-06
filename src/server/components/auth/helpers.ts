@@ -20,7 +20,7 @@ export function ensureUserIsAdministrator(req: Request, _res: Response, next: Ne
   if (req.isAuthenticated() && req.user.isAdministrator) {
     next();
   } else {
-    const err = new HttpException(405, "405", "Not allowed");
+    const err = new HttpException(405, "405", "Not allowed, only super administrators can access this page");
     return next(err);
   }
 }

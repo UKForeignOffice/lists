@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { startCase } from "lodash";
 import { Status } from "@prisma/client";
 import { add, isPast } from "date-fns";
 
-import * as Types from "../dashboard/listsItems/types";
+import type * as Types from "../dashboard/listsItems/types";
 import { findListItemByReference } from "server/models/listItem/listItem";
 import { getDetailsViewModel } from "server/components/dashboard/listsItems/getViewModel";
 import { getCSRFToken } from "server/components/cookies/helpers";
@@ -15,7 +15,7 @@ import type { ListItemGetObject, List, ListJsonData } from "server/models/types"
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
-import { ListWithJsonData } from "server/components/dashboard/helpers";
+import type { ListWithJsonData } from "server/components/dashboard/helpers";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -23,7 +23,14 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     const listItem = await findListItemByReference(listItemRef);
 
     if (!listItem) {
-      return next(new HttpException(404, "404", "The list item cannot be found"));
+      next(
+        new HttpException(
+          404,
+          "404",
+          `The list item with the reference ${listItemRef} cannot be found for the confirmation page`
+        )
+      );
+      return;
     }
 
     // @ts-ignore
@@ -120,7 +127,7 @@ export async function confirmPostController(req: Request, res: Response, next: N
       return res.redirect(`/annual-review/confirm/${req.body.reference}`);
     }
 
-    req.session.updatesRequired = chosenValue === "no"
+    req.session.updatesRequired = chosenValue === "no";
     return res.redirect(`/annual-review/declaration/${req.body.reference}`);
   } catch (err) {
     next(err);
@@ -132,11 +139,12 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
   const result = await findListItemByReference(listItemRef);
 
   if (!result) {
-    return next(new HttpException(404, "404", "The list item cannot be found"));
+    logger.error(`redirectToFormRunner: List item with reference ${listItemRef} cannot be found`);
+    next(new HttpException(404, "404", `List item could be found when trying to redirect.`));
+    return;
   }
 
   const { list, ...listItem } = result;
-
 
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({
     list,
@@ -186,7 +194,14 @@ export async function declarationPostController(req: Request, res: Response, nex
 
     const result = await findListItemByReference(listItemRef);
     if (!result) {
-      return next(new HttpException(404, "404", "The list item cannot be found"));
+      next(
+        new HttpException(
+          404,
+          "404",
+          `The list item with the reference ${listItemRef} cannot be found when trying to show the declaration page`
+        )
+      );
+      return;
     }
 
     const list = result.list;

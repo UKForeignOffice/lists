@@ -68,7 +68,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(props: {
 
     return await prisma.$queryRawUnsafe(query);
   } catch (error) {
-    logger.error("findPublishedTranslatorsInterpreters ERROR: ", error);
+    logger.error("findPublishedTranslatorsInterpretersPerCountry ERROR: ", error);
     return [];
   }
 }

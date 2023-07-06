@@ -24,8 +24,7 @@ export async function getPlaceGeoPoint(props: {
   try {
     return await geoLocatePlaceByText(text as string, countryName as string);
   } catch (error) {
-    const typedError = error as { message: string };
-    logger.error(typedError.message);
+    logger.error(`getPlaceGeoPoint ${(error as Error).message}`);
 
     return [0.0, 0.0];
   }

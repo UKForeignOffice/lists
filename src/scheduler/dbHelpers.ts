@@ -22,7 +22,7 @@ export async function findListItems(options: {
     const { listIds, listItemIds, statuses, isAnnualReview } = options;
     if (!listIds?.length && !listItemIds?.length) {
       const message = "List ids or list item ids must be specified to find list items";
-      logger.error(message);
+      logger.error(`findListItems: ${message}`);
       return { error: Error(message) };
     }
     const result = await prisma.listItem.findMany({
@@ -50,7 +50,7 @@ export async function findListItems(options: {
     });
     return { result };
   } catch (error) {
-    logger.error(`findListItemsForLists Error ${(error as Error).stack}`);
+    logger.error(`findListItems Error: ${(error as Error).message}`);
     return { error: Error("Unable to get list items") };
   }
 }
@@ -72,7 +72,9 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
     logger.debug(`direct from query, found [${result.length}] lists`);
     return { result };
   } catch (error) {
-    logger.error(`findListsInAnnualReview Error: ${(error as Error).message}`);
+    logger.error(
+      `findListsWithCurrentAnnualReview: Unable to find list with current annual review ${(error as Error).message}`
+    );
     return { error: new Error("Unable to get lists in annual review") };
   }
 }
@@ -99,8 +101,8 @@ export async function updateListForAnnualReview(
     })) as List;
     return { result };
   } catch (error) {
-    const errorMessage = `Unable to update list for annual review: ${(error as Error).message}`;
-    logger.error(errorMessage);
+    const errorMessage = `Unable to update list with id ${list.id} for annual review: ${(error as Error).message}`;
+    logger.error(`updateListForAnnualReview: ${errorMessage}`);
     return { error: new Error(errorMessage) };
   }
 }
@@ -143,7 +145,11 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
 
     return { result };
   } catch (error) {
-    logger.error(`findListByCountryAndType Error: ${(error as Error).message}`);
+    logger.error(
+      `findListByAnnualReviewDate Error: Unable to find list by specified annual review date: ${annualReviewStartDate}  ${
+        (error as Error).message
+      }`
+    );
     return { error: Error("Unable to get lists") };
   }
 }
@@ -164,8 +170,8 @@ export async function updateIsAnnualReview(
   const updatedListItems: ListItemWithHistory[] = [];
 
   if (!listItems?.length) {
-    const message = `List item ids must be provided to update list items for list ${list.id}`;
-    logger.error(message);
+    const message = `List item ids must be provided to update list items for list with id ${list.id}`;
+    logger.error(`updateIsAnnualReview: ${message}`);
     return { error: new Error(message) };
   }
   for (const listItem of listItems) {
@@ -176,7 +182,6 @@ export async function updateIsAnnualReview(
       data: {
         isAnnualReview: listItem.status !== Status.UNPUBLISHED,
         status: Status.OUT_WITH_PROVIDER,
-        // history: EVENTS[listItemEvent](),
         history: {
           create: {
             type: listItemEvent,
@@ -193,8 +198,8 @@ export async function updateIsAnnualReview(
       await prisma.listItem.update(updateListItemPrismaStatement);
       updatedListItems.push(listItem);
     } catch (err) {
-      const message = `could not update list item ${listItem.id} due to ${err.message}.`;
-      logger.error(message);
+      const message = `Could not update list item ${listItem.id} due to ${err.message}.`;
+      logger.error(`updateIsAnnualReview: ${message}`);
     }
   }
   return { result: updatedListItems };

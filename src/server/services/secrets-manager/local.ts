@@ -65,7 +65,7 @@ export async function createSecret(secretName: string): Promise<boolean> {
     await secretsManager.createSecret(params);
     return true;
   } catch (error) {
-    logger.error(`SecretsManager createSecret Error: ${error.message}`);
+    logger.error(`createSecret: SecretsManager createSecret Error: ${error.message}`);
     return false;
   }
 }
@@ -96,9 +96,7 @@ export async function rotateSecret(secretName: string): Promise<boolean> {
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
-    logger.error(
-      `Failed to rotate secret ${secretName}. Error: ${error.message}`
-    );
+    logger.error(`rotateSecret: Failed to rotate secret ${secretName}. Error: ${error.message}`);
     return false;
   }
 }

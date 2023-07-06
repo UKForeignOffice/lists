@@ -14,7 +14,7 @@ import {
 import { QuestionName } from "../types";
 import { getCSRFToken } from "server/components/cookies/helpers";
 import { LawyerListItem } from "server/models/listItem/providers";
-import { CountryName, LawyerListItemGetObject } from "server/models/types";
+import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { cleanLegalPracticeAreas, validateCountry } from "server/models/listItem/providers/helpers";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
@@ -57,7 +57,7 @@ export async function searchLawyers(req: Request, res: Response): Promise<void> 
     }
   } catch (error) {
     // continue processing with an empty allRows[]
-    logger.error(`Exception caught in searchLawyers`, error);
+    logger.error(`searchLawyers: ${error}. Search params used: ${JSON.stringify(params)}`);
   }
   const count = allRows.length;
 

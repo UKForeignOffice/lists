@@ -1,6 +1,6 @@
 // Covid Test Suppliers
 // TODO: Test
-import { LawyerListItemGetObject } from "server/models/types";
+import type { LawyerListItemGetObject } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";

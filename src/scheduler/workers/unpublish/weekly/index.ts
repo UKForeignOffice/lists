@@ -8,6 +8,6 @@ export async function main() {
   results
     .filter((result) => result.status !== "fulfilled")
     .forEach((failedResult) => {
-      logger.error((failedResult as PromiseRejectedResult).reason);
+      logger.error(`scheduler unpublish weekly: ${(failedResult as PromiseRejectedResult).reason}`);
     });
 }

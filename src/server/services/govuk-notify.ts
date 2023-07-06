@@ -120,7 +120,7 @@ export async function sendEditDetailsEmail(
 
     return { result: (result as NotifyResult).statusText === "Created" };
   } catch (error) {
-    const message = `Unable to send change request email: ${error.message}`;
+    const message = `sendEditDetailsEmail: Unable to send change request email: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }
@@ -182,7 +182,11 @@ export async function sendAnnualReviewCompletedEmail(
       reference: "",
     });
   } catch (error) {
-    logger.error(`The annual review completion email could not be sent due to error: ${(error as Error).message}`);
+    logger.error(
+      `sendAnnualReviewCompletedEmail: The annual review completion email could not be sent due to error: ${
+        (error as Error).message
+      }`
+    );
   }
 }
 
@@ -209,7 +213,7 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
 
   settled.filter(hasNotifyError).forEach((reject) => {
     // @ts-ignore
-    logger.error(`${logLabel} Template ID: ${templateId} rejected with from notify API ${reject.reason}`, {
+    logger.error(`sendEmails: ${logLabel} Template ID: ${templateId} rejected with from notify API ${reject.reason}`, {
       method: "sendEmails",
     });
   });
@@ -239,7 +243,7 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   });
 
   logger.error(
-    `sendManualActionNotificationToPost - ${listId} could not be found, could not send notification for ${trigger}`
+    `sendManualActionNotificationToPost: List with id ${listId} could not be found, could not send notification for NotificationTrigger ${trigger}`
   );
   if (!list) {
     return { error: `invalid ${listId}` };

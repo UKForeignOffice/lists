@@ -39,7 +39,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
     req.flash("successBannerColour", "blue");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${jsonData?.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${jsonData?.organisationName} could not be updated.`);
     return res.redirect(listItemUrl);
   }
 }
@@ -53,7 +53,7 @@ async function handleListItemRequestChanges(
   if (userId === undefined) {
     throw new Error("handleListItemRequestChange Error: userId is undefined");
   }
-  logger.info(`user ${userId} is requesting changes for ${listItem.id}`);
+  logger.info(`user with id: ${userId} is requesting changes for list item with id: ${listItem.id}`);
   const list = {
     type: listItem.type,
   };
@@ -61,15 +61,14 @@ async function handleListItemRequestChanges(
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isUnderTest });
 
   // Email applicant
-  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
+  logger.info(`Generated form runner URL [${formRunnerEditUserUrl}] from a change request by user [${userId}].`);
   const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
-
-  logger.info(`Got contact info [${contactName}, ${contactEmailAddress}], getting list item contact info.`);
   const listType = serviceName(listItem.type ?? "");
 
-  logger.info(`Got list type [${listType}`);
   await sendEditDetailsEmail(contactName, contactEmailAddress, listType, message, formRunnerEditUserUrl);
-  logger.info(`Sent email, updating listItem`);
+  logger.info(
+    `Change request email sent to provider with these deatils name: ${contactName}, email: ${contactEmailAddress} service: ${listType}`
+  );
 
   const status = Status.OUT_WITH_PROVIDER;
   const auditEvent = AuditEvent.OUT_WITH_PROVIDER;

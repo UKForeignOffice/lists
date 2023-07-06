@@ -256,7 +256,7 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
 
 export function validateCountry(countryName: string): string | undefined {
   const matchingCountryName = countriesList.find((country) => country.value === countryName)?.value;
-  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
+  if (!matchingCountryName) logger.error(`validateCountry: Invalid country ${countryName} detected`);
   return matchingCountryName;
 }
 

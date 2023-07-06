@@ -8,7 +8,9 @@ export async function feedbackIngest(req: Request, res: Response) {
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (error) {
-    logger.error(`${req.originalUrl} validation failed ${error.message}`);
+    logger.error(
+      `feedbackIngest: validation failed for this url ${req.originalUrl} with error message ${error.message}`
+    );
     res.status(400).json({ error: error.message }).send();
     return;
   }
@@ -19,7 +21,7 @@ export async function feedbackIngest(req: Request, res: Response) {
     await sendContactUsEmail(personalisation);
     return res.status(200).json({ success: true }).send();
   } catch (error) {
-    logger.error(`feedbackIngest Error: ${error.errors ?? error.message}`);
+    logger.error(`feedbackIngest: ${error.errors ?? error.message}`);
     res.status(400).json({ error: error.message }).send();
   }
 }

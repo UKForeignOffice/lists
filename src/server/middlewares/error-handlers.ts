@@ -1,4 +1,4 @@
-import { Express, NextFunction, Request, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 
 export class HttpException extends Error {
@@ -35,9 +35,7 @@ export const configureErrorHandlers = (server: Express): void => {
         error: "The resource you where looking for is not available.",
       });
     } else {
-      res
-        .type("txt")
-        .send("The resource you where looking for is not available.");
+      res.type("txt").send("The resource you where looking for is not available.");
     }
   });
 
@@ -48,7 +46,7 @@ export const configureErrorHandlers = (server: Express): void => {
     if (acceptsHTML(req)) {
       res.render("errors/generic-error", {
         message: err.message ?? "",
-        status: err.status
+        status: err.status,
       });
     } else if (acceptsJSON(req)) {
       res.json({
@@ -66,7 +64,8 @@ function getErrorMessage(message: string): string {
   return error;
 }
 
-export function rateLimitExceededErrorHandler (req: Request, res: Response, next: NextFunction): void {
+export function rateLimitExceededErrorHandler(req: Request, res: Response, next: NextFunction): void {
+  logger.error("429 Rate limit exceeded", { path: req.path });
   const err = new HttpException(429, "429", "Maximum rate of page requests exceeded - wait and try again");
   return next(err);
 }

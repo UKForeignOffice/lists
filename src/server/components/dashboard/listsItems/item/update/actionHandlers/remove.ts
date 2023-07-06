@@ -13,7 +13,7 @@ export async function remove(req: Request, res: Response) {
     req.flash("successBannerColour", "red");
     return res.redirect(listIndexUrl);
   } catch (error: any) {
-    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated. ${error.message}`);
+    req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
     return res.redirect(listItemUrl);
   }
 }

@@ -41,10 +41,7 @@ export async function listItemCreateInputFromWebhook(
   const listId = await getListIdForCountryAndType(country as CountryName, type);
 
   if (!listId) {
-    logger.error(
-      `list for ${country} and ${type} could not be found`,
-      "createListItem"
-    );
+    logger.error(`listItemCreateInputFromWebhook: ${type}  list for ${country} could not be found`, "createListItem");
   }
 
   let address = {};

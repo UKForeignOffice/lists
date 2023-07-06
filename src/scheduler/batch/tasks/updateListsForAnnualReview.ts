@@ -15,7 +15,9 @@ export async function populateCurrentAnnualReview(lists: List[]): Promise<void> 
     isAnnualReview: false,
   });
   if (findListItemsResult.error) {
-    logger.error(`Unable to retrieve List Items for Lists ${listIds}: ${findListItemsResult.error.message}`);
+    logger.error(
+      `populateCurrentAnnualReview: Unable to retrieve list items for lists with id ${listIds}: ${findListItemsResult.error.message}`
+    );
     return;
   }
   if (!findListItemsResult.result.length) {
@@ -69,7 +71,9 @@ export async function updateListsForAnnualReview(today: Date): Promise<void> {
     );
 
     if (!lists?.length) {
-      logger.error("updateListsForAnnualReview: no list with annual review found");
+      logger.error(
+        `updateListsForAnnualReview: No list with annual reviews found for this date ${annualReviewStartDate}`
+      );
       return;
     }
     await populateCurrentAnnualReview(lists);

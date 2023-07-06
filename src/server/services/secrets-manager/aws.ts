@@ -27,7 +27,7 @@ export async function createSecret(secretName: string): Promise<boolean> {
     await secretsManager.createSecret(params).promise();
     return true;
   } catch (error) {
-    logger.error(`SecretsManager createSecret Error: ${error.message}`);
+    logger.error(`createSecret Error: ${error.message}`);
     return false;
   }
 }
@@ -35,9 +35,7 @@ export async function createSecret(secretName: string): Promise<boolean> {
 export async function rotateSecret(secretName: string): Promise<boolean> {
   try {
     const secretsManager = getAWSSecretsManager();
-    const { CreatedDate, ARN } = await secretsManager
-      .getSecretValue({ SecretId: secretName })
-      .promise();
+    const { CreatedDate, ARN } = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
 
     if (CreatedDate === undefined || ARN === undefined) {
       throw new Error(`Could not getSecret values for secret ${secretName}`);
@@ -58,9 +56,7 @@ export async function rotateSecret(secretName: string): Promise<boolean> {
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
-    logger.error(
-      `Failed to rotate secret ${secretName}. Error: ${error.message}`
-    );
+    logger.error(`rotateSecret: Failed to rotate secret ${secretName}. Error: ${error.message}`);
     return false;
   }
 }
@@ -77,7 +73,7 @@ export async function getSecretValue(secretName: string): Promise<string> {
       await createSecret(secretName);
       return await getSecretValue(secretName);
     } else {
-      logger.error(`SecretsManager getSecretValue Error: ${error.message}`);
+      logger.error(`getSecretValue Error: ${error.message}`);
       throw error;
     }
   }

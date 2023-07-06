@@ -8,7 +8,6 @@ import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
-
 export async function ingestPostController(req: Request, res: Response): Promise<void> {
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   if (!serviceType) {
@@ -55,8 +54,7 @@ export async function ingestPostController(req: Request, res: Response): Promise
 
     res.send({});
   } catch (error) {
-    const typedError = error as { message: string };
-    logger.error(`ingestPostController Error: ${typedError.message}`);
+    logger.error(`ingestPostController Error: ${(error as Error).message}`);
 
     res.status(422).send({
       error: "Unable to process form",
