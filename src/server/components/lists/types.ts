@@ -1,25 +1,6 @@
-import { Request } from "express";
-import { CountryName } from "server/models/types";
-import { ServiceType } from "shared/types";
-
-export enum QuestionName {
-  "readNotice" = "readNotice",
-  "country" = "country",
-  "region" = "region",
-  "practiceArea" = "practiceArea",
-  "readDisclaimer" = "readDisclaimer",
-  "resultsTurnaround" = "resultsTurnaround",
-  "readCovidDisclaimer" = "readCovidDisclaimer",
-  "insurance" = "insurance",
-  "contactInsurance" = "contactInsurance",
-  "repatriation" = "repatriation",
-  "servicesProvided" = "servicesProvided",
-  "languagesProvided" = "languagesProvided",
-  "languagesSummary" = "languagesSummary",
-  "translationSpecialties" = "translationSpecialties",
-  "interpreterServices" = "interpreterServices",
-  "interpreterTranslationServices" = "interpreterTranslationServices",
-}
+import type { Request } from "express";
+import type { CountryName } from "server/models/types";
+import type { ServiceType } from "shared/types";
 
 export interface QuestionError {
   field: string;
@@ -36,15 +17,6 @@ export interface QuestionData {
 export interface QuestionDataSet {
   name: string;
   data: QuestionData[];
-}
-
-export interface Question {
-  pageTitle: (req: Request) => string;
-  pageHintText?: (req: Request) => string;
-  needsToAnswer: (req: Request) => boolean;
-  getViewPartialName: (req: Request) => string;
-  getPartialData?: (req: Request) => QuestionDataSet[] | QuestionData[];
-  validate: (req: Request) => boolean | QuestionError;
 }
 
 export interface ListsRequestParams {
