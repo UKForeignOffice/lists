@@ -173,7 +173,7 @@ export async function findListItemByReference(ref: string) {
               },
             },
           },
-        }
+        },
       },
     });
   } catch (error) {

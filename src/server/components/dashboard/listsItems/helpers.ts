@@ -1,10 +1,9 @@
 import { logger } from "server/services/logger";
-
 import type { NextFunction, Request } from "express";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemRes } from "server/components/dashboard/listsItems/types";
-import { ListItem, User } from "server/models/types";
+import type { ListItemRes } from "server/components/dashboard/listsItems/types";
+import type { ListItem, User } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { recordListItemEvent } from "shared/audit";
 import { AuditEvent } from "@prisma/client";

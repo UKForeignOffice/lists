@@ -3,6 +3,7 @@
 {% import "../lists/partials/lawyers/macros.njk" as lawyersMacros %}
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block header %}
   {% include "includes/header-list-mgmt.njk" %}
@@ -95,6 +96,36 @@
           </div>
           <div class="govuk-notification-banner__content">
             <strong>{{ bannerToggles.unpublishWarning.countOfListItems }} service {{ "providers are" if bannerToggles.unpublishWarning.countOfListItems > 1 else "provider is" }} going to be unpublished at 1pm on {{ unpublishDate }} as they have not responded to the annual review. <a href="?activity=out_with_provider" class="govuk-link">Check which providers</a> are going to be unpublished.</strong>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if bannerToggles.annualReviewComplete %}
+        <div class="govuk-notification-banner govuk-notification-banner--{{'error' if bannerToggles.annualReviewComplete.allUnpublished else 'success'}}" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Annual review is complete
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading">
+              {% if bannerToggles.annualReviewComplete.allUnpublished %}
+                None of the service providers responded
+                {% else %}
+                The annual review finished on {{ bannerToggles.annualReviewComplete.endOfAnnualReview }}.
+              {% endif %}
+            </h3>
+            <p class="govuk-body">
+              {% if bannerToggles.annualReviewComplete.totalUnpublishedListItems === 0 %}
+                All service providers responded.
+              {% elif bannerToggles.annualReviewComplete.allUnpublished %}
+                {{ bannerToggles.annualReviewComplete.responseText.noneResponded }}
+                <br />
+                Check which providers were <a class="govuk-notification-banner__link" href="?publishing=unpublished">unpublished</a>.
+              {% else %}
+                {{ bannerToggles.annualReviewComplete.responseText.someResponded }} <a class="govuk-notification-banner__link" href="?publishing=unpublished">unpublished</a>.
+              {% endif %}
+            </p>
           </div>
         </div>
       {% endif %}

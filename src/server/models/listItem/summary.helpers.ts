@@ -5,6 +5,8 @@ import * as DateFns from "date-fns";
 import { differenceInWeeks, isPast, isWithinInterval, parseISO, set } from "date-fns";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";
 import { prisma } from "server/models/db/prisma-client";
+import { logger } from "server/services/logger";
+import pluralize from "pluralize";
 
 /**
  * Additions to Status type to help with rendering
@@ -269,4 +271,122 @@ export async function displayEmailsSentBanner(
   return {
     emailsSent,
   };
+}
+
+export async function displayAnnualReviewCompleteBanner(list: ListWithJsonData) {
+  const { id, lastAnnualReviewStartDate } = list;
+
+  if (!lastAnnualReviewStartDate) {
+    return {};
+  }
+  const endOfAnnualReview = DateFns.addWeeks(lastAnnualReviewStartDate, 6);
+  const twoWeeksAfterEndOfAnnualReview = DateFns.addWeeks(endOfAnnualReview, 2);
+  const dateIsWithinRange = DateFns.isWithinInterval(DateFns.startOfToday(), {
+    start: endOfAnnualReview,
+    end: twoWeeksAfterEndOfAnnualReview,
+  });
+
+  if (!dateIsWithinRange) {
+    return {};
+  }
+
+  const { length: totalUnpublished } = await findListItemsUnpublishedByAR(id!, endOfAnnualReview);
+  const listItems = await findListItemsUsedForAnnualReview(id!, lastAnnualReviewStartDate);
+  const formattedEndDate = DateFns.format(endOfAnnualReview, "dd MMMM");
+  const responseText = {
+    someResponded: `${totalUnpublished} service ${pluralize(
+      "provider",
+      totalUnpublished
+    )} did not respond and ${pluralize("was", totalUnpublished)}`,
+    noneResponded: `${totalUnpublished} service ${pluralize("provider", totalUnpublished)} ${pluralize(
+      "was",
+      totalUnpublished
+    )} removed from the list as they did not respond by ${formattedEndDate}.`,
+  };
+
+  return {
+    annualReviewComplete: {
+      totalUnpublishedListItems: totalUnpublished,
+      allUnpublished: totalUnpublished === listItems.results!.length,
+      endOfAnnualReview: formattedEndDate,
+      responseText,
+    },
+  };
+}
+
+async function findListItemsUnpublishedByAR(listId: number, endOfAnnualReview: Date) {
+  try {
+    const result = await prisma.listItem.findMany({
+      where: {
+        listId,
+        status: "ANNUAL_REVIEW_OVERDUE",
+        isAnnualReview: false,
+        isPublished: false,
+        AND: [
+          {
+            history: {
+              some: {
+                type: "ANNUAL_REVIEW_OVERDUE",
+                time: {
+                  gte: endOfAnnualReview,
+                },
+              },
+            },
+          },
+          {
+            history: {
+              some: {
+                type: "UNPUBLISHED",
+                time: {
+                  gte: endOfAnnualReview,
+                },
+              },
+            },
+          },
+          {
+            history: {
+              none: {
+                type: "PUBLISHED",
+                time: {
+                  gte: endOfAnnualReview,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    return result;
+  } catch (e: any) {
+    logger.error(`findListItemsUnpublishedByAR Error ${e.message}`);
+
+    throw new Error(`Failed to find list items`);
+  }
+}
+
+async function findListItemsUsedForAnnualReview(listId: number, lastAnnualReviewStartDate: Date) {
+  try {
+    const results = await prisma.listItem.findMany({
+      where: {
+        listId,
+        AND: [
+          {
+            history: {
+              some: {
+                type: "ANNUAL_REVIEW_STARTED",
+                time: {
+                  gte: lastAnnualReviewStartDate,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+    return { results };
+  } catch (error) {
+    logger.error(`findListItemsUsedForAnnualReview Error ${(error as Error).message}`);
+    return { error: "Unable to get list items used for annual review" };
+  }
 }
