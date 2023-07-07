@@ -1,4 +1,3 @@
-import type { Request } from "express";
 import type { CountryName } from "server/models/types";
 import type { ServiceType } from "shared/types";
 
@@ -12,11 +11,6 @@ export interface QuestionData {
   text: string;
   value: string;
   description?: string;
-}
-
-export interface QuestionDataSet {
-  name: string;
-  data: QuestionData[];
 }
 
 export interface ListsRequestParams {

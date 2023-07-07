@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import express from "express";
 import * as handlers from "./handlers";
 import { checkIncompleteState } from "./middleware/checkIncompleteState";
