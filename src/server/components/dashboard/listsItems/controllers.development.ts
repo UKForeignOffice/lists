@@ -106,8 +106,8 @@ export async function post(req: Request, res: ListIndexRes) {
     return;
   }
 
-  const { jsonData } = list;
-  const isAnnualReview = jsonData.currentAnnualReview;
+  const { jsonData } = list as List;
+  const isAnnualReview = jsonData?.currentAnnualReview;
 
   if (isAnnualReview) {
     try {
