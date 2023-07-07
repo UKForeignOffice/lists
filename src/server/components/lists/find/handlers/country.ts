@@ -1,5 +1,5 @@
 import { countriesList } from "server/services/metadata";
-import { validateCountry } from "server/models/listItem/providers/helpers";
+import { validateCountry, validateCountryLower } from "server/models/listItem/providers/helpers";
 import type { NextFunction, Request, Response } from "express";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 import { getRedirectIfListIsEmpty } from "server/components/lists/find/helpers/getRedirectIfListIsEmpty";
@@ -42,7 +42,7 @@ export async function get(req: Request, res: Response) {
 
 export async function post(req: Request, res: Response) {
   const { country } = req.body;
-  const validatedCountry = validateCountry(country);
+  const validatedCountry = validateCountryLower(country);
   if (!validatedCountry) {
     req.flash("error", "You must enter a country name");
     res.redirect("country");

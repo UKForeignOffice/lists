@@ -1,9 +1,22 @@
 import type { NextFunction, Request, Response } from "express";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
+import { logger } from "server/services/logger";
 
 export function handleCountryParam(req: Request, res: Response, next: NextFunction, country: string) {
   const funeralDirectorsParamsToSkip = ["insurance", "repatriation"];
   if (funeralDirectorsParamsToSkip.includes(country)) {
     next();
+    return;
+  }
+
+  const validatedCountry = validateCountryLower(country);
+  if (!validatedCountry) {
+    const { serviceType } = req.params;
+
+    logger.error(
+      `User requested ${req.originalUrl} but ${country} was not recognised. Redirecting to ${req.params.serviceType}`
+    );
+    res.redirect(`/find/${serviceType}`);
     return;
   }
 
