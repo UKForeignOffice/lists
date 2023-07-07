@@ -1,5 +1,5 @@
 import { countriesList } from "server/services/metadata";
-import { validateCountry, validateCountryLower } from "server/models/listItem/providers/helpers";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import type { NextFunction, Request, Response } from "express";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 import { getRedirectIfListIsEmpty } from "server/components/lists/find/helpers/getRedirectIfListIsEmpty";
