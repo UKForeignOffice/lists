@@ -110,6 +110,7 @@ export async function post(req: Request, res: ListIndexRes) {
 
   if (isAnnualReview) {
     try {
+      // @ts-ignore
       await setUpdatedCurrentAnnualReview(list, req.body);
       req.flash("successBannerMessage", "Key dates update was successful");
       req.flash("successBannerHeading", "Key dates update");
@@ -135,8 +136,9 @@ export async function post(req: Request, res: ListIndexRes) {
   }
 }
 
-async function setUpdatedCurrentAnnualReview(list, body) {
-  const jsonData = list.jsonData as List["jsonData"];
+// @ts-ignore
+async function setUpdatedCurrentAnnualReview(list: List, body) {
+  const jsonData = list.jsonData;
   const { currentAnnualReview } = jsonData;
 
   const newDates = parseKeyDatesFromBodyRequest(body);
