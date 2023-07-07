@@ -11,9 +11,9 @@ Feature:
     And the answer for "Areas of law" is "Maritime, Real Estate"
 
   Scenario: Old translators results loads parameters and redirects to new url
-    When I navigate to "/results?serviceType=translatorsInterpreters&readNotice=ok&country=poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&readDisclaimer=ok"
+    When I navigate to "/results?serviceType=translatorsInterpreters&readNotice=ok&country=Poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&readDisclaimer=ok"
     Then I should see the heading "Translators in Poland"
-    And the answer for "Country" is "poland"
+    And the answer for "Country" is "Poland"
     And the answer for "Location" is "Not set"
     And the answer for "Services needed" is "translation"
 
