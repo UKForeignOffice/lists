@@ -35,10 +35,10 @@ export async function get(req: Request, res: ListIndexRes) {
 
   const jsonData = list.jsonData as List["jsonData"];
 
-  const { nextAnnualReviewStartDate, lastAnnualReviewStartDate, isAnnualReview } = list;
-
+  const { nextAnnualReviewStartDate, lastAnnualReviewStartDate } = list;
+  const keyDates = jsonData.currentAnnualReview?.keyDates;
   let annualReviewValuesToEdit = {};
-  if (isAnnualReview) {
+  if (keyDates) {
     const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate!);
     const start = startOfDay(parseISO(keyDates.annualReview.START));
 
@@ -54,7 +54,7 @@ export async function get(req: Request, res: ListIndexRes) {
     nextAnnualReviewStartDate: nextAnnualReviewStartDate?.toISOString(),
     lastAnnualReviewStartDate: lastAnnualReviewStartDate?.toISOString(),
     ...annualReviewValuesToEdit,
-    isAnnualReview,
+    isAnnualReview: true && keyDates,
   });
 }
 
@@ -106,7 +106,8 @@ export async function post(req: Request, res: ListIndexRes) {
     return;
   }
 
-  const { isAnnualReview } = list;
+  const { jsonData } = list;
+  const isAnnualReview = jsonData.currentAnnualReview;
 
   if (isAnnualReview) {
     try {
