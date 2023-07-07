@@ -1,9 +1,9 @@
-import { ListIndexRes } from "server/components/dashboard/listsItems/types";
-import { List, ListJsonData, ScheduledProcessKeyDates } from "server/models/types";
-import { differenceInWeeks, eachWeekOfInterval, parseISO, startOfDay, startOfToday } from "date-fns";
+import type { ListIndexRes } from "server/components/dashboard/listsItems/types";
+import type { List, ListJsonData, ScheduledProcessKeyDates } from "server/models/types";
+import { differenceInWeeks, eachWeekOfInterval, formatISO, parseISO, startOfDay, startOfToday } from "date-fns";
 
 import { prisma } from "server/models/db/prisma-client";
-import { Request } from "express";
+import type { Request } from "express";
 import { logger } from "server/services/logger";
 import { createKeyDatesFromISODate } from "server/components/dashboard/annualReview/helpers.keyDates";
 import { URLSearchParams } from "url";
@@ -11,7 +11,8 @@ import { URLSearchParams } from "url";
 export async function get(req: Request, res: ListIndexRes) {
   if (!req.user?.isAdministrator) {
     req.flash("error", "You do not have the correct permissions to view this page");
-    return res.redirect(res.locals.listsEditUrl);
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
   if (req.query.del) {
@@ -21,37 +22,39 @@ export async function get(req: Request, res: ListIndexRes) {
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     req.flash("successBannerMessage", `Reminders ${req.query.del} deleted. They will be reattempted on the next run`);
     req.flash("successBannerHeading", "Key dates update");
-    return res.redirect("development");
+    res.redirect("development");
+    return;
   }
 
   const { list } = res.locals;
 
   if (!list) {
-    return res.redirect(res.locals.listsEditUrl);
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
   const jsonData = list.jsonData as List["jsonData"];
 
-  const { nextAnnualReviewStartDate } = list;
+  const { nextAnnualReviewStartDate, lastAnnualReviewStartDate, isAnnualReview } = list;
 
-  if (!nextAnnualReviewStartDate) {
-    req.flash("error", "Set an annual review date first");
-    return res.redirect(res.locals.listsEditUrl);
+  let annualReviewValuesToEdit = {};
+  if (isAnnualReview) {
+    const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate!);
+    const start = startOfDay(parseISO(keyDates.annualReview.START));
+
+    annualReviewValuesToEdit = {
+      keyDates: flattenKeyDatesObject(keyDates),
+      weeklyReminders: await findReminders(list.id),
+      currentWeek: differenceInWeeks(startOfToday(), start),
+    };
   }
 
-  if (!jsonData.currentAnnualReview?.keyDates) {
-    logger.warn(`${list.id} is missing the keyDates object`);
-  }
-
-  const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate);
-  const weeklyReminders = await findReminders(list.id);
-  const start = startOfDay(parseISO(keyDates.annualReview.START));
-
-  return res.render("dashboard/lists-edit-dev", {
-    keyDates: flattenKeyDatesObject(keyDates),
+  res.render("dashboard/lists-edit-dev", {
     csrfToken: req.csrfToken(),
-    weeklyReminders,
-    currentWeek: differenceInWeeks(startOfToday(), start),
+    nextAnnualReviewStartDate: nextAnnualReviewStartDate?.toISOString(),
+    lastAnnualReviewStartDate: lastAnnualReviewStartDate?.toISOString(),
+    ...annualReviewValuesToEdit,
+    isAnnualReview,
   });
 }
 
@@ -91,28 +94,52 @@ function flattenKeyDatesObject(keyDates: ScheduledProcessKeyDates) {
 export async function post(req: Request, res: ListIndexRes) {
   if (!req.user?.isAdministrator) {
     req.flash("You do not have the correct permissions to edit key dates");
-    return res.redirect(res.locals.listsEditUrl);
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
   const { list } = res.locals;
 
   if (!list) {
     req.flash("error", "There was a problem");
-    return res.redirect(res.locals.listsEditUrl);
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
+  const { isAnnualReview } = list;
+
+  if (isAnnualReview) {
+    try {
+      await setUpdatedCurrentAnnualReview(list, req.body);
+      req.flash("successBannerMessage", "Key dates update was successful");
+      req.flash("successBannerHeading", "Key dates update");
+
+      res.redirect(`${res.locals.listsEditUrl}/development`);
+    } catch (e) {
+      logger.error(`listsItems post: ${e}`);
+      req.flash("error", "The date must be a valid ISO Date string for example 2019-09-18 (YYYY-MM-DD)");
+      res.redirect(`${res.locals.listsEditUrl}/development`);
+    }
+
+    return;
+  }
+
+  const { nextAnnualReviewStartDate, lastAnnualReviewStartDate } = req.body;
+  try {
+    await setNextOrLastDates(list.id, nextAnnualReviewStartDate, lastAnnualReviewStartDate);
+    res.redirect(`${res.locals.listsEditUrl}/development`);
+  } catch (e) {
+    logger.error(`listsItems post: ${e}`);
+    req.flash("error", e.message);
+    res.redirect(`${res.locals.listsEditUrl}/development`);
+  }
+}
+
+async function setUpdatedCurrentAnnualReview(list, body) {
   const jsonData = list.jsonData as List["jsonData"];
   const { currentAnnualReview } = jsonData;
 
-  let newDates;
-
-  try {
-    newDates = parseKeyDatesFromBodyRequest(req.body);
-  } catch (e) {
-    logger.error(`listsItems post: ${e}`);
-    req.flash("error", "The date must be a valid ISO Date string for example 2019-09-18 (YYYY-MM-DD)");
-    return res.redirect(`${res.locals.listsEditUrl}/development`);
-  }
+  const newDates = parseKeyDatesFromBodyRequest(body);
 
   const updatedCurrentAnnualReview = {
     ...currentAnnualReview,
@@ -122,7 +149,7 @@ export async function post(req: Request, res: ListIndexRes) {
     },
   };
 
-  const result = await prisma.list.update({
+  return await prisma.list.update({
     where: {
       id: list.id,
     },
@@ -133,16 +160,20 @@ export async function post(req: Request, res: ListIndexRes) {
       },
     },
   });
+}
 
-  if (!result) {
-    req.flash("error", "Update failed");
-    return res.redirect(`${res.locals.listsEditUrl}/development`);
-  } //
-
-  req.flash("successBannerMessage", "Key dates update was successful");
-  req.flash("successBannerHeading", "Key dates update");
-
-  return res.redirect(`${res.locals.listsEditUrl}/development`);
+async function setNextOrLastDates(id: number, nextAnnualReviewStartDate: string, lastAnnualReviewStartDate: string) {
+  return await prisma.list.update({
+    where: {
+      id,
+    },
+    data: {
+      nextAnnualReviewStartDate: formatISO(new Date(nextAnnualReviewStartDate)),
+      ...(lastAnnualReviewStartDate && {
+        lastAnnualReviewStartDate: formatISO(new Date(lastAnnualReviewStartDate)),
+      }),
+    },
+  });
 }
 
 async function findReminders(listId: number) {
