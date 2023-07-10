@@ -68,10 +68,9 @@ Feature:
   Scenario: Changing interpretation types
     When I click Change "what services do you need answer"
     And I "check" the "Interpretation of spoken language" checkbox for "What services do you need?"
-    And I "check" the "Translation of written content" checkbox for "What services do you need?"
+    And I "uncheck" the "Translation of written content" checkbox for "What services do you need?"
     And I continue
     And I "check" the "Medical assistance" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     Then I should see the heading "Translators and interpreters in Italy"
-    Then the answer for "Translation types" is "all"
     Then the answer for "Interpretation types" is "Medical assistance"
