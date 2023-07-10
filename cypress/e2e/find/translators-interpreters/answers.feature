@@ -38,7 +38,8 @@ Feature:
     Given the answer for "Services needed" is "translation"
     And there is no answer for "Interpretation types"
     When I click Change "what services do you need answer"
-    And I select "Interpretation of spoken language"
+    And I "check" the "Interpretation of spoken language" checkbox for "What services do you need?"
+    And I "check" the "Translation of written content" checkbox for "What services do you need?"
     And I continue
     And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
