@@ -2,7 +2,7 @@ import type { SendEmailResponse } from "notifications-node-client";
 import { ListItemEvent } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
 
-type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
+export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
 /**
  * These are intended to be used during a nested write via Prisma.EventCreateWithoutListItemInput.
@@ -123,10 +123,12 @@ export const EVENTS = {
   }),
 
   [ListItemEvent.REMINDER]: (
-    response: SendEmailResponse,
+    response: SendEmailResponse | {},
     notes?: string[],
     reference?: string
-  ): EventCreate<"REMINDER"> => {
+  ): EventCreate<"REMINDER"> | undefined => {
+    if (!("id" in response)) return;
+
     const notifyResponseWithoutContent = {
       id: response.id,
       template: response.template,

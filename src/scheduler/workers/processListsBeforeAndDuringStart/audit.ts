@@ -1,39 +1,29 @@
+import { ListItemEvent } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
-import type { AuditEvent } from "@prisma/client";
 
-export async function findAuditEvents(
-  annualReviewReference: string,
-  auditEvent: AuditEvent,
-  type?: "user" | "list" | "listItem",
-  itemId?: number
-) {
-  type = type ?? "listItem";
-
+export async function findAllReminderEvents(annualReviewReference: string, itemId?: number) {
   const andCondition = [
     {
-      type,
+      type: ListItemEvent.REMINDER,
     },
     {
       jsonData: {
-        path: ["annualReviewRef"],
+        path: ["reference"],
         equals: annualReviewReference,
       },
     },
+    {
+      ...(itemId && {
+        listItemId: itemId,
+      }),
+    },
   ];
-  if (itemId) {
-    andCondition.push({
-      jsonData: {
-        path: ["itemId"],
-        equals: `${itemId}`,
-      },
-    });
-  }
 
   try {
-    const result = await prisma.audit.findMany({
+    const result = await prisma.event.findMany({
       take: 1,
       orderBy: {
-        createdAt: "desc",
+        time: "desc",
       },
       where: {
         AND: andCondition,

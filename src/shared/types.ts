@@ -46,7 +46,10 @@ export type ListAnnualReviewPostReminderType =
 export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
   eventName: ServerTypes.AuditListEventName;
   annualReviewRef?: string;
-  reminderType?: ListAnnualReviewPostReminderType | ServerTypes.ListItemUnpublishedPostReminderType;
+  reminderType?:
+    | ListAnnualReviewPostReminderType
+    | ServerTypes.ListItemUnpublishedPostReminderType
+    | ListItemAnnualReviewProviderReminderType;
 }
 
 export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";

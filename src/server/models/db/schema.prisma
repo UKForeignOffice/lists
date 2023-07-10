@@ -130,14 +130,6 @@ model Feedback {
 // actions that can be performed on anything that is not a ListItem. ListItems have their own events.
 enum AuditEvent {
   NEW
-  OUT_WITH_PROVIDER // TODO: deprecate
-  EDITED // TODO: deprecate
-  ANNUAL_REVIEW // TODO: deprecate
-  REVIEWED // TODO: deprecate
-  UNPUBLISHED // TODO: deprecate
-  PUBLISHED // TODO: deprecate
-  PINNED // TODO: deprecate
-  UNPINNED // TODO: deprecate
   DELETED
   UNDEFINED
   REMINDER

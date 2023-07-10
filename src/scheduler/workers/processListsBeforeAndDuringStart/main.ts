@@ -1,11 +1,12 @@
 import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
 import { lowerCase, startCase } from "lodash";
-import { AuditEvent, ListItemEvent } from "@prisma/client";
+import { AuditEvent, Event, ListItemEvent } from "@prisma/client";
+import { prisma } from "scheduler/prismaClient";
+import type { SendEmailResponse } from "notifications-node-client";
 
 import { findListItems, findListsWithCurrentAnnualReview, updateIsAnnualReview } from "scheduler/dbHelpers";
 import { logger } from "scheduler/logger";
 import type {
-  Audit,
   List,
   ListAnnualReviewPostReminderType,
   ListItemAnnualReviewProviderReminderType,
@@ -18,9 +19,10 @@ import {
   sendAnnualReviewPostEmail,
   sendAnnualReviewProviderEmail,
 } from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
-import { findAuditEvents } from "./audit";
-import { recordListItemEvent } from "shared/audit";
+import { findAllReminderEvents } from "./audit";
 import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
+import { EVENTS } from "shared/listItemEvent";
+import type { EventCreate } from "shared/listItemEvent";
 
 async function processPostEmailsForList(
   list: List,
@@ -28,28 +30,25 @@ async function processPostEmailsForList(
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ) {
   // Check if sent before
-  let emailSent = false;
   if (!list.jsonData.users) {
     logger.info(
       `Unable to send email to post for ${milestoneTillAnnualReview}. No users identified for List ${list.id}.`
     );
     return;
   }
-  for (const publisherEmail of list.jsonData.users) {
-    const { result } = await sendAnnualReviewPostEmail(
+
+  const postEmailPromises = list.jsonData.users.map(async (publisherEmail) => {
+    return await sendAnnualReviewPostEmail(
       milestoneTillAnnualReview,
       publisherEmail,
       lowerCase(startCase(list.type)),
       list?.country?.name ?? "",
       formatDate(list.nextAnnualReviewStartDate)
     );
-    if (!emailSent && result) {
-      emailSent = result;
-    }
-  }
-  // @todo the following code would be used if using Promise.allSettled
-  // const sendResult = await Promise.allSettled(postEmailPromises);
-  // const emailSent = sendResult.find((result) => result.status === "fulfilled" && result.value);
+  });
+
+  const sendResult = await Promise.allSettled(postEmailPromises);
+  const emailSent = sendResult.find((result) => result.status === "fulfilled" && result.value);
 
   if (!emailSent) {
     logger.error(
@@ -59,20 +58,20 @@ async function processPostEmailsForList(
   }
   logger.info(`Annual review email sent to post contacts ${list.jsonData.users}`);
 
-  await recordListItemEvent(
-    {
-      eventName: "reminder",
-      itemId: list.id,
-      annualReviewRef: list.jsonData.currentAnnualReview?.reference,
-      reminderType,
+  await prisma.audit.create({
+    data: {
+      auditEvent: AuditEvent.REMINDER,
+      type: "list",
+      jsonData: {
+        eventName: "reminder",
+        annualReviewRef: list.jsonData.currentAnnualReview?.reference,
+        reminderType,
+      },
     },
-    AuditEvent.REMINDER,
-    "list",
-    "scheduler"
-  );
+  });
 }
 
-async function emailProvider(list: List, listItem: ListItemWithHistory) {
+async function sendAnnualReviewStartEmail(list: List, listItem: ListItemWithHistory) {
   const annualReviewProviderUrl = createAnnualReviewProviderUrl(listItem);
   const unpublishDate = new Date(list.jsonData.currentAnnualReview?.keyDates.unpublished.UNPUBLISH ?? "");
   const unpublishDateString = formatDate(unpublishDate);
@@ -95,40 +94,36 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
 
     // get the most recent audit record to determine if the email has already been sent for the start milestone
     if (annualReviewRef) {
-      const { result: events } = await findAuditEvents(annualReviewRef, "REMINDER", "listItem", listItem.id);
+      const { result: events } = await findAllReminderEvents(annualReviewRef, listItem.id);
       if (events?.length) {
         const audit = events.pop();
-        isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedProviderEmail");
+        isEmailSent = isEmailSentBefore(audit, "sendStartedProviderEmail");
       }
     }
 
     // email the provider and add an audit record
     if (!isEmailSent) {
-      const providerEmailResult = await emailProvider(list, listItem);
+      const { result } = await sendAnnualReviewStartEmail(list, listItem);
       const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
 
-      if (providerEmailResult.result) {
-        await recordListItemEvent(
-          {
-            eventName: "reminder",
-            itemId: listItem.id,
-            annualReviewRef,
-            reminderType: "sendStartedProviderEmail",
-          },
-          AuditEvent.REMINDER,
-          "listItem",
-          "scheduler"
-        );
+      if (result) {
+        await prisma.event.create({
+          data: EVENTS.REMINDER(
+            result as SendEmailResponse,
+            ["sendStartedProviderEmail"],
+            annualReviewRef
+          ) as EventCreate<"REMINDER">,
+        });
       }
     }
   }
 }
 
 async function getLatestReminderAuditEvent(annualReviewRef: string, auditType: "user" | "list" | "listItem") {
-  const { result: events } = await findAuditEvents(annualReviewRef, "REMINDER", auditType);
-  let audit: Audit | undefined;
+  const { result: events } = await findAllReminderEvents(annualReviewRef);
+  let audit: Event | undefined;
   if (events?.length) {
-    audit = events.pop() as Audit;
+    audit = events.pop() as Event;
   }
   return audit;
 }
@@ -163,7 +158,7 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
       end: subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? "")), 1),
     })
   ) {
-    isEmailSent = isEmailSentBefore(audit as Audit, "sendOneMonthPostEmail");
+    isEmailSent = isEmailSentBefore(audit as Event, "sendOneMonthPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
     }
@@ -190,14 +185,14 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   }
   if (isSameDay(new Date(annualReviewKeyDates?.START ?? ""), today)) {
     // email posts to notify of annual review start
-    isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
+    isEmailSent = isEmailSentBefore(audit, "sendStartedPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "START", "sendStartedPostEmail");
     }
 
     // update ListItem.isAnnualReview if today = the START milestone date
     // email providers to notify of annual review start
-    isEmailSent = isEmailSentBefore(listItemAudit as Audit, "sendStartedProviderEmail");
+    isEmailSent = isEmailSentBefore(listItemAudit, "sendStartedProviderEmail");
     if (isEmailSent) {
       logger.info(`Annual review started email has already been sent to providers for list ${list.id}`);
       return;

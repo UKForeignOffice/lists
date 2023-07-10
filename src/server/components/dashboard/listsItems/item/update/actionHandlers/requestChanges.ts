@@ -3,14 +3,14 @@ import { initialiseFormRunnerSession } from "server/components/formRunner/helper
 import { getListItemContactInformation } from "server/models/listItem/providers/helpers";
 import serviceName from "server/utils/service-name";
 import { sendEditDetailsEmail } from "server/services/govuk-notify";
-import { AuditEvent, Status } from "@prisma/client";
+import { Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
 import { EVENTS } from "server/models/listItem/listItemEvent";
-import { recordListItemEvent } from "shared/audit";
+
+import type { ListItemGetObject, User } from "server/models/types";
 import type { ListItemRes } from "server/components/dashboard/listsItems/types";
 import type { Request } from "express";
 import type { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
-import type { ListItemGetObject, User } from "server/models/types";
 
 export async function requestChanges(req: Request, res: ListItemRes) {
   const userId = req.user!.id;
@@ -69,31 +69,19 @@ async function handleListItemRequestChanges(
   );
 
   const status = Status.OUT_WITH_PROVIDER;
-  const auditEvent = AuditEvent.OUT_WITH_PROVIDER;
 
   logger.info(`user ${userId} is unpublishing ${listItem.id} and setting status ${status}`);
 
   try {
-    await prisma.$transaction([
-      prisma.listItem.update({
-        where: { id: listItem.id },
-        data: {
-          status,
-          history: {
-            create: [EVENTS.OUT_WITH_PROVIDER(userId, message)],
-          },
+    await prisma.listItem.update({
+      where: { id: listItem.id },
+      data: {
+        status,
+        history: {
+          create: [EVENTS.OUT_WITH_PROVIDER(userId, message)],
         },
-      }),
-      recordListItemEvent(
-        {
-          eventName: "requestChange",
-          itemId: listItem.id,
-          userId,
-          requestedChanges: message,
-        },
-        auditEvent
-      ),
-    ]);
+      },
+    });
   } catch (error: any) {
     logger.error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
     throw new Error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);

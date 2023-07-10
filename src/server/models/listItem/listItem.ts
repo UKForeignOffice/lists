@@ -1,21 +1,27 @@
-import { WebhookData } from "server/components/formRunner";
-import { List, ListItem, Point, User } from "server/models/types";
-import { ServiceType } from "shared/types";
-import { ListItemWithAddressCountry, ListItemWithAddressCountryAndList, ListItemWithJsonData } from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";
-import { recordListItemEvent } from "shared/audit";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook";
 import pgescape from "pg-escape";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import { AuditEvent, ListItem as PrismaListItem, Prisma, Status } from "@prisma/client";
+import { Status } from "@prisma/client";
 import { merge } from "lodash";
-import { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
 import { subMonths } from "date-fns";
+
+import type { WebhookData } from "server/components/formRunner";
+import type { List, ListItem, Point, User } from "server/models/types";
+import type { ServiceType } from "shared/types";
+import type {
+  ListItemWithAddressCountry,
+  ListItemWithAddressCountryAndList,
+  ListItemWithJsonData,
+} from "server/models/listItem/providers/types";
+import type { ListItem as PrismaListItem, Prisma } from "@prisma/client";
+import type { DeserialisedWebhookData, ListItemJsonData } from "./providers/deserialisers/types";
+
 export { findIndexListItems } from "./summary";
 export const createFromWebhook = listItemCreateInputFromWebhook;
 
@@ -201,40 +207,29 @@ export async function togglerListItemIsPublished({
   const status = isPublished ? Status.PUBLISHED : Status.UNPUBLISHED;
   const event = EVENTS[status](userId);
   logger.info(`user ${userId} is setting ${id} isPublished to ${isPublished}`);
-  const auditEvent = isPublished ? AuditEvent.PUBLISHED : AuditEvent.UNPUBLISHED;
   if (jsonData.updatedJsonData) {
     delete jsonData.updatedJsonData;
   }
   try {
-    const [listItem] = await prisma.$transaction([
-      prisma.listItem.update({
-        where: { id },
-        data: {
-          isApproved: true,
-          isPublished,
-          status,
-          jsonData,
-          history: {
-            create: [event],
+    const listItem = await prisma.listItem.update({
+      where: { id },
+      data: {
+        isApproved: true,
+        isPublished,
+        status,
+        jsonData,
+        history: {
+          create: [event],
+        },
+      },
+      include: {
+        address: {
+          include: {
+            country: true,
           },
         },
-        include: {
-          address: {
-            include: {
-              country: true,
-            },
-          },
-        },
-      }),
-      recordListItemEvent(
-        {
-          eventName: isPublished ? "publish" : "unpublish",
-          itemId: id,
-          userId,
-        },
-        auditEvent
-      ),
-    ]);
+      },
+    });
 
     return listItem;
   } catch (error) {
@@ -313,13 +308,7 @@ export async function createListItem(webhookData: WebhookData): Promise<ListItem
         },
       },
     });
-    await recordListItemEvent(
-      {
-        eventName: "edit",
-        itemId: listItem.id,
-      },
-      AuditEvent.NEW
-    );
+
     return listItem;
   } catch (error) {
     logger.error(`create ListItem failed ${error.message}`);
@@ -436,21 +425,12 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
     let result;
 
     const updateItem = prisma.listItem.update(listItemPrismaQuery);
-    const updateAudit = recordListItemEvent(
-      {
-        eventName: "publish",
-        itemId: id,
-        userId,
-        updatedJsonData,
-      },
-      AuditEvent.PUBLISHED
-    );
 
     if (requiresAddressUpdate) {
       // @ts-ignore
-      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit]);
+      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!)]);
     } else {
-      result = await prisma.$transaction([updateItem, updateAudit]);
+      result = await updateItem;
     }
 
     if (!result) {
@@ -478,14 +458,6 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
           id,
         },
       }),
-      recordListItemEvent(
-        {
-          eventName: "delete",
-          itemId: id,
-          userId,
-        },
-        AuditEvent.DELETED
-      ),
     ]);
   } catch (e) {
     logger.error(`deleteListItem Error ${e.message}`);

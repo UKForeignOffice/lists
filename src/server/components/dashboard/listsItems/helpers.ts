@@ -5,9 +5,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import type { ListItemRes } from "server/components/dashboard/listsItems/types";
 import type { ListItem, User } from "server/models/types";
-import type { ServiceType } from "shared/types";
-import { recordListItemEvent } from "shared/audit";
-import { AuditEvent } from "@prisma/client";
+import { ServiceType } from "shared/types";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 
 /**
@@ -62,34 +60,22 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
   }
 
   try {
-    const auditEvent = recordListItemEvent(
-      {
-        eventName: isPinned ? "pin" : "unpin",
-        itemId: id,
-        userId,
-      },
-      isPinned ? AuditEvent.PINNED : AuditEvent.UNPINNED
-    );
-
     const connectOrDisconnect = isPinned ? "connect" : "disconnect";
     const pinOrUnpinEvent = isPinned ? EVENTS.PINNED(userId) : EVENTS.PINNED(userId);
 
-    const [listItem] = await prisma.$transaction([
-      prisma.listItem.update({
-        where: {
-          id,
+    const listItem = await prisma.listItem.update({
+      where: {
+        id,
+      },
+      data: {
+        pinnedBy: {
+          [connectOrDisconnect]: [{ id: userId }],
         },
-        data: {
-          pinnedBy: {
-            [connectOrDisconnect]: [{ id: userId }],
-          },
-          history: {
-            create: [pinOrUnpinEvent],
-          },
+        history: {
+          create: [pinOrUnpinEvent],
         },
-      }),
-      auditEvent,
-    ]);
+      },
+    });
 
     return listItem;
   } catch (e: any) {

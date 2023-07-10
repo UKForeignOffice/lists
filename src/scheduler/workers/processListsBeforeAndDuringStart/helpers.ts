@@ -1,10 +1,10 @@
 import type {
-  Audit,
   ListAnnualReviewPostReminderType,
   ListEventJsonData,
   ListItemAnnualReviewProviderReminderType,
 } from "shared/types";
 import { logger } from "scheduler/logger";
+import type { Event } from "@prisma/client";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
@@ -15,7 +15,7 @@ export function formatDate(date: Date = todayDateString) {
 }
 
 export function isEmailSentBefore(
-  audit: Audit | undefined,
+  audit: Event | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {
   if (!audit?.jsonData) {

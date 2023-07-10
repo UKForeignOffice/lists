@@ -177,7 +177,6 @@ export interface EventJsonData extends JsonObject {
 
 export interface BaseAuditEventJsonData extends JsonObject {
   userId?: User["id"];
-  itemId: ListItem["id"];
 }
 
 export interface ListItemEventJsonData extends BaseAuditEventJsonData {
