@@ -58,15 +58,16 @@ Feature:
 
 
   Scenario: Changing translation types
-  And I click Change "what types of translating services do you need answer"
+    And I click Change "what types of translating services do you need answer"
     And I "uncheck" the "Select all" checkbox for "Select the type of translation that you need"
     And I "check" the "Legal" checkbox for "Select the type of translation that you need"
-  And I continue
-  Then the answer for "Translation types" is "Legal"
+    And I continue
+    Then the answer for "Translation types" is "Legal"
 
   Scenario: Changing interpretation types
     When I click Change "what services do you need answer"
-    And I select "Interpretation of spoken language"
+    And I "check" the "Interpretation of spoken language" checkbox for "What services do you need?"
+    And I "check" the "Translation of written content" checkbox for "What services do you need?"
     And I continue
     And I "check" the "Medical assistance" checkbox for "Select the situation that you need an interpreter for"
     And I continue
