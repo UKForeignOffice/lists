@@ -41,10 +41,11 @@ Feature:
     And I "check" the "Interpretation of spoken language" checkbox for "What services do you need?"
     And I "check" the "Translation of written content" checkbox for "What services do you need?"
     And I continue
+    And I "check" the "Legal" checkbox for "Select the type of translation that you need"
     And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     Then  I should see the heading "Translators and interpreters in Italy"
-    And the answer for "Services needed" is "translation"
+    And the answer for "Services needed" is "translation, interpretation"
     And the answer for "Interpretation types" is "all"
 
 
