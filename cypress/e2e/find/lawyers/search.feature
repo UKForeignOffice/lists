@@ -8,7 +8,7 @@ Feature:
     When I select [Bankruptcy,Criminal]
     And I continue
     And I have read the disclaimer
-    Then I see "Vegna Mendola"
+    Then I see "Dalla Vedova Studio Legale"
 
 
   Scenario: searching for a country with an empty lawyers list
