@@ -1,17 +1,10 @@
-import {
-  //listsGetController,
-  // listsResultsController,
-  listsGetPrivateBetaPage,
-  listsConfirmApplicationController,
-} from "../controllers";
+import { listsGetPrivateBetaPage, listsConfirmApplicationController } from "../controllers";
 import { ingestPostController } from "../controllers/ingest";
 import * as listItem from "server/models/listItem/listItem";
 import * as notify from "server/services/govuk-notify";
 import { SERVICE_DOMAIN } from "server/config";
 import { ServiceType } from "../../../../shared/types";
 import * as lawyers from "../searches/lawyers";
-import { DEFAULT_VIEW_PROPS } from "../constants";
-import { getServiceLabel } from "../helpers";
 import * as notifyEmails from "server/services/govuk-notify";
 
 const webhookPayload = {
@@ -266,24 +259,4 @@ describe("Lists Controllers", () => {
       });
     });
   });
-
-  //TODO:-
-  // describe("listsResultsController", () => {
-  //   test.todo("it invokes searchLayer with correct parameters", () => {
-  //     const spySearchLawyers = jest.spyOn(lawyers, "searchLawyers");
-  //     req.params.serviceType = ServiceType.lawyers;
-  //
-  //     //listsResultsController(req, res, next);
-  //
-  //     expect(spySearchLawyers).toHaveBeenCalledWith(req, res);
-  //   });
-  //
-  //   test.todo("it invokes next when serviceType is unknown", () => {
-  //     req.params.serviceType = "any";
-  //
-  //     listsResultsController(req, res, next);
-  //
-  //     expect(next).toHaveBeenCalled();
-  //   });
-  // });
 });
