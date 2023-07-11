@@ -4,7 +4,6 @@ import { formatCountryParam } from "../../helpers";
 export function get(req: Request, res: Response) {
   const country = req.query.country;
   const { serviceType } = req.params;
-
   if (country) {
     res.locals.country = formatCountryParam(country as string);
   }

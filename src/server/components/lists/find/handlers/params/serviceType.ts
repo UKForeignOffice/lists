@@ -8,7 +8,7 @@ import { normaliseServiceType } from "server/components/lists/find/helpers/norma
 
 export function validateServiceTypeParam(req: Request, res: Response, next: NextFunction, serviceType: string) {
   const normalisedServiceType = normaliseServiceType(serviceType);
-  const schema = Joi.string().allow("lawyers", "funeral-directors", "translators-interpreters");
+  const schema = Joi.string().allow("lawyers", "funeral-directors", "translators-interpreters").only();
   const { error } = schema.validate(normalisedServiceType);
 
   if (error) {
