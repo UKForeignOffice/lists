@@ -8,9 +8,7 @@ import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
 import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import * as metaData from "server/services/metadata";
-import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
-import { HttpException } from "server/middlewares/error-handlers";
+import { countriesList, languages } from "server/services/metadata";
 import { getObjectDiff } from "server/components/lists/controllers/ingest/helpers";
 
 /**
@@ -265,87 +263,4 @@ export function validateCountryLower(countryName: string | string[]): string | u
   )?.value;
   if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
   return matchingCountryName;
-}
-
-export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined = []): string[] {
-  const lowercasedPracticeAreas = practiceAreas.map((area) => area.toLowerCase());
-  const lowercasedAllLegalPracticeAreas: string[] = legalPracticeAreasList.map((area) => area.toLowerCase());
-
-  if (lowercasedPracticeAreas.find((area) => area === "all")) {
-    return lowercasedAllLegalPracticeAreas;
-  }
-
-  const validatedPracticeAreas = lowercasedPracticeAreas.filter((areaToValidate) => {
-    return lowercasedAllLegalPracticeAreas.find((area) => area === areaToValidate);
-  });
-
-  if (validatedPracticeAreas.length === 0) {
-    throw new HttpException(403, "403", "Legal practice area could not be identified");
-  }
-
-  return validatedPracticeAreas;
-}
-
-export function cleanTranslatorInterpreterServices(servicesProvided: string[] = []): string[] {
-  const matchingServicesProvided = servicesProvided
-    .filter((service) => {
-      return metaData.translationInterpretationServices.some((translationInterpretationService) => {
-        return translationInterpretationService.value.toLowerCase() === service.toLowerCase();
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingServicesProvided.length === 0) {
-    throw new HttpException(403, "403", "Services could not be identified");
-  }
-  return matchingServicesProvided;
-}
-
-export function cleanTranslatorSpecialties(translationSpecialties: string[] = []): string[] {
-  const matchingTranslatorSpecialities = translationSpecialties
-    .filter((selectedTranslationSpecialty) => {
-      return metaData.translationSpecialties.some((translationSpecialty) => {
-        return (
-          translationSpecialty.value.toLowerCase() === selectedTranslationSpecialty.toLowerCase() ||
-          selectedTranslationSpecialty.toLowerCase() === "all"
-        );
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingTranslatorSpecialities.length === 0) {
-    throw new HttpException(403, "403", "Translation services could not be identified");
-  }
-  return matchingTranslatorSpecialities;
-}
-
-export function cleanInterpreterServices(interpreterServices: string[] = []): string[] {
-  const matchingInterpreterServices = interpreterServices
-    .filter((selectedInterpreterSpecialty) => {
-      return metaData.interpretationServices.some((interpreterSpecialty) => {
-        return (
-          interpreterSpecialty.value.toLowerCase() === selectedInterpreterSpecialty.toLowerCase() ||
-          selectedInterpreterSpecialty.toLowerCase() === "all"
-        );
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingInterpreterServices.length === 0) {
-    throw new HttpException(403, "403", "Interpreter services could not be identified");
-  }
-
-  return matchingInterpreterServices;
-}
-
-export function cleanLanguagesProvided(languagesProvided: string[] = []): string[] {
-  const matchingLanguages = languagesProvided
-    .filter((language) => languages[language.toLowerCase()])
-    .map((language) => language.toLowerCase());
-
-  if (matchingLanguages.length === 0) {
-    throw new HttpException(403, "403", "Languages could not be identified");
-  }
-
-  return matchingLanguages;
 }

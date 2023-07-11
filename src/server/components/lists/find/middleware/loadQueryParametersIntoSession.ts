@@ -5,13 +5,13 @@ import { sanitiseLanguages } from "server/components/lists/find/helpers/sanitise
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
 import { languageCodesToReadable } from "server/components/lists/find/helpers/languageCodeToReadable";
+import type { ParsedQs } from "qs";
 
 export function loadQueryParametersIntoSession(req: Request, res: Response, next: NextFunction) {
   const { serviceType, region, country } = req.query;
-
   req.session.answers = {
     region: region as string,
-    country: country as string,
+    country: queryParameterValueAsString(country),
     disclaimer: true,
   };
 
@@ -37,8 +37,8 @@ function loadFuneralDirectorsQueryParameters(req: Request, res: Response, next: 
     practiceAreas: sanitisePracticeAreas(req.query["practice-area"] as string),
     repatriation: req.query.repatriation === "yes",
     insurance: req.query.insurance === "yes",
-    region: req.query.region as string,
-    country: req.query.country as string,
+    region: queryParameterValueAsString(req.query.region),
+    country: queryParameterValueAsString(req.query.country),
     serviceType: "funeral-directors",
   };
 
@@ -84,4 +84,8 @@ function loadLawyersQueryParameters(req: Request, res: Response, next: NextFunct
   req.session.answers!.serviceType = "lawyers";
 
   next();
+}
+
+function queryParameterValueAsString(value: string | string[] | ParsedQs | ParsedQs[] | undefined) {
+  return (Array.isArray(value) ? value[0] : value) as string;
 }
