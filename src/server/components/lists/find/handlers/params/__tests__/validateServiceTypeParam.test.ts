@@ -47,6 +47,7 @@ describe("validateServiceType integration", function () {
     ${"lawyers/country"}                  | ${200}
     ${"translators-interpreters"}         | ${200}
     ${"translators-interpreters/country"} | ${200}
+    ${"eggs"}                             | ${404}
     ${"eggs/country"}                     | ${404}
     ${"funeralDirectors/country"}         | ${200}
     ${"translatorsInterpreters/country"}  | ${200}
