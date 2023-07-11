@@ -5,6 +5,8 @@ import { sanitiseLanguages } from "./../../helpers/sanitiseLanguages";
 import { getLanguagesRows } from "server/models/listItem/providers/helpers";
 import querystring from "querystring";
 
+const languagesAsArray = splitLanguagesIntoArray();
+
 export function get(req: Request, res: Response) {
   const shouldReturn = req.query.return === "results";
   const queryString = querystring.encode({ ...(shouldReturn && { return: "results" }) });
@@ -19,11 +21,11 @@ export function get(req: Request, res: Response) {
 
     return;
   }
-  const languagesVM = Object.entries(languages).map(([value, text]) => ({ value, text }));
+  const languagesViewModel = languagesAsArray;
   const sanitisedLanguages = sanitiseLanguages(req.session.answers!.languages);
 
   res.render("lists/find/translators-interpreters/languages.njk", {
-    languages: [{ text: "", value: "" }, ...languagesVM],
+    languages: [{ text: "", value: "" }, ...languagesViewModel],
     languagesRows: getLanguagesRows(sanitisedLanguages),
   });
 }
@@ -53,4 +55,23 @@ export function post(req: Request, res: Response) {
   }
 
   res.redirect(`languages/summary`);
+}
+
+/**
+ * Splits metadata.languages into an array of objects. Each object is a single key value pair.
+ * ```
+ *   [
+ *     { aa: "Afar" },
+ *     { ab: "Abkhazian" }
+ *   ]
+ * ```
+ */
+function splitLanguagesIntoArray() {
+  return Object.entries(languages).map(languageEntriesToObject);
+}
+
+function languageEntriesToObject([languageCode, languageName]: [string, string]) {
+  return {
+    [languageCode]: languageName,
+  };
 }
