@@ -32,7 +32,7 @@ describe("validateServiceTypeParam", () => {
   });
 });
 
-describe("validateServiceType integration", function () {
+describe("serviceType is validated on /find/:serviceType* routes", () => {
   let server;
 
   beforeAll(async () => {
