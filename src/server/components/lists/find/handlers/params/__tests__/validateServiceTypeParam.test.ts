@@ -1,6 +1,6 @@
 import { validateServiceTypeParam } from "../serviceType";
 import { HttpException } from "server/middlewares/error-handlers";
-import { getServer } from "../../../../../../server";
+import { getServer } from "server/server";
 import request from "supertest";
 
 let req, res, next;
