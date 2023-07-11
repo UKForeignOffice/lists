@@ -62,7 +62,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -109,7 +109,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const contactName = "Ada Lovelace";
@@ -156,7 +156,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const contactName = "Ada Lovelace";
@@ -204,7 +204,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const contactName = "Ada Lovelace";
@@ -252,7 +252,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -268,7 +268,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.id).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneMonth,
         "testemail@gov.uk",
@@ -288,7 +288,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -304,7 +304,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.id).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneWeek,
         "testemail@gov.uk",
@@ -324,7 +324,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -340,7 +340,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.id).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneDay,
         "testemail@gov.uk",
@@ -360,7 +360,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -370,7 +370,7 @@ describe("GOVUK Notify service:", () => {
 
       const { result } = await sendAnnualReviewPostEmail("START", emailAddress, typePlural, country, annualReviewDate);
 
-      expect(result).toBe(true);
+      expect(result.id).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postStart,
         "testemail@gov.uk",
@@ -414,7 +414,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       const emailAddress = "testemail@gov.uk";
@@ -433,7 +433,7 @@ describe("GOVUK Notify service:", () => {
         changeLink
       );
 
-      expect(result).toBe(true);
+      expect(result.id).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.providerStart,
         "testemail@gov.uk",
@@ -500,7 +500,7 @@ describe("GOVUK Notify service:", () => {
       const notifyClient = getNotifyClient();
 
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce({
-        statusText: "Created",
+        id: "Created",
       });
 
       await sendManualActionNotificationToPost(1, trigger);
@@ -514,13 +514,13 @@ describe("GOVUK Notify service:", () => {
     test("returns resolved value when at least one email succeeds", async () => {
       const notifyClient = getNotifyClient();
       const successfulSend = {
-        statusText: "Created",
+        id: "Created",
       };
       const rejectedSend = "Failed to send email";
       jest.spyOn(notifyClient, "sendEmail").mockResolvedValueOnce(successfulSend).mockRejectedValueOnce(rejectedSend);
 
       const settled = await sendManualActionNotificationToPost(1, "CHANGED_DETAILS");
-      expect(settled).toEqual({ statusText: "Created" });
+      expect(settled).toEqual({ id: "Created" });
     });
   });
 });

@@ -36,7 +36,7 @@ export async function sendAuthenticationEmail(email: string, authenticationLink:
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return "id" in result && result.id !== undefined;
   } catch (error) {
     logger.error(`sendAuthenticationEmail Error: ${error.message}`);
     return false;
@@ -61,7 +61,7 @@ export async function sendApplicationConfirmationEmail(
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return "id" in result && result.id !== undefined;
   } catch (error) {
     logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
     return false;
@@ -88,7 +88,7 @@ export async function sendDataPublishedEmail(
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return "id" in result && result.id !== undefined;
   } catch (error) {
     logger.error(`sendDataPublishedEmail Error: ${error.message}`);
     return false;
@@ -121,7 +121,7 @@ export async function sendEditDetailsEmail(
       reference: "",
     });
 
-    return { result: (result as NotifyResult).statusText === "Created" };
+    return { result: "id" in result && result.id !== undefined };
   } catch (error) {
     const message = `sendEditDetailsEmail: Unable to send change request email: ${error.message}`;
     logger.error(message);

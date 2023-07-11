@@ -21,7 +21,7 @@ export function getNotifyClient() {
 
 class FakeNotifyClient {
   sendEmail() {
-    return { statusText: "Created" };
+    return { id: "Created" };
   }
 }
 

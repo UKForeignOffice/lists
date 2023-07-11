@@ -1,6 +1,6 @@
 import { prisma } from "scheduler/prismaClient";
-import { AuditCreateInput, ListEventJsonData } from "server/models/types";
-import { AuditEvent } from "@prisma/client";
+import type { AuditCreateInput, ListEventJsonData } from "server/models/types";
+import type { AuditEvent } from "@prisma/client";
 
 export async function addUnpublishPostReminderAudit(eventData: ListEventJsonData, auditEvent: AuditEvent) {
   const data: AuditCreateInput = {

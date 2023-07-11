@@ -99,10 +99,6 @@ export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
   jsonData: ListJsonData;
 }
 
-export interface NotifyResult {
-  statusText: string;
-}
-
 export interface Event extends PrismaClient.Event {
   jsonData: EventJsonData;
 }
