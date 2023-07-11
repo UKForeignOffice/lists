@@ -148,10 +148,7 @@ export type ListAnnualReviewPostReminderType = SharedTypes.ListAnnualReviewPostR
 
 export type ListItemAnnualReviewProviderReminderType = SharedTypes.ListItemAnnualReviewProviderReminderType;
 
-export type ListItemUnpublishedPostReminderType =
-  | "sendUnpublishedPostEmail"
-  | "sendUnpublishOneDayPostEmail"
-  | "sendUnpublishWeeklyPostEmail";
+export type ListItemUnpublishedPostReminderType = "sendUnpublishOneDayPostEmail" | "sendUnpublishWeeklyPostEmail";
 
 export type ListItemUnpublishedProviderReminderType =
   | "sendUnpublishedProviderEmail"

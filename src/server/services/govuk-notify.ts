@@ -4,7 +4,6 @@ import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { FEEDBACK_EMAIL_ADDRESSES, NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
-import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
