@@ -187,11 +187,12 @@ function restoreSpecialCharacter(specialCharacter: string, country: string, coun
   return countryName;
 }
 
-export function formatCountryParam(country: string): string {
-  let countryName: string = country;
+export function formatCountryParam(country: string | string[]): string {
+  const countryAsString: string = Array.isArray(country) ? country[0] : country;
+  let countryName = countryAsString;
 
   if (countryName) {
-    countryName = startCase(country);
+    countryName = startCase(countryAsString);
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
@@ -200,7 +201,7 @@ export function formatCountryParam(country: string): string {
     }
     const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
     specialChars.forEach((specialChar) => {
-      countryName = restoreSpecialCharacter(specialChar, country, countryName);
+      countryName = restoreSpecialCharacter(specialChar, countryAsString, countryName);
     });
   }
   return countryName;

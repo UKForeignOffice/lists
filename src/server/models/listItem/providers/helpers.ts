@@ -250,15 +250,18 @@ export function getLanguagesRows(languagesProvided: string[], path = "languages"
   return { rows };
 }
 
-export function validateCountry(countryName: string): string | undefined {
-  const matchingCountryName = countriesList.find((country) => country.value === countryName)?.value;
+export function validateCountry(countryName: string | string[]): string | undefined {
+  const countryAsString = Array.isArray(countryName) ? countryName[0] : countryName;
+  const matchingCountryName = countriesList.find((country) => country.value === countryAsString)?.value;
   if (!matchingCountryName) logger.error(`validateCountry: Invalid country ${countryName} detected`);
   return matchingCountryName;
 }
 
-export function validateCountryLower(countryName: string): string | undefined {
+export function validateCountryLower(countryName: string | string[]): string | undefined {
+  const countryAsString = Array.isArray(countryName) ? countryName[0] : countryName;
+
   const matchingCountryName = countriesList.find(
-    (country) => country.value.toLowerCase() === countryName.toLowerCase()
+    (country) => country.value.toLowerCase() === countryAsString.toLowerCase()
   )?.value;
   if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
   return matchingCountryName;

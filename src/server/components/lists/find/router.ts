@@ -56,7 +56,7 @@ findRouter.get("/:serviceType/:country/result", checkIncompleteState, handlers.r
 
 function redirectQueryServiceName(req: Request, res: Response) {
   const serviceType = req.query.serviceType as string;
-  const country = validateCountry(req.query.country as string);
+  const country = validateCountry(req.query.country as string | string[]);
   let query = "";
   if (country) {
     query = `?${querystring.encode({ country })}`;
