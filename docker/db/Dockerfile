@@ -21,7 +21,7 @@ RUN echo $PGP_SECRET | base64 --decode | gpg --import && \
     echo $PGP_OTRUST | gpg --import-ownertrust
 
 ### If you are unable to decrypt these files, you may have an invalid or outdated key and need to regenerate them.
-RUN cd /docker-entrypoint-initdb.d && gpg -o test_data.sql -d test_data.sql.zip.gpg
+RUN cd /docker-entrypoint-initdb.d && gpg -o 00-test_data.sql -d test_data.sql.zip.gpg
 
 CMD docker-entrypoint.sh -c 'shared_buffers=256MB' -c 'max_connections=200' -c config_file=postgresql-local.conf
 
