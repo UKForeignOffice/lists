@@ -39,6 +39,7 @@ Then("the {string} key date email is sent to post", function (keyDate) {
         },
       },
     }).then((audit) => {
+      cy.log(audit);
       cy.expect(audit.id).to.exist;
     });
   });

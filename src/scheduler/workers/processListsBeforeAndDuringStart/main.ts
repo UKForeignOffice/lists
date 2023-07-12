@@ -21,8 +21,7 @@ import {
 } from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
 import { findAllReminderEvents } from "./audit";
 import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
-import { EVENTS } from "shared/listItemEvent";
-import type { EventCreate } from "shared/listItemEvent";
+import { addReminderEvent } from "../helpers/addReminderEvent";
 
 async function processPostEmailsForList(
   list: List,
@@ -107,19 +106,13 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
       const annualReviewRef = list.jsonData.currentAnnualReview?.reference;
 
       if (result) {
-        await prisma.event.create({
-          data: EVENTS.REMINDER(
-            result as SendEmailResponse,
-            ["sendStartedProviderEmail"],
-            annualReviewRef
-          ) as EventCreate<"REMINDER">,
-        });
+        await addReminderEvent(listItem.id, result as SendEmailResponse, ["sendStartedProviderEmail"], annualReviewRef);
       }
     }
   }
 }
 
-async function getLatestReminderAuditEvent(annualReviewRef: string, auditType: "user" | "list" | "listItem") {
+async function getLatestReminderAuditEvent(annualReviewRef: string) {
   const { result: events } = await findAllReminderEvents(annualReviewRef);
   let audit: Event | undefined;
   if (events?.length) {
@@ -140,8 +133,8 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
     return;
   }
   // get the most recent audit record to determine if the email has already been sent for the respective milestones
-  const audit = await getLatestReminderAuditEvent(annualReviewRef, "list");
-  const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef, "listItem");
+  const audit = await getLatestReminderAuditEvent(annualReviewRef);
+  const listItemAudit = await getLatestReminderAuditEvent(annualReviewRef);
   let isEmailSent = false;
 
   const today = startOfDay(new Date());
@@ -275,7 +268,6 @@ export async function processAnnualReview(): Promise<void> {
   }
   const { result: listItems } = listItemsResult;
   for (const list of listsWithCurrentAnnualReview) {
-    // @ts-ignore
     const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
     await processList(list, listItemsForList);
   }
