@@ -2,7 +2,7 @@ import type { Express, NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import csrf from "csurf";
 import { isTest } from "server/config";
-import { logger } from "scheduler/logger";
+import { logger } from "server/services/logger";
 
 const CSRFOptions = {
   cookie: true,
@@ -11,7 +11,7 @@ const CSRFOptions = {
 export function configureCookieParser(server: Express): void {
   server.use(cookieParser());
 
-  logger.warn(`initCookies: CSRF is ${isTest ? "disabled" : "enabled"}`);
+  logger.warn(`configureCookieParser: CSRF is ${isTest ? "disabled" : "enabled"}`);
   server.use(csrf(CSRFOptions));
   server.use(addCsrfTokenToLocals);
 }
