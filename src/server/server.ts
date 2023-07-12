@@ -1,4 +1,5 @@
-import express, { Express } from "express";
+import type { Express } from "express";
+import express from "express";
 import {
   configureAccessControl,
   configureBodyParser,
@@ -34,6 +35,7 @@ export async function getServer(): Promise<Express> {
   configureStaticServer(server);
   configureFormRunnerProxyMiddleware(server);
   configureCookieParser(server);
+
   configureBodyParser(server);
   configureViews(server);
 
@@ -50,7 +52,7 @@ export async function getServer(): Promise<Express> {
   // error handlers
   configureErrorHandlers(server);
 
-   logger.info(
+  logger.info(
     `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
   );
   return server;
