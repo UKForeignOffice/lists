@@ -3,7 +3,6 @@ import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
 import type { ACTIVITY_TAGS, PUBLISHING_TAGS, Tags } from "server/models/listItem/types";
 import { ORDER_BY, TAGS } from "server/models/listItem/types";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import type { ListItemRes } from "server/components/dashboard/listsItems/types";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
 import type { ListWithJsonData } from "../helpers";
@@ -178,8 +177,6 @@ export async function listItemsIndexController(
       annualReviewDate,
       unpublishDate: unpublishDate ? AnnualReviewHelpers.formatDate(unpublishDate) : undefined,
       bannerToggles,
-      // @ts-expect-error
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

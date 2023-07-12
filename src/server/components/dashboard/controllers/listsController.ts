@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import { authRoutes } from "server/components/auth";
 import { pageTitles } from "server/components/dashboard/helpers";
 import { dashboardRoutes } from "server/components/dashboard/routes";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { countriesList } from "server/services/metadata";
 import { ServiceType } from "shared/types";
 import { calculateDashboardBoxes, calculateSortOrder, tableHeaders } from "./listsController.helpers";
@@ -29,7 +28,7 @@ export async function listsController(req: Request, res: Response, next: NextFun
       isNewUser: lists.length === 0,
       tableHeaders: tableHeaders(req.query),
       lists,
-      csrfToken: getCSRFToken(req),
+
       dashboardBoxes: calculateDashboardBoxes(lists),
     });
   } catch (error) {

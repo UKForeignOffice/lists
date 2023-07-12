@@ -6,7 +6,6 @@ import { add, isPast } from "date-fns";
 import type * as Types from "../dashboard/listsItems/types";
 import { findListItemByReference } from "server/models/listItem/listItem";
 import { getDetailsViewModel } from "server/components/dashboard/listsItems/getViewModel";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
@@ -85,7 +84,6 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
       rows,
       country: listItem.address.country.name,
       service: startCase(listItem?.type),
-      csrfToken: getCSRFToken(req),
       reference: listItem.reference,
       error,
     });
@@ -173,7 +171,7 @@ export function declarationGetController(req: Request, res: Response, next: Next
     error = { text: errorMsg };
   }
 
-  res.render("annual-review/declaration", { reference: listItemRef, error, csrfToken: getCSRFToken(req) });
+  res.render("annual-review/declaration", { reference: listItemRef, error });
 }
 
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {

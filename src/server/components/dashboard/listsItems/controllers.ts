@@ -1,7 +1,6 @@
 // TODO: Ideally all of the checks in the controller should be split off into reusable middleware rather then repeating in each controller
 import type { NextFunction, Request, Response } from "express";
 import type { EventJsonData, ListItem, ListItemGetObject } from "server/models/types";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import type { Prisma } from "@prisma/client";
 import { Status } from "@prisma/client";
 import { findListById, updateList } from "server/models/list";
@@ -117,7 +116,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     error,
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
-    csrfToken: getCSRFToken(req),
   });
 }
 
@@ -183,7 +181,6 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
       error,
       list,
       req,
-      csrfToken: getCSRFToken(req),
     });
     return;
   }
