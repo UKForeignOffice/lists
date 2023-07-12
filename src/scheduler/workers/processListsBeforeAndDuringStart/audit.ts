@@ -35,3 +35,41 @@ export async function findAllReminderEvents(annualReviewReference: string, itemI
     return { error: new Error(message) };
   }
 }
+
+export async function findReminderAuditEvents(annualReviewReference: string, itemId?: number) {
+  const andCondition = [
+    {
+      type: "list",
+    },
+    {
+      jsonData: {
+        path: ["annualReviewRef"],
+        equals: annualReviewReference,
+      },
+    },
+  ];
+  if (itemId) {
+    andCondition.push({
+      jsonData: {
+        path: ["itemId"],
+        equals: `${itemId}`,
+      },
+    });
+  }
+
+  try {
+    const result = await prisma.audit.findMany({
+      take: 1,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        AND: andCondition,
+      },
+    });
+    return { result };
+  } catch (e) {
+    const message = `Unable to find audit records: ${e.message}`;
+    return { error: new Error(message) };
+  }
+}

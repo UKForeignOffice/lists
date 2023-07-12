@@ -4,7 +4,7 @@ import type {
   ListItemAnnualReviewProviderReminderType,
 } from "shared/types";
 import { logger } from "scheduler/logger";
-import type { Event } from "@prisma/client";
+import type { Audit, Event } from "@prisma/client";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
@@ -15,10 +15,10 @@ export function formatDate(date: Date = todayDateString) {
 }
 
 export function isEmailSentBefore(
-  audit: Event | undefined,
+  event: Event | Audit | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {
-  if (!audit?.jsonData) {
+  if (!event?.jsonData) {
     return false;
   }
   const subsequentEmailsForReminderType = {
@@ -33,9 +33,14 @@ export function isEmailSentBefore(
     sendStartedPostEmail: ["sendStartedPostEmail"],
     sendStartedProviderEmail: ["sendStartedProviderEmail"],
   };
-  const listEventJsonData = audit.jsonData as ListEventJsonData;
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];
-  const reminderHasBeenSent = subsequentEmails?.includes?.(listEventJsonData?.reminderType as string) ?? false;
+  let reminderHasBeenSent = false;
+  if ("createdAt" in event) {
+    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as ListEventJsonData)?.reminderType as string);
+  } else {
+    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as Record<string, string>)?.notes);
+  }
+
   if (reminderHasBeenSent) {
     logger.info(`Email has been sent before for ${reminderType} reminder type`);
     return true;

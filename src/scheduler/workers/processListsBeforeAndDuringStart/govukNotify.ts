@@ -15,7 +15,7 @@ export async function sendAnnualReviewProviderEmail(
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return { result: {} };
+      return { result: { id: "test", template: "test" } };
     }
 
     const personalisation = {
@@ -56,7 +56,7 @@ export async function sendAnnualReviewPostEmail(
 ): Promise<{ result?: SendEmailResponse | {}; error?: Error }> {
   if (config.isSmokeTest) {
     logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-    return { result: {} };
+    return { result: { id: "test", template: "test" } };
   }
 
   const notifyTemplates: Record<MilestoneTillAnnualReview, string> = {

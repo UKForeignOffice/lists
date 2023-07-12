@@ -8,7 +8,6 @@ Then("an email for the {string} key date is sent to eligible providers", async f
       },
     },
   }).then((result) => {
-    list = result;
     cy.task("db", {
       operation: "event.findMany",
       variables: {
@@ -18,13 +17,13 @@ Then("an email for the {string} key date is sent to eligible providers", async f
             {
               jsonData: {
                 path: ["notes"],
-                equals: "sendStartedProviderEmail",
+                equals: ["sendStartedProviderEmail"],
               },
             },
             {
               jsonData: {
                 path: ["reference"],
-                equals: list.jsonData.currentAnnualReview.reference,
+                equals: result.jsonData.currentAnnualReview.reference,
               },
             },
           ],
