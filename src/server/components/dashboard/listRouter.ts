@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { csrfRequestHandler } from "server/components/cookies/helpers";
 import { listsEditController, listsEditPostController, listsController } from "server/components/dashboard/controllers";
 import * as annualReview from "server/components/dashboard/annualReview/controllers";
 import * as developmentControllers from "server/components/dashboard/listsItems/controllers.development";
@@ -15,7 +14,7 @@ import { relatedLinksRouter } from "server/components/dashboard/relatedLinks/rou
 
 export const listRouter = express.Router();
 
-listRouter.all(`*`, ensureAuthenticated, csrfRequestHandler);
+listRouter.all(`*`, ensureAuthenticated);
 listRouter.get("/", listsController);
 
 listRouter.param("listId", async (req, res, next, listId) => {
@@ -23,7 +22,8 @@ listRouter.param("listId", async (req, res, next, listId) => {
     res.locals.list = {
       id: "new",
     };
-    return next();
+    next();
+    return;
   }
 
   try {
@@ -32,17 +32,19 @@ listRouter.param("listId", async (req, res, next, listId) => {
 
     if (!list) {
       const err = new HttpException(404, "404", `Could not find list ${listId}`);
-      return next(err);
+      next(err);
+      return;
     }
 
     res.locals.list = list;
     res.locals.listsEditUrl = `${req.baseUrl}/${listId}`;
     res.locals.listIndexUrl = `${req.baseUrl}/${listId}/items`;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]}s in ${list.country.name}`;
-    return next();
+    next();
+    return;
   } catch (e) {
     logger.error(`${req.path} - Assigning listId ${listId} to req failed, ${e}`);
-    return next(e);
+    next(e);
   }
 });
 

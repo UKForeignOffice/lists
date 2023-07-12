@@ -1,11 +1,9 @@
 /* eslint-disable */
 import express from "express";
 import * as AnnualReviewController from "./controller";
-import { csrfRequestHandler } from "server/components/cookies/helpers";
-
 const annualReviewRouter = express.Router();
 
-annualReviewRouter.all("/annual-review*", csrfRequestHandler);
+annualReviewRouter.all("/annual-review*");
 
 annualReviewRouter.get("/annual-review/confirm/:listItemRef", AnnualReviewController.confirmGetController);
 annualReviewRouter.post("/annual-review/confirm/:listItemRef", AnnualReviewController.confirmPostController);
