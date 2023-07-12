@@ -5,7 +5,7 @@ import { sanitiseLanguages } from "./../../helpers/sanitiseLanguages";
 import { getLanguagesRows } from "server/models/listItem/providers/helpers";
 import querystring from "querystring";
 
-const languagesAsArray = splitLanguagesIntoArray();
+const languagesAsGovukOptionsArray = splitLanguagesIntoOptionsArray();
 
 export function get(req: Request, res: Response) {
   const shouldReturn = req.query.return === "results";
@@ -21,7 +21,7 @@ export function get(req: Request, res: Response) {
 
     return;
   }
-  const languagesViewModel = languagesAsArray;
+  const languagesViewModel = languagesAsGovukOptionsArray;
   const sanitisedLanguages = sanitiseLanguages(req.session.answers!.languages);
 
   res.render("lists/find/translators-interpreters/languages.njk", {
@@ -58,20 +58,30 @@ export function post(req: Request, res: Response) {
 }
 
 /**
- * Splits metadata.languages into an array of objects. Each object is a single key value pair.
+ * Separates each key value pair in metadata.languages into an array of objects which GOVUK frontend can render.
  * ```
  *   [
- *     { aa: "Afar" },
- *     { ab: "Abkhazian" }
+ *     { value: "aa",
+ *       text: "afar"
+ *     },
+ *     { value: "ab",
+ *       text: "Abkhazian"
+ *     }
  *   ]
  * ```
  */
-function splitLanguagesIntoArray() {
-  return Object.entries(languages).map(languageEntriesToObject);
+function splitLanguagesIntoOptionsArray() {
+  return Object.entries(languages).map(languageEntriesToOptions);
 }
 
-function languageEntriesToObject([languageCode, languageName]: [string, string]) {
+function languageEntriesToOptions([languageCode, languageName]: [string, string]): GOVUKOptionViewModel {
   return {
-    [languageCode]: languageName,
+    text: languageName,
+    value: languageCode,
   };
+}
+
+interface GOVUKOptionViewModel {
+  text: string;
+  value: string | number;
 }
