@@ -14,7 +14,6 @@ import {
   fcdoTranslatorsInterpretersByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
-import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
