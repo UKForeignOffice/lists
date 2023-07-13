@@ -98,11 +98,6 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
   };
 }
 
-export function getParameterValue(parameterName: string, queryString: string): string {
-  const searchParams = new URLSearchParams(queryString);
-  return searchParams.get(parameterName) ?? "";
-}
-
 export function removeQueryParameter(queryString: string, parameterName: string): string {
   const params = omit(querystring.parse(queryString), parameterName);
   return `${querystring.stringify(params)}`;
