@@ -3,7 +3,7 @@
 INSERT INTO "Event" ("time", "listItemId", "type", "jsonData")
 SELECT  a."createdAt" "createdAt",
         (a."jsonData"->>'itemId')::int,
-        "REMINDER",
+        'REMINDER',
         jsonb_set(
           '{}'::jsonb,
           '{reference}',
@@ -11,6 +11,6 @@ SELECT  a."createdAt" "createdAt",
           jsonb_build_object('notes', '["sendStartedProviderEmail"]') ||
           jsonb_build_object('eventName', '["reminder"]')
 FROM "Audit" a
-INNER JOIN "List" l on  (a."jsonData"->>'itemId')::int = l.id
+INNER JOIN "ListItem" l on  (a."jsonData"->>'itemId')::int = l.id
 WHERE a.type = 'listItem'
 AND "auditEvent" = 'REMINDER';
