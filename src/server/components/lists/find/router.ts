@@ -5,14 +5,13 @@ import { checkIncompleteState } from "./middleware/checkIncompleteState";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import querystring from "querystring";
 import { initFindSession } from "./middleware/initFindSession";
-import { loadCsrfTokenIntoLocals } from "./middleware/loadCsrfTokenIntoLocals";
 import { normaliseServiceType } from "server/components/lists/find/helpers/normaliseServiceType";
 import { validateServiceTypeParam } from "server/components/lists/find/handlers/params/serviceType";
 import { handleCountryParam } from "server/components/lists/find/handlers/params/country";
 import { loadAnswersIntoLocals } from "server/components/lists/find/middleware/loadAnswersIntoLocals";
 export const findRouter = express.Router();
 
-findRouter.all("*", initFindSession, loadCsrfTokenIntoLocals);
+findRouter.all("*", initFindSession);
 
 findRouter.get("/", redirectQueryServiceName);
 
