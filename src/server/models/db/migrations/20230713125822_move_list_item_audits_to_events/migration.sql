@@ -8,8 +8,7 @@ SELECT  a."createdAt" "createdAt",
           '{}'::jsonb,
           '{reference}',
           to_jsonb(a."jsonData"->'annualReviewRef')) ||
-          jsonb_build_object('notes', '["sendStartedProviderEmail"]') ||
-          jsonb_build_object('eventName', '["reminder"]')
+          jsonb_build_object('notes', '{sendStartedProviderEmail}'::text[], 'eventName', '{reminder}'::text[])
 FROM "Audit" a
 INNER JOIN "ListItem" l on  (a."jsonData"->>'itemId')::int = l.id
 WHERE a.type = 'listItem'
