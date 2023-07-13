@@ -14,7 +14,7 @@ export function formatDate(date: Date = todayDateString) {
   return date.toLocaleString("en-gb", options);
 }
 
-export function isEmailSentBefore(
+export function hasDataContainingReference(
   event: Event | Audit | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {

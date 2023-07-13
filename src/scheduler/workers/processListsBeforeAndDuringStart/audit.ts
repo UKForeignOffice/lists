@@ -1,7 +1,17 @@
 import { ListItemEvent } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
 
-export async function findAllReminderEvents(annualReviewReference: string, itemId?: number) {
+interface GetReminderEventsOptions {
+  annualReviewReference: string;
+  itemId?: number;
+  annualReveiwStartDate?: Date;
+}
+
+export async function findAllReminderEvents({
+  annualReviewReference,
+  itemId,
+  annualReveiwStartDate,
+}: GetReminderEventsOptions) {
   const andCondition = [
     {
       type: ListItemEvent.REMINDER,
@@ -15,6 +25,13 @@ export async function findAllReminderEvents(annualReviewReference: string, itemI
     {
       ...(itemId && {
         listItemId: itemId,
+      }),
+    },
+    {
+      ...(annualReveiwStartDate && {
+        time: {
+          gte: annualReveiwStartDate,
+        },
       }),
     },
   ];
@@ -36,7 +53,11 @@ export async function findAllReminderEvents(annualReviewReference: string, itemI
   }
 }
 
-export async function findReminderAuditEvents(annualReviewReference: string, itemId?: number) {
+export async function findAllReminderAudits({
+  annualReviewReference,
+  itemId,
+  annualReveiwStartDate,
+}: GetReminderEventsOptions) {
   const andCondition = [
     {
       type: "list",
@@ -47,15 +68,22 @@ export async function findReminderAuditEvents(annualReviewReference: string, ite
         equals: annualReviewReference,
       },
     },
+    {
+      ...(itemId && {
+        jsonData: {
+          path: ["itemId"],
+          equals: itemId,
+        },
+      }),
+    },
+    {
+      ...(annualReveiwStartDate && {
+        createdAt: {
+          gte: annualReveiwStartDate,
+        },
+      }),
+    },
   ];
-  if (itemId) {
-    andCondition.push({
-      jsonData: {
-        path: ["itemId"],
-        equals: `${itemId}`,
-      },
-    });
-  }
 
   try {
     const result = await prisma.audit.findMany({
