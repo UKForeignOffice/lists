@@ -34,9 +34,8 @@ export async function getServer(): Promise<Express> {
   configureCompression(server);
   configureStaticServer(server);
   configureFormRunnerProxyMiddleware(server);
-  configureCookieParser(server);
-
   configureBodyParser(server);
+  configureCookieParser(server);
   configureViews(server);
 
   // initialize components
