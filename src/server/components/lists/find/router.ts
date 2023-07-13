@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import * as handlers from "./handlers";
 import { checkIncompleteState } from "./middleware/checkIncompleteState";
@@ -9,6 +9,8 @@ import { normaliseServiceType } from "server/components/lists/find/helpers/norma
 import { validateServiceTypeParam } from "server/components/lists/find/handlers/params/serviceType";
 import { handleCountryParam } from "server/components/lists/find/handlers/params/country";
 import { loadAnswersIntoLocals } from "server/components/lists/find/middleware/loadAnswersIntoLocals";
+import { getServiceLabel } from "server/components/lists";
+import serviceName from "server/utils/service-name";
 export const findRouter = express.Router();
 
 findRouter.all("*", initFindSession);
@@ -23,7 +25,22 @@ findRouter.param("serviceType", loadAnswersIntoLocals);
 findRouter.param("country", handleCountryParam);
 
 findRouter.get("/:serviceType/country", handlers.country.get);
+
+findRouter.all("/funeral-directors/*", loadAnswersIntoLocals, (_req: Request, res: Response, next: NextFunction) => {
+  res.locals.serviceType = "funeral-directors";
+  res.locals.serviceLabel = getServiceLabel("funeral-directors");
+  res.locals.serviceLabelPlural = serviceName("funeral-directors");
+  next();
+});
+
+findRouter.get("/funeral-directors/insurance", handlers.funeralDirectors.insurance.get);
+findRouter.post("/funeral-directors/insurance", handlers.funeralDirectors.insurance.post);
+findRouter.get("/funeral-directors/insurance/contact-insurance", handlers.funeralDirectors.contactInsurance.get);
+findRouter.get("/funeral-directors/repatriation", handlers.funeralDirectors.repatriation.get);
+findRouter.post("/funeral-directors/repatriation", handlers.funeralDirectors.repatriation.post);
+
 findRouter.get("/:serviceType/:country*", handlers.country.redirectIfEmpty);
+
 findRouter.post("/:serviceType/country", handlers.country.post);
 
 findRouter.get("/:serviceType/:country/region", handlers.region.get);
@@ -31,12 +48,6 @@ findRouter.post("/:serviceType/:country/region", handlers.region.post);
 
 findRouter.get("/:serviceType/:country/practice-areas", handlers.lawyers.practiceAreas.get);
 findRouter.post("/:serviceType/:country/practice-areas", handlers.lawyers.practiceAreas.post);
-
-findRouter.get("/:serviceType/insurance", handlers.funeralDirectors.insurance.get);
-findRouter.post("/:serviceType/insurance", handlers.funeralDirectors.insurance.post);
-findRouter.get("/:serviceType/insurance/contact-insurance", handlers.funeralDirectors.contactInsurance.get);
-findRouter.get("/:serviceType/repatriation", handlers.funeralDirectors.repatriation.get);
-findRouter.post("/:serviceType/repatriation", handlers.funeralDirectors.repatriation.post);
 
 findRouter.get("/:serviceType/:country/services", handlers.translatorsInterpreters.services.get);
 findRouter.post("/:serviceType/:country/services", handlers.translatorsInterpreters.services.post);

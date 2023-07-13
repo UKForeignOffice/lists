@@ -3,12 +3,6 @@ import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { logger } from "server/services/logger";
 
 export function handleCountryParam(req: Request, res: Response, next: NextFunction, country: string) {
-  const funeralDirectorsParamsToSkip = ["insurance", "repatriation"];
-  if (funeralDirectorsParamsToSkip.includes(country)) {
-    next();
-    return;
-  }
-
   const validatedCountry = validateCountryLower(country);
   if (!validatedCountry) {
     const { serviceType } = req.params;

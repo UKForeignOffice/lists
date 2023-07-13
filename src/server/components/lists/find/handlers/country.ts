@@ -13,12 +13,6 @@ export async function redirectIfEmpty(req: Request, res: Response, next: NextFun
 
   const country = req.session.answers?.country ?? req.params.country;
 
-  const funeralDirectorsParamsToSkip = ["insurance", "repatriation"];
-  if (funeralDirectorsParamsToSkip.includes(country)) {
-    next();
-    return;
-  }
-
   const serviceType = req.session.answers?.serviceType ?? req.params.serviceType;
   const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
 
@@ -36,7 +30,6 @@ export async function redirectIfEmpty(req: Request, res: Response, next: NextFun
 export async function get(req: Request, res: Response) {
   res.render("lists/find/country", {
     countriesList,
-    answers: req.session.answers,
   });
 }
 
