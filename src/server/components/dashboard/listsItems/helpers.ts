@@ -4,7 +4,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { prisma } from "server/models/db/prisma-client";
 import type { ListItemRes } from "server/components/dashboard/listsItems/types";
 import type { ListItem, User } from "server/models/types";
-import { ServiceType } from "shared/types";
+import type { ServiceType } from "shared/types";
 import { recordListItemEvent } from "shared/audit";
 import { AuditEvent } from "@prisma/client";
 import { EVENTS } from "server/models/listItem/listItemEvent";
@@ -42,6 +42,7 @@ export async function getListOverview(id: number) {
       nextAnnualReviewStartDate: true,
       lastAnnualReviewStartDate: true,
       jsonData: true,
+      isAnnualReview: true,
     },
   });
 }

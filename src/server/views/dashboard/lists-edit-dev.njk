@@ -34,56 +34,88 @@
       <h1 class="govuk-heading-l">
         Settings - {{ _.startCase(list.type) }}
       </h1>
+      <h3 class="govuk-heading-s">This list is {{ "not" if not isAnnualReview }} in annual review mode</h3>
 
       <form class="form" method="post" required>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {% if not isAnnualReview %}
+         {{  govukInput({
+           label: {
+             text: "Next annual review start date"
+           },
+           hint: {
+             text: "Enter in the ISO format YYYY-MM-DDT, for example 2023-07-05T"
+           },
+           value: nextAnnualReviewStartDate,
+           id: "nextAnnualReviewStartDate",
+           name: "nextAnnualReviewStartDate"
+         }) }}
 
-        {% set rowsWithInput = [] %}
-        {% for key, value in keyDates %}
-          {% set text = _.replace(key, r/annualReview|unpublished|\[|\]/g, '') %}
-          {% set input = govukInput({
+          {{  govukInput({
             label: {
-              text: text,
-              classes: "govuk-visually-hidden"
+              text: "Last annual review start date"
             },
-            value: value,
-            id: key,
-            name: key
-          }) %}
-
-          {% set rowWithInput = [
-            {
-              text: text
+            hint: {
+              text: "Enter in the ISO format YYYY-MM-DDT, for example 2023-07-05T"
             },
-            {
-              html: input
-            }
-          ]
-          %}
+            value: lastAnnualReviewStartDate,
+            id: "lastAnnualReviewStartDate",
+            name: "lastAnnualReviewStartDate"
+          }) }}
 
-          {% set rowsWithInput = (rowsWithInput.push(rowWithInput), rowsWithInput) %}
 
-        {% endfor %}
+        {% endif %}
+        {% if isAnnualReview %}
+          {% set rowsWithInput = [] %}
+          {% for key, value in keyDates %}
+            {% set text = _.replace(key, r/annualReview|unpublished|\[|\]/g, '') %}
+            {% set input = govukInput({
+              label: {
+                text: text,
+                classes: "govuk-visually-hidden"
+              },
+              value: value,
+              id: key,
+              name: key
+            }) %}
 
-        {{ govukTable({
-          caption: "Key dates",
-          captionClasses: "govuk-table__caption--m",
-          firstCellIsHeader: true,
-          head: [
-            {
-              text: "Key date"
-            },
-            {
-              text: "Date to send email"
-            }
-          ],
-          rows: rowsWithInput
-        }) }}
+            {% set rowWithInput = [
+              {
+                text: text
+              },
+              {
+                html: input
+              }
+            ]
+            %}
+
+            {% set rowsWithInput = (rowsWithInput.push(rowWithInput), rowsWithInput) %}
+
+          {% endfor %}
+
+          {{ govukTable({
+            caption: "Key dates",
+            captionClasses: "govuk-table__caption--m",
+            firstCellIsHeader: true,
+            head: [
+              {
+                text: "Key date"
+              },
+              {
+                text: "Date to send email"
+              }
+            ],
+            rows: rowsWithInput
+          }) }}
+
+        {% endif %}
+
 
         {{ govukButton({
           text: "Update"
         }) }}
 
+        {% if isAnnualReview %}
 
 
         <h3 class="govuk-heading-s">Current week (since annual review starting): {{ currentWeek }}</h3>
@@ -133,6 +165,7 @@
 
 
         {% endfor %}
+        {% endif %}
 
 
       </form>
