@@ -11,10 +11,10 @@ import { handleCountryParam } from "server/components/lists/find/handlers/params
 import { loadAnswersIntoLocals } from "server/components/lists/find/middleware/loadAnswersIntoLocals";
 import { getServiceLabel } from "server/components/lists";
 import serviceName from "server/utils/service-name";
+import { HttpException } from "server/middlewares/error-handlers";
 export const findRouter = express.Router();
 
 findRouter.all("*", initFindSession);
-
 findRouter.get("/", redirectQueryServiceName);
 
 findRouter.get("/:serviceType", handlers.serviceType.get);
@@ -64,8 +64,12 @@ findRouter.post("/:serviceType/:country/disclaimer", handlers.disclaimer.post);
 
 findRouter.get("/:serviceType/:country/result", checkIncompleteState, handlers.result.get);
 
-function redirectQueryServiceName(req: Request, res: Response) {
+function redirectQueryServiceName(req: Request, res: Response, next: NextFunction) {
   const serviceType = req.query.serviceType as string;
+  if (!serviceType) {
+    next(new HttpException(404, "404", " "));
+    return;
+  }
   const country = validateCountry(req.query.country as string | string[]);
   let query = "";
   if (country) {

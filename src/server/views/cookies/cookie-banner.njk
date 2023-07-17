@@ -10,7 +10,7 @@
   Cookies on {{ SERVICE_NAME }}
 {% endset %}
 
-<div id="global-cookie-message">
+<div id="global-cookie-message" class="govuk-body govuk-!-margin-bottom-0">
   <form id="global-cookie-message-form" method="post" action="/help/cookies">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <input name="referrer" type="hidden" value="{{ currentLocation }}" />
