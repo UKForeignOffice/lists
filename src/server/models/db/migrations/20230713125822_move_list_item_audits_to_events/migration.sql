@@ -4,12 +4,20 @@ INSERT INTO "Event" ("time", "listItemId", "type", "jsonData")
 SELECT  a."createdAt" "createdAt",
         (a."jsonData"->>'itemId')::int,
         'REMINDER',
-        jsonb_set(
-          '{}'::jsonb,
-          '{reference}',
-          to_jsonb(a."jsonData"->'annualReviewRef')) ||
-          jsonb_build_object('notes', '{sendStartedProviderEmail}'::text[], 'eventName', '{reminder}'::text[])
+        jsonb_build_object(
+          'reference', a."jsonData"->'annualReviewRef',
+          'notes', jsonb_build_array(a."jsonData"->>'reminderType'),
+          'eventName', a."jsonData"->'eventName'
+        )
 FROM "Audit" a
-INNER JOIN "ListItem" l on  (a."jsonData"->>'itemId')::int = l.id
+INNER JOIN "ListItem" l ON (a."jsonData"->>'itemId')::int = l.id
 WHERE a.type = 'listItem'
-AND "auditEvent" = 'REMINDER';
+AND "auditEvent" = 'REMINDER'
+-- Prevent duplicate entries
+AND NOT EXISTS (
+  SELECT 1
+  FROM "Event" e
+  WHERE e."listItemId" = (a."jsonData"->>'itemId')::int
+  AND e.type = 'REMINDER'
+  AND DATE(e.time) = DATE(a."createdAt")
+);
