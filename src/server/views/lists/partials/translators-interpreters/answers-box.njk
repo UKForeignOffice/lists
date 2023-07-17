@@ -1,0 +1,49 @@
+{% set services = answers.services if answers.services else [] %}
+{% if answers.services or isResultsPage %}
+  <p class="govuk-body">
+    <span id="services" class="answers-box__question">
+      Services needed
+    </span>
+    <strong aria-labelledby="services">{{ services.join(", ") }}</strong>
+    <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/services{{ returnParam }}"
+       aria-label="Change what services do you need answer">Change</a>
+  </p>
+{% endif %}
+{% if answers.languages or isResultsPage %}
+  <p class="govuk-body">
+    <span id="languages" class="answers-box__question">
+      Languages needed
+    </span>
+    <strong aria-labelledby="languages">{{ answers.languagesReadable.join(", ") }}</strong>
+    <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ urlSafeCountry }}/languages{{ returnParam }}"
+       aria-label="Change languages answer">Change</a>
+  </p>
+{% endif %}
+{% if services.includes('translation') %}
+  {% if answers.translationTypes or isResultsPage %}
+    <p class="govuk-body">
+      <span id="translation-types" class="answers-box__question">
+        Translation types
+      </span>
+      <strong aria-labelledby="translation-types">{{ answers.translationTypes.join(", ") }}</strong>
+      <a class="govuk-link noprint"
+         href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#translation{{ returnParam }}"
+         aria-label="Change what types of translating services do you need answer">Change</a>
+    </p>
+  {% endif %}
+{% endif %}
+{% if services.includes('interpretation') %}
+  {% if answers.interpretationTypes  or isResultsPage %}
+    <p class="govuk-body">
+      <span id="interpretation-types" class="answers-box__question">
+        Interpretation types
+      </span>
+      <strong aria-labelledby="interpretation-types">{{ answers.interpretationTypes.join(", ") }}</strong>
+      <a class="govuk-link noprint"
+         href="/find/{{ serviceType }}/{{ urlSafeCountry }}/types#interpretation{{ returnParam }}"
+         aria-label="Change what types of interpreting services do you need answer">
+        Change
+      </a>
+    </p>
+  {% endif %}
+{% endif %}

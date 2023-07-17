@@ -23,9 +23,11 @@
     </strong>
   </div>
 
-{% if (print !== "yes") %}
-  <p class="govuk-body">Links to lawyer websites will open in a new tab. You can give <a class="govuk-link" href="/find/lawyers#feedback-heading">feedback</a> on individual lawyers or this service.</p>
-{% endif %}
+  <p class="govuk-body noprint">
+    Links to lawyer websites will open in a new tab. You can give
+    <a class="govuk-link" href="/find/lawyers#feedback-heading">feedback</a>
+    on individual lawyers or this service.
+  </p>
 {% if (print === "yes") %}
 {% include 'includes/disclaimer.njk' %}
 {% endif %}

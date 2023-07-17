@@ -349,3 +349,13 @@ $two-thirds: $one-third * 2;
     cursor: pointer;
   }
 }
+
+@media print {
+  .noprint {
+    display: none;
+  }
+}
+
+.answers-box__question {
+  display: block;
+}

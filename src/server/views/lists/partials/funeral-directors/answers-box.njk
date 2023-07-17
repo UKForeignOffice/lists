@@ -1,0 +1,32 @@
+{% if answers.repatriation or isResultsPage %}
+  <p class="govuk-body">
+    <span id="repatriation" class="answers-box__question">
+      Repatriation needed
+    </span>
+    <strong aria-labelledby="repatriation">
+      {{ _.startCase("Yes" if answers.repatriation else "No") }}
+    </strong>
+    <a
+      class="govuk-link noprint"
+      href="/find/{{ serviceType }}/repatriation{{ returnParam }}"
+      aria-label="Change repatriation answer">
+      Change
+    </a>
+  </p>
+{% endif %}
+
+{% if answers.insurance or isResultsPage %}
+  <p class="govuk-body">
+    <span id="insurance" class="answers-box__question">
+      Has insurance
+    </span>
+    <strong aria-labelledby="insurance">
+      {{ _.startCase("Yes" if answers.insurance else "No") }}
+    </strong>
+    <a class="govuk-link noprint"
+       href="/find/{{ serviceType }}/insurance{{ returnParam }}"
+       aria-label="Change has insurance answer">
+      Change
+    </a>
+  </p>
+{% endif %}
