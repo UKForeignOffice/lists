@@ -18,8 +18,6 @@ export interface ListsRequestParams {
   country?: CountryName | "";
   region?: string;
   practiceArea?: string | string[];
-  legalAid?: "yes" | "no" | "";
-  proBono?: "yes" | "no" | "";
   readNotice?: string;
   readDisclaimer?: string;
   resultsTurnaround?: string;
