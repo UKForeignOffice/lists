@@ -193,26 +193,7 @@ export function getChangedAddressFields(
   return getObjectDiff(updatableAddressObject, webhookAsAddress);
 }
 
-export function setLanguagesProvided(newLanguage: string, languagesProvided: string): string {
-  return languagesProvided === "" ? `${newLanguage}` : languagesProvided.concat(`,${newLanguage}`);
-}
-
-export function getLanguageNames(languagesProvided: string): string | undefined {
-  if (!languagesProvided) {
-    return undefined;
-  }
-  languagesProvided = languagesProvided
-    ?.split(",")
-    .filter((language: string) => {
-      // @ts-ignore
-      const languageName: string = languages[language];
-      return languageName;
-    })
-    .join(",");
-  return languagesProvided;
-}
-
-export function getLanguagesRows(languagesProvided: string[], path = "languages"): LanguageRows {
+export function getLanguagesRows(languagesProvided: string[]): LanguageRows {
   if (!languagesProvided) {
     const languageRows: LanguageRows = { rows: [] };
     return languageRows;
