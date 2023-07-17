@@ -948,37 +948,37 @@ export const translationSpecialties: QuestionData[] = [
   {
     text: "Legal",
     value: "Legal",
-    description: "For example property, visas, death certificates, notarised documents",
+    description: "For example, property, visas, death certificates, notarised documents",
   },
   {
     text: "Medical",
     value: "Medical",
-    description: "For example medical records, autopsy reports",
+    description: "For example, medical records, autopsy reports",
   },
   {
     text: "Events",
     value: "Events",
-    description: "For example weddings, conferences",
+    description: "For example, weddings, conferences",
   },
   {
     text: "Publishing",
     value: "Publishing",
-    description: "For example scientific, technical, medical, educational, fictional",
+    description: "For example, scientific, technical, medical, educational, fictional",
   },
   {
     text: "Business and commercial",
     value: "Business and commercial",
-    description: "For example contracts, transcripts, documents",
+    description: "For example, contracts, transcripts, documents",
   },
   {
     text: "Digital media",
     value: "Digital media",
-    description: "For example subtitling, captioning, voiceovers, dubbing",
+    description: "For example, subtitling, captioning, voiceovers, dubbing",
   },
   {
     text: "General translation ",
     value: "General translation",
-    description: " For example informal, personal text",
+    description: " For example, informal, personal text",
   },
 ];
 
@@ -986,37 +986,37 @@ export const interpretationServices: QuestionData[] = [
   {
     text: "Medical assistance",
     value: "Medical assistance",
-    description: "For example hospitalisations, doctor's appointments",
+    description: "For example, hospitalisations, doctor's appointments",
   },
   {
     text: "Police and local authorities",
     value: "Police and local authorities",
-    description: "For example arrests, immigration issues",
+    description: "For example, arrests, immigration issues",
   },
   {
     text: "Courts and legal",
     value: "Courts and legal",
-    description: "For example hearings, trials",
+    description: "For example, hearings, trials",
   },
   {
     text: "Events",
     value: "Events",
-    description: "For example conferences, weddings",
+    description: "For example, conferences, weddings",
   },
   {
     text: "Media and communications",
     value: "Media and communications",
-    description: "For example TV, radio",
+    description: "For example, TV, radio",
   },
   {
     text: "Business and commercial",
     value: "Business and commerce",
-    description: "For example negotiations, meetings",
+    description: "For example, negotiations, meetings",
   },
   {
     text: "General interpretation",
     value: "General interpretation ",
-    description: "For example informal, conversational",
+    description: "For example, informal, conversational",
   },
 ];
 
