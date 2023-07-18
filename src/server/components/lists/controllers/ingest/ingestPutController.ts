@@ -11,7 +11,7 @@ import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
-import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
+import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";
 import type { ListJsonData } from "server/models/types";
 
 export async function ingestPutController(req: Request, res: Response) {
@@ -46,9 +46,15 @@ export async function ingestPutController(req: Request, res: Response) {
           jsonData: true,
         },
       },
+      history: {
+        orderBy: {
+          time: "desc",
+        },
+      },
     },
   });
 
+  const isChangeRequest = listItem?.history[0]?.type === "OUT_WITH_PROVIDER";
   if (!listItem) {
     return res.status(404).send({
       error: {
@@ -64,6 +70,7 @@ export async function ingestPutController(req: Request, res: Response) {
       ...jsonData,
       updatedJsonData: diff,
     };
+    const jsonDataOnly = { ...jsonData, ...diff };
     const listJsonData = listItem.list.jsonData as ListJsonData;
     const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
@@ -77,11 +84,11 @@ export async function ingestPutController(req: Request, res: Response) {
         history: {
           create: event,
         },
-        jsonData: jsonDataWithUpdatedJsonData,
+        jsonData: isChangeRequest ? jsonDataWithUpdatedJsonData : jsonDataOnly,
       },
     };
 
-    await prisma.$transaction([prisma.listItem.update(listItemPrismaQuery)]);
+    await prisma.listItem.update(listItemPrismaQuery);
 
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
@@ -89,7 +96,16 @@ export async function ingestPutController(req: Request, res: Response) {
       await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
     }
 
-    return res.status(204).send();
+    if (isChangeRequest) {
+      await sendProviderInformedOfEditEmail(listJsonData.emailAddress as string, {
+        contactName: listJsonData.contactName as string,
+        typeSingular: serviceType,
+        message: "",
+      });
+      return res.status(204).send();
+    }
+
+    res.redirect(302, `/lists/${id}/items/${listItem.listId}`);
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
     /**
