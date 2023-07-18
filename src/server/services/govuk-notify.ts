@@ -281,3 +281,13 @@ export async function sendContactUsEmail(personalisation: Record<"emailSubject" 
     reference: "",
   });
 }
+
+export async function sendProviderInformedOfEditEmail(
+  emailAddress: string,
+  personalisation: Record<"contactName" | "typeSingular" | "message", string>
+) {
+  return await sendEmails(NOTIFY.templates.contactUsApplyJourney, [emailAddress], {
+    personalisation,
+    reference: "",
+  });
+}
