@@ -55,6 +55,7 @@
   {% set actionToLabelText = {
       publish: "Publish",
       remove: "Remove",
+      editDetails: "Edit details",
       requestChanges: "Request changes",
       unpin: "Unpin",
       unpublish: "Unpublish",
@@ -92,17 +93,52 @@
     }) }}
   {% endset %}
 
+{% set editDetailsHintHtml %}
+  <div id="message-hint" class="govuk-hint">
+    Enter a change note
+  </div>
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      The service provider will be emailed a copy of this note
+    </strong>
+  </div>
+{% endset %}
+
+  {% set editDetailsHtml %}
+    {{ govukTextarea ({
+      id: "message",
+      name: "message",
+      label: {
+        text: "Edit message",
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        html: editDetailsHintHtml
+      }
+    }) }}
+  {% endset %}
+
   {% set items = [] %}
 
   {% for action in actionButtons %}
-    {% if action in ["requestChanges", "archive"] %}
-      {% set isRequestChanges = action == "requestChanges" %}
+    {% if action in ["requestChanges", "archive", "editDetails"] %}
+      {% set conditionalHtml %}
+        {% if action == "requestChanges" %}
+          {{ changeMessageHtml | safe }}
+        {% elif action == "archive" %}
+          {{archiveHtml | safe }}
+        {% else %}
+          {{editDetailsHtml | safe }}
+        {% endif %}
+      {% endset %}
       {% set item = {
         text: actionToLabelText[action],
         value: action,
         id: action,
         conditional: {
-          html: changeMessageHtml if isRequestChanges else archiveHtml
+          html: conditionalHtml
         }
       } %}
     {% else %}
