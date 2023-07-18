@@ -2,9 +2,8 @@ import type { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { recordListItemEvent } from "shared/audit";
 import type { Prisma } from "@prisma/client";
-import { AuditEvent, Status } from "@prisma/client";
+import { Status } from "@prisma/client";
 import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
@@ -82,16 +81,7 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     };
 
-    await prisma.$transaction([
-      prisma.listItem.update(listItemPrismaQuery),
-      recordListItemEvent(
-        {
-          eventName: "edit",
-          itemId: Number(id),
-        },
-        AuditEvent.EDITED
-      ),
-    ]);
+    await prisma.$transaction([prisma.listItem.update(listItemPrismaQuery)]);
 
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
