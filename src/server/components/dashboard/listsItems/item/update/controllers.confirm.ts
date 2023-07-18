@@ -1,10 +1,10 @@
-import type { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
-import type { Action } from "./types";
 import { actionHandlers } from "./actionHandlers";
-import type { ListItemRes } from "../../types";
 import { merge } from "lodash";
+import type { ListItemRes } from "../../types";
+import type { Action } from "./types";
+import type { NextFunction, Request, Response } from "express";
 
 export async function get(req: Request, res: Response, _next: NextFunction) {
   const { listItemUrl, listItem } = res.locals;
