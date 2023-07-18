@@ -84,6 +84,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     pin: false, // never show this radio
     remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
     requestChanges: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
+    editDetails: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
     unpin: false, // never show this radio
     unpublish: listItem.isPublished,
     update: false, // never show this radio
