@@ -196,17 +196,21 @@ async function findReminders(listId: number) {
   const start = startOfDay(parseISO(keyDates.annualReview.START));
   const end = startOfDay(parseISO(keyDates.unpublished.UNPUBLISH));
   const weekStartsOn = start.getDay();
-
-  const weeks = eachWeekOfInterval(
-    {
-      start,
-      end,
-    },
-    {
-      // @ts-ignore
-      weekStartsOn,
-    }
-  );
+  let weeks: Date[] = [];
+  try {
+    weeks = eachWeekOfInterval(
+      {
+        start,
+        end,
+      },
+      {
+        // @ts-ignore
+        weekStartsOn,
+      }
+    );
+  } catch (e) {
+    logger.warn(`${listId}/development: findReminders could not calculate intervals for ${start} to ${end}, ${e}`);
+  }
 
   const weeksWithQueryInput = weeks.map((weekStartDate, index) => {
     const greaterThanStartOfWeek = { gte: weekStartDate };
