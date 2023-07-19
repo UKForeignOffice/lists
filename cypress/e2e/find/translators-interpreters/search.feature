@@ -19,6 +19,7 @@ Feature:
     And I "check" the "Select all" checkbox for "Select the type of translation that you need"
     And I continue
     And I have read the disclaimer
+    Then I should see the heading "Translators in Italy"
 
 
   Scenario: Only Interpretation
@@ -31,6 +32,7 @@ Feature:
     And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     And I have read the disclaimer
+    Then I should see the heading "Interpreters in Italy"
 
 
   Scenario: both translation and interpretation
@@ -45,3 +47,4 @@ Feature:
     And I "check" the "Select all" checkbox for "Select the situation that you need an interpreter for"
     And I continue
     And I have read the disclaimer
+    Then I should see the heading "Translators and interpreters in Italy"

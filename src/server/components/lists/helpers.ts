@@ -1,6 +1,5 @@
-import querystring from "querystring";
 import type { Express, Request } from "express";
-import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
+import { get, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
