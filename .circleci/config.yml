@@ -1,4 +1,3 @@
-version: 2.1
 
 orbs:
   aws-eks: circleci/aws-eks@2.2.0
@@ -8,7 +7,6 @@ orbs:
 
 defaults: &defaults
   working_directory: ~/repo
-
 
 jobs:
   test:
@@ -44,7 +42,6 @@ jobs:
           paths:
             - node_modules
 
-
   smoke:
     <<: *defaults
     machine:
@@ -70,14 +67,13 @@ jobs:
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache lists apply
             docker ps
 
-
       - run:
           name: build scheduler images
           command: |
             docker-compose build scheduler-batch && docker-compose build scheduler-annual-review-worker
 
       - run:
-          name:  run lists
+          name: run lists
           command: |
             docker-compose up -d lists apply
             docker ps
@@ -107,13 +103,10 @@ jobs:
           name: Run smoke tests
           command: npm run smoke-tests
 
-
-#       store videos so they are accessible via circleci UI. You must turn on video recording via cypress.config.ts first (video: true).
-#      - store_artifacts:
-#         path: ~/repo/cypress/videos
-#         destination: videos
-
-
+      # store videos so they are accessible via circleci UI. You must turn on video recording via cypress.config.ts first (video: true).
+      # - store_artifacts:
+      #     path: ~/repo/cypress/videos
+      #     destination: videos
 
   publish:
     <<: *defaults
@@ -365,7 +358,6 @@ workflows:
             - VPN
             - AWS
 
-
       - publish:
           name: publish-lists-apply
           app: lists-apply
@@ -379,7 +371,6 @@ workflows:
             - VPN
             - AWS
 
-
       - publish:
           name: publish-lists-postgres
           app: lists-postgres
@@ -388,12 +379,11 @@ workflows:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               only:
-#                - deploy-test
+                #                - deploy-test
                 - deploy-db
           context:
             - VPN
             - AWS
-
 
       - publish:
           name: publish-lists-scheduler-batch
@@ -408,7 +398,6 @@ workflows:
             - VPN
             - AWS
 
-
       - publish:
           name: publish-lists-scheduler-worker
           app: lists-scheduler-worker
@@ -422,7 +411,6 @@ workflows:
             - VPN
             - AWS
 
-
       - deploy:
           name: deploy-test
           namespace: test-lists
@@ -434,7 +422,7 @@ workflows:
             - publish-lists-apply
             - publish-lists-scheduler-batch
             - publish-lists-scheduler-worker
-#            - publish-lists-postgres
+          #            - publish-lists-postgres
           filters:
             branches:
               only:

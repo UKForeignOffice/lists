@@ -22,8 +22,7 @@ test("makeAddressGeoLocationString can construct a string from DeserialisedFormD
     "70 King Charles Street, London, Spain, SW1A 2AH"
   );
 
-  const { addressCountry, ...addressWithNoAddressCountry } =
-    addressWithAllLines;
+  const { addressCountry, ...addressWithNoAddressCountry } = addressWithAllLines;
   const addressWithCountry = {
     ...addressWithNoAddressCountry,
     country: "United Kingdom",

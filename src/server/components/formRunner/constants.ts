@@ -1,4 +1,4 @@
-export { FORM_RUNNER_URL, FORM_RUNNER_PUBLIC_URL } from "server/config"
+export { FORM_RUNNER_URL, FORM_RUNNER_PUBLIC_URL } from "server/config";
 export const FORM_RUNNER_INITIALISE_SESSION_ROUTE = "/session";
 
 export enum QuestionName {

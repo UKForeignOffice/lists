@@ -2,9 +2,9 @@ import { WebhookDeserialisers } from "./types";
 import type { ServiceType } from "shared/types";
 import { checkboxCSVToArray } from "server/models/listItem/providers/deserialisers/helpers";
 
-export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType.translatorsInterpreters] =
-  (webhookData) => {
-
+export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType.translatorsInterpreters] = (
+  webhookData
+) => {
   const {
     deliveryOfServices = [],
     servicesProvided = [],

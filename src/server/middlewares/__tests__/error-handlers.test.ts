@@ -58,9 +58,7 @@ describe("Error handlers middleware", () => {
     test("it responds with text when request does not accepts either HTMl nor JSON", () => {
       req.accepts.mockReturnValue("something else");
       handle404(req, res);
-      expect(res.send).toHaveBeenCalledWith(
-        "The resource you where looking for is not available."
-      );
+      expect(res.send).toHaveBeenCalledWith("The resource you where looking for is not available.");
     });
   });
 
@@ -82,7 +80,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/generic-error.njk when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle500(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 500});
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", { message: "Error has occurred", status: 500 });
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -96,9 +94,7 @@ describe("Error handlers middleware", () => {
     test("it responds with text when request does not accepts either HTMl nor JSON", () => {
       req.accepts.mockReturnValue("something else");
       handle500(error, req, res);
-      expect(res.send).toHaveBeenCalledWith(
-        "This request could not be processed - Error has occurred"
-      );
+      expect(res.send).toHaveBeenCalledWith("This request could not be processed - Error has occurred");
     });
   });
 
@@ -120,7 +116,7 @@ describe("Error handlers middleware", () => {
     test("it renders errors/generic-error when request expects HTML", () => {
       req.accepts.mockReturnValue("html");
       handle403(error, req, res);
-      expect(res.render).toHaveBeenCalledWith("errors/generic-error", {message: "Error has occurred", status: 403});
+      expect(res.render).toHaveBeenCalledWith("errors/generic-error", { message: "Error has occurred", status: 403 });
     });
 
     test("it responds with json when request expects JSON", () => {
@@ -134,9 +130,7 @@ describe("Error handlers middleware", () => {
     test("it responds with text when request does not accepts either HTMl nor JSON", () => {
       req.accepts.mockReturnValue("something else");
       handle403(error, req, res);
-      expect(res.send).toHaveBeenCalledWith(
-        "This request could not be processed - Error has occurred"
-      );
+      expect(res.send).toHaveBeenCalledWith("This request could not be processed - Error has occurred");
     });
   });
 });

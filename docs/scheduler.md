@@ -1,15 +1,14 @@
-
 ## Overview
 
-Diagrams can be found in [./scheduler/assets]('./scheduler/assets'). 
-* [Entity relationship diagram]('./sheduler/assets/ERD.svg)
-* [Batch process overview]('./sheduler/assets/batch.svg)
-* [Worker process overview]('./sheduler/assets/batch.svg)
-  * [Worker reminder emails]('./sheduler/assets/worker-reminder-emails.svg)
-  * [Worker stateful changes]('./sheduler/assets/worker-stateful.svg)
+Diagrams can be found in [./scheduler/assets]('./scheduler/assets').
+
+- [Entity relationship diagram]('./sheduler/assets/ERD.svg)
+- [Batch process overview]('./sheduler/assets/batch.svg)
+- [Worker process overview]('./sheduler/assets/batch.svg)
+  - [Worker reminder emails]('./sheduler/assets/worker-reminder-emails.svg)
+  - [Worker stateful changes]('./sheduler/assets/worker-stateful.svg)
 
 Every day at 10:50 and 11:00 the batch process and worker process will run at their respective times. The batch process checks which lists should enter annual review, and which list items are eligible. The batch process will create a json object and appends it to \`List.jsonData\`. The worker process uses this object to perform state changes or send emails.
-
 
 ### Batch process
 
@@ -25,7 +24,7 @@ The batch process generates a json object `currentAnnualReview` and appends it t
     keyDates: {
       annualReview: {
         POST_ONE_MONTH: ISODateString, // should be 1 month before start date
-        POST_ONE_WEEK: ISODateString, // should be 1 week before 
+        POST_ONE_WEEK: ISODateString, // should be 1 week before
         POST_ONE_DAY: ISODateString, // 1 day before..
         START: ISODateString // This should match ListItem.nextAnnualReviewDate
       },
@@ -60,7 +59,7 @@ You can change the dates via a direct database edit, or by going to `/dashboard/
 `findListItemsForLists Error ${error/stack}`
 
 - Cause: finding eligible list items failed. Possibly due to incorrect query or an issue with the database connection.
-- fix: check the status of the database, is it available and accessible from the lists container.  Check the version of prisma client used in /node_modules and verify that it’s not been updated and if it has, check if there are any breaking changes that could have been introduced.
+- fix: check the status of the database, is it available and accessible from the lists container. Check the version of prisma client used in /node_modules and verify that it’s not been updated and if it has, check if there are any breaking changes that could have been introduced.
 
 ### Worker
 
@@ -74,7 +73,7 @@ If an email/state change fails, and the keyDate is still “relevant”, it will
 
 Cause: Issue with [gov.uk](http://gov.uk) notify or the request to notify. Emails to `post` do not need to be retried if at least one has been sent.
 
-Fix: Check the email addresses associated with the List to ensure they’re valid email addresses and clean up / remove any that are invalid.  Emails can be sent from notify as a fallback.
+Fix: Check the email addresses associated with the List to ensure they’re valid email addresses and clean up / remove any that are invalid. Emails can be sent from notify as a fallback.
 
 - `List items [...] were not updated for annual review start`
 
@@ -89,6 +88,7 @@ Fix:
 #### Debug steps
 
 - To find events that have happened on `ListItem` relating to an annual review
+
   ```sql
   -- get the reference --
   select "jsonData"->'currentAnnualReview'->'reference' from "List" where id = 0;
@@ -100,6 +100,7 @@ Fix:
   select * from "Audit" where "jsonData"->'reference' = XX;
 
   ```
+
 - To find key dates associated with a given list
 
 ```

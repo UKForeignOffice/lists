@@ -2,9 +2,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { Feedback, FeedbackCreateInput } from "./types";
 
-export async function createFeedback(
-  data: Pick<FeedbackCreateInput, "type" | "jsonData">
-): Promise<Feedback> {
+export async function createFeedback(data: Pick<FeedbackCreateInput, "type" | "jsonData">): Promise<Feedback> {
   if (data.type === undefined) {
     throw new Error("Feedback type is required");
   }
@@ -17,10 +15,7 @@ export async function createFeedback(
   }
 }
 
-export async function findFeedbackByType(
-  type: Feedback["type"],
-  order: "asc" | "desc" = "desc"
-): Promise<Feedback[]> {
+export async function findFeedbackByType(type: Feedback["type"], order: "asc" | "desc" = "desc"): Promise<Feedback[]> {
   if (type === undefined) {
     throw new Error("Feedback type is required");
   }
@@ -28,7 +23,7 @@ export async function findFeedbackByType(
   try {
     return await prisma.feedback.findMany({
       where: { type },
-      orderBy: { id: order }
+      orderBy: { id: order },
     });
   } catch (error) {
     logger.error(`findFeedbackByType Error: ${error.message}`);

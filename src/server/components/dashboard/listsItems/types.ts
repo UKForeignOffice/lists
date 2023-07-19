@@ -84,4 +84,4 @@ export type ListItemRes = Response<
   }
 >;
 
-export type ListItemWithHistory = ListItem & {history: Event[]};
+export type ListItemWithHistory = ListItem & { history: Event[] };

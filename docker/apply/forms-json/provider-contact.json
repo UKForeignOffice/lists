@@ -1079,8 +1079,7 @@
         "paymentSkipped": false,
         "nextSteps": "If your comment or query needs a response we will reply as soon as possible."
       },
-      "components": [
-      ]
+      "components": []
     }
   },
   "sections": [],

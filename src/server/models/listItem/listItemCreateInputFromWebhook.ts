@@ -3,10 +3,7 @@ import { getListIdForCountryAndType } from "server/models/helpers";
 import { CountryName } from "server/models/types";
 import { logger } from "server/services/logger";
 import { createAddressObject } from "./geoHelpers";
-import {
-  baseDeserialiser,
-  DESERIALISER,
-} from "server/models/listItem/providers/deserialisers";
+import { baseDeserialiser, DESERIALISER } from "server/models/listItem/providers/deserialisers";
 import { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
 import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
@@ -17,8 +14,7 @@ export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
   const { type } = baseDeserialised;
   const deserialiser = DESERIALISER[type];
   // just return the webhook object if no deserialiser can be found
-  const deserialised = (deserialiser?.(baseDeserialised) ??
-    webhook) as DeserialisedWebhookData;
+  const deserialised = (deserialiser?.(baseDeserialised) ?? webhook) as DeserialisedWebhookData;
   return deserialised;
 }
 
@@ -58,7 +54,7 @@ export async function listItemCreateInputFromWebhook(
       },
     },
     history: {
-      create: [EVENTS.NEW()]
+      create: [EVENTS.NEW()],
     },
     jsonData: {
       ...deserialised,

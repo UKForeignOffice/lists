@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: ['master', '[0-9].*.*']
+    branches: ["master", "[0-9].*.*"]
 
 jobs:
   release:
@@ -25,4 +25,3 @@ jobs:
         run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

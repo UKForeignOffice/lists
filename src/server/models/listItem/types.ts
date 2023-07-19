@@ -1,9 +1,6 @@
 import { JsonObject, List, ListItem, User } from "server/models/types";
 import * as PrismaClient from "@prisma/client";
-import {
-  DeserialisedWebhookData,
-  ListItemJsonData,
-} from "server/models/listItem/providers/deserialisers/types";
+import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { Status } from "@prisma/client";
 import * as SharedTypes from "shared/types";
 

@@ -20,7 +20,7 @@
       "@jest/*": ["./../.jest/*"],
       "@forms/*": ["./../docker/apply/forms-json/*"]
     },
-    "useUnknownInCatchVariables": false,
+    "useUnknownInCatchVariables": false
   },
   "include": [
     ".jest/*",
@@ -29,12 +29,8 @@
     "src/server/**/*",
     "src/scheduler/**/*",
     "src/client/**/*",
-    "node_modules/jest-extended/types/**/*.d.ts",
+    "node_modules/jest-extended/types/**/*.d.ts"
   ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "ignore": ["dist"]
-
 }

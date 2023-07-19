@@ -9,9 +9,7 @@ import { configurePassport } from "../passport";
 jest.mock("passport-jwt", () => ({
   Strategy: jest.fn(),
   ExtractJwt: {
-    fromUrlQueryParameter: jest
-      .fn()
-      .mockReturnValue("fromUrlQueryParameterResult"),
+    fromUrlQueryParameter: jest.fn().mockReturnValue("fromUrlQueryParameterResult"),
   },
 }));
 
@@ -62,16 +60,12 @@ describe("Auth Passport:", () => {
       algorithms: ["HS256"],
       jwtFromRequest: "fromUrlQueryParameterResult",
     });
-    expect(passportJwt.ExtractJwt.fromUrlQueryParameter).toHaveBeenCalledWith(
-      "token"
-    );
+    expect(passportJwt.ExtractJwt.fromUrlQueryParameter).toHaveBeenCalledWith("token");
   });
 
   test("JwtStrategy verify function processes existing user correctly", async () => {
     const spyJwtStrategy = jest.spyOn(passportJwt, "Strategy");
-    const spyFindUser = jest
-      .spyOn(userModel, "findUserByEmail")
-      .mockResolvedValueOnce(user);
+    const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(user);
 
     await configurePassport(server);
 
@@ -94,17 +88,13 @@ describe("Auth Passport:", () => {
 
     await verifyFunction({ user: {} }, done);
 
-    expect(done).toHaveBeenCalledWith(
-      new Error("Invalid authentication token")
-    );
+    expect(done).toHaveBeenCalledWith(new Error("Invalid authentication token"));
   });
 
   test("JwtStrategy verify function correctly creates user", async () => {
     jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(undefined);
     const spyJwtStrategy = jest.spyOn(passportJwt, "Strategy");
-    const spyCreateUser = jest
-      .spyOn(userModel, "createUser")
-      .mockResolvedValueOnce(user);
+    const spyCreateUser = jest.spyOn(userModel, "createUser").mockResolvedValueOnce(user);
 
     await configurePassport(server);
 
@@ -129,10 +119,7 @@ describe("Auth Passport:", () => {
     const verifyFunction = spyJwtStrategy.mock.calls[0][1] as any;
     const done = jest.fn();
 
-    await verifyFunction(
-      { user: { ...user, email: "invalid@email.com" } },
-      done
-    );
+    await verifyFunction({ user: { ...user, email: "invalid@email.com" } }, done);
 
     expect(done).toHaveBeenCalledWith(null, undefined);
   });
@@ -170,9 +157,7 @@ describe("Auth Passport:", () => {
   test("passport is initialized correctly", async () => {
     jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(user);
     const passportInit = jest.fn().mockName("mockPassportInitialize");
-    const spyInitialize = jest
-      .spyOn(passport, "initialize")
-      .mockReturnValue(passportInit);
+    const spyInitialize = jest.spyOn(passport, "initialize").mockReturnValue(passportInit);
 
     await configurePassport(server);
 
@@ -183,9 +168,7 @@ describe("Auth Passport:", () => {
   test("passport session is initialized correctly", async () => {
     jest.spyOn(userModel, "findUserByEmail").mockResolvedValueOnce(user);
     const passportSession = jest.fn();
-    const spySession = jest
-      .spyOn(passport, "session")
-      .mockReturnValue(passportSession);
+    const spySession = jest.spyOn(passport, "session").mockReturnValue(passportSession);
 
     await configurePassport(server);
 

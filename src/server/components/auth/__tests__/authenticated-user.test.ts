@@ -3,7 +3,6 @@ import { prisma } from "../../../models/db/__mocks__/prisma-client";
 
 jest.mock("./../../../models/db/prisma-client");
 
-
 let user;
 let administrator;
 
@@ -44,7 +43,7 @@ test("should call order by same value that is passed in as argument", async () =
     orderBy: [
       {
         admins: "asc",
-      }
+      },
     ],
   });
 });

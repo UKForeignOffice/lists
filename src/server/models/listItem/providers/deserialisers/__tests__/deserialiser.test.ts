@@ -46,15 +46,11 @@ test("baseDeserialiser input with missing questions does not cause an unexpected
 });
 
 test("baseDeserialiser input with empty questions (i.e. no fields) does not cause an unexpected crash", () => {
-  expect(
-    baseDeserialiser({ metadata: { type: "lawyers" }, questions: [] })
-  ).toEqual({
+  expect(baseDeserialiser({ metadata: { type: "lawyers" }, questions: [] })).toEqual({
     type: "lawyers",
   });
 });
 
 test("baseDeserialiser extracts service type from metadata", () => {
-  expect(
-    baseDeserialiser({ metadata: { type: "lawyers" }, questions: [] })
-  ).toEqual({ type: "lawyers" });
+  expect(baseDeserialiser({ metadata: { type: "lawyers" }, questions: [] })).toEqual({ type: "lawyers" });
 });

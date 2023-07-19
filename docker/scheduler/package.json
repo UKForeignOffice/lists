@@ -1,15 +1,15 @@
 {
-    "name": "lists-scheduler",
-    "version": "0.0.0-development",
-    "private": true,
-    "engines": {
-      "node": ">=14"
-    },
-    "scripts": {
-      "scheduler:batch": "node dist/scheduler/batch.js",
-      "scheduler:worker": "node dist/scheduler/worker.js",
-      "scheduler:unpublish": "npm run prisma:deploy && node dist/scheduler/unpublish.js",
-      "prisma:deploy": "npx prisma migrate deploy --schema src/server/models/db/schema.prisma",
-      "prisma:generate": "npx prisma generate --schema src/server/models/db/schema.prisma"
-    }
+  "name": "lists-scheduler",
+  "version": "0.0.0-development",
+  "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "scheduler:batch": "node dist/scheduler/batch.js",
+    "scheduler:worker": "node dist/scheduler/worker.js",
+    "scheduler:unpublish": "npm run prisma:deploy && node dist/scheduler/unpublish.js",
+    "prisma:deploy": "npx prisma migrate deploy --schema src/server/models/db/schema.prisma",
+    "prisma:generate": "npx prisma generate --schema src/server/models/db/schema.prisma"
+  }
 }

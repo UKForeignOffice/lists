@@ -1,7 +1,11 @@
 import { WebhookData } from "server/components/formRunner";
 import { List, ListItem, Point, User } from "server/models/types";
 import { ServiceType } from "shared/types";
-import { ListItemWithAddressCountry, ListItemWithAddressCountryAndList, ListItemWithJsonData } from "server/models/listItem/providers/types";
+import {
+  ListItemWithAddressCountry,
+  ListItemWithAddressCountryAndList,
+  ListItemWithJsonData,
+} from "server/models/listItem/providers/types";
 import { makeAddressGeoLocationString } from "server/models/listItem/geoHelpers";
 import { rawUpdateGeoLocation } from "server/models/helpers";
 import { geoLocatePlaceByText } from "server/services/location";

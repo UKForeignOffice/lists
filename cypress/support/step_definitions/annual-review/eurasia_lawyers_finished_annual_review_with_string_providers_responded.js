@@ -69,7 +69,7 @@ async function createListPublishedItem() {
               type: "PUBLISHED",
               time: publishedDate,
               jsonData: {},
-            }
+            },
           ],
         },
       },
@@ -125,7 +125,7 @@ async function createListUnpublishedItem() {
               type: "PUBLISHED",
               time: publishedDate,
               jsonData: {},
-            }
+            },
           ],
         },
       },

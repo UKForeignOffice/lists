@@ -1,11 +1,15 @@
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
 import { List, Prisma } from "@prisma/client";
-import {parseISO, subDays} from "date-fns";
+import { parseISO, subDays } from "date-fns";
 import { ListJsonData } from "server/models/types";
 
 export async function findNonRespondentsForList(list: List) {
-  const logger = schedulerLogger.child({ listId: list.id, method: "findNonRespondentsForList", timeframe: "dayBefore" });
+  const logger = schedulerLogger.child({
+    listId: list.id,
+    method: "findNonRespondentsForList",
+    timeframe: "dayBefore",
+  });
 
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;

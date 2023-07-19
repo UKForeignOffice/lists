@@ -26,7 +26,7 @@ Given("the list is in annual review", () => {
               reference: "ANNUAL_REVIEW_REF",
             },
           },
-          nextAnnualReviewStartDate: new Date()
+          nextAnnualReviewStartDate: new Date(),
         },
       },
     });

@@ -7,14 +7,12 @@ import { generateRandomSecret } from "./helpers";
 let secretsManager: LocalSecretsManager;
 
 class LocalSecretsManager {
-  secrets: Record<string, GetSecretValueResponse>= {};
+  secrets: Record<string, GetSecretValueResponse> = {};
   constructor(options?: SecretsManager.Types.ClientConfiguration) {
     logger.info("Using LocalSecretsManager");
   }
 
-  async createSecret(
-    params: SecretsManager.Types.CreateSecretRequest
-  ): Promise<boolean> {
+  async createSecret(params: SecretsManager.Types.CreateSecretRequest): Promise<boolean> {
     const { Name, SecretString } = params;
     this.secrets[Name] = {
       SecretString,
@@ -25,13 +23,7 @@ class LocalSecretsManager {
     return true;
   }
 
-  async putSecretValue({
-    SecretId,
-    SecretString,
-  }: {
-    SecretId: string;
-    SecretString: string;
-  }): Promise<any> {
+  async putSecretValue({ SecretId, SecretString }: { SecretId: string; SecretString: string }): Promise<any> {
     this.secrets[SecretId] = { SecretString };
   }
 

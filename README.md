@@ -22,12 +22,13 @@ The lists server depends on [XGovFormBuilder/digital-form-builder](https://githu
 to deploy form journeys for data ingestion. The base docker images for the form runner have already been built.
 
 **To add new forms:**
+
 1. Add or replace a form configuration in `docker/apply/forms-json/`
 2. The form runner will create a new route matching the file name.
-i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
-
+   i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
 
 To start the form runner
+
 ```sh
 $ docker compose -f docker-compose.ci.yml up apply
 ```

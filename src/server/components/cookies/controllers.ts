@@ -21,17 +21,13 @@ export function cookiesPOSTController(req: Request, res: Response): void {
     usage: accept,
   };
 
-  res.cookie(
-    "cookies_policy",
-    Buffer.from(JSON.stringify(cookiesPolicy)).toString("base64"),
-    {
-      maxAge: ONE_YEAR,
-      secure: !isLocalHost,
-      // disable encode as it breaks form-runner
-      encode: (v) => v,
-      httpOnly: false, // Set this to false so that Google tag manager can read cookie preferences
-    }
-  );
+  res.cookie("cookies_policy", Buffer.from(JSON.stringify(cookiesPolicy)).toString("base64"), {
+    maxAge: ONE_YEAR,
+    secure: !isLocalHost,
+    // disable encode as it breaks form-runner
+    encode: (v) => v,
+    httpOnly: false, // Set this to false so that Google tag manager can read cookie preferences
+  });
 
   if (redirect === cookiesPageRoute) {
     // If the referrer is the cookie page then load back the page.
