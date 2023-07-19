@@ -238,6 +238,12 @@ const sampleListItem = {
   list: {
     id: 8,
   },
+  history: [
+    {
+      id: 1,
+      statis: "OUT_WITH_PROVIDER",
+    },
+  ],
 };
 
 const response = {
