@@ -15,7 +15,8 @@ export async function createEditDetailsURL({ listItem, message, userId, isAnnual
   const list = { type: listItem.type };
 
   try {
-    const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isAnnualReview });
+    const title = "Change provider details";
+    const formRunnerEditUserUrl = await initialiseFormRunnerSession({ list, listItem, message, isAnnualReview, title });
     return { result: formRunnerEditUserUrl };
   } catch (error) {
     logger.error(`createEditDetailsURL error: could not initialise a form runner session: ${(error as Error).message}`);
