@@ -286,8 +286,13 @@ export async function sendProviderInformedOfEditEmail(
   emailAddress: string,
   personalisation: Record<"contactName" | "typeSingular" | "message", string>
 ) {
-  return await sendEmails(NOTIFY.templates.contactUsApplyJourney, [emailAddress], {
-    personalisation,
-    reference: "",
-  });
+  return await sendEmails(
+    NOTIFY.templates.providerInformedOfEdit,
+    [emailAddress],
+    {
+      personalisation,
+      reference: "",
+    },
+    "sendProviderInformedOfEditEmail"
+  );
 }

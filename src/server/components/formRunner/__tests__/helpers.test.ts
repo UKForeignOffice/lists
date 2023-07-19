@@ -521,7 +521,14 @@ describe("Form Runner Service:", () => {
     });
     test("generated object is correct", async () => {
       const result = await generateFormRunnerWebhookData(getObject as LawyerListItemGetObject);
-      const newSessionWebhookData = getNewSessionWebhookData("lawyers", 111, result, "Change the text", false, '112');
+      const newSessionWebhookData = getNewSessionWebhookData({
+        listType: "lawyers",
+        listItemId: 111,
+        questions: result,
+        message: "Change the text",
+        isAnnualReview: false,
+        listItemRef: "112",
+      });
 
       expect(newSessionWebhookData.questions).toMatchObject(expectedNewSessionWebhookData.questions);
     });
