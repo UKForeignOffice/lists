@@ -53,8 +53,8 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     },
   });
-
   const isChangeRequest = listItem?.history[0]?.type === "OUT_WITH_PROVIDER";
+
   if (!listItem) {
     return res.status(404).send({
       error: {
@@ -80,7 +80,7 @@ export async function ingestPutController(req: Request, res: Response) {
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
-        status,
+        ...(isChangeRequest && { status }),
         history: {
           create: event,
         },
@@ -97,21 +97,23 @@ export async function ingestPutController(req: Request, res: Response) {
     }
 
     if (isChangeRequest) {
-      await sendProviderInformedOfEditEmail(listJsonData.emailAddress as string, {
-        contactName: listJsonData.contactName as string,
-        typeSingular: serviceType,
-        message: "",
-      });
       return res.status(204).send();
     }
 
-    res.redirect(302, `/lists/${id}/items/${listItem.listId}`);
+    await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
+      contactName: jsonData.contactName,
+      typeSingular: serviceType,
+      message: "",
+    });
+
+    // TODO - use proper redirection from formRunner
+    // res.redirect(302, `/lists/${id}/items/${listItem.listId}`);
+    return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);
     /**
      * TODO:- Queue?
      */
-
     return res.status(422).send({ message: "List item failed to update" });
   }
 }
