@@ -25,17 +25,22 @@ Feature: Dashboard filtering
     And I do not see radio buttons "<radioButtonsConfirm>"
 
     Examples:
-      | contactName | radioButtons                        | radioButtonsConfirm        |
-      | Winston     | Publish,Request changes,Archive     | Remove,Update live version |
-      | Julia       | Publish,Archive                     | Remove,Update live version |
-      | Bruce       | Update live version,Request changes | Publish,Remove             |
-      | Joker       | Publish,Request changes,Archive     | Update live version,Remove |
+      | contactName | radioButtons                                     | radioButtonsConfirm        |
+      | Winston     | Publish,Request changes,Edit details,Archive     | Remove,Update live version |
+      | Julia       | Publish,Archive                                  | Remove,Update live version |
+      | Bruce       | Update live version,Request changes,Edit details | Publish,Remove             |
+      | Joker       | Publish,Request changes,Edit details,Archive     | Update live version,Remove |
 
 
   Scenario: Request changes radio button reveals a textarea
     When I am viewing the list item details for "Winston"
     And I select "Request changes"
     And I see the input "Change message"
+
+  Scenario: Edit details radio button reveals a textarea
+    When I am viewing the list item details for "Winston"
+    And I select "Edit details"
+    And I see the input "Edit message"
 
 
   Scenario: Show only Unpublish when listItem has isPublished or isAnnualReview flag set
@@ -173,4 +178,3 @@ Feature: Dashboard filtering
     And I "see" the updated tag on row "Pro bono"
     And I "see" the updated tag on row "Company"
     And I "do not see" the updated tag on row "Legal aid"
-
