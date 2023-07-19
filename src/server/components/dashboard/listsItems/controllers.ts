@@ -155,7 +155,7 @@ export async function listItemPostController(req: Request, res: Response, next: 
   if (action === "editDetails") {
     const editDetailsUrl = await createEditDetailsURL({
       listItem: res.locals.listItem,
-      message: req.body.message[1],
+      message: req.body.editMessage,
       userId: req.user?.id as number,
       isAnnualReview: res.locals.listItem.isAnnualReview,
     });

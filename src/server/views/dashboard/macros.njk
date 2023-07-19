@@ -106,19 +106,19 @@
   </div>
 {% endset %}
 
-  {% set editDetailsHtml %}
-    {{ govukTextarea ({
-      id: "message",
-      name: "message",
-      label: {
-        text: "Edit message",
-        classes: "govuk-visually-hidden"
-      },
-      hint: {
-        html: editDetailsHintHtml
-      }
-    }) }}
-  {% endset %}
+{% set editDetailsHtml %}
+  {{ govukTextarea ({
+    id: "editMessage",
+    name: "editMessage",
+    label: {
+      text: "Edit message",
+      classes: "govuk-visually-hidden"
+    },
+    hint: {
+      html: editDetailsHintHtml
+    }
+  }) }}
+{% endset %}
 
   {% set items = [] %}
 
