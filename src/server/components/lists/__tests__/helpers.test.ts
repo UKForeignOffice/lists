@@ -4,7 +4,6 @@ import {
   parseListValues,
   getServiceLabel,
   getAllRequestParams,
-  removeQueryParameter,
   getCountryLawyerRedirectLink,
   createConfirmationLink,
   createListSearchBaseLink,
@@ -123,16 +122,6 @@ describe("Lawyers List:", () => {
 
     test("undefined is returned when service name is unknown", () => {
       expect(getServiceLabel("famous singer phone number")).toEqual(undefined);
-    });
-  });
-
-  describe("removeQueryParameter", () => {
-    test("parameter is removed correctly from query string", () => {
-      const queryString =
-        "serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no";
-      expect(removeQueryParameter(queryString, "country")).toBe(
-        "serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no"
-      );
     });
   });
 

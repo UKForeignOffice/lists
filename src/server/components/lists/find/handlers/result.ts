@@ -1,5 +1,4 @@
 import { searchLawyers } from "server/components/lists/searches/lawyers";
-import { removeQueryParameter } from "../../helpers";
 import type { Request, Response } from "express";
 import { searchFuneralDirectors } from "server/components/lists/searches/funeral-directors";
 import { HttpException } from "server/middlewares/error-handlers";
@@ -23,5 +22,5 @@ export async function get(req: Request, res: Response) {
 
   const context = await searchMethod(req);
 
-  res.render(`lists/find/${serviceType}/results.njk`, { ...context, removeQueryParameter });
+  res.render(`lists/find/${serviceType}/results.njk`, context);
 }

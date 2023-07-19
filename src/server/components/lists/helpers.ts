@@ -97,11 +97,6 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
   };
 }
 
-export function removeQueryParameter(queryString: string, parameterName: string): string {
-  const params = omit(querystring.parse(queryString), parameterName);
-  return `${querystring.stringify(params)}`;
-}
-
 export const getCountryLawyerRedirectLink = (() => {
   const pagesByCountry = mapKeys(fcdoLawyersPagesByCountry, (_, key) => lowerCase(key));
 
