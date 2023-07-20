@@ -1,4 +1,4 @@
-import { QuestionData } from "server/components/lists";
+import type { QuestionData } from "server/components/lists";
 
 export const legalPracticeAreasList = [
   "Bankruptcy",
@@ -436,7 +436,7 @@ export const fcdoLawyersPagesByCountry = {
   Uruguay: "https://www.gov.uk/government/publications/uruguay-list-of-lawyers",
   Uzbekistan: "https://www.gov.uk/government/publications/uzbekistan-list-of-lawyers",
   Vanuatu: "https://www.gov.uk/government/publications/vanuatu-list-of-lawyers",
-  Vietnam: "https://www.gov.uk/government/publications/vietnam-lists-of-interpretation-and-translation-companies",
+  Vietnam: "https://www.gov.uk/government/publications/vietnam-list-of-english-speaking-lawyers-for-british-nationals",
   Yemen: "https://www.gov.uk/government/publications/yemen-list-of-lawyers",
   Zambia: "https://www.gov.uk/government/publications/zambia-list-of-lawyers",
   Benin: "https://www.gov.uk/government/publications/benin-lawyers",
