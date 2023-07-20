@@ -123,12 +123,10 @@ export const EVENTS = {
   }),
 
   [ListItemEvent.REMINDER]: (
-    response: SendEmailResponse | {},
+    response: SendEmailResponse,
     notes?: string[],
     reference?: string
-  ): EventCreate<"REMINDER"> | undefined => {
-    if (!("id" in response)) return;
-
+  ): EventCreate<"REMINDER"> => {
     const notifyResponseWithoutContent = {
       id: response.id,
       template: response.template,
