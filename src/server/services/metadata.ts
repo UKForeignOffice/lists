@@ -772,6 +772,7 @@ export const languages: Record<string, string> = {
   ca: "Catalan; Valencian",
   ce: "Chechen",
   ch: "Chamorro",
+  cnr: "Montenegrin",
   co: "Corsican",
   cr: "Cree",
   cs: "Czech",
