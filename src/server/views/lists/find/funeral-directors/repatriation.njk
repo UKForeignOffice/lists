@@ -2,6 +2,10 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
 
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Do you want to repatriate the person who died to the UK?
+{% endblock %}
+
 {% block question %}
   {% set error = messages.error %}
   {% block questionError %}

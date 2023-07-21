@@ -1,7 +1,12 @@
 {% extends "./../../question-page.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Find a funeral director {{ "in " + country if country else "abroad"}}
+{% endblock %}
+
 {% block heading %}
   <h1 class="govuk-heading-l">
-    Find a funeral director {{ "in " + _.startCase(country) if country else "abroad"}}
+    Find a funeral director {{ "in " + country if country else "abroad"}}
   </h1>
 {% endblock %}
 

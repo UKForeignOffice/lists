@@ -1,6 +1,10 @@
 {% extends "./../../question-page.njk" %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - What services do you need?
+{% endblock %}
+
 {% block question %}
   {% set error = messages.error %}
   {% block questionError %}

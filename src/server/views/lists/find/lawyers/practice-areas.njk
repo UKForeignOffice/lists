@@ -1,5 +1,8 @@
 {% extends "./../../question-page.njk" %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - In what areas of law do you need legal help?
+{% endblock %}
 
 {% block question %}
   {% set error = messages.error %}

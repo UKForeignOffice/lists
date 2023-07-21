@@ -2,6 +2,11 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
 
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Did the person who died have insurance?
+{% endblock %}
+
+
 {% block question %}
   {% set error = messages.error %}
   {% block questionError %}

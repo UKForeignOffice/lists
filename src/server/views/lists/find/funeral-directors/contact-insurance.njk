@@ -2,6 +2,10 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
 
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - You should contact the insurance company
+{% endblock %}
+
 {% block question %}
   <form class="form" method="post">
     <div class="govuk-form-group">

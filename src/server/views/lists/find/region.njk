@@ -1,4 +1,7 @@
 {% extends "./../question-page.njk" %}
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Where in {{ country }} do you want to find {{ serviceLabel }}?
+{% endblock %}
 
 {% block question %}
   <form class="form" method="post">
@@ -7,7 +10,7 @@
       <fieldset class="govuk-fieldset">
         <h1 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--l" for="area">
-            Where in {{_.startCase(country) }} do you want to find {{ serviceLabel }}? (Optional)
+            Where in {{ country }} do you want to find {{ serviceLabel }}? (Optional)
           </label>
         </h1>
         <div id="area-hint" class="govuk-hint">

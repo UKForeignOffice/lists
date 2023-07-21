@@ -1,6 +1,10 @@
 {% extends "./../../question-page.njk" %}
 {% from "select/macro.njk" import govukSelect %}
 
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Which language(s) do you need translating?
+{% endblock %}
+
 {% block question %}
   {% set error = messages.error %}
   {% block questionError %}
