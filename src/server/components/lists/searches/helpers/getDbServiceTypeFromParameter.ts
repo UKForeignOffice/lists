@@ -4,7 +4,7 @@ export function getDbServiceTypeFromParameter(param: string) {
   const normalisedParameterToServiceType: { [key: string]: ServiceType } = {
     "funeral-directors": ServiceType.funeralDirectors,
     lawyers: ServiceType.lawyers,
-    "translator-interpreters": ServiceType.translatorsInterpreters,
+    "translators-interpreters": ServiceType.translatorsInterpreters,
   };
 
   return normalisedParameterToServiceType[param];

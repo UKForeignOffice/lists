@@ -1,11 +1,19 @@
 import type { Request, Response } from "express";
-import { formatCountryParam } from "../../helpers";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
 
 export function get(req: Request, res: Response) {
   const country = req.query.country;
   const { serviceType } = req.params;
-  if (country) {
-    res.locals.country = formatCountryParam(country as string);
+  const validatedCountry = validateCountryLower(country as string | string[]);
+  const userRequestedInvalidCountry = country && !validatedCountry;
+
+  if (userRequestedInvalidCountry) {
+    res.redirect(`${serviceType}`);
+    return;
+  }
+
+  if (validatedCountry) {
+    res.locals.country = validatedCountry;
   }
 
   if (req.query.restart === "yes") {

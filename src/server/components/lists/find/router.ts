@@ -23,9 +23,9 @@ findRouter.param("serviceType", validateServiceTypeParam);
 findRouter.param("serviceType", loadAnswersIntoLocals);
 
 findRouter.param("country", handleCountryParam);
+findRouter.param("country", handlers.country.redirectIfEmpty);
 
 findRouter.get("/:serviceType/country", handlers.country.get);
-
 findRouter.all("/funeral-directors/*", loadAnswersIntoLocals, (_req: Request, res: Response, next: NextFunction) => {
   res.locals.serviceType = "funeral-directors";
   res.locals.serviceLabel = getServiceLabel("funeral-directors");
@@ -38,8 +38,6 @@ findRouter.post("/funeral-directors/insurance", handlers.funeralDirectors.insura
 findRouter.get("/funeral-directors/insurance/contact-insurance", handlers.funeralDirectors.contactInsurance.get);
 findRouter.get("/funeral-directors/repatriation", handlers.funeralDirectors.repatriation.get);
 findRouter.post("/funeral-directors/repatriation", handlers.funeralDirectors.repatriation.post);
-
-findRouter.get("/:serviceType/:country*", handlers.country.redirectIfEmpty);
 
 findRouter.post("/:serviceType/country", handlers.country.post);
 

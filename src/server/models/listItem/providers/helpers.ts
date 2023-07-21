@@ -236,7 +236,7 @@ export function validateCountry(countryName: string | string[]): string | undefi
   return matchingCountryName;
 }
 
-export function validateCountryLower(countryName: string | string[]): string | undefined {
+export function validateCountryLower(countryName: string | string[] = ""): string | undefined {
   const countryAsString = Array.isArray(countryName) ? countryName[0] : countryName;
 
   const matchingCountryName = countriesList.find(

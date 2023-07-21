@@ -5,14 +5,7 @@ import { getDbServiceTypeFromParameter } from "server/components/lists/searches/
 import { getRedirectIfListIsEmpty } from "server/components/lists/find/helpers/getRedirectIfListIsEmpty";
 import { logger } from "server/services/logger";
 
-export async function redirectIfEmpty(req: Request, res: Response, next: NextFunction) {
-  if (req.session.answers?.country) {
-    next();
-    return;
-  }
-
-  const country = req.session.answers?.country ?? req.params.country;
-
+export async function redirectIfEmpty(req: Request, res: Response, next: NextFunction, country: string) {
   const serviceType = req.session.answers?.serviceType ?? req.params.serviceType;
   const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
 
