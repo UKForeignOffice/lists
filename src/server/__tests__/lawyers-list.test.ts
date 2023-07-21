@@ -148,7 +148,7 @@ describe("Lawyers List:", () => {
       const pageHeader = $main.find("h1");
       const continueButton = $main.find("button");
 
-      expect(pageHeader.text().trim()).toBe("Where in Northern Cyprus do you want to find a lawyer? (Optional)");
+      expect(pageHeader.text().trim()).toBe("Where in northern Cyprus do you want to find a lawyer? (Optional)");
       expect(continueButton.text()).toBe("Continue");
     });
 
