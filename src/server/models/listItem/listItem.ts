@@ -450,9 +450,6 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
   }
   try {
     await prisma.$transaction([
-      prisma.event.create({
-        data: EVENTS.DELETED(userId, id),
-      }),
       prisma.listItem.delete({
         where: {
           id,

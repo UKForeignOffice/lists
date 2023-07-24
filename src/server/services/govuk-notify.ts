@@ -120,7 +120,7 @@ export async function sendEditDetailsEmail(
       reference: "",
     });
 
-    return { result: "id" in result && result.id !== undefined };
+    return { result: result.statusText === "Created" };
   } catch (error) {
     const message = `sendEditDetailsEmail: Unable to send change request email: ${error.message}`;
     logger.error(message);
