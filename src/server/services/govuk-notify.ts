@@ -35,7 +35,7 @@ export async function sendAuthenticationEmail(email: string, authenticationLink:
       reference: "",
     });
 
-    return "id" in result && result.id !== undefined;
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendAuthenticationEmail Error: ${error.message}`);
     return false;
@@ -60,7 +60,7 @@ export async function sendApplicationConfirmationEmail(
       reference: "",
     });
 
-    return "id" in result && result.id !== undefined;
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
     return false;
@@ -87,7 +87,7 @@ export async function sendDataPublishedEmail(
       reference: "",
     });
 
-    return "id" in result && result.id !== undefined;
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendDataPublishedEmail Error: ${error.message}`);
     return false;

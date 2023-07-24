@@ -14,7 +14,7 @@ export function formatDate(date: Date = todayDateString) {
   return date.toLocaleString("en-gb", options);
 }
 
-export function hasDataContainingReference(
+export function isEmailSentBefore(
   event: Event | Audit | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {
@@ -38,7 +38,7 @@ export function hasDataContainingReference(
   if ("createdAt" in event) {
     reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as ListEventJsonData)?.reminderType as string);
   } else {
-    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as Record<string, string>)?.notes);
+    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as Record<string, string>)?.notes[0]);
   }
 
   if (reminderHasBeenSent) {

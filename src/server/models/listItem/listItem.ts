@@ -6,7 +6,7 @@ import { listItemCreateInputFromWebhook } from "./listItemCreateInputFromWebhook
 import pgescape from "pg-escape";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
-import { Status } from "@prisma/client";
+import { AuditEvent, Status } from "@prisma/client";
 import { merge } from "lodash";
 import { EVENTS } from "./listItemEvent";
 import { subMonths } from "date-fns";
@@ -456,6 +456,17 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
       prisma.listItem.delete({
         where: {
           id,
+        },
+      }),
+      prisma.audit.create({
+        data: {
+          auditEvent: AuditEvent.DELETED,
+          type: "listItem",
+          jsonData: {
+            eventName: "delete",
+            itemId: id,
+            userId,
+          },
         },
       }),
     ]);

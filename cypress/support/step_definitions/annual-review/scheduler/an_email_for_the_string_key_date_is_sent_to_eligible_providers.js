@@ -17,7 +17,7 @@ Then("an email for the {string} key date is sent to eligible providers", async f
             {
               jsonData: {
                 path: ["notes"],
-                equals: ["sendStartedProviderEmail"],
+                array_contains: ["sendStartedProviderEmail"],
               },
             },
             {
