@@ -7,7 +7,7 @@ Feature:
     And I click the link "Start"
     And I click the "Yes" radio button
     And I continue
-    Then I see "You should contact the insurance company"
+    Then I should see the heading "You should contact the insurance company"
     When I click the link "Continue"
     And I click the "Yes, I want to bring the body or ashes back to the UK." radio button
     And I continue

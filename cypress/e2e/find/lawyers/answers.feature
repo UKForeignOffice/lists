@@ -34,7 +34,7 @@ Feature:
 
   Scenario: Start again
     When I click the link "Start again"
-    Then I see "Find a lawyer abroad"
+    Then I should see the heading "Find a lawyer abroad"
     When I click the link "Start"
     Then I see "Your answers will appear here"
 
