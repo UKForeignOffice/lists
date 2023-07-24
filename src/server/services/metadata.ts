@@ -856,7 +856,7 @@ export const languages: Record<string, string> = {
   ms: "Malay",
   mt: "Maltese",
   my: "Burmese",
-  me: "Montenegrin",
+  cnr: "Montenegrin",
   na: "Nauru",
   nb: "Bokmål, Norwegian; Norwegian Bokmål",
   nd: "Ndebele, North; North Ndebele",
