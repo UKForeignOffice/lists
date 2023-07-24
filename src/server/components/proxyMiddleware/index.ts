@@ -28,12 +28,13 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
       },
       userResHeaderDecorator(headers, userReq, userRes) {
         const isApplicationRequest = userReq.originalUrl.startsWith("/application");
-
         if (userRes.statusCode === 302 && isApplicationRequest) {
           const prefix = headers.location?.startsWith("?view=") ? `/${userReq.params[0]}` : "";
           return {
             ...headers,
-            location: `/application${prefix}${headers.location}`,
+            location: headers.location?.startsWith("http")
+              ? headers.location
+              : `/application${prefix}${headers.location}`,
           };
         }
 
