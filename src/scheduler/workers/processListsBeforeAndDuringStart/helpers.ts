@@ -18,7 +18,7 @@ export function isEmailSentBefore(
   event: Event | Audit | undefined,
   reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
 ): boolean {
-  if (!event?.jsonData) {
+  if (!event?.jsonData || !reminderType) {
     return false;
   }
   const subsequentEmailsForReminderType = {
@@ -36,9 +36,9 @@ export function isEmailSentBefore(
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];
   let reminderHasBeenSent = false;
   if ("createdAt" in event) {
-    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as ListEventJsonData)?.reminderType as string);
+    reminderHasBeenSent = subsequentEmails.includes((event.jsonData as ListEventJsonData)?.reminderType as string);
   } else {
-    reminderHasBeenSent = subsequentEmails?.includes?.((event.jsonData as Record<string, string>)?.notes[0]);
+    reminderHasBeenSent = subsequentEmails.includes((event.jsonData as Record<string, string>)?.notes[0]);
   }
 
   if (reminderHasBeenSent) {

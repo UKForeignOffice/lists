@@ -11,7 +11,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
 import type { ListItemGetObject, List, ListJsonData } from "server/models/types";
-import { EVENTS } from "server/models/listItem/listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";

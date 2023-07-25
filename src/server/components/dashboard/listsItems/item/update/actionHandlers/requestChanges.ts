@@ -5,7 +5,7 @@ import serviceName from "server/utils/service-name";
 import { sendEditDetailsEmail } from "server/services/govuk-notify";
 import { Status } from "@prisma/client";
 import { prisma } from "server/models/db/prisma-client";
-import { EVENTS } from "server/models/listItem/listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 
 import type { ListItemGetObject, User } from "server/models/types";
 import type { ListItemRes } from "server/components/dashboard/listsItems/types";

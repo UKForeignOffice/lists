@@ -106,7 +106,7 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  emailType           PostEmailType @default(undefined)
+  emailType           PostEmailType?
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
@@ -155,7 +155,7 @@ model Event {
   listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
-  emailType           ProviderEmailType @default(undefined)
+  emailType           ProviderEmailType?
   jsonData            Json
 
   @@index([time, listItemId])
@@ -215,7 +215,6 @@ enum PostEmailType {
   sendStartedPostEmail
   sendUnpublishOneDayPostEmail
   sendUnpublishWeeklyPostEmail
-  undefined
 }
 
 enum ProviderEmailType {
@@ -223,5 +222,4 @@ enum ProviderEmailType {
   sendUnpublishedProviderEmail
   sendUnpublishOneDayProviderEmail
   sendUnpublishWeeklyProviderEmail
-  undefined
 }

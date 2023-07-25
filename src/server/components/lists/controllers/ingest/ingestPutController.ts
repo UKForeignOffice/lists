@@ -6,7 +6,7 @@ import { Status } from "@prisma/client";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
-import { EVENTS } from "server/models/listItem/listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";

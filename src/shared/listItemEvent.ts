@@ -1,6 +1,6 @@
 import type { SendEmailResponse } from "notifications-node-client";
 import { ListItemEvent } from "@prisma/client";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, ProviderEmailType } from "@prisma/client";
 
 export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
@@ -122,19 +122,20 @@ export const EVENTS = {
     },
   }),
 
-  [ListItemEvent.REMINDER]: (
-    response: SendEmailResponse,
-    notes?: string[],
-    reference?: string
-  ): EventCreate<"REMINDER"> => {
+  [ListItemEvent.REMINDER]: ({
+    response,
+    notes,
+    reference,
+    emailType,
+  }: EventReminderInput): EventCreate<"REMINDER"> => {
     const notifyResponseWithoutContent = {
       id: response.id,
-      template: response.template,
+      template: response.template as unknown as Prisma.InputJsonObject,
     };
 
     return {
       type: ListItemEvent.REMINDER,
-      // @ts-ignore -- issue is with response.Template, there is a tsc/prisma incompatibility
+      emailType,
       jsonData: {
         eventName: "reminder",
         ...{ notes },
@@ -152,3 +153,10 @@ export const EVENTS = {
     },
   }),
 };
+
+interface EventReminderInput {
+  response: SendEmailResponse;
+  notes?: string[];
+  reference?: string;
+  emailType: ProviderEmailType;
+}

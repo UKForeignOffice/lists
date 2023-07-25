@@ -1,10 +1,13 @@
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { postReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
-import { AuditEvent, List } from "@prisma/client";
+import { AuditEvent, PostEmailType } from "@prisma/client";
 import { addUnpublishPostReminderAudit } from "./addDayBeforePostReminderAudit";
-import { Meta } from "./types";
+
+import type { Meta } from "./types";
+import type { List } from "@prisma/client";
+import type { RequestError } from "notifications-node-client";
 
 const template = NOTIFY.templates.unpublishNotice.postOneDay;
 
@@ -34,17 +37,17 @@ export async function sendDayBeforePostReminder(
 
     const updateAudit = await addUnpublishPostReminderAudit(
       {
-        reminderType: "sendUnpublishOneDayPostEmail",
         eventName: "reminder",
         itemId: list.id,
         annualReviewRef: meta.reference,
       },
-      AuditEvent.REMINDER
+      AuditEvent.REMINDER,
+      PostEmailType.sendUnpublishOneDayPostEmail
     );
 
     if (!updateAudit) {
       logger.error(
-        `failed to add npublish reminder event for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
+        `failed to add publish reminder event for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
       );
     }
 

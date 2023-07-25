@@ -8,7 +8,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { AuditEvent, Status } from "@prisma/client";
 import { merge } from "lodash";
-import { EVENTS } from "./listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 import { subMonths } from "date-fns";
 
 import type { WebhookData } from "server/components/formRunner";

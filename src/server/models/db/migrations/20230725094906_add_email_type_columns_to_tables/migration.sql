@@ -7,8 +7,7 @@ CREATE TYPE "PostEmailType" AS ENUM (
   'sendOneDayPostEmail',
   'sendStartedPostEmail',
   'sendUnpublishOneDayPostEmail',
-  'sendUnpublishWeeklyPostEmail',
-  'undefined'
+  'sendUnpublishWeeklyPostEmail'
 );
 
 -- CreateEnum
@@ -16,8 +15,7 @@ CREATE TYPE "ProviderEmailType" AS ENUM (
   'sendStartedProviderEmail',
   'sendUnpublishedProviderEmail',
   'sendUnpublishOneDayProviderEmail',
-  'sendUnpublishWeeklyProviderEmail',
-  'undefined'
+  'sendUnpublishWeeklyProviderEmail'
 );
 
 -- Alter Audit and Event Tables
@@ -33,7 +31,7 @@ SET "emailType" = CASE
     WHEN a."jsonData" ->> 'reminderType' = 'sendStartedPostEmail' THEN 'sendStartedPostEmail'::"PostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishOneDayPostEmail' THEN 'sendUnpublishOneDayPostEmail'::"PostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishWeeklyPostEmail' THEN 'sendUnpublishWeeklyPostEmail'::"PostEmailType"
-    ELSE 'undefined'::"PostEmailType"
+    ELSE NULL
   END;
 
 UPDATE "Event" AS e
@@ -42,7 +40,7 @@ SET "emailType" = CASE
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for week%') THEN 'sendUnpublishWeeklyProviderEmail'::"ProviderEmailType"
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 1 days%') THEN 'sendUnpublishOneDayProviderEmail'::"ProviderEmailType"
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 0 days%') THEN 'sendUnpublishedProviderEmail'::"ProviderEmailType"
-  ELSE 'undefined'::"ProviderEmailType"
+  ELSE NULL
 END;
 
 COMMIT;
