@@ -106,7 +106,7 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-
+  emailType           PostEmailType @default(undefined)
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
@@ -133,6 +133,7 @@ enum AuditEvent {
   ANNUAL_REVIEW
   DELETED
   UNDEFINED
+  UNPUBLISHED
   REMINDER
   ANALYTICS
   LIST_EDIT
@@ -154,6 +155,7 @@ model Event {
   listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
+  emailType           ProviderEmailType @default(undefined)
   jsonData            Json
 
   @@index([time, listItemId])
@@ -204,4 +206,22 @@ view ListsForDashboard {
   lastAnnualReviewStartDate   DateTime? @db.Date
   jsonData                    Json
   @@unique([listId])
+}
+
+enum PostEmailType {
+  sendOneMonthPostEmail
+  sendOneWeekPostEmail
+  sendOneDayPostEmail
+  sendStartedPostEmail
+  sendUnpublishOneDayPostEmail
+  sendUnpublishWeeklyPostEmail
+  undefined
+}
+
+enum ProviderEmailType {
+  sendStartedProviderEmail
+  sendUnpublishedProviderEmail
+  sendUnpublishOneDayProviderEmail
+  sendUnpublishWeeklyProviderEmail
+  undefined
 }
