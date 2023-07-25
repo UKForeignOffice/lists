@@ -147,26 +147,16 @@ export async function listItemPostController(req: Request, res: Response, next: 
     message,
   };
 
-  const allowedSkipConfirmationActions = ["pin", "unpin"];
+  const allowedSkipConfirmationActions = ["pin", "unpin", "editDetails"];
+  const isPinAction = ["pin", "unpin"].includes(action);
 
-  if (skipConfirmation && allowedSkipConfirmationActions.includes(action)) {
-    actionHandlers[action as Action](req, res, next);
-    return;
-  }
-
-  if (action === "editDetails") {
-    const editDetailsUrl = await createEditDetailsURL({
-      listItem: res.locals.listItem,
-      message: req.body.editMessage,
-      userId: req.user?.id as number,
-      isAnnualReview: res.locals.listItem.isAnnualReview,
-    });
-
-    if ("error" in editDetailsUrl) {
-      next(editDetailsUrl.error);
+  if (allowedSkipConfirmationActions.includes(action)) {
+    if (isPinAction && !skipConfirmation) {
+      // pin and unpin have a confirmation page - but are sometimes skippable based on context.
+      res.redirect(`${listItemUrl}/confirm`);
       return;
     }
-    res.redirect(editDetailsUrl.result);
+    actionHandlers[action as Action](req, res, next);
     return;
   }
 

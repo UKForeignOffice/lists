@@ -1,5 +1,5 @@
-import * as FormRunner from "./types";
-import {
+import type * as FormRunner from "./types";
+import type {
   FuneralDirectorListItemGetObject,
   LawyerListItemGetObject,
   List,
@@ -10,13 +10,13 @@ import { ServiceType } from "shared/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
-import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { CALLBACK_URL, isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
-import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
+import type { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 import { forms } from "./forms";
 
 interface NewSessionWebhookDataInput {
@@ -27,7 +27,19 @@ interface NewSessionWebhookDataInput {
   isAnnualReview?: boolean;
   listItemRef: string;
   title?: string;
+  skipSummaryUrl?: string;
+  metadata?: FormRunner.NewSessionData["metadata"];
 }
+
+const DEFAULT_OPTIONS = {
+  customText: {
+    title: "Application resubmitted",
+    paymentSkipped: false,
+    nextSteps:
+      "The British consulate or embassy will check your application again. If your application passes these checks your information will be published to the list.",
+  },
+  components: [],
+};
 export function getNewSessionWebhookData({
   listType,
   listItemId,
@@ -36,23 +48,25 @@ export function getNewSessionWebhookData({
   isAnnualReview,
   listItemRef,
   title,
+  skipSummaryUrl,
+  metadata,
 }: NewSessionWebhookDataInput): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://${CALLBACK_URL}/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
+
   const options = {
+    ...DEFAULT_OPTIONS,
     message,
-    customText: {
-      title: "Application resubmitted",
-      paymentSkipped: false,
-      nextSteps:
-        "The British consulate or embassy will check your application again. If your application passes these checks your information will be published to the list.",
-    },
-    components: [],
     callbackUrl,
     redirectPath,
     backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`,
     ...(title && { title }),
+    ...(skipSummaryUrl && {
+      skipSummary: {
+        redirectUrl: skipSummaryUrl,
+      },
+    }),
   };
 
   const newSessionData: FormRunner.NewSessionData = {
@@ -60,6 +74,7 @@ export function getNewSessionWebhookData({
     options,
     name: "Changes required",
     metadata: {
+      ...metadata,
       isAnnualReview,
     },
   };
@@ -124,6 +139,8 @@ interface initialiseFormRunnerInput {
   message: string;
   isAnnualReview?: boolean;
   title?: string;
+  metadata?: FormRunner.NewSessionData["metadata"];
+  skipSummaryUrl?: string;
 }
 
 export async function initialiseFormRunnerSession({
@@ -132,6 +149,8 @@ export async function initialiseFormRunnerSession({
   message,
   isAnnualReview,
   title,
+  metadata,
+  skipSummaryUrl,
 }: initialiseFormRunnerInput): Promise<string> {
   logger.info(
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
@@ -161,6 +180,8 @@ export async function initialiseFormRunnerSession({
     isAnnualReview,
     listItemRef: listItem.reference,
     title,
+    skipSummaryUrl,
+    metadata,
   });
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);

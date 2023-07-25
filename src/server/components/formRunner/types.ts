@@ -25,9 +25,14 @@ export interface Question {
 export interface NewSessionData {
   questions: Array<Partial<Question>> | undefined;
   options: {
-    message: string;
     callbackUrl: string;
-    redirectPath: string;
+    redirectPath?: string;
+    message?: string;
+    htmlMessage?: string;
+    title?: string;
+    skipSummary?: {
+      redirectUrl: string;
+    };
   };
   metadata: Record<string, any>;
   name: string;

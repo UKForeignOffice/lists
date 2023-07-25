@@ -15,6 +15,7 @@ import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } f
 import type { ListJsonData } from "server/models/types";
 
 export async function ingestPutController(req: Request, res: Response) {
+  console.log("START ingest put");
   const id = req.params.id;
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
@@ -74,7 +75,7 @@ export async function ingestPutController(req: Request, res: Response) {
     const listJsonData = listItem.list.jsonData as ListJsonData;
     const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
-    const { isAnnualReview = false } = value.metadata;
+    const { isAnnualReview = false, isPostEdit = false } = value.metadata;
     const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
@@ -89,25 +90,21 @@ export async function ingestPutController(req: Request, res: Response) {
     };
 
     await prisma.listItem.update(listItemPrismaQuery);
-
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
+      return res.status(204).send();
+    }
+
+    if (isPostEdit) {
+      // await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
+      //   contactName: jsonData.contactName,
+      //   typeSingular: serviceType,
+      //   message: "",
+      // });
     } else {
       await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
     }
 
-    if (isChangeRequest) {
-      return res.status(204).send();
-    }
-
-    await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
-      contactName: jsonData.contactName,
-      typeSingular: serviceType,
-      message: "",
-    });
-
-    // TODO - use proper redirection from formRunner
-    // res.redirect(302, `/lists/${id}/items/${listItem.listId}`);
     return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);

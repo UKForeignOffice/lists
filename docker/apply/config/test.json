@@ -1,5 +1,6 @@
 {
   "safelist": ["lists"],
   "logPrettyPrint": false,
-  "env": "test"
+  "env": "test",
+  "initialisedSessionAlgorithm": "HS256"
 }
