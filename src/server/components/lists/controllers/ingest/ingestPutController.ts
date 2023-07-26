@@ -53,7 +53,6 @@ export async function ingestPutController(req: Request, res: Response) {
       },
     },
   });
-  const isChangeRequest = listItem?.history[0]?.type === "OUT_WITH_PROVIDER";
 
   if (!listItem) {
     return res.status(404).send({
@@ -74,17 +73,17 @@ export async function ingestPutController(req: Request, res: Response) {
     const listJsonData = listItem.list.jsonData as ListJsonData;
     const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
-    const { isAnnualReview = false } = value.metadata;
+    const { isAnnualReview = false, isPostEdit = false } = value.metadata;
     const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
-        ...(isChangeRequest && { status }),
+        ...(!isPostEdit && { status }),
         history: {
           create: event,
         },
-        jsonData: isChangeRequest ? jsonDataWithUpdatedJsonData : jsonDataOnly,
+        jsonData: isPostEdit ? jsonDataOnly : jsonDataWithUpdatedJsonData,
       },
     };
 
@@ -93,21 +92,17 @@ export async function ingestPutController(req: Request, res: Response) {
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     } else {
-      await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
+      if (isPostEdit) {
+        await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
+      } else {
+        await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
+          contactName: jsonData.contactName,
+          typeSingular: serviceType,
+          message: "",
+        });
+      }
     }
 
-    if (isChangeRequest) {
-      return res.status(204).send();
-    }
-
-    await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
-      contactName: jsonData.contactName,
-      typeSingular: serviceType,
-      message: "",
-    });
-
-    // TODO - use proper redirection from formRunner
-    // res.redirect(302, `/lists/${id}/items/${listItem.listId}`);
     return res.status(204).send();
   } catch (e) {
     logger.error(`ingestPutController Error: ${e.message}`);

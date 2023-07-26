@@ -25,8 +25,10 @@ interface NewSessionWebhookDataInput {
   questions?: Array<Partial<FormRunner.Question>>;
   message: string;
   isAnnualReview?: boolean;
+  isPostEdit?: boolean;
   listItemRef: string;
   title?: string;
+  redirectUrl?: string;
 }
 export function getNewSessionWebhookData({
   listType,
@@ -34,8 +36,10 @@ export function getNewSessionWebhookData({
   questions,
   message,
   isAnnualReview,
+  isPostEdit,
   listItemRef,
   title,
+  redirectUrl,
 }: NewSessionWebhookDataInput): FormRunner.NewSessionData {
   const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
@@ -53,6 +57,7 @@ export function getNewSessionWebhookData({
     redirectPath,
     backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`,
     ...(title && { title }),
+    ...(redirectUrl && { skipSummary: { redirectUrl } }),
   };
 
   const newSessionData: FormRunner.NewSessionData = {
@@ -61,6 +66,7 @@ export function getNewSessionWebhookData({
     name: "Changes required",
     metadata: {
       isAnnualReview,
+      isPostEdit,
     },
   };
   return newSessionData;
@@ -123,7 +129,9 @@ interface initialiseFormRunnerInput {
   listItem: ListItemWithAddressCountry;
   message: string;
   isAnnualReview?: boolean;
+  isPostEdit?: boolean;
   title?: string;
+  redirectUrl?: string;
 }
 
 export async function initialiseFormRunnerSession({
@@ -131,7 +139,9 @@ export async function initialiseFormRunnerSession({
   listItem,
   message,
   isAnnualReview,
+  isPostEdit,
   title,
+  redirectUrl,
 }: initialiseFormRunnerInput): Promise<string> {
   logger.info(
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
@@ -159,8 +169,10 @@ export async function initialiseFormRunnerSession({
     questions,
     message,
     isAnnualReview,
+    isPostEdit,
     listItemRef: listItem.reference,
     title,
+    redirectUrl,
   });
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
