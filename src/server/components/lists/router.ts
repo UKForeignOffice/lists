@@ -6,6 +6,7 @@ import annualReviewRouter from "server/components/annual-review/router";
 import { findRouter } from "./find/router";
 import { redirectToFindResource } from "server/components/lists/find/helpers/redirectToFindResource";
 import { loadQueryParametersIntoSession } from "server/components/lists/find/middleware/loadQueryParametersIntoSession";
+import apiRouter from "./api/router";
 
 export const listsRouter = express.Router();
 
@@ -23,3 +24,4 @@ listsRouter.get(listsRoutes.termsAndConditions, (_req, res) => {
 });
 
 listsRouter.use(annualReviewRouter);
+listsRouter.use(apiRouter);
