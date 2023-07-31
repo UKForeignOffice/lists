@@ -21,11 +21,10 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-import { isLocalHost, isSmokeTest, isTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 import { configureCsrf } from "server/middlewares/csrf";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
-import { listsRouter } from "server/components/lists/router";
 
 const server = express();
 
