@@ -1,4 +1,4 @@
-import type { QuestionData } from "server/components/lists";
+import { QuestionData } from "server/components/lists";
 
 export const legalPracticeAreasList = [
   "Bankruptcy",
@@ -856,7 +856,6 @@ export const languages: Record<string, string> = {
   ms: "Malay",
   mt: "Maltese",
   my: "Burmese",
-  cnr: "Montenegrin",
   na: "Nauru",
   nb: "Bokmål, Norwegian; Norwegian Bokmål",
   nd: "Ndebele, North; North Ndebele",
