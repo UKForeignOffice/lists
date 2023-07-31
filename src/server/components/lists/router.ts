@@ -2,7 +2,6 @@
 import express from "express";
 import * as Controllers from "./controllers";
 import { listsRoutes } from "./routes";
-import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import annualReviewRouter from "server/components/annual-review/router";
 import { findRouter } from "./find/router";
 import { redirectToFindResource } from "server/components/lists/find/helpers/redirectToFindResource";
@@ -23,5 +22,4 @@ listsRouter.get(listsRoutes.termsAndConditions, (_req, res) => {
   res.render("help/terms-and-conditions");
 });
 
-listsRouter.use(ingestRouter);
 listsRouter.use(annualReviewRouter);

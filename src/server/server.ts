@@ -21,13 +21,19 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, isSmokeTest, isTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
+import { configureCsrf } from "server/middlewares/csrf";
+import { ingestRouter } from "server/components/lists/controllers/ingest/router";
+import { listsRouter } from "server/components/lists/router";
 
 const server = express();
 
 export async function getServer(): Promise<Express> {
-  // middlewares
+  /**
+   * Application level middleware
+   */
+
   configureAccessControl(server);
   configureHelmet(server);
   configureLogger(server);
@@ -38,7 +44,20 @@ export async function getServer(): Promise<Express> {
   configureCookieParser(server);
   configureViews(server);
 
-  // initialize components
+  /**
+   * API routes
+   * note: put any API routes, or routes which are expecting a request FROM an external service above configureCsrf.
+   */
+
+  server.use(ingestRouter);
+
+  configureCsrf(server);
+
+  /**
+   * Internal routes
+   * note: put all other routes here, so they are protected by csrf middleware.
+   */
+
   await initAuth(server);
   await initLists(server);
   await initCookies(server);
