@@ -23,8 +23,8 @@ import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware
 
 import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
-import { configureCsrf } from "server/middlewares/csrf";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
+import { configureCsrf } from "server/middlewares/csrf";
 
 const server = express();
 
@@ -45,10 +45,12 @@ export async function getServer(): Promise<Express> {
 
   /**
    * API routes
-   * note: put any API routes, or routes which are expecting a request FROM an external service above configureCsrf.
+   * note: put any API routes, or routes which are expecting a request FROM an external service above configureCsrf. Including requests from the form runner.
+   *
    */
 
   server.use(ingestRouter);
+  await initFeedback(server);
 
   configureCsrf(server);
 
@@ -61,7 +63,6 @@ export async function getServer(): Promise<Express> {
   await initLists(server);
   await initCookies(server);
   await initSitemap(server);
-  await initFeedback(server);
   await initDashboard(server);
   await initDevelopment(server);
   await initHealthCheck(server);
