@@ -74,5 +74,8 @@ function redirectQueryServiceName(req: Request, res: Response, next: NextFunctio
     query = `?${querystring.encode({ country })}`;
   }
 
-  res.redirect(301, `find/${normaliseServiceType(serviceType)}${query}`);
+  /**
+   * TODO: Change to 301 for the next release cycle after 1.91.0.
+   */
+  res.redirect(302, `find/${normaliseServiceType(serviceType)}${query}`);
 }

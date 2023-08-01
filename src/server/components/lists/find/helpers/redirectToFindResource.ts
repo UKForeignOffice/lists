@@ -11,7 +11,10 @@ export async function redirectToFindResource(req: Request, res: Response, next: 
   }
 
   if (!country) {
-    res.redirect(301, `/find/${serviceType}`);
+    /**
+     * TODO: Change to 301 for the next release cycle after 1.91.0.
+     */
+    res.redirect(302, `/find/${serviceType}`);
     return;
   }
 
@@ -22,5 +25,8 @@ export async function redirectToFindResource(req: Request, res: Response, next: 
     return;
   }
 
-  res.redirect(301, `/find/${serviceType}/${encodeURIComponent(country)}/result`);
+  /**
+   * TODO: Change to 301 for the next release cycle after 1.91.0.
+   */
+  res.redirect(302, `/find/${serviceType}/${encodeURIComponent(country)}/result`);
 }
