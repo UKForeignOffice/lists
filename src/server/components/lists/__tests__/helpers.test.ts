@@ -4,7 +4,6 @@ import {
   parseListValues,
   getServiceLabel,
   getAllRequestParams,
-  removeQueryParameter,
   getCountryLawyerRedirectLink,
   createConfirmationLink,
   createListSearchBaseLink,
@@ -121,22 +120,8 @@ describe("Lawyers List:", () => {
       expect(getServiceLabel("lawyers")).toEqual("a lawyer");
     });
 
-    test("Covid test provider label is returned correctly", () => {
-      expect(getServiceLabel("covidTestProviders")).toEqual("a COVID-19 test provider");
-    });
-
     test("undefined is returned when service name is unknown", () => {
       expect(getServiceLabel("famous singer phone number")).toEqual(undefined);
-    });
-  });
-
-  describe("removeQueryParameter", () => {
-    test("parameter is removed correctly from query string", () => {
-      const queryString =
-        "serviceType=lawyers&readNotice=ok&country=spain&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no";
-      expect(removeQueryParameter(queryString, "country")).toBe(
-        "serviceType=lawyers&readNotice=ok&region=madrid&practiceArea=maritime%2Creal%20estate&legalAid=no"
-      );
     });
   });
 
@@ -252,11 +237,11 @@ describe("getLinksOfRelatedLists", () => {
     const serviceType = "lawyers";
     const expectedLinks = [
       {
-        url: "/find?serviceType=funeralDirectors&country=Argentina",
+        url: "/find/funeral-directors?country=Argentina",
         text: "Find a funeral director in Argentina",
       },
       {
-        url: "/find?serviceType=translatorsInterpreters&country=Argentina",
+        url: "/find/translators-interpreters?country=Argentina",
         text: "Find a translator or interpreter in Argentina",
       },
     ];
@@ -284,11 +269,11 @@ describe("getLinksOfRelatedLists", () => {
 
     expect(links).toEqual([
       {
-        url: "/find?serviceType=lawyers&country=France",
+        url: "/find/lawyers?country=France",
         text: "Find a lawyer in France",
       },
       {
-        url: "/find?serviceType=translatorsInterpreters",
+        url: "/find/translators-interpreters",
         text: "Find a translator or interpreter in France",
       },
     ]);

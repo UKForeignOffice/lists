@@ -1,11 +1,11 @@
-import { NextFunction, Request } from "express";
+import type { NextFunction, Request } from "express";
 import { DEFAULT_VIEW_PROPS } from "server/components/lists/constants";
 import { findIndexListItems } from "server/models/listItem/listItem";
-import { ACTIVITY_TAGS, ORDER_BY, PUBLISHING_TAGS, TAGS, Tags } from "server/models/listItem/types";
-import { getCSRFToken } from "server/components/cookies/helpers";
-import { ListItemRes } from "server/components/dashboard/listsItems/types";
+import type { ACTIVITY_TAGS, PUBLISHING_TAGS, Tags } from "server/models/listItem/types";
+import { ORDER_BY, TAGS } from "server/models/listItem/types";
+import type { ListItemRes } from "server/components/dashboard/listsItems/types";
 import * as AnnualReviewHelpers from "server/components/dashboard/annualReview/helpers";
-import { ListWithJsonData } from "../helpers";
+import type { ListWithJsonData } from "../helpers";
 import {
   displayAnnualReviewCompleteBanner,
   displayEmailsSentBanner,
@@ -119,7 +119,6 @@ function sanitiseListItemsQueryParams(query: IndexQuery): SanitisedIndexQuery {
 }
 
 export const serviceTypeIndexHeading: Record<ServiceType | string, string> = {
-  covidTestProviders: "Covid test provider",
   funeralDirectors: "Funeral directors",
   lawyers: "Lawyers",
   translatorsInterpreters: "Translators and interpreters",
@@ -156,7 +155,8 @@ export async function listItemsIndexController(
     });
 
     if (list === undefined) {
-      return next();
+      next();
+      return;
     }
 
     const annualReviewDate = AnnualReviewHelpers.formatAnnualReviewDate(
@@ -177,8 +177,6 @@ export async function listItemsIndexController(
       annualReviewDate,
       unpublishDate: unpublishDate ? AnnualReviewHelpers.formatDate(unpublishDate) : undefined,
       bannerToggles,
-      // @ts-expect-error
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

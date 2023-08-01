@@ -1,0 +1,80 @@
+{% extends "./../../question-page.njk" %}
+{% from "checkboxes/macro.njk" import govukCheckboxes %}
+
+{% block question %}
+
+  {% set errors = [] %}
+  {% set translationError = false %}
+  {% set interpretationError = false %}
+
+  {% if messages["error-translation"] %}
+    {% set translationError = {
+      text: messages["error-translation"],
+      href: "#translation"
+    } %}
+    {% set errors = (errors.push(translationError), errors) %}
+  {% endif %}
+
+
+  {% if messages["error-interpretation"] %}
+    {% set interpretationError = {
+      text: messages["error-interpretation"],
+      href: "#interpretation"
+    } %}
+    {% set errors = (errors.push(interpretationError), errors) %}
+  {% endif %}
+
+  {% block questionError %}
+    {% if errors.length %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errors
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+     {% if translationTypes %}
+      {{ govukCheckboxes({
+        name: "translation",
+        fieldset: {
+          legend: {
+            classes: "govuk-fieldset__legend--s",
+            text: "Select the type of translation that you need"
+          }
+        },
+        hint: {
+          text: "Translation is when written content is translated into another language."
+        },
+        items: translationTypes.items,
+        errorMessage: translationError,
+        values: translationTypes.values
+      }) }}
+    {% endif %}
+
+    {% if interpretationTypes %}
+      {{ govukCheckboxes({
+        name: "interpretation",
+        fieldset: {
+          legend: {
+            classes: "govuk-fieldset__legend--s",
+            text: "Select the situation that you need an interpreter for"
+          }
+        },
+        hint: {
+          text: "Interpretation is when spoken language is interpreted into another language"
+        },
+        items: interpretationTypes.items,
+        errorMessage: interpretationError,
+        values: interpretationTypes.values
+      }) }}
+    {% endif %}
+
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+
+{% endblock %}

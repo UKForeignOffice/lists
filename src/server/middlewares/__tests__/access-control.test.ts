@@ -34,9 +34,7 @@ describe("access-control", () => {
 
       accessControl(req, res, next);
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        "https://www.gov.uk/foreign-travel-advice"
-      );
+      expect(res.redirect).toHaveBeenCalledWith("https://www.gov.uk/foreign-travel-advice");
     });
 
     it("should call res.redirect with the correct args when a service type query param matches", () => {
@@ -47,9 +45,7 @@ describe("access-control", () => {
 
       accessControl(req, res, next);
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        "https://www.gov.uk/foreign-travel-advice"
-      );
+      expect(res.redirect).toHaveBeenCalledWith("https://www.gov.uk/foreign-travel-advice");
     });
 
     it("should pass through when no paths or query params match", () => {
@@ -71,42 +67,23 @@ describe("access-control", () => {
     beforeEach(async () => {
       server = await getServer();
       application = request(server);
+      mockIsTest = false;
     });
 
-    it("should pass through in test mode", async () => {
-      const { status } = await application.get(
-        "/find?serviceType=covidTestProviders"
+    it("should redirect to the GOV.uk travel advice page when accessing COVID test provider application page", async () => {
+      const { header, status } = await application.get(
+        "/application/covid-test-providers/register-to-the-find-a-covid-19-test-provider-abroad-service"
       );
 
-      expect(status).toEqual(200);
+      expect(header.location).toEqual("https://www.gov.uk/foreign-travel-advice");
+      expect(status).toEqual(302);
     });
 
-    describe("when not in test mode", () => {
-      beforeEach(() => {
-        mockIsTest = false;
-      });
+    it("should redirect to the GOV.uk travel advice page when accessing find a COVID test provider page", async () => {
+      const { header, status } = await application.get("/find?serviceType=covidTestProviders");
 
-      it("should redirect to the GOV.uk travel advice page when accessing COVID test provider application page", async () => {
-        const { header, status } = await application.get(
-          "/application/covid-test-providers/register-to-the-find-a-covid-19-test-provider-abroad-service"
-        );
-
-        expect(header.location).toEqual(
-          "https://www.gov.uk/foreign-travel-advice"
-        );
-        expect(status).toEqual(302);
-      });
-
-      it("should redirect to the GOV.uk travel advice page when accessing find a COVID test provider page", async () => {
-        const { header, status } = await application.get(
-          "/find?serviceType=covidTestProviders"
-        );
-
-        expect(header.location).toEqual(
-          "https://www.gov.uk/foreign-travel-advice"
-        );
-        expect(status).toEqual(302);
-      });
+      expect(header.location).toEqual("https://www.gov.uk/foreign-travel-advice");
+      expect(status).toEqual(302);
     });
   });
 });

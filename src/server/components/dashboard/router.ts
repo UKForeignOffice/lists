@@ -10,7 +10,7 @@ import {
   usersEditPostController,
 } from "./controllers/controllers";
 import { dashboardRoutes } from "./routes";
-import { csrfRequestHandler, addUrlToSession } from "server/components/cookies/helpers";
+import { addUrlToSession } from "server/components/cookies/helpers";
 import { listRouter } from "./listRouter";
 
 export const dashboardRouter = express.Router();
@@ -22,7 +22,7 @@ dashboardRouter.get(dashboardRoutes.start, startRouteController);
 dashboardRouter.get(dashboardRoutes.listsHelp, helpPageController);
 
 // Users
-dashboardRouter.all(`${dashboardRoutes.usersList}*`, csrfRequestHandler, ensureUserIsAdministrator, addUrlToSession);
+dashboardRouter.all(`${dashboardRoutes.usersList}*`, ensureUserIsAdministrator, addUrlToSession);
 dashboardRouter.get(dashboardRoutes.usersList, usersListController);
 dashboardRouter.post(dashboardRoutes.usersEdit, usersEditPostController);
 dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
@@ -30,10 +30,4 @@ dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
 // lists
 dashboardRouter.use("/dashboard/lists", listRouter);
 
-dashboardRouter.get(
-  dashboardRoutes.feedback,
-  csrfRequestHandler,
-  ensureUserIsAdministrator,
-  addUrlToSession,
-  feedbackController
-);
+dashboardRouter.get(dashboardRoutes.feedback, ensureUserIsAdministrator, addUrlToSession, feedbackController);

@@ -1,6 +1,5 @@
-import querystring from "querystring";
 import type { Express, Request } from "express";
-import { get, omit, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
+import { get, trim, mapKeys, isArray, without, lowerCase, kebabCase, camelCase, startCase } from "lodash";
 
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 import { listsRouter } from "./router";
@@ -14,7 +13,6 @@ import {
   fcdoTranslatorsInterpretersByCountry,
   listOfCountriesWithLegalAid,
 } from "server/services/metadata";
-import { URLSearchParams } from "url";
 import {
   FORM_RUNNER_INITIALISE_SESSION_ROUTE,
   FORM_RUNNER_URL,
@@ -27,50 +25,8 @@ export async function initLists(server: Express): Promise<void> {
 }
 
 /**
- * To support the select all option for checkbox fields, this function does the following:
- *   - detects if the value "All" is provided and will remove all other options in the event "Select All" and any
- *     additional checkboxes were selected by the user.  Currently this is only required for lawyers.practiceArea
- *     (Areas of law field).
- *   - detects if the region field is empty and sets to the value "Not set" to enable searching for by the entire country.
- *   - detects the presence of the _csrf property and deletes it.
- * @param params
+ * TODO: - Refactor so this uses querystring.decode or .encode.
  */
-export function preProcessParams(params: Record<string, any>, req: Request): Record<string, any> {
-  const { _csrf, ...paramsCopy } = params;
-
-  // select all
-  const hasSelectedAll: boolean = paramsCopy?.practiceArea?.includes("All") ?? false;
-
-  // region validation
-  const noRegionSelected = paramsCopy?.region === "";
-
-  // country validation
-  let { country } = paramsCopy || "";
-  if (paramsCopy?.sameCountry?.includes("yes") && country === "United Kingdom") {
-    delete paramsCopy.country;
-    country = null;
-  } else if (paramsCopy?.sameCountry?.includes("no") && country !== "United Kingdom") {
-    country = "United Kingdom";
-  }
-
-  // translation services validation
-  if (paramsCopy.servicesProvided) {
-    if (!paramsCopy.servicesProvided.includes("translation")) {
-      delete paramsCopy.translationSpecialties;
-    }
-    if (!paramsCopy.servicesProvided.includes("interpretation")) {
-      delete paramsCopy.interpreterServices;
-    }
-  }
-
-  return {
-    ...paramsCopy,
-    ...(hasSelectedAll && { practiceArea: "All" }),
-    ...(noRegionSelected && { region: "Not set" }),
-    ...(country && { country: country }),
-  };
-}
-
 export function queryStringFromParams(params: Record<string, any>, removeEmptyValues?: boolean): string {
   return Object.keys(params)
     .filter((param) => param !== "page")
@@ -95,6 +51,9 @@ export function queryStringFromParams(params: Record<string, any>, removeEmptyVa
     .join("&");
 }
 
+/**
+ * TODO: - Refactor so this uses querystring.decode or .encode.
+ */
 export function parseListValues(paramName: string, params: ListsRequestParams): string[] | undefined {
   if (!(`${paramName}` in params)) {
     return undefined;
@@ -113,8 +72,6 @@ export function getServiceLabel(serviceType: string | undefined): string | undef
   switch (getServiceTypeName(serviceType)) {
     case ServiceType.lawyers:
       return "a lawyer";
-    case ServiceType.covidTestProviders:
-      return "a COVID-19 test provider";
     case ServiceType.funeralDirectors:
       return "a funeral director";
     case ServiceType.translatorsInterpreters:
@@ -137,16 +94,6 @@ export function getAllRequestParams(req: Request): ListsRequestParams {
     ...req.body,
     ...req.params,
   };
-}
-
-export function getParameterValue(parameterName: string, queryString: string): string {
-  const searchParams = new URLSearchParams(queryString);
-  return searchParams.get(parameterName) ?? "";
-}
-
-export function removeQueryParameter(queryString: string, parameterName: string): string {
-  const params = omit(querystring.parse(queryString), parameterName);
-  return `${querystring.stringify(params)}`;
 }
 
 export const getCountryLawyerRedirectLink = (() => {
@@ -201,10 +148,6 @@ export function createFormRunnerReturningUserLink(serviceType: string, isAnnualR
     throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
   }
 
-  if (serviceType === "covidTestProviders") {
-    throw new Error("This service is not supported");
-  }
-
   const formName = kebabCase(serviceType);
 
   return `${FORM_RUNNER_URL}${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${formName}`;
@@ -232,11 +175,12 @@ function restoreSpecialCharacter(specialCharacter: string, country: string, coun
   return countryName;
 }
 
-export function formatCountryParam(country: string): string {
-  let countryName: string = country;
+export function formatCountryParam(country: string | string[]): string {
+  const countryAsString: string = Array.isArray(country) ? country[0] : country;
+  let countryName = countryAsString;
 
   if (countryName) {
-    countryName = startCase(country);
+    countryName = startCase(countryAsString);
     if (countryName === "Northern Cyprus") {
       countryName = "northern Cyprus";
     }
@@ -245,7 +189,7 @@ export function formatCountryParam(country: string): string {
     }
     const specialChars = [".", ",", "-", "ã", "é", "í", "ç", "ô"];
     specialChars.forEach((specialChar) => {
-      countryName = restoreSpecialCharacter(specialChar, country, countryName);
+      countryName = restoreSpecialCharacter(specialChar, countryAsString, countryName);
     });
   }
   return countryName;
@@ -258,17 +202,17 @@ export async function getLinksOfRelatedLists(
   const relatedLinkOptions = [
     {
       text: `Find a lawyer in ${countryName}`,
-      url: `/find?serviceType=lawyers`,
+      url: `/find/lawyers`,
       type: "lawyers",
     },
     {
       text: `Find a funeral director in ${countryName}`,
-      url: `/find?serviceType=funeralDirectors`,
+      url: `/find/funeral-directors`,
       type: "funeralDirectors",
     },
     {
       text: `Find a translator or interpreter in ${countryName}`,
-      url: `/find?serviceType=translatorsInterpreters`,
+      url: `/find/translators-interpreters`,
       type: "translatorsInterpreters",
     },
   ];
@@ -279,7 +223,7 @@ export async function getLinksOfRelatedLists(
   return relatedLinkOptions
     .filter((link) => serviceType !== link.type)
     .map(({ text, url, type }) => {
-      const countryParam = `&country=${countryName}`;
+      const countryParam = `?country=${countryName}`;
       const relatedListExists = existingListTypes.includes(type);
       return {
         text,

@@ -10,10 +10,4 @@ describe("service-name", () => {
   it('should return "lawyers" when "lawyers" is passed', () => {
     expect(serviceName("lawyers")).toEqual("lawyers");
   });
-
-  it('should return "COVID-19 test providers" when "covidTestProviders" is passed', () => {
-    expect(serviceName("covidTestProviders")).toEqual(
-      "COVID-19 test providers"
-    );
-  });
 });

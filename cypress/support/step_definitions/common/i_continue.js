@@ -1,3 +1,3 @@
-When("I continue", (profession, country, city) => {
-  cy.findByRole("button").click();
+When("I continue", () => {
+  cy.findByRole("button", { name: "Continue" }).click();
 });

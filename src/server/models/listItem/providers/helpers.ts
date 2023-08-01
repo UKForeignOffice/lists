@@ -1,17 +1,14 @@
-import { Address, CountryName, ListItem, Point } from "server/models/types";
-import { ServiceType } from "shared/types";
+import type { Address, CountryName, ListItem, Point } from "server/models/types";
+import type { ServiceType } from "shared/types";
 import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
-import { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
-import { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import * as metaData from "server/services/metadata";
-import { countriesList, languages, legalPracticeAreasList } from "server/services/metadata";
-import { listsRoutes } from "server/components/lists";
-import { HttpException } from "server/middlewares/error-handlers";
+import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
+import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import { countriesList, languages } from "server/services/metadata";
 import { getObjectDiff } from "server/components/lists/controllers/ingest/helpers";
 
 /**
@@ -196,35 +193,15 @@ export function getChangedAddressFields(
   return getObjectDiff(updatableAddressObject, webhookAsAddress);
 }
 
-export function setLanguagesProvided(newLanguage: string, languagesProvided: string): string {
-  return languagesProvided === "" ? `${newLanguage}` : languagesProvided.concat(`,${newLanguage}`);
-}
-
-export function getLanguageNames(languagesProvided: string): string | undefined {
-  if (!languagesProvided) {
-    return undefined;
-  }
-  languagesProvided = languagesProvided
-    ?.split(",")
-    .filter((language: string) => {
-      // @ts-ignore
-      const languageName: string = languages[language];
-      return languageName;
-    })
-    .join(",");
-  return languagesProvided;
-}
-
-export function getLanguagesRows(languagesProvided: string, queryString: string): LanguageRows {
+export function getLanguagesRows(languagesProvided: string[]): LanguageRows {
   if (!languagesProvided) {
     const languageRows: LanguageRows = { rows: [] };
     return languageRows;
   }
-  const languagesJson: LanguageRow[] = languagesProvided?.split(",").map((language: string) => {
+
+  const rows: LanguageRow[] = languagesProvided.map((language: string) => {
     // @ts-ignore
     const languageName: string = languages[language];
-    logger.info(`language name: ${languageName}`);
-    const removeLanguageUrl = listsRoutes.removeLanguage.replace(":language", language);
 
     const languageRow: LanguageRow = {
       key: {
@@ -238,9 +215,10 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
       actions: {
         items: [
           {
-            href: `${removeLanguageUrl}?${queryString}`,
+            href: `?remove=${language}`,
             text: "Remove",
             visuallyHiddenText: language,
+            classes: "govuk-link--no-visited-state",
           },
         ],
       },
@@ -248,97 +226,22 @@ export function getLanguagesRows(languagesProvided: string, queryString: string)
     return languageRow;
   });
 
-  const languageRows: LanguageRows = {
-    rows: languagesJson,
-  } || { rows: [] };
-  return languageRows;
+  return { rows };
 }
 
-export function validateCountry(countryName: string): string | undefined {
-  const matchingCountryName = countriesList.find((country) => country.value === countryName)?.value;
+export function validateCountry(countryName: string | string[]): string | undefined {
+  const countryAsString = Array.isArray(countryName) ? countryName[0] : countryName;
+  const matchingCountryName = countriesList.find((country) => country.value === countryAsString)?.value;
   if (!matchingCountryName) logger.error(`validateCountry: Invalid country ${countryName} detected`);
   return matchingCountryName;
 }
 
-export function cleanLegalPracticeAreas(practiceAreas: string[] | undefined = []): string[] {
-  const lowercasedPracticeAreas = practiceAreas.map((area) => area.toLowerCase());
-  const lowercasedAllLegalPracticeAreas: string[] = legalPracticeAreasList.map((area) => area.toLowerCase());
+export function validateCountryLower(countryName: string | string[] = ""): string | undefined {
+  const countryAsString = Array.isArray(countryName) ? countryName[0] : countryName;
 
-  if (lowercasedPracticeAreas.find((area) => area === "all")) {
-    return lowercasedAllLegalPracticeAreas;
-  }
-
-  const validatedPracticeAreas = lowercasedPracticeAreas.filter((areaToValidate) => {
-    return lowercasedAllLegalPracticeAreas.find((area) => area === areaToValidate);
-  });
-
-  if (validatedPracticeAreas.length === 0) {
-    throw new HttpException(403, "403", "Legal practice area could not be identified");
-  }
-
-  return validatedPracticeAreas;
-}
-
-export function cleanTranslatorInterpreterServices(servicesProvided: string[] = []): string[] {
-  const matchingServicesProvided = servicesProvided
-    .filter((service) => {
-      return metaData.translationInterpretationServices.some((translationInterpretationService) => {
-        return translationInterpretationService.value.toLowerCase() === service.toLowerCase();
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingServicesProvided.length === 0) {
-    throw new HttpException(403, "403", "Services could not be identified");
-  }
-  return matchingServicesProvided;
-}
-
-export function cleanTranslatorSpecialties(translationSpecialties: string[] = []): string[] {
-  const matchingTranslatorSpecialities = translationSpecialties
-    .filter((selectedTranslationSpecialty) => {
-      return metaData.translationSpecialties.some((translationSpecialty) => {
-        return (
-          translationSpecialty.value.toLowerCase() === selectedTranslationSpecialty.toLowerCase() ||
-          selectedTranslationSpecialty.toLowerCase() === "all"
-        );
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingTranslatorSpecialities.length === 0) {
-    throw new HttpException(403, "403", "Translation services could not be identified");
-  }
-  return matchingTranslatorSpecialities;
-}
-
-export function cleanInterpreterServices(interpreterServices: string[] = []): string[] {
-  const matchingInterpreterServices = interpreterServices
-    .filter((selectedInterpreterSpecialty) => {
-      return metaData.interpretationServices.some((interpreterSpecialty) => {
-        return (
-          interpreterSpecialty.value.toLowerCase() === selectedInterpreterSpecialty.toLowerCase() ||
-          selectedInterpreterSpecialty.toLowerCase() === "all"
-        );
-      });
-    })
-    .map((service) => service.toLowerCase());
-
-  if (matchingInterpreterServices.length === 0) {
-    throw new HttpException(403, "403", "Interpreter services could not be identified");
-  }
-
-  return matchingInterpreterServices;
-}
-
-export function cleanLanguagesProvided(languagesProvided: string[] = []): string[] {
-  const matchingLanguages = languagesProvided
-    .filter((language) => languages[language.toLowerCase()])
-    .map((language) => language.toLowerCase());
-
-  if (matchingLanguages.length === 0) {
-    throw new HttpException(403, "403", "Languages could not be identified");
-  }
-
-  return matchingLanguages;
+  const matchingCountryName = countriesList.find(
+    (country) => country.value.toLowerCase() === countryAsString.toLowerCase()
+  )?.value;
+  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
+  return matchingCountryName;
 }

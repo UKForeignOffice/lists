@@ -1,0 +1,52 @@
+{% extends "./../../question-page.njk" %}
+
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Find a translator or interpreter {{ "in " + country if country else "abroad"}}
+  </h1>
+{% endblock %}
+
+{% block answers %}
+{% endblock %}
+
+{% block question %}
+
+  <p class="govuk-body">
+    The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking translators and interpreters abroad to
+    help British nationals find the support they need.
+  </p>
+  <p class="govuk-body">You can search for translators and interpreters by country or a more specific location.</p>
+  <p class="govuk-body">All translators and interpreters on the lists have confirmed they:</p>
+
+  <ul class="govuk-list govuk-list--bullet">
+    <li>can translate and/or interpret to and from English</li>
+    <li>are qualified in their country to practice translation or interpretation</li>
+  </ul>
+
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      You should always do your own research and carry out your own checks into a service provider before using them.
+    </strong>
+  </div>
+
+  {% if country %}
+    <a href="{{ findServiceType }}/{{ country }}/region" class="govuk-button">Start</a>
+  {% else %}
+    <a href="{{ findServiceType }}/country" class="govuk-button">Start</a>
+  {% endif %}
+
+<h2 class="govuk-heading-m">Disclaimer</h2>
+{% include 'includes/disclaimer.njk' %}
+<h2 class="govuk-heading-m">Feedback on this service</h2>
+  <p class="govuk-body">
+    We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service.
+    You can also make a <a class="govuk-link" href="/complain/provider-complaint/form">complaint</a> about a translator or interpreter listed in this service.
+  </p>
+<h2 class="govuk-heading-m">Apply to be added to this service</h2>
+<p class="govuk-body">
+  You can <a class="govuk-link" href="{{ serviceApplyUrl }}">apply to be added to this service</a> if you are based outside the UK and can provide translation or interpretation services to British nationals in English.
+</p>
+
+{% endblock %}

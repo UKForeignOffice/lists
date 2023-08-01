@@ -1,14 +1,13 @@
-import * as PrismaClient from "@prisma/client";
-import { countriesList } from "server/services/metadata";
-import {
-  CovidTestSupplierJsonData,
+import type * as PrismaClient from "@prisma/client";
+import type { countriesList } from "server/services/metadata";
+import type {
   FuneralDirectorJsonData,
   LawyerJsonData,
   ListItemJsonData,
   TranslatorInterpreterJsonData,
 } from "./listItem/providers/deserialisers/types";
-import { Event } from "./listItem/types";
-import * as SharedTypes from "shared/types";
+import type { Event } from "./listItem/types";
+import type * as SharedTypes from "shared/types";
 
 export type List = SharedTypes.List;
 export type ListItem = SharedTypes.ListItem;
@@ -97,23 +96,12 @@ export interface FuneralDirectorListItemGetObject extends BaseListItemGetObject 
   jsonData: AsJsonObject<FuneralDirectorJsonData>;
 }
 
-export interface CovidTestSupplierListItemCreateInput extends PrismaClient.Prisma.ListItemCreateInput {
-  type: StringLike<SharedTypes.ServiceType.covidTestProviders>;
-  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
-}
-
 export interface TranslatorInterpreterListItemGetObject extends BaseListItemGetObject {
   type: StringLike<SharedTypes.ServiceType.translatorsInterpreters>;
   jsonData: AsJsonObject<TranslatorInterpreterJsonData>;
 }
 
-export interface CovidTestSupplierListItemGetObject extends BaseListItemGetObject {
-  type: StringLike<SharedTypes.ServiceType.covidTestProviders>;
-  jsonData: AsJsonObject<CovidTestSupplierJsonData>;
-}
-
 export type ListItemGetObject =
-  | CovidTestSupplierListItemGetObject
   | LawyerListItemGetObject
   | FuneralDirectorListItemGetObject
   | TranslatorInterpreterListItemGetObject;

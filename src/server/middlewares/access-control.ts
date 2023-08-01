@@ -1,5 +1,4 @@
 import type { Express, RequestHandler } from "express";
-import { isTest } from "server/config";
 
 enum PathType {
   Application = "application",
@@ -35,12 +34,6 @@ export const accessControl: RequestHandler = (req, res, next) => {
 
 export const configureAccessControl = (server: Express): void => {
   server.use((req, res, next) => {
-    if (isTest) {
-      // Pass through in test mode so that shut down paths can still be tested
-      next();
-    } else {
-      // Otherwise run the handler
-      accessControl(req, res, next);
-    }
+    accessControl(req, res, next);
   });
 };

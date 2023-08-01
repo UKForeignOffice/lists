@@ -1,0 +1,51 @@
+{% extends "./../question-page.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Disclaimer
+{% endblock %}
+
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Disclaimer
+  </h1>
+{% endblock %}
+
+{% block question %}
+
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#disclaimer"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+{% include 'includes/disclaimer.njk' %}
+<form class="form" method="post">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
+    {% if error %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+    {% endif %}
+    <div class="govuk-checkboxes">
+      <div class="govuk-checkboxes__item">
+        <input class="govuk-checkboxes__input" id="read-disclaimer" name="readDisclaimer" type="checkbox">
+        <label class="govuk-label govuk-checkboxes__label" for="read-disclaimer">
+          I have read and accept this statement.
+        </label>
+      </div>
+    </div>
+  </div>
+  <button class="govuk-button" data-module="govuk-button">Continue</button>
+</form>
+
+{% endblock %}

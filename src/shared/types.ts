@@ -4,7 +4,6 @@ import type { ListItemJsonData } from "server/models/listItem/providers/deserial
 import type { EventJsonData } from "server/models/listItem/types";
 
 export enum ServiceType {
-  "covidTestProviders" = "covidTestProviders",
   "lawyers" = "lawyers",
   "funeralDirectors" = "funeralDirectors",
   "translatorsInterpreters" = "translatorsInterpreters",

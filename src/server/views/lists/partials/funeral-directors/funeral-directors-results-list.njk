@@ -11,8 +11,6 @@
 {% if searchResults.length === 0 %}
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-4">Funeral Directors in {{ country }}</h2>
-
   <p class="govuk-body">Read the FCDO guidance on
     <a class="govuk-link"
        href="https://www.gov.uk/government/publications/coping-with-death-abroad/death-abroad-initial-steps"
@@ -35,12 +33,16 @@
     </strong>
   </div>
 
-{% if (print !== "yes") %}
-  <p class="govuk-body">Links to funeral director websites will open in a new tab. You can give <a class="govuk-link" href="{{ listsRoutes.finder }}?serviceType={{ getParameterValue("serviceType", queryString) }}#feedback-heading">feedback</a> on individual funeral directors or this service.</p>
-{% endif %}
-{% if (print === "yes") %}
-{% include 'includes/disclaimer.njk' %}
-{% endif %}
+  <p class="govuk-body noprint">
+    Links to funeral director websites will open in a new tab. You can give
+    <a class="govuk-link" href="/find/funeral-directors#feedback-heading">feedback</a>
+    on individual funeral directors or this service.
+  </p>
+
+  {% if (print === "yes") %}
+    {% include 'includes/disclaimer.njk' %}
+  {% endif %}
+
   <p class="govuk-body">
     Results are ordered
     {% if region and region !== "Not set" %}

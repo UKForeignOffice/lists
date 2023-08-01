@@ -9,7 +9,6 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import type { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { HttpException } from "server/middlewares/error-handlers";
 import { logger } from "server/services/logger";
 import { pageTitles } from "server/components/dashboard/helpers";
@@ -48,7 +47,6 @@ export async function usersListController(req: Request, res: Response, next: Nex
       title: pageTitles[dashboardRoutes.usersList],
       users,
       req,
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -85,7 +83,6 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       user,
       req,
       error,
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);
@@ -168,7 +165,7 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       }
     }
 
-    const { covidTestProviders, ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
+    const { ...updatedServiceType } = ServiceType; // TODO: Remove covidTestProviders properly in the project
 
     const questionError = req.flash("questionError")[0] as unknown as string;
 
@@ -183,7 +180,6 @@ export async function listsEditController(req: Request, res: Response, next: Nex
       req,
       automatedRelatedLinks,
       error: questionError && JSON.parse(questionError),
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     logger.error(`listsEditController: list to edit with id ${listId} could not be found`, error);
@@ -298,7 +294,6 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
     userEmail,
     list,
     req,
-    csrfToken: getCSRFToken(req),
   });
 }
 
@@ -310,7 +305,6 @@ export async function feedbackController(req: Request, res: Response, next: Next
       ...DEFAULT_VIEW_PROPS,
       feedbacksList,
       req,
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     next(error);

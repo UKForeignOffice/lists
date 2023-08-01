@@ -2,7 +2,6 @@ import * as DateFns from "date-fns";
 import { isAfter, isSameDay } from "date-fns";
 import { startCase } from "lodash";
 import { findListById } from "server/models/list";
-import { getCSRFToken } from "server/components/cookies/helpers";
 import { logger } from "server/services/logger";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import * as Helpers from "server/components/dashboard/annualReview/helpers";
@@ -34,7 +33,6 @@ export async function editDateGetController(req: Request, res: Response, next: N
       formattedMaxDate,
       list,
       helpText,
-      csrfToken: getCSRFToken(req),
     });
   } catch (error) {
     logger.error(`editDateGetController Error: ${(error as Error).message}`);
@@ -70,7 +68,6 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response, next: Nex
     newAnnualReviewDate: annualReviewDate.value.toISOString(),
     list,
     serviceType: startCase(list.type).toLowerCase(),
-    csrfToken: getCSRFToken(req),
   });
 }
 

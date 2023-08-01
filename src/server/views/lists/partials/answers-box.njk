@@ -1,128 +1,59 @@
 {% import "./macros.njk" as macros %}
 <div class="answers-box">
   <p class="govuk-body">Your answers:</p>
-  {% if not country %}
+   {% if not answers | length %}
     <p class="govuk-body">Your answers will appear here</p>
-  {% endif %}
-  {% if serviceType %}
-    {# until other services are integrated we can hide this #}
-    {# <p class="govuk-body">
-      What are you looking for?<br />
-      <strong>{{ _.upperFirst(_.lowerCase(serviceType)) }}</strong>
-      <a class="govuk-link" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'serviceType') }}">Change</a>
-    </p> #}
-  {% endif %}
-  {% if region %}
+   {% endif %}
+
+  {% set region = answers.region if answers.region else "Not supplied" %}
+  {% if answers.region or answers.region === "" or isResultsPage %}
+  {% set returnParam = "?return=results" if isResultsPage else "" %}
     <p class="govuk-body">
-      Location<br />
-      <strong>{{ _.upperFirst(region) }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'region') }}" aria-label="Change country's area answer">Change</a>{% endif %}
+      <span id="location" class="answers-box__question">Location</span>
+      <strong aria-labelledby="location">{{ _.upperFirst(answers.region) if answers.region else "Not supplied" }}</strong>
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/region{{ returnParam }}" aria-label="Change country's area answer">
+        Change
+      </a>
     </p>
   {% endif %}
-  {% if country %}
+
+  {% if answers.country or isResultsPage %}
+    {% set countryAnswer = answers.country %}
     <p class="govuk-body">
-      Country<br />
-      <strong>{{ country }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'country') }}" aria-label="Change country answer">Change</a>{% endif %}
+      <span id="country" class="answers-box__question">Country</span>
+      <strong aria-labelledby="country">{{ countryAnswer }}</strong>
+      <a class="govuk-link noprint" href="/find/{{ serviceType }}/country{{ returnParam }}" aria-label="Change country answer">Change</a>
     </p>
   {% endif %}
-  {% if practiceArea %}
-    <p class="govuk-body">
-      Areas of law<br />
-      <strong>{{ _.split(practiceArea, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'practiceArea') }}" aria-label="Change area of law answer">Change</a>{% endif %}
-    </p>
+  {% if serviceType === 'lawyers' %}
+    {% include "./lawyers/answers-box.njk" %}
   {% endif %}
-  {% if resultsTurnaround %}
-    <p class="govuk-body">
-      Results speed<br />
-      <strong>
-        {% if resultsTurnaround == "other" %}
-          No preference
-        {% else %}
-          {{ resultsTurnaround }} hour{{ "s" if resultsTurnaround > 1 else "" }}
-        {% endif %}
-      </strong>
-      {% if print !== "yes" %}
-        <a
-          class="govuk-link noprint"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'resultsTurnaround') }}"
-          aria-label="Change results turnaround time answer"
-        >Change</a>
-      {% endif %}
-    </p>
+
+  {% if serviceType === 'funeral-directors' %}
+    {% include "./funeral-directors/answers-box.njk" %}
   {% endif %}
-  {% if repatriation %}
-    <p class="govuk-body">
-      Repatriation needed<br />
-      <strong>
-        {{ "Yes" if repatriation.includes("yes") else "No" }}
-      </strong>
-      {% if print !== "yes" %}
-        <a
-          class="govuk-link noprint"
-          href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'repatriation') }}"
-          aria-label="Change repatriation answer"
-        >Change</a>
-      {% endif %}
-    </p>
-  {% endif %}
-  {% if insurance %}
-    <p class="govuk-body">
-      Has insurance<br />
-      <strong>{{ "Yes" if insurance.includes("yes") else "No" }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'insurance') }}" aria-label="Change has insurance answer">Change</a>{% endif %}
-    </p>
-  {% endif %}
-  {% if serviceNamesProvided and serviceNamesProvided.length %}
-    <p class="govuk-body">
-      Services needed<br />
-      <strong>{{ _.split(serviceNamesProvided, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'servicesProvided') }}" aria-label="Change what services do you need answer">Change</a>{% endif %}
-    </p>
-  {% endif %}
-  {% if languageNamesProvided %}
-    <p class="govuk-body">
-      Languages needed<br />
-      <strong>{{ languageNamesProvided }}</strong>{% if print !== "yes" %}
-      {% set trimmedQueryString = removeQueryParameter(queryString, 'languageNamesProvided') %}
-      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesPopulated') %}
-      {% set trimmedQueryString = removeQueryParameter(trimmedQueryString, 'languagesConfirmed') %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ trimmedQueryString }}" aria-label="Change has insurance answer">Change</a>{% endif %}
-    </p>
-  {% endif %}
-  {% if translationSpecialties %}
-    <p class="govuk-body">
-      Translation types<br />
-      <strong>{{ _.split(translationSpecialties, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'translationSpecialties') }}" aria-label="Change what types of translating services do you need answer">Change</a>{% endif %}
-    </p>
-  {% endif %}
-  {% if interpreterServices %}
-    <p class="govuk-body">
-      Interpretation types<br />
-      <strong>{{ _.split(interpreterServices, ",").map(_.startCase).join(", ") }}</strong>{% if print !== "yes" %}
-      <a class="govuk-link noprint" href="{{ listsRoutes.finder }}?{{ removeQueryParameter(queryString, 'interpreterServices') }}" aria-label="Change what types of interpreting services do you need answer">Change</a>{% endif %}
-    </p>
-  {% endif %}
-  {% if print !== "yes" and country %}
+
+{% if serviceType === 'translators-interpreters' %}
+  {% include "./translators-interpreters/answers-box.njk" %}
+{% endif %}
+
+  <p class="govuk-body noprint">
+    <a
+      class="govuk-link"
+      href="/find/{{ serviceType }}?restart=yes"
+      aria-label="Start again"
+    >Start again</a>
+  </p>
+  {% if searchResults.length > 0 %}
     <p class="govuk-body noprint">
-        <a
-          class="govuk-link"
-          href="{{ macros.startAgainUrl(listsRoutes.finder, serviceType, getParameterValue("readNotice", queryString)) }}"
-          aria-label="Start again"
-        >Start again</a>
+      <a
+        class="govuk-link"
+        href="?print=yes"
+        aria-label="Print all results (opens in new tab)"
+        rel="noreferrer noopener"
+        target="_blank"
+      >Print all results (opens in new tab)</a>
     </p>
-    {% if searchResults.length > 0 %}
-      <p class="govuk-body noprint">
-        <a
-          class="govuk-link"
-          href="{{ listsRoutes.results }}?{{ queryString }}&print=yes"
-          aria-label="Print all results (opens in new tab)"
-          rel="noreferrer noopener"
-          target="_blank"
-        >Print all results  (opens in new tab)</a>
-      </p>
-    {% endif %}
   {% endif %}
 </div>
+

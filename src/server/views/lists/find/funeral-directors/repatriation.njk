@@ -1,0 +1,64 @@
+{% extends "./../../question-page.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Do you want to repatriate the person who died to the UK?
+{% endblock %}
+
+{% block question %}
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#repatriation"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    {% set value %}
+      {% if answers.repatriation === true %}
+        yes
+      {% endif %}
+      {% if answers.repatriation === false %}
+        no
+      {% endif %}
+    {% endset %}
+
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      {{ govukRadios({
+        name: "repatriation",
+        fieldset: {
+          legend: {
+            text: "Do you want to repatriate the person who died to the UK?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          text: "Repatriation is the process of returning a person to their own country."
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes, I want to bring the body or ashes back to the UK."
+          },
+          {
+            value: "no",
+            text: "No, I do not want to bring the body or ashes back to the UK."
+          }
+        ],
+        value: value
+      }) }}
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+{% endblock %}

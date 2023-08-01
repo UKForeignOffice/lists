@@ -1,0 +1,32 @@
+{% extends "./../../question-page.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - You have selected these languages
+{% endblock %}
+
+
+{% from "select/macro.njk" import govukSelect %}
+  {% block heading %}
+    <h1 class="govuk-heading-l">
+      You have selected these languages
+    </h1>
+  {% endblock %}
+{% block question %}
+
+  {% set error = messages.error %}
+    {% if languagesRows and languagesRows.rows.length > 0 %}
+      {{ govukSummaryList(languagesRows) }}
+      <div class="govuk-button-group">
+        <a class="govuk-button govuk-button" href="../types?{{ query }}">Continue</a>
+        <a class="govuk-button govuk-button--secondary" href="../languages?{{ query }}">Add another</a>
+      </div>
+
+    {% endif %}
+  </form>
+
+{% endblock %}
+
+
+{% from "summary-list/macro.njk" import govukSummaryList %}
+
+

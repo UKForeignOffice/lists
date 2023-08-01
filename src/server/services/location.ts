@@ -62,7 +62,7 @@ export async function geoLocatePlaceByText(region: string, country: string): Pro
   }
 
   const location = getAWSLocationService();
-  const countryCode = region.toLowerCase().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
+  const countryCode = region?.toLowerCase?.().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
 
   if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
 

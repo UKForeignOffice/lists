@@ -1,0 +1,12 @@
+{% if answers.practiceAreas or isResultsPage %}
+  <p class="govuk-body">
+    <span id="areas-of-law" class="answers-box__question">Areas of law</span>
+    <strong aria-labelledby="areas-of-law">
+      {{ _.split(answers.practiceAreas, ",").map(_.startCase).join(", ") }}
+    </strong>
+    <a class="govuk-link noprint" href="/find/{{ serviceType }}/{{ answers.country }}/practice-areas{{ returnParam }}"
+       aria-label="Change area of law answer">
+      Change
+    </a>
+  </p>
+{% endif %}

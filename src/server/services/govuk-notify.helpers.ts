@@ -1,14 +1,12 @@
 import type { ServiceType } from "shared/types";
 
 const listTypeToTypeSingular: Record<ServiceType, string> = {
-  covidTestProviders: "covid test provider",
   funeralDirectors: "funeral director",
   lawyers: "lawyer",
   translatorsInterpreters: "translator or interpreter",
 };
 
 const listTypeToType: Record<ServiceType, string> = {
-  covidTestProviders: "covid test providers",
   funeralDirectors: "funeral directors",
   lawyers: "lawyers",
   translatorsInterpreters: "translators and interpreters",

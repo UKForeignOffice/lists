@@ -1,15 +1,15 @@
-import { LawyerListItemGetObject } from "server/models/types";
+import type { LawyerListItemGetObject } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
+import Joi from "joi";
+import { legalPracticeAreasList } from "server/services/metadata";
 
 export async function findPublishedLawyersPerCountry(props: {
   countryName?: string;
   region?: string | "";
-  legalAid?: "yes" | "no" | "";
-  proBono?: "yes" | "no" | "";
   practiceArea?: string[];
   offset?: number;
 }): Promise<LawyerListItemGetObject[]> {
@@ -19,28 +19,17 @@ export async function findPublishedLawyersPerCountry(props: {
   const offset = props.offset ?? 0;
   const countryName = props.countryName;
   const andWhere: string[] = [];
-  const jsonQuery: {
-    legalAid?: boolean;
-    proBono?: boolean;
-  } = {};
+  const practiceAreasValidation = Joi.array()
+    .items(...legalPracticeAreasList)
+    .single();
 
-  if (props.legalAid === "yes") {
-    jsonQuery.legalAid = true;
-  }
-
-  if (props.proBono === "yes") {
-    jsonQuery.proBono = true;
-  }
-
-  if (Object.keys(jsonQuery).length > 0) {
-    andWhere.push(`AND "ListItem"."jsonData" @> '${JSON.stringify(jsonQuery)}'`);
-  }
-
-  if (props.practiceArea !== undefined && props.practiceArea.length > 0) {
+  const { value: validPracticeAreas = [] } = practiceAreasValidation.validate(props.practiceArea, {
+    stripUnknown: { arrays: true },
+    convert: true,
+  });
+  if (validPracticeAreas.length) {
     andWhere.push(
-      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && ARRAY ${JSON.stringify(
-        props.practiceArea
-      ).replace(/"/g, "'")}`
+      `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'areasOfLaw'))) && lower('{${validPracticeAreas}}')::text[]`
     );
   }
 

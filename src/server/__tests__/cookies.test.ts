@@ -6,7 +6,7 @@ import { SERVICE_NAME } from "server/config";
 import { capitalize } from "lodash";
 
 describe("Cookies", () => {
-  const pageLink = "/find?serviceType=lawyers";
+  const pageLink = "/find/lawyers";
   let server: Express;
 
   beforeAll(async () => {
@@ -15,22 +15,16 @@ describe("Cookies", () => {
 
   describe("Cookies routes", () => {
     test("get /help/cookies is responding correctly", async () => {
-      const { text, status } = await request(server)
-        .get("/help/cookies")
-        .type("text/html");
+      const { text, status } = await request(server).get("/help/cookies").type("text/html");
       expect(status).toEqual(200);
-      expect(
-        text.includes(`Cookies on ${capitalize(process.env.SERVICE_NAME)}`)
-      ).toBe(true);
+      expect(text.includes(`Cookies on ${capitalize(process.env.SERVICE_NAME)}`)).toBe(true);
     });
 
     test("post /help/cookies is responding correctly when referrer is cookie page", async () => {
-      const { text, status } = await request(server)
-        .post("/help/cookies")
-        .send({
-          cookies: "accept",
-          referrer: "/help/cookies",
-        });
+      const { text, status } = await request(server).post("/help/cookies").send({
+        cookies: "accept",
+        referrer: "/help/cookies",
+      });
 
       expect(status).toEqual(200);
       expect(text.includes(`Your cookie settings were saved`)).toBe(true);
@@ -56,9 +50,7 @@ describe("Cookies", () => {
       const acceptButton = cookieBanner.find("button").eq(0);
       const rejectButton = cookieBanner.find("button").eq(1);
 
-      expect(cookieBanner.text()).toInclude(
-        `Cookies on ${capitalize(SERVICE_NAME)}`
-      );
+      expect(cookieBanner.text()).toInclude(`Cookies on ${capitalize(SERVICE_NAME)}`);
       expect(acceptButton.text().trim()).toEqual("Accept analytics cookies");
       expect(rejectButton.text().trim()).toEqual("Reject analytics cookies");
     });
@@ -78,9 +70,7 @@ describe("Cookies", () => {
       expect(pageText).toInclude("Cookies");
       expect(pageText).toInclude("We use 2 types of cookie.");
       expect(pageText).toInclude("Use cookies that measure my website use");
-      expect(pageText).toInclude(
-        "Do not use cookies that measure my website use"
-      );
+      expect(pageText).toInclude("Do not use cookies that measure my website use");
       expect(radios.length).toBe(2);
     });
 
@@ -105,13 +95,10 @@ describe("Cookies", () => {
     });
 
     test("reject analytics works correctly", async () => {
-      const { text, headers } = await request(server)
-        .post(pageLink)
-        .type("form")
-        .send({
-          cookies: "reject",
-          referrer: "/help/cookies",
-        });
+      const { text, headers } = await request(server).post(pageLink).type("form").send({
+        cookies: "reject",
+        referrer: "/help/cookies",
+      });
 
       const $html = $.load(text);
       const radios = $html(":radio");

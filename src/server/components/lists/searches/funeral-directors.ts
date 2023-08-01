@@ -1,35 +1,16 @@
-import { Request, Response } from "express";
+import type { Request } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { DEFAULT_VIEW_PROPS } from "../constants";
-import {
-  getServiceLabel,
-  getAllRequestParams,
-  removeQueryParameter,
-  getParameterValue,
-  queryStringFromParams,
-  formatCountryParam,
-  getLinksOfRelatedLists,
-} from "../helpers";
-import { QuestionName } from "../types";
-import { getCSRFToken } from "server/components/cookies/helpers";
+import { getServiceLabel, getAllRequestParams, formatCountryParam, getLinksOfRelatedLists } from "../helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
-import { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
+import type { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
 import { validateCountry } from "server/models/listItem/providers/helpers";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 
-export const funeralDirectorsQuestionsSequence = [
-  QuestionName.readNotice,
-  QuestionName.insurance,
-  QuestionName.contactInsurance,
-  QuestionName.repatriation,
-  QuestionName.country,
-  QuestionName.region,
-  QuestionName.readDisclaimer,
-];
-
-export async function searchFuneralDirectors(req: Request, res: Response): Promise<void> {
+export async function searchFuneralDirectors(req: Request) {
   let params = getAllRequestParams(req);
-  const { serviceType, country, region, repatriation, print = "no" } = params;
+  const { country, region, repatriation, print = "no" } = params;
+  const serviceType = getDbServiceTypeFromParameter(params.serviceType!);
   let countryName: string | undefined = formatCountryParam(country as string);
   countryName = validateCountry(countryName);
 
@@ -44,7 +25,7 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
   const filterProps = {
     countryName,
     region,
-    repatriation: repatriation?.includes("yes") ?? false,
+    repatriation: repatriation?.toLowerCase?.() === "yes",
     offset: -1,
   };
 
@@ -71,23 +52,17 @@ export async function searchFuneralDirectors(req: Request, res: Response): Promi
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(countryName!, serviceType!)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+    ...(await getRelatedLinks(countryName!, serviceType)),
+    ...(await getLinksOfRelatedLists(country as CountryName, serviceType)),
   ];
 
-  res.render("lists/results-page", {
-    ...DEFAULT_VIEW_PROPS,
-    ...params,
+  return {
     searchResults: results,
-    removeQueryParameter,
-    getParameterValue,
-    queryString: queryStringFromParams(params),
     serviceLabel: getServiceLabel(serviceType),
     limit: ROWS_PER_PAGE,
     offset,
     pagination,
     print,
-    csrfToken: getCSRFToken(req),
     relatedLinks,
-  });
+  };
 }

@@ -1,0 +1,8 @@
+{% extends "./../../results-page.njk" %}
+
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Lawyers {{ "in " + _.startCase(country) if country else "abroad"}}
+  </h1>
+{% endblock %}
+

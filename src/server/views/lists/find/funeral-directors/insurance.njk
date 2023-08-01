@@ -1,0 +1,66 @@
+{% extends "./../../question-page.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "error-summary/macro.njk" import govukErrorSummary %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Did the person who died have insurance?
+{% endblock %}
+
+
+{% block question %}
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#insurance"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    {% set value %}
+      {% if answers.insurance === true %}
+        yes
+      {% endif %}
+      {% if ansewrs.insurance === false %}
+        no
+      {% endif %}
+    {% endset %}
+
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      {{ govukRadios({
+        name: "insurance",
+        fieldset: {
+          legend: {
+            text: "Did the person who died have insurance?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l govuk-radios--inline"
+          }
+        },
+        hint: {
+          text: "For example, travel or repatriation insurance. If you are not sure whether they had insurance, check with their bank, credit card company, or their employer if they were travelling for work."
+        },
+        errorMessage: error if error,
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ],
+        value: value
+      }) }}
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+{% endblock %}

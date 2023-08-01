@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { random, noop } from "lodash";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -6,8 +6,8 @@ import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { isLocalHost } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
-import { Action } from "server/components/dashboard/listsItems/item/update/types";
-import { RelatedLink } from "shared/types";
+import type { Action } from "server/components/dashboard/listsItems/item/update/types";
+import type { RelatedLink } from "shared/types";
 
 const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -15,6 +15,37 @@ const FOUR_HOURS = 4 * ONE_HOUR;
 const ONE_DAY = 24 * ONE_HOUR;
 const SECRET_NAME = "SESSION_SECRET";
 
+interface FuneralDirectorAnswers {
+  practiceAreas: string[];
+  repatriation: boolean;
+  insurance: boolean;
+}
+
+export interface TranslatorsInterpretersAnswers {
+  languages: string[];
+  languagesReadable: string[];
+  services: string[];
+  interpretationTypes: string[];
+  translationTypes: string[];
+}
+
+interface LawyersAnswers {
+  practiceAreas: string[];
+}
+
+interface BaseAnswers {
+  country?: string;
+  urlSafeCountry?: string;
+  serviceType?: "lawyers" | "translators-interpreters" | "funeral-directors";
+  region?: string;
+  notice?: boolean;
+  disclaimer?: boolean;
+}
+
+export type Answers = BaseAnswers &
+  Partial<FuneralDirectorAnswers> &
+  Partial<TranslatorsInterpretersAnswers> &
+  Partial<LawyersAnswers>;
 declare module "express-session" {
   export interface SessionData {
     returnTo?: string;
@@ -24,8 +55,9 @@ declare module "express-session" {
     };
     currentUrl?: string;
     updatesRequired?: boolean;
-
     relatedLink?: RelatedLink;
+
+    answers: Answers;
   }
 }
 

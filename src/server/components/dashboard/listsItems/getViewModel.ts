@@ -1,16 +1,15 @@
-import { ListItemGetObject } from "server/models/types";
+import type { ListItemGetObject } from "server/models/types";
 import { ServiceType } from "shared/types";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import * as Types from "./types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type * as Types from "./types";
 import { AddressDisplay, DeliveryOfServices, languages } from "server/services/metadata";
-import { ListItem } from "@prisma/client";
+import type { ListItem } from "@prisma/client";
 
 interface DetailsViewModel {
   organisation: Types.govukSummaryList;
   contact: Types.govukSummaryList;
   adminUseOnly: Types.govukSummaryList;
-
-  [key: string]: Types.govukSummaryList;
+  headerField: string;
 }
 
 /**
@@ -205,7 +204,6 @@ function getOrganisationRows(listItem: ListItemGetObject): Types.govukRow[] {
   const baseFields: KeyOfJsonData[] = ["organisationName", "contactName", "size", "regions"];
   const fields = {
     [ServiceType.lawyers]: [...baseFields, "areasOfLaw", "legalAid", "proBono", "representedBritishNationals"],
-    [ServiceType.covidTestProviders]: [...baseFields],
     [ServiceType.funeralDirectors]: [
       ...baseFields,
       "repatriation",
