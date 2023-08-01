@@ -242,6 +242,5 @@ export function validateCountryLower(countryName: string | string[] = ""): strin
   const matchingCountryName = countriesList.find(
     (country) => country.value.toLowerCase() === countryAsString.toLowerCase()
   )?.value;
-  if (!matchingCountryName) logger.error(`Invalid country ${countryName} detected`);
   return matchingCountryName;
 }
