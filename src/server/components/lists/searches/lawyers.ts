@@ -15,9 +15,11 @@ export async function searchLawyers(req: Request) {
   const { print = "no", page = 1 } = req.query ?? {};
   const pageNum = parseInt(page as string);
 
+  const region = decodeURIComponent(answers.region ?? "");
+
   const filterProps = {
     countryName: validateCountryLower(country),
-    region: decodeURIComponent(answers.region ?? ""),
+    ...(region && { region }),
     practiceArea: sanitisePracticeAreas(answers.practiceAreas ?? []),
     offset: -1,
   };

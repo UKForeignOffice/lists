@@ -46,9 +46,11 @@ export async function searchTranslatorsInterpreters(req: Request) {
 
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
+  const region = decodeURIComponent(answers.region ?? "");
+
   const filterProps = {
     countryName: validateCountryLower(country),
-    region: decodeURIComponent(answers.region ?? ""),
+    ...(region && { region }),
     servicesProvided: sanitiseServices(answers.services),
     languagesProvided: sanitiseLanguages(answers.languages),
     interpreterServices: sanitiseInterpretationTypes(answers.interpretationTypes ?? []),

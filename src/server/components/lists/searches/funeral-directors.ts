@@ -9,13 +9,15 @@ import { ServiceType } from "shared/types";
 
 export async function searchFuneralDirectors(req: Request) {
   const { answers = {} } = req.session;
-  const { country, serviceType, region, repatriation } = answers;
+  const { country, serviceType, repatriation } = answers;
   const { print = "no", page = 1 } = req.query ?? {};
   const pageNum = parseInt(page as string);
 
+  const region = decodeURIComponent(answers.region ?? "");
+
   const filterProps = {
     countryName: validateCountryLower(country),
-    region,
+    ...(region && { region }),
     ...(repatriation && { repatriation }),
     offset: -1,
   };
