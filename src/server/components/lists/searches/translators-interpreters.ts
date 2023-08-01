@@ -41,7 +41,7 @@ function hasSworn(results: TranslatorInterpreterListItemGetObject[]): SwornOutpu
 export async function searchTranslatorsInterpreters(req: Request) {
   const { answers = {} } = req.session;
   const { country, serviceType } = answers;
-  const { print = "no", page = 1 } = req.query;
+  const { print = "no", page = 1 } = req.query ?? {};
   const pageNum = parseInt(page as string);
 
   let allRows: TranslatorInterpreterListItemGetObject[] = [];

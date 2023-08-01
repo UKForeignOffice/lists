@@ -12,7 +12,7 @@ import { getDbServiceTypeFromParameter } from "server/components/lists/searches/
 export async function searchLawyers(req: Request) {
   const { answers = {} } = req.session;
   const { country } = answers;
-  const { print = "no", page = 1 } = req.query;
+  const { print = "no", page = 1 } = req.query ?? {};
   const pageNum = parseInt(page as string);
 
   const filterProps = {

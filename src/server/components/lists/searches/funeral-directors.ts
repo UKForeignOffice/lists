@@ -10,7 +10,7 @@ import { ServiceType } from "shared/types";
 export async function searchFuneralDirectors(req: Request) {
   const { answers = {} } = req.session;
   const { country, serviceType, region, repatriation } = answers;
-  const { print = "no", page = 1 } = req.query;
+  const { print = "no", page = 1 } = req.query ?? {};
   const pageNum = parseInt(page as string);
 
   const filterProps = {
