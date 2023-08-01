@@ -1,6 +1,6 @@
 import type { Request } from "express";
-import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { getServiceLabel, getLinksOfRelatedLists } from "../helpers";
+import { getPaginationValues, ROWS_PER_PAGE } from "server/models/listItem/pagination";
+import { getLinksOfRelatedLists, getServiceLabel } from "../helpers";
 import { TranslatorInterpreterListItem } from "server/models/listItem/providers";
 import * as metaData from "server/services/metadata";
 import type { CountryName, TranslatorInterpreterListItemGetObject } from "server/models/types";
@@ -11,7 +11,7 @@ import { sanitiseServices } from "server/components/lists/find/helpers/sanitiseS
 import { sanitiseLanguages } from "server/components/lists/find/helpers/sanitiseLanguages";
 import { sanitiseInterpretationTypes } from "server/components/lists/find/helpers/sanitiseInterpretationTypes";
 import { sanitiseTranslationTypes } from "server/components/lists/find/helpers/sanitiseTranslationTypes";
-import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
+import { ServiceType } from "shared/types";
 
 const serviceTypeToNoun: Record<string, string> = {
   translation: "translators",
@@ -47,7 +47,7 @@ export async function searchTranslatorsInterpreters(req: Request) {
   let allRows: TranslatorInterpreterListItemGetObject[] = [];
   let searchResults: TranslatorInterpreterListItemGetObject[] = [];
   const filterProps = {
-    countryName: validateCountryLower(country!),
+    countryName: validateCountryLower(country),
     region: decodeURIComponent(answers.region ?? ""),
     servicesProvided: sanitiseServices(answers.services),
     languagesProvided: sanitiseLanguages(answers.languages),
@@ -95,11 +95,10 @@ export async function searchTranslatorsInterpreters(req: Request) {
     });
   }
   const results = print === "yes" ? allRows : searchResults;
-  const type = getDbServiceTypeFromParameter(answers.serviceType!);
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country!, type)),
-    ...(await getLinksOfRelatedLists(country as CountryName, type)),
+    ...(await getRelatedLinks(country!, ServiceType.translatorsInterpreters)),
+    ...(await getLinksOfRelatedLists(country as CountryName, ServiceType.translatorsInterpreters)),
   ];
 
   return {

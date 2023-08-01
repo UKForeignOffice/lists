@@ -1,30 +1,31 @@
 import type { Request } from "express";
 import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { getAllRequestParams, getLinksOfRelatedLists } from "../helpers";
+import { getLinksOfRelatedLists } from "../helpers";
 import { LawyerListItem } from "server/models/listItem/providers";
 import type { CountryName, LawyerListItemGetObject } from "server/models/types";
 import { logger } from "server/services/logger";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
+import { sanitisePracticeAreas } from "server/components/lists/find/helpers/sanitisePracticeAreas";
+import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 
 export async function searchLawyers(req: Request) {
-  const params = getAllRequestParams(req);
-  const { serviceType, print = "no", country, region } = params;
-  let { page = "1" } = params;
-  page = page !== "" ? page : "1";
-  const pageNum = parseInt(page);
-  params.page = pageNum.toString();
+  const { answers = {} } = req.session;
+  const { country } = answers;
+  const { print = "no", page = 1 } = req.query;
+  const pageNum = parseInt(page as string);
+
+  const filterProps = {
+    countryName: validateCountryLower(country),
+    region: decodeURIComponent(answers.region ?? ""),
+    practiceArea: sanitisePracticeAreas(answers.practiceAreas ?? []),
+    offset: -1,
+  };
 
   let allRows: LawyerListItemGetObject[] = [];
 
-  const { practiceAreas } = req.session.answers!;
-
   try {
-    allRows = await LawyerListItem.findPublishedLawyersPerCountry({
-      countryName: country,
-      region,
-      practiceArea: practiceAreas,
-      offset: -1,
-    });
+    allRows = await LawyerListItem.findPublishedLawyersPerCountry(filterProps);
   } catch (error) {
     logger.error(`Exception caught in searchLawyers`, error);
   }
@@ -45,17 +46,16 @@ export async function searchLawyers(req: Request) {
      * TODO: investigate why this runs twice.
      */
     searchResults = await LawyerListItem.findPublishedLawyersPerCountry({
-      countryName: country,
-      region,
-      practiceArea: practiceAreas,
+      ...filterProps,
       offset,
     });
   }
   const results = print === "yes" ? allRows : searchResults;
+  const type = getDbServiceTypeFromParameter(answers.serviceType!);
 
   const relatedLinks = [
-    ...(await getRelatedLinks(country as CountryName, serviceType!)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType!)),
+    ...(await getRelatedLinks(country as CountryName, type)),
+    ...(await getLinksOfRelatedLists(country as CountryName, type)),
   ];
 
   return {
