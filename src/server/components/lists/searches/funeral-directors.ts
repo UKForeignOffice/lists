@@ -1,44 +1,34 @@
 import type { Request } from "express";
-import { ROWS_PER_PAGE, getPaginationValues } from "server/models/listItem/pagination";
-import { getServiceLabel, getAllRequestParams, formatCountryParam, getLinksOfRelatedLists } from "../helpers";
+import { getPaginationValues, ROWS_PER_PAGE } from "server/models/listItem/pagination";
+import { getLinksOfRelatedLists, getServiceLabel } from "../helpers";
 import { FuneralDirectorListItem } from "server/models/listItem/providers";
 import type { CountryName, FuneralDirectorListItemGetObject } from "server/models/types";
-import { validateCountry } from "server/models/listItem/providers/helpers";
+import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { getRelatedLinks } from "server/components/lists/searches/helpers/getRelatedLinks";
-import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
+import { ServiceType } from "shared/types";
 
 export async function searchFuneralDirectors(req: Request) {
-  let params = getAllRequestParams(req);
-  const { country, region, repatriation, print = "no" } = params;
-  const serviceType = getDbServiceTypeFromParameter(params.serviceType!);
-  let countryName: string | undefined = formatCountryParam(country as string);
-  countryName = validateCountry(countryName);
+  const { answers = {} } = req.session;
+  const { country, serviceType, repatriation } = answers;
+  const { print = "no", page = 1 } = req.query ?? {};
+  const pageNum = parseInt(page as string);
 
-  params = { ...params, country: countryName as CountryName };
-
-  let { page = "1" } = params;
-  page = page !== "" ? page : "1";
-
-  const pageNum = parseInt(page);
-  params.page = pageNum.toString();
+  const region = decodeURIComponent(answers.region ?? "");
 
   const filterProps = {
-    countryName,
-    region,
-    repatriation: repatriation?.toLowerCase?.() === "yes",
+    countryName: validateCountryLower(country),
+    ...(region && { region }),
+    ...(repatriation && { repatriation }),
     offset: -1,
   };
 
   let allRows: FuneralDirectorListItemGetObject[] = [];
-  if (countryName) {
-    allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
-  }
+  allRows = await FuneralDirectorListItem.findPublishedFuneralDirectorsPerCountry(filterProps);
   const count = allRows.length;
 
   const { pagination } = await getPaginationValues({
     count,
     page: pageNum,
-    listRequestParams: params,
   });
 
   const offset = ROWS_PER_PAGE * pagination.results.currentPage - ROWS_PER_PAGE;
@@ -52,8 +42,8 @@ export async function searchFuneralDirectors(req: Request) {
   const results = print === "yes" ? allRows : searchResults;
 
   const relatedLinks = [
-    ...(await getRelatedLinks(countryName!, serviceType)),
-    ...(await getLinksOfRelatedLists(country as CountryName, serviceType)),
+    ...(await getRelatedLinks(country!, ServiceType.funeralDirectors)),
+    ...(await getLinksOfRelatedLists(country as CountryName, ServiceType.funeralDirectors)),
   ];
 
   return {

@@ -69,7 +69,7 @@ export async function geoLocatePlaceByText(region: string, country: string): Pro
   const { Results } = await location
     .searchPlaceIndexForText({
       MaxResults: 1,
-      Text: region,
+      Text: `${region}`,
       IndexName: INDEX_PARAMS.IndexName,
       FilterCountries: [countryCode],
     })

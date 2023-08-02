@@ -1,13 +1,8 @@
 {% import "./macros.njk" as macros %}
 {% import "../macros.njk" as partialsMacros %}
 
-{% set regionIsSet %}
-  {% if region and region !== "Not set" %}
-    yes
-  {% else %}
-    no
-  {% endif %}
-{% endset %}
+{% set regionIsSet = answers.region and answers.region !== "Not set" %}
+
 {% if searchResults.length === 0 %}
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
@@ -54,7 +49,7 @@
 {% endif %}
   <p class="govuk-body">
     Results are listed
-    {% if region and region !== "Not set" %}
+    {% if regionIsSet %}
       by closest to the centre of <span class="govuk-!-font-weight-bold">{{ _.upperFirst(region) }}</span>.
     {% else %}
       alphabetically.
