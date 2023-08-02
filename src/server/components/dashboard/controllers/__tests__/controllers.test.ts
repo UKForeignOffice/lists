@@ -18,7 +18,6 @@ import { NextFunction } from "express";
 import { listItemGetController } from "server/components/dashboard/listsItems/controllers";
 import { Status } from "@prisma/client";
 import { requestValidation } from "../../listsItems/requestValidation";
-import { HttpException } from "../../../../middlewares/error-handlers";
 import { getAnnualReviewDate } from "server/components/dashboard/annualReview/helpers";
 import { listsController } from "../listsController";
 import { listItemsIndexController } from "../../listsItems/listItemsIndexController";
@@ -385,6 +384,7 @@ describe("Dashboard Controllers", () => {
     });
 
     it("should call editListItem with the correct params", async () => {
+      mockReq = { ...mockReq, flash: jest.fn(() => [1]) };
       await listItemGetController(mockReq, mockRes);
 
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/lists-item");
