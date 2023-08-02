@@ -18,7 +18,7 @@ export async function createEditDetailsURL({ listItem, message, userId, isAnnual
   try {
     const title = "Change provider details";
     const protocol = isLocalHost ? "http" : "https";
-    const redirectUrl = `${protocol}://${SERVICE_DOMAIN}/dashboard/lists/${listItem.listId}/items/${listItem.id}?providerUpdated=true`;
+    const redirectUrl = `${protocol}://${SERVICE_DOMAIN}/dashboard/lists/${listItem.listId}/items/${listItem.id}`;
     const formRunnerEditUserUrl = await initialiseFormRunnerSession({
       list,
       listItem,

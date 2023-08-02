@@ -43,6 +43,17 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   req.session.update = {};
 
+  if (req.session.currentlyEditing) {
+    delete req.session.currentlyEditing;
+    req.flash(
+      "providerUpdated",
+      JSON.stringify({
+        title: "Provider details updated",
+        text: "The provider’s details have been updated. The provider has been emailed to let them know.",
+      })
+    );
+  }
+
   // @ts-expect-error
   if (errorMsg?.length > 0) {
     error = {
@@ -116,10 +127,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons,
     requestedChanges,
     error,
-    providerUpdated: req.query.providerUpdated && {
-      title: "Provider details updated",
-      text: "The provider’s details have been updated. The provider has been emailed to let them know.",
-    },
+    providerUpdated: JSON.parse(req.flash("providerUpdated")[0] as unknown as string),
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
   });
@@ -174,6 +182,8 @@ export async function listItemPostController(req: Request, res: Response, next: 
       next(editDetailsUrl.error);
       return;
     }
+
+    req.session.currentlyEditing = res.locals.listItem.id;
     res.redirect(editDetailsUrl.result);
     return;
   }
