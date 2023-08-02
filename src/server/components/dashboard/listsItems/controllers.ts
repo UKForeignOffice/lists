@@ -127,7 +127,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons,
     requestedChanges,
     error,
-    providerUpdated: JSON.parse(req.flash("providerUpdated")[0] as unknown as string),
+    providerUpdated: JSON.parse((req.flash("providerUpdated")[0] as unknown as string) ?? "null"),
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
   });
