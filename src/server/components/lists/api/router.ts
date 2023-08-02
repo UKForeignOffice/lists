@@ -1,9 +1,9 @@
 import express from "express";
 import { listsApiPostController } from "./controllers";
-import hmac from "./helpers/hmac";
+import hmacSha512 from "./helpers/hmac";
 
 const apiRouter = express.Router();
 
-apiRouter.post("/api/lists", hmac, listsApiPostController);
+apiRouter.post("/api/lists", hmacSha512, listsApiPostController);
 
 export default apiRouter;
