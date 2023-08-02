@@ -14,7 +14,7 @@ ENV POSTGRES_PASSWORD=postgrespass
 
 COPY test_data.sql.zip.gpg /docker-entrypoint-initdb.d/
 COPY postgresql-local.conf postgresql-local.conf
-COPY scripts/ /scripts
+COPY scripts/ /docker-entrypoint-initdb.d
 
 RUN echo $PGP_SECRET | base64 --decode | gpg --import && \
     echo $PGP_PUB | base64 --decode | gpg --import && \
