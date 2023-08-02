@@ -8,7 +8,7 @@ Feature:
     When I select [Bankruptcy,Criminal]
     And I continue
     And I have read the disclaimer
-    Then I should see the heading "Results for Lawyers in Italy"
+    Then I should see the heading "Lawyers in Italy"
 
 
   Scenario: searching for a country with an empty lawyers list
