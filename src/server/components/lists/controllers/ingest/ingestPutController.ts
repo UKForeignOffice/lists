@@ -88,18 +88,17 @@ export async function ingestPutController(req: Request, res: Response) {
     };
 
     await prisma.listItem.update(listItemPrismaQuery);
-
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     } else {
       if (isPostEdit) {
-        await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
-      } else {
         await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
           contactName: jsonData.contactName,
           typeSingular: serviceType,
           message: "",
         });
+      } else {
+        await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
       }
     }
 

@@ -116,6 +116,10 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons,
     requestedChanges,
     error,
+    providerUpdated: req.query.providerUpdated && {
+      title: "Provider details updated",
+      text: "The provider’s details have been updated. The provider has been emailed to let them know.",
+    },
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
   });
@@ -136,6 +140,12 @@ export async function listItemPostController(req: Request, res: Response, next: 
 
   if (action === "requestChanges" && !message) {
     req.flash("errorMsg", "You must provide a message to request a change");
+    res.redirect(listItemUrl);
+    return;
+  }
+
+  if (action === "editDetails" && !req.body.editMessage) {
+    req.flash("errorMsg", "You must provide a message to edit provider details");
     res.redirect(listItemUrl);
     return;
   }
