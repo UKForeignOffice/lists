@@ -43,7 +43,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   req.session.update = {};
 
-  if (req.session.currentlyEditing) {
+  if (req.session.currentlyEditing === req.params.listItemId) {
     delete req.session.currentlyEditing;
     req.flash(
       "providerUpdated",
@@ -184,6 +184,7 @@ export async function listItemPostController(req: Request, res: Response, next: 
     }
 
     req.session.currentlyEditing = res.locals.listItem.id;
+    req.session.editDetailsMessage = req.body.editMessage;
     res.redirect(editDetailsUrl.result);
     return;
   }

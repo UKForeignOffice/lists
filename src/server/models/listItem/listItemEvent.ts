@@ -6,6 +6,18 @@ import { SendEmailResponse } from "notifications-node-client";
 
 type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
+interface AnnualReviewAdditionalInfo {
+  reference: string;
+}
+
+interface PostEditedAdditionalInfo {
+  isPostEdit: true;
+  userId: number;
+  note: string;
+}
+
+type AdditionalEditedInfo = AnnualReviewAdditionalInfo | PostEditedAdditionalInfo;
+
 /**
  * These are intended to be used during a nested write via Prisma.EventCreateWithoutListItemInput.
  * You do not need to pass "connect" or "date". Connections are done automatically when doing a nested write.
@@ -93,15 +105,21 @@ export const EVENTS = {
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: (updatedJsonData = {}, reference?: string): EventCreate<"EDITED"> => ({
-    type: ListItemEvent.EDITED,
-    jsonData: {
-      notes: ["user resubmitted with these updates"],
-      eventName: "edited",
-      updatedJsonData,
-      ...{ reference },
-    },
-  }),
+  [ListItemEvent.EDITED]: (updatedJsonData = {}, options?: AdditionalEditedInfo): EventCreate<"EDITED"> => {
+    const isPostEdit = options && "isPostEdit" in options;
+    const calculateNotes = isPostEdit ? options.note : "user resubmitted with these updates";
+    return {
+      type: ListItemEvent.EDITED,
+      jsonData: {
+        notes: [calculateNotes],
+        eventName: "edited",
+        updatedJsonData,
+        ...(isPostEdit
+          ? { isPostEdit: options.isPostEdit, userId: options.userId }
+          : { reference: options!.reference }),
+      },
+    };
+  },
 
   [ListItemEvent.CHECK_ANNUAL_REVIEW]: (
     updatedJsonData = {},

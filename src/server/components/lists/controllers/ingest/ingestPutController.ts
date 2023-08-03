@@ -95,7 +95,7 @@ export async function ingestPutController(req: Request, res: Response) {
         await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
           contactName: jsonData.contactName,
           typeSingular: serviceType,
-          message: "",
+          message: req.session.editDetailsMessage ?? "",
         });
       } else {
         await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
