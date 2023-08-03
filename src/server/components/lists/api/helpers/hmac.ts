@@ -6,7 +6,7 @@ export default function hmacSha512(req: Request, res: Response, next: NextFuncti
   const { result, error } = createSignatureDigest(req);
 
   if (error) {
-    res.status(500).send(error);
+    res.status(500);
     return;
   }
 

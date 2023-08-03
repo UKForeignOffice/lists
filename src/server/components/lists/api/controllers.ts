@@ -13,7 +13,7 @@ export async function listsApiPostController(req: Request, res: Response) {
 
   if (error) {
     logger.error(`listsApiPostController schema validation error: ${error.details[0].message}`);
-    res.status(400).send(error);
+    res.status(400);
     return;
   }
 
