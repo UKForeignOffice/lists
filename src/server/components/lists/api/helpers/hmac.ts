@@ -3,22 +3,30 @@ import crypto from "crypto";
 import * as config from "server/config";
 
 export default function hmacSha512(req: Request, res: Response, next: NextFunction) {
-  const secretKey = config.HMAC_SECRET;
+  const { result, error } = createSignatureDigest(req);
 
-  if (!secretKey) {
-    res.status(500).send("hmacSha512: secret key not provided");
+  if (error) {
+    res.status(500).send(error);
     return;
   }
-  const signature = crypto.createHmac("sha512", secretKey);
 
-  signature.update(JSON.stringify(req.body));
-
-  const digest = signature.digest("hex");
-
-  if (digest !== req.headers.signature) {
+  if (result !== req.headers.signature) {
     res.status(401).send("Unauthorized");
     return;
   }
 
   next();
+}
+
+export function createSignatureDigest(req: Request) {
+  const secretKey = config.HMAC_SECRET;
+
+  if (!secretKey) {
+    return { error: "Secret key not provided" };
+  }
+
+  const signature = crypto.createHmac("sha512", secretKey);
+  signature.update(JSON.stringify(req.body));
+
+  return { result: signature.digest("hex") };
 }
