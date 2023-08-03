@@ -419,6 +419,10 @@
       "next": [
         {
           "path": "/what-size-is-your-company-or-firm"
+        },
+        {
+          "path": "/you-cannot-be-added-to-the-service",
+          "condition": "checkListExists"
         }
       ]
     },
@@ -1636,6 +1640,17 @@
   ],
   "version": 2,
   "conditions": [
+    {
+      "name": "checkListExists",
+      "displayName": "checkListExists",
+      "value": {
+        "url": "/api/lists",
+        "values": {
+          "type": "funeralDirectors",
+          "country": "$country"
+        }
+      }
+    },
     {
       "name": "oV9fvQl39FkGahoM46257",
       "displayName": "speakEnglishYes",
