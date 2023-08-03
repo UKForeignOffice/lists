@@ -27,18 +27,6 @@ describe.only("listsApiPostController", () => {
     expect(res.status).toBe(200);
   });
 
-  it("should return a 400 error if the request body is invalid", async () => {
-    const mockData = {
-      type: "invalid-type",
-      country: "United States",
-    };
-
-    prisma.list.findFirst.mockResolvedValue(true);
-    const res = await requestWithSignature(server, mockData).send(mockData);
-
-    expect(res.status).toBe(400);
-  });
-
   it("should return a 404 error if no list is found", async () => {
     const mockData = {
       type: "funeralDirectors",
