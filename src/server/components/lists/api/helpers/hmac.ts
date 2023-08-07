@@ -3,14 +3,9 @@ import crypto from "crypto";
 import * as config from "server/config";
 
 export default function hmacSha512(req: Request, res: Response, next: NextFunction) {
-  const { result, error } = createSignatureDigest(req);
+  const digest = createSignatureDigest(req.body);
 
-  if (error) {
-    res.status(500);
-    return;
-  }
-
-  if (result !== req.headers.signature) {
+  if (digest !== req.headers.signature) {
     res.status(401).send("Unauthorized");
     return;
   }
@@ -18,15 +13,11 @@ export default function hmacSha512(req: Request, res: Response, next: NextFuncti
   next();
 }
 
-export function createSignatureDigest(req: Request) {
-  const secretKey = config.HMAC_SECRET;
-
-  if (!secretKey) {
-    return { error: "Secret key not provided" };
-  }
+export function createSignatureDigest(data: Record<string, string>) {
+  const secretKey = config.HMAC_SECRET!;
 
   const signature = crypto.createHmac("sha512", secretKey);
-  signature.update(JSON.stringify(req.body));
+  signature.update(JSON.stringify(data));
 
-  return { result: signature.digest("hex") };
+  return signature.digest("hex");
 }

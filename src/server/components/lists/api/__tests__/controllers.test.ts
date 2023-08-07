@@ -6,7 +6,7 @@ import { prisma } from "server/models/db/prisma-client";
 
 jest.mock("server/models/db/prisma-client");
 
-describe.only("listsApiPostController", () => {
+describe("listsApiPostController", () => {
   let server: Express;
   const THIRTY_SECONDS = 30000;
   const timeout = THIRTY_SECONDS;
@@ -15,7 +15,7 @@ describe.only("listsApiPostController", () => {
     server = await getServer();
   }, timeout);
 
-  it("should validate the request body", async () => {
+  it("should check /api/lists/ endpoint is working correctly", async () => {
     const mockData = {
       type: "funeralDirectors",
       country: "United States",
@@ -27,7 +27,7 @@ describe.only("listsApiPostController", () => {
     expect(res.status).toBe(200);
   });
 
-  it("should return a 404 error if no list is found", async () => {
+  it("should return a 400 error if no list is found", async () => {
     const mockData = {
       type: "funeralDirectors",
       country: "Barbados",
@@ -36,7 +36,7 @@ describe.only("listsApiPostController", () => {
     prisma.list.findFirst.mockResolvedValue(false);
     const res = await requestWithSignature(server, mockData).send(mockData);
 
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(400);
   });
 
   it("should return a 500 error if an error occurs", async () => {
@@ -61,10 +61,20 @@ describe.only("listsApiPostController", () => {
 
     expect(res.status).toBe(401);
   });
+
+  it("should return a 400 error if the request body is invalid", async () => {
+    const mockData = {
+      type: "invalid-type",
+      country: "United States",
+    };
+
+    prisma.list.findFirst.mockResolvedValue(true);
+    const res = await requestWithSignature(server, mockData).send(mockData);
+
+    expect(res.status).toBe(400);
+  });
 });
 
 function requestWithSignature(server: Express, mockData: Record<string, string>) {
-  return request(server)
-    .post("/api/lists")
-    .set("signature", createSignatureDigest({ body: mockData }).result);
+  return request(server).post("/api/lists").set("signature", createSignatureDigest(mockData));
 }

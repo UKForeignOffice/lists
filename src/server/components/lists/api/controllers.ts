@@ -4,31 +4,26 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
 export async function listsApiPostController(req: Request, res: Response) {
-  const receivedData = {
-    type: req.body.type as "funeralDirectors" | "translatorsInterpreters" | "lawyers",
-    country: req.body.country as string,
-  };
-
-  const { error } = receivedDataSchema.validate(receivedData);
+  const { value, error } = receivedDataSchema.validate(req.body, { stripUnknown: true });
 
   if (error) {
     logger.error(`listsApiPostController schema validation error: ${error.details[0].message}`);
-    res.status(400);
+    res.status(400).send("Bad Request");
     return;
   }
 
   try {
-    const result = await prisma.list.findFirst({
+    const listItem = await prisma.list.findFirst({
       where: {
-        type: receivedData.type,
+        type: value.type,
         country: {
-          name: receivedData.country,
+          name: value.country,
         },
       },
     });
 
-    if (!result) {
-      res.sendStatus(404);
+    if (!listItem) {
+      res.status(400).send("No list found");
       return;
     }
 
