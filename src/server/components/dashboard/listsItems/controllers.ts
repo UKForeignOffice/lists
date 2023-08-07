@@ -184,7 +184,6 @@ export async function listItemPostController(req: Request, res: Response, next: 
     }
 
     req.session.currentlyEditing = res.locals.listItem.id;
-    req.session.editDetailsMessage = req.body.editMessage;
     res.redirect(editDetailsUrl.result);
     return;
   }

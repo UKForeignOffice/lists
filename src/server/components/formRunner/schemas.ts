@@ -27,5 +27,7 @@ export const formRunnerPostRequestSchema = Joi.object({
     paymentSkipped: Joi.boolean().optional(),
     isAnnualReview: Joi.boolean().optional(),
     isPostEdit: Joi.boolean().optional(),
+    userId: Joi.number().optional(),
+    message: Joi.string().optional(),
   }),
 });

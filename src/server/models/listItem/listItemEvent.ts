@@ -4,14 +4,14 @@ import { Event, EventCreateInput, EventJsonData } from "./types";
 import { logger } from "server/services/logger";
 import { SendEmailResponse } from "notifications-node-client";
 
-type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
+export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
 interface AnnualReviewAdditionalInfo {
   reference: string;
 }
 
 interface PostEditedAdditionalInfo {
-  isPostEdit: true;
+  isPostEdit: boolean;
   userId: number;
   note: string;
 }
@@ -106,17 +106,24 @@ export const EVENTS = {
    * After the provider makes the change
    */
   [ListItemEvent.EDITED]: (updatedJsonData = {}, options?: AdditionalEditedInfo): EventCreate<"EDITED"> => {
-    const isPostEdit = options && "isPostEdit" in options;
-    const calculateNotes = isPostEdit ? options.note : "user resubmitted with these updates";
+    let extraData = {};
+    let calculateNotes = "";
+
+    if (options) {
+      const isPostEdit = "isPostEdit" in options;
+      calculateNotes = isPostEdit ? options.note : "user resubmitted with these updates";
+      extraData = isPostEdit
+        ? { isPostEdit: options.isPostEdit, userId: options.userId }
+        : { reference: options.reference };
+    }
+
     return {
       type: ListItemEvent.EDITED,
       jsonData: {
         notes: [calculateNotes],
         eventName: "edited",
         updatedJsonData,
-        ...(isPostEdit
-          ? { isPostEdit: options.isPostEdit, userId: options.userId }
-          : { reference: options!.reference }),
+        ...extraData,
       },
     };
   },

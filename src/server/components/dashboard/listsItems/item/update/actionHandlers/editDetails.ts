@@ -27,6 +27,7 @@ export async function createEditDetailsURL({ listItem, message, userId, isAnnual
       title,
       redirectUrl,
       isPostEdit: true,
+      userId,
     });
     return { result: formRunnerEditUserUrl };
   } catch (error) {

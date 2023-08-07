@@ -2,9 +2,7 @@ import type { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import type { Prisma } from "@prisma/client";
 import { Status } from "@prisma/client";
-import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
@@ -13,6 +11,9 @@ import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";
 import type { ListJsonData } from "server/models/types";
+import type { EventCreate } from "server/models/listItem/listItemEvent";
+import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import type { Prisma } from "@prisma/client";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -70,11 +71,21 @@ export async function ingestPutController(req: Request, res: Response) {
       updatedJsonData: diff,
     };
     const jsonDataOnly = { ...jsonData, ...diff };
-    const listJsonData = listItem.list.jsonData as ListJsonData;
-    const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
 
     const { isAnnualReview = false, isPostEdit = false } = value.metadata;
-    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
+    let event: EventCreate<"EDITED"> | EventCreate<"CHECK_ANNUAL_REVIEW"> = EVENTS.EDITED(diff);
+    if (isAnnualReview) {
+      const listJsonData = listItem.list.jsonData as ListJsonData;
+      const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
+      event = EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference);
+    }
+    if (isPostEdit) {
+      event = EVENTS.EDITED(diff, {
+        isPostEdit: true,
+        note: value.metadata.message,
+        userId: value.metadata.userId,
+      });
+    }
     const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
@@ -95,7 +106,7 @@ export async function ingestPutController(req: Request, res: Response) {
         await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
           contactName: jsonData.contactName,
           typeSingular: serviceType,
-          message: req.session.editDetailsMessage ?? "",
+          message: value.metadata.message,
         });
       } else {
         await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");

@@ -29,6 +29,7 @@ interface NewSessionWebhookDataInput {
   listItemRef: string;
   title?: string;
   redirectUrl?: string;
+  userId?: number;
 }
 export function getNewSessionWebhookData({
   listType,
@@ -40,6 +41,7 @@ export function getNewSessionWebhookData({
   listItemRef,
   title,
   redirectUrl,
+  userId,
 }: NewSessionWebhookDataInput): FormRunner.NewSessionData {
   const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
@@ -67,6 +69,8 @@ export function getNewSessionWebhookData({
     metadata: {
       isAnnualReview,
       isPostEdit,
+      userId,
+      message,
     },
   };
   return newSessionData;
@@ -132,6 +136,7 @@ interface initialiseFormRunnerInput {
   isPostEdit?: boolean;
   title?: string;
   redirectUrl?: string;
+  userId?: number;
 }
 
 export async function initialiseFormRunnerSession({
@@ -142,6 +147,7 @@ export async function initialiseFormRunnerSession({
   isPostEdit,
   title,
   redirectUrl,
+  userId,
 }: initialiseFormRunnerInput): Promise<string> {
   logger.info(
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
@@ -173,6 +179,7 @@ export async function initialiseFormRunnerSession({
     listItemRef: listItem.reference,
     title,
     redirectUrl,
+    userId,
   });
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
