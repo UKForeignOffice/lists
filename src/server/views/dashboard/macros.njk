@@ -97,13 +97,10 @@
   <div id="message-hint" class="govuk-hint">
     Enter a change note
   </div>
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      The service provider will be emailed a copy of this note
-    </strong>
-  </div>
+  {{ govukWarningText({
+    text: "The service provider will be emailed a copy of this note",
+    iconFallbackText: "Warning"
+  }) }}
 {% endset %}
 
 {% set editDetailsHtml %}

@@ -43,14 +43,12 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   req.session.update = {};
 
-  if (req.session.currentlyEditing === req.params.listItemId) {
+  if (req.session.currentlyEditing === Number(req.params.listItemId)) {
     delete req.session.currentlyEditing;
+    req.flash("providerUpdatedTitle", "Provider details updated");
     req.flash(
-      "providerUpdated",
-      JSON.stringify({
-        title: "Provider details updated",
-        text: "The provider’s details have been updated. The provider has been emailed to let them know.",
-      })
+      "providerUpdatedMessage",
+      "The provider’s details have been updated. The provider has been emailed to let them know."
     );
   }
 
@@ -127,7 +125,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     actionButtons,
     requestedChanges,
     error,
-    providerUpdated: JSON.parse((req.flash("providerUpdated")[0] as unknown as string) ?? "null"),
     title: serviceTypeDetailsHeading[listItem.type] ?? "Provider",
     details: getDetailsViewModel(listItem),
   });

@@ -26,8 +26,8 @@
       {{ dashboardMacros.errorBanner(error) }}
     {% endif %}
 
-    {% if providerUpdated %}
-      {{ dashboardMacros.successBanner(providerUpdated.title, providerUpdated.text, "success") }}
+    {% if messages.providerUpdatedTitle %}
+      {{ dashboardMacros.successBanner(messages.providerUpdatedTitle, messages.providerUpdatedMessage, "success") }}
     {% endif %}
 
     <div class="flex-space-between">

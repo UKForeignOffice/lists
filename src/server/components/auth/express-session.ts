@@ -55,7 +55,7 @@ declare module "express-session" {
     };
     currentUrl?: string;
     updatesRequired?: boolean;
-    currentlyEditing?: string;
+    currentlyEditing?: number;
     relatedLink?: RelatedLink;
 
     answers: Answers;
