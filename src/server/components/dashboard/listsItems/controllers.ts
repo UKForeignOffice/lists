@@ -15,7 +15,6 @@ import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
-import { createEditDetailsURL } from "./item/update/actionHandlers/editDetails";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -133,8 +132,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
   const { action } = req.body;
   const message = req.body.message || req.body.reason;
-  const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
-
   const { listItemUrl } = res.locals;
 
   if (!action) {
@@ -160,28 +157,10 @@ export async function listItemPostController(req: Request, res: Response, next: 
     message,
   };
 
-  const allowedSkipConfirmationActions = ["pin", "unpin"];
+  const allowedSkipConfirmationActions = ["pin", "unpin", "editDetails"];
 
-  if (skipConfirmation && allowedSkipConfirmationActions.includes(action)) {
+  if (allowedSkipConfirmationActions.includes(action)) {
     actionHandlers[action as Action](req, res, next);
-    return;
-  }
-
-  if (action === "editDetails") {
-    const editDetailsUrl = await createEditDetailsURL({
-      listItem: res.locals.listItem,
-      message: req.body.editMessage,
-      userId: req.user?.id as number,
-      isAnnualReview: res.locals.listItem.isAnnualReview,
-    });
-
-    if ("error" in editDetailsUrl) {
-      next(editDetailsUrl.error);
-      return;
-    }
-
-    req.session.currentlyEditing = res.locals.listItem.id;
-    res.redirect(editDetailsUrl.result);
     return;
   }
 
