@@ -9,7 +9,7 @@ import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
 import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
-import { startCase } from "lodash";
+import { lowerCase, startCase } from "lodash";
 
 function convertPluralToSingular(typePlural: string): string {
   return typePlural
@@ -296,7 +296,7 @@ export async function sendProviderInformedOfEditEmail(
     {
       personalisation: {
         ...otherValues,
-        typeSingular: convertPluralToSingular(startCase(typePlural)),
+        typeSingular: convertPluralToSingular(lowerCase(startCase(typePlural))),
       },
       reference: "",
     },
