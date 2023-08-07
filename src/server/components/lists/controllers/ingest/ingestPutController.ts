@@ -105,7 +105,7 @@ export async function ingestPutController(req: Request, res: Response) {
       if (isPostEdit) {
         await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
           contactName: jsonData.contactName,
-          typeSingular: serviceType,
+          typePlural: serviceType,
           message: value.metadata.message,
         });
       } else {
