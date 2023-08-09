@@ -213,6 +213,13 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
     return;
   }
 
+  let timeQuery;
+  if (currentlyEditingStartTime) {
+    timeQuery = {
+      gte: new Date(currentlyEditingStartTime),
+    };
+  }
+
   const editWasSuccessful = await prisma.event.findFirst({
     where: {
       listItemId: listItem.id,
@@ -221,9 +228,7 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
         path: ["userId"],
         equals: req.user!.id,
       },
-      time: {
-        gte: `${currentlyEditingStartTime}`,
-      },
+      ...(timeQuery && { time: timeQuery }),
     },
   });
 
