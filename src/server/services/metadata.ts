@@ -121,7 +121,7 @@ export const countriesList = [
   { text: "French Guiana", value: "French Guiana", code: "GUF" },
   { text: "French Polynesia", value: "French Polynesia", code: "PYF" },
   { text: "Gabon", value: "Gabon", code: "GAB" },
-  { text: "Gambia", value: "Gambia", code: "GMB" },
+  { text: "The Gambia", value: "The Gambia", code: "GMB" },
   { text: "Georgia", value: "Georgia", code: "GEO" },
   { text: "Germany", value: "Germany", code: "DEU" },
   { text: "Ghana", value: "Ghana", code: "GHA" },
@@ -495,6 +495,8 @@ export const fcdoFuneralDirectorsByCountry = {
   Estonia: "https://www.gov.uk/government/publications/estonia-list-of-funeral-directors",
   Finland: "https://www.gov.uk/government/publications/funeral-directors-in-finland",
   Gabon: "https://www.gov.uk/government/publications/gabon-list-of-funeral-directors",
+  Gambia:
+    "https://www.gov.uk/government/publications/the-gambia-funeral-directors/the-gambia-list-of-funeral-directors",
   Georgia: "https://www.gov.uk/government/publications/georgia-list-of-funeral-directors",
   Germany: "https://www.gov.uk/government/publications/germany-list-of-funeral-directors",
   Ghana: "https://www.gov.uk/government/publications/ghana-list-of-funeral-directors",
