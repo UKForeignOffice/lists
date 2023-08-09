@@ -15,6 +15,8 @@ import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
+import { prisma } from "server/models/db/prisma-client";
+import { startOfToday } from "date-fns";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -39,17 +41,9 @@ function mapUpdatedAuditJsonDataToListItem(
 export async function listItemGetController(req: Request, res: ListItemRes): Promise<void> {
   let error;
   const errorMsg = req.flash("errorMsg");
+  const listItem = res.locals.listItem;
 
   req.session.update = {};
-
-  if (req.session.currentlyEditing === Number(req.params.listItemId)) {
-    delete req.session.currentlyEditing;
-    req.flash("providerUpdatedTitle", "Provider details updated");
-    req.flash(
-      "providerUpdatedMessage",
-      "The provider’s details have been updated. The provider has been emailed to let them know."
-    );
-  }
 
   // @ts-expect-error
   if (errorMsg?.length > 0) {
@@ -58,7 +52,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
   let requestedChanges;
 
@@ -209,4 +202,40 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);
 
   res.redirect(res.locals.listsEditUrl);
+}
+
+export async function checkSuccessfulEdit(req: Request, res: Response, next: NextFunction) {
+  const { currentlyEditing, currentlyEditingStartTime } = req.session;
+  const listItem = res.locals.listItem;
+
+  if (!currentlyEditing || currentlyEditing !== listItem.id) {
+    next();
+    return;
+  }
+
+  const editWasSuccessful = await prisma.event.findFirst({
+    where: {
+      listItemId: listItem.id,
+      type: "EDITED",
+      jsonData: {
+        path: ["userId"],
+        equals: req.user!.id,
+      },
+      time: {
+        gte: `${currentlyEditingStartTime}`,
+      },
+    },
+  });
+
+  if (editWasSuccessful) {
+    delete req.session.currentlyEditing;
+    delete req.session.currentlyEditingStartTime;
+    req.flash("providerUpdatedTitle", "Provider details updated");
+    req.flash(
+      "providerUpdatedMessage",
+      "The provider’s details have been updated. The provider has been emailed to let them know."
+    );
+  }
+
+  next();
 }

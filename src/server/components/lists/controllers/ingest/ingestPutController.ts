@@ -73,24 +73,35 @@ export async function ingestPutController(req: Request, res: Response) {
     const jsonDataOnly = { ...jsonData, ...diff };
 
     const { isAnnualReview = false, isPostEdit = false } = value.metadata;
-    let event: EventCreate<"EDITED"> | EventCreate<"CHECK_ANNUAL_REVIEW"> = EVENTS.EDITED(diff);
+    let event: AllowedEvents | AllowedEvents[] = EVENTS.EDITED(diff);
+    let status: Status = Status.EDITED;
+
     if (isAnnualReview) {
       const listJsonData = listItem.list.jsonData as ListJsonData;
       const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
       event = EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference);
+      status = Status.CHECK_ANNUAL_REVIEW;
     }
+
     if (isPostEdit) {
       event = EVENTS.EDITED(diff, {
         isPostEdit: true,
         note: value.metadata.message,
         userId: value.metadata.userId,
       });
+      if (listItem.isPublished) {
+        event = [event, EVENTS.PUBLISHED(req.user!.id)];
+        status = Status.PUBLISHED;
+      } else {
+        // keep original status
+        status = listItem.status;
+      }
     }
-    const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
+
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
-        ...(!isPostEdit && { status }),
+        status,
         history: {
           create: event,
         },
@@ -122,3 +133,5 @@ export async function ingestPutController(req: Request, res: Response) {
     return res.status(422).send({ message: "List item failed to update" });
   }
 }
+
+type AllowedEvents = EventCreate<"EDITED"> | EventCreate<"CHECK_ANNUAL_REVIEW"> | EventCreate<"PUBLISHED">;

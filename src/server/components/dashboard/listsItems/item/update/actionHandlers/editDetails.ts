@@ -27,6 +27,7 @@ export async function editDetails(req: Request, res: Response, next: NextFunctio
   }
 
   req.session.currentlyEditing = res.locals.listItem.id;
+  req.session.currentlyEditingStartTime = Date.now();
   res.redirect(editDetailsUrl.result);
 }
 
