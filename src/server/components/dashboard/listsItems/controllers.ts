@@ -207,19 +207,16 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 export async function checkSuccessfulEdit(req: Request, res: Response, next: NextFunction) {
   const { currentlyEditing, currentlyEditingStartTime } = req.session;
   const listItem = res.locals.listItem;
-
   if (!currentlyEditing || currentlyEditing !== listItem.id) {
     next();
     return;
   }
-
   let timeQuery;
   if (currentlyEditingStartTime) {
     timeQuery = {
       gte: new Date(currentlyEditingStartTime),
     };
   }
-
   const editWasSuccessful = await prisma.event.findFirst({
     where: {
       listItemId: listItem.id,
@@ -233,6 +230,12 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
   });
 
   if (editWasSuccessful) {
+    logger.info(
+      `checkSuccessfulEdit: ${req.user!.id} - edit was successful for ${currentlyEditing}. Event id ${
+        editWasSuccessful.id
+      }`
+    );
+
     delete req.session.currentlyEditing;
     delete req.session.currentlyEditingStartTime;
     req.flash("providerUpdatedTitle", "Provider details updated");
@@ -240,6 +243,10 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
       "providerUpdatedMessage",
       "The provider’s details have been updated. The provider has been emailed to let them know."
     );
+  }
+
+  if (!editWasSuccessful) {
+    logger.warn(`checkSuccessfulEdit: ${req.user!.id} - edit was not successful for ${currentlyEditing}`);
   }
 
   next();
