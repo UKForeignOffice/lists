@@ -241,7 +241,7 @@ const sampleListItem = {
   history: [
     {
       id: 1,
-      statis: "OUT_WITH_PROVIDER",
+      status: "OUT_WITH_PROVIDER",
     },
   ],
 };
