@@ -90,7 +90,7 @@ export async function ingestPutController(req: Request, res: Response) {
         userId: value.metadata.userId,
       });
       if (listItem.isPublished) {
-        event = [event, EVENTS.PUBLISHED(req.user!.id)];
+        event = [event, EVENTS.PUBLISHED(value.metadata.userId)];
         status = Status.PUBLISHED;
       } else {
         // keep original status
