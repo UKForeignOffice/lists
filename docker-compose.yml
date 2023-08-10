@@ -132,6 +132,7 @@ services:
       dockerfile: Dockerfile
     environment:
       NODE_ENV: test
+      API_CONDITION_SECRET: "${HMAC_SECRET}"
     ports:
       - 3001:3001
     depends_on:

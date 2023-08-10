@@ -422,9 +422,27 @@
       ],
       "next": [
         {
-          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english"
+          "path": "/we-are-not-accepting-applications-for-this-list"
+        },
+        {
+          "path": "/can-you-provide-translation-or-interpretation-services-to-customers-in-english",
+          "condition": "checkListExists"
         }
       ]
+    },
+    {
+      "path": "/we-are-not-accepting-applications-for-this-list",
+      "title": "We are not currently accepting online applications for this list",
+      "components": [
+        {
+          "name": "WlXNxl",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\nContact the <a href=\"https://www.gov.uk/world/embassies?utm_source=CYB&utm_medium=FAP&utm_campaign=no_list\" class=\"govuk-link\">British embassy, high commission or consulate</a> which represents the UK in your chosen country for more information on when you may be able to apply.\n\n</div>",
+          "schema": {}
+        }
+      ],
+      "next": []
     },
     {
       "path": "/which-areas-of-the-country-do-you-serve",
@@ -2776,6 +2794,17 @@
   ],
   "version": 2,
   "conditions": [
+    {
+      "name": "checkListExists",
+      "displayName": "checkListExists",
+      "value": {
+        "url": "http://lists:3000/api/lists",
+        "values": {
+          "type": "translatorsInterpreters",
+          "country": "$country"
+        }
+      }
+    },
     {
       "name": "50_TW9NLlvr2820-1-Qt6",
       "displayName": "speakEnglishNo",

@@ -418,13 +418,27 @@
       ],
       "next": [
         {
-          "path": "/what-size-is-your-company-or-firm"
+          "path": "/we-are-not-accepting-applications-for-this-list"
         },
         {
-          "path": "/you-cannot-be-added-to-the-service",
+          "path": "/what-size-is-your-company-or-firm",
           "condition": "checkListExists"
         }
       ]
+    },
+    {
+      "path": "/we-are-not-accepting-applications-for-this-list",
+      "title": "We are not currently accepting online applications for this list",
+      "components": [
+        {
+          "name": "WlXNxl",
+          "options": {},
+          "type": "Html",
+          "content": "<div class=\"govuk-hint\">\nContact the <a href=\"https://www.gov.uk/world/embassies?utm_source=CYB&utm_medium=FAP&utm_campaign=no_list\" class=\"govuk-link\">British embassy, high commission or consulate</a> which represents the UK in your chosen country for more information on when you may be able to apply.\n\n</div>",
+          "schema": {}
+        }
+      ],
+      "next": []
     },
     {
       "path": "/which-regions-do-you-serve",
@@ -1644,9 +1658,9 @@
       "name": "checkListExists",
       "displayName": "checkListExists",
       "value": {
-        "url": "/api/lists",
+        "url": "http://lists:3000/api/lists",
         "values": {
-          "type": "funeralDirectors",
+          "type": "lawyers",
           "country": "$country"
         }
       }
