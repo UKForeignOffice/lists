@@ -23,10 +23,12 @@ export async function listsApiPostController(req: Request, res: Response) {
     });
 
     if (!listItem) {
+      logger.error(`listsApiPostController error: No list found for ${value.type} in ${value.country}`);
       res.status(400).send("No list found");
       return;
     }
 
+    logger.info(`listsApiPostController: ${value.type} in ${value.country} has been accessed`);
     res.sendStatus(200);
   } catch (error) {
     logger.error(`listsApiPostController error: ${error}`);

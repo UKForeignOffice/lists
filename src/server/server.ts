@@ -12,6 +12,7 @@ import {
   configureViews,
 } from "./middlewares";
 import { initAuth } from "./components/auth";
+import initApi from "./components/api";
 import { initLists } from "./components/lists";
 import { initCookies } from "./components/cookies";
 import { initSitemap } from "./components/sitemap";
@@ -51,6 +52,7 @@ export async function getServer(): Promise<Express> {
 
   server.use(ingestRouter);
   await initFeedback(server);
+  initApi(server);
 
   configureCsrf(server);
 
