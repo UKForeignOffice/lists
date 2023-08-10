@@ -4,6 +4,25 @@ import type { Prisma, ProviderEmailType } from "@prisma/client";
 
 export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
+interface EventReminderInput {
+  response: SendEmailResponse;
+  notes?: string[];
+  reference?: string;
+  emailType: ProviderEmailType;
+}
+
+interface AnnualReviewAdditionalInfo {
+  reference: string;
+}
+
+interface PostEditedAdditionalInfo {
+  isPostEdit: boolean;
+  userId: number;
+  note: string;
+}
+
+type AdditionalEditedInfo = AnnualReviewAdditionalInfo | PostEditedAdditionalInfo;
+
 /**
  * These are intended to be used during a nested write via Prisma.EventCreateWithoutListItemInput.
  * You do not need to pass "connect" or "date". Connections are done automatically when doing a nested write.
@@ -91,15 +110,27 @@ export const EVENTS = {
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: (updatedJsonData = {}, reference?: string): EventCreate<"EDITED"> => ({
-    type: ListItemEvent.EDITED,
-    jsonData: {
-      notes: ["user resubmitted with these updates"],
-      eventName: "edited",
-      updatedJsonData,
-      ...{ reference },
-    },
-  }),
+  [ListItemEvent.EDITED]: (updatedJsonData = {}, options?: AdditionalEditedInfo): EventCreate<"EDITED"> => {
+    let extraData = {};
+    const DEFAULT_MESSAGE = "provider resubmitted with these updates";
+
+    if (options) {
+      const isPostEdit = "isPostEdit" in options;
+      extraData = isPostEdit
+        ? { isPostEdit: options.isPostEdit, userId: options.userId, notes: [options.note] }
+        : { reference: options.reference, notes: [] };
+    }
+
+    return {
+      type: ListItemEvent.EDITED,
+      jsonData: {
+        notes: [DEFAULT_MESSAGE], // will be overwritten by extraData if extraData.notes is present.
+        eventName: "edited",
+        updatedJsonData,
+        ...extraData,
+      },
+    };
+  },
 
   [ListItemEvent.CHECK_ANNUAL_REVIEW]: (
     updatedJsonData = {},
@@ -153,10 +184,3 @@ export const EVENTS = {
     },
   }),
 };
-
-interface EventReminderInput {
-  response: SendEmailResponse;
-  notes?: string[];
-  reference?: string;
-  emailType: ProviderEmailType;
-}
