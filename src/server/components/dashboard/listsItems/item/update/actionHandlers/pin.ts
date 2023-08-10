@@ -24,10 +24,11 @@ export async function pin(req: Request, res: Response) {
     );
     req.flash("successBannerHeading", `${isPinned ? "Pinned" : "Unpinned"}`);
     req.flash("successBannerColour", "blue");
-    return res.redirect(listIndexUrl);
+    res.redirect(listIndexUrl);
+    return;
   } catch (error) {
     logger.error(`listItemPinController: ${userId} failed to ${action} user, ${error}`);
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
   }
 }

@@ -2,18 +2,18 @@ import type { Request, Response } from "express";
 import { formRunnerPostRequestSchema } from "server/components/formRunner";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { recordListItemEvent } from "shared/audit";
-import type { Prisma } from "@prisma/client";
-import { AuditEvent, Status } from "@prisma/client";
-import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import { Status } from "@prisma/client";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
 import { EVENTS } from "server/models/listItem/listItemEvent";
 import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
-import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
+import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";
 import type { ListJsonData } from "server/models/types";
+import type { EventCreate } from "server/models/listItem/listItemEvent";
+import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import type { Prisma } from "@prisma/client";
 
 export async function ingestPutController(req: Request, res: Response) {
   const id = req.params.id;
@@ -47,6 +47,11 @@ export async function ingestPutController(req: Request, res: Response) {
           jsonData: true,
         },
       },
+      history: {
+        orderBy: {
+          time: "desc",
+        },
+      },
     },
   });
 
@@ -65,12 +70,34 @@ export async function ingestPutController(req: Request, res: Response) {
       ...jsonData,
       updatedJsonData: diff,
     };
-    const listJsonData = listItem.list.jsonData as ListJsonData;
-    const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
+    const jsonDataOnly = { ...jsonData, ...diff };
 
-    const { isAnnualReview = false } = value.metadata;
-    const event = isAnnualReview ? EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference) : EVENTS.EDITED(diff);
-    const status = isAnnualReview ? Status.CHECK_ANNUAL_REVIEW : Status.EDITED;
+    const { isAnnualReview = false, isPostEdit = false } = value.metadata;
+    let event: AllowedEvents | AllowedEvents[] = EVENTS.EDITED(diff);
+    let status: Status = Status.EDITED;
+
+    if (isAnnualReview) {
+      const listJsonData = listItem.list.jsonData as ListJsonData;
+      const annualReviewReference = listJsonData?.currentAnnualReview?.reference;
+      event = EVENTS.CHECK_ANNUAL_REVIEW(diff, annualReviewReference);
+      status = Status.CHECK_ANNUAL_REVIEW;
+    }
+
+    if (isPostEdit) {
+      event = EVENTS.EDITED(diff, {
+        isPostEdit: true,
+        note: value.metadata.message,
+        userId: value.metadata.userId,
+      });
+      if (listItem.isPublished) {
+        event = [event, EVENTS.PUBLISHED(value.metadata.userId)];
+        status = Status.PUBLISHED;
+      } else {
+        // keep original status
+        status = listItem.status;
+      }
+    }
+
     const listItemPrismaQuery: Prisma.ListItemUpdateArgs = {
       where: { id: Number(id) },
       data: {
@@ -78,25 +105,23 @@ export async function ingestPutController(req: Request, res: Response) {
         history: {
           create: event,
         },
-        jsonData: jsonDataWithUpdatedJsonData,
+        jsonData: isPostEdit ? jsonDataOnly : jsonDataWithUpdatedJsonData,
       },
     };
 
-    await prisma.$transaction([
-      prisma.listItem.update(listItemPrismaQuery),
-      recordListItemEvent(
-        {
-          eventName: "edit",
-          itemId: Number(id),
-        },
-        AuditEvent.EDITED
-      ),
-    ]);
-
+    await prisma.listItem.update(listItemPrismaQuery);
     if (isAnnualReview) {
       await sendAnnualReviewCompletedEmailForList(listItem.listId);
     } else {
-      await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
+      if (isPostEdit) {
+        await sendProviderInformedOfEditEmail(jsonData.emailAddress, {
+          contactName: jsonData.contactName,
+          typePlural: serviceType,
+          message: value.metadata.message,
+        });
+      } else {
+        await sendManualActionNotificationToPost(listItem.listId, "CHANGED_DETAILS");
+      }
     }
 
     return res.status(204).send();
@@ -105,7 +130,8 @@ export async function ingestPutController(req: Request, res: Response) {
     /**
      * TODO:- Queue?
      */
-
     return res.status(422).send({ message: "List item failed to update" });
   }
 }
+
+type AllowedEvents = EventCreate<"EDITED"> | EventCreate<"CHECK_ANNUAL_REVIEW"> | EventCreate<"PUBLISHED">;

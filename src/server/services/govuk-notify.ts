@@ -9,6 +9,16 @@ import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
 import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
+import { lowerCase, startCase } from "lodash";
+
+function convertPluralToSingular(typePlural: string): string {
+  return typePlural
+    .split(" ")
+    .map((word: string) => {
+      return pluralize.singular(word);
+    })
+    .join(" ");
+}
 
 export async function sendAuthenticationEmail(email: string, authenticationLink: string): Promise<boolean> {
   const emailAddress = email.trim();
@@ -98,18 +108,11 @@ export async function sendEditDetailsEmail(
       return { result: true };
     }
 
-    const typeSingular = typePlural
-      .split(" ")
-      .map((word: string) => {
-        return pluralize.singular(word);
-      })
-      .join(" ");
-
     message = message.replace(/(?:\r\n)/g, "\n^");
 
     const result = await getNotifyClient().sendEmail(NOTIFY.templates.edit, emailAddress, {
       personalisation: {
-        typeSingular,
+        typeSingular: convertPluralToSingular(typePlural),
         typePlural,
         contactName,
         message,
@@ -280,4 +283,23 @@ export async function sendContactUsEmail(personalisation: Record<"emailSubject" 
     personalisation,
     reference: "",
   });
+}
+
+export async function sendProviderInformedOfEditEmail(
+  emailAddress: string,
+  personalisation: Record<"contactName" | "typePlural" | "message", string>
+) {
+  const { typePlural, ...otherValues } = personalisation;
+  return await sendEmails(
+    NOTIFY.templates.providerInformedOfEdit,
+    [emailAddress],
+    {
+      personalisation: {
+        ...otherValues,
+        typeSingular: convertPluralToSingular(lowerCase(startCase(typePlural))),
+      },
+      reference: "",
+    },
+    "sendProviderInformedOfEditEmail"
+  );
 }

@@ -26,6 +26,10 @@
       {{ dashboardMacros.errorBanner(error) }}
     {% endif %}
 
+    {% if messages.providerUpdatedTitle %}
+      {{ dashboardMacros.successBanner(messages.providerUpdatedTitle, messages.providerUpdatedMessage, "success") }}
+    {% endif %}
+
     <div class="flex-space-between">
       <h1 class="govuk-heading-l">
         {{ title }} details

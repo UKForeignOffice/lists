@@ -10,7 +10,13 @@
         {% if state.callback.backUrl %}
           <a class="govuk-link govuk-back-link" href="{{ state.callback.backUrl }}">Back</a>
         {% endif %}
-        <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+        <h1 class="govuk-heading-l">
+          {% if callback and callback.title %}
+          {{ callback.title }}
+          {% else %}
+          {{ pageTitle }}
+          {% endif %}
+        </h1>
         {% if callback and callback.message %}
         <div class="govuk-inset-text">
           {{ callback.message | striptags(true) | escape | nl2br }}

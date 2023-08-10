@@ -18,14 +18,31 @@ import { ListItemJsonData } from "server/models/listItem/providers/deserialisers
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
 import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 import { forms } from "./forms";
-export function getNewSessionWebhookData(
-  listType: string,
-  listItemId: number,
-  questions: Array<Partial<FormRunner.Question>> | undefined,
-  message: string,
-  isAnnualReview: boolean | undefined,
-  listItemRef: string
-): FormRunner.NewSessionData {
+
+interface NewSessionWebhookDataInput {
+  listType: string;
+  listItemId: number;
+  questions?: Array<Partial<FormRunner.Question>>;
+  message: string;
+  isAnnualReview?: boolean;
+  isPostEdit?: boolean;
+  listItemRef: string;
+  title?: string;
+  redirectUrl?: string;
+  userId?: number;
+}
+export function getNewSessionWebhookData({
+  listType,
+  listItemId,
+  questions,
+  message,
+  isAnnualReview,
+  isPostEdit,
+  listItemRef,
+  title,
+  redirectUrl,
+  userId,
+}: NewSessionWebhookDataInput): FormRunner.NewSessionData {
   const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
@@ -41,6 +58,8 @@ export function getNewSessionWebhookData(
     callbackUrl,
     redirectPath,
     backUrl: isAnnualReview && `${protocol}://${SERVICE_DOMAIN}/annual-review/confirm/${listItemRef}`,
+    ...(title && { title }),
+    ...(redirectUrl && { skipSummary: { redirectUrl } }),
   };
 
   const newSessionData: FormRunner.NewSessionData = {
@@ -49,6 +68,9 @@ export function getNewSessionWebhookData(
     name: "Changes required",
     metadata: {
       isAnnualReview,
+      isPostEdit,
+      userId,
+      message,
     },
   };
   return newSessionData;
@@ -110,8 +132,11 @@ interface initialiseFormRunnerInput {
   list: Pick<List, "type"> | Pick<ListItem, "type">;
   listItem: ListItemWithAddressCountry;
   message: string;
-  isUnderTest: boolean;
   isAnnualReview?: boolean;
+  isPostEdit?: boolean;
+  title?: string;
+  redirectUrl?: string;
+  userId?: number;
 }
 
 export async function initialiseFormRunnerSession({
@@ -119,6 +144,10 @@ export async function initialiseFormRunnerSession({
   listItem,
   message,
   isAnnualReview,
+  isPostEdit,
+  title,
+  redirectUrl,
+  userId,
 }: initialiseFormRunnerInput): Promise<string> {
   logger.info(
     `initialising form runnner session for list item id: ${listItem.id} with isAnnualReview ${isAnnualReview}`
@@ -140,14 +169,18 @@ export async function initialiseFormRunnerSession({
   };
 
   const questions = await generateFormRunnerWebhookData(list, listItemForInit);
-  const formRunnerWebhookData = getNewSessionWebhookData(
-    listItem.type,
-    listItem.id,
+  const formRunnerWebhookData = getNewSessionWebhookData({
+    listType: listItem.type,
+    listItemId: listItem.id,
     questions,
     message,
     isAnnualReview,
-    listItem.reference
-  );
+    isPostEdit,
+    listItemRef: listItem.reference,
+    title,
+    redirectUrl,
+    userId,
+  });
   const formRunnerNewSessionUrl = createFormRunnerReturningUserLink(listItem.type, isAnnualReview!);
   const token = await getInitiateFormRunnerSessionToken(formRunnerNewSessionUrl, formRunnerWebhookData);
 

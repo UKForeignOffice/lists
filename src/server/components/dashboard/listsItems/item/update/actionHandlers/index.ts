@@ -1,11 +1,12 @@
-import { Action } from "../types";
+import type { Action } from "../types";
+import type { RequestHandler } from "express";
 import { update } from "./update";
 import { pin } from "./pin";
 import { remove } from "./remove";
 import { publish } from "./publish";
 import { archive } from "./archive";
 import { requestChanges } from "./requestChanges";
-import { RequestHandler } from "express";
+import { editDetails } from "./editDetails";
 
 export const actionHandlers: Record<Action, RequestHandler> = {
   update,
@@ -19,4 +20,5 @@ export const actionHandlers: Record<Action, RequestHandler> = {
   publish,
   archive,
   unpublish: publish,
+  editDetails: editDetails,
 };

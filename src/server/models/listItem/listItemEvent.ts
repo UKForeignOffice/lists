@@ -1,10 +1,23 @@
 import { prisma } from "server/models/db/prisma-client";
-import { ListItemEvent, Prisma } from "@prisma/client";
-import { Event, EventCreateInput, EventJsonData } from "./types";
+import type { Prisma } from "@prisma/client";
+import { ListItemEvent } from "@prisma/client";
+import type { Event, EventCreateInput, EventJsonData } from "./types";
 import { logger } from "server/services/logger";
-import { SendEmailResponse } from "notifications-node-client";
+import type { SendEmailResponse } from "notifications-node-client";
 
-type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
+export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
+
+interface AnnualReviewAdditionalInfo {
+  reference: string;
+}
+
+interface PostEditedAdditionalInfo {
+  isPostEdit: boolean;
+  userId: number;
+  note: string;
+}
+
+type AdditionalEditedInfo = AnnualReviewAdditionalInfo | PostEditedAdditionalInfo;
 
 /**
  * These are intended to be used during a nested write via Prisma.EventCreateWithoutListItemInput.
@@ -93,15 +106,27 @@ export const EVENTS = {
   /**
    * After the provider makes the change
    */
-  [ListItemEvent.EDITED]: (updatedJsonData = {}, reference?: string): EventCreate<"EDITED"> => ({
-    type: ListItemEvent.EDITED,
-    jsonData: {
-      notes: ["user resubmitted with these updates"],
-      eventName: "edited",
-      updatedJsonData,
-      ...{ reference },
-    },
-  }),
+  [ListItemEvent.EDITED]: (updatedJsonData = {}, options?: AdditionalEditedInfo): EventCreate<"EDITED"> => {
+    let extraData = {};
+    const DEFAULT_MESSAGE = "provider resubmitted with these updates";
+
+    if (options) {
+      const isPostEdit = "isPostEdit" in options;
+      extraData = isPostEdit
+        ? { isPostEdit: options.isPostEdit, userId: options.userId, notes: [options.note] }
+        : { reference: options.reference, notes: [] };
+    }
+
+    return {
+      type: ListItemEvent.EDITED,
+      jsonData: {
+        notes: [DEFAULT_MESSAGE], // will be overwritten by extraData if extraData.notes is present.
+        eventName: "edited",
+        updatedJsonData,
+        ...extraData,
+      },
+    };
+  },
 
   [ListItemEvent.CHECK_ANNUAL_REVIEW]: (
     updatedJsonData = {},

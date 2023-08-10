@@ -3,6 +3,7 @@ export type Action =
   | "updateNew"
   | "unpublish"
   | "requestChanges"
+  | "editDetails"
   | "updateLive"
   | "pin"
   | "unpin"

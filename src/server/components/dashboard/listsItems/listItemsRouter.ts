@@ -20,7 +20,8 @@ listItemsRouter.param("listItemId", async (req, res, next, listItemId) => {
     if (!listItem) {
       // TODO: should be handled by router.param
       const err = new HttpException(404, "404", `Could not find list item ${listItemId}`);
-      return next(err);
+      next(err);
+      return;
     }
 
     res.locals.listItem = listItem;
@@ -28,15 +29,16 @@ listItemsRouter.param("listItemId", async (req, res, next, listItemId) => {
     const list = res.locals.list;
     res.locals.title = `${serviceTypeDetailsHeading[list.type]} in ${list.country.name} details`;
 
-    return next();
+    next();
+    return;
   } catch (e) {
     const error = new HttpException(404, "404", `list item ${listItemId} could not be found on ${res.locals.list.id}`);
     logger.error(error.message, { stack: e, route: `${req.path}` });
-    return next(e);
+    next(e);
   }
 });
 
-listItemsRouter.get("/:listId/items/:listItemId", controllers.listItemGetController);
+listItemsRouter.get("/:listId/items/:listItemId", controllers.checkSuccessfulEdit, controllers.listItemGetController);
 listItemsRouter.post("/:listId/items/:listItemId", controllers.listItemPostController);
 
 listItemsRouter.use("/:listId/items/:listItemId", updateRouter);

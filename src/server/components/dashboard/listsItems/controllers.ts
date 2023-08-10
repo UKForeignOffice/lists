@@ -15,6 +15,7 @@ import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
+import { prisma } from "server/models/db/prisma-client";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
@@ -39,6 +40,7 @@ function mapUpdatedAuditJsonDataToListItem(
 export async function listItemGetController(req: Request, res: ListItemRes): Promise<void> {
   let error;
   const errorMsg = req.flash("errorMsg");
+  const listItem = res.locals.listItem;
 
   req.session.update = {};
 
@@ -49,7 +51,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     };
   }
   const list = res.locals.list!;
-  const listItem = res.locals.listItem;
   const userId = req.user?.userData.id;
   let requestedChanges;
 
@@ -84,6 +85,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     pin: false, // never show this radio
     remove: listItem.status === "UNPUBLISHED" || publishingStatus === "archived",
     requestChanges: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
+    editDetails: !["OUT_WITH_PROVIDER", "ANNUAL_REVIEW_OVERDUE"].includes(listItem.status),
     unpin: false, // never show this radio
     unpublish: listItem.isPublished,
     update: false, // never show this radio
@@ -122,8 +124,6 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 export async function listItemPostController(req: Request, res: Response, next: NextFunction) {
   const { action } = req.body;
   const message = req.body.message || req.body.reason;
-  const skipConfirmation = req.body?.["skip-confirmation"] ?? false;
-
   const { listItemUrl } = res.locals;
 
   if (!action) {
@@ -138,14 +138,20 @@ export async function listItemPostController(req: Request, res: Response, next: 
     return;
   }
 
+  if (action === "editDetails" && !req.body.editMessage) {
+    req.flash("errorMsg", "You must provide a message to edit provider details");
+    res.redirect(listItemUrl);
+    return;
+  }
+
   req.session.update = {
     action,
     message,
   };
 
-  const allowedSkipConfirmationActions = ["pin", "unpin"];
+  const allowedSkipConfirmationActions = ["pin", "unpin", "editDetails"];
 
-  if (skipConfirmation && allowedSkipConfirmationActions.includes(action)) {
+  if (allowedSkipConfirmationActions.includes(action)) {
     actionHandlers[action as Action](req, res, next);
     return;
   }
@@ -195,4 +201,52 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);
 
   res.redirect(res.locals.listsEditUrl);
+}
+
+export async function checkSuccessfulEdit(req: Request, res: Response, next: NextFunction) {
+  const { currentlyEditing, currentlyEditingStartTime } = req.session;
+  const listItem = res.locals.listItem;
+  if (!currentlyEditing || currentlyEditing !== listItem.id) {
+    next();
+    return;
+  }
+  let timeQuery;
+  if (currentlyEditingStartTime) {
+    timeQuery = {
+      gte: new Date(currentlyEditingStartTime),
+    };
+  }
+  const editWasSuccessful = await prisma.event.findFirst({
+    where: {
+      listItemId: listItem.id,
+      type: "EDITED",
+      jsonData: {
+        path: ["userId"],
+        equals: req.user!.id,
+      },
+      ...(timeQuery && { time: timeQuery }),
+    },
+  });
+
+  if (editWasSuccessful) {
+    logger.info(
+      `checkSuccessfulEdit: ${req.user!.id} - edit was successful for ${currentlyEditing}. Event id ${
+        editWasSuccessful.id
+      }`
+    );
+
+    delete req.session.currentlyEditing;
+    delete req.session.currentlyEditingStartTime;
+    req.flash("providerUpdatedTitle", "Provider details updated");
+    req.flash(
+      "providerUpdatedMessage",
+      "The provider’s details have been updated. The provider has been emailed to let them know."
+    );
+  }
+
+  if (!editWasSuccessful) {
+    logger.warn(`checkSuccessfulEdit: ${req.user!.id} - edit was not successful for ${currentlyEditing}`);
+  }
+
+  next();
 }
