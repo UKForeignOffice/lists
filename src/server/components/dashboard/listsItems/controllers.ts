@@ -16,7 +16,6 @@ import { actionHandlers } from "server/components/dashboard/listsItems/item/upda
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
-import { startOfToday } from "date-fns";
 
 function mapUpdatedAuditJsonDataToListItem(
   listItem: ListItemGetObject | ListItem,
