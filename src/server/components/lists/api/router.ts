@@ -1,9 +1,9 @@
 import express from "express";
-import { listsApiPostController } from "./controllers";
-import hmacSha512 from "./helpers/hmac";
+import { listsApiPostController } from "./listsApiPostController";
+import validateSignature from "./middleware/validateSignature";
 
 const apiRouter = express.Router();
 
-apiRouter.post("/api/lists", hmacSha512, listsApiPostController);
+apiRouter.post("/api/lists", validateSignature, listsApiPostController);
 
 export default apiRouter;

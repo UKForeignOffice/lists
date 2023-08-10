@@ -2,11 +2,11 @@ import type { NextFunction, Request, Response } from "express";
 import crypto from "crypto";
 import * as config from "server/config";
 
-export default function hmacSha512(req: Request, res: Response, next: NextFunction) {
+export default function validateSignature(req: Request, res: Response, next: NextFunction) {
   const digest = createSignatureDigest(req.body);
 
   if (digest !== req.headers.signature) {
-    res.status(401).send("Unauthorized");
+    res.status(401).send("Unauthorised");
     return;
   }
 

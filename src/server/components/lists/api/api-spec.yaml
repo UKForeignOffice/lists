@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: /api/lists - Check if a list exists
+  version: "1.0"
+paths:
+  /api/lists:
+    put:
+      description: Checks if a list for serviceType and country exists
+      parameters:
+        - in: header
+          name: signature
+          schema:
+            type: string
+          required: true
+          description: HMAC512 signature of the request body
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body'
+        required: true
+      responses:
+        '200':
+          description: Successful. The list exists
+        '401':
+          description: Unauthorised - HMAC validation failed
+        '400':
+          description: Bad request - No list found or invalid response. See message for more detail
+        '500':
+          description: Unknown server error
+
+
+components:
+  schemas:
+    Header:
+      title: Header to be included with Body
+
+    Body:
+      title: Request object to determine whether a list exists
+      type: object
+      properties:
+        country:
+          type: string
+          description: Name of the country
+        type:
+          type: string
+          description: The service type
+          enum:
+            - funeralDirectors
+            - lawyers
+            - translatorsInterpreters
+      required:
+        - type
+        - country

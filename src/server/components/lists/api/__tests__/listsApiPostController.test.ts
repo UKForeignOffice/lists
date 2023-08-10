@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import request from "supertest";
 import { getServer } from "server/server";
-import { createSignatureDigest } from "server/components/lists/api/helpers/hmac";
 import { prisma } from "server/models/db/prisma-client";
+import { createSignatureDigest } from "../middleware/validateSignature";
 
 jest.mock("server/models/db/prisma-client");
 

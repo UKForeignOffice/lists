@@ -4,7 +4,7 @@ import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 
 export async function listsApiPostController(req: Request, res: Response) {
-  const { value, error } = receivedDataSchema.validate(req.body, { stripUnknown: true });
+  const { value, error } = schema.validate(req.body, { stripUnknown: true });
 
   if (error) {
     logger.error(`listsApiPostController schema validation error: ${error.details[0].message}`);
@@ -34,7 +34,7 @@ export async function listsApiPostController(req: Request, res: Response) {
   }
 }
 
-const receivedDataSchema = Joi.object({
+const schema = Joi.object({
   type: Joi.string().valid("funeralDirectors", "translatorsInterpreters", "lawyers").required(),
   country: Joi.string().required(),
 });
