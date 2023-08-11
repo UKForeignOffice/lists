@@ -1,8 +1,10 @@
 import * as config from "server/config";
 import { logger } from "scheduler/logger";
 import { getNotifyClient } from "shared/getNotifyClient";
-import type { MilestoneTillAnnualReview } from "scheduler/batch/helpers";
-import type { NotifyResult } from "shared/types";
+import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
+import type { SendEmailResponse } from "notifications-node-client";
+
+const { annualReviewNotices } = config.NOTIFY.templates;
 
 export async function sendAnnualReviewProviderEmail(
   emailAddress: string,
@@ -10,12 +12,13 @@ export async function sendAnnualReviewProviderEmail(
   country: string,
   contactName: string,
   deletionDate: string,
-  changeLink: string
-): Promise<{ result?: boolean; error?: Error }> {
+  changeLink: string,
+  reference = "" // the annual review reference, so we can look up all emails relating to this reference.
+): Promise<{ result?: SendEmailResponse | {}; error?: Error }> {
   try {
     if (config.isSmokeTest) {
       logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-      return { result: true };
+      return { result: { id: "test", template: "test" } };
     }
 
     const personalisation = {
@@ -27,41 +30,43 @@ export async function sendAnnualReviewProviderEmail(
     };
     logger.info(
       `template ${
-        config.NOTIFY.templates.annualReviewNotices.providerStart
+        annualReviewNotices.providerStart
       }, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    await getNotifyClient().sendEmail(config.NOTIFY.templates.annualReviewNotices.providerStart, emailAddress, {
+    const result = await getNotifyClient().sendEmail(annualReviewNotices.providerStart, emailAddress, {
       personalisation,
-      reference: "",
+      reference,
     });
+
+    return { result };
   } catch (error) {
     const message = `Unable to send annual review provider email: ${error.message}`;
     logger.error(`sendAnnualReviewProviderEmail: ${message}`);
     return { error: new Error(message) };
   }
-  return { result: true };
 }
 
 export async function sendAnnualReviewPostEmail(
-  milestoneTillAnnualReviewStart: MilestoneTillAnnualReview,
+  reminderType: RemindersBeforeStartDate,
   emailAddress: string,
   typePlural: string,
   country: string,
-  annualReviewDate: string
-): Promise<{ result?: boolean; error?: Error }> {
+  annualReviewDate: string,
+  reference: string = "" // annual review reference. Allows us to look up emails in notify by group (AR reference)
+): Promise<{ result?: SendEmailResponse | {}; error?: Error }> {
   if (config.isSmokeTest) {
     logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
-    return { result: true };
+    return { result: { id: "test", template: "test" } };
   }
 
-  const notifyTemplates: Record<MilestoneTillAnnualReview, string> = {
-    POST_ONE_MONTH: config.NOTIFY.templates.annualReviewNotices.postOneMonth,
-    POST_ONE_WEEK: config.NOTIFY.templates.annualReviewNotices.postOneWeek,
-    POST_ONE_DAY: config.NOTIFY.templates.annualReviewNotices.postOneDay,
-    START: config.NOTIFY.templates.annualReviewNotices.postStart,
+  const notifyTemplates: Record<RemindersBeforeStartDate, string> = {
+    oneMonthBeforeStart: annualReviewNotices.postOneMonth,
+    oneWeekBeforeStart: annualReviewNotices.postOneWeek,
+    oneDayBeforeStart: annualReviewNotices.postOneDay,
+    started: annualReviewNotices.postStart,
   };
 
-  const notifyTemplate = notifyTemplates[milestoneTillAnnualReviewStart];
+  const notifyTemplate = notifyTemplates[reminderType];
   try {
     const personalisation = {
       typePlural,
@@ -70,14 +75,14 @@ export async function sendAnnualReviewPostEmail(
       typePluralCapitalised: typePlural.toUpperCase(),
     };
     logger.info(
-      `template - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
+      `sendAnnualReviewPostEmail: template - ${reminderType} - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
         personalisation
       )}`
     );
-    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference: "" });
-    return { result: (result as NotifyResult).statusText === "Created" };
+    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference });
+    return { result };
   } catch (error) {
-    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email: ${error.message}`;
+    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email to ${emailAddress} with template name ${reminderType} id ${notifyTemplate}: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }

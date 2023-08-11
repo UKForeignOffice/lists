@@ -6,44 +6,21 @@ Then("the unpublish reminder email is not sent", async () => {
         reference: "SMOKE",
       },
     },
-  }).then((list) => {
+  }).then((audit) => {
     cy.task("db", {
-      operation: "audit.findFirst",
+      operation: "event.findMany",
       variables: {
         where: {
-          type: "list",
-          auditEvent: "ANNUAL_REVIEW",
+          type: "REMINDER",
+          annualReviewEmailType: "oneDayBeforeUnpublish",
           jsonData: {
-            path: ["itemId"],
-            equals: list.id,
+            path: ["reference"],
+            equals: audit.jsonData.currentAnnualReview.reference,
           },
         },
       },
-    }).then((audit) => {
-      cy.task("db", {
-        operation: "event.findMany",
-        variables: {
-          where: {
-            type: "REMINDER",
-            AND: [
-              {
-                jsonData: {
-                  path: ["notes"],
-                  array_contains: ["sent reminder for"],
-                },
-              },
-              {
-                jsonData: {
-                  path: ["reference"],
-                  equals: audit.jsonData.annualReviewRef,
-                },
-              },
-            ],
-          },
-        },
-      }).then((result) => {
-        cy.expect(result.length).equals(0);
-      });
+    }).then((result) => {
+      cy.expect(result.length).equals(0);
     });
   });
 });

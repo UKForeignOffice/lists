@@ -16,7 +16,7 @@ As consular staff,
     And I am logged in as a "Admin"
     And I am viewing list item index for reference:"SMOKE"
     Then I see "Buster"
-    And I see "ANNUAL REVIEW OVERDUE"
+    And I see "ANNUAL REVIEW OVERDUE" 6 times
     And the provider with reference "UNPUBLISH_DAY_TEST" should be unpublished
 
   Scenario: A list item is deleted after being unpublished for a year

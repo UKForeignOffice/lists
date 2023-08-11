@@ -1,10 +1,11 @@
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "./types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
-import { AuditEvent, List } from "@prisma/client";
-import { addAudit } from "scheduler/workers/unpublish/day/changeState/addAudit";
+
+import type { List } from "server/models/types";
+import type { Meta } from "./types";
+import type { RequestError } from "notifications-node-client";
 
 const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
@@ -29,22 +30,6 @@ export async function sendUnpublishPostConfirmation(
       personalisation,
       reference: meta.reference,
     });
-
-    const updateAudit = await addAudit(
-      {
-        reminderType: "sendUnpublishedPostEmail",
-        eventName: "reminder",
-        itemId: list.id,
-        annualReviewRef: meta.reference,
-      },
-      AuditEvent.UNPUBLISHED
-    );
-
-    if (!updateAudit) {
-      logger.error(
-        `unpublish reminder audit event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
-      );
-    }
 
     return response.data;
   } catch (e) {

@@ -18,7 +18,12 @@ export type CountryName = typeof countriesList[number]["value"];
 export type Point = number[];
 export type Address = PrismaClient.Address;
 export type Country = PrismaClient.Country;
-// List
+
+/**
+ * Describes dates relative to the startDate. e.g. ONE_MONTH BEFORE the start date.
+ * POST refers to consular posts (e.g. embassies or consulates).
+ * "POST_ONE_MONTH" should be read as "On this date, send an email to post, one month before the start date).
+ */
 export interface AnnualReviewKeyDates extends JsonObject {
   POST_ONE_MONTH: string;
   POST_ONE_WEEK: string;
@@ -26,18 +31,27 @@ export interface AnnualReviewKeyDates extends JsonObject {
   START: string;
 }
 
+/**
+ * Describes dates relative to the unpublish date. e.g. ONE_WEEK BEFORE the unpublish date.
+ */
 export interface UnpublishedKeyDates extends JsonObject {
-  PROVIDER_FIVE_WEEKS: string;
-  PROVIDER_FOUR_WEEKS: string;
-  PROVIDER_THREE_WEEKS: string;
-  PROVIDER_TWO_WEEKS: string;
+  /**
+   * one week BEFORE the unpublish date
+   */
   ONE_WEEK: string;
   ONE_DAY: string;
   UNPUBLISH: string;
 }
 
 export interface ScheduledProcessKeyDates extends JsonObject {
+  /**
+   * annualReview describes events leading up to the nextAnnualReviewStartDate.
+   */
   annualReview: AnnualReviewKeyDates;
+
+  /**
+   * unpublished describes events after the annualReviewStartDate, where eventually providers will be unpublished.
+   */
   unpublished: UnpublishedKeyDates;
 }
 
@@ -148,15 +162,9 @@ export type ListAnnualReviewPostReminderType = SharedTypes.ListAnnualReviewPostR
 
 export type ListItemAnnualReviewProviderReminderType = SharedTypes.ListItemAnnualReviewProviderReminderType;
 
-export type ListItemUnpublishedPostReminderType =
-  | "sendUnpublishedPostEmail"
-  | "sendUnpublishOneDayPostEmail"
-  | "sendUnpublishWeeklyPostEmail";
+export type ListItemUnpublishedPostReminderType = "oneDayBeforeUnpublish" | "sendUnpublishWeeklyPostEmail";
 
-export type ListItemUnpublishedProviderReminderType =
-  | "sendUnpublishedProviderEmail"
-  | "sendUnpublishOneDayProviderEmail"
-  | "sendUnpublishWeeklyProviderEmail";
+export type ListItemUnpublishedProviderReminderType = "unpublished" | "oneDayBeforeUnpublish" | "weeklyUnpublish";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 
@@ -177,7 +185,6 @@ export interface EventJsonData extends JsonObject {
 
 export interface BaseAuditEventJsonData extends JsonObject {
   userId?: User["id"];
-  itemId: ListItem["id"];
 }
 
 export interface ListItemEventJsonData extends BaseAuditEventJsonData {

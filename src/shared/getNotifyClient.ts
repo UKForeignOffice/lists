@@ -1,8 +1,15 @@
 import { NotifyClient } from "notifications-node-client";
+import type { SendEmailResponse } from "notifications-node-client";
 import * as config from "server/config";
 import { get } from "lodash";
 
 let notifyClient: NotifyClient | undefined;
+
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
 
 export function getNotifyClient() {
   if (config.isSmokeTest) {
@@ -20,8 +27,8 @@ export function getNotifyClient() {
 }
 
 class FakeNotifyClient {
-  sendEmail() {
-    return { statusText: "Created" };
+  sendEmail(): { statusText: string; data: DeepPartial<SendEmailResponse> } {
+    return { statusText: "test", data: { id: "Created" } };
   }
 }
 

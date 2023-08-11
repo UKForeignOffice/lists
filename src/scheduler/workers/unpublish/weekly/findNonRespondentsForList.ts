@@ -1,7 +1,7 @@
 import { prisma } from "scheduler/prismaClient";
-import { ListJsonData } from "server/models/types";
+import type { ListJsonData } from "server/models/types";
 import { schedulerLogger } from "scheduler/logger";
-import { List, Prisma } from "@prisma/client";
+import type { List, Prisma } from "@prisma/client";
 import { findReminderToSend } from "./findReminderToSend";
 
 export async function findNonRespondentsForList(list: List) {
@@ -33,6 +33,7 @@ export async function findNonRespondentsForList(list: List) {
 
   const reminderHasBeenSent: Prisma.EventWhereInput = {
     type: "REMINDER",
+    annualReviewEmailType: "weeklyUnpublish",
     time: {
       gte: reminderToFind,
     },

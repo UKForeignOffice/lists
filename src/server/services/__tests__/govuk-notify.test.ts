@@ -216,6 +216,7 @@ describe("GOVUK Notify service:", () => {
       const { result } = await sendEditDetailsEmail(contactName, emailAddress, typePlural, message, changeLink);
 
       expect(result).toBe(true);
+
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.edit, "testemail@gov.uk", {
         personalisation: {
           typeSingular: "Lawyer",
@@ -261,14 +262,14 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_MONTH",
+        "oneMonthBeforeStart",
         emailAddress,
         typePlural,
         country,
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneMonth,
         "testemail@gov.uk",
@@ -297,14 +298,14 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_WEEK",
+        "oneWeekBeforeStart",
         emailAddress,
         typePlural,
         country,
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneWeek,
         "testemail@gov.uk",
@@ -333,14 +334,14 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_DAY",
+        "oneDayBeforeStart",
         emailAddress,
         typePlural,
         country,
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneDay,
         "testemail@gov.uk",
@@ -368,9 +369,15 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await sendAnnualReviewPostEmail("START", emailAddress, typePlural, country, annualReviewDate);
+      const { result } = await sendAnnualReviewPostEmail(
+        "started",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postStart,
         "testemail@gov.uk",
@@ -433,7 +440,7 @@ describe("GOVUK Notify service:", () => {
         changeLink
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.providerStart,
         "testemail@gov.uk",

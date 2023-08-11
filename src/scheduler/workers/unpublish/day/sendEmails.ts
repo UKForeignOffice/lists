@@ -3,8 +3,9 @@ import { sendUnpublishProviderConfirmation } from "./sendUnpublishProviderConfir
 import { sendUnpublishPostConfirmation } from "./sendUnpublishPostConfirmation";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
-import { ListWithCountryName } from "../types";
-import { ListJsonData } from "server/models/types";
+
+import type { ListWithCountryName } from "../types";
+import type { List, ListJsonData } from "server/models/types";
 
 export async function main(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendEmails", timeframe: "day" });
@@ -36,7 +37,7 @@ export async function main(list: ListWithCountryName) {
   }
   // email post
   const emailsForPost = listJsonData.users.map(
-    async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list, listItems.length, meta)
+    async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list as List, listItems.length, meta)
   );
   return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
 }

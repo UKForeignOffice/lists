@@ -6,12 +6,12 @@ import { Status } from "@prisma/client";
 import { ServiceType } from "shared/types";
 import { deserialise } from "server/models/listItem/listItemCreateInputFromWebhook";
 import { getServiceTypeName } from "server/components/lists/helpers";
-import { EVENTS } from "server/models/listItem/listItemEvent";
+import { EVENTS } from "shared/listItemEvent";
 import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";
 import type { ListJsonData } from "server/models/types";
-import type { EventCreate } from "server/models/listItem/listItemEvent";
+import type { EventCreate } from "shared/listItemEvent";
 import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import type { Prisma } from "@prisma/client";
 

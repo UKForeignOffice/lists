@@ -13,13 +13,8 @@ Then("the unpublish reminder email for {int} days is sent to eligible providers"
       variables: {
         where: {
           type: "REMINDER",
+          annualReviewEmailType: "oneDayBeforeUnpublish",
           AND: [
-            {
-              jsonData: {
-                path: ["notes"],
-                equals: [`sent reminder for ${noOfDays} days until unpublish`],
-              },
-            },
             {
               jsonData: {
                 path: ["reference"],

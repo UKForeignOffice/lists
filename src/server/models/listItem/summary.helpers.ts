@@ -227,8 +227,8 @@ async function countNumberOfNonRespondents(listId: number, annualReviewStartDate
   return await prisma.listItem.count({
     where: {
       listId,
-      status: "OUT_WITH_PROVIDER",
       isAnnualReview: true,
+      isPublished: true,
       history: {
         none: {
           type: {

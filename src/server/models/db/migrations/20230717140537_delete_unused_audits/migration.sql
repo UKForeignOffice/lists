@@ -1,0 +1,3 @@
+-- Delete items with these values in the auditEvent column [OUT_WITH_PROVIDER,EDITED,REVIEWED,PUBLISHED,PINNED,UNPINNED]
+DELETE FROM "Audit"
+WHERE "auditEvent"::text = ANY(Array ['OUT_WITH_PROVIDER','EDITED','REVIEWED','PUBLISHED','PINNED','UNPINNED']);

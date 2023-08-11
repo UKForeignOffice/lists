@@ -108,11 +108,12 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
   jsonData            Json
+
+  annualReviewEmailType           AnnualReviewPostEmailType?
 
   @@index([type])
   @@index([jsonData])
@@ -132,16 +133,10 @@ model Feedback {
 // actions that can be performed on anything that is not a ListItem. ListItems have their own events.
 enum AuditEvent {
   NEW
-  OUT_WITH_PROVIDER // TODO: deprecate
-  EDITED // TODO: deprecate
-  ANNUAL_REVIEW // TODO: deprecate
-  REVIEWED // TODO: deprecate
-  UNPUBLISHED // TODO: deprecate
-  PUBLISHED // TODO: deprecate
-  PINNED // TODO: deprecate
-  UNPINNED // TODO: deprecate
+  ANNUAL_REVIEW
   DELETED
   UNDEFINED
+  UNPUBLISHED
   REMINDER
   ANALYTICS
   LIST_EDIT
@@ -167,6 +162,9 @@ model Event {
   listItemId          Int
   type                ListItemEvent
   jsonData            Json
+
+
+  annualReviewEmailType   AnnualReviewProviderEmailType?
 
   @@index([time, listItemId])
 }
@@ -216,4 +214,21 @@ view ListsForDashboard {
   lastAnnualReviewStartDate   DateTime? @db.Date
   userIds                     Int[]
   @@unique([listId])
+}
+
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewPostEmailType {
+  oneMonthBeforeStart // sent one month before nextAnnualReviewStartDate
+  oneWeekBeforeStart // sent one week before
+  oneDayBeforeStart  // sent one day before
+  started // sent day of start
+  oneDayBeforeUnpublish // sent one day before unpublishing
+}
+
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewProviderEmailType {
+  started // sent day of nextAnnualReviewStartDate
+  weeklyUnpublish // sent every week until unpublish date
+  oneDayBeforeUnpublish // sent day before unpublish
+  unpublished // sent day of unpublishing
 }

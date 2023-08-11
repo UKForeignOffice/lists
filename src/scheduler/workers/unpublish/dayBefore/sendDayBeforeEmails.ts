@@ -3,8 +3,8 @@ import { sendDayBeforeProviderReminder } from "./sendDayBeforeProviderReminder";
 import { sendDayBeforePostReminder } from "./sendDayBeforePostReminder";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
-import { ListWithCountryName } from "../../types";
-import { ListJsonData } from "server/models/types";
+import type { ListWithCountryName } from "../../types";
+import type { ListJsonData } from "server/models/types";
 
 export async function sendDayBeforeEmails(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforeEmails", timeframe: "dayBefore" });
@@ -13,19 +13,14 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   if (!meta) {
     return;
   }
-
   if (meta.daysUntilUnpublish !== 1) {
     logger.info(
-      `${meta.daysUntilUnpublish} does not match 1 day before unpublish, skipping sendDayBeforeProviderConfirmation and sendUnpublishPostConfirmation`
+      `${meta.daysUntilUnpublish} days does not match 1 day before unpublish, skipping sendDayBeforeProviderConfirmation and sendUnpublishPostConfirmation`
     );
     return;
   }
 
-  const listItems = await findNonRespondentsForList(list);
-
-  if (!listItems.length) {
-    return;
-  }
+  const listItems = (await findNonRespondentsForList(list)) ?? [];
 
   logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
   const providerEmailTasks = listItems.map(async (listItem) => await sendDayBeforeProviderReminder(listItem, meta));
