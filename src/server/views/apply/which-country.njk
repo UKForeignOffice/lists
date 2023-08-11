@@ -1,0 +1,60 @@
+{% extends "./../question-page.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Which list of lawyers do you want to be added to?
+{% endblock %}
+
+{% block question %}
+
+  {% set error = messages.error %}
+  {% block questionError %}
+    {% if error %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: [
+          {
+            text: error,
+            href: "#country-autocomplete"
+          }
+        ]
+      }) }}
+    {% endif %}
+  {% endblock %}
+
+  <form class="form" method="post">
+    <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="country-autocomplete">
+          Which list of lawyers do you want to be added to?
+        </label>
+      </h1>
+      {% if error %}
+        <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+      {% endif %}
+
+      <div id="country-hint" class="govuk-hint">
+        Select a country or territory
+      </div>
+
+      <select id="country-autocomplete" name="country" class="{{ "govuk-input--error"  if error }}">
+        <option value=""></option>
+        {% for country in countriesList %}
+          <option value="{{ country.value }}">{{ country.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="govuk-button" data-module="govuk-button">Continue</button>
+  </form>
+
+
+  <script nonce="{{cspNonce}}">
+    accessibleAutocomplete.enhanceSelectElement({
+      defaultValue: '',
+      selectElement: document.querySelector('#country-autocomplete'),
+      autoselect: true
+    })
+  </script>
+
+{% endblock %}

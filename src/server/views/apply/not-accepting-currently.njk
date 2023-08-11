@@ -1,0 +1,33 @@
+{% extends "./../layout.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Apply to be added to the 'Find a lawyer abroad' service - We are not currently accepting online applications for this list
+{% endblock %}
+
+
+{% block backLink %}
+  <a class="govuk-back-link" href="{{ backLink }}">Back</a>
+{% endblock %}
+
+
+{% block content %}
+  <div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">
+        We are not currently accepting online applications for this list
+      </h1>
+
+      <p class="govuk-body">
+        Contact the <a href="https://www.gov.uk/world/embassies">British embassy, high commission or consulate</a>
+        which represents the UK in {{ country }} for more information on when you may be able to apply.
+      </p>
+
+    </div>
+  </div>
+
+
+
+
+
+{% endblock %}

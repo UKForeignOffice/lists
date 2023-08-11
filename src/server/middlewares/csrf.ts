@@ -14,7 +14,11 @@ export function configureCsrf(server: Express) {
   server.use(addCsrfTokenToLocals);
 }
 
-function addCsrfTokenToLocals(req: Request, res: Response, next: NextFunction) {
+export function singleRouteCsrf(req: Request, res: Response, next: NextFunction) {
+  csrf(CSRFOptions)(req, res, next);
+}
+
+export function addCsrfTokenToLocals(req: Request, res: Response, next: NextFunction) {
   res.locals.csrfToken = req.csrfToken();
   next();
 }
