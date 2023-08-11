@@ -1,0 +1,58 @@
+{% extends "./../question-page.njk" %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Apply to be added to the 'Find a lawyer abroad' service
+{% endblock %}
+
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Apply to be added to the 'Find a lawyer abroad' service
+  </h1>
+{% endblock %}
+
+{% block answers %}
+{% endblock %}
+
+{% block question %}
+
+  <p class="govuk-body">
+    Lawyers based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO)
+    'Find a lawyer abroad' service.
+  </p>
+  <p class="govuk-body">
+    The 'Find a lawyer abroad' service provides lists of English-speaking lawyers in specific countries to
+    help British nationals find the legal support that best suits their needs.
+  </p>
+  <p class="govuk-body">
+    To be eligible to be added to a list you need to be qualified to practise law in that country.
+  </p>
+
+  <ul class="govuk-body govuk-list govuk-list--bullet">
+    <li>legal services and support to customers in English</li>
+    <li>reliable contact details, including email address</li>
+  </ul>
+
+  {{ govukWarningText({
+    text: "You must have access to the email address you provide. You will be sent a link that you must use to complete your application.",
+    iconFallbackText: "Warning"
+  }) }}
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Feedback on this service</h3>
+  <p class="govuk-body">
+    We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service.
+    You can also make a <a class="govuk-link" href="/complain/provider-complaint/form">complaint</a> about a funeral director listed in this service.
+  </p>
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Contact us</h3>
+  <p class="govuk-body">
+    You can <a class="govuk-link" href="/application/provider-contact/" target="_blank">contact us</a> to change or remove your details, or make a complaint if you are a lawyer in this service.
+  </p>
+
+  <form class="form" method="post">
+    <a href="which-list-of-lawyers" class="govuk-button">Start</a>
+  </form>
+
+
+
+{% endblock %}

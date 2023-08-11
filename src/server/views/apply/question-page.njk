@@ -1,0 +1,32 @@
+{% extends "./../layout.njk" %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }}{{ " - " + partialPageTitle if partialPageTitle }}
+{% endblock %}
+
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% block heading %}
+      {% endblock %}
+    </div>
+
+    <div class="govuk-grid-column-two-thirds">
+      {% block questionError %}
+        {% if error.field %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [error]
+          }) }}
+        {% endif %}
+      {% endblock %}
+
+      {% block question %}
+
+      {% endblock %}
+    </div>
+
+
+  </div>
+{% endblock %}

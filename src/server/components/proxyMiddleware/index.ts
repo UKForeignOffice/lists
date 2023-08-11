@@ -1,11 +1,11 @@
-import type { Express } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
+import { applyRouter } from "./router";
+import { getServiceTypeFromUrl } from "./helpers";
 
 /**
  * Proxy middleware for the form runner
- * @param app Express app
- * Important: this middleware must be added before body and cookie parsers middlewares
  */
 export function configureFormRunnerProxyMiddleware(server: Express): void {
   if (isProd) {
@@ -14,8 +14,32 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
     server.set("trust proxy", false);
   }
 
+  /**
+   * This router first asks the user which list they wish to be added to and check the database before
+   * redirecting them to the form runner which is below.
+   */
+  server.use(applyRouter);
+
   server.use(
     `/application/*`,
+    (req: Request, res: Response, next: NextFunction) => {
+      if (req.baseUrl.includes("assets")) {
+        next();
+        return;
+      }
+
+      const serviceType = getServiceTypeFromUrl(req.baseUrl);
+      if (!serviceType) {
+        next();
+        return;
+      }
+
+      if (!req.session.application?.country) {
+        res.redirect("/application/lawyers/start");
+        return;
+      }
+      next();
+    },
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace("/application", "");
