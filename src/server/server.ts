@@ -40,11 +40,11 @@ export async function getServer(): Promise<Express> {
   configureCompression(server);
   configureStaticServer(server);
   await configureExpressSession(server);
+  configureCookieParser(server);
   configureViews(server);
 
   configureFormRunnerProxyMiddleware(server);
   configureBodyParser(server);
-  configureCookieParser(server);
 
   /**
    * API routes
