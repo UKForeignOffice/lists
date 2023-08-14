@@ -239,6 +239,26 @@
       ]
     },
     {
+      "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+      "title": "Can you offer pro bono service to British nationals?",
+      "components": [
+        {
+          "name": "proBono",
+          "options": {
+            "required": true
+          },
+          "type": "YesNoField",
+          "title": "Can you offer pro bono service to British nationals?",
+          "schema": {}
+        }
+      ],
+      "next": [
+        {
+          "path": "/have-you-represented-british-nationals-before"
+        }
+      ]
+    },
+    {
       "path": "/have-you-represented-british-nationals-before",
       "title": "Have you represented British nationals before?",
       "components": [
