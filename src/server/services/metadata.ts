@@ -352,7 +352,7 @@ export const fcdoLawyersPagesByCountry = {
   Ethiopia: "https://www.gov.uk/government/publications/ethiopia-list-of-lawyers",
   Fiji: "https://www.gov.uk/government/publications/fiji-list-of-lawyers",
   Finland: "https://www.gov.uk/government/publications/finland-list-of-lawyers",
-  Gambia: "https://www.gov.uk/government/publications/gambia-list-of-lawyers",
+  "The Gambia": "https://www.gov.uk/government/publications/gambia-list-of-lawyers",
   Ghana: "https://www.gov.uk/government/publications/ghana-list-of-lawyers",
   "Cayman Islands": "https://www.gov.uk/government/publications/grand-cayman-list-of-lawyers",
   Grenada: "https://www.gov.uk/government/publications/grenada-list-of-lawyers",
