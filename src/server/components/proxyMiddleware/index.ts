@@ -15,10 +15,12 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   }
 
   /**
-   * This router first asks the user which list they wish to be added to and check the database before
-   * redirecting them to the form runner which is below.
+   * applyRouter must come first. If no request matches applyRouter routes,
+   * then the request will be proxied to the runner.
    */
   server.use(applyRouter);
+
+  server.get("/application/", (req: Request, res: Response, next: NextFunction) => {});
 
   server.use(
     `/application/*`,
