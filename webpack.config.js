@@ -237,4 +237,4 @@ const scheduler = {
   ],
 };
 
-module.exports = [client, server];
+module.exports = [client, server, scheduler];
