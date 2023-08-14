@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { addCsrfTokenToLocals, singleRouteCsrf } from "server/middlewares/csrf";
 import { countriesList } from "server/services/metadata";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
@@ -8,6 +8,10 @@ import { json, urlencoded } from "body-parser";
 import cookieParser from "cookie-parser";
 import { checkCountryQuestionAnswered } from "./middlewares/checkCountryQuestionAnswered";
 
+/**
+ * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
+ * are initialised. By applying these middlewares to individual routes, it does not interfere with the proxy.
+ */
 const bodyParser = [json(), urlencoded({ extended: true })];
 const cookies = cookieParser();
 const middleware = [...bodyParser, cookies, singleRouteCsrf, addCsrfTokenToLocals];
@@ -17,8 +21,9 @@ export const applyRouter = express.Router();
 declare module "express-session" {
   export interface SessionData {
     application: {
-      type: "lawyers" | "funeral-directors" | "translators-interpreters";
-      country: string;
+      type?: "lawyers" | "funeral-directors" | "translators-interpreters";
+      country?: string;
+      isInitialisedSession?: boolean;
     };
   }
 }
@@ -60,6 +65,12 @@ applyRouter.get("/application/lawyers/not-currently-accepting", (req: Request, r
     backLink: "/application/lawyers/which-list-of-lawyers",
     country: req.session?.application?.country,
   });
+});
+applyRouter.get("/application/session/*", (req: Request, res: Response, next: NextFunction) => {
+  req.session.application = {
+    isInitialisedSession: true,
+  };
+  next();
 });
 
 /**
