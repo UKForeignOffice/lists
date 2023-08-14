@@ -39,11 +39,12 @@ export async function getServer(): Promise<Express> {
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
-  configureBodyParser(server);
-  configureCookieParser(server);
   await configureExpressSession(server);
   configureViews(server);
+
   configureFormRunnerProxyMiddleware(server);
+  configureBodyParser(server);
+  configureCookieParser(server);
 
   /**
    * API routes

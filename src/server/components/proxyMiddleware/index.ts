@@ -1,8 +1,7 @@
-import type { Express, NextFunction, Request, Response } from "express";
+import type { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
 import { applyRouter } from "./router";
-import { getServiceTypeFromUrl } from "./helpers";
 
 /**
  * Proxy middleware for the form runner
@@ -20,28 +19,8 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
    */
   server.use(applyRouter);
 
-  server.get("/application/", (req: Request, res: Response, next: NextFunction) => {});
-
   server.use(
     `/application/*`,
-    (req: Request, res: Response, next: NextFunction) => {
-      if (req.baseUrl.includes("assets")) {
-        next();
-        return;
-      }
-
-      const serviceType = getServiceTypeFromUrl(req.baseUrl);
-      if (!serviceType) {
-        next();
-        return;
-      }
-
-      if (!req.session.application?.country) {
-        res.redirect("/application/lawyers/start");
-        return;
-      }
-      next();
-    },
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace("/application", "");
