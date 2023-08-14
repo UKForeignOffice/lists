@@ -6,7 +6,7 @@ import express from "express";
 import { json, urlencoded } from "body-parser";
 import cookieParser from "cookie-parser";
 import { checkCountryQuestionAnswered } from "./middlewares/checkCountryQuestionAnswered";
-import { postLawyers } from "./applyController";
+import { lawyersPostController } from "./controllers";
 
 /**
  * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
@@ -18,14 +18,14 @@ const middleware = [...bodyParser, cookies, singleRouteCsrf, addCsrfTokenToLocal
 
 export const applyRouter = express.Router();
 
-applyRouter.get("/application/lawyers/start", (_req: Request, res: Response) => {
+applyRouter.get("/application/lawyers/start", cookies, (_req: Request, res: Response) => {
   res.render("apply/lawyers/start");
 });
 applyRouter.get("/application/lawyers/which-list-of-lawyers", middleware, (_req: Request, res: Response) => {
   res.render("apply/lawyers/which-list-of-lawyers", { countriesList });
 });
-applyRouter.post("/application/lawyers/which-list-of-lawyers", middleware, postLawyers);
-applyRouter.get("/application/lawyers/not-currently-accepting", (req: Request, res: Response) => {
+applyRouter.post("/application/lawyers/which-list-of-lawyers", middleware, lawyersPostController);
+applyRouter.get("/application/lawyers/not-currently-accepting", cookies, (req: Request, res: Response) => {
   res.render("apply/not-accepting-currently", {
     backLink: "/application/lawyers/which-list-of-lawyers",
     country: req.session?.application?.country,

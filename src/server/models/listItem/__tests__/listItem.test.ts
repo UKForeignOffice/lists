@@ -165,7 +165,7 @@ describe("ListItem Model:", () => {
 
       await listItemCreateInputFromWebhook(lawyerWebhookData);
       const deserialised = deserialise(lawyerWebhookData);
-      const expectedCountryName = deserialised.country;
+      const expectedCountryName = deserialised.addressCountry;
 
       expect(spyCountry).toHaveBeenCalledWith({
         where: { name: expectedCountryName },

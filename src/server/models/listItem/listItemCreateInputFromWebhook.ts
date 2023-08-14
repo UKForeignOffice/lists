@@ -17,8 +17,7 @@ export function deserialise(webhook: WebhookData): DeserialisedWebhookData {
   const { type } = baseDeserialised;
   const deserialiser = DESERIALISER[type];
   // just return the webhook object if no deserialiser can be found
-  const deserialised = (deserialiser?.(baseDeserialised) ??
-    webhook) as DeserialisedWebhookData;
+  const deserialised = (deserialiser?.(baseDeserialised) ?? webhook) as DeserialisedWebhookData;
   return deserialised;
 }
 
@@ -31,7 +30,7 @@ export async function listItemCreateInputFromWebhook(
 
   const exists = await checkListItemExists({
     organisationName: deserialised.organisationName,
-    countryName: deserialised.country,
+    countryName: deserialised.addressCountry!,
   });
 
   if (exists) {
@@ -58,7 +57,7 @@ export async function listItemCreateInputFromWebhook(
       },
     },
     history: {
-      create: [EVENTS.NEW()]
+      create: [EVENTS.NEW()],
     },
     jsonData: {
       ...deserialised,

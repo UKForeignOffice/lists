@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { listExists } from "server/components/proxyMiddleware/helpers";
 
-export async function postLawyers(req: Request, res: Response) {
+export async function lawyersPostController(req: Request, res: Response) {
   const { country } = req.body;
   const validatedCountry = validateCountryLower(country);
 
