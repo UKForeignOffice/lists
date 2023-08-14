@@ -217,6 +217,10 @@
       "next": [
         {
           "path": "/can-you-provide-legal-aid-to-british-nationals"
+        },
+        {
+          "path": "/can-you-offer-pro-bono-service-to-british-nationals",
+          "condition": "rCuWxL"
         }
       ]
     },
@@ -1713,7 +1717,7 @@
         "conditions": [
           {
             "field": {
-              "name": "country",
+              "name": "addressCountry",
               "type": "SelectField",
               "display": "Country list"
             },
