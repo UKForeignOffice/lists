@@ -11,16 +11,19 @@ export function checkCountryQuestionAnswered(req: Request, res: Response, next: 
 
   logger.info(`checkCountryQuestionAnswered: ${req.url} - ${req.params.serviceType}`);
   const session = req.session.application ?? {};
-  const hasCountry = session.country ?? false;
-  const isInitialisedSession = session.isInitialisedSession ?? false;
 
-  if (!hasCountry || !isInitialisedSession) {
+  if (session.isInitialisedSession === true) {
     logger.info(
-      `checkCountryQuestionAnswered: ${req.url} - ${serviceType} - User has not answered country question, redirecting to start page`
+      `checkCountryQuestionAnswered: ${req.url} - User entered through /application/session - country check not required`
     );
+    next();
+    return;
+  }
 
+  if (!session.country) {
     res.redirect(`/application/${serviceType}/start`);
     return;
   }
+
   next();
 }
