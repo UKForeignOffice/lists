@@ -11,7 +11,7 @@ import { getObjectDiff } from "./helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import { sendManualActionNotificationToPost, sendProviderInformedOfEditEmail } from "server/services/govuk-notify";
 import type { ListJsonData } from "server/models/types";
-import type { EventCreate } from "server/models/listItem/listItemEvent";
+import type { EventCreate } from "shared/listItemEvent";
 import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import type { Prisma } from "@prisma/client";
 
