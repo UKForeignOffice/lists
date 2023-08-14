@@ -15,15 +15,3 @@ export async function listExists(country: string, type: string) {
     },
   });
 }
-
-export function getServiceTypeFromUrl(url: string): string | undefined {
-  if (url.includes("application/lawyers")) {
-    return "lawyers";
-  }
-  if (url.includes("application/funeral-directors")) {
-    return "funeral-directors";
-  }
-  if (url.includes("application/translators-interpreters")) {
-    return "translators-interpreters";
-  }
-}
