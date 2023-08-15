@@ -29,7 +29,10 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
-        return proxyResData.toString("utf8").replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
+        return proxyResData
+          .toString("utf8")
+          .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`)
+          .replace(/(href|src|value)=('|")([^'"])(.*sitemap)[^'"]/g, `$1=/sitemap`);
       },
       userResHeaderDecorator(headers, userReq, userRes) {
         const isApplicationRequest = userReq.originalUrl.startsWith("/application");

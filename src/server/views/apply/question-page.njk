@@ -1,4 +1,6 @@
 {% extends "./../layout.njk" %}
+{% from "button/macro.njk" import govukButton %}
+
 
 {% block pageTitle %}
   {{ SERVICE_NAME }}{{ " - " + partialPageTitle if partialPageTitle }}
@@ -29,4 +31,8 @@
 
 
   </div>
+{% endblock %}
+
+{% block footer %}
+  {% include "./apply-footer.njk" %}
 {% endblock %}
