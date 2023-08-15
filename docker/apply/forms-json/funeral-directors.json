@@ -2,39 +2,6 @@
   "startPage": "/apply-to-the-find-an-english-speaking-funeral-director-abroad-service",
   "pages": [
     {
-      "title": "Apply to the ‘Find an English-speaking funeral director abroad’ service",
-      "path": "/apply-to-the-find-an-english-speaking-funeral-director-abroad-service",
-      "components": [
-        {
-          "name": "rhnpiT",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body\">Funeral directors based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find an English-speaking funeral director abroad' service.</p>\n<p class=\"govuk-body\">This service provides lists of English-speaking funeral directors which are searchable by country and region to help British nationals find the support that best suits their needs.</p>\n<p class=\"govuk-body\">To be eligible to be added to a list you need to be:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n<li>based in the country you provide funeral services in</li>\n<li>qualified to provide funeral services, and are registered with the local authorities to provide funeral services (if applicable in your country)</li>\n</ul>\n</p>\n<p class=\"govuk-body\">You also need to be able to provide:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>funeral services and support to customers in English</li>\n  <li>reliable contact details, including an email address</li>\n</ul>\n<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must have access to the email address you provide. You will be sent a link that you must use to complete your application.\n  </strong>\n</div>\n",
-          "schema": {}
-        },
-        {
-          "name": "QLkbfP",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
-          "schema": {}
-        },
-        {
-          "name": "fhWDrb",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Contact us</p>\n<p class=\"govuk-body\">You can <a class=\"govuk-link\" href=\"/provider-contact//\" target=\"_blank\">contact us</a> to change or remove your details, or make a complaint if you are a funeral director in this service.</p>",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/which-country-list-do-you-want-to-be-added-to"
-        }
-      ],
-      "controller": "./pages/start.js"
-    },
-    {
       "title": "Check your answers",
       "path": "/summary",
       "controller": "./pages/summary.js",
@@ -372,33 +339,6 @@
       "next": [
         {
           "path": "/summary"
-        }
-      ]
-    },
-    {
-      "path": "/which-country-list-do-you-want-to-be-added-to",
-      "title": "Which country list do you want to be added to?",
-      "components": [
-        {
-          "name": "country",
-          "options": {},
-          "type": "AutocompleteField",
-          "title": "Country list",
-          "list": "country",
-          "schema": {},
-          "hint": "Select a country or territory"
-        },
-        {
-          "name": "ZoFnKT",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country or territory you select.\n  </strong>\n</div>",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/can-you-provide-funeral-services-and-support-to-customers-in-english"
         }
       ]
     },

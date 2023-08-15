@@ -1,11 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import { addCsrfTokenToLocals, singleRouteCsrf } from "server/middlewares/csrf";
-import { countriesList } from "server/services/metadata";
 
 import express from "express";
 import { json, urlencoded } from "body-parser";
 import { checkCountryQuestionAnswered, checkIsExistingList } from "./middlewares/checkCountryQuestionAnswered";
-import { lawyersPostController } from "./controllers";
+import { getCountriesPageController, getStartPageController, lawyersPostController } from "./controllers";
 
 /**
  * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
@@ -16,13 +15,9 @@ const middleware = [...bodyParser, singleRouteCsrf, addCsrfTokenToLocals];
 
 export const applyRouter = express.Router();
 
-applyRouter.get("/application/lawyers/start", (req: Request, res: Response) => {
-  req.session.application ??= {};
-  res.render("apply/lawyers/start");
-});
-applyRouter.get("/application/lawyers/which-list-of-lawyers", middleware, (req: Request, res: Response) => {
-  res.render("apply/lawyers/which-list-of-lawyers", { countriesList, answer: req.session.application?.country });
-});
+// Lawyers
+applyRouter.get("/application/lawyers/start", getStartPageController);
+applyRouter.get("/application/lawyers/which-list-of-lawyers", middleware, getCountriesPageController);
 applyRouter.post("/application/lawyers/which-list-of-lawyers", middleware, lawyersPostController);
 applyRouter.get("/application/lawyers/not-currently-accepting", (req: Request, res: Response) => {
   res.render("apply/not-accepting-currently", {
@@ -30,6 +25,15 @@ applyRouter.get("/application/lawyers/not-currently-accepting", (req: Request, r
     country: req.session?.application?.country,
   });
 });
+
+// Funeral Directors
+applyRouter.get("/application/funeral-directors/start", getStartPageController);
+applyRouter.get(
+  "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to",
+  middleware,
+  getCountriesPageController
+);
+
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
     isInitialisedSession: true,
