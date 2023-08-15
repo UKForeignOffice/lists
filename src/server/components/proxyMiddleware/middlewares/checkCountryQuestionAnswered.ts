@@ -35,6 +35,15 @@ export function checkCountryQuestionAnswered(req: Request, res: Response, next: 
 export async function checkIsExistingList(req: Request, res: Response, next: NextFunction) {
   const { serviceType } = req.params;
   const session = req.session.application ?? {};
+
+  if (session.isInitialisedSession === true) {
+    logger.info(
+      `checkIsExistingList: ${req.url} - User entered through /application/session - country check not required`
+    );
+    next();
+    return;
+  }
+
   const { country, type } = session;
   const sessionTypeMatchesReqType = serviceType === type;
 
