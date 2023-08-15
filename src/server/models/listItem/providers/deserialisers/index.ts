@@ -9,7 +9,7 @@ import { camelCase } from "lodash";
 
 export function baseDeserialiser(webhookData: FormRunner.WebhookData): BaseDeserialisedWebhookData {
   /**
-   * Deserialises to {@link #BaseDeserialisedWebhookData}
+   * Deserialises to {@link #BaseDeserialisedWebhookData}. This is run first to create a flat key value object.
    */
   const { questions = [], metadata } = webhookData;
   let { type } = metadata;
@@ -35,6 +35,9 @@ export function baseDeserialiser(webhookData: FormRunner.WebhookData): BaseDeser
 }
 
 export const DESERIALISER: Record<ServiceType, WebhookDeserialiser<any, any>> = {
+  /**
+   * These deserialisers are run after `baseDeserialiser`. Use these to add or modify the output from `baseDeserialiser`.
+   */
   [ServiceType.lawyers]: lawyerDeserialiser,
   [ServiceType.funeralDirectors]: funeralDirectorDeserialiser,
   [ServiceType.translatorsInterpreters]: translatorInterpreterDeserialiser,
