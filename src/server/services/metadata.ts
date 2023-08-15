@@ -495,7 +495,7 @@ export const fcdoFuneralDirectorsByCountry = {
   Estonia: "https://www.gov.uk/government/publications/estonia-list-of-funeral-directors",
   Finland: "https://www.gov.uk/government/publications/funeral-directors-in-finland",
   Gabon: "https://www.gov.uk/government/publications/gabon-list-of-funeral-directors",
-  Gambia:
+  "The Gambia":
     "https://www.gov.uk/government/publications/the-gambia-funeral-directors/the-gambia-list-of-funeral-directors",
   Georgia: "https://www.gov.uk/government/publications/georgia-list-of-funeral-directors",
   Germany: "https://www.gov.uk/government/publications/germany-list-of-funeral-directors",
