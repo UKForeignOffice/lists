@@ -12,6 +12,10 @@ export function getStartPageController(req: Request, res: Response) {
   res.render(`apply/${serviceType}/start`);
 }
 
+/**
+ * This controller will only work if the name of the template file matches the name of the route
+ * e.g. '/apply/funeral-directors/which-country-list-do-you-want-to-be-added-to.njk'
+ */
 export function getCountrySelectPageController(req: Request, res: Response) {
   const routeUrl = req.path;
   const serviceType = routeUrl.split("/")[2];
@@ -40,7 +44,7 @@ export async function postCountrySelectPageController(req: Request, res: Respons
     country: validatedCountry,
   };
 
-  const list = await listExists(validatedCountry, serviceType);
+  const list = await listExists(validatedCountry, camelCaseServiceType);
 
   if (!list) {
     res.redirect(Routes[camelCaseServiceType].stopPage);
@@ -50,7 +54,7 @@ export async function postCountrySelectPageController(req: Request, res: Respons
   res.redirect(Routes[camelCaseServiceType].postCountrySelect);
 }
 
-export function getStopPage(req: Request, res: Response) {
+export function getStopPageController(req: Request, res: Response) {
   const serviceType = req.path.split("/")[2];
 
   res.render("apply/not-accepting-currently", {

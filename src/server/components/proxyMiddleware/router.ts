@@ -22,15 +22,13 @@ export const applyRouter = express.Router();
 applyRouter.get(Routes.lawyers.start, Controllers.getStartPageController);
 applyRouter.get(Routes.lawyers.countrySelect, middleware, Controllers.getCountrySelectPageController);
 applyRouter.post(Routes.lawyers.countrySelect, middleware, Controllers.postCountrySelectPageController);
-applyRouter.get(Routes.lawyers.stopPage, Controllers.getStopPage);
+applyRouter.get(Routes.lawyers.stopPage, Controllers.getStopPageController);
 
 // Funeral Directors
-applyRouter.get("/application/funeral-directors/start", Controllers.getStartPageController);
-// applyRouter.get(
-//   "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to",
-//   middleware,
-//   Controllers.getCountriesPageController
-// );
+applyRouter.get(Routes.funeralDirectors.start, Controllers.getStartPageController);
+applyRouter.get(Routes.funeralDirectors.countrySelect, middleware, Controllers.getCountrySelectPageController);
+applyRouter.post(Routes.funeralDirectors.countrySelect, middleware, Controllers.postCountrySelectPageController);
+applyRouter.get(Routes.funeralDirectors.stopPage, Controllers.getStopPageController);
 
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
