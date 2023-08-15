@@ -42,7 +42,7 @@
       <select id="country-autocomplete" name="country" class="{{ "govuk-input--error"  if error }}">
         <option value=""></option>
         {% for country in countriesList %}
-          <option value="{{ country.value }}">{{ country.text }}</option>
+          <option value="{{ country.value }}" {{ "selected" if country.value === answer }}>{{ country.text }}</option>
         {% endfor %}
       </select>
     </div>

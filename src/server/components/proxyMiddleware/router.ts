@@ -20,8 +20,8 @@ applyRouter.get("/application/lawyers/start", (req: Request, res: Response) => {
   req.session.application ??= {};
   res.render("apply/lawyers/start");
 });
-applyRouter.get("/application/lawyers/which-list-of-lawyers", middleware, (_req: Request, res: Response) => {
-  res.render("apply/lawyers/which-list-of-lawyers", { countriesList });
+applyRouter.get("/application/lawyers/which-list-of-lawyers", middleware, (req: Request, res: Response) => {
+  res.render("apply/lawyers/which-list-of-lawyers", { countriesList, answer: req.session.application?.country });
 });
 applyRouter.post("/application/lawyers/which-list-of-lawyers", middleware, lawyersPostController);
 applyRouter.get("/application/lawyers/not-currently-accepting", (req: Request, res: Response) => {
