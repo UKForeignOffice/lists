@@ -1,5 +1,6 @@
 {% extends "./../question-page.njk" %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
   {{ SERVICE_NAME }} - Apply to be added to the 'Find a lawyer abroad' service
@@ -49,9 +50,13 @@
     You can <a class="govuk-link" href="/application/provider-contact/" target="_blank">contact us</a> to change or remove your details, or make a complaint if you are a lawyer in this service.
   </p>
 
-  <form class="form" method="post">
-    <a href="which-list-of-lawyers" class="govuk-button">Start</a>
-  </form>
+
+  {{ govukButton({
+    text: "Start now",
+    href: "which-list-of-lawyers",
+    isStartButton: true,
+    element: "a"
+  }) }}
 
 
 
