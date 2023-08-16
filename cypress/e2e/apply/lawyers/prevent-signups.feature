@@ -20,9 +20,9 @@ Feature: I want to apply to be added to the ‘Find a lawyer abroad’ service b
     Then I should see the heading <title>
 
     Examples:
-      | postCountrySelectPage                                                                                 | title                                                                   |
-      | "/application/lawyers/what-size-is-your-company-or-firm"                                              | Apply to be added to the 'Find a lawyer abroad' service                 |
-      | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | Apply to the ‘Find an English-speaking funeral director abroad’ service |
+      | postCountrySelectPage                                                                                 | title                                                                     |
+      | "/application/lawyers/what-size-is-your-company-or-firm"                                              | "Apply to be added to the 'Find a lawyer abroad' service"                 |
+      | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | "Apply to the ‘Find an English-speaking funeral director abroad’ service" |
 
   Scenario Outline: User cannot change their country answer and skip to form pages
     Given I navigate to <startPage>
@@ -37,9 +37,9 @@ Feature: I want to apply to be added to the ‘Find a lawyer abroad’ service b
     Then I should see the heading <title>
 
     Examples:
-      | startPage                              | country | countrySelectPage                                                              | postCountrySelectPage                                                                                 | title                                                                   |
-      | "/application/lawyers/start"           | "Italy" | "/application/lawyers/which-list-of-lawyers"                                   | "/application/lawyers/what-size-is-your-company-or-firm"                                              | Apply to be added to the 'Find a lawyer abroad' service                 |
-      | "/application/funeral-directors/start" | "India" | "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to" | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | Apply to the ‘Find an English-speaking funeral director abroad’ service |
+      | startPage                              | country | countrySelectPage                                                              | postCountrySelectPage                                                                                 | title                                                                     |
+      | "/application/lawyers/start"           | "Italy" | "/application/lawyers/which-list-of-lawyers"                                   | "/application/lawyers/what-size-is-your-company-or-firm"                                              | "Apply to be added to the 'Find a lawyer abroad' service"                 |
+      | "/application/funeral-directors/start" | "Argentina" | "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to" | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | "Apply to the ‘Find an English-speaking funeral director abroad’ service" |
 
   Scenario Outline: Back link
     Given I am searching for <serviceType>
@@ -54,4 +54,4 @@ Feature: I want to apply to be added to the ‘Find a lawyer abroad’ service b
     Examples:
       | serviceType         | country | title                                |
       | "lawyers"           | "Italy" | "What size is your company or firm?" |
-      | "funeral-directors" | "India" | "What size is your company or firm?" |
+      | "funeral-directors" | "Argentina" | "Can you provide funeral services and support to customers in English?" |
