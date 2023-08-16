@@ -11,18 +11,20 @@ Feature: I want to apply to be added to the ‘Find a lawyer|funeral director|tr
     And I see "which represents the UK in New Zealand"
 
     Examples:
-      | serviceType         |
-      | "lawyers"           |
-      | "funeral-directors" |
+      | serviceType                |
+      | "lawyers"                  |
+      | "funeral-directors"        |
+      | "translators-interpreters" |
 
   Scenario Outline: User cannot jump to a form page without answering the initial question
     When I navigate to <postCountrySelectPage>
     Then I should see the heading <title>
 
     Examples:
-      | postCountrySelectPage                                                                                 | title                                                                     |
-      | "/application/lawyers/what-size-is-your-company-or-firm"                                              | "Apply to be added to the 'Find a lawyer abroad' service"                 |
-      | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | "Apply to the ‘Find an English-speaking funeral director abroad’ service" |
+      | postCountrySelectPage                                                                                                  | title                                                                              |
+      | "/application/lawyers/what-size-is-your-company-or-firm"                                                               | "Apply to be added to the 'Find a lawyer abroad' service"                          |
+      | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english"                  | "Apply to the ‘Find an English-speaking funeral director abroad’ service"          |
+      | "/application/translators-interpreters/can-you-provide-translation-or-interpretation-services-to-customers-in-english" | "Apply to the 'Find an English-speaking translator or interpreter abroad’ service" |
 
   Scenario Outline: User cannot change their country answer and skip to form pages
     Given I navigate to <startPage>
@@ -37,9 +39,10 @@ Feature: I want to apply to be added to the ‘Find a lawyer|funeral director|tr
     Then I should see the heading <title>
 
     Examples:
-      | startPage                    | country | countrySelectPage                                                    | postCountrySelectPage                                    | title                                                     |
-      | "/application/lawyers/start" | "Italy" | "/application/lawyers/which-country-list-do-you-want-to-be-added-to" | "/application/lawyers/what-size-is-your-company-or-firm" | "Apply to be added to the 'Find a lawyer abroad' service" |
-      | "/application/funeral-directors/start" | "Argentina" | "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to" | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english" | "Apply to the ‘Find an English-speaking funeral director abroad’ service" |
+      | startPage                                     | country     | countrySelectPage                                                                     | postCountrySelectPage                                                                                                  | title                                                                              |
+      | "/application/lawyers/start"                  | "Italy"     | "/application/lawyers/which-list-of-lawyers"                                          | "/application/lawyers/what-size-is-your-company-or-firm"                                                               | "Apply to be added to the 'Find a lawyer abroad' service"                          |
+      | "/application/funeral-directors/start"        | "Argentina" | "/application/funeral-directors/which-country-list-do-you-want-to-be-added-to"        | "/application/funeral-directors/can-you-provide-funeral-services-and-support-to-customers-in-english"                  | "Apply to the ‘Find an English-speaking funeral director abroad’ service"          |
+      | "/application/translators-interpreters/start" | "Poland"    | "/application/translators-interpreters/which-country-list-do-you-want-to-be-added-to" | "/application/translators-interpreters/can-you-provide-translation-or-interpretation-services-to-customers-in-english" | "Apply to the 'Find an English-speaking translator or interpreter abroad’ service" |
 
   Scenario Outline: Back link
     Given I am searching for <serviceType>
@@ -52,6 +55,7 @@ Feature: I want to apply to be added to the ‘Find a lawyer|funeral director|tr
     Then I should see the heading "Which country list do you want to be added to?"
 
     Examples:
-      | serviceType | country | title                                |
-      | "lawyers"   | "Italy" | "What size is your company or firm?" |
-      | "funeral-directors" | "Argentina" | "Can you provide funeral services and support to customers in English?" |
+      | serviceType                | country     | title                                                                             |
+      | "lawyers"                  | "Italy"     | "What size is your company or firm?"                                              |
+      | "funeral-directors"        | "Argentina" | "Can you provide funeral services and support to customers in English?"           |
+      | "translators-interpreters" | "Poland"    | "Can you provide translation or interpretation services to customers in English?" |
