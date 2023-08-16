@@ -43,4 +43,8 @@ applyRouter.get("/application/session/*", (req: Request, _res: Response, next: N
  * todo: change to /application/:serviceType(lawyers|funeral-directors|translators-interpreters)/ when funeral-directors
  * and translators and interpreters flow is done.
  */
-applyRouter.get("/application/:serviceType(lawyers)/*", checkCountryQuestionAnswered, checkIsExistingList);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors)/*",
+  checkCountryQuestionAnswered,
+  checkIsExistingList
+);
