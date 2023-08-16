@@ -34,4 +34,4 @@ Feature:
     And I continue
     Then I should see the heading "What size is your company or firm?"
     When I click the link "Back"
-    Then I should see the heading "Which list of lawyers do you want to be added to?"
+    Then I should see the heading "Which country list do you want to be added to?"
