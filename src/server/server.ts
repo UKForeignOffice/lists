@@ -25,6 +25,7 @@ import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/confi
 import { logger } from "server/services/logger";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import { configureCsrf } from "server/middlewares/csrf";
+import { configureExpressSession } from "server/components/auth/express-session";
 
 const server = express();
 
@@ -38,10 +39,12 @@ export async function getServer(): Promise<Express> {
   configureLogger(server);
   configureCompression(server);
   configureStaticServer(server);
-  configureFormRunnerProxyMiddleware(server);
-  configureBodyParser(server);
+  await configureExpressSession(server);
   configureCookieParser(server);
   configureViews(server);
+
+  configureFormRunnerProxyMiddleware(server);
+  configureBodyParser(server);
 
   /**
    * API routes

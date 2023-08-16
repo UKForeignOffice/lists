@@ -46,6 +46,7 @@ export type Answers = BaseAnswers &
   Partial<FuneralDirectorAnswers> &
   Partial<TranslatorsInterpretersAnswers> &
   Partial<LawyersAnswers>;
+
 declare module "express-session" {
   export interface SessionData {
     returnTo?: string;
@@ -53,12 +54,16 @@ declare module "express-session" {
       message?: string;
       action?: Action;
     };
+    application: {
+      type?: "lawyers" | "funeral-directors" | "translators-interpreters";
+      country?: string;
+      isInitialisedSession?: boolean;
+    };
     currentUrl?: string;
     updatesRequired?: boolean;
     currentlyEditing?: number;
     currentlyEditingStartTime?: number;
     relatedLink?: RelatedLink;
-
     answers: Answers;
   }
 }

@@ -1,0 +1,34 @@
+{% from "footer/macro.njk" import govukFooter %}
+
+{# mimics footer found on form runner footer #}
+
+{{ govukFooter({
+  meta: {
+    items: [
+      {
+        href: '/application/help/privacy',
+        text: 'Privacy'
+      },
+      {
+        href: '/application/help/cookies',
+        text: 'Cookies'
+      },
+      {
+        href: '/application/help/accessibility-statement',
+        text: 'Accessibility Statement'
+      },
+      {
+        href: '/application/help/terms-and-conditions',
+        text: 'Terms and Conditions'
+      },
+      {
+        href: '/sitemap',
+        text: 'Sitemap'
+      },
+      {
+        href: '/application/provider-contact/contact-us',
+        text: 'Contact Us'
+      }
+    ]
+  }
+}) }}

@@ -1,39 +1,6 @@
 {
-  "startPage": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
+  "startPage": "/what-size-is-your-company-or-firm",
   "pages": [
-    {
-      "title": "Apply to be added to the ‘Find a lawyer abroad’ service",
-      "path": "/apply-to-be-added-to-the-find-a-lawyer-abroad-service",
-      "components": [
-        {
-          "name": "rhnpiT",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body\">Lawyers based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find a lawyer abroad' service.</p>\n<p class=\"govuk-body\">The 'Find a lawyer abroad' service provides lists of English-speaking lawyers in specific countries to help British nationals find the legal support that best suits their needs.</p>\n<p class=\"govuk-body\">To be eligible to be added to a list you need to be qualified to practise law in that country.</p>\n<p class=\"govuk-body\">You also need to be able to provide:</p>\n<ul class=\"govuk-list govuk-list--bullet\">\n  <li>legal services and support to customers in English</li>\n  <li>reliable contact details, including email address</li>\n</ul>\n<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must have access to the email address you provide. You will be sent a link that you must use to complete your application.\n  </strong>\n</div>\n",
-          "schema": {}
-        },
-        {
-          "name": "QLkbfP",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Feedback on this service</p>\n<p class=\"govuk-body\">We welcome your <a class=\"govuk-link\" href=\"https://www.smartsurvey.co.uk/s/Apply-to-Find-a-Professional/\" target=\"_blank\">feedback</a> to help us improve this service</p>",
-          "schema": {}
-        },
-        {
-          "name": "fhWDrb",
-          "options": {},
-          "type": "Html",
-          "content": "<p class=\"govuk-body govuk-!-font-weight-bold\">Contact us</p>\n<p class=\"govuk-body\">You can <a class=\"govuk-link\" href=\"/provider-contact//\" target=\"_blank\">contact us</a> to change or remove your details, or make a complaint if you are a lawyer in this service.</p>",
-          "schema": {}
-        }
-      ],
-      "next": [
-        {
-          "path": "/which-list-of-lawyers-do-you-want-to-be-added-to"
-        }
-      ],
-      "controller": "./pages/start.js"
-    },
     {
       "title": "Check your answers",
       "path": "/summary",
@@ -397,32 +364,6 @@
       ]
     },
     {
-      "path": "/which-list-of-lawyers-do-you-want-to-be-added-to",
-      "title": "Which list of lawyers do you want to be added to?",
-      "components": [
-        {
-          "name": "country",
-          "options": {},
-          "type": "AutocompleteField",
-          "title": "Country list",
-          "list": "country",
-          "schema": {},
-          "hint": "Select a country or territory"
-        },
-        {
-          "name": "ZoFnKT",
-          "options": {},
-          "type": "Html",
-          "content": "<div class=\"govuk-warning-text\">\n  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You must be based in the country or territory you select.\n  </strong>\n</div>"
-        }
-      ],
-      "next": [
-        {
-          "path": "/what-size-is-your-company-or-firm"
-        }
-      ]
-    },
-    {
       "path": "/which-regions-do-you-serve",
       "title": "Which regions do you serve?",
       "components": [
@@ -442,6 +383,7 @@
       ]
     },
     {
+      "backLinkFallback": "/lawyers/which-list-of-lawyers",
       "path": "/what-size-is-your-company-or-firm",
       "title": "What size is your company or firm?",
       "components": [
@@ -1776,7 +1718,7 @@
         "conditions": [
           {
             "field": {
-              "name": "country",
+              "name": "addressCountry",
               "type": "SelectField",
               "display": "Country list"
             },

@@ -1,11 +1,10 @@
 import type { Express } from "express";
 import proxy from "express-http-proxy";
 import { FORM_RUNNER_URL, isProd } from "server/config";
+import { applyRouter } from "./router";
 
 /**
  * Proxy middleware for the form runner
- * @param app Express app
- * Important: this middleware must be added before body and cookie parsers middlewares
  */
 export function configureFormRunnerProxyMiddleware(server: Express): void {
   if (isProd) {
@@ -13,6 +12,12 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   } else {
     server.set("trust proxy", false);
   }
+
+  /**
+   * applyRouter must come first. If no request matches applyRouter routes,
+   * then the request will be proxied to the runner.
+   */
+  server.use(applyRouter);
 
   server.use(
     `/application/*`,
@@ -24,7 +29,10 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
         if (userReq.baseUrl.includes("assets/")) {
           return proxyResData;
         }
-        return proxyResData.toString("utf8").replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`);
+        return proxyResData
+          .toString("utf8")
+          .replace(/(href|src|value)=('|")\/([^'"]+)/g, `$1=$2/application/$3`)
+          .replace(/(href|src|value)=('|")([^'"])(.*sitemap)[^'"]/g, `$1=/sitemap`);
       },
       userResHeaderDecorator(headers, userReq, userRes) {
         const isApplicationRequest = userReq.originalUrl.startsWith("/application");

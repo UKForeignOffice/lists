@@ -229,15 +229,6 @@ describe("Form Runner Service:", () => {
       {
         fields: [
           {
-            answer: "Italy",
-            key: "country",
-          },
-        ],
-        question: "Which list of lawyers do you want to be added to?",
-      },
-      {
-        fields: [
-          {
             answer: "Milan, Rome, Florence, Genoa, Verona, Livorno",
             key: "regions",
           },
