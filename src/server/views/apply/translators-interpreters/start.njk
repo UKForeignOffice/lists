@@ -1,0 +1,69 @@
+{% extends "./../question-page.njk" %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  {{ SERVICE_NAME }} - Apply to the 'Find an English-speaking translator or interpreter abroad’ service
+{% endblock %}
+
+{% block heading %}
+  <h1 class="govuk-heading-l">
+    Apply to the 'Find an English-speaking translator or interpreter abroad’ service
+  </h1>
+{% endblock %}
+
+{% block answers %}
+{% endblock %}
+
+{% block question %}
+
+  <p class="govuk-body">
+    Interpreters and translators based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find an English-speaking interpreter or translator abroad' service.
+  </p>
+  <p class="govuk-body">
+    This service provides lists of English-speaking interpreters and translators which are searchable by country and region to help British nationals find the support that best suits their needs.
+  </p>
+  <p class="govuk-body">
+    To be eligible to be added to a list you need to be:
+  </p>
+
+  <ul class="govuk-body govuk-list govuk-list--bullet">
+    <li>based in the country you provide services in</li>
+    <li>qualified to provide interpretation or translation services</li>
+  </ul>
+
+  <p class="govuk-body">
+    You also need to be able to provide:
+  </p>
+
+  <ul class="govuk-body govuk-list govuk-list--bullet">
+    <li>services and support to customers in English</li>
+    <li>reliable contact details, including an email address</li>
+  </ul>
+
+  {{ govukWarningText({
+    text: "You must have access to the email address you provide. You will be sent a link that you must use to complete your application.",
+    iconFallbackText: "Warning"
+  }) }}
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Feedback on this service</h3>
+  <p class="govuk-body">
+    We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service.
+  </p>
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Contact us</h3>
+  <p class="govuk-body">
+    You can <a class="govuk-link" href="/application/provider-contact/" target="_blank">contact us</a> to change or remove your details, or make a complaint if you are a translator or interpreter in this service.
+  </p>
+
+
+  {{ govukButton({
+    text: "Start now",
+    href: nextPageUrl,
+    isStartButton: true,
+    element: "a"
+  }) }}
+
+
+
+{% endblock %}
