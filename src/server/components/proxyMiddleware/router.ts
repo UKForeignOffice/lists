@@ -43,7 +43,7 @@ applyRouter.get("/application/session/*", (req: Request, _res: Response, next: N
  * and translators and interpreters flow is done.
  */
 applyRouter.get(
-  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters/*",
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/*",
   checkCountryQuestionAnswered,
   checkIsExistingList
 );
