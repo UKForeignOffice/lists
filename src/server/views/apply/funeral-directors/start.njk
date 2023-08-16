@@ -1,4 +1,6 @@
 {% extends "./../question-page.njk" %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
   {{ SERVICE_NAME }} - Apply to be added to the 'Find a funeral director abroad' service
@@ -6,7 +8,7 @@
 
 {% block heading %}
   <h1 class="govuk-heading-l">
-    Apply to be added to the 'Find a funeral director abroad' service222
+    Apply to be added to the 'Find a funeral director abroad' service
   </h1>
 {% endblock %}
 
@@ -16,33 +18,52 @@
 {% block question %}
 
   <p class="govuk-body">
-    The Foreign, Commonwealth & Development Office (FCDO) provides lists of English-speaking funeral directors abroad to
-    help British nationals find the support they need.
+    Funeral directors based outside the UK can apply online to be added to the Foreign, Commonwealth & Development Office (FCDO) 'Find an English-speaking funeral director abroad' service.
   </p>
-  <p class="govuk-body">You can search for funeral directors by country or a more specific location.</p>
-  <p class="govuk-body">All funeral directors on the lists have confirmed they can provide services in English.</p>
+  <p class="govuk-body">
+    This service provides lists of English-speaking funeral directors which are searchable by country and region to help British nationals find the support that best suits their needs.
+  </p>
+  <p class="govuk-body">
+    To be eligible to be added to a list you need to be:
+  </p>
 
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      You should do your own research before deciding which provider to use. You may also want to check if any insurance
-      policies provide cover for the services you need before you contact a funeral director independently.
-    </strong>
-  </div>
-  <form class="form" method="post">
-    <a href="{{ findServiceType }}/insurance" class="govuk-button">Start</a>
-  </form>
-  <h2 class="govuk-heading-m">Disclaimer</h2>
-  {% include 'includes/disclaimer.njk' %}
-  <h2 class="govuk-heading-m">Feedback on this service</h2>
+  <ul class="govuk-body govuk-list govuk-list--bullet">
+    <li>based in the country you provide funeral services in</li>
+    <li>qualified to provide funeral services, and are registered with the local authorities to provide funeral services (if applicable in your country)</li>
+  </ul>
+
+  <p class="govuk-body">
+    You also need to be able to provide:
+  </p>
+
+  <ul class="govuk-body govuk-list govuk-list--bullet">
+    <li>funeral services and support to customers in English</li>
+    <li>reliable contact details, including an email address</li>
+  </ul>
+
+  {{ govukWarningText({
+    text: "You must have access to the email address you provide. You will be sent a link that you must use to complete your application.",
+    iconFallbackText: "Warning"
+  }) }}
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Feedback on this service</h3>
   <p class="govuk-body">
     We welcome your <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/Find-a-Professional/" target="_blank">feedback</a> to help us improve this service.
-    You can also make a <a class="govuk-link" href="/complain/provider-complaint/form">complaint</a> about a funeral director listed in this service.
   </p>
-  <h2 class="govuk-heading-m">Apply to be added to this service</h2>
+
+  <h3 class="govuk-body govuk-!-font-weight-bold">Contact us</h3>
   <p class="govuk-body">
-    You can <a class="govuk-link" href="/application/funeral-directors">apply to be added to this service</a> if you are based outside the UK and can provide funeral services to British nationals in English.
+    You can <a class="govuk-link" href="/application/provider-contact/" target="_blank">contact us</a> to change or remove your details, or make a complaint if you are a funeral director in this service.
   </p>
+
+
+  {{ govukButton({
+    text: "Start now",
+    href: nextPageUrl,
+    isStartButton: true,
+    element: "a"
+  }) }}
+
+
 
 {% endblock %}

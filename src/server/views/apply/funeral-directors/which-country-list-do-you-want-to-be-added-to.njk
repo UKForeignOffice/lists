@@ -1,8 +1,17 @@
 {% extends "./../question-page.njk" %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}
   {{ SERVICE_NAME }} - Which country list do you want to be added to?
 {% endblock %}
+
+{% block backLink %}
+  {{ govukBackLink({
+    text: "Back",
+    href: backLink
+  }) }}
+  {% endblock %}
 
 {% block question %}
 
@@ -20,7 +29,6 @@
       }) }}
     {% endif %}
   {% endblock %}
-
   <form class="form" method="post">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <div class="govuk-form-group {{ "govuk-form-group--error" if error }}">
@@ -45,6 +53,13 @@
           <option value="{{ country.value }}" {{ "selected" if country.value === answer }}>{{ country.text }}</option>
         {% endfor %}
       </select>
+
+      {{ govukWarningText({
+        text: "You must be based in the country or territory you select.",
+        iconFallbackText: "Warning",
+        classes: 'govuk-!-margin-top-6'
+      }) }}
+
     </div>
     <button class="govuk-button" data-module="govuk-button">Continue</button>
   </form>

@@ -30,6 +30,7 @@ applyRouter.get(Routes.funeralDirectors.countrySelect, middleware, Controllers.g
 applyRouter.post(Routes.funeralDirectors.countrySelect, middleware, Controllers.postCountrySelectPageController);
 applyRouter.get(Routes.funeralDirectors.stopPage, Controllers.getStopPageController);
 
+// All services
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
     isInitialisedSession: true,

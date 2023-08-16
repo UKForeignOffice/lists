@@ -8,8 +8,13 @@ import { camelCase } from "lodash";
 export function getStartPageController(req: Request, res: Response) {
   const routeUrl = req.path;
   const serviceType = routeUrl.split("/")[2];
+  const countrySelectFullUrl = Routes[camelCase(serviceType) as "lawyers" | "funeralDirectors"].countrySelect;
+  const countrySelectPartialUrl = countrySelectFullUrl.split("/")[3];
+
   req.session.application ??= {};
-  res.render(`apply/${serviceType}/start`);
+  res.render(`apply/${serviceType}/start`, {
+    nextPageUrl: countrySelectPartialUrl,
+  });
 }
 
 /**
@@ -24,6 +29,7 @@ export function getCountrySelectPageController(req: Request, res: Response) {
   res.render(`apply/${serviceType}/${pagePath}`, {
     countriesList,
     answer: req.session.application?.country,
+    backLink: Routes[camelCase(serviceType) as "lawyers" | "funeralDirectors"].start,
   });
 }
 
