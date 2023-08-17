@@ -7,7 +7,6 @@ import express from "express";
 import { json, urlencoded } from "body-parser";
 import { checkCountryQuestionAnswered, checkIsExistingList } from "./middlewares/checkCountryQuestionAnswered";
 import * as Controllers from "./controllers";
-import * as Routes from "./routes";
 
 /**
  * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
@@ -18,19 +17,22 @@ const middleware = [...bodyParser, singleRouteCsrf, addCsrfTokenToLocals];
 
 export const applyRouter = express.Router();
 
-// Lawyers
-applyRouter.get(Routes.lawyers.start, Controllers.getStartPageController);
-applyRouter.get(Routes.lawyers.countrySelect, middleware, Controllers.getCountrySelectPageController);
-applyRouter.post(Routes.lawyers.countrySelect, middleware, Controllers.postCountrySelectPageController);
-applyRouter.get(Routes.lawyers.stopPage, Controllers.getStopPageController);
+applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/start", Controllers.getStartPageController);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
+  middleware,
+  Controllers.getCountrySelectPageController
+);
+applyRouter.post(
+  "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
+  middleware,
+  Controllers.postCountrySelectPageController
+);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors)/not-currently-accepting",
+  Controllers.getStopPageController
+);
 
-// Funeral Directors
-applyRouter.get(Routes.funeralDirectors.start, Controllers.getStartPageController);
-applyRouter.get(Routes.funeralDirectors.countrySelect, middleware, Controllers.getCountrySelectPageController);
-applyRouter.post(Routes.funeralDirectors.countrySelect, middleware, Controllers.postCountrySelectPageController);
-applyRouter.get(Routes.funeralDirectors.stopPage, Controllers.getStopPageController);
-
-// All services
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
     isInitialisedSession: true,

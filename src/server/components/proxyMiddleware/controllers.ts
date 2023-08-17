@@ -2,69 +2,61 @@ import type { Request, Response } from "express";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { listExists } from "server/components/proxyMiddleware/helpers";
 import { countriesList } from "server/services/metadata";
-import * as Routes from "./routes";
 import { camelCase } from "lodash";
 
+const COUNTRY_SELECT_PAGE_PATH = "/application/which-country-list-do-you-want-to-be-added-to";
+
 export function getStartPageController(req: Request, res: Response) {
-  const routeUrl = req.path;
-  const serviceType = routeUrl.split("/")[2];
-  const countrySelectFullUrl = Routes[camelCase(serviceType) as "lawyers" | "funeralDirectors"].countrySelect;
-  const countrySelectPartialUrl = countrySelectFullUrl.split("/")[3];
+  const { serviceType } = req.params;
 
   req.session.application ??= {};
-  res.render(`apply/${serviceType}/start`, {
-    nextPageUrl: countrySelectPartialUrl,
-  });
+  res.render(`apply/${serviceType}/start`);
 }
 
-/**
- * This controller will only work if the name of the template file matches the name of the route
- * e.g. '/apply/funeral-directors/which-country-list-do-you-want-to-be-added-to.njk'
- */
 export function getCountrySelectPageController(req: Request, res: Response) {
-  const routeUrl = req.path;
-  const serviceType = routeUrl.split("/")[2];
-  const pagePath = routeUrl.split("/")[3];
+  const { serviceType } = req.params;
 
-  res.render(`apply/${serviceType}/${pagePath}`, {
+  res.render("apply/which-country-list-do-you-want-to-be-added-to", {
     countriesList,
     answer: req.session.application?.country,
-    backLink: Routes[camelCase(serviceType) as "lawyers" | "funeralDirectors"].start,
+    backLink: `/application/${serviceType}/start`,
   });
 }
 
 export async function postCountrySelectPageController(req: Request, res: Response) {
   const { country } = req.body;
   const validatedCountry = validateCountryLower(country);
-  const serviceType = req.path.split("/")[2] as "lawyers" | "funeral-directors";
+  const { serviceType } = req.params;
   const camelCaseServiceType = camelCase(serviceType) as "lawyers" | "funeralDirectors";
+  const postCountrySelectPageUrl = {
+    lawyers: "what-size-is-your-company-or-firm",
+    funeralDirectors: "can-you-provide-funeral-services-and-support-to-customers-in-english",
+  };
 
   if (!validatedCountry) {
     req.flash("error", "You must enter a country name");
-    res.redirect(Routes[camelCaseServiceType].countrySelect);
+    res.redirect(COUNTRY_SELECT_PAGE_PATH);
     return;
   }
 
   req.session.application = {
-    type: serviceType,
+    type: serviceType as "lawyers" | "funeral-directors",
     country: validatedCountry,
   };
 
   const list = await listExists(validatedCountry, camelCaseServiceType);
 
   if (!list) {
-    res.redirect(Routes[camelCaseServiceType].stopPage);
+    res.redirect(`/application/${serviceType}/not-currently-accepting`);
     return;
   }
 
-  res.redirect(Routes[camelCaseServiceType].postCountrySelect);
+  res.redirect(`/application/${serviceType}/${postCountrySelectPageUrl[camelCaseServiceType]}`);
 }
 
 export function getStopPageController(req: Request, res: Response) {
-  const serviceType = req.path.split("/")[2];
-
   res.render("apply/not-accepting-currently", {
-    backLink: Routes[camelCase(serviceType) as "lawyers" | "funeralDirectors"].countrySelect,
+    backLink: COUNTRY_SELECT_PAGE_PATH,
     country: req.session?.application?.country,
   });
 }
