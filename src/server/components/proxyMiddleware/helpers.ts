@@ -1,4 +1,5 @@
 import { prisma } from "server/models/db/prisma-client";
+import Joi from "joi";
 
 export async function listExists(country: string, type: string) {
   return await prisma.list.findFirst({
@@ -15,3 +16,7 @@ export async function listExists(country: string, type: string) {
     },
   });
 }
+
+export const serviceTypeSchema = Joi.object({
+  serviceType: Joi.string().valid("lawyers", "funeral-directors", "translators-interpreters"),
+});
