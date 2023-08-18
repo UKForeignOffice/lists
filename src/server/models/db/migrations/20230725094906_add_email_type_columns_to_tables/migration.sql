@@ -1,5 +1,3 @@
-BEGIN;
-
 -- CreateEnum
 CREATE TYPE "PostEmailType" AS ENUM (
   'sendOneMonthPostEmail',
@@ -34,13 +32,37 @@ SET "emailType" = CASE
     ELSE NULL
   END;
 
+
+-- Adding 'sendStartedProviderEmail' audits from audit table to event table.
+with audit_reminders as (select * from "Audit" where "auditEvent" = 'REMINDER' and "emailType" is null)
+
+insert into "Event" ("listItemId", time, type, "jsonData", "emailType")
+select  cast("jsonData"->>'itemId' as int) "itemId",
+        "createdAt",
+        'REMINDER',
+        jsonb_build_object(
+          'itemId', "jsonData"->'itemId',
+          'reference', "jsonData"->'annualReviewRef',
+          'eventName', "jsonData"->'eventName',
+          'reminderType', "jsonData"->'reminderType',
+          'reference', "jsonData"->'annualReviewRef'
+          ),
+        case
+          when "jsonData"->>'reminderType' = 'sendStartedProviderEmail' then 'sendStartedProviderEmail'::"ProviderEmailType"
+          else null
+          end
+from audit_reminders;
+
+
+
+-- Reading Event.jsonData.notes and adding providerEmailType.
 UPDATE "Event" AS e
 SET "emailType" = CASE
-  WHEN 'sendStartedProviderEmail' = ANY (SELECT jsonb_array_elements_text(e."jsonData"->'notes')) THEN 'sendStartedProviderEmail'::"ProviderEmailType"
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for week%') THEN 'sendUnpublishWeeklyProviderEmail'::"ProviderEmailType"
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 1 days%') THEN 'sendUnpublishOneDayProviderEmail'::"ProviderEmailType"
   WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 0 days%') THEN 'sendUnpublishedProviderEmail'::"ProviderEmailType"
   ELSE NULL
-END;
+  END
+where type = 'REMINDER';
 
-COMMIT;
+
