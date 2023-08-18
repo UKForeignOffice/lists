@@ -194,9 +194,11 @@ export async function updateIsAnnualReview(
       },
     };
     try {
-      logger.debug(`updating isAnnualReview for list item ${listItem.id}`);
-      await prisma.listItem.update(updateListItemPrismaStatement);
-      updatedListItems.push(listItem);
+      if (!listItem.isAnnualReview) {
+        logger.debug(`updating isAnnualReview for list item ${listItem.id}`);
+        await prisma.listItem.update(updateListItemPrismaStatement);
+        updatedListItems.push(listItem);
+      }
     } catch (err) {
       const message = `Could not update list item ${listItem.id} due to ${err.message}.`;
       logger.error(`updateIsAnnualReview: ${message}`);

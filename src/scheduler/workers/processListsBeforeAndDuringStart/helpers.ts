@@ -4,7 +4,8 @@ import type {
   ListItemAnnualReviewProviderReminderType,
 } from "shared/types";
 import { logger } from "scheduler/logger";
-import type { Audit, Event } from "@prisma/client";
+import type { Audit, Event, AnnualReviewProviderEmailType } from "@prisma/client";
+import { prisma } from "scheduler/prismaClient";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
@@ -46,4 +47,26 @@ export function isEmailSentBefore(
     return true;
   }
   return false;
+}
+
+export async function shouldSend(
+  emailType: AnnualReviewProviderEmailType,
+  listItemId: number,
+  annualReviewReference: string
+): Promise<boolean> {
+  if (!annualReviewReference) {
+    return false;
+  }
+
+  /**
+   * This query uses postgres enums. Enums in postgres are ordered so `>` operator can be used.
+   */
+  const event = await prisma.$queryRaw`select * from "Event"
+         where "listItemId" = ${listItemId}
+           and "annualReviewEmailType" > ${emailType}::"AnnualReviewProviderEmailType"
+           and "jsonData"->>'reference' = '${annualReviewReference}'
+           and "type" = 'REMINDER'
+         order by "time" limit 1`;
+
+  return !event;
 }

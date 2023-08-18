@@ -1,6 +1,6 @@
 import type { SendEmailResponse } from "notifications-node-client";
 import { ListItemEvent } from "@prisma/client";
-import type { Prisma, ProviderEmailType } from "@prisma/client";
+import type { Prisma, AnnualReviewProviderEmailType } from "@prisma/client";
 
 export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
@@ -8,7 +8,7 @@ interface EventReminderInput {
   response: SendEmailResponse;
   notes?: string[];
   reference?: string;
-  emailType: ProviderEmailType;
+  emailType: AnnualReviewProviderEmailType;
 }
 
 interface AnnualReviewAdditionalInfo {
@@ -166,7 +166,7 @@ export const EVENTS = {
 
     return {
       type: ListItemEvent.REMINDER,
-      emailType,
+      annualReviewEmailType: emailType,
       jsonData: {
         eventName: "reminder",
         ...{ notes },

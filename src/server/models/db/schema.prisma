@@ -106,11 +106,12 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  emailType           PostEmailType?
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
   jsonData            Json
+
+  annualReviewEmailType           AnnualReviewPostEmailType?
 
   @@index([type])
   @@index([jsonData])
@@ -155,8 +156,10 @@ model Event {
   listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
-  emailType           ProviderEmailType?
   jsonData            Json
+
+
+  annualReviewEmailType   AnnualReviewProviderEmailType?
 
   @@index([time, listItemId])
 }
@@ -208,7 +211,8 @@ view ListsForDashboard {
   @@unique([listId])
 }
 
-enum PostEmailType {
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewPostEmailType {
   sendOneMonthPostEmail
   sendOneWeekPostEmail
   sendOneDayPostEmail
@@ -217,7 +221,8 @@ enum PostEmailType {
   sendUnpublishWeeklyPostEmail
 }
 
-enum ProviderEmailType {
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewProviderEmailType {
   sendStartedProviderEmail
   sendUnpublishedProviderEmail
   sendUnpublishOneDayProviderEmail

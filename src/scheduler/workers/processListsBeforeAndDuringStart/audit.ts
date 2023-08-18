@@ -1,3 +1,4 @@
+import type { AnnualReviewProviderEmailType } from "@prisma/client";
 import { ListItemEvent } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
 

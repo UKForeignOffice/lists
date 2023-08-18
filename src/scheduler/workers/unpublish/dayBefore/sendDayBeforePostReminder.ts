@@ -2,7 +2,7 @@ import { schedulerLogger } from "scheduler/logger";
 import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { postReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
-import { AuditEvent, PostEmailType } from "@prisma/client";
+import { AuditEvent, AnnualReviewPostEmailType } from "@prisma/client";
 import { addUnpublishPostReminderAudit } from "./addDayBeforePostReminderAudit";
 
 import type { Meta } from "./types";
@@ -42,7 +42,7 @@ export async function sendDayBeforePostReminder(
         annualReviewRef: meta.reference,
       },
       AuditEvent.REMINDER,
-      PostEmailType.sendUnpublishOneDayPostEmail
+      AnnualReviewPostEmailType.sendUnpublishOneDayPostEmail
     );
 
     if (!updateAudit) {
