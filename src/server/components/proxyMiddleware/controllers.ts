@@ -4,8 +4,6 @@ import { listExists, serviceTypeSchema } from "server/components/proxyMiddleware
 import { countriesList } from "server/services/metadata";
 import { camelCase } from "lodash";
 
-const COUNTRY_SELECT_PAGE_PATH = "/application/which-country-list-do-you-want-to-be-added-to";
-
 export function getStartPageController(req: Request, res: Response, next: NextFunction) {
   const { value } = serviceTypeSchema.validate(req.params);
 
@@ -28,14 +26,14 @@ export async function postCountrySelectPageController(req: Request, res: Respons
   const validatedCountry = validateCountryLower(country);
   const { value } = serviceTypeSchema.validate(req.params);
   const camelCaseServiceType = camelCase(value.serviceType) as "lawyers" | "funeralDirectors";
-  const postCountrySelectPageUrl = {
+  const nextPagePath = {
     lawyers: "what-size-is-your-company-or-firm",
-    funeralDirectors: "can-you-provide-funeral-services-and-support-to-customers-in-english",
+    "funeral-directors": "can-you-provide-funeral-services-and-support-to-customers-in-english",
   };
 
   if (!validatedCountry) {
     req.flash("error", "You must enter a country name");
-    res.redirect(COUNTRY_SELECT_PAGE_PATH);
+    res.redirect(`/application/${value.serviceType}/which-country-list-do-you-want-to-be-added-to`);
     return;
   }
 
@@ -47,23 +45,25 @@ export async function postCountrySelectPageController(req: Request, res: Respons
   const list = await listExists(validatedCountry, camelCaseServiceType);
 
   if (!list) {
-    res.redirect(`/application/${value.serviceType}/not-currently-accepting`);
+    res.redirect("not-currently-accepting");
     return;
   }
 
-  res.redirect(`/application/${value.serviceType}/${postCountrySelectPageUrl[camelCaseServiceType]}`);
+  res.redirect(
+    `/application/${value.serviceType}/${nextPagePath[value.serviceType as "lawyers" | "funeral-directors"]}`
+  );
 }
 
 export function getStopPageController(req: Request, res: Response) {
   const { value } = serviceTypeSchema.validate(req.params);
   const serviceTitles = {
     lawyers: "lawyers",
-    funeralDirectors: "funeral directors",
-    translatorsInterpreters: "translators and interpreters",
+    "funeral-directors": "funeral directors",
+    "translators-interpreters": "translators and interpreters",
   };
 
   res.render("apply/not-accepting-currently", {
-    backLink: COUNTRY_SELECT_PAGE_PATH,
+    backLink: `/application/${value.serviceType}/which-country-list-do-you-want-to-be-added-to`,
     country: req.session?.application?.country,
     serviceTitle: serviceTitles[value.serviceType as keyof typeof serviceTitles],
   });

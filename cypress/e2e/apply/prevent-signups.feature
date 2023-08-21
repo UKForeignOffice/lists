@@ -1,4 +1,4 @@
-Feature: I want to apply to be added to the ‘Find a lawyer abroad’ service but the list does not exist.
+Feature: I want to apply to be added to the ‘Find a lawyer|funeral director|translator and interpreter abroad’ service but the list does not exist.
 
   Scenario Outline: A list that does not exist
     Given I am searching for <serviceType>
