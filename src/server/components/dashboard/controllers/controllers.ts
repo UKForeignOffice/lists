@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { findUserByEmail, findUsers, isAdministrator, updateUser } from "server/models/user";
+import { findUserByEmail, findUsersWithListCount, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
@@ -41,7 +41,7 @@ export async function startRouteController(req: Request, res: Response, next: Ne
 
 export async function usersListController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const users = await findUsers();
+    const users = await findUsersWithListCount();
     res.render("dashboard/users-list", {
       ...DEFAULT_VIEW_PROPS,
       title: pageTitles[dashboardRoutes.usersList],
