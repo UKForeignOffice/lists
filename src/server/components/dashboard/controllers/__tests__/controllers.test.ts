@@ -140,18 +140,18 @@ describe("Dashboard Controllers", () => {
   describe("usersListController", () => {
     test("it renders correctly template with found users", async () => {
       const users: any = [{ id: 1 }];
-      const spyFindUsers = jest.spyOn(userModel, "findUsers").mockResolvedValueOnce(users);
+      const spyfindUsersWithListCount = jest.spyOn(userModel, "findUsersWithListCount").mockResolvedValueOnce(users);
 
       await usersListController(mockReq, mockRes, mockNext);
 
-      expect(spyFindUsers).toHaveBeenCalled();
+      expect(spyfindUsersWithListCount).toHaveBeenCalled();
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-list");
       expect(mockRes.render.mock.calls[0][1].users).toBe(users);
     });
 
-    test("it invokes next with findUsers error", async () => {
+    test("it invokes next with findUsersWithListCount error", async () => {
       const error = new Error("test error");
-      jest.spyOn(userModel, "findUsers").mockRejectedValueOnce(error);
+      jest.spyOn(userModel, "findUsersWithListCount").mockRejectedValueOnce(error);
 
       await usersListController(mockReq, mockRes, mockNext);
 
