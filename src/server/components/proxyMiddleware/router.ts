@@ -6,7 +6,7 @@ import { addCsrfTokenToLocals, singleRouteCsrf } from "server/middlewares/csrf";
 import express from "express";
 import { json, urlencoded } from "body-parser";
 import { checkCountryQuestionAnswered, checkIsExistingList } from "./middlewares/checkCountryQuestionAnswered";
-import { handlers } from "./handlers";
+import * as handlers from "./handlers";
 
 /**
  * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
