@@ -1,17 +1,30 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { listExists, serviceTypeSchema } from "server/components/proxyMiddleware/helpers";
 import { countriesList } from "server/services/metadata";
 import { camelCase } from "lodash";
 
-export function getStartPageController(req: Request, res: Response, next: NextFunction) {
+export const handlers = {
+  start: {
+    get: getStartPage,
+  },
+  countrySelect: {
+    get: getCountrySelectPage,
+    post: postCountrySelectPage,
+  },
+  stop: {
+    get: getStopPage,
+  },
+};
+
+function getStartPage(req: Request, res: Response) {
   const { value } = serviceTypeSchema.validate(req.params);
 
   req.session.application ??= {};
   res.render(`apply/${value.serviceType}/start`);
 }
 
-export function getCountrySelectPageController(req: Request, res: Response) {
+function getCountrySelectPage(req: Request, res: Response) {
   const { value } = serviceTypeSchema.validate(req.params);
 
   res.render("apply/which-country-list-do-you-want-to-be-added-to", {
@@ -21,7 +34,7 @@ export function getCountrySelectPageController(req: Request, res: Response) {
   });
 }
 
-export async function postCountrySelectPageController(req: Request, res: Response) {
+async function postCountrySelectPage(req: Request, res: Response) {
   const { country } = req.body;
   const validatedCountry = validateCountryLower(country);
   const { value } = serviceTypeSchema.validate(req.params);
@@ -54,7 +67,7 @@ export async function postCountrySelectPageController(req: Request, res: Respons
   );
 }
 
-export function getStopPageController(req: Request, res: Response) {
+function getStopPage(req: Request, res: Response) {
   const { value } = serviceTypeSchema.validate(req.params);
   const serviceTitles = {
     lawyers: "lawyers",

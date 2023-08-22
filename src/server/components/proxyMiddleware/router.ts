@@ -6,7 +6,7 @@ import { addCsrfTokenToLocals, singleRouteCsrf } from "server/middlewares/csrf";
 import express from "express";
 import { json, urlencoded } from "body-parser";
 import { checkCountryQuestionAnswered, checkIsExistingList } from "./middlewares/checkCountryQuestionAnswered";
-import * as Controllers from "./controllers";
+import { handlers } from "./handlers";
 
 /**
  * proxy middleware does not work if bodyParser, cookies and csrf have been applied to the server before the proxies
@@ -17,21 +17,18 @@ const middleware = [...bodyParser, singleRouteCsrf, addCsrfTokenToLocals];
 
 export const applyRouter = express.Router();
 
-applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/start", Controllers.getStartPageController);
+applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/start", handlers.start.get);
 applyRouter.get(
   "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
   middleware,
-  Controllers.getCountrySelectPageController
+  handlers.countrySelect.get
 );
 applyRouter.post(
   "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
   middleware,
-  Controllers.postCountrySelectPageController
+  handlers.countrySelect.post
 );
-applyRouter.get(
-  "/application/:serviceType(lawyers|funeral-directors)/not-currently-accepting",
-  Controllers.getStopPageController
-);
+applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/not-currently-accepting", handlers.stop.get);
 
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
