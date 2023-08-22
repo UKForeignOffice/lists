@@ -7,7 +7,7 @@
 
 {% block dashboard %}
   <h1 class="govuk-heading-l">Change administrative access</h1>
-  <h4 class="govuk-heading-s">{{ user.email }}</h4>
+  <h4 class="govuk-heading-s">{{ userLists.at(0).email }}</h4>
 
   {% if error.field %}
     {{ dashboardMacros.errorBanner(error) }}
@@ -37,7 +37,7 @@
                   name="roles"
                   type="checkbox"
                   value="{{ role }}"
-                  {{-" checked" if _.includes(user.jsonData.roles, role) }}
+                  {{-" checked" if _.includes(userLists.at(0).jsonData.roles, role) }}
                 />
                 <label
                   class="govuk-label govuk-checkboxes__label"
@@ -52,6 +52,27 @@
     </div>
     <button class="govuk-button" data-module="govuk-button">Save</button>
   </form>
+  {% if userLists.at(0).type %}
+    <div class="govuk-body">
+      This user is an admin on {{userLists.length}} lists
+    </div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Type</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">Country</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for list in userLists %}
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">{{ _.startCase(list.type) }}</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric">{{ list.countryName }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
 
 {% endblock %}

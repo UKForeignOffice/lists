@@ -79,7 +79,7 @@ interface UserWithListCount {
 export async function findUsersWithListCount(): Promise<UserWithListCount[]> {
   try {
     const userWithListCount = await prisma.$queryRaw`
-      select "User".email, "User"."jsonData", count("List".id) as count
+      select email, "User"."jsonData", count("List".id) as count
       from "User"
         left join lateral (
           select id
@@ -93,6 +93,26 @@ export async function findUsersWithListCount(): Promise<UserWithListCount[]> {
     return userWithListCount as UserWithListCount[];
   } catch (error) {
     logger.error(`findUsersWithListCount Error ${error.message}`);
+    return [];
+  }
+}
+
+// getUsersWithListDataByEmail
+export async function findUserWithListDataByEmail(email: string): Promise<any | undefined> {
+  try {
+    const userWithListCount = await prisma.$queryRawUnsafe(
+      `
+      select "List".type, "Country".name as "countryName", "User".email, "User"."jsonData"
+      from "User"
+      left join "List" on "List"."jsonData"->'users' ? $1
+      left join "Country" on "Country".id = "List"."countryId"
+      where "User".email = $1;
+    `,
+      email
+    );
+    return userWithListCount as any[];
+  } catch (error) {
+    logger.error(`findUserWithListDataByEmail Error ${error.message}`);
     return [];
   }
 }
