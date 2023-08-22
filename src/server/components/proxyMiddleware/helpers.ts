@@ -17,6 +17,4 @@ export async function listExists(country: string, type: string) {
   });
 }
 
-export const serviceTypeSchema = Joi.object({
-  serviceType: Joi.string().valid("lawyers", "funeral-directors", "translators-interpreters"),
-});
+export const serviceTypeSchema = Joi.string<"lawyers" | "funeral-directors">().valid("lawyers", "funeral-directors");
