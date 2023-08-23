@@ -97,22 +97,18 @@ export async function findUsersWithListCount(): Promise<UserWithListCount[]> {
   }
 }
 
-// getUsersWithListDataByEmail
-export async function findUserWithListDataByEmail(email: string): Promise<any | undefined> {
+export async function getUsersWithListDataByEmail(email: string): Promise<any | undefined> {
   try {
-    const userWithListCount = await prisma.$queryRawUnsafe(
-      `
+    const userWithListCount = await prisma.$queryRaw`
       select "List".type, "Country".name as "countryName", "User".email, "User"."jsonData"
       from "User"
-      left join "List" on "List"."jsonData"->'users' ? $1
+      left join "List" on "List"."jsonData"->'users' ? ${email}
       left join "Country" on "Country".id = "List"."countryId"
-      where "User".email = $1;
-    `,
-      email
-    );
+      where "User".email = ${email};
+    `;
     return userWithListCount as any[];
   } catch (error) {
-    logger.error(`findUserWithListDataByEmail Error ${error.message}`);
+    logger.error(`getUsersWithListDataByEmail Error ${error.message}`);
     return [];
   }
 }

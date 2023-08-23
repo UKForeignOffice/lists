@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { findUserWithListDataByEmail, findUsersWithListCount, isAdministrator, updateUser } from "server/models/user";
+import { getUsersWithListDataByEmail, findUsersWithListCount, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
@@ -74,7 +74,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       };
     }
 
-    const userLists = await findUserWithListDataByEmail(userEmail);
+    const userLists = await getUsersWithListDataByEmail(userEmail);
 
     res.render("dashboard/users-edit", {
       ...DEFAULT_VIEW_PROPS,
