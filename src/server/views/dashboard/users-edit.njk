@@ -66,7 +66,7 @@
       <tbody class="govuk-table__body">
         {% for list in userLists %}
         <tr class="govuk-table__row">
-          <th scope="row" class="govuk-table__header">{{ _.startCase(list.type) }}</th>
+          <th scope="row" class="govuk-table__header">{{ "Translators and Interpreters" if list.type === "translatorsInterpreters" else _.startCase(list.type) }}</th>
           <td class="govuk-table__cell govuk-table__cell--numeric">{{ list.countryName }}</td>
         </tr>
         {% endfor %}
