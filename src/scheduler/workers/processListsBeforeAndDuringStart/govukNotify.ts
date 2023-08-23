@@ -46,8 +46,9 @@ export async function sendAnnualReviewProviderEmail(
   }
 }
 
+type RemindersBeforeStartDate = Exclude<ListAnnualReviewPostReminderType, "oneDayBeforeUnpublish">;
 export async function sendAnnualReviewPostEmail(
-  reminderType: ListAnnualReviewPostReminderType | MilestoneTillAnnualReview,
+  reminderType: RemindersBeforeStartDate | MilestoneTillAnnualReview,
   emailAddress: string,
   typePlural: string,
   country: string,
@@ -63,7 +64,7 @@ export async function sendAnnualReviewPostEmail(
   /**
    * Maps `ListAnnualReviewPostReminderType` or `MilestoneTillAnnualReview` to the notify template ID.
    */
-  const notifyTemplates: Record<ListAnnualReviewPostReminderType | MilestoneTillAnnualReview, string> = {
+  const notifyTemplates: Record<RemindersBeforeStartDate | MilestoneTillAnnualReview, string> = {
     oneMonthBeforeStart: annualReviewNotices.postOneMonth,
     oneWeekBeforeStart: annualReviewNotices.postOneWeek,
     oneDayBeforeStart: annualReviewNotices.postOneDay,
