@@ -59,9 +59,6 @@ export async function sendAnnualReviewPostEmail(
     return { result: { id: "test", template: "test" } };
   }
 
-  /**
-   * Maps `ListAnnualReviewPostReminderType` or `MilestoneTillAnnualReview` to the notify template ID.
-   */
   const notifyTemplates: Record<RemindersBeforeStartDate, string> = {
     oneMonthBeforeStart: annualReviewNotices.postOneMonth,
     oneWeekBeforeStart: annualReviewNotices.postOneWeek,
