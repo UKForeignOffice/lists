@@ -7,6 +7,10 @@ interface AddReminderEventInput {
   id: number;
   response: SendEmailResponse;
   notes?: string[];
+
+  /**
+   * Annual review reference
+   */
   reference?: string;
   emailType: AnnualReviewProviderEmailType;
 }

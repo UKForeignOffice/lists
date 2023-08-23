@@ -19,7 +19,7 @@ Then("the {string} key date email is sent to post", function (keyDate) {
         where: {
           type: "list",
           auditEvent: "REMINDER",
-          emailType: keyDateReminders[keyDate],
+          annualReviewEmailType: keyDateReminders[keyDate],
           jsonData: {
             path: ["annualReviewRef"],
             equals: list.jsonData.currentAnnualReview.reference,
