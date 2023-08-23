@@ -17,7 +17,10 @@ const middleware = [...bodyParser, singleRouteCsrf, addCsrfTokenToLocals];
 
 export const applyRouter = express.Router();
 
-applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/start", handlers.start.get);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/start",
+  handlers.start.get
+);
 applyRouter.get(
   "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/which-country-list-do-you-want-to-be-added-to",
   middleware,
@@ -28,7 +31,10 @@ applyRouter.post(
   middleware,
   handlers.countrySelect.post
 );
-applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/not-currently-accepting", handlers.stop.get);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/not-currently-accepting",
+  handlers.stop.get
+);
 
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
