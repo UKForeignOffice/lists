@@ -37,7 +37,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
       response: response.data as SendEmailResponse,
       notes: [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
       reference: meta.reference,
-      emailType: AnnualReviewProviderEmailType.sendUnpublishWeeklyProviderEmail,
+      emailType: AnnualReviewProviderEmailType.weeklyUnpublish,
     });
 
     if (!event) {

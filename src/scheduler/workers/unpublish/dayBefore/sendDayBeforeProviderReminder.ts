@@ -38,7 +38,7 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
       response: response.data as SendEmailResponse,
       notes: [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       reference: meta.reference,
-      emailType: AnnualReviewProviderEmailType.sendUnpublishOneDayProviderEmail,
+      emailType: AnnualReviewProviderEmailType.oneDayBeforeUnpublish,
     });
 
     if (!event) {

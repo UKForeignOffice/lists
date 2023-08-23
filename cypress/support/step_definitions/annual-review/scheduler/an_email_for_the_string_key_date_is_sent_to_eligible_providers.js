@@ -13,7 +13,7 @@ Then("an email for the {string} key date is sent to eligible providers", async f
       variables: {
         where: {
           type: "REMINDER",
-          emailType: "sendStartedProviderEmail",
+          emailType: "started",
           AND: [
             {
               jsonData: {

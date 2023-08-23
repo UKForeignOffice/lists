@@ -85,20 +85,16 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
    */
   for (const listItem of listItems) {
     const annualReviewReference = list.jsonData.currentAnnualReview?.reference;
-    const shouldSendStartedProviderEmail = await shouldSend(
-      "sendStartedProviderEmail",
-      listItem.id,
-      annualReviewReference
-    );
+    const shouldstarted = await shouldSend("started", listItem.id, annualReviewReference);
 
-    if (!shouldSendStartedProviderEmail) {
+    if (!shouldstarted) {
       return;
     }
 
     const { result, error } = await sendAnnualReviewStartEmail(list, listItem);
 
     if (error) {
-      logger.error(`sendStartedProviderEmail failed to send to ${listItem.id}`);
+      logger.error(`started failed to send to ${listItem.id}`);
       return;
     }
 
@@ -106,9 +102,9 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
       await addReminderEvent({
         id: listItem.id,
         response: result as SendEmailResponse,
-        notes: ["sendStartedProviderEmail"],
+        notes: ["started"],
         reference: annualReviewReference,
-        emailType: "sendStartedProviderEmail",
+        emailType: "started",
       });
     }
   }

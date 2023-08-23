@@ -150,10 +150,7 @@ export type ListItemAnnualReviewProviderReminderType = SharedTypes.ListItemAnnua
 
 export type ListItemUnpublishedPostReminderType = "oneDayBeforeUnpublish" | "sendUnpublishWeeklyPostEmail";
 
-export type ListItemUnpublishedProviderReminderType =
-  | "sendUnpublishedProviderEmail"
-  | "sendUnpublishOneDayProviderEmail"
-  | "sendUnpublishWeeklyProviderEmail";
+export type ListItemUnpublishedProviderReminderType = "unpublished" | "oneDayBeforeUnpublish" | "weeklyUnpublish";
 
 export type WebhookDataAsJsonObject<T> = T & JsonObject;
 

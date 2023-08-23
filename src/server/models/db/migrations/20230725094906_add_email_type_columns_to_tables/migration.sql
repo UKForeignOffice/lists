@@ -9,10 +9,10 @@ CREATE TYPE "AnnualReviewPostEmailType" AS ENUM (
 
 -- CreateEnum
 CREATE TYPE "AnnualReviewProviderEmailType" AS ENUM (
-  'sendStartedProviderEmail',
-  'sendUnpublishOneDayProviderEmail',
-  'sendUnpublishWeeklyProviderEmail',
-  'sendUnpublishedProviderEmail'
+  'started',
+  'weeklyUnpublish',
+  'oneDayBeforeUnpublish',
+  'unpublished'
 
 );
 
@@ -33,7 +33,6 @@ SET "annualReviewEmailType" = CASE
   END;
 
 
--- Adding 'sendStartedProviderEmail' audits from audit table to event table.
 with audit_reminders as (select * from "Audit" where "auditEvent" = 'REMINDER' and "annualReviewEmailType" is null)
 
 insert into "Event" ("listItemId", time, type, "jsonData", "annualReviewEmailType")
@@ -48,7 +47,7 @@ select  cast("jsonData"->>'itemId' as int) "itemId",
           'reference', "jsonData"->'annualReviewRef'
           ),
         case
-          when "jsonData"->>'reminderType' = 'sendStartedProviderEmail' then 'sendStartedProviderEmail'::"AnnualReviewProviderEmailType"
+          when "jsonData"->>'reminderType' = 'started' then 'started'::"AnnualReviewProviderEmailType"
           else null
           end
 from audit_reminders;
@@ -58,9 +57,9 @@ from audit_reminders;
 -- Reading Event.jsonData.notes and adding AnnualReviewProviderEmailType.
 UPDATE "Event" AS e
 SET "annualReviewEmailType" = CASE
-  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for week%') THEN 'sendUnpublishWeeklyProviderEmail'::"AnnualReviewProviderEmailType"
-  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 1 days%') THEN 'sendUnpublishOneDayProviderEmail'::"AnnualReviewProviderEmailType"
-  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 0 days%') THEN 'sendUnpublishedProviderEmail'::"AnnualReviewProviderEmailType"
+  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for week%') THEN 'weeklyUnpublish'::"AnnualReviewProviderEmailType"
+  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 1 days%') THEN 'oneDayBeforeUnpublish'::"AnnualReviewProviderEmailType"
+  WHEN EXISTS (SELECT 1 FROM jsonb_array_elements_text(e."jsonData"->'notes') AS note WHERE note ILIKE 'sent reminder for 0 days%') THEN 'unpublished'::"AnnualReviewProviderEmailType"
   ELSE NULL
   END
 where type = 'REMINDER';

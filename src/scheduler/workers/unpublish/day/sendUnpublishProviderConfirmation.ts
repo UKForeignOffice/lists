@@ -37,7 +37,7 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
       response: response.data as SendEmailResponse,
       notes: [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       reference: meta.reference,
-      emailType: AnnualReviewProviderEmailType.sendUnpublishedProviderEmail,
+      emailType: AnnualReviewProviderEmailType.unpublished,
     });
 
     if (!event) {

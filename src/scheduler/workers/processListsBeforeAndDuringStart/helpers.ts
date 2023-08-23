@@ -29,7 +29,7 @@ export function isEmailSentBefore(
     oneWeekBeforeStart: ["oneWeekBeforeStart", "oneDayBeforeStart", "started"],
     oneDayBeforeStart: ["oneDayBeforeStart", "started"],
     started: ["started"],
-    sendStartedProviderEmail: ["sendStartedProviderEmail"],
+    started: ["started"],
   };
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];
   let reminderHasBeenSent = false;

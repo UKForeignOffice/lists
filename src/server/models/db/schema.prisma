@@ -222,8 +222,8 @@ enum AnnualReviewPostEmailType {
 
 // These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
 enum AnnualReviewProviderEmailType {
-  sendStartedProviderEmail // sent day of nextAnnualReviewStartDate
-  sendUnpublishWeeklyProviderEmail // sent every week until unpublish date
-  sendUnpublishOneDayProviderEmail // sent day before unpublish
-  sendUnpublishedProviderEmail // sent day of unpublishing
+  started // sent day of nextAnnualReviewStartDate
+  weeklyUnpublish // sent every week until unpublish date
+  oneDayBeforeUnpublish // sent day before unpublish
+  unpublished // sent day of unpublishing
 }
