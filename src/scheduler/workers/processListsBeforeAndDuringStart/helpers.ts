@@ -60,7 +60,7 @@ export async function shouldSend(
            and "annualReviewEmailType" > ${emailType}::"AnnualReviewProviderEmailType"
            and "jsonData"->>'reference' = '${annualReviewReference}'
            and "type" = 'REMINDER'
-         order by "time" limit 1`;
+         order by "time" desc limit 1`;
 
   /**
    * Query always returns array, hence [0].
