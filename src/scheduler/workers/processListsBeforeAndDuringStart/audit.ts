@@ -55,7 +55,6 @@ export async function findAllReminderEvents({
 
 export async function findAllReminderAudits({
   annualReviewReference,
-  itemId,
   annualReveiwStartDate,
 }: GetReminderEventsOptions) {
   const andCondition = [
@@ -67,14 +66,6 @@ export async function findAllReminderAudits({
         path: ["annualReviewRef"],
         equals: annualReviewReference,
       },
-    },
-    {
-      ...(itemId && {
-        jsonData: {
-          path: ["itemId"],
-          equals: itemId,
-        },
-      }),
     },
     {
       ...(annualReveiwStartDate && {
