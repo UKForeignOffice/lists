@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { listExists } from "server/components/proxyMiddleware/helpers";
+import { camelCase } from "lodash";
 
 export function checkCountryQuestionAnswered(req: Request, res: Response, next: NextFunction) {
   const serviceType = req.params.serviceType;
@@ -48,7 +49,7 @@ export async function checkIsExistingList(req: Request, res: Response, next: Nex
   const sessionTypeMatchesReqType = serviceType === type;
 
   if (country && sessionTypeMatchesReqType) {
-    const list = await listExists(country, type);
+    const list = await listExists(country, camelCase(type));
     if (list) {
       next();
       return;
