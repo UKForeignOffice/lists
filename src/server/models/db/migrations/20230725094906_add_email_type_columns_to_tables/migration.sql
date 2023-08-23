@@ -28,7 +28,6 @@ SET "annualReviewEmailType" = CASE
     WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeStart' THEN 'oneDayBeforeStart'::"AnnualReviewPostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'started' THEN 'started'::"AnnualReviewPostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeUnpublish' THEN 'oneDayBeforeUnpublish'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishWeeklyPostEmail' THEN 'sendUnpublishWeeklyPostEmail'::"AnnualReviewPostEmailType"
     ELSE NULL
   END;
 
