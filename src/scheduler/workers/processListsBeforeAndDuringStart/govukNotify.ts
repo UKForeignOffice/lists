@@ -5,6 +5,8 @@ import type { MilestoneTillAnnualReview } from "scheduler/batch/helpers";
 import type { SendEmailResponse } from "notifications-node-client";
 import type { ListAnnualReviewPostReminderType } from "server/models/types";
 
+const { annualReviewNotices } = config.NOTIFY.templates;
+
 export async function sendAnnualReviewProviderEmail(
   emailAddress: string,
   typePlural: string,
@@ -28,17 +30,13 @@ export async function sendAnnualReviewProviderEmail(
     };
     logger.info(
       `template ${
-        config.NOTIFY.templates.annualReviewNotices.providerStart
+        annualReviewNotices.providerStart
       }, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(personalisation)}`
     );
-    const result = await getNotifyClient().sendEmail(
-      config.NOTIFY.templates.annualReviewNotices.providerStart,
-      emailAddress,
-      {
-        personalisation,
-        reference: "",
-      }
-    );
+    const result = await getNotifyClient().sendEmail(annualReviewNotices.providerStart, emailAddress, {
+      personalisation,
+      reference: "",
+    });
 
     return { result };
   } catch (error) {
@@ -49,7 +47,7 @@ export async function sendAnnualReviewProviderEmail(
 }
 
 export async function sendAnnualReviewPostEmail(
-  reminderType: ListAnnualReviewPostReminderType,
+  reminderType: ListAnnualReviewPostReminderType | MilestoneTillAnnualReview,
   emailAddress: string,
   typePlural: string,
   country: string,
@@ -61,19 +59,23 @@ export async function sendAnnualReviewPostEmail(
     return { result: { id: "test", template: "test" } };
   }
 
-  const notifyTemplates: Record<ListAnnualReviewPostReminderType, string> = {
-    oneDayBeforeStart: "",
-    oneMonthBeforeStart: "",
-    oneWeekBeforeStart: "",
-    started: "",
+  // TODO:- Migrate all usage of sendAnnualReviewPostEmail using MilestoneTillAnnualReview to ListAnnualReviewPostReminderType.
+  /**
+   * Maps `ListAnnualReviewPostReminderType` or `MilestoneTillAnnualReview` to the notify template ID.
+   */
+  const notifyTemplates: Record<ListAnnualReviewPostReminderType | MilestoneTillAnnualReview, string> = {
+    oneMonthBeforeStart: annualReviewNotices.postOneMonth,
+    oneWeekBeforeStart: annualReviewNotices.postOneWeek,
+    oneDayBeforeStart: annualReviewNotices.postOneDay,
+    started: annualReviewNotices.postStart,
 
-    POST_ONE_MONTH: config.NOTIFY.templates.annualReviewNotices.postOneMonth,
-    POST_ONE_WEEK: config.NOTIFY.templates.annualReviewNotices.postOneWeek,
-    POST_ONE_DAY: config.NOTIFY.templates.annualReviewNotices.postOneDay,
-    START: config.NOTIFY.templates.annualReviewNotices.postStart,
+    POST_ONE_MONTH: annualReviewNotices.postOneMonth,
+    POST_ONE_WEEK: annualReviewNotices.postOneWeek,
+    POST_ONE_DAY: annualReviewNotices.postOneDay,
+    START: annualReviewNotices.postStart,
   };
 
-  const notifyTemplate = notifyTemplates[milestoneTillAnnualReviewStart];
+  const notifyTemplate = notifyTemplates[reminderType];
   try {
     const personalisation = {
       typePlural,
@@ -82,14 +84,14 @@ export async function sendAnnualReviewPostEmail(
       typePluralCapitalised: typePlural.toUpperCase(),
     };
     logger.info(
-      `template - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
+      `template - ${reminderType} - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
         personalisation
       )}`
     );
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference });
     return { result };
   } catch (error) {
-    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email to ${emailAddress} with template name ${milestoneTillAnnualReviewStart}: ${error.message}`;
+    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email to ${emailAddress} with template name ${reminderType} id ${notifyTemplate}: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }
