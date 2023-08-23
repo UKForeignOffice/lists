@@ -59,7 +59,7 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
     });
   } catch (e) {
     logger.error(
-      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.jsonData.users} for list ${list.id} ${milestoneTillAnnualReview} before annual review start`
+      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.jsonData.users} for list ${list.id} ${reminderType} before annual review start`
     );
   }
 }

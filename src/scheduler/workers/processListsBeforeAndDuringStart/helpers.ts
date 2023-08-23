@@ -1,12 +1,8 @@
-import type {
-  ListAnnualReviewPostReminderType,
-  ListEventJsonData,
-  ListItemAnnualReviewProviderReminderType,
-} from "shared/types";
+import type { ListAnnualReviewPostReminderType } from "shared/types";
 import { logger } from "scheduler/logger";
 import type { Audit, Event, AnnualReviewProviderEmailType } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
-import { log } from "winston";
+import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
 
 export const now = new Date(Date.now());
 const todayDateString = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
@@ -17,27 +13,22 @@ export function formatDate(date: Date = todayDateString) {
 }
 
 // TODO: use a query like in `shouldSend`. This function relies on the entire event or audit to be loaded into the fn, then uses iterations to determine if an email has been sent or superseded.
-export function isEmailSentBefore(
-  event: Event | Audit | undefined,
-  reminderType: ListAnnualReviewPostReminderType | ListItemAnnualReviewProviderReminderType
-): boolean {
-  if (!event?.jsonData || !reminderType) {
+export function isEmailSentBefore(event: Audit | undefined, reminderType: RemindersBeforeStartDate): boolean {
+  if (!event?.jsonData || !reminderType || !event) {
     return false;
   }
-  const subsequentEmailsForReminderType = {
-    oneMonthBeforeStart: ["oneMonthBeforeStart", "oneWeekBeforeStart", "oneDayBeforeStart", "sendStartPostEmail"],
+
+  const subsequentEmailsForReminderType: Record<RemindersBeforeStartDate, ListAnnualReviewPostReminderType[]> = {
+    oneMonthBeforeStart: ["oneMonthBeforeStart", "oneWeekBeforeStart", "oneDayBeforeStart", "started"],
     oneWeekBeforeStart: ["oneWeekBeforeStart", "oneDayBeforeStart", "started"],
     oneDayBeforeStart: ["oneDayBeforeStart", "started"],
     started: ["started"],
-    started: ["started"],
   };
+
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];
-  let reminderHasBeenSent = false;
-  if ("createdAt" in event) {
-    reminderHasBeenSent = subsequentEmails.includes((event.jsonData as ListEventJsonData)?.reminderType as string);
-  } else {
-    reminderHasBeenSent = subsequentEmails.includes((event.jsonData as Record<string, string>)?.notes[0]);
-  }
+  const reminderHasBeenSent = subsequentEmails.includes(
+    event.annualReviewEmailType ?? (event.jsonData as Record<string, string>)?.reminderType
+  );
 
   if (reminderHasBeenSent) {
     logger.info(`Email has been sent before for ${reminderType} reminder type`);
