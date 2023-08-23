@@ -25,6 +25,7 @@ export const schedulerMilestoneDays = {
     UNPUBLISH: 0,
   },
 };
+
 export type SchedulerMilestone =
   | typeof schedulerMilestoneDays.post.ONE_MONTH
   | typeof schedulerMilestoneDays.post.ONE_DAY
@@ -47,7 +48,6 @@ export interface SchedulerDateContexts {
   unpublish: DateContext[];
 }
 
-export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEEK" | "POST_ONE_MONTH";
 export type RemindersBeforeStartDate = Exclude<ListAnnualReviewPostReminderType, "oneDayBeforeUnpublish">;
 
 /**
