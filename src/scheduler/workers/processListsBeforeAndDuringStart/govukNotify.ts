@@ -1,7 +1,7 @@
 import * as config from "server/config";
 import { logger } from "scheduler/logger";
 import { getNotifyClient } from "shared/getNotifyClient";
-import type { MilestoneTillAnnualReview, RemindersBeforeStartDate } from "scheduler/batch/helpers";
+import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
 import type { SendEmailResponse } from "notifications-node-client";
 
 const { annualReviewNotices } = config.NOTIFY.templates;
