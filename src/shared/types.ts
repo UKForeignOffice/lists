@@ -2,7 +2,6 @@ import type * as PrismaClient from "@prisma/client";
 import type * as ServerTypes from "server/models/types";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { EventJsonData } from "server/models/listItem/types";
-import type { AnnualReviewPostEmailType } from "@prisma/client";
 
 export enum ServiceType {
   "lawyers" = "lawyers",

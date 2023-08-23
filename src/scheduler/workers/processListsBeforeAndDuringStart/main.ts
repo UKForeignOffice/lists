@@ -68,6 +68,7 @@ async function sendAnnualReviewStartEmail(list: List, listItem: ListItemWithHist
   const annualReviewProviderUrl = createAnnualReviewProviderUrl(listItem);
   const unpublishDate = new Date(list.jsonData.currentAnnualReview?.keyDates.unpublished.UNPUBLISH ?? "");
   const unpublishDateString = formatDate(unpublishDate);
+  const reference = list.jsonData.currentAnnualReview?.reference;
 
   const providerEmailResult = await sendAnnualReviewProviderEmail(
     (listItem.jsonData as BaseDeserialisedWebhookData).emailAddress,
@@ -75,7 +76,8 @@ async function sendAnnualReviewStartEmail(list: List, listItem: ListItemWithHist
     list?.country?.name ?? "",
     (listItem.jsonData as BaseDeserialisedWebhookData).contactName,
     unpublishDateString,
-    annualReviewProviderUrl
+    annualReviewProviderUrl,
+    reference
   );
   return providerEmailResult;
 }

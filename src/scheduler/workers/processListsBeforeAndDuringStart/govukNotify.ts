@@ -12,7 +12,8 @@ export async function sendAnnualReviewProviderEmail(
   country: string,
   contactName: string,
   deletionDate: string,
-  changeLink: string
+  changeLink: string,
+  reference = "" // the annual review reference, so we can look up all emails relating to this reference.
 ): Promise<{ result?: SendEmailResponse | {}; error?: Error }> {
   try {
     if (config.isSmokeTest) {
@@ -34,7 +35,7 @@ export async function sendAnnualReviewProviderEmail(
     );
     const result = await getNotifyClient().sendEmail(annualReviewNotices.providerStart, emailAddress, {
       personalisation,
-      reference: "",
+      reference,
     });
 
     return { result };
@@ -77,7 +78,7 @@ export async function sendAnnualReviewPostEmail(
       typePluralCapitalised: typePlural.toUpperCase(),
     };
     logger.info(
-      `template - ${reminderType} - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
+      `sendAnnualReviewPostEmail: template - ${reminderType} - ${notifyTemplate}, emailAddress - ${emailAddress}, personalisation - ${JSON.stringify(
         personalisation
       )}`
     );
