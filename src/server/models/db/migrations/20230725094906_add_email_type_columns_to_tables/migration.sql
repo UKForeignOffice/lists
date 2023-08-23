@@ -13,7 +13,6 @@ CREATE TYPE "AnnualReviewProviderEmailType" AS ENUM (
   'weeklyUnpublish',
   'oneDayBeforeUnpublish',
   'unpublished'
-
 );
 
 -- Alter Audit and Event Tables
@@ -23,16 +22,17 @@ ALTER TABLE "Event" ADD COLUMN "annualReviewEmailType" "AnnualReviewProviderEmai
 -- Update emailType in Audit and Event Tables
 UPDATE "Audit" AS a
 SET "annualReviewEmailType" = CASE
-    WHEN a."jsonData" ->> 'reminderType' = 'oneMonthBeforeStart' THEN 'oneMonthBeforeStart'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'oneWeekBeforeStart' THEN 'oneWeekBeforeStart'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeStart' THEN 'oneDayBeforeStart'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'started' THEN 'started'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeUnpublish' THEN 'oneDayBeforeUnpublish'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'sendOneMonthPostEmail' THEN 'oneMonthBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'sendOneWeekPostEmail' THEN 'oneWeekBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'sendOneDayPostEmail' THEN 'oneDayBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'sendStartedPostEmail' THEN 'started'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishOneDayPostEmail' THEN 'oneDayBeforeUnpublish'::"AnnualReviewPostEmailType"
     ELSE NULL
   END;
 
 
-with audit_reminders as (select * from "Audit" where "auditEvent" = 'REMINDER' and "annualReviewEmailType" is null)
+-- copying over the `sendStartedProviderEmail` audit to the Event table.
+with audit_reminders as (select * from "Audit" where "auditEvent" = 'REMINDER' and "annualReviewEmailType" is null and type = 'listItem')
 
 insert into "Event" ("listItemId", time, type, "jsonData", "annualReviewEmailType")
 select  cast("jsonData"->>'itemId' as int) "itemId",
@@ -46,7 +46,7 @@ select  cast("jsonData"->>'itemId' as int) "itemId",
           'reference', "jsonData"->'annualReviewRef'
           ),
         case
-          when "jsonData"->>'reminderType' = 'started' then 'started'::"AnnualReviewProviderEmailType"
+          when "jsonData"->>'reminderType' = 'sendStartedProviderEmail' then 'started'::"AnnualReviewProviderEmailType"
           else null
           end
 from audit_reminders;
