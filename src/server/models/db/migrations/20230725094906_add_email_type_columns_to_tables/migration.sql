@@ -41,7 +41,7 @@ select  cast("jsonData"->>'itemId' as int) "itemId",
         jsonb_build_object(
           'itemId', "jsonData"->'itemId',
           'reference', "jsonData"->'annualReviewRef',
-          'annualReviewRef', "jsonData"->'annualReviewRef'
+          'annualReviewRef', "jsonData"->'annualReviewRef',
           'eventName', "jsonData"->'eventName',
           'reminderType', "jsonData"->'reminderType',
           ),

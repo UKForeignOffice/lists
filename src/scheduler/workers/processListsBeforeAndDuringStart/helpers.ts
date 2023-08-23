@@ -37,6 +37,10 @@ export function isEmailSentBefore(event: Audit | undefined, reminderType: Remind
   return false;
 }
 
+/**
+ * Determines whether `emailType` should be sent for `annualReviewReference`.
+ * All annual review audits or events are recorded with the {@link annualReviewReference} or `reference` from `{@link List.jsonData.currentAnnualReview.reference}`.
+ */
 export async function shouldSend(
   emailType: AnnualReviewProviderEmailType,
   listItemId: number,
