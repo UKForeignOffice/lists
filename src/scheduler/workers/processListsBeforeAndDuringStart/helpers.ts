@@ -54,21 +54,21 @@ export async function shouldSend(
   }
   /**
    * This query uses postgres enums. Enums in postgres are ordered so `>` operator can be used.
+   * Looks for events with `listItemId` and where an annualReviewEmailType > than `emailType` has occurred.
    */
-  const event: Event[] | undefined = await prisma.$queryRaw`select * from "Event"
+  const result: Event[] | undefined = await prisma.$queryRaw`select * from "Event"
          where "listItemId" = ${listItemId}
            and "annualReviewEmailType" > ${emailType}::"AnnualReviewProviderEmailType"
            and "jsonData"->>'reference' = '${annualReviewReference}'
            and "type" = 'REMINDER'
          order by "time" desc limit 1`;
 
-  /**
-   * Query always returns array, hence [0].
-   */
-  const hasItems = (event ?? []).length >= 1;
+  const eventSupersedingSelectedType = result?.at?.(0);
 
-  if (hasItems) {
-    logger.info(`shouldSend: ${emailType} Email has already been sent to ${listItemId} on ${event?.[0].time}`);
+  if (eventSupersedingSelectedType) {
+    logger.info(
+      `shouldSend: ${emailType} Email has already been sent to ${listItemId} on ${eventSupersedingSelectedType.time}`
+    );
     return false;
   }
 
