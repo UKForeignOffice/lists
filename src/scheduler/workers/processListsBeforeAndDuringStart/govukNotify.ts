@@ -1,9 +1,8 @@
 import * as config from "server/config";
 import { logger } from "scheduler/logger";
 import { getNotifyClient } from "shared/getNotifyClient";
-import type { MilestoneTillAnnualReview } from "scheduler/batch/helpers";
+import type { MilestoneTillAnnualReview, RemindersBeforeStartDate } from "scheduler/batch/helpers";
 import type { SendEmailResponse } from "notifications-node-client";
-import type { ListAnnualReviewPostReminderType } from "server/models/types";
 
 const { annualReviewNotices } = config.NOTIFY.templates;
 
@@ -46,9 +45,8 @@ export async function sendAnnualReviewProviderEmail(
   }
 }
 
-type RemindersBeforeStartDate = Exclude<ListAnnualReviewPostReminderType, "oneDayBeforeUnpublish">;
 export async function sendAnnualReviewPostEmail(
-  reminderType: RemindersBeforeStartDate | MilestoneTillAnnualReview,
+  reminderType: RemindersBeforeStartDate,
   emailAddress: string,
   typePlural: string,
   country: string,
@@ -60,20 +58,14 @@ export async function sendAnnualReviewPostEmail(
     return { result: { id: "test", template: "test" } };
   }
 
-  // TODO:- Migrate all usage of sendAnnualReviewPostEmail using MilestoneTillAnnualReview to ListAnnualReviewPostReminderType.
   /**
    * Maps `ListAnnualReviewPostReminderType` or `MilestoneTillAnnualReview` to the notify template ID.
    */
-  const notifyTemplates: Record<RemindersBeforeStartDate | MilestoneTillAnnualReview, string> = {
+  const notifyTemplates: Record<RemindersBeforeStartDate, string> = {
     oneMonthBeforeStart: annualReviewNotices.postOneMonth,
     oneWeekBeforeStart: annualReviewNotices.postOneWeek,
     oneDayBeforeStart: annualReviewNotices.postOneDay,
     started: annualReviewNotices.postStart,
-
-    POST_ONE_MONTH: annualReviewNotices.postOneMonth,
-    POST_ONE_WEEK: annualReviewNotices.postOneWeek,
-    POST_ONE_DAY: annualReviewNotices.postOneDay,
-    START: annualReviewNotices.postStart,
   };
 
   const notifyTemplate = notifyTemplates[reminderType];

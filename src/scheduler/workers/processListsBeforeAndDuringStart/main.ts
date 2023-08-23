@@ -1,14 +1,13 @@
 import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
 import { lowerCase, startCase } from "lodash";
-import { AuditEvent, ListItemEvent, AnnualReviewProviderEmailType } from "@prisma/client";
-import type { Event, Audit, AnnualReviewPostEmailType } from "@prisma/client";
+import { AuditEvent, ListItemEvent } from "@prisma/client";
+import type { Event, Audit } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
 import type { SendEmailResponse } from "notifications-node-client";
 
 import { findListItems, findListsWithCurrentAnnualReview, updateIsAnnualReview } from "scheduler/dbHelpers";
 import { logger } from "scheduler/logger";
 import type { List, ListItemWithHistory } from "shared/types";
-import type { MilestoneTillAnnualReview } from "../../batch/helpers";
 import { formatDate, isEmailSentBefore, shouldSend } from "./helpers";
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
 import {
@@ -18,8 +17,9 @@ import {
 import { findAllReminderAudits } from "./audit";
 import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
 import { addReminderEvent } from "../helpers/addReminderEvent";
+import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
 
-async function processPostEmailsForList(list: List, reminderType: AnnualReviewPostEmailType) {
+async function processPostEmailsForList(list: List, reminderType: RemindersBeforeStartDate) {
   if (!list.jsonData.users) {
     logger.warn(`Unable to send email to post for ${reminderType}. No users identified for List ${list.id}.`);
     return;
@@ -53,6 +53,7 @@ async function processPostEmailsForList(list: List, reminderType: AnnualReviewPo
         jsonData: {
           eventName: "reminder",
           annualReviewRef: list.jsonData.currentAnnualReview?.reference,
+          response: JSON.stringify(result),
         },
       },
     });
@@ -85,9 +86,9 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
    */
   for (const listItem of listItems) {
     const annualReviewReference = list.jsonData.currentAnnualReview?.reference;
-    const shouldstarted = await shouldSend("started", listItem.id, annualReviewReference);
+    const shouldSendStartedEmail = await shouldSend("started", listItem.id, annualReviewReference);
 
-    if (!shouldstarted) {
+    if (!shouldSendStartedEmail) {
       return;
     }
 
@@ -156,7 +157,7 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   ) {
     isEmailSent = isEmailSentBefore(latestAudit as Audit, "oneMonthBeforeStart");
     if (!isEmailSent) {
-      await processPostEmailsForList(list, "POST_ONE_MONTH", "oneMonthBeforeStart");
+      await processPostEmailsForList(list, "oneMonthBeforeStart");
     }
     return;
   }
@@ -168,14 +169,14 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   ) {
     isEmailSent = isEmailSentBefore(latestAudit as Audit, "oneWeekBeforeStart");
     if (!isEmailSent) {
-      await processPostEmailsForList(list, "POST_ONE_WEEK", "oneWeekBeforeStart");
+      await processPostEmailsForList(list, "oneWeekBeforeStart");
     }
     return;
   }
   if (isSameDay(today, new Date(annualReviewKeyDates?.POST_ONE_DAY ?? ""))) {
     isEmailSent = isEmailSentBefore(latestAudit as Audit, "oneDayBeforeStart");
     if (!isEmailSent) {
-      await processPostEmailsForList(list, "POST_ONE_DAY", "oneDayBeforeStart");
+      await processPostEmailsForList(list, "oneDayBeforeStart");
     }
     return;
   }
@@ -183,7 +184,7 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
     // email posts to notify of annual review start
     isEmailSent = isEmailSentBefore(latestAudit as Audit, "started");
     if (!isEmailSent) {
-      await processPostEmailsForList(list, "START", "started");
+      await processPostEmailsForList(list, "started");
     }
 
     // update ListItem.isAnnualReview if today = the START milestone date

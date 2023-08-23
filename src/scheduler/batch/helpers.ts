@@ -1,6 +1,7 @@
 import { addDays, startOfDay, subDays } from "date-fns";
 import type { CurrentAnnualReview } from "shared/types";
 import crypto from "crypto";
+import type { ListAnnualReviewPostReminderType } from "server/models/types";
 
 export const schedulerMilestoneDays = {
   post: {
@@ -47,6 +48,7 @@ export interface SchedulerDateContexts {
 }
 
 export type MilestoneTillAnnualReview = "START" | "POST_ONE_DAY" | "POST_ONE_WEEK" | "POST_ONE_MONTH";
+export type RemindersBeforeStartDate = Exclude<ListAnnualReviewPostReminderType, "oneDayBeforeUnpublish">;
 
 /**
  * Calculate the annual review dates six weeks prior to the unpublish date of 0, 1, 7, 14, 21, 28, 35 days in the future
