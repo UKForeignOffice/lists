@@ -262,7 +262,7 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_MONTH",
+        "oneMonthBeforeStart",
         emailAddress,
         typePlural,
         country,
@@ -298,7 +298,7 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_WEEK",
+        "oneWeekBeforeStart",
         emailAddress,
         typePlural,
         country,
@@ -334,7 +334,7 @@ describe("GOVUK Notify service:", () => {
       const annualReviewDate = "01-Jan-2023";
 
       const { result } = await sendAnnualReviewPostEmail(
-        "POST_ONE_DAY",
+        "oneDayBeforeStart",
         emailAddress,
         typePlural,
         country,
@@ -369,7 +369,13 @@ describe("GOVUK Notify service:", () => {
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
 
-      const { result } = await sendAnnualReviewPostEmail("START", emailAddress, typePlural, country, annualReviewDate);
+      const { result } = await sendAnnualReviewPostEmail(
+        "started",
+        emailAddress,
+        typePlural,
+        country,
+        annualReviewDate
+      );
 
       expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
