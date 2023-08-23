@@ -43,7 +43,7 @@ select  cast("jsonData"->>'itemId' as int) "itemId",
           'reference', "jsonData"->'annualReviewRef',
           'annualReviewRef', "jsonData"->'annualReviewRef',
           'eventName', "jsonData"->'eventName',
-          'reminderType', "jsonData"->'reminderType',
+          'reminderType', "jsonData"->'reminderType'
           ),
         case
           when "jsonData"->>'reminderType' = 'sendStartedProviderEmail' then 'started'::"AnnualReviewProviderEmailType"
