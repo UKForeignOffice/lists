@@ -167,15 +167,15 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with correct user value", async () => {
-      const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
+      const userBeingEdited = { email: "userbeingEdited@gov.uk" };
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(false);
-      const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(userBeingEdited);
+      const spyFindUser = jest.spyOn(userModel, "getUsersWithListDataByEmail").mockResolvedValue(userBeingEdited);
 
       await usersEditController(mockReq, mockRes, mockNext);
 
       expect(spyFindUser).toHaveBeenCalledWith(mockReq.params.userEmail);
       expect(mockRes.render.mock.calls[0][0]).toBe("dashboard/users-edit");
-      expect(mockRes.render.mock.calls[0][1].user).toBe(userBeingEdited);
+      expect(mockRes.render.mock.calls[0][1].userLists).toBe(userBeingEdited);
     });
   });
 
@@ -183,9 +183,6 @@ describe("Dashboard Controllers", () => {
     test("next invoked when user updated but they do not have Administrator role", async () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
-
-      const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
-      const spyUpdateUser = jest.spyOn(userModel, "updateUser").mockResolvedValueOnce(userBeingEdited);
 
       mockReq.method = "POST";
       mockReq.body = {

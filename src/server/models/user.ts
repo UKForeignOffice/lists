@@ -97,7 +97,14 @@ export async function findUsersWithListCount(): Promise<UserWithListCount[]> {
   }
 }
 
-export async function getUsersWithListDataByEmail(email: string): Promise<any | undefined> {
+interface UserWithListData {
+  type: string;
+  countryName: string;
+  email: string;
+  jsonData: { roles: UserRoles[] };
+}
+
+export async function getUsersWithListDataByEmail(email: string): Promise<UserWithListData[] | []> {
   try {
     const userWithListCount = await prisma.$queryRaw`
       select "List".type, "Country".name as "countryName", "User".email, "User"."jsonData"
@@ -106,7 +113,7 @@ export async function getUsersWithListDataByEmail(email: string): Promise<any | 
       left join "Country" on "Country".id = "List"."countryId"
       where "User".email = ${email};
     `;
-    return userWithListCount as any[];
+    return userWithListCount as UserWithListData[];
   } catch (error) {
     logger.error(`getUsersWithListDataByEmail Error ${error.message}`);
     return [];
