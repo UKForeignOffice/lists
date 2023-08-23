@@ -1,19 +1,19 @@
 -- CreateEnum
 CREATE TYPE "AnnualReviewPostEmailType" AS ENUM (
-  'sendOneMonthPostEmail',
-  'sendOneWeekPostEmail',
-  'sendOneDayPostEmail',
-  'sendStartedPostEmail',
-  'sendUnpublishOneDayPostEmail',
-  'sendUnpublishWeeklyPostEmail'
+  'oneMonthBeforeStart',
+  'oneWeekBeforeStart',
+  'oneDayBeforeStart',
+  'started',
+  'oneDayBeforeUnpublish'
 );
 
 -- CreateEnum
 CREATE TYPE "AnnualReviewProviderEmailType" AS ENUM (
   'sendStartedProviderEmail',
-  'sendUnpublishedProviderEmail',
   'sendUnpublishOneDayProviderEmail',
-  'sendUnpublishWeeklyProviderEmail'
+  'sendUnpublishWeeklyProviderEmail',
+  'sendUnpublishedProviderEmail'
+
 );
 
 -- Alter Audit and Event Tables
@@ -23,11 +23,11 @@ ALTER TABLE "Event" ADD COLUMN "annualReviewEmailType" "AnnualReviewProviderEmai
 -- Update emailType in Audit and Event Tables
 UPDATE "Audit" AS a
 SET "annualReviewEmailType" = CASE
-    WHEN a."jsonData" ->> 'reminderType' = 'sendOneMonthPostEmail' THEN 'sendOneMonthPostEmail'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'sendOneWeekPostEmail' THEN 'sendOneWeekPostEmail'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'sendOneDayPostEmail' THEN 'sendOneDayPostEmail'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'sendStartedPostEmail' THEN 'sendStartedPostEmail'::"AnnualReviewPostEmailType"
-    WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishOneDayPostEmail' THEN 'sendUnpublishOneDayPostEmail'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'oneMonthBeforeStart' THEN 'oneMonthBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'oneWeekBeforeStart' THEN 'oneWeekBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeStart' THEN 'oneDayBeforeStart'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'started' THEN 'started'::"AnnualReviewPostEmailType"
+    WHEN a."jsonData" ->> 'reminderType' = 'oneDayBeforeUnpublish' THEN 'oneDayBeforeUnpublish'::"AnnualReviewPostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishWeeklyPostEmail' THEN 'sendUnpublishWeeklyPostEmail'::"AnnualReviewPostEmailType"
     ELSE NULL
   END;

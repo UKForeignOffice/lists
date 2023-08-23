@@ -213,18 +213,17 @@ view ListsForDashboard {
 
 // These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
 enum AnnualReviewPostEmailType {
-  sendOneMonthPostEmail
-  sendOneWeekPostEmail
-  sendOneDayPostEmail
-  sendStartedPostEmail
-  sendUnpublishOneDayPostEmail
-  sendUnpublishWeeklyPostEmail
+  oneMonthBeforeStart // sent one month before nextAnnualReviewStartDate
+  oneWeekBeforeStart // sent one week before
+  oneDayBeforeStart  // sent one day before
+  started // sent day of start
+  oneDayBeforeUnpublish // sent one day before unpublishing
 }
 
 // These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
 enum AnnualReviewProviderEmailType {
-  sendStartedProviderEmail
-  sendUnpublishedProviderEmail
-  sendUnpublishOneDayProviderEmail
-  sendUnpublishWeeklyProviderEmail
+  sendStartedProviderEmail // sent day of nextAnnualReviewStartDate
+  sendUnpublishWeeklyProviderEmail // sent every week until unpublish date
+  sendUnpublishOneDayProviderEmail // sent day before unpublish
+  sendUnpublishedProviderEmail // sent day of unpublishing
 }

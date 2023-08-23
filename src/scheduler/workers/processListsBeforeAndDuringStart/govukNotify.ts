@@ -3,6 +3,7 @@ import { logger } from "scheduler/logger";
 import { getNotifyClient } from "shared/getNotifyClient";
 import type { MilestoneTillAnnualReview } from "scheduler/batch/helpers";
 import type { SendEmailResponse } from "notifications-node-client";
+import type { ListAnnualReviewPostReminderType } from "server/models/types";
 
 export async function sendAnnualReviewProviderEmail(
   emailAddress: string,
@@ -48,18 +49,24 @@ export async function sendAnnualReviewProviderEmail(
 }
 
 export async function sendAnnualReviewPostEmail(
-  milestoneTillAnnualReviewStart: MilestoneTillAnnualReview,
+  reminderType: ListAnnualReviewPostReminderType,
   emailAddress: string,
   typePlural: string,
   country: string,
-  annualReviewDate: string
+  annualReviewDate: string,
+  reference: string = "" // annual review reference. Allows us to look up emails in notify by group (AR reference)
 ): Promise<{ result?: SendEmailResponse | {}; error?: Error }> {
   if (config.isSmokeTest) {
     logger.info(`isSmokeTest[${config.isSmokeTest}], would be emailing to ${emailAddress}`);
     return { result: { id: "test", template: "test" } };
   }
 
-  const notifyTemplates: Record<MilestoneTillAnnualReview, string> = {
+  const notifyTemplates: Record<ListAnnualReviewPostReminderType, string> = {
+    oneDayBeforeStart: "",
+    oneMonthBeforeStart: "",
+    oneWeekBeforeStart: "",
+    started: "",
+
     POST_ONE_MONTH: config.NOTIFY.templates.annualReviewNotices.postOneMonth,
     POST_ONE_WEEK: config.NOTIFY.templates.annualReviewNotices.postOneWeek,
     POST_ONE_DAY: config.NOTIFY.templates.annualReviewNotices.postOneDay,
@@ -79,10 +86,10 @@ export async function sendAnnualReviewPostEmail(
         personalisation
       )}`
     );
-    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference: "" });
+    const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference });
     return { result };
   } catch (error) {
-    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email: ${error.message}`;
+    const message = `sendAnnualReviewPostEmail: Unable to send annual review post email to ${emailAddress} with template name ${milestoneTillAnnualReviewStart}: ${error.message}`;
     logger.error(message);
     return { error: new Error(message) };
   }

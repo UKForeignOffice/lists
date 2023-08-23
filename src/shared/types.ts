@@ -38,10 +38,10 @@ export interface Audit extends PrismaClient.Audit {
 }
 
 export type ListAnnualReviewPostReminderType =
-  | "sendOneMonthPostEmail"
-  | "sendOneWeekPostEmail"
-  | "sendOneDayPostEmail"
-  | "sendStartedPostEmail";
+  | "oneMonthBeforeStart"
+  | "oneWeekBeforeStart"
+  | "oneDayBeforeStart"
+  | "started";
 
 export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
   eventName: ServerTypes.AuditListEventName;

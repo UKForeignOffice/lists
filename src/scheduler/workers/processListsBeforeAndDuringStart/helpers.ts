@@ -25,15 +25,10 @@ export function isEmailSentBefore(
     return false;
   }
   const subsequentEmailsForReminderType = {
-    sendOneMonthPostEmail: [
-      "sendOneMonthPostEmail",
-      "sendOneWeekPostEmail",
-      "sendOneDayPostEmail",
-      "sendStartPostEmail",
-    ],
-    sendOneWeekPostEmail: ["sendOneWeekPostEmail", "sendOneDayPostEmail", "sendStartedPostEmail"],
-    sendOneDayPostEmail: ["sendOneDayPostEmail", "sendStartedPostEmail"],
-    sendStartedPostEmail: ["sendStartedPostEmail"],
+    oneMonthBeforeStart: ["oneMonthBeforeStart", "oneWeekBeforeStart", "oneDayBeforeStart", "sendStartPostEmail"],
+    oneWeekBeforeStart: ["oneWeekBeforeStart", "oneDayBeforeStart", "started"],
+    oneDayBeforeStart: ["oneDayBeforeStart", "started"],
+    started: ["started"],
     sendStartedProviderEmail: ["sendStartedProviderEmail"],
   };
   const subsequentEmails: string[] = subsequentEmailsForReminderType[reminderType];

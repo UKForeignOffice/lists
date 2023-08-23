@@ -42,7 +42,7 @@ export async function sendDayBeforePostReminder(
         annualReviewRef: meta.reference,
       },
       AuditEvent.REMINDER,
-      AnnualReviewPostEmailType.sendUnpublishOneDayPostEmail
+      AnnualReviewPostEmailType.oneDayBeforeUnpublish
     );
 
     if (!updateAudit) {
