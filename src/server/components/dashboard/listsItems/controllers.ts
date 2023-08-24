@@ -195,7 +195,7 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
 
   const updatedUsers = jsonData.users?.filter((u) => u !== userEmail) ?? [];
 
-  await updateList(list.id, { ...jsonData, users: updatedUsers });
+  await updateList(list.id, { users: updatedUsers });
 
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);

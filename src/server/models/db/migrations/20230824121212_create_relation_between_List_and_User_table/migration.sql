@@ -16,7 +16,13 @@ ALTER TABLE "_ListToUser" ADD CONSTRAINT "_ListToUser_A_fkey" FOREIGN KEY ("A") 
 -- AddForeignKey
 ALTER TABLE "_ListToUser" ADD CONSTRAINT "_ListToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-SELECT "List"."jsonData"->user, "List".id
-    from "List"
-    -- get the userId from the email
-    -- keep listId
+-- Populate table with List and User id, based on jsonData.users from the List table
+INSERT INTO "_ListToUser" ("A", "B")
+SELECT "List"."id", "User"."id"
+FROM "List"
+JOIN "User" ON "User"."email" IN (
+    SELECT jsonb_array_elements_text("List"."jsonData"->'users')
+);
+
+-- NOTE: If testing this locally or in develop the list-management@cautionyourblast.com will have to be created
+-- INSERT INTO "User" (email, "updatedAt", "jsonData") VALUES ('list-management@cautionyourblast.com', now(), '{"roles":[]}');
