@@ -127,6 +127,14 @@
           "schema": {}
         },
         {
+          "name": "addressCountry",
+          "options": {},
+          "type": "AutocompleteField",
+          "title": "Country",
+          "list": "country",
+          "schema": {}
+        },
+        {
           "name": "addressDisplay",
           "options": {},
           "type": "RadiosField",
