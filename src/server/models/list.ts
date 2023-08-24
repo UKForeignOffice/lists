@@ -4,7 +4,7 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, ListUpdateInput } from "./types";
+import type { CountryName, List, ListCreateInput } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
@@ -77,6 +77,8 @@ export async function createList(listData: {
       throw new Error("CreatedBy is not a valid GOV UK email address");
     }
 
+    const userIds = await getUserIdFromEmails(users);
+
     const data: ListCreateInput = {
       type: listData.serviceType,
       country: {
@@ -90,9 +92,11 @@ export async function createList(listData: {
         },
       },
       jsonData: {
-        users,
         relatedLinks: getRelatedLinks(listData.serviceType),
         createdBy: listData.createdBy,
+      },
+      users: {
+        connect: userIds,
       },
     };
 
@@ -180,10 +184,11 @@ export async function updateList(
       throw new Error("Users contain a non GOV UK email address");
     }
 
-    const data: ListUpdateInput = {
-      jsonData: {
-        ...listData,
-        users,
+    const userIds = await getUserIdFromEmails(users);
+
+    const data = {
+      users: {
+        connect: userIds,
       },
     };
 
@@ -200,6 +205,18 @@ export async function updateList(
   }
 }
 
+async function getUserIdFromEmails(emails: string[]): Promise<Array<Record<"id", number>>> {
+  return await prisma.user.findMany({
+    where: {
+      AND: emails.map((email) => ({
+        email,
+      })),
+    },
+    select: {
+      id: true,
+    },
+  });
+}
 /**
  * todo: deprecate
  */
