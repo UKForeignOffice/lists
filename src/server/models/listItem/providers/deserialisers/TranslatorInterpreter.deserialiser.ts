@@ -20,6 +20,5 @@ export const translatorInterpreterDeserialiser: WebhookDeserialisers[ServiceType
     interpreterServices: checkboxCSVToArray(interpreterServices),
     languagesProvided: checkboxCSVToArray(languagesProvided),
     ...rest,
-    country: webhookData.addressCountry!,
   };
 };
