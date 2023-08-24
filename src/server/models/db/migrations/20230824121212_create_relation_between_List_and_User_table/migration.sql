@@ -4,10 +4,10 @@ CREATE TABLE "_ListToUser" (
     "B" INTEGER NOT NULL
 );
 
--- CreateIndex
+-- CreateIndex - makes sure no two rows are the same
 CREATE UNIQUE INDEX "_ListToUser_AB_unique" ON "_ListToUser"("A", "B");
 
--- CreateIndex
+-- CreateIndex -  to improve efficiency of filtering or searching on the "B" column
 CREATE INDEX "_ListToUser_B_index" ON "_ListToUser"("B");
 
 -- AddForeignKey
@@ -16,7 +16,7 @@ ALTER TABLE "_ListToUser" ADD CONSTRAINT "_ListToUser_A_fkey" FOREIGN KEY ("A") 
 -- AddForeignKey
 ALTER TABLE "_ListToUser" ADD CONSTRAINT "_ListToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-select "List"."jsonData"->user, "List".id
+SELECT "List"."jsonData"->user, "List".id
     from "List"
     -- get the userId from the email
     -- keep listId
