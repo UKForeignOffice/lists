@@ -17,18 +17,24 @@ const middleware = [...bodyParser, singleRouteCsrf, addCsrfTokenToLocals];
 
 export const applyRouter = express.Router();
 
-applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/start", handlers.start.get);
 applyRouter.get(
-  "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/start",
+  handlers.start.get
+);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/which-country-list-do-you-want-to-be-added-to",
   middleware,
   handlers.countrySelect.get
 );
 applyRouter.post(
-  "/application/:serviceType(lawyers|funeral-directors)/which-country-list-do-you-want-to-be-added-to",
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/which-country-list-do-you-want-to-be-added-to",
   middleware,
   handlers.countrySelect.post
 );
-applyRouter.get("/application/:serviceType(lawyers|funeral-directors)/not-currently-accepting", handlers.stop.get);
+applyRouter.get(
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/not-currently-accepting",
+  handlers.stop.get
+);
 
 applyRouter.get("/application/session/*", (req: Request, _res: Response, next: NextFunction) => {
   req.session.application = {
@@ -39,11 +45,9 @@ applyRouter.get("/application/session/*", (req: Request, _res: Response, next: N
 
 /**
  * checkCountryQuestionAnswer must come last to prevent circular redirect
- * todo: change to /application/:serviceType(lawyers|funeral-directors|translators-interpreters)/ when funeral-directors
- * and translators and interpreters flow is done.
  */
 applyRouter.get(
-  "/application/:serviceType(lawyers|funeral-directors)/*",
+  "/application/:serviceType(lawyers|funeral-directors|translators-interpreters)/*",
   checkCountryQuestionAnswered,
   checkIsExistingList
 );

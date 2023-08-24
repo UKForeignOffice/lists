@@ -22,6 +22,7 @@ export async function post(req: Request, res: Response) {
   const nextPagePath = {
     lawyers: "what-size-is-your-company-or-firm",
     "funeral-directors": "can-you-provide-funeral-services-and-support-to-customers-in-english",
+    "translators-interpreters": "can-you-provide-translation-or-interpretation-services-to-customers-in-english",
   };
 
   if (!validatedCountry) {
