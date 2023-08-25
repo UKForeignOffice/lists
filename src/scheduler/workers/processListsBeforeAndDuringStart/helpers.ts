@@ -1,6 +1,6 @@
 import type { ListAnnualReviewPostReminderType } from "shared/types";
 import { logger } from "scheduler/logger";
-import type { Audit, Event, AnnualReviewProviderEmailType } from "@prisma/client";
+import type { Audit, Event, AnnualReviewProviderEmailType, Prisma } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
 import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
 
@@ -38,10 +38,50 @@ export function isEmailSentBefore(event: Audit | undefined, reminderType: Remind
 }
 
 /**
- * Determines whether `emailType` should be sent for `annualReviewReference`.
- * All annual review audits or events are recorded with the {@link annualReviewReference} or `reference` from `{@link List.jsonData.currentAnnualReview.reference}`.
+ * if `emailType` is `oneMonthBeforeStart` and an email has been sent for `oneWeekBeforeStart` or `oneDayBeforeStart` or `started`, this function will return false.
+ * @param emailType the `{@link ListAnnualReviewPostReminderType}` to check. If an email has been sent for this type OR a type larger than this type, this function will return false.
+ * @param reference annual review reference
  */
-export async function shouldSend(
+export async function shouldSendToPost(emailType: ListAnnualReviewPostReminderType, reference: string) {
+  /**
+   * This query uses postgres enums. Enums in postgres are ordered so `>=` operator can be used.
+   * Looks for events with `listItemId` and where an annualReviewEmailType > than `emailType` has occurred.
+   */
+  const query: Prisma.PrismaPromise<Audit[] | undefined> = prisma.$queryRaw`select * from "Audit"
+           where "annualReviewEmailType" >= ${emailType}::"AnnualReviewPostEmailType"
+           and "jsonData"->>'annualReviewRef' = '${reference}'
+         order by "createdAt" desc limit 1`;
+
+  let result: Audit[] | undefined;
+
+  try {
+    result = await query;
+  } catch (e) {
+    logger.error(`shouldSend: ${e}`);
+  }
+
+  const auditSupersedingSelectedType = result?.at?.(0);
+
+  if (auditSupersedingSelectedType) {
+    // @ts-ignore
+    const listId = auditSupersedingSelectedType.jsonData?.itemId;
+    logger.info(
+      `shouldSend: ${emailType} Email has already been sent to ${listId} on ${auditSupersedingSelectedType.createdAt}`
+    );
+    return false;
+  }
+
+  logger.debug(`shouldSend: ${emailType} Email has not been sent for ${reference}`);
+  return true;
+}
+
+/**
+ * if `emailType` is `oneMonthBeforeStart` and an email has been sent for `oneWeekBeforeStart` or `oneDayBeforeStart` or `started`, this function will return false.
+ * @param emailType the `{@link AnnualReviewProviderEmailType}` to check. If an email has been sent for this type OR a type larger than this type, this function will return false.
+ * @param listItemId the list item id to check
+ * @param annualReviewReference
+ */
+export async function shouldSendToProvider(
   emailType: AnnualReviewProviderEmailType,
   listItemId: number,
   annualReviewReference?: string
@@ -53,15 +93,23 @@ export async function shouldSend(
     return false;
   }
   /**
-   * This query uses postgres enums. Enums in postgres are ordered so `>` operator can be used.
-   * Looks for events with `listItemId` and where an annualReviewEmailType > than `emailType` has occurred.
+   * This query uses postgres enums. Enums in postgres are ordered so `>=` operator can be used.
+   * Looks for events with `listItemId` and where an annualReviewEmailType >= than `emailType` has occurred.
    */
-  const result: Event[] | undefined = await prisma.$queryRaw`select * from "Event"
+  const query: Prisma.PrismaPromise<Event[] | undefined> = prisma.$queryRaw`select * from "Event"
          where "listItemId" = ${listItemId}
-           and "annualReviewEmailType" > ${emailType}::"AnnualReviewProviderEmailType"
+           and "annualReviewEmailType" >= ${emailType}::"AnnualReviewProviderEmailType"
            and "jsonData"->>'reference' = '${annualReviewReference}'
            and "type" = 'REMINDER'
          order by "time" desc limit 1`;
+
+  let result: Event[] | undefined;
+
+  try {
+    result = await query;
+  } catch (e) {
+    logger.error(`shouldSendToProvider: ${e}`);
+  }
 
   const eventSupersedingSelectedType = result?.at?.(0);
 

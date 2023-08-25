@@ -28,7 +28,8 @@ SET "annualReviewEmailType" = CASE
     WHEN a."jsonData" ->> 'reminderType' = 'sendStartedPostEmail' THEN 'started'::"AnnualReviewPostEmailType"
     WHEN a."jsonData" ->> 'reminderType' = 'sendUnpublishOneDayPostEmail' THEN 'oneDayBeforeUnpublish'::"AnnualReviewPostEmailType"
     ELSE NULL
-  END;
+  END
+where "jsonData"->>'reminderType' is not null;
 
 
 -- copying over the `sendStartedProviderEmail` audit to the Event table.
