@@ -1,4 +1,3 @@
-import { startOfDay } from "date-fns";
 import { lowerCase, startCase } from "lodash";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
@@ -111,34 +110,22 @@ async function processProviderEmailsForListItems(list: List, listItems: ListItem
 }
 
 export async function processList(list: List, listItemsForList: ListItemWithHistory[]) {
-  const processListLogger = logger.child({ listId: list.id, method: "processList" });
-
   const { currentAnnualReview } = list.jsonData;
 
   const annualReviewKeyDates = currentAnnualReview?.keyDates.annualReview;
   const annualReviewReference = currentAnnualReview?.reference;
+
+  const processListLogger = logger.child({ listId: list.id, method: "processList", keyDates: annualReviewKeyDates });
 
   if (!annualReviewReference) {
     logger.info(`Annual review reference not found in currentAnnualReview field for list ${list.id}`);
     return;
   }
 
-  const today = startOfDay(new Date());
-  processListLogger.info(
-    `Checking annual review key dates for list id ${
-      list.id
-    } against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`
-  );
-
   const emailTypeForToday: RemindersBeforeStartDate | undefined = getEmailTypeForToday(currentAnnualReview?.keyDates);
 
   if (!emailTypeForToday) {
-    processListLogger.info(
-      `No email type found for today for list ${
-        list.id
-      } - today ${today.toISOString()} is not in range of any ${JSON.stringify(annualReviewKeyDates)}`
-    );
-
+    processListLogger.info(`No email type found for today for ${list.id}`);
     return;
   }
 
