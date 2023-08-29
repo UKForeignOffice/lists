@@ -66,6 +66,7 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
       },
       include: {
         country: true,
+        users: true,
       },
     })) as List[];
 

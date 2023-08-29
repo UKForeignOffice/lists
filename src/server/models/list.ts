@@ -15,6 +15,7 @@ export async function findListById(listId: string | number): Promise<List | unde
       },
       include: {
         country: true,
+        users: true,
       },
     })) as List;
     return lists ?? undefined;
@@ -77,7 +78,12 @@ export async function createList(listData: {
       throw new Error("CreatedBy is not a valid GOV UK email address");
     }
 
-    const userIds = await getUserIdFromEmails(users);
+    let userIds = await getUserIdsFromEmails(users);
+
+    if (userIds.length === 0) {
+      await createUsersFromEmails(users);
+      userIds = await getUserIdsFromEmails(users);
+    }
 
     const data: ListCreateInput = {
       type: listData.serviceType,
@@ -184,19 +190,22 @@ export async function updateList(
       throw new Error("Users contain a non GOV UK email address");
     }
 
-    const userIds = await getUserIdFromEmails(users);
+    let userIds = await getUserIdsFromEmails(users);
 
-    const data = {
-      users: {
-        connect: userIds,
-      },
-    };
+    if (userIds.length === 0) {
+      await createUsersFromEmails(users);
+      userIds = await getUserIdsFromEmails(users);
+    }
 
     const list = (await prisma.list.update({
       where: {
         id: listId,
       },
-      data,
+      data: {
+        users: {
+          connect: userIds,
+        },
+      },
     })) as List;
     return list ?? undefined;
   } catch (error) {
@@ -205,7 +214,28 @@ export async function updateList(
   }
 }
 
-async function getUserIdFromEmails(emails: string[]): Promise<Array<Record<"id", number>>> {
+export async function removeUserFromList(listId: number, userEmail: string): Promise<void> {
+  try {
+    const userIds = await getUserIdsFromEmails([userEmail]);
+
+    await prisma.list.update({
+      where: {
+        id: listId,
+      },
+      data: {
+        users: {
+          disconnect: userIds,
+        },
+      },
+    });
+    logger.info(`User ${userEmail} disconnected from list ${listId}`);
+  } catch (error) {
+    logger.error(`removeUserFromList Error: ${(error as Error).message}`);
+    throw error;
+  }
+}
+
+async function getUserIdsFromEmails(emails: string[]): Promise<Array<Record<"id", number>>> {
   return await prisma.user.findMany({
     where: {
       AND: emails.map((email) => ({
@@ -216,6 +246,19 @@ async function getUserIdFromEmails(emails: string[]): Promise<Array<Record<"id",
       id: true,
     },
   });
+}
+
+async function createUsersFromEmails(emails: string[]): Promise<void> {
+  await prisma.user.createMany({
+    data: emails.map((email) => ({
+      email,
+      jsonData: {
+        roles: [],
+      },
+    })),
+  });
+
+  logger.info(`Created users for ${emails.join(", ")}`);
 }
 /**
  * todo: deprecate
