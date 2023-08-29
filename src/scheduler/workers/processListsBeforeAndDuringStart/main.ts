@@ -29,16 +29,16 @@ async function processPostEmailsForList(
 ) {
   // Check if sent before
   let emailSent = false;
-  if (!list.jsonData.users) {
+  if (!list.users) {
     logger.info(
       `Unable to send email to post for ${milestoneTillAnnualReview}. No users identified for List ${list.id}.`
     );
     return;
   }
-  for (const publisherEmail of list.jsonData.users) {
+  for (const user of list.users) {
     const { result } = await sendAnnualReviewPostEmail(
       milestoneTillAnnualReview,
-      publisherEmail,
+      user.email,
       lowerCase(startCase(list.type)),
       list?.country?.name ?? "",
       formatDate(list.nextAnnualReviewStartDate)
@@ -53,11 +53,11 @@ async function processPostEmailsForList(
 
   if (!emailSent) {
     logger.error(
-      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.jsonData.users} for list ${list.id} ${milestoneTillAnnualReview} before annual review start`
+      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.users} for list ${list.id} ${milestoneTillAnnualReview} before annual review start`
     );
     return;
   }
-  logger.info(`Annual review email sent to post contacts ${list.jsonData.users}`);
+  logger.info(`Annual review email sent to post contacts ${list.users}`);
 
   await recordListItemEvent(
     {
