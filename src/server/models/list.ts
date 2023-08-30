@@ -120,7 +120,7 @@ export async function createList(listData: {
   }
 }
 
-function getRelatedLinks(serviceType: ServiceType) {
+export function getRelatedLinks(serviceType: ServiceType) {
   const lawyersLinks = [
     {
       url: "https://gov.uk/guidance/arrested-or-detained-abroad",
