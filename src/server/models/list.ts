@@ -64,13 +64,13 @@ export async function findListsByCountry(country: CountryName): Promise<List[] |
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  users: string | string[];
+  users: string | Array<string | undefined>;
   createdBy: string;
 }): Promise<List | Record<string, boolean> | undefined> {
   try {
     const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
 
-    const users = compact(usersAsArray.map(trim).map(toLower));
+    const users = compact((usersAsArray as string[]).map(trim).map(toLower));
     if (users.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Users contain a non GOV UK email address");
     }
