@@ -2,6 +2,7 @@ Feature: List management users
 
   Background:
     Given I am logged in as a "user"
+    And A "lawyers" list exists for Eurasia
     And a list exists with users
     And I click the link "Lists"
     And I click the link "Settings" in the row with header "Lawyers in Eurasia"
