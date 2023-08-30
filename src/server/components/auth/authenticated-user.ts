@@ -25,9 +25,8 @@ export default class AuthenticatedUser {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
-        jsonData: {
-          path: ["users"],
-          array_contains: [this.emailAddress],
+        userEmails: {
+          has: this.emailAddress,
         },
       },
     };

@@ -27,6 +27,7 @@ model List {
   jsonData            Json
 
   items               ListItem[]
+  users               User[]
 
   @@index([type, countryId])
   @@unique([countryId, type])
@@ -98,6 +99,7 @@ model User {
   jsonData  Json
 
   pinnedItems ListItem[]
+  lists       List[]
 }
 
 
@@ -210,5 +212,6 @@ view ListsForDashboard {
   nextAnnualReviewStartDate   DateTime? @db.Date
   lastAnnualReviewStartDate   DateTime? @db.Date
   jsonData                    Json
+  userEmails                  String[]
   @@unique([listId])
 }

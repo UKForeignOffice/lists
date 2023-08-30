@@ -264,22 +264,19 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   }
 
   const errorExists = "field" in error;
-  // TODO:- implement post redirect get.
+
   if (errorExists) {
     req.flash("questionError", JSON.stringify(error));
     res.redirect(res.locals.listsEditUrl);
     return;
   }
 
+  const users = [publisher];
+
+  await updateList(Number(listId), { users });
+
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${publisher} has been created`);
-
-  const newUsers = [...(list.jsonData.users ?? []), publisher];
-
-  await updateList(Number(listId), {
-    ...list.jsonData,
-    users: newUsers,
-  });
   res.redirect(res.locals.listsEditUrl);
 }
 
@@ -288,6 +285,7 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
   const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
 
+  // TODO - post redirect get pattern
   res.render("dashboard/list-edit-confirm-delete-user", {
     ...DEFAULT_VIEW_PROPS,
     listId,

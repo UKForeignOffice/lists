@@ -4,7 +4,7 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, ListUpdateInput } from "./types";
+import type { CountryName, List, ListCreateInput } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
@@ -15,6 +15,7 @@ export async function findListById(listId: string | number): Promise<List | unde
       },
       include: {
         country: true,
+        users: true,
       },
     })) as List;
     return lists ?? undefined;
@@ -63,18 +64,25 @@ export async function findListsByCountry(country: CountryName): Promise<List[] |
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  users: string | string[];
+  users: string | Array<string | undefined>;
   createdBy: string;
 }): Promise<List | Record<string, boolean> | undefined> {
   try {
     const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
 
-    const users = compact(usersAsArray.map(trim).map(toLower));
+    const users = compact((usersAsArray as string[]).map(trim).map(toLower));
     if (users.some((email) => !isGovUKEmailAddress(email))) {
       throw new Error("Users contain a non GOV UK email address");
     }
     if (!isGovUKEmailAddress(listData.createdBy)) {
       throw new Error("CreatedBy is not a valid GOV UK email address");
+    }
+
+    let userIds = await getUserIdsFromEmails(users);
+
+    if (userIds.length === 0) {
+      await createUsersFromEmails(users);
+      userIds = await getUserIdsFromEmails(users);
     }
 
     const data: ListCreateInput = {
@@ -90,9 +98,11 @@ export async function createList(listData: {
         },
       },
       jsonData: {
-        users,
         relatedLinks: getRelatedLinks(listData.serviceType),
         createdBy: listData.createdBy,
+      },
+      users: {
+        connect: userIds,
       },
     };
 
@@ -110,7 +120,7 @@ export async function createList(listData: {
   }
 }
 
-function getRelatedLinks(serviceType: ServiceType) {
+export function getRelatedLinks(serviceType: ServiceType) {
   const lawyersLinks = [
     {
       url: "https://gov.uk/guidance/arrested-or-detained-abroad",
@@ -180,18 +190,22 @@ export async function updateList(
       throw new Error("Users contain a non GOV UK email address");
     }
 
-    const data: ListUpdateInput = {
-      jsonData: {
-        ...listData,
-        users,
-      },
-    };
+    let userIds = await getUserIdsFromEmails(users);
+
+    if (userIds.length === 0) {
+      await createUsersFromEmails(users);
+      userIds = await getUserIdsFromEmails(users);
+    }
 
     const list = (await prisma.list.update({
       where: {
         id: listId,
       },
-      data,
+      data: {
+        users: {
+          connect: userIds,
+        },
+      },
     })) as List;
     return list ?? undefined;
   } catch (error) {
@@ -200,6 +214,52 @@ export async function updateList(
   }
 }
 
+export async function removeUserFromList(listId: number, userEmail: string): Promise<void> {
+  try {
+    const userIds = await getUserIdsFromEmails([userEmail]);
+
+    await prisma.list.update({
+      where: {
+        id: listId,
+      },
+      data: {
+        users: {
+          disconnect: userIds,
+        },
+      },
+    });
+    logger.info(`User ${userEmail} disconnected from list ${listId}`);
+  } catch (error) {
+    logger.error(`removeUserFromList Error: ${(error as Error).message}`);
+    throw error;
+  }
+}
+
+async function getUserIdsFromEmails(emails: string[]): Promise<Array<Record<"id", number>>> {
+  return await prisma.user.findMany({
+    where: {
+      AND: emails.map((email) => ({
+        email,
+      })),
+    },
+    select: {
+      id: true,
+    },
+  });
+}
+
+async function createUsersFromEmails(emails: string[]): Promise<void> {
+  await prisma.user.createMany({
+    data: emails.map((email) => ({
+      email,
+      jsonData: {
+        roles: [],
+      },
+    })),
+  });
+
+  logger.info(`Created users for ${emails.join(", ")}`);
+}
 /**
  * todo: deprecate
  */
