@@ -1,9 +1,5 @@
 Given("a list exists with users", async () => {
-  const jsonData = {
-    users: ["smoke@cautionyourblast.com", "smoke+1@cautionyourblast.com", "smoke+2@cautionyourblast.com"],
-  };
-
-  const userIds = await addEmailsToUserTable(jsonData);
+  const userIds = getIdsForUsersWithSmokeEmail();
 
   cy.task("db", {
     operation: "list.findUnique",
@@ -19,7 +15,7 @@ Given("a list exists with users", async () => {
         create: {
           type: "lawyers",
           reference: "SMOKE",
-          jsonData,
+          jsonData: {},
           country: {
             connect: {
               name: "Eurasia",
@@ -46,34 +42,20 @@ Given("a list exists with users", async () => {
   });
 });
 
-/**
- *
- * @todo this creates new item in the users table with news ids each time
- */
-async function addEmailsToUserTable(emails) {
-  const allIDs = [];
-  emails.users.forEach(async(email) => {
-    await cy.task("db", {
-      operation: "user.upsert",
-      variables: {
-        create: {
-          email,
-          jsonData: {
-            roles: []
-          }
-        },
-        update: {
-          jsonData: {
-            roles: []
-          }
-        },
-        where: {
-          email,
+
+function getIdsForUsersWithSmokeEmail() {
+  let allIDs = [];
+  cy.task("db", {
+    operation: "user.findMany",
+    variables: {
+      where: {
+        email: {
+          contains: "smoke"
         },
       },
-    }).then(result => {
-      allIDs.push({id: result.id})
-    });
+    },
+  }).then(results => {
+    allIDs = results.reduce((acc, result) => [...acc, {id: result.id}], []);
   });
   return allIDs;
 }

@@ -23,8 +23,8 @@ create or replace view "ListsForDashboard" as (
     coalesce(li.live, 0) as live,
     coalesce(li."actionNeeded", 0) as "actionNeeded",
     coalesce(l."lastAnnualReviewStartDate", fp."firstPublished", current_date) + interval '18 months' < current_date as "isOverdue",
-    cardinality((select array_agg(u.email) from "_ListToUser" lu inner join "User" u on lu."B" = u.id where lu."A" = l.id)) as "admins", -- updated column
-    (select array_agg(u.email) from "_ListToUser" lu inner join "User" u on lu."B" = u.id where lu."A" = l.id) as "userEmails" -- new column
+    coalesce(count((select array_agg(u.email) from "_ListToUser" lu inner join "User" u on lu."B" = u.id where lu."A" = l.id)), 0) as "admins", -- updated column
+    coalesce((select array_agg(u.email) from "_ListToUser" lu inner join "User" u on lu."B" = u.id where lu."A" = l.id), '{}'::varchar[]) as "userEmails" -- new column
   from
     "List" l
       inner join "Country" c on  c.id = l."countryId"
