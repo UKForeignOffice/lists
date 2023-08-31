@@ -52,6 +52,26 @@
     </div>
     <button class="govuk-button" data-module="govuk-button">Save</button>
   </form>
-
+  {% if user.lists.length > 0 %}
+    <div class="govuk-body">
+      This user is an admin on <strong>{{user.lists.length}}</strong> {{"lists" if user.lists.length > 1 else "list"}}
+    </div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Type</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">Country</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for list in user.lists %}
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">{{ "Translators and Interpreters" if list.type === "translatorsInterpreters" else _.startCase(list.type) }}</th>
+            <td class="govuk-table__cell govuk-table__cell--numeric">{{ list.country.name }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
 {% endblock %}
