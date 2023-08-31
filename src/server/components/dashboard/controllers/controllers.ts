@@ -324,7 +324,7 @@ export function userDeleteGetController(req: Request, res: Response) {
 
 export async function userDeletePostController(req: Request, res: Response) {
   const { userEmail } = req.params;
-  await deleteUserByEmail(userEmail, userEmail);
+  await deleteUserByEmail(userEmail, req.user?.userData.email as string);
 
   req.flash("deletedUser", userEmail);
 
