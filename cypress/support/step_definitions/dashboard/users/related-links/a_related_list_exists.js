@@ -41,5 +41,4 @@ When("a related list exists", () => {
       },
     });
   })
-
 });
