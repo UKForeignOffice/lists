@@ -1,0 +1,29 @@
+{% extends "./dashboard.njk" %}
+{% import "./macros.njk" as dashboardMacros %}
+{% from "button/macro.njk" import govukButton %}
+
+{% block aside %}
+  <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.usersEdit.replace(':userEmail', req.params.userEmail) }}">Back</a>
+{% endblock %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">Remove access</h1>
+  <h4 class="govuk-heading-s">{{ userEmail }}</h4>
+
+  <form class="form" method="post" required>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-body">
+      Are you sure you want to permanently remove this user from the system and all associated lists?
+    </div>
+
+    {{ govukButton({
+      text: "Keep admin",
+      href: dashboardRoutes.usersEdit.replace(':userEmail', req.params.userEmail)
+    }) }}
+
+    {{ govukButton({
+      text: "Delete admin",
+      classes: "govuk-button--warning"
+    }) }}
+  </form>
+{% endblock %}

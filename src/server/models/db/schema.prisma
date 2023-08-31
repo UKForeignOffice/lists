@@ -145,6 +145,7 @@ enum AuditEvent {
   REMINDER
   ANALYTICS
   LIST_EDIT
+  USER_DELETED
 }
 
 enum Status {

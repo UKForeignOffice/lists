@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { findUserByEmail, findUsersWithListCount, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList } from "server/models/list";
+import { findUserByEmail, isAdministrator, updateUser } from "server/models/user";
+import { createList, findListById, updateList, deleteUserByEmail } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
@@ -311,4 +311,22 @@ export function helpPageController(req: Request, res: Response): void {
   res.render("dashboard/help", {
     backUrl: req.session.currentUrl ?? "/dashboard/lists",
   });
+}
+
+export function userDeleteGetController(req: Request, res: Response) {
+  const { userEmail } = req.params;
+  res.render("dashboard/users-delete-confirm", {
+    ...DEFAULT_VIEW_PROPS,
+    userEmail,
+    req,
+  });
+}
+
+export async function userDeletePostController(req: Request, res: Response) {
+  const { userEmail } = req.params;
+  await deleteUserByEmail(userEmail, userEmail);
+
+  req.flash("deletedUser", userEmail);
+
+  res.redirect(dashboardRoutes.lists);
 }

@@ -8,6 +8,8 @@ import {
   usersEditController,
   helpPageController,
   usersEditPostController,
+  userDeleteGetController,
+  userDeletePostController,
 } from "./controllers/controllers";
 import { dashboardRoutes } from "./routes";
 import { addUrlToSession } from "server/components/cookies/helpers";
@@ -26,6 +28,10 @@ dashboardRouter.all(`${dashboardRoutes.usersList}*`, ensureUserIsAdministrator, 
 dashboardRouter.get(dashboardRoutes.usersList, usersListController);
 dashboardRouter.post(dashboardRoutes.usersEdit, usersEditPostController);
 dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
+dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
+
+dashboardRouter.get("/dashboard/users/:userEmail/delete-confirm", userDeleteGetController);
+dashboardRouter.post("/dashboard/users/:userEmail/delete-confirm", userDeletePostController);
 
 // lists
 dashboardRouter.use("/dashboard/lists", listRouter);
