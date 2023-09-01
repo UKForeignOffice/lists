@@ -6,14 +6,19 @@ import { main as resendRequestedEditEmail } from "./resendRequestedEditEmail";
 import { logger } from "scheduler/logger";
 import deleteItemsAfterAYear from "./unpublish/delete";
 
-const [args] = process.argv.slice(2);
+const SCHEDULER_WORKER_RUN_TASK = process.env.SCHEDULER_WORKER_RUN_TASK;
+
+if (!SCHEDULER_WORKER_RUN_TASK) {
+  logger.error(`SCHEDULER_WORKER_RUN_TASK not set`);
+  process.exit(1);
+}
 
 /**
  * Use this to retry one task.
  * `npm run task:resendRequestedEditEmail` or
- * `node dist/scheduler/run resendRequestedEditEmail`
+ * `SCHEDULER_WORKER_RUN_TASK="resendRequestedEditEmail" node dist/scheduler/run`
  */
-async function run(taskName: string) {
+export async function run(taskName: string) {
   logger.info(`Task requested was ${taskName}`);
 
   const tasks = {
@@ -24,6 +29,7 @@ async function run(taskName: string) {
     resendRequestedEditEmail,
     deleteItemsAfterAYear,
   };
+
   // @ts-ignore
   const task = tasks[taskName];
   if (!task) {
@@ -33,13 +39,3 @@ async function run(taskName: string) {
 
   return await task();
 }
-
-run(args)
-  .then(() => {
-    logger.info(`Task completed`);
-    process.exit(0);
-  })
-  .catch((promiseRejects) => {
-    logger.error(promiseRejects);
-    process.exit(1);
-  });

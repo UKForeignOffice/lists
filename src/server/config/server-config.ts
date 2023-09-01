@@ -61,4 +61,3 @@ export const NOTIFY = {
 // Form runner
 export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
 export const FORM_RUNNER_PUBLIC_URL = `${SERVICE_DOMAIN}/application`;
-export const RESEND_EDIT_REQUEST_EMAIL = process.env.RESEND_EDIT_REQUEST_EMAIL ?? false;
