@@ -8,11 +8,6 @@ import deleteItemsAfterAYear from "./unpublish/delete";
 
 const SCHEDULER_WORKER_RUN_TASK = process.env.SCHEDULER_WORKER_RUN_TASK;
 
-if (!SCHEDULER_WORKER_RUN_TASK) {
-  logger.error(`SCHEDULER_WORKER_RUN_TASK not set`);
-  process.exit(1);
-}
-
 /**
  * Use this to retry one task.
  * `npm run task:resendRequestedEditEmail` or
@@ -20,6 +15,11 @@ if (!SCHEDULER_WORKER_RUN_TASK) {
  */
 export async function run(taskName: string) {
   logger.info(`Task requested was ${taskName}`);
+
+  if (!SCHEDULER_WORKER_RUN_TASK) {
+    logger.error(`SCHEDULER_WORKER_RUN_TASK not set`);
+    process.exit(1);
+  }
 
   const tasks = {
     unpublishWeeklyTask,
