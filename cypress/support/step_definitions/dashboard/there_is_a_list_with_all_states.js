@@ -7,6 +7,8 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 });
 
 function createListForService(service) {
+  const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
+
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
   };
@@ -29,7 +31,7 @@ function createListForService(service) {
       where: {
         listItem: {
           list: {
-            reference: "SMOKE",
+            reference,
           },
         },
       },
@@ -44,13 +46,12 @@ function createListForService(service) {
       },
     },
   }).then(result => {
-    const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
     cy.task("db", {
       operation: "list.upsert",
       variables: {
         create: {
           type: service,
-          reference: reference,
+          reference,
           nextAnnualReviewStartDate: null,
           jsonData,
           country: {
@@ -74,7 +75,7 @@ function createListForService(service) {
           }
         },
         where: {
-          reference: reference,
+          reference,
         },
       },
     });
@@ -87,12 +88,14 @@ Given("there are these list items", (table) => {
    * | contactName | companyName | status | isPublished |  emailVerified | isPinned | displayedRadioButtons | hiddenRadioButtons | service | isArchived
    */
   const rows = table.hashes();
+  const { service } = rows.at(0);
+  const reference = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
 
   cy.task("db", {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference: "SMOKE",
+        reference,
       },
     },
   }).then((list) => {
@@ -107,7 +110,7 @@ Given("there are these list items", (table) => {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference: "SMOKE",
+        reference,
       },
       include: {
         items: true,

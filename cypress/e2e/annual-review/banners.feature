@@ -7,7 +7,7 @@ Feature: Annual review banners
 
     Scenario:
       When the batch process has run
-      And I am viewing list item index for reference:SMOKE
+      And I am viewing list item index for reference:"SMOKE"
       Then I see the start banner
 
     Scenario:
@@ -15,7 +15,5 @@ Feature: Annual review banners
       And 1 days before unpublish
       And the batch process has run
       And the worker process has run
-      And I am viewing list item index for reference:SMOKE
+      And I am viewing list item index for reference:"SMOKE"
       Then I see "1 service provider is going to be unpublished"
-
-
