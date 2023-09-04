@@ -11,7 +11,8 @@ Feature: List management users
     When I add "julia@cautionyourblast.com" as a user
     Then I should see "julia@cautionyourblast.com"
 
-  Scenario: Add emails to list of users
+  Scenario: Remove emails from list of users
+    When I add "smoke+1@cautionyourblast.com" as a user
     When I remove the user "smoke+1@cautionyourblast.com"
     And I click the "Remove" button
     Then I should not see "smoke+1@cautionyourblast.com"

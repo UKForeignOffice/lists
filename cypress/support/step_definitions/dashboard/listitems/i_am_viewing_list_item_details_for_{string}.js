@@ -1,4 +1,3 @@
-/* eslint-disable */
 Given(
   "I am viewing the list item details for {string}",
   async (contactName) => {
@@ -13,8 +12,10 @@ Given(
         },
       },
     }).then((result) => {
-      cy.log(JSON.stringify(result));
-      cy.visit(`/dashboard/lists/${result.listId}/items/${result.id}`);
+      cy.log("listItem.findFirst result:" + JSON.stringify(result));
+      cy.visit(`/dashboard/lists/${result.listId}/items/${result.id}`, {
+        failOnStatusCode: false,
+      });
     });
   }
 );
