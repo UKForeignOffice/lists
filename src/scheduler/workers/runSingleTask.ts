@@ -13,7 +13,7 @@ const SCHEDULER_WORKER_RUN_TASK = process.env.SCHEDULER_WORKER_RUN_TASK;
  * `npm run task:resendRequestedEditEmail` or
  * `SCHEDULER_WORKER_RUN_TASK="resendRequestedEditEmail" node dist/scheduler/run`
  */
-export async function run(taskName: string) {
+export async function runSingleTask(taskName: string) {
   logger.info(`Task requested was ${taskName}`);
 
   if (!SCHEDULER_WORKER_RUN_TASK) {
