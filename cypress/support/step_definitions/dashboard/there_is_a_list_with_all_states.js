@@ -44,12 +44,13 @@ function createListForService(service) {
       },
     },
   }).then(result => {
+    const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
     cy.task("db", {
       operation: "list.upsert",
       variables: {
         create: {
           type: service,
-          reference: "SMOKE",
+          reference: reference,
           nextAnnualReviewStartDate: null,
           jsonData,
           country: {
@@ -73,7 +74,7 @@ function createListForService(service) {
           }
         },
         where: {
-          reference: "SMOKE",
+          reference: reference,
         },
       },
     });
