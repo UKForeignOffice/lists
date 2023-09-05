@@ -4,8 +4,13 @@ import { main as unpublishDayTask } from "./unpublish/day";
 import { processAnnualReview as processListsBeforeAndDuringStart } from "./processListsBeforeAndDuringStart/main";
 import { logger } from "scheduler/logger";
 import deleteItemsAfterAYear from "./unpublish/delete";
+import { runSingleTask } from "./runSingleTask";
 
 async function main() {
+  if (process.env.SCHEDULER_WORKER_RUN_TASK) {
+    logger.warn(`Task requested was ${process.env.SCHEDULER_WORKER_RUN_TASK}. Only running this task.`);
+    return await runSingleTask(process.env.SCHEDULER_WORKER_RUN_TASK);
+  }
   // if a task needs to be executed first, await them here.
   try {
     await processListsBeforeAndDuringStart();

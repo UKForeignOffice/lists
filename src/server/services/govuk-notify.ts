@@ -103,8 +103,8 @@ export async function sendEditDetailsEmail(
   changeLink: string
 ): Promise<{ result?: boolean; error?: Error }> {
   try {
-    logger.info(`isSmokeTest[${config.isSmokeTest}]`);
     if (config.isSmokeTest) {
+      logger.info(`sendEditDetailsEmail - isSmokeTest[${config.isSmokeTest}]`);
       return { result: true };
     }
 
