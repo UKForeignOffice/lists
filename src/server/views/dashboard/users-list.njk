@@ -11,7 +11,7 @@
   {% endif %}
   <table class="govuk-table">
       {% if messages.deletedUserEmail %}
-        {{ dashboardMacros.successBanner("Success", messages.deletedUserEmail + " has been removed as an admin", "green") }}
+        {{ dashboardMacros.successBanner("Success", messages.deletedUserEmail + " has been removed as " + messages.deletedUserRole, "green") }}
       {% endif %}
     <caption class="govuk-table__caption govuk-table__caption--l">List administrators</caption>
     <thead class="govuk-table__head">

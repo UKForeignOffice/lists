@@ -331,7 +331,7 @@ export async function userDeletePostController(req: Request, res: Response) {
   await deleteUserByEmail(userData as User, req.user?.userData.email as string);
 
   req.flash("deletedUserEmail", userEmail);
-  req.flash("deletedUserRole", userIsSuperAdmin ? "super admin" : "admin");
+  req.flash("deletedUserRole", userIsSuperAdmin ? "a super admin" : "an admin");
 
   res.redirect(dashboardRoutes.usersList);
 }
