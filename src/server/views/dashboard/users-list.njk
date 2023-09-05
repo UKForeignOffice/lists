@@ -10,6 +10,9 @@
     {{ dashboardMacros.successBanner(successBannerTitle, messages.userUpdatedEmail + notificationMessage, messages.userUpdatedNotificationColour) }}
   {% endif %}
   <table class="govuk-table">
+      {% if messages.deletedUserEmail %}
+        {{ dashboardMacros.successBanner("Success", messages.deletedUserEmail + " has been removed as an admin", "green") }}
+      {% endif %}
     <caption class="govuk-table__caption govuk-table__caption--l">List administrators</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">

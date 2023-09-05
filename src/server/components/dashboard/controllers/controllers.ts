@@ -20,6 +20,8 @@ import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 import { getLinksOfRelatedLists } from "server/components/lists/helpers";
 
+import type { User } from "@prisma/client";
+
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
   countriesList,
@@ -324,9 +326,12 @@ export function userDeleteGetController(req: Request, res: Response) {
 
 export async function userDeletePostController(req: Request, res: Response) {
   const { userEmail } = req.params;
-  await deleteUserByEmail(userEmail, req.user?.userData.email as string);
+  const userData = await findUserByEmail(userEmail); // TODO remove after testing
+  const userIsSuperAdmin = await isAdministrator(userEmail);
+  await deleteUserByEmail(userData as User, req.user?.userData.email as string);
 
-  req.flash("deletedUser", userEmail);
+  req.flash("deletedUserEmail", userEmail);
+  req.flash("deletedUserRole", userIsSuperAdmin ? "super admin" : "admin");
 
-  res.redirect(dashboardRoutes.lists);
+  res.redirect(dashboardRoutes.usersList);
 }
