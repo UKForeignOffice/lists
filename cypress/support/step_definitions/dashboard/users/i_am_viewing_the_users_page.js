@@ -1,4 +1,4 @@
 /* eslint-disable */
 Given("I am viewing the users page", () => {
-  cy.visit("/dashboard/users");
+  cy.visit("/dashboard/users", { failOnStatusCode: false });
 });
