@@ -39,48 +39,38 @@ function createListForService(service) {
   });
 
   cy.task("db", {
-    operation: "user.findUnique",
+    operation: "list.upsert",
     variables: {
+      create: {
+        type: service,
+        reference,
+        nextAnnualReviewStartDate: null,
+        jsonData,
+        country: {
+          connect: {
+            name: "Eurasia",
+          },
+        },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com" }
+        }
+      },
+      update: {
+        type: service,
+        jsonData,
+        nextAnnualReviewStartDate: null,
+        items: {
+          deleteMany: {},
+        },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com" }
+        }
+      },
       where: {
-        email: "smoke@cautionyourblast.com",
+        reference,
       },
     },
-  }).then(result => {
-    cy.task("db", {
-      operation: "list.upsert",
-      variables: {
-        create: {
-          type: service,
-          reference,
-          nextAnnualReviewStartDate: null,
-          jsonData,
-          country: {
-            connect: {
-              name: "Eurasia",
-            },
-          },
-          users: {
-            connect: { id: result.id }
-          }
-        },
-        update: {
-          type: service,
-          jsonData,
-          nextAnnualReviewStartDate: null,
-          items: {
-            deleteMany: {},
-          },
-          users: {
-            connect: { id: result.id }
-          }
-        },
-        where: {
-          reference,
-        },
-      },
-    });
   });
-
 }
 
 Given("there are these list items", (table) => {

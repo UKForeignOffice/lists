@@ -53,9 +53,12 @@ function getIdsForUsersWithSmokeEmail() {
           contains: "smoke"
         },
       },
+      select: {
+        id: true,
+      },
     },
   }).then(results => {
-    allIDs = results.reduce((acc, result) => [...acc, {id: result.id}], []);
+    allIDs = results;
   });
   return allIDs;
 }
