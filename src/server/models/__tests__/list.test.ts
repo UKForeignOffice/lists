@@ -112,7 +112,7 @@ describe("List Model:", () => {
 
   describe("createList", () => {
     const listData = {
-      country: "United Kingdom" as CountryName,
+      country: "United Kingdom",
       serviceType: ServiceType.lawyers,
       users: ["test@gov.uk", "publisher@gov.uk", undefined],
       createdBy: "test@gov.uk",

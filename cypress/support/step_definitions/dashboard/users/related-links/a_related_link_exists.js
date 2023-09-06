@@ -5,46 +5,36 @@ When("a related link exists", () => {
   };
 
   cy.task("db", {
-    operation: "user.findUnique",
+    operation: "list.upsert",
     variables: {
+      create: {
+        type: "lawyers",
+        reference: "SMOKE",
+        nextAnnualReviewStartDate: null,
+        jsonData,
+        country: {
+          connect: {
+            name: "Eurasia",
+          },
+        },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com", }
+        }
+      },
+      update: {
+        type: "lawyers",
+        jsonData,
+        nextAnnualReviewStartDate: null,
+        items: {
+          deleteMany: {},
+        },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com", }
+        }
+      },
       where: {
-        email: "smoke@cautionyourblast.com",
+        reference: "SMOKE",
       },
     },
-  }).then(result => {
-    cy.task("db", {
-      operation: "list.upsert",
-      variables: {
-        create: {
-          type: "lawyers",
-          reference: "SMOKE",
-          nextAnnualReviewStartDate: null,
-          jsonData,
-          country: {
-            connect: {
-              name: "Eurasia",
-            },
-          },
-          users: {
-            connect: { id: result.id }
-          }
-        },
-        update: {
-          type: "lawyers",
-          jsonData,
-          nextAnnualReviewStartDate: null,
-          items: {
-            deleteMany: {},
-          },
-          users: {
-            connect: { id: result.id }
-          }
-        },
-        where: {
-          reference: "SMOKE",
-        },
-      },
-    });
   });
-
 });
