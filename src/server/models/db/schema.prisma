@@ -211,7 +211,6 @@ view ListsForDashboard {
   isOverdue                   Boolean @default(false)
   nextAnnualReviewStartDate   DateTime? @db.Date
   lastAnnualReviewStartDate   DateTime? @db.Date
-  jsonData                    Json
-  userEmails                  String[]
+  userIds                     Int[]
   @@unique([listId])
 }

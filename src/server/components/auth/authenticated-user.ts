@@ -25,8 +25,8 @@ export default class AuthenticatedUser {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
-        userEmails: {
-          has: this.emailAddress,
+        userIds: {
+          has: this.id,
         },
       },
     };

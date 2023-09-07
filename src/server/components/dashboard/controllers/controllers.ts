@@ -211,7 +211,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const data = {
     country: req.body.country,
     serviceType: req.body.serviceType,
-    users: req.body.publisher,
+    user: req.body.publisher,
     createdBy: `${req.user?.userData.email}`,
   };
 
@@ -271,9 +271,9 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     return;
   }
 
-  const users = [publisher];
+  const user = publisher;
 
-  await updateList(Number(listId), { users });
+  await updateList(Number(listId), { user });
 
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${publisher} has been created`);

@@ -1,10 +1,9 @@
-import { compact, toLower, trim } from "lodash";
 import { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput } from "./types";
+import type { CountryName, List, ListCreateInput, User } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
@@ -64,25 +63,21 @@ export async function findListsByCountry(country: CountryName): Promise<List[] |
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  users: string | Array<string | undefined>;
+  user: string;
   createdBy: string;
 }): Promise<List | Record<string, boolean> | undefined> {
   try {
-    const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
-
-    const users = compact((usersAsArray as string[]).map(trim).map(toLower));
-    if (users.some((email) => !isGovUKEmailAddress(email))) {
+    if (!isGovUKEmailAddress(listData.user)) {
       throw new Error("Users contain a non GOV UK email address");
     }
     if (!isGovUKEmailAddress(listData.createdBy)) {
       throw new Error("CreatedBy is not a valid GOV UK email address");
     }
 
-    let userIds = await getUserIdsFromEmails(users);
+    const userExists = await checkUserExists(listData.user);
 
-    if (userIds.length === 0) {
-      await createUsersFromEmails(users);
-      userIds = await getUserIdsFromEmails(users);
+    if (!userExists) {
+      await createUsersFromEmails(listData.user);
     }
 
     const data: ListCreateInput = {
@@ -102,7 +97,9 @@ export async function createList(listData: {
         createdBy: listData.createdBy,
       },
       users: {
-        connect: userIds,
+        connect: {
+          email: listData.user,
+        },
       },
     };
 
@@ -181,20 +178,18 @@ export function getRelatedLinks(serviceType: ServiceType) {
 export async function updateList(
   listId: number,
   listData: {
-    users: string[];
+    user: string;
   }
 ): Promise<List | undefined> {
   try {
-    const users = compact(listData.users.map(trim).map(toLower));
-    if (users.some((email) => !isGovUKEmailAddress(email))) {
+    if (!isGovUKEmailAddress(listData.user)) {
       throw new Error("Users contain a non GOV UK email address");
     }
 
-    let userIds = await getUserIdsFromEmails(users);
+    const userExists = await checkUserExists(listData.user);
 
-    if (userIds.length === 0) {
-      await createUsersFromEmails(users);
-      userIds = await getUserIdsFromEmails(users);
+    if (!userExists) {
+      await createUsersFromEmails(listData.user);
     }
 
     const list = (await prisma.list.update({
@@ -203,7 +198,9 @@ export async function updateList(
       },
       data: {
         users: {
-          connect: userIds,
+          connect: {
+            email: listData.user,
+          },
         },
       },
     })) as List;
@@ -216,15 +213,15 @@ export async function updateList(
 
 export async function removeUserFromList(listId: number, userEmail: string): Promise<void> {
   try {
-    const userIds = await getUserIdsFromEmails([userEmail]);
-
     await prisma.list.update({
       where: {
         id: listId,
       },
       data: {
         users: {
-          disconnect: userIds,
+          disconnect: {
+            email: userEmail,
+          },
         },
       },
     });
@@ -235,30 +232,27 @@ export async function removeUserFromList(listId: number, userEmail: string): Pro
   }
 }
 
-async function getUserIdsFromEmails(emails: string[]): Promise<Array<Record<"id", number>>> {
-  return await prisma.user.findMany({
-    where: {
-      AND: emails.map((email) => ({
-        email,
-      })),
-    },
-    select: {
-      id: true,
-    },
-  });
-}
-
-async function createUsersFromEmails(emails: string[]): Promise<void> {
-  await prisma.user.createMany({
-    data: emails.map((email) => ({
+async function createUsersFromEmails(email: string): Promise<void> {
+  await prisma.user.create({
+    data: {
       email,
       jsonData: {
         roles: [],
       },
-    })),
+    },
   });
 
-  logger.info(`Created users for ${emails.join(", ")}`);
+  logger.info(`Created users for ${email}`);
+}
+
+async function checkUserExists(email: string): Promise<User> {
+  const res = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  return res as User;
 }
 /**
  * todo: deprecate
