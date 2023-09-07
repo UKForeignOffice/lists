@@ -169,7 +169,7 @@ describe("List Model:", () => {
           ...listData,
           user: "invalid@email.com",
         })
-      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("User contain a non GOV UK email address"));
     });
 
     test("it throws when createdBy is a non GOV.UK email address", async () => {
@@ -227,7 +227,7 @@ describe("List Model:", () => {
           ...listData,
           user: "invalid@email.com",
         })
-      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("User contain a non GOV UK email address"));
     });
   });
 });
