@@ -8,7 +8,7 @@ import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
  */
 export function getEmailTypeForToday(keyDates: CurrentAnnualReview["keyDates"]): RemindersBeforeStartDate | undefined {
   if (!keyDates?.annualReview) {
-    return undefined;
+    return;
   }
   const keyDatesBeforeStart = keyDates.annualReview;
 
