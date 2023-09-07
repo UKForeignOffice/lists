@@ -6,5 +6,6 @@ Feature: List creation
         When I click the link "Create New List"
         And I click the "Lawyers" radio button
         And I choose the country "France"
+        And I enter "smoke@cautionyourblast.com" in the "publisher" input
         And I click the "Create" button
         Then I should see the error "A list of Lawyers in France already exists"

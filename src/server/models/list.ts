@@ -67,17 +67,19 @@ export async function createList(listData: {
   createdBy: string;
 }): Promise<List | Record<string, boolean> | undefined> {
   try {
-    if (!isGovUKEmailAddress(listData.user)) {
-      throw new Error("Users contain a non GOV UK email address");
+    const user = listData.user.toLowerCase().trim();
+
+    if (!isGovUKEmailAddress(user)) {
+      throw new Error("User contain a non GOV UK email address");
     }
     if (!isGovUKEmailAddress(listData.createdBy)) {
       throw new Error("CreatedBy is not a valid GOV UK email address");
     }
 
-    const userExists = await checkUserExists(listData.user);
+    const userExists = await checkUserExists(user);
 
     if (!userExists) {
-      await createUsersFromEmails(listData.user);
+      await createUsersFromEmails(user);
     }
 
     const data: ListCreateInput = {
@@ -182,14 +184,16 @@ export async function updateList(
   }
 ): Promise<List | undefined> {
   try {
-    if (!isGovUKEmailAddress(listData.user)) {
-      throw new Error("Users contain a non GOV UK email address");
+    const user = listData.user.toLowerCase().trim();
+
+    if (!isGovUKEmailAddress(user)) {
+      throw new Error("User contain a non GOV UK email address");
     }
 
-    const userExists = await checkUserExists(listData.user);
+    const userExists = await checkUserExists(user);
 
     if (!userExists) {
-      await createUsersFromEmails(listData.user);
+      await createUsersFromEmails(user);
     }
 
     const list = (await prisma.list.update({

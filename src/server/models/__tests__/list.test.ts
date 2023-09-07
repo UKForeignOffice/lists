@@ -114,7 +114,7 @@ describe("List Model:", () => {
     const listData = {
       country: "United Kingdom",
       serviceType: ServiceType.lawyers,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
+      user: "test@gov.uk",
       createdBy: "test@gov.uk",
     };
 
@@ -145,7 +145,9 @@ describe("List Model:", () => {
             createdBy: listData.createdBy,
           },
           users: {
-            connect: [sampleUser]
+            connect: {
+              email: "test@gov.uk"
+            }
           }
         },
       });
@@ -165,7 +167,7 @@ describe("List Model:", () => {
       await expect(
         createList({
           ...listData,
-          users: ["invalid@email.com"],
+          user: "invalid@email.com",
         })
       ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
     });
@@ -186,13 +188,9 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.lawyers,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
+      user: "test@gov.uk",
       createdBy: "test@gov.uk",
     };
-
-    beforeEach(() => {
-      prisma.user.findMany.mockResolvedValue([sampleUser]);
-    });
 
     test("create update is correct", async () => {
       prisma.list.update.mockResolvedValue(sampleList);
@@ -205,7 +203,9 @@ describe("List Model:", () => {
         },
         data: {
           users: {
-            connect: [sampleUser]
+            connect: {
+              email: "test@gov.uk"
+            }
           },
         },
       });
@@ -225,7 +225,7 @@ describe("List Model:", () => {
       await expect(
         updateList(listId, {
           ...listData,
-          users: ["invalid@email.com"],
+          user: "invalid@email.com",
         })
       ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
     });
