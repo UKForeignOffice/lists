@@ -19,6 +19,7 @@ import type { RelatedLink } from "shared/types";
 import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 import { getLinksOfRelatedLists } from "server/components/lists/helpers";
+import pluralize from "pluralize";
 
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -83,6 +84,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       user,
       req,
       error,
+      pluralize,
     });
   } catch (error) {
     next(error);
