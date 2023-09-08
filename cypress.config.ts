@@ -1,6 +1,6 @@
 export default {
   chromeWebSecurity: false,
-  video: false, // change to true if debug required (.circleci.yml)
+  video: true, // change to true if debug required (.circleci.yml)
   projectId: "fo4z8h",
   failOnStatusCode: false,
   env: {
