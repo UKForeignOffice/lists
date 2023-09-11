@@ -75,15 +75,7 @@ export async function updateUser(email: string, data: Partial<User>): Promise<Us
   }
 }
 
-interface UserWithListCount {
-  email: string;
-  jsonData: {
-    roles: UserRoles[];
-  };
-  count: number;
-}
-
-export async function findUsersWithListCount(): Promise<UserWithListCount[]> {
+export async function findUsersWithListCount(): Promise<User[]> {
   try {
     return (await prisma.user.findMany({
       orderBy: {
