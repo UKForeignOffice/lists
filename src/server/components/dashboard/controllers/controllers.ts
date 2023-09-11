@@ -317,7 +317,7 @@ export function helpPageController(req: Request, res: Response): void {
 
 export function userDeleteGetController(req: Request, res: Response) {
   const { userEmail } = req.params;
-  res.render("dashboard/users-delete", {
+  res.render("dashboard/users-delete-confirm", {
     ...DEFAULT_VIEW_PROPS,
     userEmail,
     req,
@@ -328,7 +328,7 @@ export async function userDeletePostController(req: Request, res: Response) {
   const { userEmail } = req.params;
   const userData = await findUserByEmail(userEmail); // TODO remove after testing
   const userIsSuperAdmin = await isAdministrator(userEmail);
-  await deleteUserByEmail(userData as User, req.user?.userData.email as string);
+  await deleteUserByEmail((userData as User).email, req.user?.userData.email as string);
 
   req.flash("deletedUserEmail", userEmail);
   req.flash("deletedUserRole", userIsSuperAdmin ? "a super admin" : "an admin");

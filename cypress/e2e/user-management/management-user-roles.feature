@@ -12,7 +12,6 @@ Feature: List management actions for lists creators
 
   Scenario: user should not be able access Users page by changing urls
     Given I am logged in as "no.role@cautionyourblast.com"
-    And I click the "Continue" button
     When I am viewing the users page
     Then I should be denied permission
 
