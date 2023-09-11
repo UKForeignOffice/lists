@@ -1,7 +1,7 @@
 import { omit, pick } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { UserRoles } from "../types";
-import { findUserByEmail, createUser, updateUser, findUsersWithListCount } from "../user";
+import { findUserByEmail, createUser, updateUser, getUsersWithList } from "../user";
 jest.mock("../db/prisma-client");
 
 describe("User Model:", () => {
@@ -148,27 +148,29 @@ describe("User Model:", () => {
     });
   });
 
-  describe("findUsersWithListCount", () => {
+  describe("getUsersWithList", () => {
     test("findMany command is correct", async () => {
       const useWithList = {
+        id: 123,
         email: "test@depto.gov.uk",
+        createdAt: new Date(),
+        updatedAt: new Date(),
         jsonData: {
           roles: [],
-        },
-        count: 10,
+        }
       };
 
-      prisma.$queryRaw.mockResolvedValue([useWithList]);
+      prisma.user.findMany.mockResolvedValue([useWithList]);
 
-      const result = await findUsersWithListCount();
+      const result = await getUsersWithList();
 
       expect(result).toMatchObject([useWithList]);
     });
 
     test("it returns an empty list if findMany command fails", async () => {
-      prisma.$queryRaw.mockRejectedValue("");
+      prisma.user.findMany.mockRejectedValue("");
 
-      const result = await findUsersWithListCount();
+      const result = await getUsersWithList();
 
       expect(result).toMatchObject([]);
     });

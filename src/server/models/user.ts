@@ -75,7 +75,7 @@ export async function updateUser(email: string, data: Partial<User>): Promise<Us
   }
 }
 
-export async function findUsersWithListCount(): Promise<User[]> {
+export async function getUsersWithList(): Promise<User[]> {
   try {
     return (await prisma.user.findMany({
       orderBy: {
@@ -86,7 +86,7 @@ export async function findUsersWithListCount(): Promise<User[]> {
       },
     })) as User[];
   } catch (error) {
-    logger.error(`findUsersWithListCount Error ${error.message}`);
+    logger.error(`getUsersWithList Error ${error.message}`);
     return [];
   }
 }
