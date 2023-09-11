@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { findUserByEmail, isAdministrator, updateUser } from "server/models/user";
+import { findUserByEmail, findUsersWithListCount, isAdministrator, updateUser } from "server/models/user";
 import { createList, findListById, updateList, deleteUserByEmail } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
@@ -317,7 +317,7 @@ export function helpPageController(req: Request, res: Response): void {
 
 export function userDeleteGetController(req: Request, res: Response) {
   const { userEmail } = req.params;
-  res.render("dashboard/users-delete-confirm", {
+  res.render("dashboard/users-delete", {
     ...DEFAULT_VIEW_PROPS,
     userEmail,
     req,

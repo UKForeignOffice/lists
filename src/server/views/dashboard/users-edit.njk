@@ -80,7 +80,7 @@
   {{ govukButton({
     text: "Delete admin",
     classes: "govuk-button--secondary",
-    href: req.originalUrl + "/delete-confirm"
+    href: req.params.userEmail + "/delete"
   }) }}
 
 {% endblock %}

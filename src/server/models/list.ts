@@ -3,9 +3,8 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput } from "./types";
+import type { CountryName, List, ListCreateInput, User } from "./types";
 import type { ServiceType } from "shared/types";
-import type { User } from "@prisma/client";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -257,7 +256,6 @@ async function checkUserExists(email: string) {
 
   return res as User;
 }
-
 /**
  * todo: deprecate
  */

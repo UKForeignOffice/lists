@@ -30,8 +30,8 @@ dashboardRouter.post(dashboardRoutes.usersEdit, usersEditPostController);
 dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
 dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);
 
-dashboardRouter.get("/dashboard/users/:userEmail/delete-confirm", userDeleteGetController);
-dashboardRouter.post("/dashboard/users/:userEmail/delete-confirm", userDeletePostController);
+dashboardRouter.get("/dashboard/users/:userEmail/delete", userDeleteGetController);
+dashboardRouter.post("/dashboard/users/:userEmail/delete", userDeletePostController);
 
 // lists
 dashboardRouter.use("/dashboard/lists", listRouter);
