@@ -4,7 +4,7 @@ Feature: List management deleting users
     Given A "lawyers" list exists for Eurasia
 
   Scenario: A deleted user should not show in the list of users
-    When User "smoke+delete@cautionyourblast.com" has been added to list with reference:SMOKE
+    When User "smoke+delete+1@cautionyourblast.com" has been added to list with reference:SMOKE
     And I am logged in as a "Administrator"
     And I am viewing the users page
     When I click the edit link for user with email "smoke+delete+1@cautionyourblast.com"
