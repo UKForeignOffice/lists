@@ -1,5 +1,5 @@
 Given("a list exists with users", async () => {
-  const userIds = getIdsForUsersWithSmokeEmail();
+  const emails = [{ email: 'smoke@cautionyourblast.com' }, { email: 'smoke+1@cautionyourblast.com' }, { email: 'smoke+2@cautionyourblast.com' }];
 
   cy.task("db", {
     operation: "list.findUnique",
@@ -22,7 +22,7 @@ Given("a list exists with users", async () => {
             },
           },
           users: {
-            connect: userIds
+            connect: emails
           }
         },
         update: {
@@ -31,7 +31,7 @@ Given("a list exists with users", async () => {
             deleteMany: {},
           },
           users: {
-            connect: userIds
+            connect: emails
           }
         },
         where: {
@@ -41,24 +41,3 @@ Given("a list exists with users", async () => {
     });
   });
 });
-
-
-function getIdsForUsersWithSmokeEmail() {
-  let allIDs = [];
-  cy.task("db", {
-    operation: "user.findMany",
-    variables: {
-      where: {
-        email: {
-          contains: "smoke"
-        },
-      },
-      select: {
-        id: true,
-      },
-    },
-  }).then(results => {
-    allIDs = results;
-  });
-  return allIDs;
-}

@@ -104,7 +104,7 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
       return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
     }
   }
-  for (const user of list.users!) {
+  for (const user of list.users) {
     await sendAnnualReviewDateChangeEmail({
       emailAddress: user.email,
       serviceType: startCase(list.type),
