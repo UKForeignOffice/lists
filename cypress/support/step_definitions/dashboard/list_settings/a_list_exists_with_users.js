@@ -1,7 +1,5 @@
-Given("a list exists with users", () => {
-  const jsonData = {
-    users: ["smoke@cautionyourblast.com", "smoke+1@cautionyourblast.com", "smoke+2@cautionyourblast.com"],
-  };
+Given("a list exists with users", async () => {
+  const emails = [{ email: 'smoke@cautionyourblast.com' }, { email: 'smoke+1@cautionyourblast.com' }, { email: 'smoke+2@cautionyourblast.com' }];
 
   cy.task("db", {
     operation: "list.findUnique",
@@ -10,29 +8,31 @@ Given("a list exists with users", () => {
         reference: "SMOKE",
       },
     },
-  }).then((result) => {
+  }).then(() => {
     cy.task("db", {
       operation: "list.upsert",
       variables: {
         create: {
           type: "lawyers",
           reference: "SMOKE",
-          jsonData,
+          jsonData: {},
           country: {
             connect: {
               name: "Eurasia",
             },
           },
+          users: {
+            connect: emails
+          }
         },
         update: {
           type: "lawyers",
-          jsonData: {
-            ...result.jsonData,
-            ...jsonData,
-          },
           items: {
             deleteMany: {},
           },
+          users: {
+            connect: emails
+          }
         },
         where: {
           reference: "SMOKE",

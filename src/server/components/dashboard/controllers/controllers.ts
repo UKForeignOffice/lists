@@ -211,9 +211,25 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
   const data = {
     country: req.body.country,
     serviceType: req.body.serviceType,
-    users: req.body.publisher,
+    user: req.body.publisher,
     createdBy: `${req.user?.userData.email}`,
   };
+
+  // TODO: rename to "newUser"
+  const publisher: string = req.body.publisher;
+
+  if (!publisher || !isGovUKEmailAddress(publisher)) {
+    error = {
+      field: "publisher",
+      text: !publisher
+        ? "Enter an FCO or FCDO email address to add a user, e.g. 'example@fco.gov.uk or example@fcdo.gov.uk'"
+        : "New users must have an FCO or FCDO email address, e.g. 'example@fco.gov.uk, or example@fcdo.gov.uk'",
+      href: "#publisher",
+    };
+    req.flash("questionError", JSON.stringify(error));
+    res.redirect("new");
+    return;
+  }
 
   if (listId === "new") {
     const newList = await createList(data);
@@ -234,19 +250,6 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     }
   }
 
-  // TODO: rename to "newUser"
-  const publisher: string = req.body.publisher;
-
-  if (!publisher || !isGovUKEmailAddress(publisher)) {
-    error = {
-      field: "publisher",
-      text: !publisher
-        ? "Enter an FCO or FCDO email address to add a user, e.g. 'example@fco.gov.uk or example@fcdo.gov.uk'"
-        : "New users must have an FCO or FCDO email address, e.g. 'example@fco.gov.uk, or example@fcdo.gov.uk'",
-      href: "#publisher",
-    };
-  }
-
   const list = await findListById(listId);
 
   if (!list) {
@@ -255,31 +258,23 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
     return;
   }
 
-  if (list?.jsonData.users?.includes?.(publisher)) {
+  if (list?.users?.some((user) => user.email === publisher)) {
     error = {
       field: "publisher",
       text: "This user already exists on this list",
       href: "#publisher",
     };
-  }
-
-  const errorExists = "field" in error;
-  // TODO:- implement post redirect get.
-  if (errorExists) {
     req.flash("questionError", JSON.stringify(error));
     res.redirect(res.locals.listsEditUrl);
     return;
   }
 
+  const user = publisher;
+
+  await updateList(Number(listId), { user });
+
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${publisher} has been created`);
-
-  const newUsers = [...(list.jsonData.users ?? []), publisher];
-
-  await updateList(Number(listId), {
-    ...list.jsonData,
-    users: newUsers,
-  });
   res.redirect(res.locals.listsEditUrl);
 }
 
@@ -288,6 +283,7 @@ export async function listEditRemovePublisher(req: Request, res: Response): Prom
   const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
 
+  // TODO - post redirect get pattern
   res.render("dashboard/list-edit-confirm-delete-user", {
     ...DEFAULT_VIEW_PROPS,
     listId,

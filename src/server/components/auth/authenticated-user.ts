@@ -25,9 +25,8 @@ export default class AuthenticatedUser {
     const notSuperAdmin = !this.isAdministrator;
     const whereInputForUser = {
       where: {
-        jsonData: {
-          path: ["users"],
-          array_contains: [this.emailAddress],
+        userIds: {
+          has: this.id,
         },
       },
     };
@@ -56,9 +55,8 @@ export default class AuthenticatedUser {
     const result = await prisma.list.findFirst({
       where: {
         id,
-        jsonData: {
-          path: ["users"],
-          array_contains: [this.emailAddress],
+        users: {
+          some: { email: { contains: this.emailAddress } },
         },
       },
     });

@@ -3,6 +3,7 @@ When("a related link exists", () => {
     users: ["smoke@cautionyourblast.com"],
     relatedLinks: [{ url: "https://gov.uk", text: "How to find eggs" }],
   };
+
   cy.task("db", {
     operation: "list.upsert",
     variables: {
@@ -16,6 +17,9 @@ When("a related link exists", () => {
             name: "Eurasia",
           },
         },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com", }
+        }
       },
       update: {
         type: "lawyers",
@@ -24,6 +28,9 @@ When("a related link exists", () => {
         items: {
           deleteMany: {},
         },
+        users: {
+          connect: { email: "smoke@cautionyourblast.com", }
+        }
       },
       where: {
         reference: "SMOKE",

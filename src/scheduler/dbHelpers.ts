@@ -66,6 +66,7 @@ export async function findListsWithCurrentAnnualReview(): Promise<Result<List[]>
       },
       include: {
         country: true,
+        users: true,
       },
     })) as List[];
 
@@ -119,6 +120,7 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
       },
       include: {
         country: true,
+        users: true,
         items: {
           where: {
             history: {

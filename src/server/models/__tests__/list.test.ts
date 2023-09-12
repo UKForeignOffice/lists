@@ -1,7 +1,6 @@
-import { compact } from "lodash";
-import { findListById, findListByCountryAndType, createList, updateList } from "../list";
+import { findListById, findListByCountryAndType, createList, updateList, getRelatedLinks } from "../list";
 import { prisma } from "../db/__mocks__/prisma-client";
-import { List } from "../types";
+import type { List, CountryName } from "../types";
 import { ServiceType } from "../../../shared/types";
 import { logger } from "../../services/logger";
 
@@ -14,7 +13,7 @@ describe("List Model:", () => {
     reference: "123Reference",
     createdAt: new Date("2021-06-23T11:13:55.236+00:00"),
     updatedAt: new Date("2021-06-23T11:13:55.238+00:00"),
-    type: "covidTestProviders",
+    type: "lawyers",
     countryId: 3,
     country: {
       name: "United Kingdom",
@@ -26,6 +25,14 @@ describe("List Model:", () => {
       administrators: ["test@gov.uk"],
     },
   };
+
+  const sampleUser = {
+    id: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    email: "test@test.com",
+    jsonData: { roles: [] },
+  }
 
   describe("findListById", () => {
     test("findUnique call is correct", async () => {
@@ -39,6 +46,7 @@ describe("List Model:", () => {
         },
         include: {
           country: true,
+          users: true,
         },
       });
     });
@@ -67,14 +75,14 @@ describe("List Model:", () => {
     test("findMany call is correct", async () => {
       prisma.list.findMany.mockResolvedValue([sampleList]);
 
-      await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
+      await findListByCountryAndType("United Kingdom", ServiceType.lawyers);
 
       expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: {
           country: {
             name: "United Kingdom",
           },
-          type: ServiceType.covidTestProviders,
+          type: ServiceType.lawyers,
         },
         include: {
           country: true,
@@ -85,7 +93,7 @@ describe("List Model:", () => {
     test("returned value is correct", async () => {
       prisma.list.findMany.mockResolvedValue([sampleList]);
 
-      const result = await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
+      const result = await findListByCountryAndType("United Kingdom", ServiceType.lawyers);
 
       expect(result).toMatchObject([sampleList]);
     });
@@ -95,7 +103,7 @@ describe("List Model:", () => {
         message: "findMany error message",
       });
 
-      const result = await findListByCountryAndType("United Kingdom", ServiceType.covidTestProviders);
+      const result = await findListByCountryAndType("United Kingdom", ServiceType.lawyers);
 
       expect(result).toBeUndefined();
       expect(logger.error).toHaveBeenCalledWith("findListByCountryAndType Error: findMany error message");
@@ -103,12 +111,16 @@ describe("List Model:", () => {
   });
 
   describe("createList", () => {
-    const listData: any = {
+    const listData = {
       country: "United Kingdom",
-      serviceType: ServiceType.covidTestProviders,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
+      serviceType: ServiceType.lawyers,
+      user: "test@gov.uk",
       createdBy: "test@gov.uk",
     };
+
+    beforeEach(() => {
+      prisma.user.findMany.mockResolvedValue([sampleUser]);
+    });
 
     test("create call is correct", async () => {
       prisma.list.create.mockResolvedValue(sampleList);
@@ -129,9 +141,14 @@ describe("List Model:", () => {
             },
           },
           jsonData: {
-            users: compact(listData.users),
+            relatedLinks: getRelatedLinks(listData.serviceType),
             createdBy: listData.createdBy,
           },
+          users: {
+            connect: {
+              email: "test@gov.uk"
+            }
+          }
         },
       });
     });
@@ -150,9 +167,9 @@ describe("List Model:", () => {
       await expect(
         createList({
           ...listData,
-          users: ["invalid@email.com"],
+          user: "invalid@email.com",
         })
-      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("User contain a non GOV UK email address"));
     });
 
     test("it throws when createdBy is a non GOV.UK email address", async () => {
@@ -170,8 +187,8 @@ describe("List Model:", () => {
 
     const listData: any = {
       country: "United Kingdom",
-      serviceType: ServiceType.covidTestProviders,
-      users: ["test@gov.uk", "publisher@gov.uk", undefined],
+      serviceType: ServiceType.lawyers,
+      user: "test@gov.uk",
       createdBy: "test@gov.uk",
     };
 
@@ -185,11 +202,10 @@ describe("List Model:", () => {
           id: listId,
         },
         data: {
-          jsonData: {
-            country: "United Kingdom",
-            serviceType: ServiceType.covidTestProviders,
-            users: ["test@gov.uk", "publisher@gov.uk"],
-            createdBy: "test@gov.uk",
+          users: {
+            connect: {
+              email: "test@gov.uk"
+            }
           },
         },
       });
@@ -209,9 +225,9 @@ describe("List Model:", () => {
       await expect(
         updateList(listId, {
           ...listData,
-          users: ["invalid@email.com"],
+          user: "invalid@email.com",
         })
-      ).rejects.toEqual(new Error("Users contain a non GOV UK email address"));
+      ).rejects.toEqual(new Error("User contain a non GOV UK email address"));
     });
   });
 });
