@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { AuditEvent, Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
@@ -234,6 +234,28 @@ export async function removeUserFromList(listId: number, userEmail: string): Pro
     logger.error(`removeUserFromList Error: ${(error as Error).message}`);
     throw error;
   }
+}
+
+export async function deleteUserByEmail(email: string, adminEmail: string): Promise<void> {
+  await prisma.$transaction([
+    prisma.audit.create({
+      data: {
+        auditEvent: AuditEvent.USER_DELETED,
+        type: "list",
+        jsonData: {
+          deletedUser: email,
+          deletedBy: adminEmail,
+        },
+      },
+    }),
+    prisma.user.delete({
+      where: {
+        email,
+      },
+    }),
+  ]);
+
+  logger.info(`Deleted user ${email}`);
 }
 
 async function createUserFromEmail(email: string) {
