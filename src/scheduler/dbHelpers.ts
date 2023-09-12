@@ -120,6 +120,7 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
       },
       include: {
         country: true,
+        users: true,
         items: {
           where: {
             history: {

@@ -3,7 +3,7 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, User, UserJsonData } from "./types";
+import type { CountryName, List, ListCreateInput, User } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {

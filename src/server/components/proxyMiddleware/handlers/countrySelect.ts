@@ -43,5 +43,5 @@ export async function post(req: Request, res: Response) {
     return;
   }
 
-  res.redirect(`/application/${serviceType}/${nextPagePath[serviceType!]}`);
+  res.redirect(`/application/${serviceType}/${nextPagePath[serviceType as keyof typeof nextPagePath]}`);
 }
