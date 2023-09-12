@@ -17,6 +17,7 @@ export default async function deleteItemsAfterAYear() {
 
     await prisma.$transaction([
       prisma.audit.createMany({
+        // Data added to Audit table for list item since it's been removed therefore does not have any items in the Event table to connect to
         data: itemsUnpublishedByAR.map((item) => ({
           auditEvent: "DELETED",
           type: "listItem",

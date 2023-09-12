@@ -1,9 +1,9 @@
 import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import { NotifyClient, RequestError, SendEmailResponse } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
-import { ListItem } from "@prisma/client";
+import { ListItem, ProviderEmailType } from "@prisma/client";
 import { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
@@ -30,13 +30,13 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
       reference: meta.reference,
     });
 
-    const event = await addReminderEvent(
-      listItem.id,
-      // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
-      response.data,
-      [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
-      meta.reference
-    );
+    const event = await addReminderEvent({
+      id: listItem.id,
+      response: response.data as SendEmailResponse,
+      notes: [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
+      reference: meta.reference,
+      emailType: ProviderEmailType.sendUnpublishWeeklyProviderEmail,
+    });
 
     if (!event) {
       logger.error(

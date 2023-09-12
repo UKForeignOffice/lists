@@ -148,10 +148,7 @@ export type ListAnnualReviewPostReminderType = SharedTypes.ListAnnualReviewPostR
 
 export type ListItemAnnualReviewProviderReminderType = SharedTypes.ListItemAnnualReviewProviderReminderType;
 
-export type ListItemUnpublishedPostReminderType =
-  | "sendUnpublishedPostEmail"
-  | "sendUnpublishOneDayPostEmail"
-  | "sendUnpublishWeeklyPostEmail";
+export type ListItemUnpublishedPostReminderType = "sendUnpublishOneDayPostEmail" | "sendUnpublishWeeklyPostEmail";
 
 export type ListItemUnpublishedProviderReminderType =
   | "sendUnpublishedProviderEmail"
@@ -177,7 +174,6 @@ export interface EventJsonData extends JsonObject {
 
 export interface BaseAuditEventJsonData extends JsonObject {
   userId?: User["id"];
-  itemId: ListItem["id"];
 }
 
 export interface ListItemEventJsonData extends BaseAuditEventJsonData {

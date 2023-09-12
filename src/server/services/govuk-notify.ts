@@ -4,7 +4,6 @@ import { logger } from "./logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { FEEDBACK_EMAIL_ADDRESSES, NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
-import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import type { SendEmailOptions } from "notifications-node-client";
@@ -36,7 +35,7 @@ export async function sendAuthenticationEmail(email: string, authenticationLink:
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendAuthenticationEmail Error: ${error.message}`);
     return false;
@@ -61,7 +60,7 @@ export async function sendApplicationConfirmationEmail(
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendApplicationConfirmationEmail Error: ${error.message}`);
     return false;
@@ -88,7 +87,7 @@ export async function sendDataPublishedEmail(
       reference: "",
     });
 
-    return (result as NotifyResult).statusText === "Created";
+    return result.statusText === "Created";
   } catch (error) {
     logger.error(`sendDataPublishedEmail Error: ${error.message}`);
     return false;
@@ -121,7 +120,7 @@ export async function sendEditDetailsEmail(
       reference: "",
     });
 
-    return { result: (result as NotifyResult).statusText === "Created" };
+    return { result: result.statusText === "Created" };
   } catch (error) {
     const message = `sendEditDetailsEmail: Unable to send change request email: ${error.message}`;
     logger.error(message);

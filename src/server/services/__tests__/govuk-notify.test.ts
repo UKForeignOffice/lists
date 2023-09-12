@@ -216,6 +216,7 @@ describe("GOVUK Notify service:", () => {
       const { result } = await sendEditDetailsEmail(contactName, emailAddress, typePlural, message, changeLink);
 
       expect(result).toBe(true);
+
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.edit, "testemail@gov.uk", {
         personalisation: {
           typeSingular: "Lawyer",
@@ -268,7 +269,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneMonth,
         "testemail@gov.uk",
@@ -304,7 +305,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneWeek,
         "testemail@gov.uk",
@@ -340,7 +341,7 @@ describe("GOVUK Notify service:", () => {
         annualReviewDate
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneDay,
         "testemail@gov.uk",
@@ -370,7 +371,7 @@ describe("GOVUK Notify service:", () => {
 
       const { result } = await sendAnnualReviewPostEmail("START", emailAddress, typePlural, country, annualReviewDate);
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postStart,
         "testemail@gov.uk",
@@ -433,7 +434,7 @@ describe("GOVUK Notify service:", () => {
         changeLink
       );
 
-      expect(result).toBe(true);
+      expect(result.statusText).toBeTruthy();
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.providerStart,
         "testemail@gov.uk",

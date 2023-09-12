@@ -106,7 +106,7 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-
+  emailType           PostEmailType?
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
@@ -130,16 +130,10 @@ model Feedback {
 // actions that can be performed on anything that is not a ListItem. ListItems have their own events.
 enum AuditEvent {
   NEW
-  OUT_WITH_PROVIDER // TODO: deprecate
-  EDITED // TODO: deprecate
-  ANNUAL_REVIEW // TODO: deprecate
-  REVIEWED // TODO: deprecate
-  UNPUBLISHED // TODO: deprecate
-  PUBLISHED // TODO: deprecate
-  PINNED // TODO: deprecate
-  UNPINNED // TODO: deprecate
+  ANNUAL_REVIEW
   DELETED
   UNDEFINED
+  UNPUBLISHED
   REMINDER
   ANALYTICS
   LIST_EDIT
@@ -161,6 +155,7 @@ model Event {
   listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
+  emailType           ProviderEmailType?
   jsonData            Json
 
   @@index([time, listItemId])
@@ -211,4 +206,20 @@ view ListsForDashboard {
   lastAnnualReviewStartDate   DateTime? @db.Date
   jsonData                    Json
   @@unique([listId])
+}
+
+enum PostEmailType {
+  sendOneMonthPostEmail
+  sendOneWeekPostEmail
+  sendOneDayPostEmail
+  sendStartedPostEmail
+  sendUnpublishOneDayPostEmail
+  sendUnpublishWeeklyPostEmail
+}
+
+enum ProviderEmailType {
+  sendStartedProviderEmail
+  sendUnpublishedProviderEmail
+  sendUnpublishOneDayProviderEmail
+  sendUnpublishWeeklyProviderEmail
 }

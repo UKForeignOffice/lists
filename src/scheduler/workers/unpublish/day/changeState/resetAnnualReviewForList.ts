@@ -1,10 +1,12 @@
 import { prisma } from "scheduler/prismaClient";
-import { AuditEvent, List } from "@prisma/client";
-import { ListJsonData } from "shared/types";
 import { addYears } from "date-fns";
-import { addAudit } from "./addAudit";
-import { Meta } from "../types";
 import { schedulerLogger } from "scheduler/logger";
+import { AuditEvent } from "@prisma/client";
+
+import type { List } from "@prisma/client";
+import type { ListJsonData } from "shared/types";
+import type { Meta } from "../types";
+import { addAudit } from "./addAudit";
 
 export async function resetAnnualReviewForList(list: List, meta: Meta) {
   const logger = schedulerLogger.child({ listId: list.id, method: "resetAnnualReviewForList", timeframe: "day" });

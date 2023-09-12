@@ -19,26 +19,18 @@ Then("the {string} key date email is sent to post", function (keyDate) {
         where: {
           type: "list",
           auditEvent: "REMINDER",
-          AND: [
-            {
-              jsonData: {
-                path: ["reminderType"],
-                equals: keyDateReminders[keyDate],
-              },
-            },
-            {
-              jsonData: {
-                path: ["annualReviewRef"],
-                equals: list.jsonData.currentAnnualReview.reference,
-              },
-            },
-          ],
+          emailType: keyDateReminders[keyDate],
+          jsonData: {
+            path: ["annualReviewRef"],
+            equals: list.jsonData.currentAnnualReview.reference,
+          },
         },
         orderBy: {
           createdAt: "desc",
         },
       },
     }).then((audit) => {
+      cy.log(audit);
       cy.expect(audit.id).to.exist;
     });
   });

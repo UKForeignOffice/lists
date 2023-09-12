@@ -130,10 +130,6 @@ describe("ListItem Model:", () => {
     return prisma.$transaction.mockImplementation((values) => Promise.all(values) as never);
   };
 
-  const spyAuditRecordListItemEvent = (returnValue: any = {}): jest.SpyInstance => {
-    return jest.spyOn(audit, "recordListItemEvent").mockResolvedValue(returnValue);
-  };
-
   beforeEach(() => {
     sampleListItem = {
       id: "123ABC",

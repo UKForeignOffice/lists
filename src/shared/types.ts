@@ -46,7 +46,10 @@ export type ListAnnualReviewPostReminderType =
 export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
   eventName: ServerTypes.AuditListEventName;
   annualReviewRef?: string;
-  reminderType?: ListAnnualReviewPostReminderType | ServerTypes.ListItemUnpublishedPostReminderType;
+  reminderType?:
+    | ListAnnualReviewPostReminderType
+    | ServerTypes.ListItemUnpublishedPostReminderType
+    | ListItemAnnualReviewProviderReminderType;
 }
 
 export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";
@@ -94,10 +97,6 @@ export interface ListJsonData extends PrismaClient.Prisma.JsonObject {
 
 export interface ListUpdateInput extends PrismaClient.Prisma.ListUpdateInput {
   jsonData: ListJsonData;
-}
-
-export interface NotifyResult {
-  statusText: string;
 }
 
 export interface Event extends PrismaClient.Event {
