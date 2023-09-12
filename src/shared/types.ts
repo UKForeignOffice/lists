@@ -23,7 +23,7 @@ export interface List extends PrismaClient.List {
   isAnnualReview: boolean;
   nextAnnualReviewStartDate: Date;
   lastAnnualReviewStartDate: Date | null;
-  users?: PrismaClient.User[];
+  users: PrismaClient.User[];
 }
 
 export type ListItemWithHistory = ListItem & { history: PrismaClient.Event[] };

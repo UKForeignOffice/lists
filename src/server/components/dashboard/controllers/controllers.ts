@@ -227,7 +227,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
       href: "#publisher",
     };
     req.flash("questionError", JSON.stringify(error));
-    res.redirect(`${dashboardRoutes.listsEdit.replace(":listId", "new")}`);
+    res.redirect("new");
     return;
   }
 

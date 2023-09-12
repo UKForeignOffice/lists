@@ -3,7 +3,7 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, User } from "./types";
+import type { CountryName, List, ListCreateInput, User, UserJsonData } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
@@ -79,7 +79,7 @@ export async function createList(listData: {
     const userExists = await checkUserExists(user);
 
     if (!userExists) {
-      await createUsersFromEmails(user);
+      await createUserFromEmail(user);
     }
 
     const data: ListCreateInput = {
@@ -100,7 +100,7 @@ export async function createList(listData: {
       },
       users: {
         connect: {
-          email: listData.user,
+          email: user,
         },
       },
     };
@@ -193,7 +193,7 @@ export async function updateList(
     const userExists = await checkUserExists(user);
 
     if (!userExists) {
-      await createUsersFromEmails(user);
+      await createUserFromEmail(user);
     }
 
     const list = (await prisma.list.update({
@@ -203,7 +203,7 @@ export async function updateList(
       data: {
         users: {
           connect: {
-            email: listData.user,
+            email: user,
           },
         },
       },
@@ -236,8 +236,8 @@ export async function removeUserFromList(listId: number, userEmail: string): Pro
   }
 }
 
-async function createUsersFromEmails(email: string): Promise<void> {
-  await prisma.user.create({
+async function createUserFromEmail(email: string) {
+  return await prisma.user.create({
     data: {
       email,
       jsonData: {
@@ -245,11 +245,9 @@ async function createUsersFromEmails(email: string): Promise<void> {
       },
     },
   });
-
-  logger.info(`Created users for ${email}`);
 }
 
-async function checkUserExists(email: string): Promise<User> {
+async function checkUserExists(email: string) {
   const res = await prisma.user.findUnique({
     where: {
       email,
