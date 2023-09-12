@@ -84,7 +84,6 @@ export async function usersEditController(req: Request, res: Response, next: Nex
       user,
       req,
       error,
-      pluralize,
     });
   } catch (error) {
     next(error);
