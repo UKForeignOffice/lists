@@ -291,3 +291,11 @@ export async function updateAnnualReviewDate(listId: string, nextAnnualReviewSta
     },
   });
 }
+
+export async function findListDashboardData(listId: string) {
+  return await prisma.listsForDashboard.findUnique({
+    where: {
+      listId: Number(listId),
+    },
+  });
+}

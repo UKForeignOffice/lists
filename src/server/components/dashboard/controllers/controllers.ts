@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
 import { findUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList, deleteUserByEmail } from "server/models/list";
+import { createList, findListById, updateList, deleteUserByEmail, findListDashboardData } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
@@ -187,6 +187,21 @@ export async function listsEditController(req: Request, res: Response, next: Nex
     const err = new HttpException(404, "404", "List could not be found.");
     next(err);
   }
+}
+
+export async function listDeleteController(req: Request, res: Response) {
+  const listData = await findListDashboardData(req.params.listId);
+
+  res.render("dashboard/lists-delete", {
+    type: listData?.type,
+    country: listData?.country,
+    live: listData?.live,
+    listId: req.params.listId,
+  });
+}
+
+export async function listDeletePostController() {
+  // TODO - work on this!!!
 }
 
 export async function listsEditPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
