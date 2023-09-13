@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { findUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList, deleteUserByEmail } from "server/models/list";
+import { deleteUserByEmail, findUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
+import { createList, findListById, updateList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
