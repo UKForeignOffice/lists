@@ -28,7 +28,7 @@ When("User {string} has been added to list with reference:SMOKE ", (email) => {
         },
       },
       where: {
-        reference: "SMOKE-",
+        reference: "SMOKE",
       },
     },
   });
