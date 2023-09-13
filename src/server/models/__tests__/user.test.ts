@@ -25,6 +25,13 @@ describe("User Model:", () => {
         where: {
           email: sampleUser.email,
         },
+        include: {
+          lists: {
+            include: {
+              country: true,
+            },
+          },
+        },
       });
     });
 
@@ -152,6 +159,9 @@ describe("User Model:", () => {
         orderBy: {
           email: "asc",
         },
+        include: {
+          lists: true
+        }
       });
     });
 

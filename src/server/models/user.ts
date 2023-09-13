@@ -8,6 +8,13 @@ export async function findUserByEmail(email: string): Promise<User | undefined> 
   try {
     const user = (await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
+      include: {
+        lists: {
+          include: {
+            country: true,
+          },
+        },
+      },
     })) as User;
 
     return user ?? undefined;
@@ -72,6 +79,9 @@ export async function findUsers(): Promise<User[]> {
     return (await prisma.user.findMany({
       orderBy: {
         email: "asc",
+      },
+      include: {
+        lists: true,
       },
     })) as User[];
   } catch (error) {
