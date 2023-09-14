@@ -299,3 +299,34 @@ export async function findListDashboardData(listId: string) {
     },
   });
 }
+
+export async function deleteList(list: List, userEmail: string) {
+  await prisma.$transaction([
+    prisma.listItem.deleteMany({
+      where: {
+        listId: Number(list.id),
+      },
+    }),
+    prisma.list.delete({
+      where: {
+        id: Number(list.id),
+      },
+    }),
+    prisma.audit.create({
+      data: {
+        auditEvent: AuditEvent.LIST_DELETED,
+        type: "list",
+        jsonData: {
+          listId: list.id,
+          country: list.country?.name,
+          service: list.type,
+          deletedBy: userEmail,
+        },
+      },
+    }),
+  ]);
+
+  logger.info(
+    `Deleted List with id: ${list.id}, country: ${list.country?.name} and service: ${list.type} by ${userEmail}`
+  );
+}

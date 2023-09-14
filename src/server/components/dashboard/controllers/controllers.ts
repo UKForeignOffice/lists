@@ -2,7 +2,14 @@ import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
 import { findUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList, deleteUserByEmail, findListDashboardData } from "server/models/list";
+import {
+  createList,
+  findListById,
+  updateList,
+  deleteUserByEmail,
+  findListDashboardData,
+  deleteList,
+} from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
@@ -200,8 +207,15 @@ export async function listDeleteController(req: Request, res: Response) {
   });
 }
 
-export async function listDeletePostController() {
-  // TODO - work on this!!!
+export async function listDeletePostController(req: Request, res: Response) {
+  const { listId } = req.params;
+  const list = await findListById(listId);
+  await deleteList(list!, req.user!.emailAddress);
+
+  req.flash("deletedListCountry", list?.country?.name as string);
+  req.flash("deletedListType", list?.type as string);
+
+  res.redirect(dashboardRoutes.lists);
 }
 
 export async function listsEditPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
