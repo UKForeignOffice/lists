@@ -256,7 +256,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
       href: "#publisher",
     };
     req.flash("questionError", JSON.stringify(error));
-    res.redirect("new");
+    res.redirect(listId === "new" ? "new" : res.locals.listsEditUrl);
     return;
   }
 
