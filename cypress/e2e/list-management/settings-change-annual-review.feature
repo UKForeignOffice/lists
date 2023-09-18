@@ -16,7 +16,7 @@ Feature: List management change annual review date
     Then I see the notification text "Annual review date updated successfully"
 
   Scenario: User cannot enter date February 29
-    Given I enter "29" for "Day"
-    And I enter "2" for "Month"
+    Given I enter "29" in the "day" input
+    And I enter "2" in the "month" input
     And I click the "Continue" button
     Then I should see the error "You cannot set the annual review to this date. Please choose another"

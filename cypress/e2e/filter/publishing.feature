@@ -14,10 +14,10 @@ Feature:
       | Boxer       | UNPUBLISHED           | false       |                | true          | true     |
       | Jones       | CHECK_ANNUAL_REVIEW   | true        | true           | true          |          |
       | Napoleon    | ANNUAL_REVIEW_OVERDUE | false       | true           | true          |          |
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
 
   Scenario: Filter by New publishing status
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | New |
     Then I see the list items
@@ -26,7 +26,7 @@ Feature:
       | Winston | Emmanuel | Julia | O'Brien | Boxer | Napoleon |
 
   Scenario: Filter by Live status
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | Live |
     Then I see the list items
@@ -35,7 +35,7 @@ Feature:
       | Winston | Emmanuel | Julia | O'Brien | Boxer | Napoleon |
 
   Scenario: Filter by Unpublished status
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | Unpublished |
     Then I see the list items
@@ -44,10 +44,11 @@ Feature:
       | Winston | Emmanuel | Jones | Julia | O'Brien | Parsons | Boxer |
 
   Scenario: Filter by Archived status
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | Archived |
     Then I see the list items
       | Boxer |
     And not the list items
       | Winston | Emmanuel | Jones | Julia | O'Brien | Parsons | Napoleon |
+

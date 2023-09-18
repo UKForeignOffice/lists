@@ -12,17 +12,11 @@ When("a related list exists", () => {
             name: "Eurasia",
           },
         },
-        users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
       },
       update: {
         type: "funeralDirectors",
         jsonData: { users: ["smoke@cautionyourblast.com"] },
         nextAnnualReviewStartDate: null,
-        users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        },
         items: {
           deleteMany: {},
         },

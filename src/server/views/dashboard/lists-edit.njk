@@ -92,14 +92,14 @@
           {% endif %}
 
           <dl class="govuk-summary-list {{ "govuk-form-group--error" if error.field === 'publisherList' }}">
-            {% for user in _.reverse(list.users) %}
+            {% for user in _.reverse(list.jsonData.users) %}
               <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                  {{ user.email }}
+                  {{ user }}
                 </dt>
                 <dd class="govuk-summary-list__actions">
-                    <button class="govuk-button--link govuk-body govuk-link govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user.email }}">
-                      Remove<span class="govuk-visually-hidden"> {{ user.email }}</span>
+                    <button class="govuk-button--link govuk-body govuk-link govuk-!-margin-0" data-module="govuk-button" name="userEmail" value="{{ user }}">
+                      Remove<span class="govuk-visually-hidden"> {{ user }}</span>
                     </button>
                 </dd>
               </div>

@@ -16,7 +16,7 @@ Feature: Dashboard filtering
       | Tessa       | Tessa Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | false       | true           | true          | 11/01/22  |
       | Kaleb       | Kaleb Law        | smoke@cautionyourblast.com | OUT_WITH_PROVIDER   | true        | true           | true          | 06/01/22  |
       | Seth        | Seth Law         | smoke@cautionyourblast.com | CHECK_ANNUAL_REVIEW | true        | false          | true          | 09/01/22  |
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
 
   Scenario Outline: View list item details
 

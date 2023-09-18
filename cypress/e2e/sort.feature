@@ -11,7 +11,7 @@ Feature:
             | Julia       | Julia Law        | OUT_WITH_PROVIDER | false       | false     | false      | true          | 2022-01-12  |
             | Joker       | Emmanuel Law     | EDITED            | false       | false     | false      | true          | 2022-02-03  |
             | Parsons     | Parsons Law      | PUBLISHED         | true        | false     | false      | true          | 2022-01-08  |
-        Given I am viewing list item index for reference:"SMOKE"
+        Given I am viewing list item index for reference:SMOKE
 
 
     Scenario: Show providers based on last updated date first
