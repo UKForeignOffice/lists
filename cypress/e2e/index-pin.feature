@@ -12,11 +12,11 @@ Feature:
 
 
     Scenario: Pinning an application
-      Given I am viewing list item index for reference:"SMOKE"
+      Given I am viewing list item index for reference:SMOKE
       When I pin "Winston"
       Then I see the notification that "Winston" has been "pinned"
 
     Scenario: Unpinning an application
-      Given I am viewing list item index for reference:"SMOKE"
+      Given I am viewing list item index for reference:SMOKE
       When I unpin "Julia"
       Then I see the notification that "Julia" has been "unpinned"

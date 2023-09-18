@@ -1,9 +1,10 @@
+import { compact, toLower, trim } from "lodash";
 import { Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, User } from "./types";
+import type { CountryName, List, ListCreateInput, ListUpdateInput } from "./types";
 import type { ServiceType } from "shared/types";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
@@ -14,7 +15,6 @@ export async function findListById(listId: string | number): Promise<List | unde
       },
       include: {
         country: true,
-        users: true,
       },
     })) as List;
     return lists ?? undefined;
@@ -63,23 +63,18 @@ export async function findListsByCountry(country: CountryName): Promise<List[] |
 export async function createList(listData: {
   country: CountryName;
   serviceType: ServiceType;
-  user: string;
+  users: string | string[];
   createdBy: string;
 }): Promise<List | Record<string, boolean> | undefined> {
   try {
-    const user = listData.user.toLowerCase().trim();
+    const usersAsArray = Array.isArray(listData.users) ? listData.users : [listData.users];
 
-    if (!isGovUKEmailAddress(user)) {
-      throw new Error("User contain a non GOV UK email address");
+    const users = compact(usersAsArray.map(trim).map(toLower));
+    if (users.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Users contain a non GOV UK email address");
     }
     if (!isGovUKEmailAddress(listData.createdBy)) {
       throw new Error("CreatedBy is not a valid GOV UK email address");
-    }
-
-    const userExists = await checkUserExists(user);
-
-    if (!userExists) {
-      await createUserFromEmail(user);
     }
 
     const data: ListCreateInput = {
@@ -95,13 +90,9 @@ export async function createList(listData: {
         },
       },
       jsonData: {
+        users,
         relatedLinks: getRelatedLinks(listData.serviceType),
         createdBy: listData.createdBy,
-      },
-      users: {
-        connect: {
-          email: user,
-        },
       },
     };
 
@@ -119,7 +110,7 @@ export async function createList(listData: {
   }
 }
 
-export function getRelatedLinks(serviceType: ServiceType) {
+function getRelatedLinks(serviceType: ServiceType) {
   const lawyersLinks = [
     {
       url: "https://gov.uk/guidance/arrested-or-detained-abroad",
@@ -180,33 +171,27 @@ export function getRelatedLinks(serviceType: ServiceType) {
 export async function updateList(
   listId: number,
   listData: {
-    user: string;
+    users: string[];
   }
 ): Promise<List | undefined> {
   try {
-    const user = listData.user.toLowerCase().trim();
-
-    if (!isGovUKEmailAddress(user)) {
-      throw new Error("User contain a non GOV UK email address");
+    const users = compact(listData.users.map(trim).map(toLower));
+    if (users.some((email) => !isGovUKEmailAddress(email))) {
+      throw new Error("Users contain a non GOV UK email address");
     }
 
-    const userExists = await checkUserExists(user);
-
-    if (!userExists) {
-      await createUserFromEmail(user);
-    }
+    const data: ListUpdateInput = {
+      jsonData: {
+        ...listData,
+        users,
+      },
+    };
 
     const list = (await prisma.list.update({
       where: {
         id: listId,
       },
-      data: {
-        users: {
-          connect: {
-            email: user,
-          },
-        },
-      },
+      data,
     })) as List;
     return list ?? undefined;
   } catch (error) {
@@ -215,47 +200,6 @@ export async function updateList(
   }
 }
 
-export async function removeUserFromList(listId: number, userEmail: string): Promise<void> {
-  try {
-    await prisma.list.update({
-      where: {
-        id: listId,
-      },
-      data: {
-        users: {
-          disconnect: {
-            email: userEmail,
-          },
-        },
-      },
-    });
-    logger.info(`User ${userEmail} disconnected from list ${listId}`);
-  } catch (error) {
-    logger.error(`removeUserFromList Error: ${(error as Error).message}`);
-    throw error;
-  }
-}
-
-async function createUserFromEmail(email: string) {
-  return await prisma.user.create({
-    data: {
-      email,
-      jsonData: {
-        roles: [],
-      },
-    },
-  });
-}
-
-async function checkUserExists(email: string) {
-  const res = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  return res as User;
-}
 /**
  * todo: deprecate
  */

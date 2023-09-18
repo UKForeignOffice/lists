@@ -7,8 +7,6 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 });
 
 function createListForService(service) {
-  const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
-
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
   };
@@ -31,7 +29,7 @@ function createListForService(service) {
       where: {
         listItem: {
           list: {
-            reference,
+            reference: "SMOKE",
           },
         },
       },
@@ -43,7 +41,7 @@ function createListForService(service) {
     variables: {
       create: {
         type: service,
-        reference,
+        reference: "SMOKE",
         nextAnnualReviewStartDate: null,
         jsonData,
         country: {
@@ -51,9 +49,6 @@ function createListForService(service) {
             name: "Eurasia",
           },
         },
-        users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
       },
       update: {
         type: service,
@@ -62,12 +57,9 @@ function createListForService(service) {
         items: {
           deleteMany: {},
         },
-        users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
       },
       where: {
-        reference,
+        reference: "SMOKE",
       },
     },
   });
@@ -78,14 +70,12 @@ Given("there are these list items", (table) => {
    * | contactName | companyName | status | isPublished |  emailVerified | isPinned | displayedRadioButtons | hiddenRadioButtons | service | isArchived
    */
   const rows = table.hashes();
-  const { service } = rows.at(0);
-  const reference = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
 
   cy.task("db", {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference,
+        reference: "SMOKE",
       },
     },
   }).then((list) => {
@@ -100,7 +90,7 @@ Given("there are these list items", (table) => {
     operation: "list.findUnique",
     variables: {
       where: {
-        reference,
+        reference: "SMOKE",
       },
       include: {
         items: true,

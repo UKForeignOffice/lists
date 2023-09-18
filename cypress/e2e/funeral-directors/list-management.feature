@@ -10,7 +10,7 @@ Feature: List management actions
 			| Tristen     | Peace Funerals         | smoke@cautionyourblast.com | EDITED    | false       | funeralDirectors |
 			| Luke        | Samba directors        | smoke@cautionyourblast.com | EDITED    | true        | funeralDirectors |
 			| Catherine   | C & A Reed             | smoke@cautionyourblast.com | PUBLISHED | true        | funeralDirectors |
-		Given I am viewing list item index for reference:"SMOKE-FD"
+		Given I am viewing list item index for reference:SMOKE
 
 
 	Scenario Outline: View list item details
@@ -19,14 +19,14 @@ Feature: List management actions
 		And I do not see radio buttons "<radioButtonsConfirm>"
 
 		Examples:
-			| contactName | radioButtons                    | radioButtonsConfirm       |
+			| contactName | radioButtons                      | radioButtonsConfirm     |
 			| Lola        | Publish,Archive,Request changes | Remove,Confirm and update |
 			| Nima        | Publish,Archive,Request changes | Remove,Confirm and update |
 
 
 	Scenario Outline: Request changes for list item
 		When I am viewing the list item details for "<contactName>"
-		And I select "Request changes"
+    And I select "Request changes"
 		And I enter a message in the textarea
 		And I click the "Continue" button
 		Then I should see the provider details "<contactName>", "<organisationName>" and "smoke@cautionyourblast.com"

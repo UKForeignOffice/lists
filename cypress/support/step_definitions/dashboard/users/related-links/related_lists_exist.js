@@ -1,16 +1,12 @@
-When("a related link exists", () => {
-  const jsonData = {
-    users: ["smoke@cautionyourblast.com"],
-    relatedLinks: [{ url: "https://gov.uk", text: "How to find eggs" }],
-  };
+Given("a related lists exist", () => {
   cy.task("db", {
     operation: "list.upsert",
     variables: {
       create: {
-        type: "lawyers",
-        reference: "SMOKE",
+        type: "funeralDirectors",
+        reference: "SMOKE-FD",
         nextAnnualReviewStartDate: null,
-        jsonData,
+        jsonData: { users: ["smoke@cautionyourblast.com"] },
         country: {
           connect: {
             name: "Eurasia",
@@ -18,15 +14,15 @@ When("a related link exists", () => {
         },
       },
       update: {
-        type: "lawyers",
-        jsonData,
+        type: "funeralDirectors",
+        jsonData: { users: ["smoke@cautionyourblast.com"] },
         nextAnnualReviewStartDate: null,
         items: {
           deleteMany: {},
         },
       },
       where: {
-        reference: "SMOKE",
+        reference: "SMOKE-FD",
       },
     },
   });

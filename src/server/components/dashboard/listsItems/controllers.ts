@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { EventJsonData, ListItem, ListItemGetObject } from "server/models/types";
 import type { Prisma } from "@prisma/client";
 import { Status } from "@prisma/client";
-import { findListById, removeUserFromList } from "server/models/list";
+import { findListById, updateList } from "server/models/list";
 import { HttpException } from "server/middlewares/error-handlers";
 import { DEFAULT_VIEW_PROPS } from "server/components/dashboard/controllers/controllers";
 import { getDetailsViewModel } from "./getViewModel";
@@ -180,7 +180,6 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
       href: "#publishers",
     };
 
-    // TODO - post redirect get pattern
     res.render("dashboard/list-edit-confirm-delete-user", {
       ...DEFAULT_VIEW_PROPS,
       listId: list.id,
@@ -192,7 +191,11 @@ export async function listPublisherDelete(req: Request, res: ListIndexRes, next:
     return;
   }
 
-  await removeUserFromList(list.id, userEmail);
+  const { jsonData = {} } = list;
+
+  const updatedUsers = jsonData.users?.filter((u) => u !== userEmail) ?? [];
+
+  await updateList(list.id, { ...jsonData, users: updatedUsers });
 
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", `User ${userEmail} has been removed`);

@@ -14,7 +14,7 @@ As consular staff,
     And the batch process has run
     And the worker process has run
     And I am logged in as a "Admin"
-    And I am viewing list item index for reference:"SMOKE"
+    And I am viewing list item index for reference:SMOKE
     Then I see "Buster"
     And I see "ANNUAL REVIEW OVERDUE"
     And the provider with reference "UNPUBLISH_DAY_TEST" should be unpublished

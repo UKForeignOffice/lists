@@ -15,10 +15,10 @@ Feature:
       | Benjamin    | UNPUBLISHED           | false       |                | true          |            | true                |
       | Jones       | CHECK_ANNUAL_REVIEW   | true        | true           | true          |            |                     |
       | Napoleon    | ANNUAL_REVIEW_OVERDUE | false       | true           | true          |            |                     |
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
 
   Scenario: Filter by to do
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | To do |
     Then I see the list items
@@ -27,7 +27,7 @@ Feature:
       | Julia | O'Brien | Parsons | Napoleon | Boxer |
 
   Scenario: Filter by out with provider
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | With provider |
     Then I see the list items
@@ -36,7 +36,7 @@ Feature:
       | Winston | Emmanuel | Boxer | Jones |
 
   Scenario: Filter by No action needed
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | No action needed |
     Then I see the list items
@@ -45,7 +45,7 @@ Feature:
       | Julia | O'Brien | Napoleon | Winston | Emmanuel | Boxer | Jones |
 
   Scenario: Filter by to do, with provider
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | To do | With provider |
     Then I see the list items
@@ -54,10 +54,11 @@ Feature:
       | Parsons | O'brien |
 
   Scenario: Filter by to do, no action needed
-    Given I am viewing list item index for reference:"SMOKE"
+    Given I am viewing list item index for reference:SMOKE
     When I filter by
       | To do | No action needed |
     Then I see the list items
       | Winston | Emmanuel | Jones | Parsons | Benjamin |
     And not the list items
       | Julia | O'Brien | Boxer |
+
