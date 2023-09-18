@@ -4,6 +4,7 @@ import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 import { UserRoles } from "./types";
 import type { User } from "./types";
+import { AuditEvent } from "@prisma/client";
 
 export async function findUserByEmail(email: string): Promise<User | undefined> {
   try {
@@ -102,4 +103,47 @@ export async function isAdministrator(email: string | undefined): Promise<boolea
     logger.error(`isAdministratorUser Error: ${error.message}`);
     throw error;
   }
+}
+
+export async function deleteUserByEmail(email: string, adminEmail: string): Promise<void> {
+  await prisma.$transaction([
+    prisma.audit.create({
+      data: {
+        auditEvent: AuditEvent.USER_DELETED,
+        type: "list",
+        jsonData: {
+          deletedUser: email,
+          deletedBy: adminEmail,
+        },
+      },
+    }),
+    prisma.user.delete({
+      where: {
+        email,
+      },
+    }),
+  ]);
+
+  logger.info(`Deleted user ${email}`);
+}
+
+export async function createUserFromEmail(email: string) {
+  return await prisma.user.create({
+    data: {
+      email,
+      jsonData: {
+        roles: [],
+      },
+    },
+  });
+}
+
+export async function checkUserExists(email: string) {
+  const res = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  return res as User;
 }
