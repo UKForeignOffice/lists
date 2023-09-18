@@ -3,8 +3,9 @@ import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
 
-import type { CountryName, List, ListCreateInput, User } from "./types";
+import type { CountryName, List, ListCreateInput } from "./types";
 import type { ServiceType } from "shared/types";
+import { checkUserExists, createUserFromEmail } from "./user";
 
 export async function findListById(listId: string | number): Promise<List | undefined> {
   try {
@@ -236,26 +237,6 @@ export async function removeUserFromList(listId: number, userEmail: string): Pro
   }
 }
 
-async function createUserFromEmail(email: string) {
-  return await prisma.user.create({
-    data: {
-      email,
-      jsonData: {
-        roles: [],
-      },
-    },
-  });
-}
-
-async function checkUserExists(email: string) {
-  const res = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  return res as User;
-}
 /**
  * todo: deprecate
  */

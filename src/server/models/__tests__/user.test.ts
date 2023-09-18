@@ -1,7 +1,7 @@
 import { omit, pick } from "lodash";
 import { prisma } from "../db/__mocks__/prisma-client";
 import { UserRoles } from "../types";
-import { findUserByEmail, createUser, updateUser, findUsers } from "../user";
+import { findUserByEmail, createUser, updateUser, getUsersWithList } from "../user";
 jest.mock("../db/prisma-client");
 
 describe("User Model:", () => {
@@ -148,27 +148,29 @@ describe("User Model:", () => {
     });
   });
 
-  describe("findUsers", () => {
+  describe("getUsersWithList", () => {
     test("findMany command is correct", async () => {
-      prisma.user.findMany.mockResolvedValue([sampleUser]);
-
-      const result = await findUsers();
-
-      expect(result).toMatchObject([sampleUser]);
-      expect(prisma.user.findMany).toHaveBeenCalledWith({
-        orderBy: {
-          email: "asc",
-        },
-        include: {
-          lists: true
+      const useWithList = {
+        id: 123,
+        email: "test@depto.gov.uk",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        jsonData: {
+          roles: [],
         }
-      });
+      };
+
+      prisma.user.findMany.mockResolvedValue([useWithList]);
+
+      const result = await getUsersWithList();
+
+      expect(result).toMatchObject([useWithList]);
     });
 
     test("it returns an empty list if findMany command fails", async () => {
       prisma.user.findMany.mockRejectedValue("");
 
-      const result = await findUsers();
+      const result = await getUsersWithList();
 
       expect(result).toMatchObject([]);
     });

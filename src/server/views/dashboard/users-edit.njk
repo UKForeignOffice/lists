@@ -1,5 +1,6 @@
 {% extends "./dashboard.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
+{% from "button/macro.njk" import govukButton %}
 
 {% block aside %}
   <a class="govuk-link govuk-back-link" href="{{ dashboardRoutes.usersList }}">Back</a>
@@ -76,5 +77,10 @@
       </tbody>
     </table>
   {% endif %}
+  {{ govukButton({
+    text: "Delete admin",
+    classes: "govuk-button--secondary",
+    href: req.params.userEmail + "/delete"
+  }) }}
 
 {% endblock %}

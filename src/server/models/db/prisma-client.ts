@@ -63,6 +63,6 @@ prisma.$on("error", (e) => {
   logger.error(e);
 });
 
-prisma.$on("beforeExit", () => {
+process.on("beforeExit", () => {
   logger.info("Prisma is exiting");
 });

@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@googleapis/sheets": "^4.0.2",
-    "@prisma/client": "^4.11.0",
+    "@prisma/client": "^5.2.0",
     "@types/csurf": "^1.11.2",
     "accessible-autocomplete": "^2.0.3",
     "aws-sdk": "^2.1031.0",
@@ -149,7 +149,7 @@
     "nodemon-webpack-plugin": "^4.5.2",
     "postcss-loader": "^7.0.1",
     "prettier": "2.3.2",
-    "prisma": "^4.11.0",
+    "prisma": "^5.2.0",
     "redis-mock": "^0.56.3",
     "sass": "^1.38.0",
     "sass-loader": "^13.0.2",

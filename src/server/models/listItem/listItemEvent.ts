@@ -1,8 +1,5 @@
-import { prisma } from "server/models/db/prisma-client";
 import type { Prisma } from "@prisma/client";
 import { ListItemEvent } from "@prisma/client";
-import type { Event, EventCreateInput, EventJsonData } from "./types";
-import { logger } from "server/services/logger";
 import type { SendEmailResponse } from "notifications-node-client";
 
 export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
@@ -179,24 +176,3 @@ export const EVENTS = {
     },
   }),
 };
-
-export function recordEvent(
-  eventData: EventJsonData,
-  listItemId: number,
-  eventType: ListItemEvent
-): Prisma.Prisma__EventClient<Event> {
-  logger.debug(`event type ${eventType} to record`);
-  const data: EventCreateInput = {
-    time: new Date(),
-    type: eventType,
-    jsonData: { ...eventData },
-    listItem: {
-      connect: {
-        id: listItemId,
-      },
-    },
-  };
-  logger.debug(`creating Event record with data [${JSON.stringify(data)}`);
-
-  return prisma.event.create({ data }) as Prisma.Prisma__EventClient<Event>;
-}
