@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { AuditEvent, Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
