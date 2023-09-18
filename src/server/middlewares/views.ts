@@ -3,13 +3,12 @@ import { Buffer } from "buffer";
 import _, { get, capitalize } from "lodash";
 import nunjucks from "nunjucks";
 import nunjucksDate from "nunjucks-date";
+import { Express } from "express";
 import { SERVICE_NAME, SERVICE_DOMAIN, isProd } from "server/config";
 import { enforceHttps } from "server/utils/security";
 import { parseDate } from "server/utils/date";
 import flash from "express-flash";
-import type { Express } from "express";
-import type { govukRow } from "server/components/dashboard/listsItems/types";
-import pluralize from "pluralize";
+import { govukRow } from "server/components/dashboard/listsItems/types";
 
 const ROOT = process.cwd();
 
@@ -36,7 +35,6 @@ export const configureViews = (server: Express): void => {
     .addGlobal("SERVICE_DOMAIN", SERVICE_DOMAIN)
     .addGlobal("enforceHttps", enforceHttps)
     .addGlobal("parseDate", parseDate)
-    .addGlobal("pluralize", pluralize)
     .addGlobal("_", _);
 
   // Date filter
