@@ -71,6 +71,7 @@ export function calculateSortOrder(
     ...defaultSortOrder,
   };
 
+  // @ts-ignore
   return Object.entries(sortOrder).map(convertEntryToObject);
 }
 

@@ -36,15 +36,14 @@ test("should call order by same value that is passed in as argument", async () =
   await user.getLists([{ admins: "asc" }]);
   expect(prisma.listsForDashboard.findMany).toHaveBeenCalledWith({
     where: {
-      jsonData: {
-        path: ["users"],
-        array_contains: ["test@gov.uk"],
+      userIds: {
+        has: 7,
       },
     },
     orderBy: [
       {
         admins: "asc",
-      }
+      },
     ],
   });
 });
