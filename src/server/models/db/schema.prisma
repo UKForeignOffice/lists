@@ -11,120 +11,117 @@ datasource db {
 }
 
 model List {
-  id                            Int      @id @default(autoincrement())
-  reference                     String   @default(uuid()) @unique
-  createdAt                     DateTime @default(now())
-  updatedAt                     DateTime @updatedAt
-  nextAnnualReviewStartDate     DateTime? @db.Date
-  lastAnnualReviewStartDate     DateTime? @db.Date
-  isAnnualReview                Boolean @default(false)
+  id                        Int       @id @default(autoincrement())
+  reference                 String    @unique @default(uuid())
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  nextAnnualReviewStartDate DateTime? @db.Date
+  lastAnnualReviewStartDate DateTime? @db.Date
+  isAnnualReview            Boolean   @default(false)
 
+  type      String
+  country   Country @relation(fields: [countryId], references: [id])
+  countryId Int
 
-  type                String
-  country             Country  @relation(fields: [countryId], references: [id])
-  countryId           Int
+  jsonData Json
 
-  jsonData            Json
+  items ListItem[]
+  users User[]
 
-  items               ListItem[]
-  users               User[]
-
-  @@index([type, countryId])
   @@unique([countryId, type])
+  @@index([type, countryId])
 }
 
 model ListItem {
-  id                  Int      @id @default(autoincrement())
-  reference           String   @default(uuid()) @unique
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  reference String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  type                String
-  jsonData            Json
+  type     String
+  jsonData Json
 
-  address             Address @relation(fields: [addressId], references: [id])
-  addressId           Int
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId Int
 
-  isApproved          Boolean @default(false) //TODO: deprecate
-  isPublished         Boolean @default(false)
-  isBlocked           Boolean @default(false) //TODO: deprecate
-  isAnnualReview      Boolean @default(false)
+  isApproved     Boolean @default(false) //TODO: deprecate
+  isPublished    Boolean @default(false)
+  isBlocked      Boolean @default(false) //TODO: deprecate
+  isAnnualReview Boolean @default(false)
 
-  pinnedBy            User[]
+  pinnedBy User[]
 
-  list                List @relation(fields: [listId], references: [id])
-  listId              Int
+  list   List @relation(fields: [listId], references: [id])
+  listId Int
 
-  history             Event[]
+  history Event[]
 
-  status              Status @default(NEW)
+  status Status @default(NEW)
 
   @@index([type, reference, isApproved, isPublished, isBlocked])
 }
 
 model Address {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  firstLine    String   @db.VarChar(255)
-  secondLine  String?  @db.VarChar(255)
-  city        String?  @db.VarChar(255)
-  postCode    String?   @db.VarChar(255)
-  country     Country  @relation(fields: [countryId], references: [id])
-  countryId   Int
+  firstLine  String  @db.VarChar(255)
+  secondLine String? @db.VarChar(255)
+  city       String? @db.VarChar(255)
+  postCode   String? @db.VarChar(255)
+  country    Country @relation(fields: [countryId], references: [id])
+  countryId  Int
 
-  ListItem    ListItem[]
+  ListItem ListItem[]
 
-  geoLocation    GeoLocation?  @relation(fields: [geoLocationId], references: [id])
-  geoLocationId   Int?
+  geoLocation   GeoLocation? @relation(fields: [geoLocationId], references: [id])
+  geoLocationId Int?
 }
 
 model Country {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  name      String    @db.VarChar(255) @unique
-  address   Address[]
-  list      List[]
+  name    String    @unique @db.VarChar(255)
+  address Address[]
+  list    List[]
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  email     String    @unique
-  jsonData  Json
+  email    String @unique
+  jsonData Json
 
   pinnedItems ListItem[]
   lists       List[]
 }
 
-
-
 model Audit {
-  id                  Int      @id @default(autoincrement())
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  type                String?
-  auditEvent          AuditEvent @default(UNDEFINED)
+  type       String?
+  auditEvent AuditEvent @default(UNDEFINED)
 
-  jsonData            Json
+  jsonData Json
 
   @@index([type])
   @@index([jsonData])
 }
 
 model Feedback {
-  id                  Int      @id @default(autoincrement())
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  type                String
-  jsonData            Json
+  type     String
+  jsonData Json
 
   @@index([type])
 }
@@ -160,12 +157,12 @@ enum Status {
 }
 
 model Event {
-  id                  Int    @id @default(autoincrement())
-  time                DateTime @default(now())
-  listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  listItemId          Int
-  type                ListItemEvent
-  jsonData            Json
+  id         Int           @id @default(autoincrement())
+  time       DateTime      @default(now())
+  listItem   ListItem?     @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  listItemId Int
+  type       ListItemEvent
+  jsonData   Json
 
   @@index([time, listItemId])
 }
@@ -188,31 +185,34 @@ enum ListItemEvent {
 }
 
 view FirstPublishedOnList {
-  listId                      Int
-  eventId                     Int
-  firstPublished              DateTime
-  nextAnnualReviewStartDate   DateTime? @db.Date
+  listId                    Int
+  eventId                   Int
+  firstPublished            DateTime
+  nextAnnualReviewStartDate DateTime? @db.Date
+
   @@unique([listId, eventId])
 }
+
 // note: keep GeoLocation here -- syntax parsers don't like the unsupported
 model GeoLocation {
-  id          Int @id @default(autoincrement())
-  location    Unsupported("geography(POINT)")
-  address     Address[]
+  id       Int                             @id @default(autoincrement())
+  location Unsupported("geography(POINT)")
+  address  Address[]
 
   @@index([location])
 }
 
 view ListsForDashboard {
-  listId                      Int
-  type                        String
-  country                     String
-  admins                      Int
-  live                        Int
-  actionNeeded                Int
-  isOverdue                   Boolean @default(false)
-  nextAnnualReviewStartDate   DateTime? @db.Date
-  lastAnnualReviewStartDate   DateTime? @db.Date
-  userIds                     Int[]
+  listId                    Int
+  type                      String
+  country                   String
+  admins                    Int
+  live                      Int
+  actionNeeded              Int
+  isOverdue                 Boolean   @default(false)
+  nextAnnualReviewStartDate DateTime? @db.Date
+  lastAnnualReviewStartDate DateTime? @db.Date
+  userIds                   Int[]
+
   @@unique([listId])
 }
