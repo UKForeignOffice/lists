@@ -260,18 +260,25 @@ export async function findListDashboardData(listId: string) {
 }
 
 export async function deleteList(list: List, userEmail: string) {
-  await prisma.$transaction([
-    prisma.listItem.deleteMany({
-      where: {
-        listId: Number(list.id),
-      },
-    }),
-    prisma.list.delete({
+  await prisma.$transaction(async (tx) => {
+    const deletedListItems = await tx.list.delete({
       where: {
         id: Number(list.id),
       },
-    }),
-    prisma.audit.create({
+      select: {
+        items: true,
+      },
+    });
+
+    await tx.address.deleteMany({
+      where: {
+        id: {
+          in: deletedListItems.items.map((listItem) => listItem.addressId),
+        },
+      },
+    });
+
+    await tx.audit.create({
       data: {
         auditEvent: AuditEvent.LIST_DELETED,
         type: "list",
@@ -282,8 +289,8 @@ export async function deleteList(list: List, userEmail: string) {
           deletedBy: userEmail,
         },
       },
-    }),
-  ]);
+    });
+  });
 
   logger.info(
     `Deleted List with id: ${list.id}, country: ${list.country?.name} and service: ${list.type} by ${userEmail}`
