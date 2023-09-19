@@ -51,11 +51,14 @@
       </div>
 
       <div>
+        <p class="govuk-body">
+          <a href="/dashboard/lists/csv-export" class="govuk-link">Export list at CSV</a>
+        </p>
         <h2 class="govuk-heading-m">Annual review</h2>
         {% if lastAnnualReviewStartDate %}
           <p class="govuk-body">The last annual review started on {{ lastAnnualReviewStartDate }}.</p>
         {% endif %}
-        <h3 class="govuk-heading-s govuk-!-margin-0">Next annual review start date </h3>
+        <h3 class="govuk-heading-s govuk-!-margin-0">Next annual review start date</h3>
         <dl class="govuk-summary-list">
           <div class="govuk-summary-list__row">
             <dd class="govuk-summary-list__value" data-testid="annual-review-date">
