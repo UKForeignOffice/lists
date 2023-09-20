@@ -51,9 +51,11 @@
       </div>
 
       <div>
-        <p class="govuk-body">
-          <a href="/dashboard/lists/csv-export" class="govuk-link">Export list at CSV</a>
+        {% if req.user.isAdministrator %}
+        <p class="govuk-body govuk-!-text-align-right">
+          <a href="/dashboard/lists/{{list.id}}/csv-export" class="govuk-link">Export list as CSV</a>
         </p>
+        {% endif %}
         <h2 class="govuk-heading-m">Annual review</h2>
         {% if lastAnnualReviewStartDate %}
           <p class="govuk-body">The last annual review started on {{ lastAnnualReviewStartDate }}.</p>
