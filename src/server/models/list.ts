@@ -265,9 +265,6 @@ export async function deleteList(list: List, userEmail: string) {
       where: {
         id: Number(list.id),
       },
-      select: {
-        items: true,
-      },
     }),
     prisma.address.deleteMany({
       where: {
