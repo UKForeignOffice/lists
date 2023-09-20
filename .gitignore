@@ -132,4 +132,5 @@ lib/
 
 # cypress
 cypress/videos
+cypress/downloads
 cypress/screenshots
