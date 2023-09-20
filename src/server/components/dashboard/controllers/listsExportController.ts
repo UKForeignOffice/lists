@@ -8,19 +8,12 @@ import { Readable } from "node:stream";
 import { startCase } from "lodash";
 import { format } from "date-fns";
 import { logger } from "server/services/logger";
-import { HttpException } from "server/middlewares/error-handlers";
 import { AuditEvent } from "@prisma/client";
 
 type ListWithJsonData = Array<ListItem & { jsonData: ListItemJsonData }>;
 
 export async function listsExportController(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req.user?.isAdministrator) {
-      const err = new HttpException(403, "403", "You do not have permission to exports lists");
-      next(err);
-      return;
-    }
-
     const [result] = await prisma.$transaction([
       prisma.list.findUnique({
         where: {

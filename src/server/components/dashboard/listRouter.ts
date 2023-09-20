@@ -18,6 +18,7 @@ import { HttpException } from "server/middlewares/error-handlers";
 import { validateAccessToList } from "server/components/dashboard/listsItems/validateAccessToList";
 import { listItemsRouter } from "./listsItems/listItemsRouter";
 import { relatedLinksRouter } from "server/components/dashboard/relatedLinks/router";
+import { validateActionPermission } from "./helpers";
 
 export const listRouter = express.Router();
 
@@ -78,6 +79,7 @@ listRouter.use("/:listId/delete", (req, _res, next) => {
 listRouter.get("/:listId/delete", listDeleteController);
 listRouter.post("/:listId/delete", listDeletePostController);
 listRouter.get("/:listId/csv-export", listsExportController);
+listRouter.get("/:listId/csv-export", validateActionPermission, listsExportController);
 
 listRouter.use("/:listId/related-links", relatedLinksRouter);
 
