@@ -203,13 +203,8 @@ export async function listDeleteController(req: Request, res: Response) {
 export async function listDeletePostController(req: Request, res: Response, next: NextFunction) {
   const { listId } = req.params;
   const list = await findListById(listId);
-  if (!req.user?.isAdministrator) {
-    const err = new HttpException(403, "403", "You is not authorised to execute this action.");
-    next(err);
-    return;
-  }
 
-  await deleteList(list!, req.user.emailAddress);
+  await deleteList(list!, req.user!.emailAddress);
 
   req.flash("deletedListCountry", list?.country?.name as string);
   req.flash("deletedListType", list?.type as string);

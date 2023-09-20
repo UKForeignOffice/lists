@@ -39,6 +39,7 @@
             Settings - {{ _.startCase(list.type) }}
           </h1>
         </div>
+        {% if req.user.isAdministrator %}
         <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
           {{ govukButton({
               text: "Delete list",
@@ -46,6 +47,7 @@
               href: req.params.listId + "/delete"
           }) }}
         </div>
+        {% endif %}
       </div>
 
       <div>
