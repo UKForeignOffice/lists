@@ -12,7 +12,7 @@ import { AuditEvent } from "@prisma/client";
 
 type ListWithJsonData = Array<ListItem & { jsonData: ListItemJsonData }>;
 
-export async function listsExportController(req: Request, res: Response, next: NextFunction) {
+export async function listExportController(req: Request, res: Response, next: NextFunction) {
   try {
     const [result] = await prisma.$transaction([
       prisma.list.findUnique({
