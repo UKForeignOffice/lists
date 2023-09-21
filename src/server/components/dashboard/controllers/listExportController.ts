@@ -14,7 +14,7 @@ type ListItemWithJsonData = ListItem & { jsonData: ListItemJsonData };
 
 export async function listExportController(req: Request, res: Response, next: NextFunction) {
   try {
-    const result = await prisma.lis.findUniqueOrThrow({
+    const result = await prisma.list.findUniqueOrThrow({
       where: {
         id: Number(req.params.listId),
       },
