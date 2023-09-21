@@ -10,34 +10,21 @@ import { format } from "date-fns";
 import { logger } from "server/services/logger";
 import { AuditEvent } from "@prisma/client";
 
-type ListWithJsonData = Array<ListItem & { jsonData: ListItemJsonData }>;
+type ListItemWithJsonData = ListItem & { jsonData: ListItemJsonData };
 
 export async function listExportController(req: Request, res: Response, next: NextFunction) {
   try {
-    const [result] = await prisma.$transaction([
-      prisma.list.findUnique({
-        where: {
-          id: Number(req.params.listId),
-        },
-        include: {
-          items: true,
-          country: true,
-        },
-      }),
-      prisma.audit.create({
-        data: {
-          type: "list",
-          auditEvent: AuditEvent.LIST_EXPORTED,
-          jsonData: {
-            listId: Number(req.params.listId),
-            userId: req.user?.id,
-            userEmail: req.user?.emailAddress,
-          },
-        },
-      }),
-    ]);
+    const result = await prisma.lis.findUniqueOrThrow({
+      where: {
+        id: Number(req.params.listId),
+      },
+      include: {
+        items: true,
+        country: true,
+      },
+    });
 
-    const formattedItems = formatProviderData((result?.items as ListWithJsonData) ?? []);
+    const formattedItems = (result.items as ListItemWithJsonData[]).map(formatForCSV);
 
     const output = await json2csv(formattedItems, {
       emptyFieldValue: "none provided",
@@ -68,27 +55,37 @@ export async function listExportController(req: Request, res: Response, next: Ne
     stream.pipe(res);
 
     logger.info(`List ${result?.id} exported to ${fileName} by ${req.user?.emailAddress}`);
+
+    await prisma.audit.create({
+      data: {
+        type: "list",
+        auditEvent: AuditEvent.LIST_EXPORTED,
+        jsonData: {
+          listId: Number(req.params.listId),
+          userId: req.user?.id,
+          userEmail: req.user?.emailAddress,
+        },
+      },
+    });
   } catch (error) {
     logger.error(`listsExportController error: ${error}`);
-    next("An error occurred whilst trying to export the list: ");
+    next();
   }
 }
 
-function formatProviderData(items: ListWithJsonData) {
-  return items.map((item) => {
-    const { type, jsonData, ...rest } = item;
-    const {
-      organisationName,
-      "address.firstLine": addressFirstLine,
-      "address.secondLine": addressSecondLine,
-      ...otherFields
-    } = jsonData as ListItemJsonData;
-    return {
-      organisationName,
-      ...otherFields,
-      addressFirstLine,
-      addressSecondLine,
-      ...rest,
-    };
-  });
+function formatForCSV(item: ListItemWithJsonData) {
+  const { type, jsonData, ...rest } = item;
+  const {
+    organisationName,
+    "address.firstLine": addressFirstLine,
+    "address.secondLine": addressSecondLine,
+    ...otherFields
+  } = jsonData as ListItemJsonData;
+  return {
+    organisationName,
+    ...otherFields,
+    addressFirstLine,
+    addressSecondLine,
+    ...rest,
+  };
 }
