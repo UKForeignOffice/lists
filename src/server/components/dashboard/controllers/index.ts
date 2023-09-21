@@ -1,3 +1,3 @@
 export * from "./controllers";
 export { listsController } from "./listsController";
-export { listsExportController } from "./listsExportController";
+export { listExportController } from "./listExportController";

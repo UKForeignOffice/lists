@@ -5,7 +5,7 @@ import {
   listsController,
   listDeleteController,
   listDeletePostController,
-  listsExportController,
+  listExportController,
 } from "server/components/dashboard/controllers";
 import * as annualReview from "server/components/dashboard/annualReview/controllers";
 import * as developmentControllers from "server/components/dashboard/listsItems/controllers.development";
@@ -78,8 +78,8 @@ listRouter.use("/:listId/delete", (req, _res, next) => {
 
 listRouter.get("/:listId/delete", listDeleteController);
 listRouter.post("/:listId/delete", listDeletePostController);
-listRouter.get("/:listId/csv-export", listsExportController);
-listRouter.get("/:listId/csv-export", validateActionPermission, listsExportController);
+listRouter.get("/:listId/csv", listExportController);
+listRouter.get("/:listId/csv", validateActionPermission, listExportController);
 
 listRouter.use("/:listId/related-links", relatedLinksRouter);
 
