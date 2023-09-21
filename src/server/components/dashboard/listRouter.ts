@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { listsEditController, listsEditPostController, listsController } from "server/components/dashboard/controllers";
+import { listsEditController, listsEditPostController, listsController, listDeleteController, listDeletePostController } from "server/components/dashboard/controllers";
 import * as annualReview from "server/components/dashboard/annualReview/controllers";
 import * as developmentControllers from "server/components/dashboard/listsItems/controllers.development";
 
@@ -58,6 +58,18 @@ listRouter.post("/:listId/annual-review-date", annualReview.editDatePostControll
 
 listRouter.get("/:listId", listsEditController);
 listRouter.post("/:listId", listsEditPostController);
+
+listRouter.use("/:listId/delete", (req, _res, next) => {
+  if (!req.user?.isAdministrator) {
+    const err = new HttpException(403, "403", "You are not authorised to execute this action.");
+    next(err);
+    return;
+  }
+  next();
+});
+
+listRouter.get("/:listId/delete", listDeleteController);
+listRouter.post("/:listId/delete", listDeletePostController);
 
 listRouter.use("/:listId/related-links", relatedLinksRouter);
 

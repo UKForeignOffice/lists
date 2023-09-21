@@ -1,5 +1,6 @@
 {% extends "./dashboard.njk" %}
 {% from "table/macro.njk" import govukTable %}
+{% import "./macros.njk" as dashboardMacros %}
 {% from "./partials/table-header-cell.njk" import tableHeaderCell %}
 
 {% block dashboard %}
@@ -7,6 +8,17 @@
     {% include "./partials/new-user-banner.njk" %}
   {% endif %}
 
+  {% if messages.deletedListCountry %}
+    {% set tmpl = [
+      'The list ',
+            'Translators and Interpreters' if messages.deletedListType === "translatorsInterpreters" else _.startCase(messages.deletedListType),
+      ' - ',
+      messages.deletedListCountry,
+      ' has been deleted'
+      ] | join
+    %}
+    {{ dashboardMacros.successBanner("Success", tmpl, "green") }}
+  {% endif %}
   {% if lists.length > 0 %}
     <div class="govuk-grid-row">
       <h1 class="govuk-grid-column-one-quarter govuk-table__caption--l">Your lists</h1>

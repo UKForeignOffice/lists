@@ -1,0 +1,55 @@
+{% extends "./dashboard.njk" %}
+{% import "./macros.njk" as dashboardMacros %}
+{% from "button/macro.njk" import govukButton %}
+
+{% block aside %}
+  <a class="govuk-link govuk-back-link" href="/dashboard/lists/{{listId}}">Back</a>
+{% endblock %}
+
+{% block dashboard %}
+  <h1 class="govuk-heading-l">Delete list</h1>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <p class="govuk-body">Type</p>
+    </div>
+    <div class="govuk-grid-column-three-quaters">
+      <p class="govuk-body govuk-!-font-weight-bold">{{ "Translators and Interpreters" if type === "translatorsInterpreters" else _.startCase(type) }}</p>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <p class="govuk-body">Country</p>
+    </div>
+    <div class="govuk-grid-column-three-quaters">
+      <p class="govuk-body govuk-!-font-weight-bold">{{ country }}</p>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <p class="govuk-body">Live</p>
+    </div>
+    <div class="govuk-grid-column-three-quaters">
+      <p class="govuk-body govuk-!-font-weight-bold">{{ live }}</p>
+    </div>
+  </div>
+
+  <form class="form" method="post" required>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <p class="govuk-body">
+      This list is being used by <strong>{{ live }}</strong> {{pluralize("provider", live)}}. Are you sure you want to permanently delete this list?
+    </p>
+
+    {{ govukButton({
+      text: "Keep list",
+      href: "/dashboard/lists/" + listId
+    }) }}
+
+    {{ govukButton({
+      text: "Delete list",
+      classes: "govuk-button--warning"
+    }) }}
+  </form>
+{% endblock %}

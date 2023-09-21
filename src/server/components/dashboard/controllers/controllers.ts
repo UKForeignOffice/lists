@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import _, { trim } from "lodash";
 import { dashboardRoutes } from "../routes";
-import { deleteUserByEmail, findUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
-import { createList, findListById, updateList } from "server/models/list";
+import { findUserByEmail, deleteUserByEmail, getUsersWithList, isAdministrator, updateUser } from "server/models/user";
+import { createList, findListById, updateList, findListDashboardData, deleteList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
 import { isGovUKEmailAddress } from "server/utils/validation";
@@ -189,6 +189,29 @@ export async function listsEditController(req: Request, res: Response, next: Nex
   }
 }
 
+export async function listDeleteController(req: Request, res: Response) {
+  const listData = await findListDashboardData(req.params.listId);
+
+  res.render("dashboard/lists-delete", {
+    type: listData?.type,
+    country: listData?.country,
+    live: listData?.live,
+    listId: req.params.listId,
+  });
+}
+
+export async function listDeletePostController(req: Request, res: Response, next: NextFunction) {
+  const { listId } = req.params;
+  const list = await findListById(listId);
+
+  await deleteList(list!, req.user!.emailAddress);
+
+  req.flash("deletedListCountry", list?.country?.name as string);
+  req.flash("deletedListType", list?.type as string);
+
+  res.redirect(dashboardRoutes.lists);
+}
+
 export async function listsEditPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const removeButtonClicked = "userEmail" in req.body;
@@ -227,7 +250,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
       href: "#publisher",
     };
     req.flash("questionError", JSON.stringify(error));
-    res.redirect("new");
+    res.redirect(listId === "new" ? "new" : res.locals.listsEditUrl);
     return;
   }
 

@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { AuditEvent, Prisma } from "@prisma/client";
 import { logger } from "server/services/logger";
 import { isGovUKEmailAddress } from "server/utils/validation";
 import { prisma } from "server/models/db/prisma-client";
@@ -249,4 +249,47 @@ export async function updateAnnualReviewDate(listId: string, nextAnnualReviewSta
       nextAnnualReviewStartDate,
     },
   });
+}
+
+export async function findListDashboardData(listId: string) {
+  return await prisma.listsForDashboard.findUnique({
+    where: {
+      listId: Number(listId),
+    },
+  });
+}
+
+export async function deleteList(list: List, userEmail: string) {
+  await prisma.$transaction([
+    prisma.list.delete({
+      where: {
+        id: Number(list.id),
+      },
+    }),
+    prisma.address.deleteMany({
+      where: {
+        ListItem: {
+          every: {
+            listId: Number(list.id),
+          },
+        },
+      },
+    }),
+    prisma.audit.create({
+      data: {
+        auditEvent: AuditEvent.LIST_DELETED,
+        type: "list",
+        jsonData: {
+          listId: list.id,
+          country: list.country?.name,
+          service: list.type,
+          deletedBy: userEmail,
+        },
+      },
+    }),
+  ]);
+
+  logger.info(
+    `Deleted List with id: ${list.id}, country: ${list.country?.name} and service: ${list.type} by ${userEmail}`
+  );
 }

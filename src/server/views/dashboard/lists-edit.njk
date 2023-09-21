@@ -1,5 +1,6 @@
 {% extends "./dashboard.njk" %}
 {% import "./macros.njk" as dashboardMacros %}
+{% from "button/macro.njk" import govukButton %}
 
 
 {% block content %}
@@ -32,9 +33,22 @@
       {% endif %}
 
       <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
-      <h1 class="govuk-heading-l">
-        Settings - {{ _.startCase(list.type) }}
-      </h1>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+          <h1 class="govuk-heading-l">
+            Settings - {{ _.startCase(list.type) }}
+          </h1>
+        </div>
+        {% if req.user.isAdministrator %}
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+          {{ govukButton({
+              text: "Delete list",
+              classes: "govuk-button--warning",
+              href: req.params.listId + "/delete"
+          }) }}
+        </div>
+        {% endif %}
+      </div>
 
       <div>
         <h2 class="govuk-heading-m">Annual review</h2>
@@ -80,10 +94,9 @@
                 <input class="govuk-input" id="publisher" name="publisher" type="email" aria-describedby="publisher-hint">
             </fieldset>
           </div>
-
-          <button class="govuk-button" data-module="govuk-button">
-              Add to list
-          </button>
+          {{ govukButton({
+            text: "Add to list"
+          }) }}
 
           {% if error.field === 'publisherList' %}
             <span class="govuk-error-message">

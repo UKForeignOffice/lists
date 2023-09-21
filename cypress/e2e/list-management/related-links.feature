@@ -20,15 +20,15 @@ Feature: Related links
     When I click the "Save" button
     Then I see "A related link has been added"
 
-    Scenario: Custom links can be changed
-      When a related link exists
-      And I click the link "Settings" in the row with header "Lawyers in Eurasia"
-      And I click Change "How to find eggs"
-      And I enter " (international guide)" for "Page title"
-      And I enter "/government/organisations/foreign-commonwealth-development-office" for "URL"
-      When I continue
-      And I click the "Save" button
-      Then I see "A related link has been updated"
+  Scenario: Custom links can be changed
+    When a related link exists
+    And I click the link "Settings" in the row with header "Lawyers in Eurasia"
+    And I click Change "How to find eggs"
+    And I enter " (international guide)" for "Page title"
+    And I enter "/government/organisations/foreign-commonwealth-development-office" for "URL"
+    When I continue
+    And I click the "Save" button
+    Then I see "A related link has been updated"
 
   Scenario: Only GOV.UK links are allowed
     When I click the link "Settings" in the row with header "Lawyers in Eurasia"
@@ -38,11 +38,9 @@ Feature: Related links
     And I continue
     Then I should see the error "You can only link to GOV.UK"
 
-    Scenario: Custom links can be removed
-      When a related link exists
-      And I click the link "Settings" in the row with header "Lawyers in Eurasia"
-      And I click Change "How to find eggs"
-      And I click the "Remove" button
-      Then I see "You removed a link to"
-
-
+  Scenario: Custom links can be removed
+    When a related link exists
+    And I click the link "Settings" in the row with header "Lawyers in Eurasia"
+    And I click Change "How to find eggs"
+    And I click the "Remove" button
+    Then I see "You removed a link to"
