@@ -224,7 +224,7 @@ export async function displayUnpublishWarning(
 }
 
 async function countNumberOfNonRespondents(listId: number, annualReviewStartDate: string | Date) {
-  const foo = await prisma.listItem.count({
+  return await prisma.listItem.count({
     where: {
       listId,
       isAnnualReview: true,
