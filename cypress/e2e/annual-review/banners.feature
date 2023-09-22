@@ -11,7 +11,7 @@ Feature: Annual review banners
       Then I see the start banner
 
 
-    Scenario: Service providers are going to be unpublished banner
+    Scenario: 1 Service provider is going to be unpublished banner
       And 1 days before unpublish
       And the batch process has run
       And the worker process has run
@@ -20,8 +20,9 @@ Feature: Annual review banners
       Then I see "1 service provider is going to be unpublished"
 
 
-    Scenario: Service providers are going to be unpublished banner
+    Scenario: 2 Service providers are going to be unpublished banner
       When a list item has been with the provider for 100 days with the reference "UNPUBLISH_DAY_TEST"
+      And 1 days before unpublish
       And the batch process has run
       And the worker process has run
       And the other eurasia lawyers have answered
