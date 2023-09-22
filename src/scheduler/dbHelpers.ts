@@ -119,25 +119,6 @@ export async function findListByAnnualReviewDate(annualReviewStartDate: Date): P
       },
       include: {
         country: true,
-        items: {
-          where: {
-            history: {
-              some: {
-                type: "PUBLISHED",
-                time: {
-                  lte: subMonths(Date.now(), 1),
-                },
-              },
-            },
-          },
-          include: {
-            history: {
-              orderBy: {
-                time: "desc",
-              },
-            },
-          },
-        },
       },
     })) as List[];
 

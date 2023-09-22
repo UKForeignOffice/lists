@@ -1,7 +1,16 @@
 import { addDays, startOfDay, subDays } from "date-fns";
 import type { CurrentAnnualReview } from "shared/types";
 import crypto from "crypto";
-import type { ListAnnualReviewPostReminderType } from "server/models/types";
+import type { ListAnnualReviewPostReminderType, ScheduledProcessKeyDates } from "server/models/types";
+import { subDaysFromISODate } from "server/components/dashboard/annualReview/helpers.keyDates";
+
+/**
+ * Describes a unit of time, e.g "ONE_MONTH" in days.
+ */
+const DAYS = {
+  ONE_MONTH: 28,
+  ONE_WEEK: 7,
+};
 
 export const schedulerMilestoneDays = {
   post: {
@@ -116,6 +125,32 @@ export function getDateContexts(annualReviewStartDate: Date): SchedulerDateConte
     annualReview: getAnnualReviewDateContexts(annualReviewStartDate),
     unpublish: getUnpublishedDateContexts(annualReviewStartDate),
   };
+}
+
+/**
+ * @throws {Error} will throw a date-fns error if days could not be calculated
+ */
+export function composeKeyDatesForDate(date: Date) {
+  const startDate = startOfDay(date);
+  const endDate = addDays(startDate, DAYS.ONE_WEEK * 6);
+  const keyDates: ScheduledProcessKeyDates = {
+    annualReview: {
+      POST_ONE_DAY: subDays(startDate, 1).toISOString(),
+      POST_ONE_MONTH: subDays(startDate, DAYS.ONE_MONTH).toISOString(),
+      POST_ONE_WEEK: subDays(startDate, DAYS.ONE_WEEK).toISOString(),
+      START: startDate.toISOString(),
+    },
+    unpublished: {
+      ONE_DAY: subDays(endDate, 1).toISOString(),
+      ONE_WEEK: subDays(endDate, DAYS.ONE_WEEK).toISOString(),
+      PROVIDER_FIVE_WEEKS: subDays(endDate, DAYS.ONE_WEEK * 5).toISOString(),
+      PROVIDER_FOUR_WEEKS: subDays(endDate, DAYS.ONE_WEEK * 4).toISOString(),
+      PROVIDER_THREE_WEEKS: subDays(endDate, DAYS.ONE_WEEK * 3).toISOString(),
+      PROVIDER_TWO_WEEKS: subDays(endDate, DAYS.ONE_WEEK * 2).toISOString(),
+      UNPUBLISH: endDate.toISOString(),
+    },
+  };
+  return keyDates;
 }
 
 export function getCurrentAnnualReviewData(listItemIdsForAnnualReview: any[], contexts: SchedulerDateContexts) {

@@ -1,4 +1,10 @@
-import { DateContext, getDateContexts, schedulerMilestoneDays } from "../helpers";
+import {
+  composeKeyDatesForDate,
+  DateContext,
+  getCurrentAnnualReviewData,
+  getDateContexts,
+  schedulerMilestoneDays,
+} from "../helpers";
 import { startOfDay } from "date-fns";
 
 function testContext(actualUnpublishContext: DateContext[], expectedDateContexts: DateContext[], daysToAction: number) {
@@ -116,4 +122,12 @@ describe("Today Date", () => {
     const actualDate = startOfDay(new Date());
     expect(actualDate.toISOString()).toBe(expectedDate);
   });
+});
+
+test("getCurrentAnnualReviewData returns the same dates as composeKeyDates", () => {
+  const contexts = getDateContexts(new Date("2022-05-01T00:00:00.000Z"));
+  const getCurrentAnnualReviewDataKeyDates = getCurrentAnnualReviewData([], contexts).keyDates;
+
+  const composedKeyDates = composeKeyDatesForDate(new Date("2022-05-01T00:00:00.000Z"));
+  expect(getCurrentAnnualReviewDataKeyDates).toEqual(composedKeyDates);
 });

@@ -27,10 +27,10 @@ export interface AnnualReviewKeyDates extends JsonObject {
 }
 
 export interface UnpublishedKeyDates extends JsonObject {
-  PROVIDER_FIVE_WEEKS: string;
-  PROVIDER_FOUR_WEEKS: string;
-  PROVIDER_THREE_WEEKS: string;
-  PROVIDER_TWO_WEEKS: string;
+  PROVIDER_FIVE_WEEKS?: string;
+  PROVIDER_FOUR_WEEKS?: string;
+  PROVIDER_THREE_WEEKS?: string;
+  PROVIDER_TWO_WEEKS?: string;
   ONE_WEEK: string;
   ONE_DAY: string;
   UNPUBLISH: string;

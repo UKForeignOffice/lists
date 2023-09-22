@@ -108,7 +108,7 @@ async function createEligibleListItem(reference) {
     variables: {
       data: {
         reference,
-        ...listItemCreateBaseObject(),
+        ...listItemCreateBaseObject(reference),
         history: {
           createMany: {
             data: [events.NEW(), events.PUBLISHED()],
@@ -187,23 +187,27 @@ async function baseJsonData() {
     },
   };
 }
-function jsonDataLawyers() {
+function jsonDataLawyers(ref) {
   return {
     ...baseJsonData(),
     areasOfLaw: [],
     size: "Independent lawyer / sole practitioner",
     proBono: true,
     legalAid: true,
+    metadata: {
+      emailVerified: true,
+    },
+    contactName: ref,
   };
 }
-function listItemCreateBaseObject() {
+function listItemCreateBaseObject(ref) {
   return {
     type: "lawyers",
     isApproved: true,
     isPublished: true,
     isBlocked: false,
     status: "PUBLISHED",
-    jsonData: jsonDataLawyers(),
+    jsonData: jsonDataLawyers(ref),
     list: {
       connect: {
         reference: "SMOKE",
