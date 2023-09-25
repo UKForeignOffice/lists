@@ -1,7 +1,7 @@
 import { subMonths } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { logger } from "scheduler/logger";
-import { Audit, Status } from "@prisma/client";
+import { Status } from "@prisma/client";
 
 import type { Prisma, ListItemEvent } from "@prisma/client";
 import type {
