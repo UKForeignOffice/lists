@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { ListItem } from "server/models/types";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
@@ -12,7 +12,7 @@ import { AuditEvent } from "@prisma/client";
 
 type ListItemWithJsonData = ListItem & { jsonData: ListItemJsonData };
 
-export async function listExportController(req: Request, res: Response, next: NextFunction) {
+export async function listExportController(req: Request, res: Response) {
   try {
     const result = await prisma.list.findUniqueOrThrow({
       where: {
@@ -67,18 +67,19 @@ export async function listExportController(req: Request, res: Response, next: Ne
         },
       },
     });
-  } catch (error) {
-    logger.error(`listsExportController error: ${error}`);
-    next(`An error occurred whilst trying to export the list: ${error}`);
+  } catch (err) {
+    logger.error(`listExportController error: Error exporting list ${err}`);
+    req.flash("exportError", "Error exporting this list");
+    res.redirect(`/dashboard/lists/${req.params.listId}`);
   }
-}
 
-function formatForCSV(item: ListItemWithJsonData) {
-  const { type, jsonData, ...rest } = item;
-  const { organisationName, ...otherFields } = jsonData as ListItemJsonData;
-  return {
-    organisationName,
-    ...otherFields,
-    ...rest,
-  };
+  function formatForCSV(item: ListItemWithJsonData) {
+    const { type, jsonData, ...rest } = item;
+    const { organisationName, ...otherFields } = jsonData as ListItemJsonData;
+    return {
+      organisationName,
+      ...otherFields,
+      ...rest,
+    };
+  }
 }

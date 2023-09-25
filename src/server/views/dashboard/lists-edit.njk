@@ -19,6 +19,10 @@
         {{ dashboardMacros.successBanner("Success", messages.successBannerMessage, "green") }}
       {% endif %}
 
+      {% if messages.exportError %}
+        {{ dashboardMacros.errorBanner(messages.exportError) }}
+      {% endif %}
+
 
       {% if messages.relatedLinkBannerStatus %}
         {% include "./related-links/banner.njk" %}
@@ -53,7 +57,10 @@
       <div>
         {% if req.user.isAdministrator %}
         <p class="govuk-body govuk-!-text-align-right">
-          <a href="/dashboard/lists/{{list.id}}/csv" class="govuk-link" download>Export list as CSV</a>
+          {# <form action="/dashboard/lists/{{list.id}}/csv" method="GET">
+            <button type="submit">Export list as CSV</button>
+          </form> #}
+          <a href="/dashboard/lists/{{list.id}}/csv" class="govuk-link">Export list as CSV</a>
         </p>
         {% endif %}
         <h2 class="govuk-heading-m">Annual review</h2>
