@@ -67,18 +67,10 @@ listRouter.post("/:listId/annual-review-date", annualReview.editDatePostControll
 listRouter.get("/:listId", listsEditController);
 listRouter.post("/:listId", listsEditPostController);
 
-listRouter.use("/:listId/delete", (req, _res, next) => {
-  if (!req.user?.isAdministrator) {
-    const err = new HttpException(403, "403", "You are not authorised to execute this action.");
-    next(err);
-    return;
-  }
-  next();
-});
+listRouter.use("/:listId/delete", validateActionPermission);
 
 listRouter.get("/:listId/delete", listDeleteController);
 listRouter.post("/:listId/delete", listDeletePostController);
-listRouter.get("/:listId/csv", listExportController);
 listRouter.get("/:listId/csv", validateActionPermission, listExportController);
 
 listRouter.use("/:listId/related-links", relatedLinksRouter);

@@ -45,7 +45,7 @@ export async function listExportController(req: Request, res: Response, next: Ne
 
     const currentDate = new Date();
     const formattedDate = format(currentDate, "yyyy-MM-dd");
-    const fileName = `${result?.country.name}-${startCase(result?.type)}-${formattedDate}.csv`;
+    const fileName = `${result.country.name}-${startCase(result.type)}-${formattedDate}.csv`;
 
     const stream = new Readable();
     stream.push(output);
@@ -54,7 +54,7 @@ export async function listExportController(req: Request, res: Response, next: Ne
     res.set("Content-Type", "text/csv");
     stream.pipe(res);
 
-    logger.info(`List ${result?.id} exported to ${fileName} by ${req.user?.emailAddress}`);
+    logger.info(`List ${result.id} exported to ${fileName} by ${req.user?.emailAddress}`);
 
     await prisma.audit.create({
       data: {
@@ -69,23 +69,16 @@ export async function listExportController(req: Request, res: Response, next: Ne
     });
   } catch (error) {
     logger.error(`listsExportController error: ${error}`);
-    next();
+    next(`An error occurred whilst trying to export the list: ${error}`);
   }
 }
 
 function formatForCSV(item: ListItemWithJsonData) {
   const { type, jsonData, ...rest } = item;
-  const {
-    organisationName,
-    "address.firstLine": addressFirstLine,
-    "address.secondLine": addressSecondLine,
-    ...otherFields
-  } = jsonData as ListItemJsonData;
+  const { organisationName, ...otherFields } = jsonData as ListItemJsonData;
   return {
     organisationName,
     ...otherFields,
-    addressFirstLine,
-    addressSecondLine,
     ...rest,
   };
 }
