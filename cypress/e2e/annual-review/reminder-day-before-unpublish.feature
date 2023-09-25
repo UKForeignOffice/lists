@@ -22,6 +22,7 @@ Feature: Check that a provider is sent a reminder email only on the day before t
     And the batch process has run
     And the worker process has run
     Then the unpublish reminder email for 1 days is sent to eligible providers
+
   Scenario: The provider is not sent a reminder email on the day they're unpublished
     When 0 days before unpublish
     And the batch process has run
