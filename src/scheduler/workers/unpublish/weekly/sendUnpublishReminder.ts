@@ -1,17 +1,16 @@
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
 import type { RequestError, SendEmailResponse } from "notifications-node-client";
-import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 import type { ListItem } from "@prisma/client";
 import { AnnualReviewProviderEmailType } from "@prisma/client";
 import type { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
+import { getNotifyClient } from "shared/getNotifyClient";
 
 const template = NOTIFY.templates.annualReviewNotices.providerStart;
-const notifyClient = new NotifyClient(NOTIFY.apiKey);
-
+const notifyClient = getNotifyClient();
 export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
   const logger = schedulerLogger.child({
     listId: listItem.listId,
