@@ -1,8 +1,7 @@
 import { findListByAnnualReviewDate, updateListForAnnualReview } from "scheduler/dbHelpers";
 import type { List } from "server/models/types";
 import { logger } from "scheduler/logger";
-import * as helpers from "../helpers";
-import { composeKeyDatesForDate, getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
+import { composeKeyDatesForDate, schedulerMilestoneDays } from "../helpers";
 import { addDays } from "date-fns";
 import _ from "lodash";
 import { findEligibleListItems } from "./populateMissingAnnualReviewDates/findEligibleListItems";

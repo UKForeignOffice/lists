@@ -1,7 +1,7 @@
 import { subMonths } from "date-fns";
 import { prisma } from "scheduler/prismaClient";
 import { logger } from "scheduler/logger";
-import { Status } from "@prisma/client";
+import { Audit, Status } from "@prisma/client";
 
 import type { Prisma, ListItemEvent } from "@prisma/client";
 import type {
@@ -92,14 +92,26 @@ export async function updateListForAnnualReview(
         currentAnnualReview: listData.currentAnnualReview,
       },
     };
+    const [listResult] = await prisma.$transaction([
+      prisma.list.update({
+        where: {
+          id: list.id,
+        },
+        data,
+      }),
+      prisma.audit.create({
+        data: {
+          jsonData: {
+            itemId: list.id,
+            currentAnnualReview: listData.currentAnnualReview,
+          },
+          type: "list",
+          auditEvent: "ANNUAL_REVIEW",
+        },
+      }),
+    ]);
 
-    const result = (await prisma.list.update({
-      where: {
-        id: list.id,
-      },
-      data,
-    })) as List;
-    return { result };
+    return { result: listResult as List };
   } catch (error) {
     const errorMessage = `Unable to update list with id ${list.id} for annual review: ${(error as Error).message}`;
     logger.error(`updateListForAnnualReview: ${errorMessage}`);
