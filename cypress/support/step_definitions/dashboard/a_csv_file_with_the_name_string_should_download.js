@@ -15,7 +15,6 @@ Then("A csv file with the name {string} should download", (fileName) => {
   cy.intercept({ method: 'GET', url: '/dashboard/lists/634/csv' }, (req) => {
     req.reply({
       statusCode: 200,
-      ...req
     });
   }).as('responseRole');
 
