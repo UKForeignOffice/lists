@@ -2,28 +2,27 @@ import { findListByAnnualReviewDate, updateListForAnnualReview } from "scheduler
 import type { List } from "server/models/types";
 import { logger } from "scheduler/logger";
 import * as helpers from "../helpers";
-import { getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
+import { composeKeyDatesForDate, getCurrentAnnualReviewData, schedulerMilestoneDays } from "../helpers";
 import { addDays } from "date-fns";
 import _ from "lodash";
 import { findEligibleListItems } from "./populateMissingAnnualReviewDates/findEligibleListItems";
+import crypto from "crypto";
 
 /**
  * @param list - from {@link findListByAnnualReviewDate}. These lists are due to start annual review.
  */
 export async function populateCurrentAnnualReview(list: List): Promise<void> {
-  const listItems = await findEligibleListItems(list.id);
+  const listItems = (await findEligibleListItems(list.id)) ?? [];
 
-  if (!listItems?.length) {
-    logger.info(`No list items identified for list ${list.id}, excluding from sending annual review emails`);
-    return;
-  }
+  const eligibleListItemIds = listItems.map((listItem) => listItem.id);
 
-  const listItemIdsForAnnualReview = listItems.map((listItem) => listItem.id);
-
-  const contexts = helpers.getDateContexts(list.nextAnnualReviewStartDate);
   const currentAnnualReviewAlreadyExists = !!list.jsonData?.currentAnnualReview?.reference;
 
-  const currentAnnualReview = getCurrentAnnualReviewData(listItemIdsForAnnualReview, contexts);
+  const currentAnnualReview = {
+    reference: crypto.randomUUID(),
+    eligibleListItems: eligibleListItemIds,
+    keyDates: composeKeyDatesForDate(list.nextAnnualReviewStartDate),
+  };
 
   let shouldUpdateList = true;
 
@@ -33,6 +32,7 @@ export async function populateCurrentAnnualReview(list: List): Promise<void> {
     const existingEligibleListItems = existingCurrentAnnualReview.eligibleListItems.sort(numeric);
     const newEligibleListItems = currentAnnualReview.eligibleListItems.sort(numeric);
     shouldUpdateList = !_.isEqual(existingEligibleListItems, newEligibleListItems);
+
     if (shouldUpdateList) {
       currentAnnualReview.reference = existingCurrentAnnualReview.reference;
       currentAnnualReview.keyDates = existingCurrentAnnualReview.keyDates;
