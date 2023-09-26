@@ -57,9 +57,6 @@
       <div>
         {% if req.user.isAdministrator %}
         <p class="govuk-body govuk-!-text-align-right">
-          {# <form action="/dashboard/lists/{{list.id}}/csv" method="GET">
-            <button type="submit">Export list as CSV</button>
-          </form> #}
           <a href="/dashboard/lists/{{list.id}}/csv" class="govuk-link">Export list as CSV</a>
         </p>
         {% endif %}
