@@ -131,3 +131,24 @@ test("getCurrentAnnualReviewData returns the same dates as composeKeyDates", () 
   const composedKeyDates = composeKeyDatesForDate(new Date("2022-05-01T00:00:00.000Z"));
   expect(getCurrentAnnualReviewDataKeyDates).toEqual(composedKeyDates);
 });
+
+test("composeKeyDatesForDate is correct when today's date is 1st May 2022", () => {
+  const keyDates = composeKeyDatesForDate(new Date("2022-05-01T00:00:00.000Z"));
+  expect(keyDates).toEqual({
+    annualReview: {
+      POST_ONE_DAY: "2022-04-30T00:00:00.000Z",
+      POST_ONE_MONTH: "2022-04-03T00:00:00.000Z",
+      POST_ONE_WEEK: "2022-04-24T00:00:00.000Z",
+      START: "2022-05-01T00:00:00.000Z",
+    },
+    unpublished: {
+      ONE_DAY: "2022-06-11T00:00:00.000Z",
+      ONE_WEEK: "2022-06-05T00:00:00.000Z",
+      PROVIDER_FIVE_WEEKS: "2022-05-08T00:00:00.000Z",
+      PROVIDER_FOUR_WEEKS: "2022-05-15T00:00:00.000Z",
+      PROVIDER_THREE_WEEKS: "2022-05-22T00:00:00.000Z",
+      PROVIDER_TWO_WEEKS: "2022-05-29T00:00:00.000Z",
+      UNPUBLISH: "2022-06-12T00:00:00.000Z",
+    },
+  });
+});
