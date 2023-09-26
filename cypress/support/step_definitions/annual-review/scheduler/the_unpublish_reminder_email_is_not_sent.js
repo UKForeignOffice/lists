@@ -25,13 +25,8 @@ Then("the unpublish reminder email is not sent", async () => {
         variables: {
           where: {
             type: "REMINDER",
+            annualReviewEmailType: "oneDayBeforeUnpublish",
             AND: [
-              {
-                jsonData: {
-                  path: ["notes"],
-                  array_contains: ["sent reminder for"],
-                },
-              },
               {
                 jsonData: {
                   path: ["reference"],
