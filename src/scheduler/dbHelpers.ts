@@ -102,6 +102,7 @@ export async function updateListForAnnualReview(
       prisma.audit.create({
         data: {
           jsonData: {
+            eventName: "startAnnualReview",
             itemId: list.id,
             currentAnnualReview: listData.currentAnnualReview,
           },
