@@ -106,11 +106,12 @@ model Audit {
   id                  Int      @id @default(autoincrement())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  emailType           PostEmailType?
   type                String?
   auditEvent          AuditEvent @default(UNDEFINED)
 
   jsonData            Json
+
+  annualReviewEmailType           AnnualReviewPostEmailType?
 
   @@index([type])
   @@index([jsonData])
@@ -155,8 +156,10 @@ model Event {
   listItem            ListItem? @relation(fields: [listItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listItemId          Int
   type                ListItemEvent
-  emailType           ProviderEmailType?
   jsonData            Json
+
+
+  annualReviewEmailType   AnnualReviewProviderEmailType?
 
   @@index([time, listItemId])
 }
@@ -208,18 +211,19 @@ view ListsForDashboard {
   @@unique([listId])
 }
 
-enum PostEmailType {
-  sendOneMonthPostEmail
-  sendOneWeekPostEmail
-  sendOneDayPostEmail
-  sendStartedPostEmail
-  sendUnpublishOneDayPostEmail
-  sendUnpublishWeeklyPostEmail
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewPostEmailType {
+  oneMonthBeforeStart // sent one month before nextAnnualReviewStartDate
+  oneWeekBeforeStart // sent one week before
+  oneDayBeforeStart  // sent one day before
+  started // sent day of start
+  oneDayBeforeUnpublish // sent one day before unpublishing
 }
 
-enum ProviderEmailType {
-  sendStartedProviderEmail
-  sendUnpublishedProviderEmail
-  sendUnpublishOneDayProviderEmail
-  sendUnpublishWeeklyProviderEmail
+// These enums are ordered and `<` and `>` operators are used on these enums. Do not adjust their order!
+enum AnnualReviewProviderEmailType {
+  started // sent day of nextAnnualReviewStartDate
+  weeklyUnpublish // sent every week until unpublish date
+  oneDayBeforeUnpublish // sent day before unpublish
+  unpublished // sent day of unpublishing
 }

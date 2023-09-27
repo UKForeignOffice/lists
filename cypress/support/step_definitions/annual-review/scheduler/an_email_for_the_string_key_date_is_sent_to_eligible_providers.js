@@ -13,13 +13,8 @@ Then("an email for the {string} key date is sent to eligible providers", async f
       variables: {
         where: {
           type: "REMINDER",
+          annualReviewEmailType: "started",
           AND: [
-            {
-              jsonData: {
-                path: ["notes"],
-                array_contains: ["sendStartedProviderEmail"],
-              },
-            },
             {
               jsonData: {
                 path: ["reference"],

@@ -19,7 +19,7 @@
     "lint:fix": "eslint ./src --fix",
     "test": "TZ=UTC jest --detectOpenHandles --forceExit --verbose",
     "test:debug": "node --expose-gc ./node_modules/.bin/jest --verbose --logHeapUsage -i --detect-leaks --detectOpenHandles",
-    "test:dev": "jest --watch",
+    "test:dev": "TZ=UTC jest --watch",
     "test:coverage": "jest --coverage",
     "prisma:generate": "npx prisma generate --schema ./src/server/models/db/schema.prisma",
     "prisma:migrate": "npx prisma migrate dev --schema ./src/server/models/db/schema.prisma",

@@ -1,4 +1,4 @@
-import type { ProviderEmailType } from "@prisma/client";
+import type { AnnualReviewProviderEmailType } from "@prisma/client";
 import type { SendEmailResponse } from "notifications-node-client";
 import { prisma } from "scheduler/prismaClient";
 import { EVENTS } from "shared/listItemEvent";
@@ -7,8 +7,12 @@ interface AddReminderEventInput {
   id: number;
   response: SendEmailResponse;
   notes?: string[];
+
+  /**
+   * Annual review reference
+   */
   reference?: string;
-  emailType: ProviderEmailType;
+  emailType: AnnualReviewProviderEmailType;
 }
 
 export async function addReminderEvent({ id, response, notes, reference, emailType }: AddReminderEventInput) {

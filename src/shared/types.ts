@@ -37,11 +37,7 @@ export interface Audit extends PrismaClient.Audit {
   jsonData: ServerTypes.AuditEventJsonData;
 }
 
-export type ListAnnualReviewPostReminderType =
-  | "sendOneMonthPostEmail"
-  | "sendOneWeekPostEmail"
-  | "sendOneDayPostEmail"
-  | "sendStartedPostEmail";
+export type ListAnnualReviewPostReminderType = PrismaClient.AnnualReviewPostEmailType;
 
 export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
   eventName: ServerTypes.AuditListEventName;
@@ -52,7 +48,7 @@ export interface ListEventJsonData extends ServerTypes.BaseAuditEventJsonData {
     | ListItemAnnualReviewProviderReminderType;
 }
 
-export type ListItemAnnualReviewProviderReminderType = "sendStartedProviderEmail";
+export type ListItemAnnualReviewProviderReminderType = PrismaClient.AnnualReviewProviderEmailType;
 
 export interface AuditCreateInput extends PrismaClient.Prisma.AuditCreateInput {
   type: "user" | "list" | "listItem";

@@ -1,5 +1,6 @@
-import { ListItemEvent } from "@prisma/client";
+import type { AnnualReviewPostEmailType } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
+import { logger } from "scheduler/logger";
 
 interface GetReminderEventsOptions {
   annualReviewReference: string;
@@ -7,55 +8,8 @@ interface GetReminderEventsOptions {
   annualReveiwStartDate?: Date;
 }
 
-export async function findAllReminderEvents({
-  annualReviewReference,
-  itemId,
-  annualReveiwStartDate,
-}: GetReminderEventsOptions) {
-  const andCondition = [
-    {
-      type: ListItemEvent.REMINDER,
-    },
-    {
-      jsonData: {
-        path: ["reference"],
-        equals: annualReviewReference,
-      },
-    },
-    {
-      ...(itemId && {
-        listItemId: itemId,
-      }),
-    },
-    {
-      ...(annualReveiwStartDate && {
-        time: {
-          gte: annualReveiwStartDate,
-        },
-      }),
-    },
-  ];
-
-  try {
-    const result = await prisma.event.findMany({
-      take: 1,
-      orderBy: {
-        time: "desc",
-      },
-      where: {
-        AND: andCondition,
-      },
-    });
-    return { result };
-  } catch (e) {
-    const message = `Unable to find audit records: ${e.message}`;
-    return { error: new Error(message) };
-  }
-}
-
 export async function findAllReminderAudits({
   annualReviewReference,
-  itemId,
   annualReveiwStartDate,
 }: GetReminderEventsOptions) {
   const andCondition = [
@@ -67,14 +21,6 @@ export async function findAllReminderAudits({
         path: ["annualReviewRef"],
         equals: annualReviewReference,
       },
-    },
-    {
-      ...(itemId && {
-        jsonData: {
-          path: ["itemId"],
-          equals: itemId,
-        },
-      }),
     },
     {
       ...(annualReveiwStartDate && {
@@ -101,3 +47,23 @@ export async function findAllReminderAudits({
     return { error: new Error(message) };
   }
 }
+
+/**
+ *
+ */
+async function getMaxEmailTypeByReference(reference: string) {
+  try {
+    const result: Array<{ max: AnnualReviewPostEmailType }> = await prisma.$queryRaw`
+      select max("annualReviewEmailType") from "Audit" where "jsonData"->>'annualReviewRef' = ${reference} and "annualReviewEmailType" is not null;
+  `;
+
+    return result?.at?.(0)?.max;
+  } catch (e) {
+    logger.error(`audit.getMaxEmailTypeByReference: ${e}`);
+  }
+}
+
+export const audit = {
+  getMaxEmailTypeByReference,
+  findAll: findAllReminderAudits,
+};
