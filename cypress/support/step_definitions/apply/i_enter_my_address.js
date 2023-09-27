@@ -8,27 +8,18 @@ const defaultAddress = {
   country: "Italy",
 };
 
-When(
-  "I enter my address {string} {string} {string} {string} {string}",
-  (lineOne, LineTwo, town, postCode, country) => {
-    cy.findByRole("textbox", { name: "Company name" }).type(nanoid(5));
-    cy.findByRole("textbox", { name: "Address line 1" }).type(
-      lineOne || defaultAddress.lineOne
-    );
-    cy.findByRole("textbox", { name: "Address line 2 (Optional)" }).type(
-      LineTwo || defaultAddress.lineTwo
-    );
+When("I enter my address {string} {string} {string} {string} {string}", (lineOne, LineTwo, town, postCode, country) => {
+  cy.findByRole("textbox", { name: "Company name" }).type(nanoid(5));
+  cy.findByRole("textbox", { name: "Address line 1" }).type(lineOne || defaultAddress.lineOne);
+  cy.findByRole("textbox", { name: "Address line 2 (Optional)" }).type(LineTwo || defaultAddress.lineTwo);
 
-    cy.findByRole("textbox", { name: "Town or city" }).type(
-      town || defaultAddress.town
-    );
+  cy.findByRole("textbox", { name: "Town or city" }).type(town || defaultAddress.town);
 
-    cy.findByRole("textbox", {
-      name: "Post code / area code",
-    }).type(postCode || defaultAddress.postCode);
+  cy.findByRole("textbox", {
+    name: "Post code / area code",
+  }).type(postCode || defaultAddress.postCode);
 
-    cy.get("select").select(country);
+  cy.get("select").select(country);
 
-    cy.findByRole("button").click();
-  }
-);
+  cy.findByRole("button").click();
+});

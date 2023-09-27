@@ -17,9 +17,7 @@ describe("Cookies", () => {
   });
 
   test("sitemap route loads successfully", async () => {
-    const { status, text } = await request(server)
-      .get(sitemapPath)
-      .type("text/html");
+    const { status, text } = await request(server).get(sitemapPath).type("text/html");
 
     const $html = $.load(text);
     const $main = $html("main");

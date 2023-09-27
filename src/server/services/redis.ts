@@ -1,12 +1,6 @@
 import IORedis from "ioredis";
 import { logger } from "./logger";
-import {
-  REDIS_HOST,
-  REDIS_PORT,
-  REDIS_PASSWORD,
-  REDIS_TLS,
-  REDIS_CLUSTER_MODE,
-} from "server/config";
+import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_TLS, REDIS_CLUSTER_MODE } from "server/config";
 
 export type RedisClient = IORedis.Cluster | IORedis.Redis;
 
@@ -29,7 +23,9 @@ export function getRedisClient(): RedisClient {
           },
         ],
         {
-          dnsLookup: (address, callback) => callback(null, address),
+          dnsLookup: (address, callback) => {
+            callback(null, address);
+          },
           redisOptions: {
             password: REDIS_PASSWORD,
             tls: REDIS_TLS ? {} : undefined,

@@ -18,8 +18,7 @@ describe("Feedback Model:", () => {
         answer: "dsadsadsa",
       },
       {
-        question:
-          "How easy or difficult was it to find what you were looking for?",
+        question: "How easy or difficult was it to find what you were looking for?",
         answer: "Easy",
       },
       {
@@ -31,8 +30,7 @@ describe("Feedback Model:", () => {
         answer: "dsadsadas",
       },
       {
-        question:
-          "How likely would you be to recommend this service to other people?",
+        question: "How likely would you be to recommend this service to other people?",
         answer: "Extremely likely",
       },
     ];

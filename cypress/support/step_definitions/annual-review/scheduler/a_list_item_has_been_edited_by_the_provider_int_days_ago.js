@@ -13,7 +13,7 @@ When("a list item has been edited by the provider {int} days ago", (days) => {
         status: "EDITED",
         jsonData: {
           emailAddress: "test@test.com",
-          contactName: "Buster"
+          contactName: "Buster",
         },
         list: {
           connect: {

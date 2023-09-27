@@ -1,5 +1,9 @@
 Given("a list exists with users", async () => {
-  const emails = [{ email: 'smoke@cautionyourblast.com' }, { email: 'smoke+1@cautionyourblast.com' }, { email: 'smoke+2@cautionyourblast.com' }];
+  const emails = [
+    { email: "smoke@cautionyourblast.com" },
+    { email: "smoke+1@cautionyourblast.com" },
+    { email: "smoke+2@cautionyourblast.com" },
+  ];
 
   cy.task("db", {
     operation: "list.findUnique",
@@ -22,8 +26,8 @@ Given("a list exists with users", async () => {
             },
           },
           users: {
-            connect: emails
-          }
+            connect: emails,
+          },
         },
         update: {
           type: "lawyers",
@@ -31,8 +35,8 @@ Given("a list exists with users", async () => {
             deleteMany: {},
           },
           users: {
-            connect: emails
-          }
+            connect: emails,
+          },
         },
         where: {
           reference: "SMOKE",

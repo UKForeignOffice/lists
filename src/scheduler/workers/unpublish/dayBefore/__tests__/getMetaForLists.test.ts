@@ -1,5 +1,5 @@
 import { getMetaForList } from "../getMetaForList";
-import {subDays} from "date-fns";
+import { subDays } from "date-fns";
 
 test.each`
   daysBeforeUnpublish

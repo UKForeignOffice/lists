@@ -11,12 +11,14 @@ describe("Audit Model:", () => {
     test.skip("create command is correct", async () => {
       prisma.audit.create.mockResolvedValue(sampleAuditObject);
 
-      await recordListItemEvent({
+      await recordListItemEvent(
+        {
           eventName: "new",
           itemId: 123,
           userId: 1,
         },
-        AuditEvent.NEW);
+        AuditEvent.NEW
+      );
 
       expect(prisma.audit.create).toHaveBeenCalledWith({
         data: {
@@ -29,12 +31,14 @@ describe("Audit Model:", () => {
     test("create command result is correct", async () => {
       prisma.audit.create.mockResolvedValue(sampleAuditObject);
 
-      const result = await recordListItemEvent({
-        eventName: "new",
-        itemId: 123,
-        userId: 1,
-      },
-        AuditEvent.NEW);
+      const result = await recordListItemEvent(
+        {
+          eventName: "new",
+          itemId: 123,
+          userId: 1,
+        },
+        AuditEvent.NEW
+      );
 
       expect(result).toBe(sampleAuditObject);
     });

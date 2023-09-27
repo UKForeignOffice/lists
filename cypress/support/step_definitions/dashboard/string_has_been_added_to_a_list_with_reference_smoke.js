@@ -22,8 +22,8 @@ When("User {string} has been added to list with reference:SMOKE", (email) => {
         },
         data: {
           users: {
-            connect: { email }
-          }
+            connect: { email },
+          },
         },
       },
     });

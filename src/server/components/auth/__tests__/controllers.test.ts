@@ -1,9 +1,4 @@
-import {
-  getLoginController,
-  postLoginController,
-  getLogoutController,
-  authController,
-} from "../controllers";
+import { getLoginController, postLoginController, getLogoutController, authController } from "../controllers";
 import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
 import * as userModel from "server/models/user";
@@ -56,9 +51,7 @@ describe("Auth Module", () => {
   }
 
   function spyCreateAuthenticationPath(): any {
-    return jest
-      .spyOn(tokenService, "createAuthenticationPath")
-      .mockResolvedValue("/login?token=123Token");
+    return jest.spyOn(tokenService, "createAuthenticationPath").mockResolvedValue("/login?token=123Token");
   }
 
   describe("getLoginController", () => {
@@ -109,10 +102,7 @@ describe("Auth Module", () => {
 
       setTimeout(() => {
         expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
-        expect(sendEmailSpy).toHaveBeenCalledWith(
-          email,
-          "https://test-domain/login?token=123Token"
-        );
+        expect(sendEmailSpy).toHaveBeenCalledWith(email, "https://test-domain/login?token=123Token");
         done();
       });
     });
@@ -199,9 +189,7 @@ describe("Auth Module", () => {
     let spyCreateUser: any;
 
     beforeEach(() => {
-      spyFindUserByEmail = jest
-        .spyOn(userModel, "findUserByEmail")
-        .mockResolvedValue(undefined);
+      spyFindUserByEmail = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(undefined);
       spyCreateUser = jest.spyOn(userModel, "createUser").mockResolvedValue({
         email,
         jsonData: {

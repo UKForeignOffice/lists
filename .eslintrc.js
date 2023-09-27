@@ -7,10 +7,13 @@ module.exports = {
     {
       files: ["*.ts", "*.tsx"],
       parserOptions: {
-        project: ["tsconfig.json"],
+        project: ["./tsconfig.json"],
       },
     },
   ],
+  parserOptions: {
+    project: ["./tsconfig.json"],
+  },
   rules: {
     "prettier/prettier": 1,
     "no-console": ["error"],
@@ -41,5 +44,6 @@ module.exports = {
     "src/form-runner/form-runner-app/",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
+    "cypress/support/step_definitions/**/*.js",
   ],
 };

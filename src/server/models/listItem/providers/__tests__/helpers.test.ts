@@ -33,9 +33,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
     ["address.secondLine"]: "updated second line",
   };
 
-  expect(
-    getChangedAddressFields(lawyerSecondLineFromNull, databaseAddress)
-  ).toEqual({
+  expect(getChangedAddressFields(lawyerSecondLineFromNull, databaseAddress)).toEqual({
     secondLine: "updated second line",
   });
 
@@ -44,18 +42,14 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
     ["address.secondLine"]: undefined,
   };
 
-  expect(
-    getChangedAddressFields(lawyerUndefinedOnSecondLine, databaseAddress)
-  ).toEqual({});
+  expect(getChangedAddressFields(lawyerUndefinedOnSecondLine, databaseAddress)).toEqual({});
 
   const covidSecondLineFromNull = {
     ...webhookData.covidTestProvider,
     ["address.secondLine"]: "updated second line",
   };
 
-  expect(
-    getChangedAddressFields(covidSecondLineFromNull, databaseAddress)
-  ).toEqual({
+  expect(getChangedAddressFields(covidSecondLineFromNull, databaseAddress)).toEqual({
     secondLine: "updated second line",
   });
 
@@ -64,9 +58,7 @@ test("getChangedAddressFields returns the correct changed fields when addressLin
     ["address.secondLine"]: undefined,
   };
 
-  expect(
-    getChangedAddressFields(covidUndefinedOnSecondLine, databaseAddress)
-  ).toEqual({});
+  expect(getChangedAddressFields(covidUndefinedOnSecondLine, databaseAddress)).toEqual({});
 });
 
 test("getChangedAddressFields returns the correct changed fields when postcode changed", () => {
@@ -75,9 +67,7 @@ test("getChangedAddressFields returns the correct changed fields when postcode c
     postCode: "EC2A 4DS",
   };
 
-  expect(
-    getChangedAddressFields(lawyerPostCodeChange, databaseAddress)
-  ).toEqual({
+  expect(getChangedAddressFields(lawyerPostCodeChange, databaseAddress)).toEqual({
     postCode: "EC2A 4DS",
   });
 
@@ -86,11 +76,9 @@ test("getChangedAddressFields returns the correct changed fields when postcode c
     postCode: "EC2A 4DS",
   };
 
-  expect(getChangedAddressFields(covidPostCodeChange, databaseAddress)).toEqual(
-    {
-      postCode: "EC2A 4DS",
-    }
-  );
+  expect(getChangedAddressFields(covidPostCodeChange, databaseAddress)).toEqual({
+    postCode: "EC2A 4DS",
+  });
 });
 
 test("getChangedAddressFields returns the correct changed fields when city changed", () => {
@@ -117,9 +105,7 @@ test("getChangedAddressFields returns the correct changed fields when multiple f
     city: "Londinium",
   };
 
-  expect(
-    getChangedAddressFields(lawyerUpdatedAllKeys, databaseAddress)
-  ).toEqual({
+  expect(getChangedAddressFields(lawyerUpdatedAllKeys, databaseAddress)).toEqual({
     firstLine: "King Charles Road",
     secondLine: "updated second line",
     postCode: "EC2A 4DS",
@@ -134,14 +120,12 @@ test("getChangedAddressFields returns the correct changed fields when multiple f
     city: "Londinium",
   };
 
-  expect(getChangedAddressFields(covidUpdatedAllKeys, databaseAddress)).toEqual(
-    {
-      firstLine: "King Charles Road",
-      secondLine: "updated second line",
-      postCode: "EC2A 4DS",
-      city: "Londinium",
-    }
-  );
+  expect(getChangedAddressFields(covidUpdatedAllKeys, databaseAddress)).toEqual({
+    firstLine: "King Charles Road",
+    secondLine: "updated second line",
+    postCode: "EC2A 4DS",
+    city: "Londinium",
+  });
 });
 
 test("getChangedAddressFields doesn't update country", () => {
@@ -150,16 +134,12 @@ test("getChangedAddressFields doesn't update country", () => {
     country: "United Kingdom",
   };
 
-  expect(
-    getChangedAddressFields(lawyerAttemptedCountryChange, databaseAddress)
-  ).toEqual({});
+  expect(getChangedAddressFields(lawyerAttemptedCountryChange, databaseAddress)).toEqual({});
 
   const covidAttemptedCountryChange = {
     ...webhookData.covidTestProvider,
     country: "United Kingdom",
   };
 
-  expect(
-    getChangedAddressFields(covidAttemptedCountryChange, databaseAddress)
-  ).toEqual({});
+  expect(getChangedAddressFields(covidAttemptedCountryChange, databaseAddress)).toEqual({});
 });

@@ -38,7 +38,6 @@ describe("Development controllers", () => {
     });
   });
 
-
   describe("resetDb", () => {
     it("invokes npm run prisma:reset and responds correctly", () => {
       const spy = jest.spyOn(childProcess, "exec").mockImplementation(jest.fn());

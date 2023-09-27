@@ -1,4 +1,5 @@
-import { AuditEvent, type User } from "@prisma/client";
+import { AuditEvent } from "@prisma/client";
+import type { User } from "@prisma/client";
 import type { List, RelatedLink } from "shared/types";
 import { prisma } from "server/models/db/prisma-client";
 

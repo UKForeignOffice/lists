@@ -32,7 +32,7 @@ describe("List Model:", () => {
     updatedAt: new Date(),
     email: "test@test.com",
     jsonData: { roles: [] },
-  }
+  };
 
   describe("findListById", () => {
     test("findUnique call is correct", async () => {
@@ -146,9 +146,9 @@ describe("List Model:", () => {
           },
           users: {
             connect: {
-              email: "test@gov.uk"
-            }
-          }
+              email: "test@gov.uk",
+            },
+          },
         },
       });
     });
@@ -204,8 +204,8 @@ describe("List Model:", () => {
         data: {
           users: {
             connect: {
-              email: "test@gov.uk"
-            }
+              email: "test@gov.uk",
+            },
           },
         },
       });

@@ -1,4 +1,5 @@
-import Joi, { type CustomHelpers } from "joi";
+import Joi from "joi";
+import type { CustomHelpers } from "joi";
 
 const ERROR_MESSAGES = {
   "string.url.govuk": "You can only link to GOV.UK",
