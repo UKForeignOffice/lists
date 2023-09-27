@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import type { Express } from "express";
 import { feedbackRouter } from "./router";
 
 export async function initFeedback(server: Express): Promise<void> {
@@ -20,5 +20,5 @@ export function getFeedbackSuccessContent(): string {
         </p>
       </div>
     </div>
-  `
+  `;
 }

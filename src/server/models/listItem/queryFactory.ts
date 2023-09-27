@@ -1,5 +1,5 @@
-import { PaginationOptions, Tags } from "server/models/listItem/types";
-import { Prisma } from "@prisma/client";
+import type { PaginationOptions, Tags } from "server/models/listItem/types";
+import type { Prisma } from "@prisma/client";
 
 /**
  * covert TAGS to prisma query options object
@@ -67,7 +67,9 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   },
 };
 
-export function calculatePagination(paginationOptions: PaginationOptions): Record<string, unknown> | { take: number; skip: number } {
+export function calculatePagination(
+  paginationOptions: PaginationOptions
+): Record<string, unknown> | { take: number; skip: number } {
   const currentPage = paginationOptions?.pagination?.page ?? 1;
   const skipAmount = currentPage ? currentPage - 1 : currentPage;
   return {

@@ -1,7 +1,7 @@
 @use "sass:math";
 $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
-@import './dashboard-table';
+@import "./dashboard-table";
 
 .answers-box {
   background-color: govuk-colour("light-grey");
@@ -248,7 +248,7 @@ $two-thirds: $one-third * 2;
 }
 
 .grey-text {
-  color:  #868D91;
+  color: #868d91;
 }
 
 .list-mgmt {
@@ -257,11 +257,11 @@ $two-thirds: $one-third * 2;
   }
 
   .govuk-header__navigation {
-    float: right
+    float: right;
   }
 
   .govuk-header__navigation-list {
-    margin: 0
+    margin: 0;
   }
 
   .govuk-header__content {
@@ -284,8 +284,8 @@ $two-thirds: $one-third * 2;
 }
 
 .govuk-notification-banner--error {
-  border-color: 	#AA2A16;
-  background-color: 	#AA2A16;
+  border-color: #aa2a16;
+  background-color: #aa2a16;
 }
 
 .govuk-\!-width-one-sixth {
@@ -313,7 +313,7 @@ $two-thirds: $one-third * 2;
     background-color: #cbe2d8;
 
     .govuk-body {
-      color: #005A30;
+      color: #005a30;
     }
   }
 
@@ -327,7 +327,7 @@ $two-thirds: $one-third * 2;
 }
 
 .govuk-link--red,
-.govuk-link--red:visited  {
+.govuk-link--red:visited {
   color: #942514;
 }
 

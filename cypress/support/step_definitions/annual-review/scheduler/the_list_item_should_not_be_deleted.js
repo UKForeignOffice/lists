@@ -3,7 +3,7 @@ Then("the list item should not be deleted", () => {
     operation: "listItem.findFirst",
     variables: {
       where: {
-        reference: "AUTO_DELETE"
+        reference: "AUTO_DELETE",
       },
     },
   }).then((listItem) => {

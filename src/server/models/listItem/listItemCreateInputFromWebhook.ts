@@ -1,15 +1,12 @@
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { getListIdForCountryAndType } from "server/models/helpers";
-import { CountryName } from "server/models/types";
+import type { CountryName } from "server/models/types";
 import { logger } from "server/services/logger";
 import { createAddressObject } from "./geoHelpers";
-import {
-  baseDeserialiser,
-  DESERIALISER,
-} from "server/models/listItem/providers/deserialisers";
-import { WebhookData } from "server/components/formRunner";
+import { baseDeserialiser, DESERIALISER } from "server/models/listItem/providers/deserialisers";
+import type { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import { EVENTS } from "./listItemEvent";
 
 export function deserialise(webhook: WebhookData): DeserialisedWebhookData {

@@ -157,7 +157,7 @@ describe("User Model:", () => {
         updatedAt: new Date(),
         jsonData: {
           roles: [],
-        }
+        },
       };
 
       prisma.user.findMany.mockResolvedValue([useWithList]);

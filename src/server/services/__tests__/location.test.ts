@@ -1,10 +1,5 @@
 import { Location } from "aws-sdk";
-import {
-  getAWSLocationService,
-  checkIfPlaceIndexExists,
-  createPlaceIndex,
-  geoLocatePlaceByText,
-} from "../location";
+import { getAWSLocationService, checkIfPlaceIndexExists, createPlaceIndex, geoLocatePlaceByText } from "../location";
 import { LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "server/services/logger";
 
@@ -33,16 +28,12 @@ describe("Location service:", () => {
 
     test("returns false when listPlaceIndexes rejects", async () => {
       const error: any = new Error("SomeError");
-      jest
-        .spyOn(getAWSLocationService().listPlaceIndexes(), "promise")
-        .mockRejectedValue(error);
+      jest.spyOn(getAWSLocationService().listPlaceIndexes(), "promise").mockRejectedValue(error);
 
       const exists = await checkIfPlaceIndexExists("DOES_NOT_EXIST");
 
       expect(exists).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "checkIfPlaceIndexExists Error: SomeError"
-      );
+      expect(logger.error).toHaveBeenCalledWith("checkIfPlaceIndexExists Error: SomeError");
     });
   });
 
@@ -77,11 +68,9 @@ describe("Location service:", () => {
         ],
       };
 
-      jest
-        .spyOn(getAWSLocationService(), "listPlaceIndexes")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValueOnce(placeIndexes),
-        } as any);
+      jest.spyOn(getAWSLocationService(), "listPlaceIndexes").mockReturnValueOnce({
+        promise: jest.fn().mockResolvedValueOnce(placeIndexes),
+      } as any);
 
       const result = await createPlaceIndex();
 
@@ -91,18 +80,14 @@ describe("Location service:", () => {
     test("it returns false when createPlaceIndex rejects", async () => {
       const error = new Error("listPlaceIndexes error message");
 
-      jest
-        .spyOn(getAWSLocationService(), "createPlaceIndex")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockRejectedValue(error),
-        } as any);
+      jest.spyOn(getAWSLocationService(), "createPlaceIndex").mockReturnValueOnce({
+        promise: jest.fn().mockRejectedValue(error),
+      } as any);
 
       const result = await createPlaceIndex();
 
       expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "createPlaceIndex error: listPlaceIndexes error message"
-      );
+      expect(logger.error).toHaveBeenCalledWith("createPlaceIndex error: listPlaceIndexes error message");
     });
   });
 
@@ -126,13 +111,11 @@ describe("Location service:", () => {
     });
 
     test("returns 0.0, 0.0 when searchPlaceIndexForText returns no results", async () => {
-      jest
-        .spyOn(getAWSLocationService(), "searchPlaceIndexForText")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValueOnce({
-            Results: [],
-          }),
-        } as any);
+      jest.spyOn(getAWSLocationService(), "searchPlaceIndexForText").mockReturnValueOnce({
+        promise: jest.fn().mockResolvedValueOnce({
+          Results: [],
+        }),
+      } as any);
 
       const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 

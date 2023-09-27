@@ -1,9 +1,5 @@
 import crypto from "crypto";
-import {
-  createSecret,
-  rotateSecret,
-  getSecretValue,
-} from "../secrets-manager/aws";
+import { createSecret, rotateSecret, getSecretValue } from "../secrets-manager/aws";
 import { SecretsManager } from "aws-sdk";
 import { subDays } from "date-fns";
 import { logger } from "server/services/logger";
@@ -21,10 +17,7 @@ describe("Secrets Manager", () => {
     }));
   }
 
-  function spyGetSecretValue(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
+  function spyGetSecretValue(returnedValue: any, shouldReject = false): jest.SpyInstance {
     const spy = jest.spyOn(secretManager.getSecretValue(), "promise");
 
     if (shouldReject) {
@@ -36,25 +29,15 @@ describe("Secrets Manager", () => {
     return spy;
   }
 
-  function spyCreateSecret(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
+  function spyCreateSecret(returnedValue: any, shouldReject = false): jest.SpyInstance {
     return jest.spyOn(secretManager, "createSecret").mockReturnValue({
-      promise: shouldReject
-        ? jest.fn().mockRejectedValue(returnedValue)
-        : jest.fn().mockResolvedValue(returnedValue),
+      promise: shouldReject ? jest.fn().mockRejectedValue(returnedValue) : jest.fn().mockResolvedValue(returnedValue),
     } as any);
   }
 
-  function spyPutSecretValue(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
+  function spyPutSecretValue(returnedValue: any, shouldReject = false): jest.SpyInstance {
     return jest.spyOn(secretManager, "putSecretValue").mockReturnValue({
-      promise: shouldReject
-        ? jest.fn().mockRejectedValue(returnedValue)
-        : jest.fn().mockResolvedValue(returnedValue),
+      promise: shouldReject ? jest.fn().mockRejectedValue(returnedValue) : jest.fn().mockResolvedValue(returnedValue),
     } as any);
   }
 

@@ -7,7 +7,7 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 });
 
 function createListForService(service) {
-  const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
+  const reference = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
 
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
@@ -52,8 +52,8 @@ function createListForService(service) {
           },
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       update: {
         type: service,
@@ -63,8 +63,8 @@ function createListForService(service) {
           deleteMany: {},
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       where: {
         reference,

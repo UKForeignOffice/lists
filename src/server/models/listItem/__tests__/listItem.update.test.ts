@@ -8,18 +8,12 @@ test("throws when the requested id does not exist", async () => {
   // @ts-expect-error
   prisma.listItem.findFirst.mockRejectedValue(Error("mocked error"));
 
-  await expect(listItem.update(40404, 1, webhookData.lawyer)).rejects.toThrow(
-    "list item 40404 not found"
-  );
-  await expect(
-    listItem.update(40404, 1, webhookData.covidTestProvider)
-  ).rejects.toThrow("list item 40404 not found");
+  await expect(listItem.update(40404, 1, webhookData.lawyer)).rejects.toThrow("list item 40404 not found");
+  await expect(listItem.update(40404, 1, webhookData.covidTestProvider)).rejects.toThrow("list item 40404 not found");
 });
 
 test.skip("update throws when geoLocatePlaceByText fails", async () => {
-  jest
-    .spyOn(location, "geoLocatePlaceByText")
-    .mockRejectedValue(Error("nope!"));
+  jest.spyOn(location, "geoLocatePlaceByText").mockRejectedValue(Error("nope!"));
 
   // @ts-expect-error
   prisma.listItem.findFirst.mockResolvedValue({
@@ -31,9 +25,7 @@ test.skip("update throws when geoLocatePlaceByText fails", async () => {
     },
   });
 
-  await expect(listItem.update(1, 1, webhookData.lawyer)).rejects.toThrowError(
-    "GeoLocation update failed"
-  );
+  await expect(listItem.update(1, 1, webhookData.lawyer)).rejects.toThrowError("GeoLocation update failed");
 });
 
 test.skip("address and geolocation tables are not queried when there are no address changes", async () => {

@@ -49,8 +49,6 @@ describe("Express Session", () => {
       prefix: "lists_session_",
     });
 
-    expect(spySession.mock.calls[0][0].store instanceof mockRedisStore).toBe(
-      true
-    );
+    expect(spySession.mock.calls[0][0].store instanceof mockRedisStore).toBe(true);
   });
 });

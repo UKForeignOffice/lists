@@ -11,7 +11,7 @@ describe("Feedback routes", () => {
 
   test("/feedback is responding correctly", async () => {
     const { status, body } = await request(server).post("/feedback");
-    
+
     expect(status).toEqual(400);
     expect(body).toEqual({ error: '"questions" is required' });
   });

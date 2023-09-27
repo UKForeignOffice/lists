@@ -2,12 +2,11 @@
 
 ## Pre-requisites
 
-- Login details for the FCDO AWS configuration https://github.com/UKForeignOffice/configurable-forms-infrastructure#kubectl-client-configuration 
+- Login details for the FCDO AWS configuration https://github.com/UKForeignOffice/configurable-forms-infrastructure#kubectl-client-configuration
 - Connected to the VPN and authenticated. See [connecting to the test db](https://github.com/UKForeignOffice/lists/blob/master/docs/connecting-to-test-db.md#connecting-to-test-environment-database) for more details
 - Set your context to `fco-forms-prod`. `% kubectx fco-forms-prod`
-- postgres running on your machine locally 
+- postgres running on your machine locally
   - `% docker compose up postgres`
-
 
 ## 1 - Get a dump of data from production and export to a file
 
@@ -17,6 +16,7 @@ You will first have to use **kubectl** to get the list of available pods `kubect
 Locate the one with the prefix `lists-postgres- `
 
 Them access the shell of that pod with the following command:
+
 ```bash
 kubectl exec -it lists-postgres-[pod_id]
 ```
@@ -38,7 +38,6 @@ Here's an example of how to load a Postgres dump file into a local development d
 ```bash
 psql -U master -h localhost -d lists < prod_data.sql
 ```
-
 
 ## 3 - Update Emails on All Lists in Local Dev Database
 
@@ -63,11 +62,9 @@ You can do that with the following command
 pg_dump postgresql://master:[password]@localhost:5432/lists | gpg -e -o updated_prod_data.sql.zip.gpg -r [recipient_id]
 ```
 
-
-See [connecting-to-test-db.md#snapshot](https://github.com/UKForeignOffice/lists/blob/master/docs/connecting-to-test-db.md#snapshot) on how to decrypt and encrypt the database using GPG. 
+See [connecting-to-test-db.md#snapshot](https://github.com/UKForeignOffice/lists/blob/master/docs/connecting-to-test-db.md#snapshot) on how to decrypt and encrypt the database using GPG.
 
 [GPG Documentation](https://www.gnupg.org/documentation/index.html)
-
 
 ## 5 - Reference in DB Container
 

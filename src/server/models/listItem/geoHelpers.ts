@@ -1,11 +1,11 @@
 // Helpers
-import { Country, Point } from "server/models/types";
+import type { Country, Point } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
 import { geoLocatePlaceByText } from "server/services/location";
 import { logger } from "server/services/logger";
 import { rawInsertGeoLocation } from "server/models/helpers";
-import { Prisma } from "@prisma/client";
-import { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
+import type { Prisma } from "@prisma/client";
+import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function createCountry(country: string): Promise<Country> {
   return await prisma.country.upsert({
@@ -15,10 +15,7 @@ export async function createCountry(country: string): Promise<Country> {
   });
 }
 
-export async function getPlaceGeoPoint(props: {
-  countryName?: string;
-  text?: string;
-}): Promise<Point> {
+export async function getPlaceGeoPoint(props: { countryName?: string; text?: string }): Promise<Point> {
   const { countryName = 0.0, text = 0.0 } = props;
 
   try {
@@ -30,9 +27,7 @@ export async function getPlaceGeoPoint(props: {
   }
 }
 
-export function makeAddressGeoLocationString(
-  webhookData: DeserialisedWebhookData
-): string {
+export function makeAddressGeoLocationString(webhookData: DeserialisedWebhookData): string {
   const address = [
     webhookData["address.firstLine"],
     webhookData["address.secondLine"],
@@ -46,15 +41,11 @@ export function makeAddressGeoLocationString(
   return address.join(", ");
 }
 
-export function getCountryFromData(
-  webhookData: DeserialisedWebhookData
-): string {
+export function getCountryFromData(webhookData: DeserialisedWebhookData): string {
   return webhookData.addressCountry ?? webhookData.country;
 }
 
-export async function createAddressGeoLocation(
-  item: DeserialisedWebhookData
-): Promise<number> {
+export async function createAddressGeoLocation(item: DeserialisedWebhookData): Promise<number> {
   const address = makeAddressGeoLocationString(item);
   const country = getCountryFromData(item);
   const point = await geoLocatePlaceByText(address, country);

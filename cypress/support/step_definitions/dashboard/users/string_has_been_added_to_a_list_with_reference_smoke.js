@@ -13,15 +13,15 @@ When("User {string} has been added to list with reference:SMOKE ", (email) => {
           },
         },
         users: {
-          connect: { email }
-        }
+          connect: { email },
+        },
       },
       update: {
         type: "funeralDirectors",
         jsonData: {},
         nextAnnualReviewStartDate: null,
         users: {
-          connect: { email }
+          connect: { email },
         },
         items: {
           deleteMany: {},

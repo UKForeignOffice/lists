@@ -18,8 +18,8 @@ When("a related link exists", () => {
           },
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com", }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       update: {
         type: "lawyers",
@@ -29,8 +29,8 @@ When("a related link exists", () => {
           deleteMany: {},
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com", }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       where: {
         reference: "SMOKE",

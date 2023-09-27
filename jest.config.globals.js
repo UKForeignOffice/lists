@@ -51,8 +51,7 @@ const covidTestProvider = {
   meetUKstandards: true,
   provideResultsInEnglishFrenchSpanish: true,
   provideTestResultsIn72Hours: true,
-  providedTests:
-    "Antigen, Loop-mediated Isothermal Amplification (LAMP), Polymerase Chain Reaction (PCR)",
+  providedTests: "Antigen, Loop-mediated Isothermal Amplification (LAMP), Polymerase Chain Reaction (PCR)",
   turnaroundTimeAntigen: "1",
   turnaroundTimeLamp: "48",
   turnaroundTimePCR: "24",

@@ -1,8 +1,4 @@
-import {
-  isGovUKEmailAddress,
-  isCountryNameValid,
-  throwIfConfigVarIsUndefined,
-} from "../validation";
+import { isGovUKEmailAddress, isCountryNameValid, throwIfConfigVarIsUndefined } from "../validation";
 import { countriesList } from "server/services/metadata";
 import * as config from "server/config/server-config";
 
@@ -37,9 +33,7 @@ describe("Utils Validation", () => {
 
   describe("countryNameIsValid", () => {
     test("all valid countries pass", () => {
-      const result = countriesList.every((country) =>
-        isCountryNameValid(country.value)
-      );
+      const result = countriesList.every((country) => isCountryNameValid(country.value));
       expect(result).toBe(true);
     });
 
@@ -51,15 +45,11 @@ describe("Utils Validation", () => {
 
   describe("throwIfConfigVarIsUndefined", () => {
     test("it throws when config variable is undefined", () => {
-      expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrowError(
-        ""
-      );
+      expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrowError("");
     });
 
     test("it does not throw when environment variable is present", () => {
-      expect(() =>
-        throwIfConfigVarIsUndefined("DATABASE_URL")
-      ).not.toThrowError();
+      expect(() => throwIfConfigVarIsUndefined("DATABASE_URL")).not.toThrowError();
     });
   });
 });
