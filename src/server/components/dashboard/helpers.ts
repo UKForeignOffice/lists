@@ -1,10 +1,12 @@
 import { logger } from "server/services/logger";
+import type { NextFunction, Request, Response } from "express";
 import axios from "axios";
 import type { List, ListJsonData } from "server/models/types";
 import type { NewSessionData } from "../formRunner/types";
 import { dashboardRoutes } from "server/components/dashboard/routes";
 import { sitemapRoute } from "server/components/sitemap/routes";
 import { authRoutes } from "server/components/auth";
+import { HttpException } from "server/middlewares/error-handlers";
 
 export type ListWithJsonData = Partial<List> & {
   jsonData: ListJsonData;
@@ -49,3 +51,12 @@ export const pageTitles: Record<string, string> = {
   [authRoutes.login]: "login",
   [authRoutes.logout]: "logout",
 };
+
+export function validateActionPermission(req: Request, _res: Response, next: NextFunction) {
+  if (!req.user?.isAdministrator) {
+    const err = new HttpException(403, "403", "You are not authorised to execute this action.");
+    next(err);
+    return;
+  }
+  next();
+}
