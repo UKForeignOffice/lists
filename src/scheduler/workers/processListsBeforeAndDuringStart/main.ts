@@ -39,12 +39,9 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
     if (!result) {
       return;
     }
-    // @ts-ignore
-    console.log(result);
-    // @ts-ignore
-    console.log(result.data);
 
-    logger.info(`Reminder ${reminderType} succeeded with ${JSON.stringify(result)}`);
+    // @ts-ignore
+    logger.info(`Reminder ${reminderType} succeeded with ${result.data}`);
     await prisma.audit.create({
       data: {
         auditEvent: AuditEvent.REMINDER,
@@ -61,9 +58,7 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
     });
   } catch (e) {
     logger.error(
-      `processPostEmailsForList: Unable to send annual review email to post contacts ${list.users.map(
-        (user) => user.email
-      )} for list ${list.id} ${reminderType} before annual review start. ${e.message}`
+      `processPostEmailsForList: Unable to send annual review email to post contacts ${emailAddresses} for list ${list.id} ${reminderType} before annual review start. ${e.message}`
     );
   }
 }
