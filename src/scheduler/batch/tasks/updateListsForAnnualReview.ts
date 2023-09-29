@@ -23,7 +23,7 @@ export async function populateCurrentAnnualReview(list: List): Promise<void> {
     keyDates: composeKeyDatesForDate(list.nextAnnualReviewStartDate),
   };
 
-  let shouldUpdateList = true;
+  let shouldUpdateList = eligibleListItemIds.length > 0;
 
   // use the same reference if it already exists to ensure audit records can be checked for previous emails
   if (currentAnnualReviewAlreadyExists) {
