@@ -54,11 +54,14 @@ export async function shouldSendToPost(emailType: ListAnnualReviewPostReminderTy
 
   let result: Audit[] | undefined;
 
+  console.log(query);
+
   try {
     result = await query;
   } catch (e) {
     logger.error(`shouldSend: ${e}`);
   }
+  console.log("res", result);
 
   logger.info(`${reference} - found ${result?.length} reminders >= ${emailType}`);
 
