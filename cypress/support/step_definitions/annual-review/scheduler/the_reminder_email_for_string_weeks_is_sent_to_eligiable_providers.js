@@ -66,8 +66,8 @@ Then("the weeklyReminder emails were not re-sent", async () => {
         },
       },
     }).then((result) => {
-      cy.get("@emailsSent").then(($emailsSent) => {
-        cy.expect($emailsSent).to.be.equal(result.length);
+      cy.get("@emailsSent").then((emailsSent) => {
+        cy.expect(emailsSent).to.be.equal(result.length);
       });
     });
   });
