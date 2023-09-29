@@ -21,6 +21,8 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
   }
   const reference = list.jsonData.currentAnnualReview?.reference;
 
+  const emailAddresses = list.users.map((user) => user.email);
+  logger.info(`attempting to send ${reminderType} to ${emailAddresses} from list ${list.id}`);
   const postEmailPromises = list.users.map(async (user) => {
     return await sendAnnualReviewPostEmail(
       reminderType,
@@ -34,25 +36,21 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
 
   try {
     const { result, error } = await Promise.any(postEmailPromises);
-    if (error) {
-      throw error;
+    if (!result) {
+      return;
     }
 
-    logger.info(
-      `Annual review email  ${reminderType} sent to post contacts ${list.users.map((user) => user.email)} for list ${
-        list.id
-      }`
-    );
-
+    logger.info(`Reminder ${reminderType} succeeded with ${JSON.stringify(result)}`);
     await prisma.audit.create({
       data: {
         auditEvent: AuditEvent.REMINDER,
         type: "list",
         annualReviewEmailType: reminderType,
+        // @ts-ignore
         jsonData: {
           eventName: "reminder",
           annualReviewRef: list.jsonData.currentAnnualReview?.reference,
-          response: JSON.stringify(result),
+          response: result,
         },
       },
     });
