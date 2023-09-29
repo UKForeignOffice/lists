@@ -31,9 +31,6 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
       reference
     );
   });
-  // @todo the following code would be used if using Promise.allSettled
-  // const sendResult = await Promise.allSettled(postEmailPromises);
-  // const emailSent = sendResult.find((result) => result.status === "fulfilled" && result.value);
 
   try {
     const { result, error } = await Promise.any(postEmailPromises);
