@@ -30,14 +30,16 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
       formatDate(list.nextAnnualReviewStartDate),
       reference
     );
-  })
+  });
   // @todo the following code would be used if using Promise.allSettled
   // const sendResult = await Promise.allSettled(postEmailPromises);
   // const emailSent = sendResult.find((result) => result.status === "fulfilled" && result.value);
 
   try {
     const { result, error } = await Promise.any(postEmailPromises);
-    throw error;
+    if (error) {
+      throw error;
+    }
 
     logger.info(`Annual review email  ${reminderType} sent to post contacts ${list.users}`);
 
