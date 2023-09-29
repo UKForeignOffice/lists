@@ -38,7 +38,11 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
       throw error;
     }
 
-    logger.info(`Annual review email  ${reminderType} sent to post contacts ${list.users}`);
+    logger.info(
+      `Annual review email  ${reminderType} sent to post contacts ${list.users.map((user) => user.email)} for list ${
+        list.id
+      }`
+    );
 
     await prisma.audit.create({
       data: {
