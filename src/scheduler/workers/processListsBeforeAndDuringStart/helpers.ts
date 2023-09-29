@@ -50,7 +50,7 @@ export async function shouldSendToPost(emailType: ListAnnualReviewPostReminderTy
   const query: Prisma.PrismaPromise<Audit[] | undefined> = prisma.$queryRaw`select * from "Audit"
            where "annualReviewEmailType" >= ${emailType}::"AnnualReviewPostEmailType"
            and "jsonData"->>'annualReviewRef' = '${reference}'
-         order by "createdAt" desc limit 1`;
+         order by "createdAt"`;
 
   let result: Audit[] | undefined;
 
@@ -59,6 +59,8 @@ export async function shouldSendToPost(emailType: ListAnnualReviewPostReminderTy
   } catch (e) {
     logger.error(`shouldSend: ${e}`);
   }
+
+  logger.info(`${reference} - found ${result?.length} reminders >= ${emailType}`);
 
   const auditSupersedingSelectedType = result?.at?.(0);
 
