@@ -50,10 +50,9 @@ export async function shouldSendToPost(emailType: ListAnnualReviewPostReminderTy
   const result: Audit[] = await prisma.$queryRaw`select * from "Audit"
            where "annualReviewEmailType" >= ${emailType}::"AnnualReviewPostEmailType"
            and "jsonData"->>'annualReviewRef' = ${reference}
-         order by "createdAt"`;
+         order by "createdAt" limit 1`;
 
   logger.info(`${reference} - found ${result?.length} reminders >= ${emailType}`);
-  logger.info(result);
 
   const auditSupersedingSelectedType = result?.at?.(0);
 
@@ -91,20 +90,12 @@ export async function shouldSendToProvider(
    * This query uses postgres enums. Enums in postgres are ordered so `>=` operator can be used.
    * Looks for events with `listItemId` and where an annualReviewEmailType >= than `emailType` has occurred.
    */
-  const query: Prisma.PrismaPromise<Event[] | undefined> = prisma.$queryRaw`select * from "Event"
+  const result: Event[] = await prisma.$queryRaw`select * from "Event"
          where "listItemId" = ${listItemId}
            and "annualReviewEmailType" >= ${emailType}::"AnnualReviewProviderEmailType"
            and "jsonData"->>'reference' = '${annualReviewReference}'
            and "type" = 'REMINDER'
          order by "time" desc limit 1`;
-
-  let result: Event[] | undefined;
-
-  try {
-    result = await query;
-  } catch (e) {
-    logger.error(`shouldSendToProvider: ${e}`);
-  }
 
   const eventSupersedingSelectedType = result?.at?.(0);
 
