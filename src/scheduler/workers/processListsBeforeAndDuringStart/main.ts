@@ -39,6 +39,10 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
     if (!result) {
       return;
     }
+    // @ts-ignore
+    console.log(result);
+    // @ts-ignore
+    console.log(result.data);
 
     logger.info(`Reminder ${reminderType} succeeded with ${JSON.stringify(result)}`);
     await prisma.audit.create({
@@ -50,7 +54,8 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
         jsonData: {
           eventName: "reminder",
           annualReviewRef: list.jsonData.currentAnnualReview?.reference,
-          response: result,
+          // @ts-ignore
+          response: result.data ?? {},
         },
       },
     });

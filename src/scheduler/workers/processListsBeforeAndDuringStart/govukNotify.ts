@@ -80,6 +80,7 @@ export async function sendAnnualReviewPostEmail(
       )}`
     );
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference });
+
     return { result };
   } catch (error) {
     const message = `sendAnnualReviewPostEmail: Unable to send annual review post email to ${emailAddress} with template name ${reminderType} id ${notifyTemplate}: ${error.message}`;
