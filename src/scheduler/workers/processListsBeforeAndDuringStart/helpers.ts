@@ -1,6 +1,6 @@
 import type { ListAnnualReviewPostReminderType } from "shared/types";
 import { logger } from "scheduler/logger";
-import type { Audit, Event, AnnualReviewProviderEmailType, Prisma } from "@prisma/client";
+import type { Audit, Event, AnnualReviewProviderEmailType } from "@prisma/client";
 import { prisma } from "scheduler/prismaClient";
 import type { RemindersBeforeStartDate } from "scheduler/batch/helpers";
 

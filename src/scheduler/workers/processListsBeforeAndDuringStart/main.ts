@@ -35,7 +35,7 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
   });
 
   try {
-    const { result, error } = await Promise.any(postEmailPromises);
+    const { result } = await Promise.any(postEmailPromises);
     if (!result) {
       return;
     }
@@ -49,6 +49,7 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
         annualReviewEmailType: reminderType,
         // @ts-ignore
         jsonData: {
+          itemId: list.id,
           eventName: "reminder",
           annualReviewRef: list.jsonData.currentAnnualReview?.reference,
           // @ts-ignore
