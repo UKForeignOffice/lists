@@ -56,7 +56,7 @@ async function processPostEmailsForList(list: List, reminderType: RemindersBefor
     logger.error(
       `processPostEmailsForList: Unable to send annual review email to post contacts ${list.users.map(
         (user) => user.email
-      )} for list ${list.id} ${reminderType} before annual review start`
+      )} for list ${list.id} ${reminderType} before annual review start. ${e.message}`
     );
   }
 }
