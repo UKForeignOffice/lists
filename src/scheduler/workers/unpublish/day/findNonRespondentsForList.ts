@@ -1,7 +1,7 @@
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
-import { List, Prisma } from "@prisma/client";
-import { ListJsonData } from "server/models/types";
+import type { List, Prisma } from "@prisma/client";
+import type { ListJsonData } from "server/models/types";
 import { parseISO } from "date-fns";
 
 export async function findNonRespondentsForList(list: List) {
@@ -11,7 +11,7 @@ export async function findNonRespondentsForList(list: List) {
   const { keyDates } = jsonData.currentAnnualReview!;
   const reminderToFind = parseISO(keyDates.unpublished.UNPUBLISH);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
-
+  console.log("===", reminderToFind);
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {
     type: {
       in: ["EDITED", "CHECK_ANNUAL_REVIEW"],
@@ -23,6 +23,11 @@ export async function findNonRespondentsForList(list: List) {
 
   const reminderHasBeenSent: Prisma.EventWhereInput = {
     type: "REMINDER",
+    annualReviewEmailType: "unpublished",
+    jsonData: {
+      path: ["reference"],
+      equals: jsonData.currentAnnualReview?.reference,
+    },
     time: {
       gte: reminderToFind,
     },
@@ -35,11 +40,13 @@ export async function findNonRespondentsForList(list: List) {
       status: "OUT_WITH_PROVIDER",
       history: {
         none: {
-          OR: [editedSinceAnnualReviewDate, reminderHasBeenSent],
+          OR: [reminderHasBeenSent],
         },
       },
     },
   });
+  console.log("LI===", reminderToFind);
+  console.log(listItems);
 
   logger.info(
     `Found ${listItems.length} items to send unpublish reminder ${
@@ -48,6 +55,8 @@ export async function findNonRespondentsForList(list: List) {
         : [listItems.map((listItem) => listItem.id)]
     }`
   );
+
+  // console.log(listItems);
 
   return listItems;
 }

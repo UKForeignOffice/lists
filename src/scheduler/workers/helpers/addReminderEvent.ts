@@ -16,14 +16,14 @@ interface AddReminderEventInput {
 }
 
 export async function addReminderEvent({ id, response, notes, reference, emailType }: AddReminderEventInput) {
-  return await prisma.listItem.update({
-    where: {
-      id,
-    },
+  return await prisma.event.create({
     data: {
-      history: {
-        create: EVENTS.REMINDER({ response, notes, reference, emailType }),
+      listItem: {
+        connect: {
+          id,
+        },
       },
+      ...EVENTS.REMINDER({ response, notes, reference, emailType }),
     },
   });
 }

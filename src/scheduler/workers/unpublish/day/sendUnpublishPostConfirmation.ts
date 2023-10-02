@@ -30,8 +30,9 @@ export async function sendUnpublishPostConfirmation(list: List, numberNotRespond
         reference: meta.reference,
       });
     });
+
     const response = await Promise.any(emailRequests);
-    console.log(`sendUnpublishPostConfirmation - ${JSON.stringify(response.data)}`);
+    console.log(`sendUnpublishPostConfirmation - ${list.id}`);
     return response.data;
   } catch (e) {
     const { response } = e;

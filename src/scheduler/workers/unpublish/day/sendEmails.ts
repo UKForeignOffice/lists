@@ -17,7 +17,7 @@ export async function main(list: List) {
     return;
   }
 
-  if (meta.daysUntilUnpublish <= 0) {
+  if (meta.daysUntilUnpublish >= 0) {
     logger.info(
       `Days until unpublish: ${meta.daysUntilUnpublish}. does not match 0 day before unpublish, skipping sendEmailsToNonRespondents for unpublish day`
     );
