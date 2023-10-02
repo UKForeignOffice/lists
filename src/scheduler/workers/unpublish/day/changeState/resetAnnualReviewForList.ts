@@ -27,15 +27,18 @@ export async function resetAnnualReviewForList(list: List, meta: Meta) {
     },
   });
   logger.info(`Reset annual review state for list ${list.id}`);
-
-  await addAudit(
-    {
-      eventName: "endAnnualReview",
-      itemId: list.id,
-      annualReviewRef: meta.reference,
-    },
-    AuditEvent.ANNUAL_REVIEW
-  );
+  try {
+    await addAudit(
+      {
+        eventName: "endAnnualReview",
+        itemId: list.id,
+        annualReviewRef: meta.reference,
+      },
+      AuditEvent.ANNUAL_REVIEW
+    );
+  } catch (e) {
+    logger.error(`endAnnualReview audit failed to add due to ${e}`);
+  }
 
   return updatedList;
 }

@@ -5,9 +5,12 @@ import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
 
 import type { ListWithCountryName } from "../types";
-import type { List, ListJsonData } from "server/models/types";
+import type { User } from "@prisma/client";
 
-export async function main(list: ListWithCountryName) {
+type List = ListWithCountryName & {
+  users: Array<Pick<User, "email">>;
+};
+export async function main(list: List) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendEmails", timeframe: "day" });
   const meta = getMetaForList(list);
   if (!meta) {
@@ -27,17 +30,13 @@ export async function main(list: ListWithCountryName) {
     return;
   }
 
-  logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
+  logger.info(`sending unpublish provider email for list items ${listItems.map((listItem) => listItem.id)}`);
   const emailsForProviders = listItems.map(async (listItem) => await sendUnpublishProviderConfirmation(listItem, meta));
 
-  const listJsonData = list.jsonData as ListJsonData;
-
-  if (!listJsonData.users) {
-    return await Promise.allSettled(emailsForProviders);
-  }
+  const providerEmails = Promise.allSettled(emailsForProviders);
   // email post
-  const emailsForPost = listJsonData.users.map(
-    async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list as List, listItems.length, meta)
-  );
-  return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
+
+  const numberNotResponded = listItems.length;
+  const postEmails = await sendUnpublishPostConfirmation(list, numberNotResponded, meta);
+  return await Promise.allSettled([providerEmails, postEmails]);
 }

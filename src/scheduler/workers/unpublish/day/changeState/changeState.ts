@@ -8,6 +8,7 @@ import { resetAnnualReviewForList } from "./resetAnnualReviewForList";
 
 export async function main(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "changeState", timeframe: "day" });
+  logger.info(`attempting to reset ${list.id} annual review state`);
 
   const jsonData = list.jsonData as ListJsonData;
   if (!jsonData?.currentAnnualReview) {
