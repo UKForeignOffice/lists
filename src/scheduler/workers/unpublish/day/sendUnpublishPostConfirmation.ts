@@ -3,14 +3,17 @@ import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
 
-import type { List } from "server/models/types";
 import type { Meta } from "./types";
 import type { RequestError } from "notifications-node-client";
+import type { ListWithCountryName } from "scheduler/workers/unpublish/types";
+import type { User } from "@prisma/client";
 
 const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
-
+type List = ListWithCountryName & {
+  users: Array<Pick<User, "email">>;
+};
 export async function sendUnpublishPostConfirmation(list: List, numberNotResponded: number, meta: Meta) {
   const logger = schedulerLogger.child({
     listId: list.id,
