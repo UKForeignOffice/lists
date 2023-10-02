@@ -19,8 +19,7 @@ async function main() {
   }
 
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
-  // const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), deleteItemsAfterAYear()];
-  const tasks = [unpublishDayTask()];
+  const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), deleteItemsAfterAYear()];
 
   return await Promise.allSettled(tasks);
 }
