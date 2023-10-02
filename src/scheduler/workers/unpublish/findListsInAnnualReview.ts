@@ -21,6 +21,11 @@ export async function findListsInAnnualReview() {
           name: true,
         },
       },
+      users: {
+        select: {
+          email: true,
+        },
+      },
     },
   });
 }

@@ -1,21 +1,20 @@
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "./types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
-import { AuditEvent, List } from "@prisma/client";
-import { addAudit } from "scheduler/workers/unpublish/day/changeState/addAudit";
+
+import type { Meta } from "./types";
+import type { RequestError } from "notifications-node-client";
+import type { ListWithCountryName } from "scheduler/workers/unpublish/types";
+import type { User } from "@prisma/client";
 
 const template = NOTIFY.templates.unpublishNotice.postUnpublished;
 
 const notifyClient = new NotifyClient(NOTIFY.apiKey);
-
-export async function sendUnpublishPostConfirmation(
-  emailAddress: string,
-  list: List,
-  numberNotResponded: number,
-  meta: Meta
-) {
+type List = ListWithCountryName & {
+  users: Array<Pick<User, "email">>;
+};
+export async function sendUnpublishPostConfirmation(list: List, numberNotResponded: number, meta: Meta) {
   const logger = schedulerLogger.child({
     listId: list.id,
     method: "sendUnpublishPostConfirmation",
@@ -25,27 +24,15 @@ export async function sendUnpublishPostConfirmation(
   const personalisation = postReminderPersonalisation(list, numberNotResponded, meta);
 
   try {
-    const response = await notifyClient.sendEmail(template, emailAddress, {
-      personalisation,
-      reference: meta.reference,
+    const emailRequests = list.users.map(async (user) => {
+      return await notifyClient.sendEmail(template, user.email, {
+        personalisation,
+        reference: meta.reference,
+      });
     });
 
-    const updateAudit = await addAudit(
-      {
-        reminderType: "sendUnpublishedPostEmail",
-        eventName: "reminder",
-        itemId: list.id,
-        annualReviewRef: meta.reference,
-      },
-      AuditEvent.UNPUBLISHED
-    );
-
-    if (!updateAudit) {
-      logger.error(
-        `unpublish reminder audit event failed to add for annual review ${meta.reference}. This email will be sent again at the next scheduled run unless an event is created.`
-      );
-    }
-
+    const response = await Promise.any(emailRequests);
+    console.log(`sendUnpublishPostConfirmation - ${list.id}`);
     return response.data;
   } catch (e) {
     const { response } = e;
@@ -61,11 +48,5 @@ export async function sendUnpublishPostConfirmation(
       });
       throw e;
     }
-
-    logger.error(
-      `Failed to make request to NotifyClient with personalisations ${JSON.stringify(
-        personalisation
-      )} for email address ${emailAddress} - ${e}`
-    );
   }
 }

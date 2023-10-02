@@ -1,10 +1,12 @@
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import type { RequestError, SendEmailResponse } from "notifications-node-client";
+import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
-import { Meta } from "./types";
+import type { Meta } from "./types";
 import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
-import { ListItem } from "@prisma/client";
+import type { ListItem } from "@prisma/client";
+import { AnnualReviewProviderEmailType } from "@prisma/client";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.unpublishNotice.providerUnpublished;
@@ -30,13 +32,13 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
       reference: meta.reference,
     });
 
-    const event = await addReminderEvent(
-      listItem.id,
-      // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
-      response.data,
-      [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
-      meta.reference
-    );
+    const event = await addReminderEvent({
+      id: listItem.id,
+      response: response.data as SendEmailResponse,
+      notes: [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
+      reference: meta.reference,
+      emailType: AnnualReviewProviderEmailType.unpublished,
+    });
 
     if (!event) {
       logger.error(

@@ -13,7 +13,7 @@ async function main() {
   }
   // if a task needs to be executed first, await them here.
   try {
-    await processListsBeforeAndDuringStart();
+    // await processListsBeforeAndDuringStart();
   } catch (e) {
     logger.error(e);
   }

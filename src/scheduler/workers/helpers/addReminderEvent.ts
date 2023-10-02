@@ -1,16 +1,29 @@
+import type { AnnualReviewProviderEmailType } from "@prisma/client";
 import type { SendEmailResponse } from "notifications-node-client";
 import { prisma } from "scheduler/prismaClient";
 import { EVENTS } from "shared/listItemEvent";
 
-export async function addReminderEvent(id: number, response: SendEmailResponse, notes?: string[], reference?: string) {
-  return await prisma.listItem.update({
-    where: {
-      id,
-    },
+interface AddReminderEventInput {
+  id: number;
+  response: SendEmailResponse;
+  notes?: string[];
+
+  /**
+   * Annual review reference
+   */
+  reference?: string;
+  emailType: AnnualReviewProviderEmailType;
+}
+
+export async function addReminderEvent({ id, response, notes, reference, emailType }: AddReminderEventInput) {
+  return await prisma.event.create({
     data: {
-      history: {
-        create: EVENTS.REMINDER(response, notes, reference),
+      listItem: {
+        connect: {
+          id,
+        },
       },
+      ...EVENTS.REMINDER({ response, notes, reference, emailType }),
     },
   });
 }

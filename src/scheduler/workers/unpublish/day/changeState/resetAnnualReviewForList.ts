@@ -1,10 +1,12 @@
 import { prisma } from "scheduler/prismaClient";
-import { AuditEvent, List } from "@prisma/client";
-import { ListJsonData } from "shared/types";
 import { addYears } from "date-fns";
-import { addAudit } from "./addAudit";
-import { Meta } from "../types";
 import { schedulerLogger } from "scheduler/logger";
+import { AuditEvent } from "@prisma/client";
+
+import type { List } from "@prisma/client";
+import type { ListJsonData } from "shared/types";
+import type { Meta } from "../types";
+import { addAudit } from "./addAudit";
 
 export async function resetAnnualReviewForList(list: List, meta: Meta) {
   const logger = schedulerLogger.child({ listId: list.id, method: "resetAnnualReviewForList", timeframe: "day" });
@@ -25,15 +27,18 @@ export async function resetAnnualReviewForList(list: List, meta: Meta) {
     },
   });
   logger.info(`Reset annual review state for list ${list.id}`);
-
-  await addAudit(
-    {
-      eventName: "endAnnualReview",
-      itemId: list.id,
-      annualReviewRef: meta.reference,
-    },
-    AuditEvent.ANNUAL_REVIEW
-  );
+  try {
+    await addAudit(
+      {
+        eventName: "endAnnualReview",
+        itemId: list.id,
+        annualReviewRef: meta.reference,
+      },
+      AuditEvent.ANNUAL_REVIEW
+    );
+  } catch (e) {
+    logger.error(`endAnnualReview audit failed to add due to ${e}`);
+  }
 
   return updatedList;
 }
