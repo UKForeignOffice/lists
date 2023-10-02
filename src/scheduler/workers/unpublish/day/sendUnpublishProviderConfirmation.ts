@@ -27,13 +27,10 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
   const emailAddress = jsonData.emailAddress;
 
   try {
-    // const response = await notifyClient.sendEmail(template, emailAddress, {
-    //   personalisation,
-    //   reference: meta.reference,
-    // });
-    const response = {
-      data: {},
-    };
+    const response = await notifyClient.sendEmail(template, emailAddress, {
+      personalisation,
+      reference: meta.reference,
+    });
 
     const event = await addReminderEvent({
       id: listItem.id,

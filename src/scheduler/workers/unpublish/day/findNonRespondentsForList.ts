@@ -11,7 +11,6 @@ export async function findNonRespondentsForList(list: List) {
   const { keyDates } = jsonData.currentAnnualReview!;
   const reminderToFind = parseISO(keyDates.unpublished.UNPUBLISH);
   const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
-  console.log("===", reminderToFind);
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {
     type: {
       in: ["EDITED", "CHECK_ANNUAL_REVIEW"],
@@ -28,9 +27,6 @@ export async function findNonRespondentsForList(list: List) {
       path: ["reference"],
       equals: jsonData.currentAnnualReview?.reference,
     },
-    time: {
-      gte: reminderToFind,
-    },
   };
 
   const listItems = await prisma.listItem.findMany({
@@ -40,13 +36,11 @@ export async function findNonRespondentsForList(list: List) {
       status: "OUT_WITH_PROVIDER",
       history: {
         none: {
-          OR: [reminderHasBeenSent],
+          OR: [editedSinceAnnualReviewDate, reminderHasBeenSent],
         },
       },
     },
   });
-  console.log("LI===", reminderToFind);
-  console.log(listItems);
 
   logger.info(
     `Found ${listItems.length} items to send unpublish reminder ${
@@ -55,8 +49,6 @@ export async function findNonRespondentsForList(list: List) {
         : [listItems.map((listItem) => listItem.id)]
     }`
   );
-
-  // console.log(listItems);
 
   return listItems;
 }
