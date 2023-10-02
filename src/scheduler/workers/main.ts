@@ -13,13 +13,14 @@ async function main() {
   }
   // if a task needs to be executed first, await them here.
   try {
-    await processListsBeforeAndDuringStart();
+    // await processListsBeforeAndDuringStart();
   } catch (e) {
     logger.error(e);
   }
 
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
-  const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), deleteItemsAfterAYear()];
+  // const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), deleteItemsAfterAYear()];
+  const tasks = [unpublishDayTask()];
 
   return await Promise.allSettled(tasks);
 }

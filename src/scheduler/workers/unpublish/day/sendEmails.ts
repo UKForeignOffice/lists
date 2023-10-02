@@ -19,22 +19,17 @@ export async function main(list: List) {
 
   if (meta.daysUntilUnpublish <= 0) {
     logger.info(
-      `${meta.daysUntilUnpublish} does not match 0 day before unpublish, skipping sendEmailsToNonRespondents`
+      `Days until unpublish: ${meta.daysUntilUnpublish}. does not match 0 day before unpublish, skipping sendEmailsToNonRespondents for unpublish day`
     );
     return;
   }
 
   const listItems = await findNonRespondentsForList(list);
 
-  if (!listItems.length) {
-    return;
-  }
-
   logger.info(`sending unpublish provider email for list items ${listItems.map((listItem) => listItem.id)}`);
   const emailsForProviders = listItems.map(async (listItem) => await sendUnpublishProviderConfirmation(listItem, meta));
 
   const providerEmails = Promise.allSettled(emailsForProviders);
-  // email post
 
   const numberNotResponded = listItems.length;
   const postEmails = await sendUnpublishPostConfirmation(list, numberNotResponded, meta);
