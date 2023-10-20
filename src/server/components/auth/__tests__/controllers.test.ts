@@ -1,9 +1,4 @@
-import {
-  getLoginController,
-  postLoginController,
-  getLogoutController,
-  authController,
-} from "../controllers";
+import { getLoginController, postLoginController, getLogoutController, authController } from "../controllers";
 import * as tokenService from "../json-web-token";
 import * as notifyService from "server/services/govuk-notify";
 import * as userModel from "server/models/user";
@@ -56,9 +51,7 @@ describe("Auth Module", () => {
   }
 
   function spyCreateAuthenticationPath(): any {
-    return jest
-      .spyOn(tokenService, "createAuthenticationPath")
-      .mockResolvedValue("/login?token=123Token");
+    return jest.spyOn(tokenService, "createAuthenticationPath").mockResolvedValue("/login?token=123Token");
   }
 
   describe("getLoginController", () => {
@@ -85,7 +78,7 @@ describe("Auth Module", () => {
 
   describe("postLoginController", () => {
     test("authentication request is successful when email address is gov.uk", (done) => {
-      const emailAddress = "person@depto.gov.uk";
+      const emailAddress = "person@fcdo.gov.uk";
       req.body.emailAddress = emailAddress;
 
       spySendAuthenticationEmail();
@@ -94,13 +87,13 @@ describe("Auth Module", () => {
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@depto.gov.uk" });
+        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
         done();
       });
     });
 
     test("sendAuthenticationEmail is called with correct parameters", (done) => {
-      const email = "person@depto.gov.uk";
+      const email = "person@fcdo.gov.uk";
       const sendEmailSpy = spySendAuthenticationEmail();
       const createAuthTokenSpy = spyCreateAuthenticationPath();
       req.body.emailAddress = email;
@@ -109,16 +102,13 @@ describe("Auth Module", () => {
 
       setTimeout(() => {
         expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
-        expect(sendEmailSpy).toHaveBeenCalledWith(
-          email,
-          "https://test-domain/login?token=123Token"
-        );
+        expect(sendEmailSpy).toHaveBeenCalledWith(email, "https://test-domain/login?token=123Token");
         done();
       });
     });
 
     test("next function is called when sendAuthenticationEmail rejects", (done) => {
-      const emailAddress = "person@depto.gov.uk";
+      const emailAddress = "person@fcdo.gov.uk";
       req.body.emailAddress = emailAddress;
 
       spySendAuthenticationEmail(true);
@@ -149,7 +139,7 @@ describe("Auth Module", () => {
     });
 
     test("authLink is not logged outside localhost", (done) => {
-      req.body.emailAddress = "person@depto.gov.uk";
+      req.body.emailAddress = "person@fcdo.gov.uk";
 
       spyCreateAuthenticationPath();
       spySendAuthenticationEmail();
@@ -158,7 +148,7 @@ describe("Auth Module", () => {
 
       setTimeout(() => {
         expect(logger.warn).not.toHaveBeenCalled();
-        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@depto.gov.uk" });
+        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
         done();
       });
     });
@@ -167,7 +157,7 @@ describe("Auth Module", () => {
       assign(serverConfig, { isLocalHost: true });
       jest.resetModules();
 
-      req.body.emailAddress = "person@depto.gov.uk";
+      req.body.emailAddress = "person@fcdo.gov.uk";
 
       spyCreateAuthenticationPath();
       spySendAuthenticationEmail();
@@ -194,14 +184,12 @@ describe("Auth Module", () => {
   });
 
   describe("authController", () => {
-    const email = "person@depto.gov.uk";
+    const email = "person@fcdo.gov.uk";
     let spyFindUserByEmail: any;
     let spyCreateUser: any;
 
     beforeEach(() => {
-      spyFindUserByEmail = jest
-        .spyOn(userModel, "findUserByEmail")
-        .mockResolvedValue(undefined);
+      spyFindUserByEmail = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(undefined);
       spyCreateUser = jest.spyOn(userModel, "createUser").mockResolvedValue({
         email,
         jsonData: {
@@ -220,7 +208,7 @@ describe("Auth Module", () => {
 
           setTimeout(() => {
             expect(req.logIn.mock.calls[0][0]).toEqual({
-              email: "person@depto.gov.uk",
+              email: "person@fcdo.gov.uk",
               jsonData: {
                 roles: [],
               },
@@ -248,7 +236,7 @@ describe("Auth Module", () => {
     test.skip("authentication redirects to session.returnTo", (done) => {
       tokenService
         .createAuthenticationPath({
-          email: "person@depto.gov.uk",
+          email: "person@fcdo.gov.uk",
         })
         .then((authPath) => {
           req.url = `http://localhost${authPath}`;
@@ -267,7 +255,7 @@ describe("Auth Module", () => {
 
     test("authentication fails when token is invalid", async () => {
       const authPath: any = await tokenService.createAuthenticationPath({
-        email: "person@depto.gov.uk",
+        email: "person@fcdo.gov.uk",
       });
 
       req.url = `http://localhost${authPath}MAKEINVALID`;

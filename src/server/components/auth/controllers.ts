@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { isGovUKEmailAddress, isValidEmailAddress } from "server/utils/validation";
 import { sendAuthenticationEmail } from "server/services/govuk-notify";
 import { createAuthenticationPath } from "./json-web-token";
@@ -18,10 +18,12 @@ export function getLoginController(req: Request, res: Response, next: NextFuncti
 
   if (token !== undefined) {
     const redirectToLogin = `${authRoutes.login}?token=${token}`;
-    return res.redirect(redirectToLogin);
+    res.redirect(redirectToLogin);
+    return;
   }
   if (tokenParam !== undefined) {
-    return next();
+    next();
+    return;
   }
 
   res.render("login", {
@@ -44,15 +46,15 @@ export async function postLoginController(req: Request, res: Response, next: Nex
       success: true,
       emailAddress,
     });
-    logger.info(`${emailAddress} (non GOV.UK) attempted to log in`);
+    logger.info(`${emailAddress} (non allowed domain) attempted to log in`);
     return;
   }
   try {
     const protocol = isLocalHost ? "http" : "https";
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
-
-    if (isLocalHost || isSmokeTest || isCybDev) {
+    const skipEmailLogin = isLocalHost || isSmokeTest || isCybDev;
+    if (skipEmailLogin) {
       res.redirect(authLink);
       return;
     }
@@ -69,6 +71,8 @@ export async function postLoginController(req: Request, res: Response, next: Nex
 }
 
 export function getLogoutController(req: Request, res: Response, next: NextFunction): void {
-  const logoutCallback = (err: Error) => (err ? next(err) : res.redirect("/login"));
+  const logoutCallback = (err: Error) => {
+    err ? next(err) : res.redirect("/login");
+  };
   req.logout(logoutCallback);
 }

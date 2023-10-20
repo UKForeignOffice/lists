@@ -16,7 +16,9 @@ export function isAllowedEmailDomain(email: string): boolean {
   const domain = email.split("@")[1];
   const acceptedDomainSchema = Joi.string()
     .domain()
-    .valid(...config.DEFAULT_ALLOWED_EMAIL_DOMAINS, ...config.ALLOWED_EMAIL_DOMAINS);
+    .valid(...config.DEFAULT_ALLOWED_EMAIL_DOMAINS, ...config.ALLOWED_EMAIL_DOMAINS)
+    .lowercase()
+    .options({ convert: true });
   const domainResult = acceptedDomainSchema.validate(domain);
 
   return !domainResult.error;

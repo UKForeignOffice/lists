@@ -9,7 +9,7 @@ describe("User Model:", () => {
     id: 123,
     createdAt: "2021-06-08 13:00:29.633",
     updatedAt: "2021-06-08 13:00:29.633",
-    email: "test@depto.gov.uk",
+    email: "test@fcdo.gov.uk",
     jsonData: {
       roles: [UserRoles.Administrator],
     },
@@ -67,7 +67,6 @@ describe("User Model:", () => {
 
     test("create command is correct", async () => {
       prisma.user.create.mockResolvedValue(sampleUser);
-
       await createUser({
         email: sampleUser.email.toUpperCase(),
         jsonData: sampleUser.jsonData,
@@ -152,12 +151,12 @@ describe("User Model:", () => {
     test("findMany command is correct", async () => {
       const useWithList = {
         id: 123,
-        email: "test@depto.gov.uk",
+        email: "test@fcdo.gov.uk",
         createdAt: new Date(),
         updatedAt: new Date(),
         jsonData: {
           roles: [],
-        }
+        },
       };
 
       prisma.user.findMany.mockResolvedValue([useWithList]);
