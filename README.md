@@ -83,7 +83,8 @@ docker compose up postgres redis
 Compose will start the following:
 
 1. `PostgreSQL`: The PostgreSQL database with PostGIS, accessible on [http://localhost:5432](http://localhost:5432)
-  - If you are using Apple Silicon (M1, M2),  
+  - If you are using Apple Silicon (M1, M2), change `docker/db/Dockerfile` to use `FROM gangstead/postgis:13-3.1-arm`
+  - If you have access to keybase and the B64 encrypted PGP keys, you may use the test data. See the Dockerfile for more details
 1. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
 1. `Apply`: The form runner, accessible on [http://localhost:3001](http://localhost:3001)
 1. `Lists`: The lists server, accessible on [http://localhost:3000](http://localhost:3000)
