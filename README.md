@@ -1,5 +1,14 @@
 # FCDO Lists
 
+## Quick start guide
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- A node version manager, like [nvm](https://github.com/nvm-sh/nvm) or [n](https://github.com/tj/n)
+- [Keybase](https://keybase.io/) - [Lists keybase URL](keybase://team/cautionyourblast.fcdo/config/dev/lists)
+
+
 ## Architecture
 
 ### Server
@@ -26,10 +35,18 @@ to deploy form journeys for data ingestion. The base docker images for the form 
 2. The form runner will create a new route matching the file name.
 i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
 
+If you are running the form runner via docker, but are running lists locally, then you will need to change the outputs within [./docker/apply/forms-jsons](./docker/apply/forms-json)
+to target host.docker.internal:3000, instead of lists:3000.
+
+```
+      "outputConfiguration": {
+        "url": "http//host.docker.internal:3000/ingest/funeralDirectors"
+      }
+```
 
 To start the form runner
 ```sh
-$ docker compose -f docker-compose.ci.yml up apply
+$ docker compose up apply
 ```
 
 By default, it will start on port 3001. It will be accessible from your local machine at localhost:3001.
@@ -57,19 +74,19 @@ The lists server also depends on [AWS Location Service](https://aws.amazon.com/l
 
 #### Starting local development required services
 
-Lists depends on both Postgres and Redis, and you can start these services by running:
+Lists depends on both Postgres and Redis and you can start these services by running:
 
 ```bash
-docker-compose up
+docker compose up postgres redis
 ```
 
 Compose will start the following:
 
 1. `PostgreSQL`: The PostgreSQL database with PostGIS, accessible on [http://localhost:5432](http://localhost:5432)
-2. `PgAdmin`: The PgAdmin GUI app so you can manage the database, accessible on [http://localhost:8080](http://localhost:8080)
-3. `PgHero`: A performance dashboard for Postgres, accessible on [http://localhost:8081](http://localhost:8081)
-4. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
-5. `RedisInsight`: Redis desktop GUI so you can manager the database, accessible on [http://localhost:8001](http://localhost:8001)
+  - If you are using Apple Silicon (M1, M2),  
+1. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
+1. `Apply`: The form runner, accessible on [http://localhost:3001](http://localhost:3001)
+1. `Lists`: The lists server, accessible on [http://localhost:3000](http://localhost:3000)
 
 Note: See `docker-compose.yml` file for respective usernames and passwords.
 
@@ -118,10 +135,13 @@ Follow the instructions [here](docs/getting-started.md) to get started.
     ├── config                    # Local development configuration files, such as local postgres config file
     ├── dist                      # Babel's build output folder (npm start/dev points here)
     ├── src
-    │   ├── client                # Client side related code and assets such as styles and images.
+    │   ├── client                # Client side related code and assets such as styles and images
+    │   ├── scheduler             # Scheduler related code, which is scheduled to run every day at 10:50 UTC and 11:00 UTC on production
+    │   │   ├── batch             # Runs at 10:50 UTC and determines which lists should be processed
+    │   │   └── workers           # Runs at 11:00 UTC and processes the lists by reading `List.jsonData.currentAnnualReview`
     │   ├── server                # NodeJS server codebase
     |   |   ├── components        # Server features are self-contained (besides views) within the various folders here
-    |   |   |   ├── config            # Environment configuration files
+    |   |   ├── config            # Environment configuration files
     |   |   ├── middlewares       # Express middlewares
     |   |   ├── models            # Postgres schema, models and helpers
     |   |   ├── services          # Various services the application integrates with
