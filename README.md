@@ -40,7 +40,7 @@ to target host.docker.internal:3000, instead of lists:3000.
 
 ```
       "outputConfiguration": {
-        "url": "http//host.docker.internal:3000/ingest/funeralDirectors"
+        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
       }
 ```
 
@@ -134,20 +134,25 @@ Follow the instructions [here](docs/getting-started.md) to get started.
     ├── .jest                     # Jest related configuration files
     ├── .vscode                   # VSCode related settings
     ├── config                    # Local development configuration files, such as local postgres config file
+    ├── cypress                   # End to end tests
     ├── dist                      # Babel's build output folder (npm start/dev points here)
+    ├── docker                    # Dockerfiles for the apply and test database
+    │   ├── apply                 # Files needed to configure the form builder, including config, jsons, and views
+    │   └── db                    # Files needed to setup the test database
     ├── src
     │   ├── client                # Client side related code and assets such as styles and images
     │   ├── scheduler             # Scheduler related code, which is scheduled to run every day at 10:50 UTC and 11:00 UTC on production
     │   │   ├── batch             # Runs at 10:50 UTC and determines which lists should be processed
     │   │   └── workers           # Runs at 11:00 UTC and processes the lists by reading `List.jsonData.currentAnnualReview`
     │   ├── server                # NodeJS server codebase
-    |   |   ├── components        # Server features are self-contained (besides views) within the various folders here
-    |   |   ├── config            # Environment configuration files
-    |   |   ├── middlewares       # Express middlewares
-    |   |   ├── models            # Postgres schema, models and helpers
-    |   |   ├── services          # Various services the application integrates with
-    |   |   ├── utils             # Several utility helper functions
-    |   |   ├── views             # Nunjucks html views
+    │   │   ├── components        # Server features are self-contained (besides views) within the various folders here
+    │   │   ├── config            # Environment configuration files
+    │   │   ├── middlewares       # Express middlewares
+    │   │   ├── models            # Postgres schema, models and helpers
+    │   │   ├── services          # Various services the application integrates with
+    │   │   ├── utils             # Several utility helper functions
+    │   │   └── views             # Nunjucks html views
+    │   ├── shared                # Shared code between scheduler and server
     │   └── types.d.ts            # Typescript's global type definition file
     ├── LICENSE
     └── README.md
