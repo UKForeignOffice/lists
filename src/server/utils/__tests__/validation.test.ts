@@ -22,7 +22,8 @@ describe("isGovUKEmailAddress", () => {
     expect(isGovUKEmailAddress("person.surname@fco")).toBe(false);
     expect(isGovUKEmailAddress("@fcdo.gov.uk")).toBe(false);
     expect(isGovUKEmailAddress("fcdo.gov.uk")).toBe(false);
-    expect(isGovUKEmailAddress("someone@fcdo.gov.uk")).toBe(false);
+    expect(isGovUKEmailAddress("someone@gov.uk")).toBe(false);
+    expect(isGovUKEmailAddress("someone@ho.gov.uk")).toBe(false);
   });
 
   test("multiple emails fail", () => {
