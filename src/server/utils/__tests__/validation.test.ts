@@ -22,12 +22,12 @@ describe("isGovUKEmailAddress", () => {
     expect(isGovUKEmailAddress("person.surname@fco")).toBe(false);
     expect(isGovUKEmailAddress("@fcdo.gov.uk")).toBe(false);
     expect(isGovUKEmailAddress("fcdo.gov.uk")).toBe(false);
-    expect(isGovUKEmailAddress("someone@gov.uk")).toBe(false);
+    expect(isGovUKEmailAddress("someone@fcdo.gov.uk")).toBe(false);
   });
 
   test("multiple emails fail", () => {
     expect(isGovUKEmailAddress("person@gmail.com,person@fco.gov.uk")).toBe(false);
-    expect(isGovUKEmailAddress("person@gov.uk,person@fco.gov.uk")).toBe(false);
+    expect(isGovUKEmailAddress("person@fcdo.gov.uk,person@fco.gov.uk")).toBe(false);
   });
 
   test("with configured allowed email domains", () => {
@@ -38,7 +38,7 @@ describe("isGovUKEmailAddress", () => {
     jest.resetModules();
 
     expect(require("./../validation").isGovUKEmailAddress("person@gmail.com")).toBe(true);
-    expect(require("./../validation").isGovUKEmailAddress("person@gov.uk")).toBe(true);
+    expect(require("./../validation").isGovUKEmailAddress("person@fcdo.gov.uk")).toBe(true);
     expect(require("./../validation").isGovUKEmailAddress("person@fcdo.gov.uk")).toBe(true);
   });
 });

@@ -19,10 +19,10 @@ describe("List Model:", () => {
       name: "United Kingdom",
     },
     jsonData: {
-      createdBy: "test@gov.uk",
-      users: ["test@gov.uk"],
-      validators: ["test@gov.uk"],
-      administrators: ["test@gov.uk"],
+      createdBy: "test@fcdo.gov.uk",
+      users: ["test@fcdo.gov.uk"],
+      validators: ["test@fcdo.gov.uk"],
+      administrators: ["test@fcdo.gov.uk"],
     },
   };
 
@@ -32,7 +32,7 @@ describe("List Model:", () => {
     updatedAt: new Date(),
     email: "test@test.com",
     jsonData: { roles: [] },
-  }
+  };
 
   describe("findListById", () => {
     test("findUnique call is correct", async () => {
@@ -114,8 +114,8 @@ describe("List Model:", () => {
     const listData = {
       country: "United Kingdom",
       serviceType: ServiceType.lawyers,
-      user: "test@gov.uk",
-      createdBy: "test@gov.uk",
+      user: "test@fcdo.gov.uk",
+      createdBy: "test@fcdo.gov.uk",
     };
 
     beforeEach(() => {
@@ -146,9 +146,9 @@ describe("List Model:", () => {
           },
           users: {
             connect: {
-              email: "test@gov.uk"
-            }
-          }
+              email: "test@fcdo.gov.uk",
+            },
+          },
         },
       });
     });
@@ -188,8 +188,8 @@ describe("List Model:", () => {
     const listData: any = {
       country: "United Kingdom",
       serviceType: ServiceType.lawyers,
-      user: "test@gov.uk",
-      createdBy: "test@gov.uk",
+      user: "test@fcdo.gov.uk",
+      createdBy: "test@fcdo.gov.uk",
     };
 
     test("create update is correct", async () => {
@@ -204,8 +204,8 @@ describe("List Model:", () => {
         data: {
           users: {
             connect: {
-              email: "test@gov.uk"
-            }
+              email: "test@fcdo.gov.uk",
+            },
           },
         },
       });

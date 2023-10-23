@@ -39,12 +39,12 @@ describe("Dashboard Controllers", () => {
     mockReq = {
       method: "GET",
       params: {
-        userEmail: "user@gov.uk",
+        userEmail: "user@fcdo.gov.uk",
       },
       query: {},
       user: {
         userData: {
-          email: "authemail@gov.uk",
+          email: "authemail@fcdo.gov.uk",
         },
         isAdministrator: false,
         getLists: jest.fn(),
@@ -167,7 +167,7 @@ describe("Dashboard Controllers", () => {
     });
 
     test("it renders correct template with correct user value", async () => {
-      const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
+      const userBeingEdited: any = { email: "userbeingEdited@fcdo.gov.uk" };
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(false);
       const spyFindUser = jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(userBeingEdited);
 
@@ -184,7 +184,7 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "findUserByEmail").mockResolvedValue(mockReq.user);
       jest.spyOn(userModel, "isAdministrator").mockResolvedValueOnce(false);
 
-      const userBeingEdited: any = { email: "userbeingEdited@gov.uk" };
+      const userBeingEdited: any = { email: "userbeingEdited@fcdo.gov.uk" };
       const spyUpdateUser = jest.spyOn(userModel, "updateUser").mockResolvedValueOnce(userBeingEdited);
 
       mockReq.method = "POST";
@@ -201,11 +201,11 @@ describe("Dashboard Controllers", () => {
       jest.spyOn(userModel, "isAdministrator").mockResolvedValue(true);
       jest.spyOn(userModel, "updateUser").mockRejectedValueOnce(error);
       mockReq.method = "POST";
-      mockReq.user.userData.email = "user@gov.uk";
+      mockReq.user.userData.email = "user@fcdo.gov.uk";
       mockReq.body = { roles: "${UserRoles.Administrator}" };
 
       await usersEditPostController(mockReq, mockRes, mockNext);
-      expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/users/user@gov.uk`);
+      expect(mockRes.redirect).toHaveBeenCalledWith(`/dashboard/users/user@fcdo.gov.uk`);
     });
   });
 
