@@ -1,6 +1,6 @@
-#FROM postgis/postgis
+FROM postgis/postgis
 # If you are using an ARM device (e.g. Apple Silicon M1, M2), use the following line instead
-FROM gangstead/postgis:13-3.1-arm
+#FROM gangstead/postgis:13-3.1-arm
 
 # These secrets are stored in keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp.
 # You can replace the next 3 lines with the contents of keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/copy_into_docker.txt
