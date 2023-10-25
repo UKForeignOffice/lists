@@ -5,6 +5,11 @@ services:
     build:
       context: ./docker/db
       dockerfile: Dockerfile
+      args:
+        - PGP_SECRET=${PGP_SECRET}
+        - PGP_PUB=${PGP_PUB}
+        - PGP_OTRUST=${PGP_OTRUST}
+
     # if you are on Mac M1 please use the image below
     # see https://github.com/docker/for-mac/issues/5122
     # image: "gangstead/postgis:13-3.1-arm"
@@ -130,6 +135,7 @@ services:
     build:
       context: "docker/apply"
       dockerfile: Dockerfile
+
     environment:
       NODE_ENV: test
     ports:

@@ -9,3 +9,4 @@
 - [Fixing local data issues](fixing-local-data-issues.md)
 - [Scheduler process(es)](scheduler.md)
 - [Update dev with prod data](update-prod-data.md)
+- [Adding a new list type](adding-new-list-type.md)

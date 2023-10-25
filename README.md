@@ -8,6 +8,44 @@
 - A node version manager, like [nvm](https://github.com/nvm-sh/nvm) or [n](https://github.com/tj/n)
 - [Keybase](https://keybase.io/) - [Lists keybase URL](keybase://team/cautionyourblast.fcdo/config/dev/lists)
 
+### Quickstart guide (for lists development)
+
+**1. Make form json changes if necessary**
+
+You do not need to do this if you only need to run the find or list-management app. You also do not need to do this if you are running the entire application via docker-compose.
+
+If you are running the form runner via docker, but are running lists locally, then you will need to change the output within [./docker/apply/forms-jsons](./docker/apply/forms-json)
+   to target host.docker.internal:3000, instead of lists:3000.
+
+```
+      "outputConfiguration": {
+        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
+      }
+```
+
+**2. Setup the test database file**
+
+For ARM (e.g. M1, M2) processors you will need to change the Dockerfile in `docker/db` to use the correct PostGIS image.
+
+To use test data, you must have the PGP keys to decrypt the data. 
+1. Download keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/.env
+1. Load the env vars from .env into the shell `$ set -o allexport; source .env; set +o allexport;`
+1. Build the container via docker compose `$ docker compose build postgres`
+
+**3. Start the databases and applications**
+
+```sh
+docker compose up postgres redis apply
+```
+
+**4. Start the lists app**
+1. Download the environment variables from [keybase://team/cautionyourblast.fcdo/config/dev/lists/.env](keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/.env) into the root of this project
+1. If you need to test form submissions locally, you will need to authenticate your shell with AWS
+1. Set your node version to 18 
+1. Install dependencies `npm install`
+1. Run the prisma migrations `npm run prisma:deploy`
+1. Start the application `npm run dev`
+
 
 ## Architecture
 
@@ -40,13 +78,13 @@ to target host.docker.internal:3000, instead of lists:3000.
 
 ```
       "outputConfiguration": {
-        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
+        "url": "http://lists:3000/ingest/funeralDirectors"
       }
 ```
 
 To start the form runner
 ```sh
-$ docker compose up apply
+docker compose up apply
 ```
 
 By default, it will start on port 3001. It will be accessible from your local machine at localhost:3001.
@@ -86,7 +124,7 @@ Compose will start the following:
   - If you are using Apple Silicon (M1, M2), change `docker/db/Dockerfile` to use `FROM gangstead/postgis:13-3.1-arm`
   - If you have access to keybase and the B64 encrypted PGP keys, you may use the test data. See the Dockerfile for more details
 1. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
-1. `Apply`: The form runner, accessible on [http://localhost:3001](http://localhost:3001)
+1. `Apply`: The form runner, accessible on [http://localhost:3001](http://localhost:3001), or [http://localhost:3000/application](http://localhost:3000/application)
 1. `Lists`: The lists server, accessible on [http://localhost:3000](http://localhost:3000)
 
 Note: See `docker-compose.yml` file for respective usernames and passwords.
@@ -163,7 +201,6 @@ Webpack will watch `/src` folder and will rebuild when changes occur, then Nodem
 
 For code styling and formatting we are using:
 
-- [https://standardjs.com/](https://standardjs.com)
 - [eslint-config-standard-with-typescript](https://www.npmjs.com/package/eslint-config-standard-with-typescript)
 - [https://prettier.io/](https://prettier.io/)
 
@@ -199,3 +236,6 @@ This project uses Conventional Commits to version the package correctly and gene
 You can generate valid commit messages by running `npm run commit` and following the instructions on your terminal window. Windows users should use the Bash terminal from the Windows Subsystem for Linux to run this.
 
 All commit messages are run through a validator and any invalid commit messages will be rejected.
+
+## Other guides
+- 
