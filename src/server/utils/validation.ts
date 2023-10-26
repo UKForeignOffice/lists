@@ -18,7 +18,6 @@ export function isAllowedEmailDomain(email: string): boolean {
     .domain()
     .valid(...config.DEFAULT_ALLOWED_EMAIL_DOMAINS, ...config.ALLOWED_EMAIL_DOMAINS)
     .lowercase()
-    .trim()
     .options({ convert: true });
   const domainResult = acceptedDomainSchema.validate(domain);
   return !domainResult.error;

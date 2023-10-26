@@ -32,7 +32,7 @@ export function getLoginController(req: Request, res: Response, next: NextFuncti
 }
 
 export async function postLoginController(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const emailAddress = req.body.emailAddress;
+  const emailAddress = req.body.emailAddress?.trim();
 
   if (!isValidEmailAddress(emailAddress) || !isGovUKEmailAddress(emailAddress)) {
     logger.info(`${emailAddress} attempted to log in but is an invalid email address`);
