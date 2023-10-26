@@ -55,7 +55,7 @@ export async function postLoginController(req: Request, res: Response, next: Nex
 
     await sendAuthenticationEmail(emailAddress, authLink);
     res.render("login", {
-      error: true,
+      success: true,
       emailAddress,
     });
   } catch (e) {
