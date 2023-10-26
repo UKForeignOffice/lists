@@ -43,7 +43,7 @@ export async function postLoginController(req: Request, res: Response, next: Nex
 
   if (!isGovUKEmailAddress(emailAddress)) {
     res.render("login", {
-      success: true,
+      success: false,
       emailAddress,
     });
     logger.info(`${emailAddress} (non allowed domain) attempted to log in`);
