@@ -66,7 +66,6 @@ jobs:
       - run:
           name: build lists
           command: |
-            docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache lists apply
             docker ps
 

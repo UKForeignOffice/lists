@@ -65,7 +65,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
       const result = await sendAuthenticationEmail(emailAddress, authenticationLink);
@@ -94,7 +94,7 @@ describe("GOVUK Notify service:", () => {
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const authenticationLink = "https://localhost/login?token=123Token";
 
       const result = await sendAuthenticationEmail(emailAddress, authenticationLink);
@@ -113,7 +113,7 @@ describe("GOVUK Notify service:", () => {
       });
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const confirmationLink = "https://localhost/confirm/123Reference";
       const country = "Italy";
       const type = "lawyers";
@@ -139,7 +139,7 @@ describe("GOVUK Notify service:", () => {
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const confirmationLink = "https://localhost/confirm/123Reference";
       const country = "Italy";
       const type = "lawyers";
@@ -160,7 +160,7 @@ describe("GOVUK Notify service:", () => {
       });
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const type = "COVID-19 test providers";
       const country = "Germany";
       const searchLink = "http://localhost:3000/find?serviceType=covidTestProviders";
@@ -168,7 +168,7 @@ describe("GOVUK Notify service:", () => {
       const result = await sendDataPublishedEmail(contactName, emailAddress, type, country, searchLink);
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.published, "testemail@gov.uk", {
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.published, "testemail@fcdo.gov.uk", {
         personalisation: {
           contactName: "Ada Lovelace",
           country: "Germany",
@@ -187,7 +187,7 @@ describe("GOVUK Notify service:", () => {
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const type = "lawyers";
       const country = "Germany";
       const searchLink = "http://localhost:3000/find?serviceType=lawyers";
@@ -208,7 +208,7 @@ describe("GOVUK Notify service:", () => {
       });
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const message = "Please correct the address";
       const changeLink = "http://localhost:3001/session/TOKEN-ABC123";
@@ -216,7 +216,7 @@ describe("GOVUK Notify service:", () => {
       const { result } = await sendEditDetailsEmail(contactName, emailAddress, typePlural, message, changeLink);
 
       expect(result).toBe(true);
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.edit, "testemail@gov.uk", {
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(NOTIFY.templates.edit, "testemail@fcdo.gov.uk", {
         personalisation: {
           typeSingular: "Lawyer",
           typePlural,
@@ -235,7 +235,7 @@ describe("GOVUK Notify service:", () => {
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
       const contactName = "Ada Lovelace";
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const message = "Please correct the address";
       const changeLink = "http://localhost:3001/session/TOKEN-ABC123";
@@ -255,7 +255,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
@@ -271,7 +271,7 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneMonth,
-        "testemail@gov.uk",
+        "testemail@fcdo.gov.uk",
         {
           personalisation: {
             typePlural,
@@ -291,7 +291,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
@@ -307,7 +307,7 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneWeek,
-        "testemail@gov.uk",
+        "testemail@fcdo.gov.uk",
         {
           personalisation: {
             typePlural,
@@ -327,7 +327,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
@@ -343,7 +343,7 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postOneDay,
-        "testemail@gov.uk",
+        "testemail@fcdo.gov.uk",
         {
           personalisation: {
             typePlural,
@@ -363,7 +363,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
@@ -373,7 +373,7 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.postStart,
-        "testemail@gov.uk",
+        "testemail@fcdo.gov.uk",
         {
           personalisation: {
             typePlural,
@@ -392,7 +392,7 @@ describe("GOVUK Notify service:", () => {
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const annualReviewDate = "01-Jan-2023";
@@ -417,7 +417,7 @@ describe("GOVUK Notify service:", () => {
         statusText: "Created",
       });
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const contactName = "Ada Lovelace";
@@ -436,7 +436,7 @@ describe("GOVUK Notify service:", () => {
       expect(result).toBe(true);
       expect(notifyClient.sendEmail).toHaveBeenCalledWith(
         mockNotify.templates.annualReviewNotices.providerStart,
-        "testemail@gov.uk",
+        "testemail@fcdo.gov.uk",
         {
           personalisation: {
             contactName,
@@ -456,7 +456,7 @@ describe("GOVUK Notify service:", () => {
 
       jest.spyOn(notifyClient, "sendEmail").mockRejectedValue(error);
 
-      const emailAddress = "testemail@gov.uk";
+      const emailAddress = "testemail@fcdo.gov.uk";
       const typePlural = "Lawyers";
       const country = "France";
       const contactName = "Ada Lovelace";
@@ -482,7 +482,7 @@ describe("GOVUK Notify service:", () => {
         id: 1,
         type: "lawyers",
         jsonData: {
-          users: ["test@gov.uk", "another@gov.uk"],
+          users: ["test@fcdo.gov.uk", "another@fcdo.gov.uk"],
         },
         country: {
           name: "France",
@@ -505,7 +505,7 @@ describe("GOVUK Notify service:", () => {
 
       await sendManualActionNotificationToPost(1, trigger);
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(`${trigger}_TEMPLATE_ID`, "test@gov.uk", {
+      expect(notifyClient.sendEmail).toHaveBeenCalledWith(`${trigger}_TEMPLATE_ID`, "test@fcdo.gov.uk", {
         personalisation: { typeSingular: "lawyer", type: "lawyers", country: "France" },
         reference: "",
       });
@@ -530,7 +530,7 @@ describe("sendEmails", () => {
     const notifyClient = getNotifyClient();
     const spy = jest.spyOn(notifyClient, "sendEmail");
 
-    await sendEmails("abc", ["test@gov.uk", "test@gov.uk"], {});
+    await sendEmails("abc", ["test@fcdo.gov.uk", "test@fcdo.gov.uk"], {});
 
     expect(spy).toBeCalledTimes(2);
   });
@@ -539,7 +539,7 @@ describe("sendEmails", () => {
     const notifyClient = getNotifyClient();
     const spy = jest.spyOn(notifyClient, "sendEmail");
     spy.mockRejectedValue("Error");
-    await expect(sendEmails("abc", ["test@gov.uk", "test@gov.uk"], {})).rejects.toThrow(AggregateError);
+    await expect(sendEmails("abc", ["test@fcdo.gov.uk", "test@fcdo.gov.uk"], {})).rejects.toThrow(AggregateError);
   });
 
   test("sendEmails returns resolved value when at least one email sends", async () => {
@@ -547,6 +547,6 @@ describe("sendEmails", () => {
     const spy = jest.spyOn(notifyClient, "sendEmail");
     spy.mockResolvedValueOnce({ successText: "woo" }).mockRejectedValue("Error");
 
-    expect(await sendEmails("abc", ["test@gov.uk", "test@gov.uk"], {})).toEqual({ successText: "woo" });
+    expect(await sendEmails("abc", ["test@fcdo.gov.uk", "test@fcdo.gov.uk"], {})).toEqual({ successText: "woo" });
   });
 });

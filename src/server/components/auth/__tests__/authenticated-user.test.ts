@@ -3,7 +3,6 @@ import { prisma } from "../../../models/db/__mocks__/prisma-client";
 
 jest.mock("./../../../models/db/prisma-client");
 
-
 let user;
 let administrator;
 
@@ -11,13 +10,13 @@ beforeEach(() => {
   user = new AuthenticatedUser({
     id: 7,
     jsonData: { roles: [] },
-    email: "test@gov.uk",
+    email: "test@fcdo.gov.uk",
   });
 
   administrator = new AuthenticatedUser({
     id: 71,
     jsonData: { roles: ["Administrator"] },
-    email: "test@gov.uk",
+    email: "test@fcdo.gov.uk",
   });
 });
 
