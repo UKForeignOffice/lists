@@ -64,17 +64,9 @@ jobs:
             docker-compose build --build-arg PGP_PUB=$PGP_PUB --build-arg PGP_SECRET=$PGP_SECRET --build-arg PGP_OTRUST=$PGP_OTRUST postgres
 
       - run:
-          name: Login to GitHub Container Registry
-          uses: docker/login-action@v3
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - run:
           name: build lists
           command: |
+            docker login ghcr.io -u jenbutongit -p $GHCR_PULL_PAT
             COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --no-cache lists apply
             docker ps
 
