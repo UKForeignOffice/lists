@@ -123,10 +123,21 @@ describe("Auth Module", () => {
       });
     });
 
-    test("present user with success message if email address is NOT gov.uk", () => {
+    test("present user with error message if email address is NOT gov.uk", () => {
       req.body.emailAddress = "someemail@gmail.com";
       postLoginController(req, res, next);
-      expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "someemail@gmail.com" });
+      expect(res.render).toHaveBeenCalledWith("login", { error: true });
+    });
+
+    test("present user with success message if email address is gov.uk", (done) => {
+      req.body.emailAddress = "someemail@fcdo.gov.uk";
+      spyCreateAuthenticationPath();
+      spySendAuthenticationEmail();
+      postLoginController(req, res, next);
+      setTimeout(() => {
+        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "someemail@fcdo.gov.uk" });
+        done();
+      });
     });
 
     test("prevent authentication email sending if email address is NOT gov.uk", async () => {
