@@ -6,7 +6,7 @@ import type { AuditListItemEventName } from "server/models/types";
 import { throwIfConfigVarIsUndefined as throwIfUndefined } from "shared/getNotifyClient";
 
 export function isValidEmailAddress(email: string): boolean {
-  const schema = Joi.string().email().lowercase().options({ convert: true });
+  const schema = Joi.string().email().lowercase().trim().options({ convert: true });
   const { error } = schema.validate(email);
 
   return !error;
@@ -18,9 +18,9 @@ export function isAllowedEmailDomain(email: string): boolean {
     .domain()
     .valid(...config.DEFAULT_ALLOWED_EMAIL_DOMAINS, ...config.ALLOWED_EMAIL_DOMAINS)
     .lowercase()
+    .trim()
     .options({ convert: true });
   const domainResult = acceptedDomainSchema.validate(domain);
-
   return !domainResult.error;
 }
 export function isGovUKEmailAddress(email: string): boolean {
