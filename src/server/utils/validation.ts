@@ -6,7 +6,7 @@ import type { AuditListItemEventName } from "server/models/types";
 import { throwIfConfigVarIsUndefined as throwIfUndefined } from "shared/getNotifyClient";
 
 export function isValidEmailAddress(email: string): boolean {
-  const schema = Joi.string().email().lowercase().trim().options({ convert: true });
+  const schema = Joi.string().email().lowercase().options({ convert: true });
   const { error } = schema.validate(email);
 
   return !error;
