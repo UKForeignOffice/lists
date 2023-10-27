@@ -20,7 +20,6 @@ export function isAllowedEmailDomain(email: string): boolean {
     .lowercase()
     .options({ convert: true });
   const domainResult = acceptedDomainSchema.validate(domain);
-
   return !domainResult.error;
 }
 export function isGovUKEmailAddress(email: string): boolean {

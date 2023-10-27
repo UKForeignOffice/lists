@@ -34,26 +34,20 @@ export function getLoginController(req: Request, res: Response, next: NextFuncti
 export async function postLoginController(req: Request, res: Response, next: NextFunction): Promise<void> {
   const emailAddress = req.body.emailAddress?.trim();
 
-  if (!isValidEmailAddress(emailAddress)) {
+  if (!isValidEmailAddress(emailAddress) || !isGovUKEmailAddress(emailAddress)) {
+    logger.info(`${emailAddress} attempted to log in but is an invalid email address`);
     res.render("login", {
       error: true,
     });
     return;
   }
 
-  if (!isGovUKEmailAddress(emailAddress)) {
-    res.render("login", {
-      success: true,
-      emailAddress,
-    });
-    logger.info(`${emailAddress} (non allowed domain) attempted to log in`);
-    return;
-  }
   try {
     const protocol = isLocalHost ? "http" : "https";
     const authPath = await createAuthenticationPath({ email: emailAddress });
     const authLink = `${protocol}://${SERVICE_DOMAIN}${authPath}`;
     const skipEmailLogin = isLocalHost || isSmokeTest || isCybDev;
+
     if (skipEmailLogin) {
       res.redirect(authLink);
       return;
