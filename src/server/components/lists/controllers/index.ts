@@ -42,7 +42,7 @@ export async function listsConfirmApplicationController(
           serviceName = "Find a professional service abroad";
       }
 
-      await sendManualActionNotificationToPost(listId as number, "PROVIDER_SUBMITTED");
+      if (listId) await sendManualActionNotificationToPost(listId, "PROVIDER_SUBMITTED");
 
       res.render("lists/application-confirmation-page", {
         serviceName,
