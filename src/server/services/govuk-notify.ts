@@ -245,10 +245,10 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
     },
   });
 
-  logger.error(
-    `sendManualActionNotificationToPost: List with id ${listId} could not be found, could not send notification for NotificationTrigger ${trigger}`
-  );
   if (!list) {
+    logger.error(
+      `sendManualActionNotificationToPost: List with id ${listId} could not be found, could not send notification for NotificationTrigger ${trigger}`
+    );
     return { error: `invalid ${listId}` };
   }
 

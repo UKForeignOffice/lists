@@ -282,6 +282,8 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 
+    logger.info(`email verified successfully for ${reference}`);
+
     return {
       type: serviceType,
       listId,
