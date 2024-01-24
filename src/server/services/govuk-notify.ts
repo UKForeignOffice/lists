@@ -242,6 +242,7 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
     },
     include: {
       country: true,
+      users: true,
     },
   });
 
@@ -266,16 +267,16 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
     );
   }
 
-  const { jsonData = {} } = list as List;
-  const { users = [] } = jsonData;
+  const { users = [] } = list as List;
+  const userEmails: string[] = users.map(user => user.email);
 
-  if (users.length === 0) {
+  if (userEmails.length === 0) {
     return { error: "No email addresses found" };
   }
 
   const personalisation = getCommonPersonalisations(list.type, list.country.name);
 
-  return await sendEmails(templateId, users, { personalisation, reference: "" });
+  return await sendEmails(templateId, userEmails, { personalisation, reference: "" });
 }
 
 export async function sendContactUsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
