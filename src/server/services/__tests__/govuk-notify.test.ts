@@ -487,6 +487,15 @@ describe("GOVUK Notify service:", () => {
         country: {
           name: "France",
         },
+        "users":
+          [
+            {
+              "email": "test@fcdo.gov.uk",
+            },
+            {
+              "email": "another@fcdo.gov.uk",
+            }
+          ]
       });
     });
 
