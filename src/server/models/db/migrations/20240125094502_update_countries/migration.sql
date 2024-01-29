@@ -48,3 +48,29 @@ SET "jsonData" = jsonb_set(
   '{regions}',
   '"St Vincent"')
 WHERE "jsonData" ->> 'country' = 'Saint Vincent and the Grenadines';
+
+-- UPDATE Saint Barthélemy
+UPDATE "Country"
+SET name = 'St Barthélemy'
+WHERE name = 'Saint Barthélemy';
+
+UPDATE "ListItem"
+SET "jsonData" = jsonb_set(
+  jsonb_set("jsonData", '{country}', '"St Barthélemy"'),
+  '{regions}',
+  '"St Barthélemy"'
+                 )
+WHERE "jsonData" ->> 'country' = 'Saint Barthélemy';
+
+-- UPDATE Saint Helena, Ascension and Tristan da Cunha
+UPDATE "Country"
+SET name = 'St Helena, Ascension and Tristan da Cunha'
+WHERE name = 'Saint Helena, Ascension and Tristan da Cunha';
+
+UPDATE "ListItem"
+SET "jsonData" = jsonb_set(
+  jsonb_set("jsonData", '{country}', '"St Helena, Ascension and Tristan da Cunha"'),
+  '{regions}',
+  '"St Helena, Ascension and Tristan da Cunha"'
+                 )
+WHERE "jsonData" ->> 'country' = 'Saint Helena, Ascension and Tristan da Cunha';

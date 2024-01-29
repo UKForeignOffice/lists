@@ -213,10 +213,10 @@ export const countriesList = [
   { text: "Romania", value: "Romania", code: "ROU" },
   { text: "Russia", value: "Russia", code: "RUS" },
   { text: "Rwanda", value: "Rwanda", code: "RWA" },
-  { text: "Saint Barthélemy", value: "Saint Barthélemy", code: "BLM" },
+  { text: "St Barthélemy", value: "St Barthélemy", code: "BLM" },
   {
-    text: "Saint Helena, Ascension and Tristan da Cunha",
-    value: "Saint Helena, Ascension and Tristan da Cunha",
+    text: "St Helena, Ascension and Tristan da Cunha",
+    value: "St Helena, Ascension and Tristan da Cunha",
     code: "SHN",
   },
   {
