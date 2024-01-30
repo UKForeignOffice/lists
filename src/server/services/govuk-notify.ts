@@ -269,6 +269,7 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   const { users = [] } = list as List;
   const userEmails: string[] = users.map(user => user.email);
+  logger.info(userEmails)
 
   if (userEmails.length === 0) {
     return { error: "No email addresses found" };
