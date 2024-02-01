@@ -74,3 +74,16 @@ SET "jsonData" = jsonb_set(
   '"St Helena, Ascension and Tristan da Cunha"'
                  )
 WHERE "jsonData" ->> 'country' = 'Saint Helena, Ascension and Tristan da Cunha';
+
+-- UPDATE St. Pierre and Miquelon
+UPDATE "Country"
+SET name = 'St Pierre and Miquelon'
+WHERE name = 'St. Pierre and Miquelon';
+
+UPDATE "ListItem"
+SET "jsonData" = jsonb_set(
+  jsonb_set("jsonData", '{country}', '"St Pierre and Miquelon"'),
+  '{regions}',
+  '"St Pierre and Miquelon"'
+                 )
+WHERE "jsonData" ->> 'country' = 'St. Pierre and Miquelon';

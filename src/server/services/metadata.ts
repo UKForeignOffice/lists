@@ -261,8 +261,8 @@ export const countriesList = [
   { text: "St Maarten", value: "St Maarten", code: "SXM" },
   { text: "St Martin", value: "St Martin", code: "MAF" },
   {
-    text: "St. Pierre and Miquelon",
-    value: "St. Pierre and Miquelon",
+    text: "St Pierre and Miquelon",
+    value: "St Pierre and Miquelon",
     code: "SPM",
   },
   { text: "Sudan", value: "Sudan", code: "SDN" },
