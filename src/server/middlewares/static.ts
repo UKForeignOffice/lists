@@ -3,11 +3,11 @@ import express, { Express } from "express";
 
 const ROOT = process.cwd();
 const NODE_MODULES = path.join(ROOT, "node_modules");
-const GOVUK_FRONTEND = path.join(NODE_MODULES, "govuk-frontend", "dist", "govuk");
+const GOVUK_FRONTEND = path.join(NODE_MODULES, "govuk-frontend", "govuk");
 
 const publicFolderPath = path.join(__dirname, "client");
 const govUKAssetsFolderPath = path.join(GOVUK_FRONTEND, "assets");
-const govUKAllJSPath = path.join(GOVUK_FRONTEND, "all.bundle.js");
+const govUKAllJSPath = path.join(GOVUK_FRONTEND, "all.js");
 const accessibleAutoCompletePath = path.join(
   NODE_MODULES,
   "accessible-autocomplete",

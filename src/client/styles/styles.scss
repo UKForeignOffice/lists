@@ -1,6 +1,6 @@
 @use "sass:math";
-$govuk-assets-path: "~govuk-frontend/dist/govuk/assets/";
-@import "~govuk-frontend/dist/govuk/all";
+$govuk-assets-path: "~govuk-frontend/govuk/assets/";
+@import "~govuk-frontend/govuk/all";
 @import './dashboard-table';
 
 .answers-box {

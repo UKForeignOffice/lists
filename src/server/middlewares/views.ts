@@ -16,8 +16,8 @@ const ROOT = process.cwd();
 const VIEWS_PATHS = [
   path.join(__dirname, "views"),
   path.join(__dirname, "..", "views"),
-  path.join(ROOT, "/node_modules/govuk-frontend/dist/govuk/"),
-  path.join(ROOT, "/node_modules/govuk-frontend/dist/govuk/components"),
+  path.join(ROOT, "/node_modules/govuk-frontend/govuk/"),
+  path.join(ROOT, "/node_modules/govuk-frontend/govuk/components"),
 ];
 
 const EMPTY_BASE64_COOKIE = Buffer.from(JSON.stringify({})).toString("base64");
