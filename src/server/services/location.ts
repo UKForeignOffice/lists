@@ -1,4 +1,12 @@
-import { Location } from "aws-sdk";
+import type {
+  PricingPlan,
+  IntendedUse} from "@aws-sdk/client-location";
+import {
+  LocationClient,
+  CreatePlaceIndexCommand,
+  ListPlaceIndexesCommand,
+  SearchPlaceIndexForTextCommand
+} from "@aws-sdk/client-location";
 import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
 import getCountryCodeFromCountryName from "./country-codes";
@@ -6,32 +14,32 @@ import getCountryCodeFromCountryName from "./country-codes";
 const INDEX_PARAMS = {
   DataSource: "Esri",
   IndexName: `${LOCATION_SERVICE_INDEX_NAME}`,
-  PricingPlan: "RequestBasedUsage",
+  PricingPlan: "RequestBasedUsage" as PricingPlan,
   DataSourceConfiguration: {
-    IntendedUse: "SingleUse",
+    IntendedUse: "SingleUse" as IntendedUse,
   },
   Description: "FCDO Professional service finder",
 };
 
-let location: Location;
+let locationClient: LocationClient;
 let placeIndexExists = false;
 
-export function getAWSLocationService(): Location {
-  if (location === undefined) {
-    location = new Location({
-      apiVersion: "2020-11-19",
+export function getAWSLocationService(): LocationClient {
+  if (!locationClient) {
+    locationClient = new LocationClient({
       region: AWS_REGION,
     });
   }
 
-  return location;
+  return locationClient;
 }
 
 export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<boolean> {
   try {
-    const location = getAWSLocationService();
-    const result = await location.listPlaceIndexes().promise();
-    return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
+    const client = getAWSLocationService();
+    const command = new ListPlaceIndexesCommand({});
+    const result = await client.send(command);
+    return result.Entries?.some((entry) => entry.IndexName === placeIndexName) ?? false;
   } catch (error) {
     logger.error(`checkIfPlaceIndexExists Error: ${error.message}`);
     return false;
@@ -39,7 +47,7 @@ export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<b
 }
 
 export async function createPlaceIndex(): Promise<boolean> {
-  const location = getAWSLocationService();
+  const client = getAWSLocationService();
   const alreadyExists = await checkIfPlaceIndexExists(INDEX_PARAMS.IndexName);
 
   if (alreadyExists) {
@@ -47,39 +55,34 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 
   try {
-    await location.createPlaceIndex(INDEX_PARAMS).promise();
+    const command = new CreatePlaceIndexCommand(INDEX_PARAMS);
+    await client.send(command);
     return true;
   } catch (error) {
-    const typedError = error as Error;
-    logger.error(`createPlaceIndex error: ${typedError.message}`);
+    logger.error(`createPlaceIndex error: ${error.message}`);
     return false;
   }
 }
 
-export async function geoLocatePlaceByText(region: string, country: string): Promise<Location.Types.Position> {
+export async function geoLocatePlaceByText(region: string, country: string): Promise<number[]> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
 
-  const location = getAWSLocationService();
-  const countryCode = region?.toLowerCase?.().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
+  const client = getAWSLocationService();
+  const countryCode = region.toLowerCase().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
 
   if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
 
-  const { Results } = await location
-    .searchPlaceIndexForText({
-      MaxResults: 1,
-      Text: `${region}`,
-      IndexName: INDEX_PARAMS.IndexName,
-      FilterCountries: [countryCode],
-    })
-    .promise();
+  const command = new SearchPlaceIndexForTextCommand({
+    MaxResults: 1,
+    Text: region,
+    IndexName: INDEX_PARAMS.IndexName,
+    FilterCountries: [countryCode],
+  });
+
+  const { Results } = await client.send(command);
 
   // Return location if found
-  if (Results.length > 0) {
-    return Results[0].Place.Geometry.Point ?? [0.0, 0.0];
-  }
-
-  // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)
-  return [0.0, 0.0];
+  return Results?.[0]?.Place?.Geometry?.Point ?? [0.0, 0.0];
 }

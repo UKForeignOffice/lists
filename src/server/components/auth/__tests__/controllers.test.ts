@@ -1,11 +1,11 @@
 import { getLoginController, postLoginController, getLogoutController, authController } from "../controllers";
 import * as tokenService from "../json-web-token";
-import * as notifyService from "server/services/govuk-notify";
-import * as userModel from "server/models/user";
-import { getServer } from "server/server";
+import * as notifyService from "../../../services/govuk-notify";
+import * as userModel from "../../../models/user";
+import { getServer } from "../../../server";
 import { assign, noop } from "lodash";
-import { logger } from "server/services/logger";
-import * as serverConfig from "server/config/server-config";
+import { logger } from "../../../services/logger";
+import * as serverConfig from "../../../config/server-config";
 
 jest.mock("server/services/logger");
 
@@ -173,9 +173,8 @@ describe("Auth Module", () => {
     });
 
     test("prevent authentication email sending if email address is NOT gov.uk", async () => {
-      const sendAuthEmail = jest.fn(() => notifyService.sendAuthenticationEmail());
-
       req.body.emailAddress = "someemail@gmail.com";
+      const sendAuthEmail = jest.fn(() => notifyService.sendAuthenticationEmail(req.body.emailAddress, 'testLink'));
       await postLoginController(req, res, next);
 
       expect(sendAuthEmail).not.toHaveBeenCalledWith();
