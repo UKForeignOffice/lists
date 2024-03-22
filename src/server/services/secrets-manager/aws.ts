@@ -1,14 +1,13 @@
-import { SecretsManager } from "aws-sdk";
+import { SecretsManagerClient, CreateSecretCommand, GetSecretValueCommand, PutSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import { AWS_REGION } from "server/config";
 import { differenceInDays } from "date-fns";
 import { logger } from "./../logger";
 import { generateRandomSecret } from "./helpers";
 
-let secretsManager: SecretsManager;
+let secretsManager: SecretsManagerClient;
 
-export function getAWSSecretsManager(): SecretsManager {
-  secretsManager ??= new SecretsManager({
-    apiVersion: "2017-10-17",
+function getAWSSecretsManager(): SecretsManagerClient {
+  secretsManager ??= new SecretsManagerClient({
     region: AWS_REGION,
   });
 
@@ -24,7 +23,7 @@ export async function createSecret(secretName: string): Promise<boolean> {
   };
 
   try {
-    await secretsManager.createSecret(params).promise();
+    await secretsManager.send(new CreateSecretCommand(params));
     return true;
   } catch (error) {
     logger.error(`createSecret Error: ${error.message}`);
@@ -35,13 +34,14 @@ export async function createSecret(secretName: string): Promise<boolean> {
 export async function rotateSecret(secretName: string): Promise<boolean> {
   try {
     const secretsManager = getAWSSecretsManager();
-    const { CreatedDate, ARN } = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+    const { CreatedDate, ARN } = await secretsManager.send(new GetSecretValueCommand({ SecretId: secretName }));
 
     if (CreatedDate === undefined || ARN === undefined) {
       throw new Error(`Could not getSecret values for secret ${secretName}`);
     }
 
     const secretAgeInDays = differenceInDays(new Date(), CreatedDate);
+    logger.info(secretAgeInDays);
 
     if (secretAgeInDays < 30) {
       return false;
@@ -52,7 +52,7 @@ export async function rotateSecret(secretName: string): Promise<boolean> {
       SecretString: generateRandomSecret(),
     };
 
-    await secretsManager.putSecretValue(params).promise();
+    await secretsManager.send(new PutSecretValueCommand(params));
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
@@ -66,10 +66,10 @@ export async function getSecretValue(secretName: string): Promise<string> {
   const params = { SecretId: secretName };
 
   try {
-    const secret = await secretsManager.getSecretValue(params).promise();
-    return `${secret.SecretString}`;
+    const { SecretString } = await secretsManager.send(new GetSecretValueCommand(params));
+    return `${SecretString}`;
   } catch (error) {
-    if (error.code === "ResourceNotFoundException") {
+    if (error.name === "ResourceNotFoundException") {
       await createSecret(secretName);
       return await getSecretValue(secretName);
     } else {

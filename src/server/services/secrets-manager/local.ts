@@ -1,49 +1,60 @@
-import { SecretsManager } from "aws-sdk";
 import { differenceInDays } from "date-fns";
-import { logger } from "./../logger";
-import { GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
+import { logger } from "../logger";
 import { generateRandomSecret } from "./helpers";
+
+interface SecretValue {
+  SecretString?: string;
+  CreatedDate?: Date;
+  ARN?: string;
+}
+
+interface CreateSecretRequest {
+  Name: string;
+  SecretString: string;
+}
+
+interface GetSecretValueRequest {
+  SecretId: string;
+}
+
+interface PutSecretValueRequest {
+  SecretId: string;
+  SecretString: string;
+}
 
 let secretsManager: LocalSecretsManager;
 
 class LocalSecretsManager {
-  secrets: Record<string, GetSecretValueResponse>= {};
-  constructor(options?: SecretsManager.Types.ClientConfiguration) {
+  private secrets: Record<string, SecretValue> = {};
+
+  constructor() {
     logger.info("Using LocalSecretsManager");
   }
 
-  async createSecret(
-    params: SecretsManager.Types.CreateSecretRequest
-  ): Promise<boolean> {
+  async createSecret(params: CreateSecretRequest): Promise<boolean> {
     const { Name, SecretString } = params;
     this.secrets[Name] = {
       SecretString,
       CreatedDate: new Date(),
       ARN: "some-ARN",
     };
-
     return true;
   }
 
-  async putSecretValue({
-    SecretId,
-    SecretString,
-  }: {
-    SecretId: string;
-    SecretString: string;
-  }): Promise<any> {
-    this.secrets[SecretId] = { SecretString };
+  async putSecretValue(params: PutSecretValueRequest): Promise<void> {
+    const { SecretId, SecretString } = params;
+    if (this.secrets[SecretId]) {
+      this.secrets[SecretId].SecretString = SecretString;
+    }
   }
 
-  async getSecretValue(
-    params: SecretsManager.Types.GetSecretValueRequest
-  ): Promise<SecretsManager.Types.GetSecretValueResponse> {
+  async getSecretValue(params: GetSecretValueRequest): Promise<SecretValue> {
     const { SecretId } = params;
     const secret = this.secrets[SecretId];
-    if (secret != null) {
+    if (secret) {
       return secret;
     } else {
-      throw Error(`Couldn't getSecretValue with name ${SecretId}`);
+      throw new Error(`Couldn't getSecretValue with name ${SecretId}`);
     }
   }
 }
@@ -73,26 +84,24 @@ export async function createSecret(secretName: string): Promise<boolean> {
 export async function rotateSecret(secretName: string): Promise<boolean> {
   try {
     const secretsManager = getLocalSecretsManager();
-    const { CreatedDate, ARN } = await secretsManager.getSecretValue({
+    const secret = await secretsManager.getSecretValue({
       SecretId: secretName,
     });
 
-    if (CreatedDate === undefined || ARN === undefined) {
+    if (!secret.CreatedDate || !secret.ARN) {
       throw new Error(`Could not getSecret values for secret ${secretName}`);
     }
 
-    const secretAgeInDays = differenceInDays(new Date(), CreatedDate);
+    const secretAgeInDays = differenceInDays(new Date(), secret.CreatedDate);
 
     if (secretAgeInDays < 30) {
       return false;
     }
 
-    const params = {
-      SecretId: ARN,
+    await secretsManager.putSecretValue({
+      SecretId: secret.ARN,
       SecretString: generateRandomSecret(),
-    };
-
-    await secretsManager.putSecretValue(params);
+    });
     logger.info(`Rotate secret ${secretName} successfully`);
     return true;
   } catch (error) {
@@ -107,7 +116,11 @@ export async function getSecretValue(secretName: string): Promise<string> {
 
   try {
     const secret = await secretsManager.getSecretValue(params);
-    return `${secret.SecretString}`;
+    if (secret?.SecretString) {
+      return secret.SecretString;
+    } else {
+      throw new Error(`Secret ${secretName} has no value.`);
+    }
   } catch (error) {
     await createSecret(secretName);
     return await getSecretValue(secretName);
