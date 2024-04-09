@@ -28,7 +28,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
   const {
     region,
     servicesProvided = ["translation", "interpretation"],
-    languagesProvided,
+    languagesProvided = [],
     interpreterServices = [],
     translationSpecialties = [],
     offset = 0,
@@ -37,14 +37,14 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
   const countryName = startCase(toLower(props.countryName));
   const andWhere: string[] = [];
 
-  if (languagesProvided) {
+  if (languagesProvided && languagesProvided.length > 0) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'languagesProvided'))) && ARRAY ${JSON.stringify(
         languagesProvided
       ).replace(/"/g, "'")}`
     );
   }
-  if (servicesProvided) {
+  if (servicesProvided && servicesProvided.length > 0) {
     andWhere.push(
       `AND ARRAY(select lower(jsonb_array_elements_text("ListItem"."jsonData"->'servicesProvided'))) && ARRAY ${JSON.stringify(
         servicesProvided

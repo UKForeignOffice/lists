@@ -157,21 +157,37 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
   return res.redirect(formRunnerEditUserUrl);
 }
 
-export function declarationGetController(req: Request, res: Response, next: NextFunction): void {
+export async function declarationGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { listItemRef } = req.params;
   const errorMsg = req.flash("declarationError")[0];
-  let error = null;
 
   if (!listItemRef) {
     const err = new HttpException(403, "403", "You do not have permission to view this page");
-    return next(err);
+    next(err);
+    return;
   }
 
-  if (errorMsg) {
-    error = { text: errorMsg };
-  }
+  const error = errorMsg ? { text: errorMsg } : null;
 
-  res.render("annual-review/declaration", { reference: listItemRef, error });
+  try {
+    const result = await findListItemByReference(listItemRef);
+
+    if (!result) {
+      const notFoundError = new HttpException(
+        404,
+        "404",
+        `The list item with the reference ${listItemRef} cannot be found when trying to show the declaration page`
+      );
+      next(notFoundError);
+      return;
+    }
+
+    const listType = result?.list?.type;
+
+    res.render("annual-review/declaration", { reference: listItemRef, listType, error });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
