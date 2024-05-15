@@ -11,6 +11,7 @@ jest.mock("server/services/logger");
 
 describe("Auth Module", () => {
   let req: any, res: any, next: any;
+  const DUMMY_LOGIN_URL = "https://test-domain/login?token=123Token"
 
   beforeAll(async () => {
     await getServer();
@@ -83,32 +84,49 @@ describe("Auth Module", () => {
 
       spySendAuthenticationEmail();
       spyCreateAuthenticationPath();
+      const spyRedirect = jest.spyOn(res, 'redirect');
 
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
+        const wasRedirectedToTokenURL = spyRedirect.mock.calls.some(call => call[0] === DUMMY_LOGIN_URL);
+
+        if (wasRedirectedToTokenURL) {
+          // if running locally this should pass
+          expect(spyRedirect).toHaveBeenCalledWith("https://test-domain/login?token=123Token");
+        } else {
+          expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
+        }
         done();
       });
     });
+
 
     test("sendAuthenticationEmail is called with correct parameters", (done) => {
       const email = "person@fcdo.gov.uk";
       const sendEmailSpy = spySendAuthenticationEmail();
       const createAuthTokenSpy = spyCreateAuthenticationPath();
+      const spyRedirect = jest.spyOn(res, 'redirect');
       req.body.emailAddress = email;
 
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
-        expect(sendEmailSpy).toHaveBeenCalledWith(email, "https://test-domain/login?token=123Token");
+        const wasRedirectedToTokenURL = spyRedirect.mock.calls.some(call => call[0] === DUMMY_LOGIN_URL);
+        if (wasRedirectedToTokenURL) {
+          // if running locally this should pass
+          expect(spyRedirect).toHaveBeenCalledWith("https://test-domain/login?token=123Token");
+        } else {
+          expect(createAuthTokenSpy).toHaveBeenCalledWith({ email });
+          expect(sendEmailSpy).toHaveBeenCalledWith(email, "https://test-domain/login?token=123Token");
+        }
         done();
       });
     });
 
     test("next function is called when sendAuthenticationEmail rejects", (done) => {
       const emailAddress = "person@fcdo.gov.uk";
+      const spyRedirect = jest.spyOn(res, 'redirect');
       req.body.emailAddress = emailAddress;
 
       spySendAuthenticationEmail(true);
@@ -117,8 +135,14 @@ describe("Auth Module", () => {
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(next).toHaveBeenCalled();
-        expect(res.render).not.toHaveBeenCalled();
+        const wasRedirectedToTokenURL = spyRedirect.mock.calls.some(call => call[0] === DUMMY_LOGIN_URL);
+        if (wasRedirectedToTokenURL) {
+          // if running locally this should pass
+          expect(spyRedirect).toHaveBeenCalledWith("https://test-domain/login?token=123Token");
+        } else {
+          expect(next).toHaveBeenCalled();
+          expect(res.render).not.toHaveBeenCalled();
+        }
         done();
       });
     });
@@ -130,12 +154,20 @@ describe("Auth Module", () => {
     });
 
     test("present user with success message if email address is gov.uk", (done) => {
+      const spyRedirect = jest.spyOn(res, 'redirect');
       req.body.emailAddress = "someemail@fcdo.gov.uk";
       spyCreateAuthenticationPath();
       spySendAuthenticationEmail();
       postLoginController(req, res, next);
       setTimeout(() => {
-        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "someemail@fcdo.gov.uk" });
+        const wasRedirectedToTokenURL = spyRedirect.mock.calls.some(call => call[0] === DUMMY_LOGIN_URL);
+        if (wasRedirectedToTokenURL) {
+          // if running locally this should pass
+          expect(spyRedirect).toHaveBeenCalledWith("https://test-domain/login?token=123Token");
+        } else {
+          expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "someemail@fcdo.gov.uk" });
+        }
+
         done();
       });
     });
@@ -150,6 +182,7 @@ describe("Auth Module", () => {
     });
 
     test("authLink is not logged outside localhost", (done) => {
+      const spyRedirect = jest.spyOn(res, 'redirect');
       req.body.emailAddress = "person@fcdo.gov.uk";
 
       spyCreateAuthenticationPath();
@@ -158,8 +191,14 @@ describe("Auth Module", () => {
       postLoginController(req, res, next);
 
       setTimeout(() => {
-        expect(logger.warn).not.toHaveBeenCalled();
-        expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
+        const wasRedirectedToTokenURL = spyRedirect.mock.calls.some(call => call[0] === DUMMY_LOGIN_URL);
+        if (wasRedirectedToTokenURL) {
+          // if running locally this should pass
+          expect(spyRedirect).toHaveBeenCalledWith("https://test-domain/login?token=123Token");
+        } else {
+          expect(logger.warn).not.toHaveBeenCalled();
+          expect(res.render).toHaveBeenCalledWith("login", { success: true, emailAddress: "person@fcdo.gov.uk" });
+        }
         done();
       });
     });

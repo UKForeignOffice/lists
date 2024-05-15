@@ -29,16 +29,25 @@ async function processPostEmailsForList(
 ) {
   // Check if sent before
   let emailSent = false;
-  if (!list.users) {
+  const { users = [] } = list;
+  if (!users) {
     logger.info(
       `Unable to send email to post for ${milestoneTillAnnualReview}. No users identified for List ${list.id}.`
     );
     return;
   }
-  for (const user of list.users) {
+  const userEmails: string[] = users.map((user) => user.email);
+  if (userEmails.length === 0) {
+    logger.info(
+      `Unable to send email to post for ${milestoneTillAnnualReview}. No user email addresses found for List ${list.id}.`
+    );
+    return;
+  }
+
+  for (const user of userEmails) {
     const { result } = await sendAnnualReviewPostEmail(
       milestoneTillAnnualReview,
-      user.email,
+      user,
       lowerCase(startCase(list.type)),
       list?.country?.name ?? "",
       formatDate(list.nextAnnualReviewStartDate)
