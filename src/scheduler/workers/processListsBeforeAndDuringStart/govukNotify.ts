@@ -75,7 +75,7 @@ export async function sendAnnualReviewPostEmail(
       )}`
     );
     const result = await getNotifyClient().sendEmail(notifyTemplate, emailAddress, { personalisation, reference: "" });
-    return { result: (result as NotifyResult).statusText === "Created" };
+    return { result: (result as NotifyResult).statusText.toLowerCase() === "created" };
   } catch (error) {
     const message = `sendAnnualReviewPostEmail: Unable to send annual review post email: ${error.message}`;
     logger.error(message);
