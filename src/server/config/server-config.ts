@@ -18,7 +18,8 @@ export const isCybDev = process.env.CYB_DEV === "true" || isDev;
 export const isSmokeTest = process.env.CI_SMOKE_TEST === "true";
 
 // AWS
-export const AWS_REGION = "eu-west-1";
+export const AWS_REGION =
+  process.env.AWS_REGION ?? "eu-west-1";
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME ?? "fcdo-professional-service-finder";
 
