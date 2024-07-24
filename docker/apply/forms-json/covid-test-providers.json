@@ -1857,7 +1857,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://lists:3000/ingest/covidTestProviders"
+        "url": "http://lists.lists.internal:3000/ingest/covidTestProviders"
       }
     }
   ],
