@@ -5,14 +5,14 @@ import {
   createPlaceIndex,
   geoLocatePlaceByText,
 } from "../location";
-import { LOCATION_SERVICE_INDEX_NAME } from "server/config";
+import { LOCATION_SERVICE_INDEX_NAME, AWS_REGION } from "server/config";
 import { logger } from "server/services/logger";
 
 describe("Location service:", () => {
   test("service is initialized with the correct parameters", () => {
     const expectedParams = {
       apiVersion: "2020-11-19",
-      region: "eu-west-1",
+      region: AWS_REGION,
     };
 
     getAWSLocationService();
