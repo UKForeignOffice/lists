@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import * as secretsManager from "server/services/secrets-manager";
 import { createAuthenticationJWT, createAuthenticationPath, getJwtSecret } from "../json-web-token";
+import { ENVIRONMENT } from "server/config/server-config";
 
 describe("Auth JSON Web Token", () => {
   function spyGetSecretValue(): jest.SpyInstance {
@@ -15,10 +16,11 @@ describe("Auth JSON Web Token", () => {
     test("it calls getSecretValue correctly", async () => {
       spyRotateSecret();
       const spyGetSecret = spyGetSecretValue();
+      const JWT_SECRET_NAME = `JWT_SECRET_${ENVIRONMENT}`
 
       await getJwtSecret();
 
-      expect(spyGetSecret).toHaveBeenCalledWith("JWT_SECRET");
+      expect(spyGetSecret).toHaveBeenCalledWith(JWT_SECRET_NAME);
     });
 
     test("result is correct", async () => {

@@ -5,9 +5,10 @@ import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
 import { User } from "server/models/types";
 import { JWT_ALGORITHM, JWT_EXPIRE_TIME } from "./constants";
 import { authRoutes } from "./routes";
+import { ENVIRONMENT } from "server/config/server-config";
 
 const ONE_MINUTE = 60000;
-const SECRET_NAME = "JWT_SECRET";
+const SECRET_NAME = `JWT_SECRET_${ENVIRONMENT}`;
 const JWT_OPTIONS: SignOptions = {
   algorithm: JWT_ALGORITHM,
   expiresIn: JWT_EXPIRE_TIME,

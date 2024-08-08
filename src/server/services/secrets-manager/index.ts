@@ -1,9 +1,9 @@
-import { isLocalHost, isTest } from "server/config";
+import { isLocalHost, isDev } from "server/config";
 import * as local from "./local";
 import * as aws from "./aws";
 
 const shouldUseLocalSecretsManager =
-  isLocalHost || isTest || process.env.SECRETS_MANAGER === "local";
+  isLocalHost || isDev || process.env.SECRETS_MANAGER === "local";
 
 interface SecretsManager {
   createSecret: (secretName: string) => Promise<boolean>;

@@ -21,7 +21,7 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-import { isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
+import {isDevMode, isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN} from "server/config";
 import { logger } from "server/services/logger";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import { configureCsrf } from "server/middlewares/csrf";
@@ -74,7 +74,7 @@ export async function getServer(): Promise<Express> {
   configureErrorHandlers(server);
 
   logger.info(
-    `NODE_ENV=${NODE_ENV}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
+    `NODE_ENV=${NODE_ENV}, DEV_MODE=${isDevMode}, LOCAL_HOST=${isLocalHost}, SERVICE_DOMAIN=${SERVICE_DOMAIN}, CI_SMOKE_TEST=${isSmokeTest}`
   );
   return server;
 }

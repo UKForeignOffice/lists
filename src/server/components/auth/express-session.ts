@@ -3,7 +3,7 @@ import { random, noop } from "lodash";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
-import { isLocalHost } from "server/config";
+import { isLocalHost, ENVIRONMENT } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
@@ -13,7 +13,7 @@ const ONE_MINUTE = 60000;
 const ONE_HOUR = 60 * ONE_MINUTE;
 const FOUR_HOURS = 4 * ONE_HOUR;
 const ONE_DAY = 24 * ONE_HOUR;
-const SECRET_NAME = "SESSION_SECRET";
+const SECRET_NAME = `SESSION_SECRET_${ENVIRONMENT}`;
 
 interface FuneralDirectorAnswers {
   practiceAreas: string[];
