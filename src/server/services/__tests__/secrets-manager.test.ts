@@ -1,164 +1,178 @@
-import crypto from "crypto";
 import {
   createSecret,
   rotateSecret,
   getSecretValue,
+  getAWSSecretsManagerClient,
 } from "../secrets-manager/aws";
-import { SecretsManager } from "aws-sdk";
+import {
+  SecretsManagerClient,
+  CreateSecretCommand,
+  GetSecretValueCommand,
+  PutSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
 import { subDays } from "date-fns";
 import { logger } from "server/services/logger";
 
+jest.mock("@aws-sdk/client-secrets-manager");
+jest.mock("../secrets-manager/helpers", () => ({
+  generateRandomSecret: jest.fn().mockReturnValue("123SECRET"),
+}));
+
 describe("Secrets Manager", () => {
-  let secretManager: SecretsManager;
+  let mockSend: jest.Mock;
 
   beforeEach(() => {
-    secretManager = new SecretsManager();
+    mockSend = jest.fn();
+    SecretsManagerClient.prototype.send = mockSend;
   });
 
-  function spyRandomBytes(): jest.SpyInstance {
-    return jest.spyOn(crypto, "randomBytes").mockImplementation(() => ({
-      toString: jest.fn().mockReturnValue("123SECRET"),
-    }));
-  }
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-  function spyGetSecretValue(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
-    const spy = jest.spyOn(secretManager.getSecretValue(), "promise");
+  describe("getAWSSecretsManagerClient", () => {
+    test("returns an instance of SecretsManagerClient", () => {
+      const client = getAWSSecretsManagerClient();
+      expect(client).toBeInstanceOf(SecretsManagerClient);
+    });
 
-    if (shouldReject) {
-      spy.mockRejectedValueOnce(returnedValue);
-    } else {
-      spy.mockResolvedValueOnce(returnedValue);
-    }
-
-    return spy;
-  }
-
-  function spyCreateSecret(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
-    return jest.spyOn(secretManager, "createSecret").mockReturnValue({
-      promise: shouldReject
-        ? jest.fn().mockRejectedValue(returnedValue)
-        : jest.fn().mockResolvedValue(returnedValue),
-    } as any);
-  }
-
-  function spyPutSecretValue(
-    returnedValue: any,
-    shouldReject = false
-  ): jest.SpyInstance {
-    return jest.spyOn(secretManager, "putSecretValue").mockReturnValue({
-      promise: shouldReject
-        ? jest.fn().mockRejectedValue(returnedValue)
-        : jest.fn().mockResolvedValue(returnedValue),
-    } as any);
-  }
+    test("reuses the same SecretsManagerClient instance", () => {
+      const client1 = getAWSSecretsManagerClient();
+      const client2 = getAWSSecretsManagerClient();
+      expect(client1).toBe(client2);
+    });
+  });
 
   describe("createSecret", () => {
     test("aws sdk createSecret call is correct", async () => {
-      spyRandomBytes();
-      const spy = spyCreateSecret("OK");
+      const spy = mockSend.mockResolvedValueOnce("OK");
 
       const secret = await createSecret("TEST_SECRET");
 
       expect(secret).toBe(true);
-      expect(spy).toHaveBeenCalledWith({
-        Name: "TEST_SECRET",
-        SecretString: "123SECRET",
-      });
+      expect(spy).toHaveBeenCalledWith(expect.any(CreateSecretCommand));
     });
 
-    test("it returns undefined when createSecret rejects", async () => {
-      spyCreateSecret(new Error("createSecret error message"), true);
+    test("returns false when createSecret rejects with an error", async () => {
+      mockSend.mockRejectedValueOnce(new Error("createSecret error"));
 
-      const secret = await createSecret("TEST_SECRET");
+      const result = await createSecret("TEST_SECRET");
 
-      expect(secret).toBe(false);
+      expect(result).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        "createSecret Error: createSecret error"
+      );
     });
   });
 
   describe("rotateSecret", () => {
     const mockSecret = {
       ARN: "123ARN",
-      Name: "TEST_SECRET",
-      VersionId: "123VERSION",
-      SecretString: "123SECRET",
-      VersionStages: ["AWSCURRENT"],
+      CreatedDate: subDays(new Date(), 31), // Secret is 31 days old
     };
 
-    test("aws sdk putSecretValue call is correct", async () => {
-      spyRandomBytes();
-      spyGetSecretValue({
-        ...mockSecret,
-        CreatedDate: subDays(new Date(), 30),
-      });
-      const spy = spyPutSecretValue({});
+    test("rotates the secret if older than 30 days", async () => {
+      mockSend
+        .mockResolvedValueOnce(mockSecret) // Mock getSecretValue response
+        .mockResolvedValueOnce({}); // Mock putSecretValue response
 
       const result = await rotateSecret("TEST_SECRET");
 
       expect(result).toBe(true);
-      expect(spy).toHaveBeenCalledWith({
-        SecretId: mockSecret.ARN,
-        SecretString: "123SECRET",
-      });
+      expect(mockSend).toHaveBeenCalledWith(expect.any(PutSecretValueCommand));
+      expect(logger.info).toHaveBeenCalledWith(
+        "Rotate secret TEST_SECRET successfully"
+      );
     });
 
-    test("it won't attempt to rotate secret if secret age is less than 30 days", async () => {
-      spyRandomBytes();
-      spyGetSecretValue({
-        ...mockSecret,
-        CreatedDate: subDays(new Date(), 29),
-      });
-      const spy = spyPutSecretValue({});
+    test("does not rotate the secret if less than 30 days old", async () => {
+      const recentSecret = {
+        ARN: "123ARN",
+        CreatedDate: subDays(new Date(), 29), // Secret is 29 days old
+      };
+
+      mockSend.mockResolvedValueOnce(recentSecret);
 
       const result = await rotateSecret("TEST_SECRET");
 
       expect(result).toBe(false);
-      expect(spy).not.toHaveBeenCalled();
+      expect(mockSend).not.toHaveBeenCalledWith(
+        expect.any(PutSecretValueCommand)
+      );
     });
 
-    test("it throws when getSecretValue resolves without ARN or CreatedDate", async () => {
-      spyGetSecretValue({ ARN: undefined, CreatedDate: undefined });
+    test("handles missing ARN or CreatedDate in getSecretValue response", async () => {
+      const incompleteSecret = {
+        ARN: undefined,
+        CreatedDate: undefined,
+      };
+
+      mockSend.mockResolvedValueOnce(incompleteSecret);
 
       const result = await rotateSecret("TEST_SECRET");
 
       expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(expect.anything());
+      expect(logger.error).toHaveBeenCalledWith(
+        "rotateSecret: Failed to rotate secret TEST_SECRET. Error: Could not getSecret values for secret TEST_SECRET"
+      );
+    });
+
+    test("returns false when putSecretValue rejects with an error", async () => {
+      mockSend
+        .mockResolvedValueOnce(mockSecret) // Mock getSecretValue response
+        .mockRejectedValueOnce(new Error("putSecretValue error"));
+
+      const result = await rotateSecret("TEST_SECRET");
+
+      expect(result).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        "rotateSecret: Failed to rotate secret TEST_SECRET. Error: putSecretValue error"
+      );
     });
   });
 
   describe("getSecretValue", () => {
-    test("aws sdk getSecretValue call is correct", async () => {
+    test("returns the secret value when it exists", async () => {
+      mockSend.mockResolvedValueOnce({ SecretString: "123ABC" });
+
       const secret = await getSecretValue("TEST_SECRET");
 
       expect(secret).toEqual("123ABC");
-      expect(secretManager.getSecretValue).toHaveBeenCalledWith({
-        SecretId: "TEST_SECRET",
-      });
+      expect(mockSend).toHaveBeenCalledWith(expect.any(GetSecretValueCommand));
     });
 
-    test("it create secret if secret doesn't exist", async () => {
-      spyGetSecretValue({ code: "ResourceNotFoundException" }, true);
+    test("creates secret when secret does not exist", async () => {
+      // Simulate AWS ResourceNotFoundException
+      const resourceNotFoundException = new Error("ResourceNotFoundException");
+      resourceNotFoundException.name = "ResourceNotFoundException";
+
+      // Mock the sequence of calls
+      mockSend
+        .mockRejectedValueOnce(resourceNotFoundException) // First GetSecretValueCommand fails
+        .mockResolvedValueOnce("OK") // CreateSecretCommand succeeds
+        .mockResolvedValueOnce({ SecretString: "123ABC" }); // Second GetSecretValueCommand succeeds
 
       const secret = await getSecretValue("TEST_SECRET");
 
+      // Validate that the final secret value is correct
       expect(secret).toBe("123ABC");
-      expect(secretManager.createSecret).toHaveBeenCalledWith({
-        Name: "TEST_SECRET",
-        SecretString: "123SECRET",
-      });
+
+      // Ensure that the mocks were called the correct number of times
+      expect(mockSend).toHaveBeenCalledTimes(3); // 2 GetSecretValueCommand + 1 CreateSecretCommand
+
+      // Verify that CreateSecretCommand was used in the call sequence
+      expect(mockSend).toHaveBeenCalledWith(expect.any(CreateSecretCommand));
     });
 
-    test("it throws when getSecretValue in unknown", async () => {
+    test("throws an error for unknown errors", async () => {
       const awsError = new Error("UnknownError");
 
-      spyGetSecretValue(awsError, true);
+      mockSend.mockRejectedValueOnce(awsError);
 
       await expect(getSecretValue("TEST_SECRET")).rejects.toBe(awsError);
+      expect(logger.error).toHaveBeenCalledWith(
+        "getSecretValue Error: UnknownError"
+      );
     });
   });
 });

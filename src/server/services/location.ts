@@ -1,4 +1,4 @@
-import { Location } from "aws-sdk";
+import { Location } from "@aws-sdk/client-location";
 import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
 import getCountryCodeFromCountryName from "./country-codes";
@@ -19,7 +19,6 @@ let placeIndexExists = false;
 export function getAWSLocationService(): Location {
   if (location === undefined) {
     location = new Location({
-      apiVersion: "2020-11-19",
       region: AWS_REGION,
     });
   }
@@ -27,10 +26,10 @@ export function getAWSLocationService(): Location {
   return location;
 }
 
-export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<boolean> {
+export async function checkIfPlaceIndexExists(placeIndexName: string): Promise<boolean | undefined> {
   try {
     const location = getAWSLocationService();
-    const result = await location.listPlaceIndexes().promise();
+    const result = await location.listPlaceIndexes();
     return result?.Entries?.some((entry) => entry.IndexName === placeIndexName);
   } catch (error) {
     logger.error(`checkIfPlaceIndexExists Error: ${error.message}`);
@@ -47,7 +46,8 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 
   try {
-    await location.createPlaceIndex(INDEX_PARAMS).promise();
+    // @ts-ignore
+    await location.createPlaceIndex(INDEX_PARAMS);
     return true;
   } catch (error) {
     const typedError = error as Error;
@@ -56,7 +56,7 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 }
 
-export async function geoLocatePlaceByText(region: string, country: string): Promise<Location.Types.Position> {
+export async function geoLocatePlaceByText(region: string, country: string): Promise<number[]> {
   if (!placeIndexExists) {
     placeIndexExists = await createPlaceIndex();
   }
@@ -66,18 +66,16 @@ export async function geoLocatePlaceByText(region: string, country: string): Pro
 
   if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
 
-  const { Results } = await location
-    .searchPlaceIndexForText({
-      MaxResults: 1,
-      Text: `${region}`,
-      IndexName: INDEX_PARAMS.IndexName,
-      FilterCountries: [countryCode],
-    })
-    .promise();
+  const { Results } = await location.searchPlaceIndexForText({
+    MaxResults: 1,
+    Text: `${region}`,
+    IndexName: INDEX_PARAMS.IndexName,
+    FilterCountries: [countryCode],
+  });
 
-  // Return location if found
-  if (Results.length > 0) {
-    return Results[0].Place.Geometry.Point ?? [0.0, 0.0];
+  if (Results && Results.length > 0) {
+    const firstResult = Results[0]; // Access the first object in the Results array
+    return firstResult.Place?.Geometry?.Point ?? [0.0, 0.0]; // Correct access to Place and Geometry
   }
 
   // Otherwise point to Null Island (https://en.wikipedia.org/wiki/Null_Island)

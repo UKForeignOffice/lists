@@ -34,11 +34,12 @@
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open"
   },
   "dependencies": {
+    "@aws-sdk/client-location": "^3.632.0",
+    "@aws-sdk/client-secrets-manager": "^3.632.0",
     "@googleapis/sheets": "^4.0.2",
     "@prisma/client": "^5.2.0",
     "@types/csurf": "^1.11.2",
     "accessible-autocomplete": "^2.0.3",
-    "aws-sdk": "^2.1031.0",
     "axios": "^0.26.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
