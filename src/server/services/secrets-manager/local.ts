@@ -14,9 +14,7 @@ class LocalSecretsManager {
     this.client = new SecretsManagerClient({});
   }
 
-  async createSecret(
-    params: { Name: string, SecretString: string }
-  ): Promise<boolean> {
+  async createSecret(params: { Name: string; SecretString: string }): Promise<boolean> {
     const { Name, SecretString } = params;
     this.secrets[Name] = {
       SecretString,

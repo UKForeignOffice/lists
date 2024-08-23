@@ -8,13 +8,8 @@ describe("Auth JSON Web Token", () => {
     return jest.spyOn(secretsManager, "getSecretValue").mockResolvedValue("SECRET_VALUE");
   }
 
-  function spyRotateSecret(): jest.SpyInstance {
-    return jest.spyOn(secretsManager, "rotateSecret").mockResolvedValue(true);
-  }
-
   describe("getJwtSecret", () => {
     test("it calls getSecretValue correctly", async () => {
-      spyRotateSecret();
       const spyGetSecret = spyGetSecretValue();
       const JWT_SECRET_NAME = `JWT_SECRET_${ENVIRONMENT}`
 
@@ -24,7 +19,6 @@ describe("Auth JSON Web Token", () => {
     });
 
     test("result is correct", async () => {
-      spyRotateSecret();
       spyGetSecretValue();
 
       const result = await getJwtSecret();
@@ -35,7 +29,6 @@ describe("Auth JSON Web Token", () => {
 
   describe("createAuthenticationJWT", () => {
     beforeEach(() => {
-      spyRotateSecret();
       spyGetSecretValue();
     });
 
@@ -62,7 +55,6 @@ describe("Auth JSON Web Token", () => {
 
   describe("createAuthenticationPath", () => {
     beforeEach(() => {
-      spyRotateSecret();
       spyGetSecretValue();
     });
 

@@ -96,19 +96,6 @@ describe("Location service:", () => {
       expect(result).toBe(true);
     });
 
-    test.skip("it returns false when createPlaceIndex rejects", async () => {
-      const mockLocationClient = getAWSLocationService();
-      const error = new Error("createPlaceIndex error message");
-
-      (mockLocationClient.createPlaceIndex as jest.Mock).mockRejectedValue(error);
-
-      const result = await createPlaceIndex();
-
-      expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "createPlaceIndex error: createPlaceIndex error message"
-      );
-    });
 
   });
 
@@ -137,7 +124,7 @@ describe("Location service:", () => {
 
       const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 
-      expect(result[0].Place.Geometry.Point).toEqual([100.50483000000008, 13.753360000000043]);
+      expect(result).toEqual([100.50483000000008, 13.753360000000043]);
     });
 
     test("returns 0.0, 0.0 when searchPlaceIndexForText returns no results", async () => {
