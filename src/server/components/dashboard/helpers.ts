@@ -17,11 +17,11 @@ export async function getInitiateFormRunnerSessionToken(
   formRunnerWebhookData: NewSessionData
 ): Promise<string> {
   // logger.info(`initiating form runner session via URL ${FORM_RUNNER_URL}, path ${FORM_RUNNER_INITIALISE_SESSION_ROUTE}/${serviceType}`);
-  logger.info(`initiating form runner session via URL http://${formRunnerNewSessionUrl}`);
+  logger.info(`initiating form runner session via URL ${formRunnerNewSessionUrl}`);
   logger.info(`sending url to ${formRunnerNewSessionUrl} with data [${JSON.stringify(formRunnerWebhookData)}]`);
 
   const token = await axios
-    .post(`http://${formRunnerNewSessionUrl}`, formRunnerWebhookData)
+    .post(`${formRunnerNewSessionUrl}`, formRunnerWebhookData)
     .then((response) => {
       return response?.data?.token;
     })
