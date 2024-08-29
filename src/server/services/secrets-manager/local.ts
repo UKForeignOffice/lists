@@ -1,20 +1,20 @@
-import { SecretsManager } from "aws-sdk";
+import { SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
 import { differenceInDays } from "date-fns";
 import { logger } from "./../logger";
-import { GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
 import { generateRandomSecret } from "./helpers";
 
 let secretsManager: LocalSecretsManager;
 
 class LocalSecretsManager {
-  secrets: Record<string, GetSecretValueResponse>= {};
-  constructor(options?: SecretsManager.Types.ClientConfiguration) {
+  secrets: Record<string, any> = {};
+  client: SecretsManagerClient;
+
+  constructor() {
     logger.info("Using LocalSecretsManager");
+    this.client = new SecretsManagerClient({});
   }
 
-  async createSecret(
-    params: SecretsManager.Types.CreateSecretRequest
-  ): Promise<boolean> {
+  async createSecret(params: { Name: string; SecretString: string }): Promise<boolean> {
     const { Name, SecretString } = params;
     this.secrets[Name] = {
       SecretString,
@@ -25,19 +25,13 @@ class LocalSecretsManager {
     return true;
   }
 
-  async putSecretValue({
-    SecretId,
-    SecretString,
-  }: {
-    SecretId: string;
-    SecretString: string;
-  }): Promise<any> {
+  async putSecretValue({ SecretId, SecretString }: { SecretId: string; SecretString: string }): Promise<any> {
     this.secrets[SecretId] = { SecretString };
   }
 
   async getSecretValue(
-    params: SecretsManager.Types.GetSecretValueRequest
-  ): Promise<SecretsManager.Types.GetSecretValueResponse> {
+    params: { SecretId: string }
+  ): Promise<any> {
     const { SecretId } = params;
     const secret = this.secrets[SecretId];
     if (secret != null) {

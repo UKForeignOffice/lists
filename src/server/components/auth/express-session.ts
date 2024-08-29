@@ -1,8 +1,7 @@
 import type { Express } from "express";
-import { random, noop } from "lodash";
 import session from "express-session";
 import connectRedis from "connect-redis";
-import { getSecretValue, rotateSecret } from "server/services/secrets-manager";
+import { getSecretValue } from "server/services/secrets-manager";
 import { isLocalHost, ENVIRONMENT } from "server/config";
 import { logger } from "server/services/logger";
 import { getRedisClient, isRedisAvailable } from "server/services/redis";
@@ -70,10 +69,6 @@ declare module "express-session" {
 
 export async function configureExpressSession(server: Express): Promise<void> {
   const secret = await getSecretValue(SECRET_NAME);
-
-  setTimeout(() => {
-    rotateSecret(SECRET_NAME).catch(noop);
-  }, random(200) * ONE_MINUTE);
 
   const options: session.SessionOptions = {
     secret: secret,

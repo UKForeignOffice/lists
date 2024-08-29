@@ -702,6 +702,7 @@ export const fcdoTranslatorsInterpretersByCountry = {
   Thailand: "https://www.gov.uk/government/publications/thailand-translators-and-interpreters",
   "The Occupied Palestinian Territories":
     "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-lawyers",
+  "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-translators-and-interpreters",
   Turkmenistan: "https://www.gov.uk/government/publications/turkmenistan-list-of-translators",
   Ukraine: "https://www.gov.uk/government/publications/ukraine-list-of-interpreters",
@@ -906,6 +907,7 @@ export const languages: Record<string, string> = {
   sw: "Swahili",
   ta: "Tamil",
   te: "Telugu",
+  tet: "Tetum",
   tg: "Tajik",
   th: "Thai",
   ti: "Tigrinya",

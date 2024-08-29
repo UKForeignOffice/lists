@@ -11,7 +11,7 @@ jest.mock("server/config", () => ({
     return mockIsTest;
   },
   get FORM_RUNNER_URL() {
-    return "apply:3001";
+    return "http://apply:3001";
   },
 }));
 
