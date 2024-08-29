@@ -28,7 +28,7 @@ describe("Express Session", () => {
     await configureExpressSession(server);
 
     expect(spySession.mock.calls[0][0]).toMatchObject({
-      secret: "12345678",
+      secret: "123ABC",
       saveUninitialized: true,
       resave: false,
       proxy: !isLocalHost,
