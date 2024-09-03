@@ -34,7 +34,11 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
     offset = 0,
   } = props;
 
-  const countryName = startCase(toLower(props.countryName));
+  const countryName = props.countryName
+    .split("-") // Split the string by hyphen
+    .map(part => startCase(toLower(part))) // Apply startCase to each part
+    .join("-"); // Join them back with a hyphen
+
   const andWhere: string[] = [];
 
   if (languagesProvided && languagesProvided.length > 0) {
