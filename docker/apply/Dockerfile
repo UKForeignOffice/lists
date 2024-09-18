@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_TAG="3.32.1-rc.9"
+ARG BASE_IMAGE_TAG="3.32.1-rc.9" # Update this value in the Terraform code also
 FROM ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG AS base
 WORKDIR /usr/src/app
 RUN rm -r runner/dist/server/forms && rm -r runner/src

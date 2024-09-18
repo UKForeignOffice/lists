@@ -43,7 +43,7 @@ export function getNewSessionWebhookData({
   redirectUrl,
   userId,
 }: NewSessionWebhookDataInput): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://lists.integration.internal:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {
