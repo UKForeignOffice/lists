@@ -10,7 +10,7 @@ import { ServiceType } from "shared/types";
 import * as lawyers from "./lawyers";
 import * as funeralDirectors from "./funeralDirectors";
 import * as translatorsInterpreters from "./translatorsInterpreters";
-import { isLocalHost, SERVICE_DOMAIN } from "server/config";
+import { isLocalHost, SERVICE_DOMAIN, LISTS_INTERNAL_URL } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
@@ -43,7 +43,7 @@ export function getNewSessionWebhookData({
   redirectUrl,
   userId,
 }: NewSessionWebhookDataInput): FormRunner.NewSessionData {
-  const callbackUrl = `http://lists.integration.internal:3000/ingest/${listType}/${listItemId}`;
+  const callbackUrl = `http://${LISTS_INTERNAL_URL}:3000/ingest/${listType}/${listItemId}`;
   const redirectPath = "/summary";
   const protocol = isLocalHost ? "http" : "https";
   const options = {

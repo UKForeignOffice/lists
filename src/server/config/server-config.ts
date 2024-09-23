@@ -9,6 +9,7 @@ export const SERVICE_DOMAIN = process.env.SERVICE_DOMAIN ?? "localhost:3000";
 export const LOG_LEVEL = process.env.LOG_LEVEL ?? "error";
 export const NODE_ENV = process.env.NODE_ENV;
 export const ENVIRONMENT = process.env.ENVIRONMENT;
+export const LISTS_INTERNAL_URL = process.env.LISTS_INTERNAL_URL;
 
 // Helper flags
 export const isProd = NODE_ENV === "production";
