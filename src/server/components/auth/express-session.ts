@@ -80,6 +80,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
     saveUninitialized: true,
     resave: false,
     proxy: !isLocalHost,
+    rolling: true,
     cookie: {
       secure: !isLocalHost,
       maxAge: isLocalHost ? ONE_DAY : FOUR_HOURS,
