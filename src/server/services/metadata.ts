@@ -400,6 +400,7 @@ export const fcdoLawyersPagesByCountry = {
   Norway: "https://www.gov.uk/government/publications/norway-list-of-lawyers",
   "The Occupied Palestinian Territories":
     "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-lawyers",
+  "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Pakistan: "https://www.gov.uk/government/publications/pakistan-list-of-lawyers",
   Panama: "https://www.gov.uk/government/publications/panama-list-of-lawyers",
   "Papua New Guinea": "https://www.gov.uk/government/publications/papua-new-guinea-list-of-lawyers",
