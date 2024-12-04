@@ -311,27 +311,27 @@ jobs:
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists=204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
+          container-image-updates: lists=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$CIRCLE_SHA1
           resource-name: deployment/lists
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists-apply=204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$CIRCLE_SHA1
+          container-image-updates: lists-apply=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$CIRCLE_SHA1
           resource-name: deployment/lists-apply
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists-postgres=204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
+          container-image-updates: lists-postgres=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$CIRCLE_SHA1
           resource-name: deployment/lists-postgres
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists-scheduler-batch=204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
+          container-image-updates: lists-scheduler-batch=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$CIRCLE_SHA1
           resource-name: cronjob/lists-scheduler-batch
 
       - kubernetes/update-container-image:
           namespace: << parameters.namespace >>
-          container-image-updates: lists-scheduler-worker=204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$CIRCLE_SHA1
+          container-image-updates: lists-scheduler-worker=523508197323.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$CIRCLE_SHA1
           resource-name: cronjob/lists-scheduler-worker
 
       - run:
