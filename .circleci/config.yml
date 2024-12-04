@@ -146,7 +146,7 @@ jobs:
             - run:
                 name: Publish docker image - lists
                 command: |
-                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 204473099916.dkr.ecr.eu-west-2.amazonaws.com
                   docker build --build-arg NODE_ENV=production --build-arg=BUILD_MODE=prod --build-arg DOCKER_TAG=$DOCKER_TAG --target main -t 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG .
                   docker push 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists:$DOCKER_TAG
 
@@ -157,7 +157,7 @@ jobs:
             - run:
                 name: Publish docker image - apply
                 command: |
-                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 204473099916.dkr.ecr.eu-west-2.amazonaws.com
                   docker build --build-arg DOCKER_TAG=$DOCKER_TAG -t 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG docker/apply
                   docker push 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-apply:$DOCKER_TAG
 
@@ -175,7 +175,7 @@ jobs:
             - run:
                 name: Publish docker image - lists-postgres
                 command: |
-                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 204473099916.dkr.ecr.eu-west-2.amazonaws.com
                   docker tag repo_postgres 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
                   docker push 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-postgres:$DOCKER_TAG
 
@@ -186,7 +186,7 @@ jobs:
             - run:
                 name: Publish docker image - annual review scheduled batch process
                 command: |
-                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 204473099916.dkr.ecr.eu-west-2.amazonaws.com
                   docker build --build-arg DOCKER_TAG=$DOCKER_TAG --build-arg BUILD_MODE=ci --target scheduled -t 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG .
                   docker push 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-batch:$DOCKER_TAG
 
@@ -197,7 +197,7 @@ jobs:
             - run:
                 name: Publish docker image - annual review scheduled worker process
                 command: |
-                  eval $(aws ecr get-login --no-include-email --region eu-west-2)
+                  aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 204473099916.dkr.ecr.eu-west-2.amazonaws.com
                   docker build --build-arg DOCKER_TAG=$DOCKER_TAG --build-arg BUILD_MODE=ci --target scheduled -t 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG .
                   docker push 204473099916.dkr.ecr.eu-west-2.amazonaws.com/fco/lists-scheduler-worker:$DOCKER_TAG
 
