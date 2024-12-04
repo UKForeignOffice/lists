@@ -427,7 +427,7 @@ workflows:
           namespace: test-lists
           context:
             - VPN
-            - AWS_MGMT
+            - AWS
           requires:
             - publish-lists
             - publish-lists-apply
@@ -444,7 +444,7 @@ workflows:
           namespace: test-lists
           context:
             - VPN
-            - AWS_MGMT
+            - AWS
           requires:
             - publish-lists-postgres
           filters:
