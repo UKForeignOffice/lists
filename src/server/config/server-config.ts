@@ -19,6 +19,10 @@ export const isLocalHost = process.env.LOCAL_HOST === "true" || SERVICE_DOMAIN.i
 export const isDevMode = process.env.DEV_MODE === "true" || isDev;
 export const isSmokeTest = process.env.CI_SMOKE_TEST === "true";
 
+// Rate limit settings
+export const RATE_LIMITING_ENABLED = process.env.RATE_LIMITING_ENABLED === "true";
+export const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? "120", 10);
+
 // AWS
 export const AWS_REGION =
   process.env.AWS_REGION ?? "eu-west-1";
