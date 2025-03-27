@@ -1,5 +1,5 @@
 Given("a list exists with users", async () => {
-  const emails = [{ email: 'smoke@cautionyourblast.com' }, { email: 'smoke+1@cautionyourblast.com' }, { email: 'smoke+2@cautionyourblast.com' }];
+  const emails = [{ email: 'simulate-delivered@notifications.service.gov.uk' }, { email: 'simulate-delivered+1@notifications.service.gov.uk' }, { email: 'simulate-delivered+2@notifications.service.gov.uk' }];
 
   cy.task("db", {
     operation: "list.findUnique",
