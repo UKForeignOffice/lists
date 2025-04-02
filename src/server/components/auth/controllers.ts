@@ -6,28 +6,43 @@ import { authRoutes } from "./routes";
 import passport from "./passport";
 import { isDevMode, isLocalHost, isSmokeTest, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
+import crypto from "crypto";
 
 export const authController = passport.authenticate("jwt", {
   successReturnToOrRedirect: "/dashboard/lists",
   failureRedirect: `${authRoutes.login}?invalidToken=true`,
 });
 
+function isTokenValid(providedToken: string, expectedToken: string): boolean {
+  const providedBuffer = Buffer.from(providedToken, "utf-8");
+  const expectedBuffer = Buffer.from(expectedToken, "utf-8");
+
+  if (providedBuffer.length !== expectedBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(providedBuffer, expectedBuffer);
+}
+
 export function getLoginController(req: Request, res: Response, next: NextFunction): void {
   const { token } = req.params;
   const { invalidToken, token: tokenParam } = req.query;
 
   if (token !== undefined) {
-    const redirectToLogin = `${authRoutes.login}?token=${token}`;
+    const redirectToLogin = `${authRoutes.login}?token=${encodeURIComponent(token)}`;
     res.redirect(redirectToLogin);
     return;
   }
+
   if (tokenParam !== undefined) {
     next();
     return;
   }
 
+  const invalidTokenFlag = invalidToken && isTokenValid(invalidToken as string, "true");
+
   res.render("login", {
-    invalidToken: invalidToken === "true",
+    invalidToken: invalidTokenFlag,
   });
 }
 

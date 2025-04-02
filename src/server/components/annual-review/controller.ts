@@ -241,3 +241,7 @@ export async function declarationPostController(req: Request, res: Response, nex
 export function submittedGetController(_: Request, res: Response): void {
   res.render("annual-review/submitted");
 }
+
+export function errorGetController(_: Request, res: Response): void {
+  res.render("annual-review/error");
+}

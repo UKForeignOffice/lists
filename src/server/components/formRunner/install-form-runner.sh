@@ -7,10 +7,10 @@ form_runner_views_folder="$form_runner_folder/runner/dist/server/views"
 form_runner_env_file="$form_runner_folder/runner/.env"
 forms_json_folder="$root_folder/src/server/components/formRunner/forms-json"
 forms_views_folder="$root_folder/src/server/components/formRunner/views"
-machine_name=`hostname`
+machine_name=$(hostname)
 
 echo "Deleting root folder $form_runner_folder"
-rm -rf $form_runner_folder
+rm -rf "$form_runner_folder"
 
 if [ -n "$(ls -A "$form_runner_folder/node_modules/.bin" 2>/dev/null)" ]
 then

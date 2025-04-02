@@ -79,6 +79,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
     cookie: {
       secure: !isLocalHost,
       maxAge: isLocalHost ? ONE_DAY : FOUR_HOURS,
+      httpOnly: true,
     },
     name: "lists_sid",
   };
