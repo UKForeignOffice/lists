@@ -101,7 +101,7 @@ function createLawyersJsonData() {
     country: "Eurasia",
     contactName: randFullName(),
     organisationName: randCompanyName(),
-    emailAddress: "list-management@cautionyourblast.com",
+    emailAddress: "bcf745d8.kainos.com@emea.teams.ms",
     speakEnglish: true,
     websiteAddress: null,
     regions: "France and UK",
