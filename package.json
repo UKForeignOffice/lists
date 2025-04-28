@@ -146,7 +146,7 @@
     "mini-css-extract-plugin": "^2.2.0",
     "nanoid": "^3.2.0",
     "nock": "^13.2.9",
-    "nodemon": "^2.0.12",
+    "nodemon": "^3.1.10",
     "nodemon-webpack-plugin": "^4.5.2",
     "postcss-loader": "^7.0.1",
     "prettier": "2.3.2",
