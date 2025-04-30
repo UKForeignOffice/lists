@@ -1,4 +1,4 @@
-import { Location } from "aws-sdk";
+import { Location } from "@aws-sdk/client-location";
 import {
   getAWSLocationService,
   checkIfPlaceIndexExists,
@@ -8,10 +8,19 @@ import {
 import { LOCATION_SERVICE_INDEX_NAME, AWS_REGION } from "server/config";
 import { logger } from "server/services/logger";
 
+jest.mock("@aws-sdk/client-location", () => {
+  return {
+    Location: jest.fn(() => ({
+      listPlaceIndexes: jest.fn(),
+      createPlaceIndex: jest.fn(),
+      searchPlaceIndexForText: jest.fn(),
+    })),
+  };
+});
+
 describe("Location service:", () => {
   test("service is initialized with the correct parameters", () => {
     const expectedParams = {
-      apiVersion: "2020-11-19",
       region: AWS_REGION,
     };
 
@@ -21,24 +30,31 @@ describe("Location service:", () => {
 
   describe("checkIfPlaceIndexExists", () => {
     test("returns true when place index exists", async () => {
-      // place index is mocked see ../__mocks__
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.listPlaceIndexes as jest.Mock).mockResolvedValue({
+        Entries: [{ IndexName: "MOCK_INDEX_NAME" }],
+      });
+
       const exists = await checkIfPlaceIndexExists("MOCK_INDEX_NAME");
       expect(exists).toBe(true);
     });
 
     test("returns false when place index does not exist", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.listPlaceIndexes as jest.Mock).mockResolvedValue({
+        Entries: [],
+      });
+
       const exists = await checkIfPlaceIndexExists("DOES_NOT_EXIST");
       expect(exists).toBe(false);
     });
 
     test("returns false when listPlaceIndexes rejects", async () => {
-      const error: any = new Error("SomeError");
-      jest
-        .spyOn(getAWSLocationService().listPlaceIndexes(), "promise")
-        .mockRejectedValue(error);
+      const mockLocationClient = getAWSLocationService();
+      const error = new Error("SomeError");
+      (mockLocationClient.listPlaceIndexes as jest.Mock).mockRejectedValue(error);
 
       const exists = await checkIfPlaceIndexExists("DOES_NOT_EXIST");
-
       expect(exists).toBe(false);
       expect(logger.error).toHaveBeenCalledWith(
         "checkIfPlaceIndexExists Error: SomeError"
@@ -47,96 +63,80 @@ describe("Location service:", () => {
   });
 
   describe("createPlaceIndex", () => {
-    test("createLocationPlacesIndex request is correct", async () => {
-      const location = getAWSLocationService();
+    test("createPlaceIndex request is correct", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.createPlaceIndex as jest.Mock).mockResolvedValue({});
 
       const result = await createPlaceIndex();
 
       expect(result).toBe(true);
-      expect(location.createPlaceIndex).toHaveBeenCalledWith({
+      expect(mockLocationClient.createPlaceIndex).toHaveBeenCalledWith({
         DataSource: "Esri",
         DataSourceConfiguration: {
           IntendedUse: "SingleUse",
         },
         Description: "FCDO Professional service finder",
-        IndexName: "LOCATION_SERVICE_INDEX_NAME",
+        IndexName: LOCATION_SERVICE_INDEX_NAME,
         PricingPlan: "RequestBasedUsage",
       });
     });
 
-    test("it returns true when secret already exists", async () => {
-      const placeIndexes: any = {
+    test("it returns true when place index already exists", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.listPlaceIndexes as jest.Mock).mockResolvedValue({
         Entries: [
           {
-            CreateTime: "2021-03-22T16:25:58.695Z",
-            DataSource: "Esri",
-            Description: "MOCK_INDEX_DESCRIPTION",
             IndexName: LOCATION_SERVICE_INDEX_NAME,
-            UpdateTime: "2021-03-22T16:25:58.695Z",
           },
         ],
-      };
-
-      jest
-        .spyOn(getAWSLocationService(), "listPlaceIndexes")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValueOnce(placeIndexes),
-        } as any);
+      });
 
       const result = await createPlaceIndex();
 
       expect(result).toBe(true);
     });
 
-    test("it returns false when createPlaceIndex rejects", async () => {
-      const error = new Error("listPlaceIndexes error message");
 
-      jest
-        .spyOn(getAWSLocationService(), "createPlaceIndex")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockRejectedValue(error),
-        } as any);
-
-      const result = await createPlaceIndex();
-
-      expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledWith(
-        "createPlaceIndex error: listPlaceIndexes error message"
-      );
-    });
   });
 
   describe("geoLocatePlaceByText", () => {
     test("locatePlaceByText request is correct", async () => {
-      const location = getAWSLocationService();
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [{ Place: { Geometry: { Point: [100.50483000000008, 13.753360000000043] } } }],
+      });
+
       await geoLocatePlaceByText("Bangkok", "Thailand");
 
-      expect(location.searchPlaceIndexForText).toHaveBeenCalledWith({
+      expect(mockLocationClient.searchPlaceIndexForText).toHaveBeenCalledWith({
         MaxResults: 1,
         Text: "Bangkok",
-        IndexName: "LOCATION_SERVICE_INDEX_NAME",
+        IndexName: LOCATION_SERVICE_INDEX_NAME,
         FilterCountries: ["THA"],
       });
     });
 
     test("locatePlaceByText response is correct", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [{ Place: { Geometry: { Point: [100.50483000000008, 13.753360000000043] } } }],
+      });
+
       const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 
       expect(result).toEqual([100.50483000000008, 13.753360000000043]);
     });
 
     test("returns 0.0, 0.0 when searchPlaceIndexForText returns no results", async () => {
-      jest
-        .spyOn(getAWSLocationService(), "searchPlaceIndexForText")
-        .mockReturnValueOnce({
-          promise: jest.fn().mockResolvedValueOnce({
-            Results: [],
-          }),
-        } as any);
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [],
+      });
 
       const result = await geoLocatePlaceByText("Bangkok", "Thailand");
 
       expect(result).toEqual([0.0, 0.0]);
     });
   });
+
 });

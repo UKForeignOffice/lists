@@ -1,4 +1,4 @@
 {
-  "safelist": ["lists", "find-a-professional-service-abroad.service.csd.fcdo.gov.uk"],
+  "safelist": ["lists"],
   "logPrettyPrint": false
 }

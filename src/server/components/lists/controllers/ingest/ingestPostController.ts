@@ -7,7 +7,7 @@ import { createConfirmationLink, getServiceTypeName } from "server/components/li
 import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import { isCybDev, isLocalHost, isSmokeTest } from "server/config";
+import { isDevMode, isLocalHost, isSmokeTest } from "server/config";
 
 export async function ingestPostController(req: Request, res: Response): Promise<void> {
   const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
@@ -50,7 +50,7 @@ export async function ingestPostController(req: Request, res: Response): Promise
     }
 
     const confirmationLink = createConfirmationLink(req, reference);
-    if (isLocalHost || isCybDev || isSmokeTest) {
+    if (isLocalHost || isDevMode || isSmokeTest) {
       logger.info(`Generated confirmation link: ${confirmationLink}`);
     }
 

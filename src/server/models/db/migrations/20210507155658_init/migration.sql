@@ -40,7 +40,7 @@ CREATE TABLE "Country" (
 );
 
 -- CreateTable
-CREATE EXTENSION postgis;
+CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE TABLE public."GeoLocation" (
     "id" SERIAL NOT NULL,
     "location" geography(POINT) NOT NULL,

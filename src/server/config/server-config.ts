@@ -8,14 +8,20 @@ export const SERVICE_NAME = process.env.SERVICE_NAME;
 export const SERVICE_DOMAIN = process.env.SERVICE_DOMAIN ?? "localhost:3000";
 export const LOG_LEVEL = process.env.LOG_LEVEL ?? "error";
 export const NODE_ENV = process.env.NODE_ENV;
+export const ENVIRONMENT = process.env.ENVIRONMENT;
+export const LISTS_INTERNAL_URL = process.env.LISTS_INTERNAL_URL;
 
 // Helper flags
 export const isProd = NODE_ENV === "production";
 export const isDev = NODE_ENV === "development";
 export const isTest = NODE_ENV === "test";
 export const isLocalHost = process.env.LOCAL_HOST === "true" || SERVICE_DOMAIN.includes("localhost");
-export const isCybDev = process.env.CYB_DEV === "true" || isDev;
+export const isDevMode = process.env.DEV_MODE === "true" || isDev;
 export const isSmokeTest = process.env.CI_SMOKE_TEST === "true";
+
+// Rate limit settings
+export const RATE_LIMITING_ENABLED = process.env.RATE_LIMITING_ENABLED === "true";
+export const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? "120", 10);
 
 // AWS
 export const AWS_REGION =
@@ -60,7 +66,7 @@ export const NOTIFY = {
 };
 
 // Form runner
-export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "apply:3001";
+export const FORM_RUNNER_URL = process.env.FORM_RUNNER_URL ?? "http://apply:3001";
 export const FORM_RUNNER_PUBLIC_URL = `${SERVICE_DOMAIN}/application`;
 
 /**
