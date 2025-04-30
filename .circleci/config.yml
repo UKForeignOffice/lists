@@ -362,7 +362,7 @@ workflows:
                 - deploy-test
           context:
             - VPN
-            - AWS
+            - AWS_MGMT
 
 
       - publish:
@@ -376,7 +376,7 @@ workflows:
                 - deploy-test
           context:
             - VPN
-            - AWS
+            - AWS_MGMT
 
 
       - publish:
@@ -391,7 +391,7 @@ workflows:
                 - deploy-db
           context:
             - VPN
-            - AWS
+            - AWS_MGMT
 
 
       - publish:
@@ -405,7 +405,7 @@ workflows:
                 - deploy-test
           context:
             - VPN
-            - AWS
+            - AWS_MGMT
 
 
       - publish:
@@ -419,7 +419,7 @@ workflows:
                 - deploy-test
           context:
             - VPN
-            - AWS
+            - AWS_MGMT
 
 
       - deploy:
