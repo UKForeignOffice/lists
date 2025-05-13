@@ -14,6 +14,9 @@ export function get(req: Request, res: Response) {
 
   if (validatedCountry) {
     res.locals.country = validatedCountry;
+    req.session.answers = { country: validatedCountry };
+  } else {
+    req.session.answers = {};
   }
 
   if (req.query.restart === "yes") {

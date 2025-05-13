@@ -15,6 +15,17 @@ import { HttpException } from "server/middlewares/error-handlers";
 export const findRouter = express.Router();
 
 findRouter.all("*", initFindSession);
+
+findRouter.use((req, res, next) => {
+  const originalUrl = req.originalUrl;
+  if (originalUrl !== "/find" && originalUrl.endsWith("/")) {
+    const trimmedUrl = originalUrl.replace(/\/+$/, "");
+    res.redirect(301, trimmedUrl);
+    return;
+  }
+  next();
+});
+
 findRouter.get("/", redirectQueryServiceName);
 
 findRouter.get("/:serviceType", handlers.serviceType.get);
@@ -73,9 +84,5 @@ function redirectQueryServiceName(req: Request, res: Response, next: NextFunctio
   if (country) {
     query = `?${querystring.encode({ country })}`;
   }
-
-  /**
-   * TODO: Change to 301 for the next release cycle after 1.91.0.
-   */
   res.redirect(302, `find/${normaliseServiceType(serviceType)}${query}`);
 }

@@ -44,7 +44,7 @@ describe("serviceType is validated on /find/:serviceType* routes", () => {
     ${"funeral-directors"}                | ${200}
     ${"funeral-directors/country"}        | ${200}
     ${"lawyers"}                          | ${200}
-    ${"lawyers/country"}                  | ${200}
+    ${"lawyers/country"}   | ${200}
     ${"translators-interpreters"}         | ${200}
     ${"translators-interpreters/country"} | ${200}
     ${"eggs"}                             | ${404}

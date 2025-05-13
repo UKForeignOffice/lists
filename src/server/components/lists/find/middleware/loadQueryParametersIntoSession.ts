@@ -34,7 +34,7 @@ export function loadQueryParametersIntoSession(req: Request, res: Response, next
 function loadFuneralDirectorsQueryParameters(req: Request, res: Response, next: NextFunction) {
   req.session.answers = {
     ...req.session.answers,
-    practiceAreas: sanitisePracticeAreas(req.query["practice-area"] as string),
+    practiceAreas: sanitisePracticeAreas(req.query["practice-areas"] as string),
     repatriation: req.query.repatriation === "yes",
     insurance: req.query.insurance === "yes",
     region: queryParameterValueAsString(req.query.region),
