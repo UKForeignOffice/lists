@@ -24,5 +24,10 @@ export function post(req: Request, res: Response) {
     return;
   }
 
-  res.redirect("country");
+  if (country) {
+    res.redirect(`${country}/region`);
+  } else {
+    res.redirect("country");
+  }
+
 }
