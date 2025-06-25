@@ -1,5 +1,6 @@
 import { URLSearchParams } from "url";
 import type { Request, Response } from "express";
+import { sanitiseRegion } from "server/components/lists/find/helpers/sanitiseRegion";
 
 export function get(req: Request, res: Response) {
   res.render("lists/find/region", {
@@ -8,7 +9,8 @@ export function get(req: Request, res: Response) {
 }
 
 export function post(req: Request, res: Response) {
-  const { region = "" } = req.body;
+  const rawRegion = req.body.region || "";
+  const region = sanitiseRegion(rawRegion);
   const { serviceType } = req.params;
   const encoded = encodeURIComponent(region);
 
