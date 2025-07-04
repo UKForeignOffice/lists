@@ -1685,8 +1685,8 @@
           "value": "northern Cyprus"
         },
         {
-          "text": "Czech Republic",
-          "value": "Czech Republic"
+          "text": "Czechia",
+          "value": "Czechia"
         },
         {
           "text": "Denmark",
@@ -2699,7 +2699,7 @@
       "type": "string",
       "items": [
         {
-          "text": "Publish my full addresss on GOV.UK",
+          "text": "Publish my full address on GOV.UK",
           "value": "full"
         },
         {

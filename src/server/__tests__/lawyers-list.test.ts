@@ -159,6 +159,17 @@ describe("Lawyers List:", () => {
       expect(header.location).toBe(`practice-areas?region=madrid`);
     });
 
+    test("POST sanitises region and redirects correctly", async () => {
+      const maliciousInput = `<script>alert("xss")</script>Madrid`;
+      const expectedSanitised = "scriptalertxssscriptMadrid";
+      const { status, header } = await request(server)
+        .post(pageLink)
+        .send({ region: maliciousInput });
+
+      expect(status).toBe(302);
+      expect(header.location).toBe(`practice-areas?region=${encodeURIComponent(expectedSanitised)}`);
+    });
+    
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 

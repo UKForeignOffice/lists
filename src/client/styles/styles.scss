@@ -3,6 +3,10 @@ $govuk-assets-path: "~govuk-frontend/govuk/assets/";
 @import "~govuk-frontend/govuk/all";
 @import './dashboard-table';
 
+.govuk-template {
+  background-color: #f4f8fb;
+}
+
 .answers-box {
   background-color: govuk-colour("light-grey");
   padding: govuk-spacing(4);
