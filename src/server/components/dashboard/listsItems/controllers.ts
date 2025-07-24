@@ -234,8 +234,7 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
     );
 
     try {
-      const [updatedListItem] = await handleListItemUpdate(listItem.id, req.user!.id);
-      //await sendPublishedEmail(updatedListItem);
+      await handleListItemUpdate(listItem.id, req.user!.id);
 
       req.flash("providerUpdatedTitle", "Provider details updated and published");
       req.flash(
