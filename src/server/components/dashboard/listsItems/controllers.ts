@@ -14,6 +14,7 @@ import { getActivityStatus, getPublishingStatus } from "server/models/listItem/s
 import { isEmpty } from "lodash";
 import { actionHandlers } from "server/components/dashboard/listsItems/item/update/actionHandlers";
 import type { Action } from "server/components/dashboard/listsItems/item/update/types";
+import { handleListItemUpdate } from "./item/update/actionHandlers/publish";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 
@@ -232,13 +233,23 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
       }`
     );
 
+    try {
+      await handleListItemUpdate(listItem.id, req.user!.id);
+
+      req.flash("providerUpdatedTitle", "Provider details updated and published");
+      req.flash(
+        "providerUpdatedMessage",
+        "The provider’s details have been updated and published. The provider has been emailed to let them know."
+      );
+      req.flash("successBannerColour", "green");
+
+      } catch (err) {
+        logger.error(`checkSuccessfulEdit: failed to update and publish listItem ${listItem.id}`, err);
+        req.flash("errorMsg", "The provider’s changes were saved, but an error occurred while publishing.");
+      }
+
     delete req.session.currentlyEditing;
     delete req.session.currentlyEditingStartTime;
-    req.flash("providerUpdatedTitle", "Provider details updated");
-    req.flash(
-      "providerUpdatedMessage",
-      "The provider’s details have been updated. The provider has been emailed to let them know."
-    );
   }
 
   if (!editWasSuccessful) {
