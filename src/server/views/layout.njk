@@ -4,6 +4,7 @@
 {% from "footer/macro.njk" import govukFooter -%}
 {% from "skip-link/macro.njk" import govukSkipLink -%}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
+{% from "service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% block head %}
 
@@ -53,6 +54,14 @@
 
 {% block header %}
   {% include "includes/header.njk" %}
+
+  {% set protocol = "http" + ("s" if SERVICE_DOMAIN != "localhost:3000" else "") %}
+  {% set serviceUrl = protocol + "://" + SERVICE_DOMAIN + "/find?serviceType=" + serviceType %}
+
+  {{ govukServiceNavigation({
+    serviceName: "Find a professional service abroad",
+    serviceUrl: serviceUrl
+  }) }}
 {% endblock %}
 
 {% block bodyStart %}
@@ -78,11 +87,12 @@
 {% endblock %}
 
 {% block beforeContent %}
+
   <div class="noprint" role="complementary" title="Phase Banner">
     {% include "includes/phase-banner.njk" %}
   </div>
-  {% block backLink %}
 
+  {% block backLink %}
   {% endblock %}
 {% endblock %}
 
@@ -93,7 +103,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="text/javascript" src="/assets/govuk-frontend/all.js"></script>
+  <script type="text/javascript" src="/assets/govuk-frontend/govuk-frontend.min.js"></script>
   <script nonce="{{ cspNonce }}">
     window.GOVUKFrontend.initAll()
   </script>
