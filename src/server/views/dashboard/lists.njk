@@ -21,7 +21,7 @@
   {% endif %}
   {% if lists.length > 0 %}
     <div class="govuk-grid-row">
-      <h1 class="govuk-grid-column-one-quarter govuk-table__caption--l">Your lists</h1>
+      <h1 class="govuk-grid-column-one-quarter govuk-table__caption--l govuk-heading-l">Your lists</h1>
       {% if req.user.isAdministrator %}
         <div class="govuk-grid-column-three-quarters govuk-!-text-align-right govuk-!-margin-top-6">
           <a href="{{ dashboardRoutes.listsEdit.replace(':listId', 'new') }}" class="govuk-link">Create New List</a>

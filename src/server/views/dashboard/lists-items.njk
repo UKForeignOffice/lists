@@ -3,9 +3,19 @@
 {% import "./macros.njk" as dashboardMacros %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% block header %}
   {% include "includes/header-list-mgmt.njk" %}
+
+  {% set protocol = "http" + ("s" if SERVICE_DOMAIN != "localhost:3000" else "") %}
+  {% set serviceUrl = protocol + "://" + SERVICE_DOMAIN + "/dashboard" %}
+
+  {{ govukServiceNavigation({
+    serviceName: "List management",
+    serviceUrl: serviceUrl
+  }) }}
+
 {% endblock %}
 
 

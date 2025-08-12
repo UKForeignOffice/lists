@@ -65,8 +65,8 @@
 {% endblock %}
 
 {% block bodyStart %}
-    <script nonce="{{cspNonce}}">
-      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+  <script nonce="{{cspNonce}}">
+  document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
   </script>
     {% if isProd %}
       <!-- Google Tag Manager (noscript) -->
@@ -103,9 +103,10 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="text/javascript" src="/assets/govuk-frontend/govuk-frontend.min.js"></script>
-  <script nonce="{{ cspNonce }}">
-    window.GOVUKFrontend.initAll()
+  <script type="module" nonce="{{ cspNonce }} src="/assets/govuk-frontend/govuk-frontend.min.js"></script>
+  <script type="module" nonce="{{ cspNonce }}">
+    import { initAll } from '/assets/govuk-frontend/govuk-frontend.min.js'
+    initAll()
   </script>
   <script type="text/javascript" src="/assets/main.js" nonce="{{cspNonce}}"></script>
 {% endblock %}

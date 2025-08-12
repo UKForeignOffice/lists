@@ -3,11 +3,10 @@
   'new': 'grey',
   'unpublished': 'red',
   'archived': 'grey'
-  }
-%}
+} %}
 
 {% set publishingStatus = listItem.publishingStatus %}
 {% set class = 'govuk-tag--' + colours[publishingStatus] %}
 <strong class="govuk-tag dashboard__list-item-tag {{ class }}">
-  {{ publishingStatus }}
+  {{ publishingStatus | upper }}
 </strong>
