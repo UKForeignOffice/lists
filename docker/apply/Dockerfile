@@ -1,7 +1,7 @@
-ARG BASE_IMAGE_TAG="3.36.1-rc.24" # Update this value in the Terraform code also
+ARG BASE_IMAGE_TAG="3.37.1-rc.26"
 FROM ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG AS base
-#ARG BASE_IMAGE_TAG="3.36.1-rc.24"
-#-FROM --platform=linux/amd64 ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG as base
+#ARG BASE_IMAGE_TAG="3.37.1-rc.26"
+#FROM --platform=linux/amd64 ghcr.io/xgovformbuilder/digital-form-builder-runner:$BASE_IMAGE_TAG as base
 WORKDIR /usr/src/app
 RUN rm -r runner/dist/server/forms && rm -r runner/src
 COPY forms-json runner/dist/server/forms

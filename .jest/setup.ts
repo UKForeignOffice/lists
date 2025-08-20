@@ -1,5 +1,19 @@
-jest.mock("server/services/logger");
 
+import { TextEncoder, TextDecoder } from "util";
+
+// @ts-ignore
+if (typeof global.TextEncoder === "undefined") {
+  // @ts-ignore
+  global.TextEncoder = TextEncoder;
+}
+
+// @ts-ignore
+if (typeof global.TextDecoder === "undefined") {
+  // @ts-ignore
+  global.TextDecoder = TextDecoder;
+}
+
+jest.mock("server/services/logger");
 jest.mock("server/services/redis");
 
 jest.mock("crypto", () => {
@@ -7,7 +21,7 @@ jest.mock("crypto", () => {
 
   return {
     ...crypto,
-    randomBytes: jest.fn().mockReturnValue("12345678"),
+    randomBytes: jest.fn((size: number) => Buffer.alloc(size, 1)), // returns predictable buffer of `0x01`
   };
 });
 

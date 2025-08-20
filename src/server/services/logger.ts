@@ -1,15 +1,17 @@
-import { createLogger, format, transports } from "winston";
+import { createLogger, transports } from "winston";
 import { LOG_LEVEL } from "server/config";
+import type { TransformableInfo } from "logform";
+import { format } from "logform";
 
-const ignoreHttpGET = format((info) => {
-  if (info?.message?.startsWith?.("HTTP GET")) {
+const ignoreHttpGET = format((info: TransformableInfo) => {
+  if (typeof info.message === 'string' && info.message.startsWith("HTTP GET")) {
     return false;
   }
   return info;
 });
 
-const ignoreHttpPOST = format((info) => {
-  if (info?.message?.startsWith?.("HTTP POST")) {
+const ignoreHttpPOST = format((info: TransformableInfo) => {
+  if (typeof info.message === 'string' && info.message.startsWith("HTTP POST")) {
     return false;
   }
   return info;
