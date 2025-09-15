@@ -154,7 +154,7 @@
     "redis-mock": "^0.56.3",
     "sass": "^1.89.2",
     "sass-loader": "^13.0.2",
-    "semantic-release": "^24.2.7",
+    "semantic-release": "^24.2.8",
     "supertest": "^7.1.4",
     "ts-standard": "^10.0.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
