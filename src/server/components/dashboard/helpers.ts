@@ -1,6 +1,6 @@
 import { logger } from "server/services/logger";
 import type { NextFunction, Request, Response } from "express";
-import axios from "axios";
+import axios from "axios/dist/node/axios.cjs";
 import type { List, ListJsonData } from "server/models/types";
 import type { NewSessionData } from "../formRunner/types";
 import { dashboardRoutes } from "server/components/dashboard/routes";
