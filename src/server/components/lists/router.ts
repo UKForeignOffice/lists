@@ -21,5 +21,8 @@ listsRouter.get(listsRoutes.accessibility, (_req, res) => {
 listsRouter.get(listsRoutes.termsAndConditions, (_req, res) => {
   res.render("help/terms-and-conditions");
 });
+listsRouter.get(listsRoutes.timeout, (_req, res) => {
+  res.render("timeout");
+});
 
 listsRouter.use(annualReviewRouter);
