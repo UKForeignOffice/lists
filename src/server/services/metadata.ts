@@ -399,7 +399,7 @@ export const fcdoLawyersPagesByCountry = {
   "North Macedonia": "https://www.gov.uk/government/publications/north-macedonia-lawyers",
   Norway: "https://www.gov.uk/government/publications/norway-list-of-lawyers",
   "Palestine":
-    "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-lawyers",
+    "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
   "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Pakistan: "https://www.gov.uk/government/publications/pakistan-list-of-lawyers",
   Panama: "https://www.gov.uk/government/publications/panama-list-of-lawyers",
@@ -580,7 +580,7 @@ export const fcdoFuneralDirectorsByCountry = {
   Tanzania: "https://www.gov.uk/government/publications/funeral-directors",
   Thailand: "https://www.gov.uk/government/publications/thailand-funeral-directors",
   "Palestine":
-    "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-funeral-directors",
+    "https://www.gov.uk/government/publications/palestine-list-of-funerals-directors",
   "Trinidad and Tobago": "https://www.gov.uk/government/publications/trinidad-and-tobago-list-of-funeral-directors",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-funeral-directors",
   Turkmenistan: "https://www.gov.uk/government/publications/list-of-funeral-directors-in-turkmenistan",
@@ -702,7 +702,7 @@ export const fcdoTranslatorsInterpretersByCountry = {
   Tanzania: "https://www.gov.uk/government/publications/list-of-translators-interpreters",
   Thailand: "https://www.gov.uk/government/publications/thailand-translators-and-interpreters",
   "Palestine":
-    "https://www.gov.uk/government/publications/the-occupied-palestinian-territories-list-of-lawyers",
+    "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
   "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-translators-and-interpreters",
   Turkmenistan: "https://www.gov.uk/government/publications/turkmenistan-list-of-translators",
