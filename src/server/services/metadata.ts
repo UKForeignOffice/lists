@@ -580,7 +580,7 @@ export const fcdoFuneralDirectorsByCountry = {
   Tanzania: "https://www.gov.uk/government/publications/funeral-directors",
   Thailand: "https://www.gov.uk/government/publications/thailand-funeral-directors",
   "Palestine":
-    "https://www.gov.uk/government/publications/palestine-list-of-funerals-directors",
+    "https://www.gov.uk/government/publications/palestine-list-of-funeral-directors",
   "Trinidad and Tobago": "https://www.gov.uk/government/publications/trinidad-and-tobago-list-of-funeral-directors",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-funeral-directors",
   Turkmenistan: "https://www.gov.uk/government/publications/list-of-funeral-directors-in-turkmenistan",
