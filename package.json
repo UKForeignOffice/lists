@@ -141,7 +141,7 @@
     "jest": "^27.0.6",
     "jest-axe": "^6.0.0",
     "jest-extended": "^0.11.5",
-    "jest-mock-extended": "^1.0.18",
+    "jest-mock-extended": "^4.0.0",
     "lint-staged": "^16.1.4",
     "mini-css-extract-plugin": "^2.2.0",
     "nanoid": "^3.2.0",
