@@ -7,7 +7,7 @@
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
 
-  {% if hasSworn.interpreters or hasSworn.translators %}
+  {% if (hasSworn.interpreters or hasSworn.translators) and country|lower != "vietnam" %}
     <div class="govuk-warning-text">
       <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
       <strong class="govuk-warning-text__text">
