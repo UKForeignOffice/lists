@@ -7,7 +7,7 @@
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
 
-  {% if hasSworn.interpreters or hasSworn.translators %}
+  {% if (hasSworn.interpreters or hasSworn.translators) and country|lower != "vietnam" %}
     <div class="govuk-warning-text">
       <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
       <strong class="govuk-warning-text__text">
@@ -26,16 +26,18 @@
       </strong>
     </div>
   {% else %}
-    <div class="govuk-body govuk-!-margin-bottom-4">Check that
-      {% if filterProps.interpreterServices and filterProps.translationSpecialties %}
-        translators and interpreters
-      {% elif filterProps.interpreterServices %}
-        interpreters
-      {% elif filterProps.translationSpecialties %}
-        translators
-      {% endif %}
-      can carry out the service you need in the language of your choosing before hiring them.
-    </div>
+    {% if country|lower != "vietnam" %}
+      <div class="govuk-body govuk-!-margin-bottom-4">Check that
+        {% if filterProps.interpreterServices and filterProps.translationSpecialties %}
+          translators and interpreters
+        {% elif filterProps.interpreterServices %}
+          interpreters
+        {% elif filterProps.translationSpecialties %}
+          translators
+        {% endif %}
+        can carry out the service you need in the language of your choosing before hiring them.
+      </div>
+    {% endif %}
   {% endif %}
 
   <p class="govuk-body noprint">
