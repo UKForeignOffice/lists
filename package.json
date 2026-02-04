@@ -178,7 +178,8 @@
     "braces": "^3.0.3",
     "micromatch": "^4.0.8",
     "cookie": "^0.7.0",
-    "tmp": "^0.2.4"
+    "tmp": "^0.2.4",
+    "lodash": "^4.17.21"
   },
   "release": {
     "branches": [
