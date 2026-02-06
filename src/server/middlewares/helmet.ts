@@ -68,9 +68,6 @@ export function configureHelmet(server: Express): void {
   );
   server.use(helmet.hsts());
   server.use(helmet.noSniff());
-  server.use(helmet.ieNoOpen());
-  server.use(helmet.expectCt());
-  server.use(helmet.xssFilter());
   server.use(helmet.hidePoweredBy());
   server.use(helmet.dnsPrefetchControl());
   server.use(helmet.permittedCrossDomainPolicies());

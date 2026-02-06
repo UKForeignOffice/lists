@@ -1,5 +1,35 @@
 
 import { TextEncoder, TextDecoder } from "util";
+import { ReadableStream, TransformStream } from "stream/web";
+import { Blob } from "buffer";
+import { MessageChannel, MessagePort } from "worker_threads";
+
+// Polyfill for cheerio/undici in Jest environment
+// @ts-ignore
+if (typeof global.ReadableStream === "undefined") {
+  // @ts-ignore
+  global.ReadableStream = ReadableStream;
+}
+// @ts-ignore
+if (typeof global.TransformStream === "undefined") {
+  // @ts-ignore
+  global.TransformStream = TransformStream;
+}
+// @ts-ignore
+if (typeof global.Blob === "undefined") {
+  // @ts-ignore
+  global.Blob = Blob;
+}
+// @ts-ignore
+if (typeof global.MessageChannel === "undefined") {
+  // @ts-ignore
+  global.MessageChannel = MessageChannel;
+}
+// @ts-ignore
+if (typeof global.MessagePort === "undefined") {
+  // @ts-ignore
+  global.MessagePort = MessagePort;
+}
 
 // @ts-ignore
 if (typeof global.TextEncoder === "undefined") {
