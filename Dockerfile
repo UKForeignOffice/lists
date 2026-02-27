@@ -1,7 +1,8 @@
 FROM node:22-alpine AS base
 RUN mkdir -p /usr/src/app && \
     apk update && \
-    apk upgrade
+    apk upgrade && \
+    apk add --no-cache openssl
 
 FROM base AS dependencies
 WORKDIR /usr/src/app

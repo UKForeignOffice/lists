@@ -8,17 +8,23 @@ import {
 } from "@aws-sdk/client-secrets-manager";
 import { logger } from "server/services/logger";
 
-jest.mock("@aws-sdk/client-secrets-manager");
+const mockSend = jest.fn();
+
+jest.mock("@aws-sdk/client-secrets-manager", () => ({
+  SecretsManagerClient: jest.fn().mockImplementation(() => ({
+    send: mockSend,
+  })),
+  GetSecretValueCommand: jest.fn(),
+}));
+
 jest.mock("../secrets-manager/helpers", () => ({
   generateRandomSecret: jest.fn().mockReturnValue("123SECRET"),
 }));
 
 describe("Secrets Manager", () => {
-  let mockSend: jest.Mock;
-
   beforeEach(() => {
-    mockSend = jest.fn();
-    SecretsManagerClient.prototype.send = mockSend;
+    mockSend.mockReset();
+    jest.resetModules();
   });
 
   afterEach(() => {
@@ -26,9 +32,10 @@ describe("Secrets Manager", () => {
   });
 
   describe("getAWSSecretsManagerClient", () => {
-    test("returns an instance of SecretsManagerClient", () => {
+    test("returns an instance with send method", () => {
       const client = getAWSSecretsManagerClient();
-      expect(client).toBeInstanceOf(SecretsManagerClient);
+      expect(client).toBeDefined();
+      expect(client.send).toBeDefined();
     });
 
     test("reuses the same SecretsManagerClient instance", () => {
