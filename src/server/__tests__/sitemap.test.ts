@@ -1,4 +1,4 @@
-import $ from "cheerio";
+import * as $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
 import { getServer } from "../server";
@@ -37,7 +37,7 @@ describe("Cookies", () => {
     const sectionLists = $main.find("ul").toArray();
 
     for (const section of sectionLists) {
-      const $section = $(section);
+      const $section = $html(section);
       const $links = $section.find("a");
       const $link = $links.eq(0);
 

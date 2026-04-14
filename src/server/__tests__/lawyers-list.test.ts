@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import $ from "cheerio";
+import * as $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";

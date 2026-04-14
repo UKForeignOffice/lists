@@ -1,4 +1,4 @@
-import $ from "cheerio";
+import * as $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
 import { getServer } from "../server";
