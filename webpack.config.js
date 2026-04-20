@@ -52,7 +52,7 @@ const environmentOptions = {
 };
 
 const client = {
-  target: ["web", "es5"],
+  target: ["web", "es2020"],
   mode: environmentOptions[nodeEnv].mode,
   watch: environmentOptions[nodeEnv].watch,
   watchOptions: {

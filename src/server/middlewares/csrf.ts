@@ -10,12 +10,12 @@ const CSRFOptions = {
 
 export function configureCsrf(server: Express) {
   logger.warn(`configureCookieParser: CSRF is ${isTest ? "disabled" : "enabled"}`);
-  server.use(csrf(CSRFOptions));
+  server.use(csrf(CSRFOptions) as any);
   server.use(addCsrfTokenToLocals);
 }
 
 export function singleRouteCsrf(req: Request, res: Response, next: NextFunction) {
-  csrf(CSRFOptions)(req, res, next);
+  csrf(CSRFOptions)(req as any, res as any, next);
 }
 
 export function addCsrfTokenToLocals(req: Request, res: Response, next: NextFunction) {

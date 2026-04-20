@@ -86,6 +86,6 @@ function loadLawyersQueryParameters(req: Request, res: Response, next: NextFunct
   next();
 }
 
-function queryParameterValueAsString(value: string | string[] | ParsedQs | ParsedQs[] | undefined) {
+function queryParameterValueAsString(value: string | ParsedQs | (string | ParsedQs)[] | undefined) {
   return (Array.isArray(value) ? value[0] : value) as string;
 }

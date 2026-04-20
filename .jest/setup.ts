@@ -1,7 +1,7 @@
 
 import { TextEncoder, TextDecoder } from "util";
 import { ReadableStream, TransformStream } from "stream/web";
-import { Blob } from "buffer";
+import { Blob, File } from "buffer";
 import { MessageChannel, MessagePort } from "worker_threads";
 
 // Polyfill for cheerio/undici in Jest environment
@@ -41,6 +41,27 @@ if (typeof global.TextEncoder === "undefined") {
 if (typeof global.TextDecoder === "undefined") {
   // @ts-ignore
   global.TextDecoder = TextDecoder;
+}
+// @ts-ignore
+if (typeof global.File === "undefined") {
+  // @ts-ignore
+  global.File = File;
+}
+// @ts-ignore
+if (typeof global.DOMException === "undefined") {
+  // @ts-ignore
+  if (typeof DOMException !== "undefined") {
+    // @ts-ignore
+    global.DOMException = DOMException;
+  } else {
+    // @ts-ignore
+    global.DOMException = class DOMException extends Error {
+      constructor(message?: string, name?: string) {
+        super(message);
+        this.name = name ?? "DOMException";
+      }
+    };
+  }
 }
 
 jest.mock("server/services/logger");
