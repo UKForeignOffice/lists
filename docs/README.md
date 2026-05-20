@@ -10,3 +10,6 @@
 - [Scheduler process(es)](scheduler.md)
 - [Update dev with prod data](update-prod-data.md)
 - [Adding a new list type](adding-new-list-type.md)
+- [High-level design](high-level-design.md)
+- [Local instance setup](local-instance-setup.md)
+- [Trigger annual review jobs locally](trigger-annual-review-jobs-locally.md)
