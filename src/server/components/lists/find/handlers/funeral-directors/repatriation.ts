@@ -29,5 +29,4 @@ export function post(req: Request, res: Response) {
   } else {
     res.redirect("country");
   }
-
 }

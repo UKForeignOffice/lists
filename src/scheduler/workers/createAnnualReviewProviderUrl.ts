@@ -1,4 +1,4 @@
-import { ListItem } from "@prisma/client";
+import type { ListItem } from "@prisma/client";
 import { isLocalHost, SERVICE_DOMAIN } from "server/config";
 
 export function createAnnualReviewProviderUrl(listItem: ListItem): string {

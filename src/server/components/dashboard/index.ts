@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { dashboardRouter } from "./router";
 
 export { dashboardRoutes } from "./routes";

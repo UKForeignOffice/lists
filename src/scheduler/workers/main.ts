@@ -9,7 +9,7 @@ import { runSingleTask } from "./runSingleTask";
 async function main() {
   if (process.env.SCHEDULER_WORKER_RUN_TASK) {
     logger.warn(`Task requested was ${process.env.SCHEDULER_WORKER_RUN_TASK}. Only running this task.`);
-    return await runSingleTask(process.env.SCHEDULER_WORKER_RUN_TASK);
+    return runSingleTask(process.env.SCHEDULER_WORKER_RUN_TASK);
   }
   // if a task needs to be executed first, await them here.
   try {
@@ -21,7 +21,7 @@ async function main() {
   // put all worker tasks to be executed here. They will be executed async (non blocking/non sequential).
   const tasks = [unpublishWeeklyTask(), unpublishDayBeforeTask(), unpublishDayTask(), deleteItemsAfterAYear()];
 
-  return await Promise.allSettled(tasks);
+  return Promise.allSettled(tasks);
 }
 
 main()

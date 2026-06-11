@@ -40,7 +40,7 @@
     "@prisma/client": "^5.22.0",
     "@types/csurf": "^1.11.5",
     "accessible-autocomplete": "^2.0.3",
-    "axios": "1.15.0",
+    "axios": "1.17.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "connect-redis": "^6.0.0",
@@ -115,8 +115,8 @@
     "@types/pluralize": "0.0.29",
     "@types/supertest": "^2.0.16",
     "@types/url-parse": "^1.4.11",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
     "babel-loader": "^8.4.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "cheerio": "^1.0.0-rc.10",
@@ -127,12 +127,13 @@
     "cypress-file-upload": "^5.0.7",
     "cz-conventional-changelog": "^3.3.0",
     "date-fns": "^2.30.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.57.1",
+    "eslint-config-standard": "^17.1.0",
     "eslint-config-prettier": "^8.10.2",
-    "eslint-config-standard-with-typescript": "^20.0.0",
-    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-prettier": "^4.2.5",
-    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-promise": "^6.6.0",
     "esm": "^3.2.25",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.5.3",
@@ -181,7 +182,10 @@
     "tmp": "^0.2.4",
     "lodash": "^4.17.21",
     "npm": "^11.12.0",
-    "axios": "1.15.0"
+    "axios": "1.17.0",
+    "googleapis-common": {
+      "uuid": "^11.1.1"
+    }
   },
   "release": {
     "branches": [

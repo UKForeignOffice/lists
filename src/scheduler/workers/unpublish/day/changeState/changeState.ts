@@ -30,7 +30,7 @@ export async function main(list: ListWithCountryName) {
     results
       .filter((result) => result.status !== "fulfilled")
       .forEach((failedResult) => {
-        logger.error((failedResult as PromiseRejectedResult).reason);
+        logger.error(failedResult.reason);
       });
 
     logger.info(

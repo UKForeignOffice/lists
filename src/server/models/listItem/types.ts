@@ -1,11 +1,8 @@
-import { JsonObject, List, ListItem, User } from "server/models/types";
-import * as PrismaClient from "@prisma/client";
-import {
-  DeserialisedWebhookData,
-  ListItemJsonData,
-} from "server/models/listItem/providers/deserialisers/types";
-import { Status } from "@prisma/client";
-import * as SharedTypes from "shared/types";
+import type { JsonObject, List, ListItem, User } from "server/models/types";
+import type * as PrismaClient from "@prisma/client";
+import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { Status } from "@prisma/client";
+import type * as SharedTypes from "shared/types";
 
 export enum ACTIVITY_TAGS {
   to_do = "to_do",

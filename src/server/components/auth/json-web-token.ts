@@ -1,7 +1,8 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { logger } from "server/services/logger";
-import { getSecretValue} from "server/services/secrets-manager";
-import { User } from "server/models/types";
+import { getSecretValue } from "server/services/secrets-manager";
+import type { User } from "server/models/types";
 import { JWT_ALGORITHM, JWT_EXPIRE_TIME } from "./constants";
 import { authRoutes } from "./routes";
 import { ENVIRONMENT } from "server/config/server-config";

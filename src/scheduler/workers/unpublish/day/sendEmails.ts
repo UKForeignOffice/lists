@@ -3,8 +3,8 @@ import { sendUnpublishProviderConfirmation } from "./sendUnpublishProviderConfir
 import { sendUnpublishPostConfirmation } from "./sendUnpublishPostConfirmation";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
-import { ListWithCountryName } from "../types";
-import { ListJsonData } from "server/models/types";
+import type { ListWithCountryName } from "../types";
+import type { ListJsonData } from "server/models/types";
 
 export async function main(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendEmails", timeframe: "day" });
@@ -27,16 +27,16 @@ export async function main(list: ListWithCountryName) {
   }
 
   logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
-  const emailsForProviders = listItems.map(async (listItem) => await sendUnpublishProviderConfirmation(listItem, meta));
+  const emailsForProviders = listItems.map(async (listItem) => sendUnpublishProviderConfirmation(listItem, meta));
 
   const listJsonData = list.jsonData as ListJsonData;
 
   if (!listJsonData.users) {
-    return await Promise.allSettled(emailsForProviders);
+    return Promise.allSettled(emailsForProviders);
   }
   // email post
-  const emailsForPost = listJsonData.users.map(
-    async (emailAddress) => await sendUnpublishPostConfirmation(emailAddress, list, listItems.length, meta)
+  const emailsForPost = listJsonData.users.map(async (emailAddress) =>
+    sendUnpublishPostConfirmation(emailAddress, list, listItems.length, meta)
   );
-  return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
+  return Promise.allSettled([...emailsForProviders, ...emailsForPost]);
 }

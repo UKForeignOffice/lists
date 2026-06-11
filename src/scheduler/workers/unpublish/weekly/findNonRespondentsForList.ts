@@ -1,7 +1,7 @@
 import { prisma } from "scheduler/prismaClient";
-import { ListJsonData } from "server/models/types";
+import type { ListJsonData } from "server/models/types";
 import { schedulerLogger } from "scheduler/logger";
-import { List, Prisma } from "@prisma/client";
+import type { List, Prisma } from "@prisma/client";
 import { findReminderToSend } from "./findReminderToSend";
 
 export async function findNonRespondentsForList(list: List) {
@@ -13,7 +13,11 @@ export async function findNonRespondentsForList(list: List) {
   logger.info(`unpublish date ${unpublished.UNPUBLISH}`);
 
   const { reminderToFind, weeksSinceStartDate } = findReminderToSend(list);
-  const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
+  if (!list.nextAnnualReviewStartDate) {
+    logger.warn("Skipping list with missing nextAnnualReviewStartDate");
+    return [];
+  }
+  const annualReviewDate = list.nextAnnualReviewStartDate.toISOString();
 
   if (weeksSinceStartDate >= 6 || weeksSinceStartDate === 0) {
     logger.info(

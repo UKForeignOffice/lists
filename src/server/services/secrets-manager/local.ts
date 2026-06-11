@@ -29,9 +29,7 @@ class LocalSecretsManager {
     this.secrets[SecretId] = { SecretString };
   }
 
-  async getSecretValue(
-    params: { SecretId: string }
-  ): Promise<any> {
+  async getSecretValue(params: { SecretId: string }): Promise<any> {
     const { SecretId } = params;
     const secret = this.secrets[SecretId];
     if (secret != null) {
@@ -104,6 +102,6 @@ export async function getSecretValue(secretName: string): Promise<string> {
     return `${secret.SecretString}`;
   } catch (error) {
     await createSecret(secretName);
-    return await getSecretValue(secretName);
+    return getSecretValue(secretName);
   }
 }

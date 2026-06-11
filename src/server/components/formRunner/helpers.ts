@@ -1,5 +1,5 @@
-import * as FormRunner from "./types";
-import {
+import type * as FormRunner from "./types";
+import type {
   FuneralDirectorListItemGetObject,
   LawyerListItemGetObject,
   List,
@@ -14,9 +14,9 @@ import { isLocalHost, SERVICE_DOMAIN, LISTS_INTERNAL_URL } from "server/config";
 import { createFormRunnerEditListItemLink, createFormRunnerReturningUserLink } from "server/components/lists/helpers";
 import { getInitiateFormRunnerSessionToken } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { getChangedAddressFields } from "server/models/listItem/providers/helpers";
-import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
+import type { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 import { forms } from "./forms";
 
 interface NewSessionWebhookDataInput {

@@ -1,4 +1,4 @@
-import { List } from "@prisma/client";
+import type { List } from "@prisma/client";
 
 interface CountryName {
   country: { name: string };

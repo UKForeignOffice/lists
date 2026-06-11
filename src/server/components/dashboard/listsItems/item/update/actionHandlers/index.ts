@@ -20,5 +20,5 @@ export const actionHandlers: Record<Action, RequestHandler> = {
   publish,
   archive,
   unpublish: publish,
-  editDetails: editDetails,
+  editDetails,
 };

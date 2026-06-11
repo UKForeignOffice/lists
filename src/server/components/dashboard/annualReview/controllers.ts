@@ -42,9 +42,10 @@ export async function editDateGetController(req: Request, res: Response, next: N
 
 export async function editDatePostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    return req.body.action === "confirmNewDate"
+    req.body.action === "confirmNewDate"
       ? await confirmNewAnnualReviewDate(req, res, next)
       : await updateNewAnnualReviewDate(req, res);
+    return;
   } catch (error) {
     logger.error(`editDatePostController Error: ${(error as Error).message}`);
     next(error);
@@ -59,10 +60,11 @@ async function confirmNewAnnualReviewDate(req: Request, res: Response, next: Nex
 
   if (!annualReviewDate.value) {
     req.flash("annualReviewError", annualReviewDate.errorMsg!);
-    return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+    res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+    return;
   }
 
-  return res.render("dashboard/lists-edit-annual-review-date-confirm", {
+  res.render("dashboard/lists-edit-annual-review-date-confirm", {
     ...DEFAULT_VIEW_PROPS,
     newAnnualReviewDateFormatted: DateFns.format(annualReviewDate.value, DATE_FORMAT),
     newAnnualReviewDate: annualReviewDate.value.toISOString(),
@@ -101,7 +103,8 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
     } catch (e) {
       logger.error(`updateNewAnnualReviewDate: ${e}`);
       req.flash("error", "There was a problem updating the annual review date");
-      return res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+      res.redirect(`${res.locals.listsEditUrl}/annual-review-date`);
+      return;
     }
   }
   for (const user of list.users) {
@@ -116,5 +119,5 @@ async function updateNewAnnualReviewDate(req: Request, res: Response): Promise<v
   req.flash("successBannerHeading", "Success");
   req.flash("successBannerMessage", "Annual review date updated successfully");
 
-  return res.redirect(res.locals.listsEditUrl);
+  res.redirect(res.locals.listsEditUrl);
 }

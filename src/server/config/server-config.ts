@@ -24,13 +24,12 @@ export const RATE_LIMITING_ENABLED = process.env.RATE_LIMITING_ENABLED === "true
 export const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? "120", 10);
 
 // AWS
-export const AWS_REGION =
-  process.env.AWS_REGION ?? "eu-west-1";
+export const AWS_REGION = process.env.AWS_REGION ?? "eu-west-1";
 export const LOCATION_SERVICE_INDEX_NAME =
   process.env.LOCATION_SERVICE_INDEX_NAME ?? "fcdo-professional-service-finder";
 
 export const FEEDBACK_EMAIL_ADDRESSES = `${
-  process.env.FEEDBACK_EMAIL_ADDRESSES ?? "digitalservicesfeedback@fco.gov.uk,list-management@cautionyourblast.com"
+  process.env.FEEDBACK_EMAIL_ADDRESSES ?? "digitalservicesfeedback@fco.gov.uk,bcf745d8.kainos.com@emea.teams.ms"
 }`.split(",");
 
 // GOVUK Notify

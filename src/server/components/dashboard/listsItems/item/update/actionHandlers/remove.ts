@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { deleteListItem } from "server/models/listItem";
 
 export async function remove(req: Request, res: Response) {
@@ -11,9 +11,11 @@ export async function remove(req: Request, res: Response) {
     req.flash("successBannerTitle", `${listItem.jsonData.organisationName} has been removed`);
     req.flash("successBannerHeading", "Removed");
     req.flash("successBannerColour", "red");
-    return res.redirect(listIndexUrl);
+    res.redirect(listIndexUrl);
+    return;
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
+    return;
   }
 }

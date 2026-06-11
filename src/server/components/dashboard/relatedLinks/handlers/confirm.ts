@@ -21,7 +21,8 @@ export async function post(req: Request, res: Response) {
   const { text, url } = req.session.relatedLink ?? {};
 
   if (!text || !url) {
-    return res.redirect(`/related-links/${relatedLinkIndex}`);
+    res.redirect(`/related-links/${relatedLinkIndex}`);
+    return;
   }
 
   try {

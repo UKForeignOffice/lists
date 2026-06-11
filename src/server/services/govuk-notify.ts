@@ -209,7 +209,7 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
   );
 
   const requests = emailAddresses.map(async (emailAddress) => {
-    return await notifyClient.sendEmail(templateId, emailAddress, options);
+    return notifyClient.sendEmail(templateId, emailAddress, options);
   });
 
   const settled = await Promise.allSettled(requests);
@@ -221,7 +221,7 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
     });
   });
 
-  return await Promise.any(requests);
+  return Promise.any(requests);
 }
 
 function hasNotifyError<T>(settledResult: PromiseSettledResult<T>) {
@@ -268,7 +268,7 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
   }
 
   const { users = [] } = list as List;
-  const userEmails: string[] = users.map(user => user.email);
+  const userEmails: string[] = users.map((user) => user.email);
 
   if (userEmails.length === 0) {
     return { error: "No email addresses found" };
@@ -276,11 +276,11 @@ export async function sendManualActionNotificationToPost(listId: number, trigger
 
   const personalisation = getCommonPersonalisations(list.type, list.country.name);
 
-  return await sendEmails(templateId, userEmails, { personalisation, reference: "" });
+  return sendEmails(templateId, userEmails, { personalisation, reference: "" });
 }
 
 export async function sendContactUsEmail(personalisation: Record<"emailSubject" | "emailPayload", string>) {
-  return await sendEmails(NOTIFY.templates.contactUsApplyJourney, FEEDBACK_EMAIL_ADDRESSES, {
+  return sendEmails(NOTIFY.templates.contactUsApplyJourney, FEEDBACK_EMAIL_ADDRESSES, {
     personalisation,
     reference: "",
   });
@@ -291,7 +291,7 @@ export async function sendProviderInformedOfEditEmail(
   personalisation: Record<"contactName" | "typePlural" | "message", string>
 ) {
   const { typePlural, ...otherValues } = personalisation;
-  return await sendEmails(
+  return sendEmails(
     NOTIFY.templates.providerInformedOfEdit,
     [emailAddress],
     {

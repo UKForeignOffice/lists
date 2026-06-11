@@ -1,11 +1,11 @@
 /**
  * Field(s) must be specified for non primitive macros, since they cannot be type checked for.
  */
-import { Response } from "express";
-import { findListItemById } from "server/models/listItem";
-import { getListOverview } from "server/components/dashboard/listsItems/helpers";
-import { ListItem } from "server/models/types";
-import { Event } from "@prisma/client";
+import type { Response } from "express";
+import type { findListItemById } from "server/models/listItem";
+import type { getListOverview } from "server/components/dashboard/listsItems/helpers";
+import type { ListItem } from "server/models/types";
+import type { Event } from "@prisma/client";
 
 export type NonPrimitiveMacros = "link" | "emailAddress" | "phoneNumber" | "multiLineText";
 
@@ -84,4 +84,4 @@ export type ListItemRes = Response<
   }
 >;
 
-export type ListItemWithHistory = ListItem & {history: Event[]};
+export type ListItemWithHistory = ListItem & { history: Event[] };

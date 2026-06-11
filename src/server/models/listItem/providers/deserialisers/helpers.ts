@@ -1,5 +1,5 @@
 import { uniq } from "lodash";
-import * as FormRunner from "server/components/formRunner";
+import type * as FormRunner from "server/components/formRunner";
 
 function trim(string: string): string {
   return string.trim();

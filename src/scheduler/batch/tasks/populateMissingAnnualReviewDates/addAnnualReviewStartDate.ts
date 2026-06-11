@@ -12,5 +12,5 @@ export async function addAnnualReviewStartDate({ firstPublished, listId }: First
     `listId: ${listId} was firstPublished on ${firstPublished.toISOString()} setting newAnnualReviewStartDate: ${startDate}`
   );
 
-  return await addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate: startDate });
+  return addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate: startDate });
 }
