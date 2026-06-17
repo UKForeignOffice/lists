@@ -1,7 +1,7 @@
 import { prisma } from "scheduler/prismaClient";
 import { schedulerLogger } from "scheduler/logger";
-import { List, Prisma } from "@prisma/client";
-import { ListJsonData } from "server/models/types";
+import type { List, Prisma } from "@prisma/client";
+import type { ListJsonData } from "server/models/types";
 import { parseISO } from "date-fns";
 
 export async function findNonRespondentsForList(list: List) {
@@ -10,7 +10,11 @@ export async function findNonRespondentsForList(list: List) {
   const jsonData = list.jsonData as ListJsonData;
   const { keyDates } = jsonData.currentAnnualReview!;
   const reminderToFind = parseISO(keyDates.unpublished.UNPUBLISH);
-  const annualReviewDate = new Date(list.nextAnnualReviewStartDate!).toISOString();
+  if (!list.nextAnnualReviewStartDate) {
+    logger.warn("Skipping list with missing nextAnnualReviewStartDate");
+    return [];
+  }
+  const annualReviewDate = list.nextAnnualReviewStartDate.toISOString();
 
   const editedSinceAnnualReviewDate: Prisma.EventWhereInput = {
     type: {

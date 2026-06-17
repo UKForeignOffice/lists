@@ -1,6 +1,6 @@
 import { logger } from "server/services/logger";
 import { handlePinListItem } from "server/components/dashboard/listsItems/helpers";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 export async function pin(req: Request, res: Response) {
   let action = req.session.update?.action;

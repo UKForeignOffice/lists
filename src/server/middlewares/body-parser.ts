@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { json, urlencoded } from "body-parser";
 
 export function configureBodyParser(server: Express): void {

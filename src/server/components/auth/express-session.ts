@@ -71,7 +71,7 @@ export async function configureExpressSession(server: Express): Promise<void> {
   const secret = await getSecretValue(SECRET_NAME);
 
   const options: session.SessionOptions = {
-    secret: secret,
+    secret,
     saveUninitialized: true,
     resave: false,
     proxy: !isLocalHost,

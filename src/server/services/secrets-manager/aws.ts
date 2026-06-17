@@ -1,4 +1,4 @@
-import { SecretsManagerClient, GetSecretValueCommand} from "@aws-sdk/client-secrets-manager";
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import { AWS_REGION } from "server/config";
 import { logger } from "./../logger";
 

@@ -6,8 +6,8 @@ export async function main() {
   const listsInAnnualReview = await findListsInAnnualReview();
   const results = await Promise.allSettled(listsInAnnualReview.map(sendEmailsToNonRespondents));
   results
-    .filter((result) => result.status !== "fulfilled")
+    .filter((result): result is PromiseRejectedResult => result.status === "rejected")
     .forEach((failedResult) => {
-      logger.error(`scheduler unpublish weekly: ${(failedResult as PromiseRejectedResult).reason}`);
+      logger.error(`scheduler unpublish weekly: ${failedResult.reason}`);
     });
 }

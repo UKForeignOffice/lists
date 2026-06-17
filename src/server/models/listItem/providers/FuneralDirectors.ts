@@ -1,4 +1,4 @@
-import { FuneralDirectorListItemGetObject } from "server/models/types";
+import type { FuneralDirectorListItemGetObject } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
 import { logger } from "server/services/logger";

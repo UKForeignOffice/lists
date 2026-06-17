@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { developmentRouter } from "./router";
 
 export async function initDevelopment(server: Express): Promise<void> {

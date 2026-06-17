@@ -1,5 +1,5 @@
-import rateLimit from 'express-rate-limit';
-import { Express } from "express";
+import rateLimit from "express-rate-limit";
+import type { Express } from "express";
 import { RATE_LIMIT_MAX, RATE_LIMITING_ENABLED } from "server/config";
 import { rateLimitExceededErrorHandler } from "server/middlewares/error-handlers";
 

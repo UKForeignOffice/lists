@@ -2,7 +2,7 @@ import { findNonRespondentsForList } from "./findNonRespondentsForList";
 import { sendUnpublishReminder } from "./sendUnpublishReminder";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
-import { ListWithCountryName } from "../types";
+import type { ListWithCountryName } from "../types";
 
 export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendEmailsToNonRespondents", timeframe: "weekly" });
@@ -18,7 +18,7 @@ export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
   }
 
   const listItems = await findNonRespondentsForList(list);
-  const emailsToSend = listItems.map(async (listItem) => await sendUnpublishReminder(listItem, meta));
+  const emailsToSend = listItems.map(async (listItem) => sendUnpublishReminder(listItem, meta));
   const emailsSent = await Promise.allSettled(emailsToSend);
 
   if (emailsSent.length) {
@@ -27,5 +27,5 @@ export async function sendEmailsToNonRespondents(list: ListWithCountryName) {
     );
   }
 
-  return await Promise.allSettled(emailsToSend);
+  return Promise.allSettled(emailsToSend);
 }

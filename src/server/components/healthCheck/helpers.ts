@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { healthCheckRouter } from "./router";
 
 export async function initHealthCheck(server: Express): Promise<void> {

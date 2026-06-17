@@ -9,11 +9,5 @@ export async function sendPublishedEmail(listItem: ListItemWithAddressCountry) {
   const { contactName, contactEmailAddress } = getListItemContactInformation(listItem);
   const typeName = serviceName(listItem.type);
 
-  return await sendDataPublishedEmail(
-    contactName,
-    contactEmailAddress,
-    typeName,
-    listItem.address.country.name,
-    searchLink
-  );
+  return sendDataPublishedEmail(contactName, contactEmailAddress, typeName, listItem.address.country.name, searchLink);
 }

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { handleListItemUpdate } from "./publish";
 import { sendPublishedEmail } from "./helpers";
-import { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
+import type { ListItemWithAddressCountry } from "server/models/listItem/providers/types";
 
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
@@ -17,9 +17,11 @@ export async function update(req: Request, res: Response): Promise<void> {
     req.flash("successBannerTitle", `${organisationName} has been updated and published`);
     req.flash("successBannerHeading", "Updated and published");
     req.flash("successBannerColour", "green");
-    return res.redirect(listIndexUrl);
+    res.redirect(listIndexUrl);
+    return;
   } catch (error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
-    return res.redirect(listItemUrl);
+    res.redirect(listItemUrl);
+    return;
   }
 }

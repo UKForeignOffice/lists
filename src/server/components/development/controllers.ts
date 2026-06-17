@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { exec } from "child_process";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { UserRoles } from "server/models/types";
 import { NOTIFY } from "server/config";
 import { createUser, updateUser, findUserByEmail } from "server/models/user";

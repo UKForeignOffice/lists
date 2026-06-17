@@ -1,8 +1,8 @@
 import { addDays, parseISO, subDays } from "date-fns";
-import { ScheduledProcessKeyDates } from "server/models/types";
+import type { ScheduledProcessKeyDates } from "server/models/types";
 import { INTERVALS_IN_DAYS } from "server/config";
 import { prisma } from "server/models/db/prisma-client";
-import { ListWithJsonData } from "server/components/dashboard/helpers";
+import type { ListWithJsonData } from "server/components/dashboard/helpers";
 import { logger } from "server/services/logger";
 
 export function subDaysFromISODate(ISODate: string | Date, amount: number) {

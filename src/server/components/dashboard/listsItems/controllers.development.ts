@@ -5,7 +5,6 @@ import { differenceInWeeks, eachWeekOfInterval, formatISO, parseISO, startOfDay,
 import { prisma } from "server/models/db/prisma-client";
 import type { Request } from "express";
 import { logger } from "server/services/logger";
-import { createKeyDatesFromISODate } from "server/components/dashboard/annualReview/helpers.keyDates";
 import { URLSearchParams } from "url";
 
 export async function get(req: Request, res: ListIndexRes) {
@@ -39,7 +38,6 @@ export async function get(req: Request, res: ListIndexRes) {
   const keyDates = jsonData.currentAnnualReview?.keyDates;
   let annualReviewValuesToEdit = {};
   if (keyDates) {
-    const keyDates = jsonData.currentAnnualReview?.keyDates ?? createKeyDatesFromISODate(nextAnnualReviewStartDate!);
     const start = startOfDay(parseISO(keyDates.annualReview.START));
 
     annualReviewValuesToEdit = {

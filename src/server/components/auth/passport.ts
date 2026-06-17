@@ -1,12 +1,9 @@
-import { Express } from "express";
+import type { Express } from "express";
 import passport from "passport";
-import {
-  ExtractJwt,
-  StrategyOptions,
-  Strategy as JwtStrategy,
-} from "passport-jwt";
+import type { StrategyOptions } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { getJwtSecret } from "./json-web-token";
-import { User } from "server/models/types";
+import type { User } from "server/models/types";
 import { findUserByEmail, createUser } from "server/models/user";
 import AuthenticatedUser from "./authenticated-user";
 
@@ -28,9 +25,7 @@ export async function configurePassport(server: Express): Promise<void> {
       const { user } = token;
 
       if (user?.email === undefined) {
-        logger.warn(
-          `JwtStrategy token is invalid for user ${JSON.stringify(user)}`
-        );
+        logger.warn(`JwtStrategy token is invalid for user ${JSON.stringify(user)}`);
         done(new Error("Invalid authentication token"));
       } else {
         let userData = await findUserByEmail(user.email);

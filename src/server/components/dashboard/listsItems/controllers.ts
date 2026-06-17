@@ -242,11 +242,10 @@ export async function checkSuccessfulEdit(req: Request, res: Response, next: Nex
         "The provider’s details have been updated and published. The provider has been emailed to let them know."
       );
       req.flash("successBannerColour", "green");
-
-      } catch (err) {
-        logger.error(`checkSuccessfulEdit: failed to update and publish listItem ${listItem.id}`, err);
-        req.flash("errorMsg", "The provider’s changes were saved, but an error occurred while publishing.");
-      }
+    } catch (err) {
+      logger.error(`checkSuccessfulEdit: failed to update and publish listItem ${listItem.id}`, err);
+      req.flash("errorMsg", "The provider’s changes were saved, but an error occurred while publishing.");
+    }
 
     delete req.session.currentlyEditing;
     delete req.session.currentlyEditingStartTime;

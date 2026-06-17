@@ -46,13 +46,13 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
     // @ts-ignore
-    return await update(id, userId, auditJsonData.updatedJsonData);
+    return update(id, userId, auditJsonData.updatedJsonData);
   }
 
   const listItemJsonData = listItem.jsonData as ListItemJsonData;
 
   logger.info(`Updating ${listItem.id} with ${JSON.stringify(listItemJsonData.updatedJsonData)}`);
-  return await update(id, userId);
+  return update(id, userId);
 }
 
 export async function publish(req: Request, res: Response) {

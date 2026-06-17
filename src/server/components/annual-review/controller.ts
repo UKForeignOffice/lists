@@ -38,9 +38,10 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
     let error = null;
 
     if (!listItem.isAnnualReview || (await dateHasExpired(listItem.listId))) {
-      return res.render("annual-review/error", {
+      res.render("annual-review/error", {
         text: { title: "This link has expired", body: "This link has expired" },
       });
+      return;
     }
 
     if (listItem.status !== Status.OUT_WITH_PROVIDER && listItem.isAnnualReview) {
@@ -67,12 +68,13 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
             userAlreadySubmitted
           )}`
         );
-        return res.render("annual-review/error", {
+        res.render("annual-review/error", {
           text: {
             title: "You have already submitted your annual review",
             body: "The annual review for your business has already been submitted.",
           },
         });
+        return;
       }
     }
 
@@ -122,11 +124,13 @@ export async function confirmPostController(req: Request, res: Response, next: N
 
     if (!chosenValue) {
       req.flash("annualReviewError", "Select if your information is correct or if you need to update it");
-      return res.redirect(`/annual-review/confirm/${req.body.reference}`);
+      res.redirect(`/annual-review/confirm/${req.body.reference}`);
+      return;
     }
 
     req.session.updatesRequired = chosenValue === "no";
-    return res.redirect(`/annual-review/declaration/${req.body.reference}`);
+    res.redirect(`/annual-review/declaration/${req.body.reference}`);
+    return;
   } catch (err) {
     next(err);
   }
@@ -154,7 +158,7 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
   });
 
   logger.info(`Generated form runner URL [${formRunnerEditUserUrl}], getting list item contact info.`);
-  return res.redirect(formRunnerEditUserUrl);
+  res.redirect(formRunnerEditUserUrl);
 }
 
 export async function declarationGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -198,7 +202,8 @@ export async function declarationPostController(req: Request, res: Response, nex
 
     if (!confirmation) {
       req.flash("declarationError", "You must select the declaration box to proceed");
-      return res.redirect(`/annual-review/declaration/${listItemRef}`);
+      res.redirect(`/annual-review/declaration/${listItemRef}`);
+      return;
     }
 
     if (updatesRequired) {

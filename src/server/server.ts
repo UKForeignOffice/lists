@@ -21,7 +21,7 @@ import { initDevelopment } from "./components/development";
 import { initHealthCheck } from "./components/healthCheck";
 import { configureFormRunnerProxyMiddleware } from "./components/proxyMiddleware";
 
-import {isDevMode, isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN} from "server/config";
+import { isDevMode, isLocalHost, isSmokeTest, NODE_ENV, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 import { ingestRouter } from "server/components/lists/controllers/ingest/router";
 import { configureCsrf } from "server/middlewares/csrf";

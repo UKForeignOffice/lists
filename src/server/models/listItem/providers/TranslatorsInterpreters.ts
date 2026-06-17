@@ -36,7 +36,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
 
   const countryName = props.countryName
     .split("-") // Split the string by hyphen
-    .map(part => startCase(toLower(part))) // Apply startCase to each part
+    .map((part) => startCase(toLower(part))) // Apply startCase to each part
     .join("-"); // Join them back with a hyphen
 
   const andWhere: string[] = [];
@@ -76,7 +76,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
     const query = fetchPublishedListItemQuery({
       type: ServiceType.translatorsInterpreters,
       countryName,
-      region: region,
+      region,
       fromGeoPoint,
       andWhere: andWhere.join(" "),
       offset,

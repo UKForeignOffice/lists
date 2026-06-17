@@ -1,4 +1,4 @@
-import { Express } from "express";
+import type { Express } from "express";
 import expressWinston from "express-winston";
 import { logger } from "server/services/logger";
 import { DEBUG } from "server/config";

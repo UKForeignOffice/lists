@@ -1,10 +1,12 @@
 import { schedulerLogger } from "scheduler/logger";
-import { NotifyClient, RequestError } from "notifications-node-client";
+import type { RequestError } from "notifications-node-client";
+import { NotifyClient } from "notifications-node-client";
 import { NOTIFY } from "server/config";
 import { postReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
-import { AuditEvent, List } from "@prisma/client";
+import type { List } from "@prisma/client";
+import { AuditEvent } from "@prisma/client";
 import { addUnpublishPostReminderAudit } from "./addDayBeforePostReminderAudit";
-import { Meta } from "./types";
+import type { Meta } from "./types";
 
 const template = NOTIFY.templates.unpublishNotice.postOneDay;
 

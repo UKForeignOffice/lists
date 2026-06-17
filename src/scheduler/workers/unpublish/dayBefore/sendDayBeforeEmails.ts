@@ -3,8 +3,8 @@ import { sendDayBeforeProviderReminder } from "./sendDayBeforeProviderReminder";
 import { sendDayBeforePostReminder } from "./sendDayBeforePostReminder";
 import { getMetaForList } from "./getMetaForList";
 import { schedulerLogger } from "scheduler/logger";
-import { ListWithCountryName } from "../../types";
-import { ListJsonData } from "server/models/types";
+import type { ListWithCountryName } from "../../types";
+import type { ListJsonData } from "server/models/types";
 
 export async function sendDayBeforeEmails(list: ListWithCountryName) {
   const logger = schedulerLogger.child({ listId: list.id, method: "sendDayBeforeEmails", timeframe: "dayBefore" });
@@ -28,7 +28,7 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   }
 
   logger.info(`sending provider email for list items ${listItems.map((listItem) => listItem.id)}`);
-  const providerEmailTasks = listItems.map(async (listItem) => await sendDayBeforeProviderReminder(listItem, meta));
+  const providerEmailTasks = listItems.map(async (listItem) => sendDayBeforeProviderReminder(listItem, meta));
   const emailsForProviders = await Promise.allSettled(providerEmailTasks);
   logger.info(
     `Sent ${emailsForProviders.filter((promise) => promise.status === "fulfilled").length} provider emails for list ${
@@ -39,15 +39,15 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   const listJsonData = list.jsonData as ListJsonData;
 
   if (!listJsonData.users) {
-    return await Promise.allSettled(emailsForProviders);
+    return emailsForProviders;
   }
   // email post
-  const postEmailTasks = listJsonData.users.map(
-    async (emailAddress) => await sendDayBeforePostReminder(emailAddress, list, listItems.length, meta)
+  const postEmailTasks = listJsonData.users.map(async (emailAddress) =>
+    sendDayBeforePostReminder(emailAddress, list, listItems.length, meta)
   );
   const emailsForPost = await Promise.allSettled(postEmailTasks);
   logger.info(
     `Sent ${emailsForPost.filter((promise) => promise.status === "fulfilled").length} post emails for list ${list.id}`
   );
-  return await Promise.allSettled([...emailsForProviders, ...emailsForPost]);
+  return [...emailsForProviders, ...emailsForPost];
 }

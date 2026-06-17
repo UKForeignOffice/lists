@@ -9,21 +9,24 @@ export function handleRelatedLinkIndexParam(req: Request, res: Response, next: N
   res.locals.relatedLinkIndex = value;
 
   if (error) {
-    return res.redirect(res.locals.listsEditUrl);
+    res.redirect(res.locals.listsEditUrl);
+    return;
   }
 
   res.locals.relatedLinkIndex = relatedLinkIndex;
 
   if (relatedLinkIndex === "new") {
     res.locals.relatedLink = req.session.relatedLink;
-    return next();
+    next();
+    return;
   }
 
   const { relatedLinks = [] } = res.locals.list.jsonData;
   const relatedLink = relatedLinks[value];
 
   if (!relatedLink) {
-    return res.redirect("new");
+    res.redirect("new");
+    return;
   }
 
   res.locals.relatedLink = { ...relatedLink, ...req.session.relatedLink };

@@ -1,13 +1,13 @@
 import * as DateFns from "date-fns";
 import { DATE_FORMAT } from "server/components/dashboard/annualReview/controllers";
-import { ListWithJsonData } from "../helpers";
+import type { ListWithJsonData } from "../helpers";
 
 export function formatAnnualReviewDate(
   list: ListWithJsonData,
   field: "nextAnnualReviewStartDate" | "lastAnnualReviewStartDate",
   dateFormat?: string
 ): string {
-  return list[field] ? formatDate(list[field] as Date, dateFormat) : "";
+  return list[field] ? formatDate(list[field], dateFormat) : "";
 }
 
 export function formatDate(date: Date | string, formatOptions?: string) {

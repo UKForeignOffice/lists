@@ -1,12 +1,12 @@
-import { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
-import { PaginationResults } from "server/components/lists";
+import type { IndexListItem, ListIndexOptions } from "server/models/listItem/types";
+import type { PaginationResults } from "server/components/lists";
 import { queryToPrismaQueryMap } from "server/models/listItem/queryFactory";
 import { prisma } from "server/models/db/prisma-client";
 import { logger } from "server/services/logger";
 import { getPaginationValues } from "server/models/listItem/pagination";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { format } from "date-fns";
-import { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
+import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import type { ListItemWithHistory } from "server/models/listItem/summary.helpers";
 import * as SummaryHelpers from "server/models/listItem/summary.helpers";
 
@@ -93,7 +93,7 @@ export async function findIndexListItems(options: ListIndexOptions): Promise<
       listId,
       AND: {
         ...emailIsVerified,
-        ...notPinnedByUser(options.userId!),
+        ...(options.userId && notPinnedByUser(options.userId)),
         ...(!reqQueries.includes("archived") && { NOT: queryToPrismaQueryMap.archived }),
       },
       ...(OR.length && { OR }),

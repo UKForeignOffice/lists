@@ -4,14 +4,14 @@ import type { TransformableInfo } from "logform";
 import { format } from "logform";
 
 const ignoreHttpGET = format((info: TransformableInfo) => {
-  if (typeof info.message === 'string' && info.message.startsWith("HTTP GET")) {
+  if (typeof info.message === "string" && info.message.startsWith("HTTP GET")) {
     return false;
   }
   return info;
 });
 
 const ignoreHttpPOST = format((info: TransformableInfo) => {
-  if (typeof info.message === 'string' && info.message.startsWith("HTTP POST")) {
+  if (typeof info.message === "string" && info.message.startsWith("HTTP POST")) {
     return false;
   }
   return info;

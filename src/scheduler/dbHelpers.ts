@@ -188,7 +188,7 @@ export async function updateIsAnnualReview(
           create: {
             type: listItemEvent,
             jsonData: {
-              eventName: eventName,
+              eventName,
               itemId: listItem.id,
             },
           },

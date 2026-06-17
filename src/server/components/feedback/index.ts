@@ -1,2 +1,1 @@
-export { initFeedback } from './helpers';
-
+export { initFeedback } from "./helpers";

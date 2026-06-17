@@ -1,6 +1,6 @@
-import { List } from "@prisma/client";
+import type { List } from "@prisma/client";
 import { schedulerLogger } from "scheduler/logger";
-import { ListJsonData } from "server/models/types";
+import type { ListJsonData } from "server/models/types";
 import { addWeeks, differenceInWeeks, parseISO, startOfDay, startOfToday } from "date-fns";
 
 export function findReminderToSend(list: List) {

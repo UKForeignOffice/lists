@@ -1,1 +1,1 @@
-export { initHealthCheck } from './helpers';
+export { initHealthCheck } from "./helpers";

@@ -398,8 +398,7 @@ export const fcdoLawyersPagesByCountry = {
   Nicaragua: "https://www.gov.uk/government/publications/nicaragua-list-of-lawyers",
   "North Macedonia": "https://www.gov.uk/government/publications/north-macedonia-lawyers",
   Norway: "https://www.gov.uk/government/publications/norway-list-of-lawyers",
-  "Palestine":
-    "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
+  Palestine: "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
   "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Pakistan: "https://www.gov.uk/government/publications/pakistan-list-of-lawyers",
   Panama: "https://www.gov.uk/government/publications/panama-list-of-lawyers",
@@ -579,8 +578,7 @@ export const fcdoFuneralDirectorsByCountry = {
   Tajikistan: "https://www.gov.uk/government/publications/tajikistan-list-of-funeral-directors",
   Tanzania: "https://www.gov.uk/government/publications/funeral-directors",
   Thailand: "https://www.gov.uk/government/publications/thailand-funeral-directors",
-  "Palestine":
-    "https://www.gov.uk/government/publications/palestine-list-of-funeral-directors",
+  Palestine: "https://www.gov.uk/government/publications/palestine-list-of-funeral-directors",
   "Trinidad and Tobago": "https://www.gov.uk/government/publications/trinidad-and-tobago-list-of-funeral-directors",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-funeral-directors",
   Turkmenistan: "https://www.gov.uk/government/publications/list-of-funeral-directors-in-turkmenistan",
@@ -701,8 +699,7 @@ export const fcdoTranslatorsInterpretersByCountry = {
   Tajikistan: "https://www.gov.uk/government/publications/tajikistan-list-of-translators",
   Tanzania: "https://www.gov.uk/government/publications/list-of-translators-interpreters",
   Thailand: "https://www.gov.uk/government/publications/thailand-translators-and-interpreters",
-  "Palestine":
-    "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
+  Palestine: "https://www.gov.uk/government/publications/jerusalem-and-west-bank-list-of-lawyers",
   "Timor-Leste": "https://www.gov.uk/government/publications/timor-leste-list-of-translators-and-interpreters",
   Turkey: "https://www.gov.uk/government/publications/turkey-list-of-translators-and-interpreters",
   Turkmenistan: "https://www.gov.uk/government/publications/turkmenistan-list-of-translators",

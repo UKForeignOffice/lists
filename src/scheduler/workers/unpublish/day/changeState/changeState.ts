@@ -28,9 +28,9 @@ export async function main(list: ListWithCountryName) {
     const results = await Promise.allSettled(unpublishedListItemsTasks);
 
     results
-      .filter((result) => result.status !== "fulfilled")
+      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
       .forEach((failedResult) => {
-        logger.error((failedResult as PromiseRejectedResult).reason);
+        logger.error(failedResult.reason);
       });
 
     logger.info(

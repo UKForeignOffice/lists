@@ -2,8 +2,7 @@ import { isLocalHost, isDev } from "server/config";
 import * as local from "./local";
 import * as aws from "./aws";
 
-const shouldUseLocalSecretsManager =
-  isLocalHost || isDev || process.env.SECRETS_MANAGER === "local";
+const shouldUseLocalSecretsManager = isLocalHost || isDev || process.env.SECRETS_MANAGER === "local";
 
 interface SecretsManager {
   getSecretValue: (secretName: string) => Promise<string>;
