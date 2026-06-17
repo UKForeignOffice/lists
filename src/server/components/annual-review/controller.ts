@@ -32,7 +32,7 @@ export async function confirmGetController(req: Request, res: Response, next: Ne
       return;
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     const rows = formatDataForSummaryRows(listItem);
     const errorMsg = req.flash("annualReviewError")[0];
     let error = null;
@@ -150,7 +150,7 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
 
   const formRunnerEditUserUrl = await initialiseFormRunnerSession({
     list,
-    // @ts-ignore
+    // @ts-expect-error
     listItem,
     message: "Correct your information and submit your details again.",
     isUnderTest: Boolean(underTest),

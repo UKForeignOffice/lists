@@ -100,7 +100,7 @@ export async function getSecretValue(secretName: string): Promise<string> {
   try {
     const secret = await secretsManager.getSecretValue(params);
     return `${secret.SecretString}`;
-  } catch (error) {
+  } catch (_error) {
     await createSecret(secretName);
     return getSecretValue(secretName);
   }

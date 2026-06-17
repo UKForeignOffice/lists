@@ -14,7 +14,7 @@ export const actionHandlers: Record<Action, RequestHandler> = {
   updateLive: update,
   pin,
   unpin: pin,
-  // @ts-ignore
+  // @ts-expect-error
   requestChanges,
   remove,
   publish,

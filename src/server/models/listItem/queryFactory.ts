@@ -67,6 +67,8 @@ export const queryToPrismaQueryMap: Record<keyof Tags, Prisma.ListItemWhereInput
   },
 };
 
+const ITEMS_PER_PAGE = 20;
+
 export function calculatePagination(
   paginationOptions: PaginationOptions
 ): Record<string, unknown> | { take: number; skip: number } {
@@ -77,5 +79,3 @@ export function calculatePagination(
     skip: skipAmount * ITEMS_PER_PAGE,
   };
 }
-
-const ITEMS_PER_PAGE = 20;

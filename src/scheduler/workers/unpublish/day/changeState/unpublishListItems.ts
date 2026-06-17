@@ -3,7 +3,7 @@ import { EVENTS } from "shared/listItemEvent";
 
 export async function unpublishListItems(ids: number[], reference?: string) {
   return ids.map(async (listItemId: number) => {
-    return await prisma.listItem.update({
+    return prisma.listItem.update({
       where: {
         id: listItemId,
       },

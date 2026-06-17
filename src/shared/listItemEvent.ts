@@ -134,7 +134,7 @@ export const EVENTS = {
 
     return {
       type: ListItemEvent.REMINDER,
-      // @ts-ignore -- issue is with response.Template, there is a tsc/prisma incompatibility
+      // @ts-expect-error -- issue is with response.Template, there is a tsc/prisma incompatibility
       jsonData: {
         eventName: "reminder",
         ...{ notes },

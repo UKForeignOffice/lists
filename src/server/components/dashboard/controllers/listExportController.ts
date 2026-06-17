@@ -74,7 +74,7 @@ export async function listExportController(req: Request, res: Response) {
   }
 
   function formatForCSV(item: ListItemWithJsonData) {
-    const { type, jsonData, ...rest } = item;
+    const { type: _type, jsonData, ...rest } = item;
     const { organisationName, ...otherFields } = jsonData as ListItemJsonData;
     return {
       organisationName,

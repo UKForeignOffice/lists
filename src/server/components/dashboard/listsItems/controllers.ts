@@ -57,10 +57,10 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
 
   const hasPendingUpdate = listItem.status === Status.EDITED;
 
-  // @ts-ignore
+  // @ts-expect-error
   const isLegacyUpdate = hasPendingUpdate && !listItem.jsonData?.updatedJsonData;
 
-  // @ts-ignore
+  // @ts-expect-error
   let updatedJsonData = listItem.jsonData?.updatedJsonData;
 
   if (hasPendingUpdate && isLegacyUpdate) {
@@ -95,7 +95,7 @@ export async function listItemGetController(req: Request, res: ListItemRes): Pro
     publish: !listItem.isPublished && listItem.status !== "EDITED",
   };
 
-  // @ts-ignore
+  // @ts-expect-error
   const actionButtons = Object.keys(actions).filter((action) => actions[action]);
   logger.info(`action buttons ${listItem.id} ${JSON.stringify(actionButtons)}`);
   const isPinned = listItem?.pinnedBy?.some((user) => userId === user.id) ?? false;

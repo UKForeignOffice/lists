@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 
 export async function createCountry(country: string): Promise<Country> {
-  return await prisma.country.upsert({
+  return prisma.country.upsert({
     where: { name: country },
     create: { name: country },
     update: {},

@@ -4,6 +4,12 @@ import type { ListItemJsonData } from "server/models/listItem/providers/deserial
 import { createAnnualReviewProviderUrl } from "scheduler/workers/createAnnualReviewProviderUrl";
 import type { Meta } from "scheduler/workers/types";
 
+const serviceDisplayString: Record<ServiceType, string> = {
+  funeralDirectors: "Funeral directors",
+  lawyers: "Lawyers",
+  translatorsInterpreters: "Translator or interpreters",
+};
+
 export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
@@ -15,9 +21,3 @@ export function weeklyReminderPersonalisation(listItem: ListItem, meta: Meta) {
     changeLink: createAnnualReviewProviderUrl(listItem),
   };
 }
-
-const serviceDisplayString: Record<ServiceType, string> = {
-  funeralDirectors: "Funeral directors",
-  lawyers: "Lawyers",
-  translatorsInterpreters: "Translator or interpreters",
-};

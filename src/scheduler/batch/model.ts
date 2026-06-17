@@ -8,7 +8,7 @@ export interface ListWithFirstPublishedDate {
 }
 
 export async function addAnnualReviewToList({ listId, oneYearAfterFirstPublishedDate }: ListWithFirstPublishedDate) {
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id: listId,
     },

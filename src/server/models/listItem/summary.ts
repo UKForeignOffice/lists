@@ -32,6 +32,8 @@ function listItemsWithIndexDetails(item: ListItemWithHistory): IndexListItem {
   };
 }
 
+const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } };
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function findPinnedIndexListItems(options: ListIndexOptions) {
   if (!options.userId) {
@@ -70,8 +72,6 @@ function notPinnedByUser(userId: number): Prisma.ListItemWhereInput {
     },
   };
 }
-
-const emailIsVerified = { jsonData: { path: ["metadata", "emailVerified"], equals: true } };
 
 export async function findIndexListItems(options: ListIndexOptions): Promise<
   {

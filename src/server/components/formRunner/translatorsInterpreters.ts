@@ -47,7 +47,7 @@ const FormRunnerFields: Record<string, string> = {
 // TODO: use the SerialisedWebhookData as the return type
 export async function generateFormRunnerWebhookData(
   listItem: TranslatorInterpreterListItemGetObject,
-  isUnderTest?: boolean
+  _isUnderTest?: boolean
 ): Promise<Array<Partial<Question>>> {
   const questions = await parseJsonFormData(ServiceType.translatorsInterpreters);
   questions.forEach((question) => {

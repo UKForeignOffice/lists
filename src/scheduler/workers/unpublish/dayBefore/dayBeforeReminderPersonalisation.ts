@@ -4,6 +4,12 @@ import type { ListItemJsonData } from "server/models/listItem/providers/deserial
 import { createAnnualReviewProviderUrl } from "../../createAnnualReviewProviderUrl";
 import type { Meta } from "./types";
 
+const serviceDisplayString: Record<ServiceType, string> = {
+  funeralDirectors: "Funeral directors",
+  lawyers: "Lawyers",
+  translatorsInterpreters: "Translator or interpreters",
+};
+
 export function providerReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
@@ -26,9 +32,3 @@ export function postReminderPersonalisation(list: List, numberNotResponded: numb
     numberNotResponded,
   };
 }
-
-const serviceDisplayString: Record<ServiceType, string> = {
-  funeralDirectors: "Funeral directors",
-  lawyers: "Lawyers",
-  translatorsInterpreters: "Translator or interpreters",
-};

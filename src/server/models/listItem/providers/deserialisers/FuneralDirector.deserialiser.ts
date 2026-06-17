@@ -11,7 +11,6 @@ export const funeralDirectorDeserialiser: WebhookDeserialisers[ServiceType.funer
   } = webhookData;
   return {
     localServicesProvided: checkboxCSVToArray(localServicesProvided),
-    // @ts-ignore
     repatriationServicesProvided: checkboxCSVToArray(repatriationServicesProvided),
     religiousCulturalServicesProvided,
     ...rest,

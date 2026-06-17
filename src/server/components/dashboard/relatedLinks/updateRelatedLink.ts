@@ -24,11 +24,11 @@ export async function updateRelatedLink(listId: List["id"], update: RelatedLink,
     relatedLinks.push(update);
   }
   if (!Number.isNaN(index)) {
-    // @ts-ignore
+    // @ts-expect-error
     relatedLinks[index] = update;
   }
 
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id: listId,
     },

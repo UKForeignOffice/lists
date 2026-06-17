@@ -56,7 +56,7 @@ export async function updateAnnualReviewWithKeyDates(list: ListWithJsonData, iso
     },
   };
 
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id: list.id,
     },

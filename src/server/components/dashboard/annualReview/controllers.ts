@@ -52,7 +52,7 @@ export async function editDatePostController(req: Request, res: Response, next: 
   }
 }
 
-async function confirmNewAnnualReviewDate(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function confirmNewAnnualReviewDate(req: Request, res: Response, _next: NextFunction): Promise<void> {
   const { id: listId } = res.locals.list;
   const list = (await findListById(listId)) as List;
   const { day, month } = req.body;

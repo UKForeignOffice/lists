@@ -1,4 +1,5 @@
-import { AuditEvent, type User } from "@prisma/client";
+import { AuditEvent } from "@prisma/client";
+import type { User } from "@prisma/client";
 import type { List, RelatedLink } from "shared/types";
 import { prisma } from "server/models/db/prisma-client";
 
@@ -12,7 +13,7 @@ export async function addRelatedLinkUpdateAudit(
   action: Actions,
   update?: RelatedLinkWithBeforeState
 ) {
-  return await prisma.audit.create({
+  return prisma.audit.create({
     data: {
       type: "list",
       auditEvent: AuditEvent.LIST_EDIT,

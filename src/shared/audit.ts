@@ -7,6 +7,7 @@ import { prisma as schedulerPrisma } from "scheduler/prismaClient";
  * @deprecated
  * TODO: deprecate, this is handled by the history field
  */
+// eslint-disable-next-line @typescript-eslint/promise-function-async -- must return PrismaPromise, not Promise, for use in $transaction
 export function recordListItemEvent(
   eventData: ListItemEventJsonData | ListEventJsonData,
   auditEvent: AuditEvent,

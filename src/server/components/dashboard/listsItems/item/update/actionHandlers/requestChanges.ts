@@ -28,7 +28,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
   const jsonData = listItem.jsonData as ListItemGetObject["jsonData"];
 
   try {
-    // @ts-ignore
+    // @ts-expect-error
     await handleListItemRequestChanges(listItem, changeMessage, userId, isAnnualReview);
 
     req.flash("successBannerTitle", `Change request sent to ${jsonData?.organisationName}`);
@@ -36,7 +36,7 @@ export async function requestChanges(req: Request, res: ListItemRes) {
     req.flash("successBannerColour", "blue");
     res.redirect(listIndexUrl);
     return;
-  } catch (error: any) {
+  } catch (_error: any) {
     req.flash("errorMsg", `${jsonData?.organisationName} could not be updated.`);
     res.redirect(listItemUrl);
   }

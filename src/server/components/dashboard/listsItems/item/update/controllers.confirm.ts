@@ -6,6 +6,34 @@ import type { ListItemRes } from "../../types";
 import type { Action } from "./types";
 import type { NextFunction, Request, Response } from "express";
 
+const actionToConfirmationView: Record<Action, string> = {
+  publish: "publish",
+  pin: "pin",
+  remove: "remove",
+  editDetails: "editDetails",
+  requestChanges: "requestChanges",
+  unpin: "pin",
+  unpublish: "unpublish",
+  update: "update",
+  updateLive: "update",
+  updateNew: "publish",
+  archive: "archive",
+};
+
+const actionToButtonText: Record<Action, string> = {
+  publish: "Publish",
+  pin: "Pin",
+  remove: "Remove",
+  editDetails: "Edit details",
+  requestChanges: "Request changes",
+  unpin: "Unpin",
+  unpublish: "Unpublish",
+  update: "Update",
+  updateLive: "Update",
+  updateNew: "Publish",
+  archive: "Archive",
+};
+
 export async function get(req: Request, res: Response, _next: NextFunction) {
   const { listItemUrl, listItem } = res.locals;
   const { update = {} } = req.session;
@@ -56,31 +84,3 @@ export function post(req: Request, res: ListItemRes, next: NextFunction) {
 
   handler(req, res, next);
 }
-
-const actionToConfirmationView: Record<Action, string> = {
-  publish: "publish",
-  pin: "pin",
-  remove: "remove",
-  editDetails: "editDetails",
-  requestChanges: "requestChanges",
-  unpin: "pin",
-  unpublish: "unpublish",
-  update: "update",
-  updateLive: "update",
-  updateNew: "publish",
-  archive: "archive",
-};
-
-const actionToButtonText: Record<Action, string> = {
-  publish: "Publish",
-  pin: "Pin",
-  remove: "Remove",
-  editDetails: "Edit details",
-  requestChanges: "Request changes",
-  unpin: "Unpin",
-  unpublish: "Unpublish",
-  update: "Update",
-  updateLive: "Update",
-  updateNew: "Publish",
-  archive: "Archive",
-};

@@ -39,7 +39,7 @@ export async function configurePassport(server: Express): Promise<void> {
           });
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         done(null, userData);
       }
     })

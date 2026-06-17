@@ -73,7 +73,7 @@ export const configureViews = (server: Express): void => {
       cookiesPolicy = JSON.parse(
         Buffer.from(get(req, "cookies.cookies_policy", EMPTY_BASE64_COOKIE), "base64").toString("ascii")
       );
-    } catch (error) {
+    } catch (_error) {
       // cleanup legacy json cookie
       res.clearCookie("cookies_policy");
     }

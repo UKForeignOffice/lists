@@ -63,7 +63,7 @@ async function findUnpublishedItems() {
     },
   }));
 
-  return await prisma.listItem.findMany({
+  return prisma.listItem.findMany({
     where: {
       status: "ANNUAL_REVIEW_OVERDUE",
       isAnnualReview: false,

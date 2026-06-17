@@ -35,7 +35,7 @@ export async function ingestPutController(req: Request, res: Response) {
 
   try {
     data = deserialise(value);
-  } catch (e) {
+  } catch (_e) {
     return res.status(422).json({ error: "questions could not be deserialised" });
   }
 
@@ -64,7 +64,7 @@ export async function ingestPutController(req: Request, res: Response) {
   }
 
   try {
-    const { updatedJsonData, ...jsonData } = listItem.jsonData as DeserialisedWebhookData;
+    const { updatedJsonData: _updatedJsonData, ...jsonData } = listItem.jsonData as DeserialisedWebhookData;
     const diff = getObjectDiff(jsonData, data);
     const jsonDataWithUpdatedJsonData = {
       ...jsonData,

@@ -19,7 +19,6 @@ export function tableHeaders(query: Request["query"]) {
   const { value: orderBy } = sanitiseQuery(query);
 
   return headers.map((cell) => {
-    // @ts-ignore
     const currentlySortedBy = orderBy[cell] ?? "none";
 
     return {
@@ -71,7 +70,7 @@ export function calculateSortOrder(
     ...defaultSortOrder,
   };
 
-  // @ts-ignore
+  // @ts-expect-error
   return Object.entries(sortOrder).map(convertEntryToObject);
 }
 

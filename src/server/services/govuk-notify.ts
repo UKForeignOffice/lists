@@ -215,7 +215,6 @@ export async function sendEmails<Personalisation extends { [key: string]: any }>
   const settled = await Promise.allSettled(requests);
 
   settled.filter(hasNotifyError).forEach((reject) => {
-    // @ts-ignore
     logger.error(`sendEmails: ${logLabel} Template ID: ${templateId} rejected with from notify API ${reject.reason}`, {
       method: "sendEmails",
     });

@@ -1,7 +1,6 @@
 import type { JsonObject, List, ListItem, User } from "server/models/types";
 import type * as PrismaClient from "@prisma/client";
 import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
-import type { Status } from "@prisma/client";
 import type * as SharedTypes from "shared/types";
 
 export enum ACTIVITY_TAGS {
@@ -45,7 +44,7 @@ export type IndexListItem = Pick<ListItemJsonData, "organisationName" | "contact
   publishingStatus: string;
   activityStatus: ActivityStatusViewModel;
   lastPublished?: string;
-  status: Status;
+  status: PrismaClient.Status;
   isAnnualReview: boolean;
   history: PrismaClient.Event[];
 };

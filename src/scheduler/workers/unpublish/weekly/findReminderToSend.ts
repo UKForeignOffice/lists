@@ -10,7 +10,6 @@ export function findReminderToSend(list: List) {
   const today = startOfToday();
   const startDate = startOfDay(parseISO(keyDates.annualReview.START));
 
-  // @ts-ignore
   const weeksSinceStartDate = differenceInWeeks(today, startDate, { roundingMethod: "floor" });
   /**
    * always round DOWN. e.g. if it is 2 weeks and 2 days, round down to 2 weeks (start of the window)

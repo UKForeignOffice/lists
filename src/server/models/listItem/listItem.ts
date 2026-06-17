@@ -283,7 +283,7 @@ export async function setEmailIsVerified({ reference }: { reference: string }): 
 
     await prisma.listItem.update({
       where: { reference },
-      // @ts-ignore
+      // @ts-expect-error
       data: { jsonData: updatedJsonData as PrismaListItem["jsonData"] },
     });
 
@@ -366,7 +366,7 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
   const { address: currentAddress, ...listItem } = listItemResult!;
 
   const jsonData = listItemResult?.jsonData as Prisma.JsonObject;
-  // @ts-ignore
+  // @ts-expect-error
   const data: DeserialisedWebhookData | null | undefined = legacyDataParameter ?? jsonData?.updatedJsonData;
 
   if (!data) {
@@ -398,7 +398,6 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
 
   if (requiresAddressUpdate && data) {
     try {
-      // @ts-ignore
       const address = makeAddressGeoLocationString(updatedJsonData);
       const point = await geoLocatePlaceByText(address, currentAddress.country.name);
 
@@ -454,7 +453,6 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
     );
 
     if (requiresAddressUpdate) {
-      // @ts-ignore
       result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit]);
     } else {
       result = await prisma.$transaction([updateItem, updateAudit]);

@@ -10,7 +10,7 @@ export function checkboxCSVToArray<T extends string | string[] = string>(checkbo
     return checkboxValue.map(trim);
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   return uniq((checkboxValue ?? "").split(",").map(trim));
 }
 
