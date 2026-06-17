@@ -39,7 +39,7 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   const listJsonData = list.jsonData as ListJsonData;
 
   if (!listJsonData.users) {
-    return Promise.allSettled(emailsForProviders);
+    return emailsForProviders;
   }
   // email post
   const postEmailTasks = listJsonData.users.map(async (emailAddress) =>
@@ -49,5 +49,5 @@ export async function sendDayBeforeEmails(list: ListWithCountryName) {
   logger.info(
     `Sent ${emailsForPost.filter((promise) => promise.status === "fulfilled").length} post emails for list ${list.id}`
   );
-  return Promise.allSettled([...emailsForProviders, ...emailsForPost]);
+  return [...emailsForProviders, ...emailsForPost];
 }

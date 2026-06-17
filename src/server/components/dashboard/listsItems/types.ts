@@ -2,8 +2,8 @@
  * Field(s) must be specified for non primitive macros, since they cannot be type checked for.
  */
 import type { Response } from "express";
-import type { findListItemById } from "server/models/listItem";
-import type { getListOverview } from "server/components/dashboard/listsItems/helpers";
+import { findListItemById } from "server/models/listItem";
+import { getListOverview } from "server/components/dashboard/listsItems/helpers";
 import type { ListItem } from "server/models/types";
 import type { Event } from "@prisma/client";
 

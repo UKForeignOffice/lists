@@ -20,7 +20,7 @@ export async function main() {
   const updates = await Promise.allSettled(listsWithoutNextAnnualReview.map(addAnnualReviewStartDate));
 
   updates
-    .filter((result) => result.status !== "fulfilled")
+    .filter((result): result is PromiseRejectedResult => result.status === "rejected")
     .forEach((failedResult) => {
       logger.error(`Unable to add annual review start dates due to ${failedResult.reason}`);
     });
