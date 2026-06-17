@@ -89,7 +89,7 @@ export async function handlePinListItem(id: number, userId: User["id"], isPinned
         },
       }),
       auditEvent,
-    ] as any);
+    ]);
 
     return listItem;
   } catch (e: any) {

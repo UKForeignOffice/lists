@@ -239,7 +239,7 @@ export async function togglerListItemIsPublished({
         },
         auditEvent
       ),
-    ] as any);
+    ]);
 
     return listItem;
   } catch (error) {
@@ -453,9 +453,9 @@ export async function update(id: ListItem["id"], userId: User["id"], legacyDataP
     );
 
     if (requiresAddressUpdate) {
-      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit] as any);
+      result = await prisma.$transaction([updateItem, rawUpdateGeoLocation(...geoLocationParams!), updateAudit]);
     } else {
-      result = await prisma.$transaction([updateItem, updateAudit] as any);
+      result = await prisma.$transaction([updateItem, updateAudit]);
     }
 
     if (!result) {
@@ -491,7 +491,7 @@ export async function deleteListItem(id: number, userId: User["id"]): Promise<vo
         },
         AuditEvent.DELETED
       ),
-    ] as any);
+    ]);
   } catch (e) {
     logger.error(`deleteListItem Error ${e.message}`);
 
