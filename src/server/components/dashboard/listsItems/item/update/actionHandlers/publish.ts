@@ -41,11 +41,9 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
   if (auditJsonData?.updatedJsonData) {
-    // @ts-expect-error
     logger.info(
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
-    // @ts-expect-error
     return update(id, userId, auditJsonData.updatedJsonData);
   }
 

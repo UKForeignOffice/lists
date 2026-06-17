@@ -3,8 +3,9 @@ import { updateSheet } from "./../googleClient";
 import { rowValuesAsColumns } from "./utils";
 
 export async function ALLwhereproviderrequired() {
-  const rows =
-    await prisma.$queryRaw`select whereproviderrequired, count(*) from "ALLwhereproviderrequired" group by "whereproviderrequired"`;
+  const rows = await prisma.$queryRaw<
+    Record<string, unknown>[]
+  >`select whereproviderrequired, count(*) from "ALLwhereproviderrequired" group by "whereproviderrequired"`;
   const header = Object.keys(rows[0]);
   const data = rowValuesAsColumns(rows);
   return updateSheet("ALLwhereproviderrequired", [header, ...data]);

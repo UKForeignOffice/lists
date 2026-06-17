@@ -5,7 +5,6 @@ import { checkboxCSVToArray } from "server/models/listItem/providers/deserialise
 export const lawyerDeserialiser: WebhookDeserialisers[ServiceType.lawyers] = (webhookData) => {
   const { areasOfLaw = [], ...rest } = webhookData;
   return {
-    // @ts-expect-error
     areasOfLaw: [...new Set(checkboxCSVToArray(areasOfLaw))],
     ...rest,
     country: webhookData.addressCountry,

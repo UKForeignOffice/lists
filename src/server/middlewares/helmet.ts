@@ -34,7 +34,7 @@ export function configureHelmet(server: Express): void {
 
   const generateCspNonce = (_req: IncomingMessage, res: ServerResponse): string => {
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-    const nonce = get(res, "locals.cspNonce") as string;
+    const nonce = get(res, "locals.cspNonce") as unknown as string;
     return `'nonce-${nonce}'`;
   };
 

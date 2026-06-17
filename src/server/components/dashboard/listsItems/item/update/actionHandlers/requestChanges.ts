@@ -93,7 +93,7 @@ async function handleListItemRequestChanges(
         },
         auditEvent
       ),
-    ]);
+    ] as any);
   } catch (error: any) {
     logger.error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);
     throw new Error(`handleListItemRequestChanges error: could not update listItem: ${error.message}`);

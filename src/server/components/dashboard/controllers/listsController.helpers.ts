@@ -19,7 +19,6 @@ export function tableHeaders(query: Request["query"]) {
   const { value: orderBy } = sanitiseQuery(query);
 
   return headers.map((cell) => {
-    // @ts-expect-error
     const currentlySortedBy = orderBy[cell] ?? "none";
 
     return {

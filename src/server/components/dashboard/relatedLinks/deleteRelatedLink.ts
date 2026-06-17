@@ -21,7 +21,6 @@ export async function deleteRelatedLink(listId: List["id"], index: number) {
   const { relatedLinks = [] } = jsonData;
 
   if (!Number.isNaN(index)) {
-    // @ts-expect-error
     relatedLinks.splice(index, 1);
   }
 
