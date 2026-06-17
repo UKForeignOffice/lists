@@ -46,7 +46,7 @@ export async function createPlaceIndex(): Promise<boolean> {
   }
 
   try {
-    // @ts-ignore
+    // @ts-expect-error
     await location.createPlaceIndex(INDEX_PARAMS);
     return true;
   } catch (error) {

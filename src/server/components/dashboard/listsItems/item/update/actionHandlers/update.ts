@@ -19,7 +19,7 @@ export async function update(req: Request, res: Response): Promise<void> {
     req.flash("successBannerColour", "green");
     res.redirect(listIndexUrl);
     return;
-  } catch (error: any) {
+  } catch (_error: any) {
     req.flash("errorMsg", `${listItem.jsonData.organisationName} could not be updated.`);
     res.redirect(listItemUrl);
     return;

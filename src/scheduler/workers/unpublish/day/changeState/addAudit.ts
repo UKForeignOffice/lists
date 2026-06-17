@@ -9,5 +9,5 @@ export async function addAudit(eventData: ListEventJsonData, auditEvent: AuditEv
     jsonData: { ...eventData },
   };
 
-  return await prisma.audit.create({ data });
+  return prisma.audit.create({ data });
 }

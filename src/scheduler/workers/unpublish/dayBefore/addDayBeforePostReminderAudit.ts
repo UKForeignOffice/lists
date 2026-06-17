@@ -9,5 +9,5 @@ export async function addUnpublishPostReminderAudit(eventData: ListEventJsonData
     jsonData: { ...eventData },
   };
 
-  return await prisma.audit.create({ data });
+  return prisma.audit.create({ data });
 }

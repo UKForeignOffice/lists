@@ -12,6 +12,6 @@ export function sanitiseLanguages(languages: string | string[] | ParsedQs | Pars
     convert: true,
   });
 
-  // @ts-ignore
+  // @ts-expect-error
   return [...new Set(value)];
 }

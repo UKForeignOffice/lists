@@ -18,7 +18,7 @@ export function post(req: Request, res: Response) {
 
   req.session.answers!.disclaimer = true;
 
-  // @ts-ignore
+  // @ts-expect-error
   const params = querystring.encode({
     ...req.query,
   });

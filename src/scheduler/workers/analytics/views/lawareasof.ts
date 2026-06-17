@@ -3,7 +3,7 @@ import { updateSheet } from "./../googleClient";
 import { getHeadersFromRow, rowValuesAsColumns } from "./utils";
 
 export async function lawareasof() {
-  const rows = (await prisma.$queryRaw`select * from "lawareasof"`) as any[];
+  const rows = await prisma.$queryRaw`select * from "lawareasof"`;
 
   const header = getHeadersFromRow(rows[0]);
   const data = rowValuesAsColumns(rows);

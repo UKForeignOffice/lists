@@ -33,7 +33,7 @@ export async function redirectIfUnauthorised(req: Request, res: ListItemRes, nex
 }
 
 export async function getListOverview(id: number) {
-  return await prisma.list.findUnique({
+  return prisma.list.findUnique({
     where: { id },
     select: {
       id: true,

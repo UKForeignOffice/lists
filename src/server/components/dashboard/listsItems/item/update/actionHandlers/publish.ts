@@ -30,7 +30,7 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   }
 
   const editEvent = listItem?.history.find((event) => {
-    // @ts-ignore
+    // @ts-expect-error
     return event.type === ListItemEvent.EDITED && !!event.jsonData?.updatedJsonData;
   });
 
@@ -41,11 +41,11 @@ export async function handleListItemUpdate(id: number, userId: User["id"]) {
   const auditJsonData: EventJsonData = editEvent?.jsonData as EventJsonData;
 
   if (auditJsonData?.updatedJsonData) {
-    // @ts-ignore
+    // @ts-expect-error
     logger.info(
       `Updating ${listItem.id} with explicit 3rd parameter: ${JSON.stringify(auditJsonData.updatedJsonData)}`
     );
-    // @ts-ignore
+    // @ts-expect-error
     return update(id, userId, auditJsonData.updatedJsonData);
   }
 
@@ -72,7 +72,7 @@ export async function publish(req: Request, res: Response) {
     req.flash("successBannerColour", "green");
     res.redirect(listIndexUrl);
     return;
-  } catch (error: any) {
+  } catch (_error: any) {
     req.flash("errorMsg", `${organisationName} could not be updated.`);
     res.redirect(listItemUrl);
   }

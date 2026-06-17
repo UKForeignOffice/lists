@@ -30,7 +30,7 @@ export async function runSingleTask(taskName: string) {
     deleteItemsAfterAYear,
   };
 
-  // @ts-ignore
+  // @ts-expect-error
   const task = tasks[taskName];
   if (!task) {
     logger.error(`Task ${task} not found`);

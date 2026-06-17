@@ -2,7 +2,7 @@ import { prisma } from "server/models/db/prisma-client";
 import Joi from "joi";
 
 export async function listExists(country: string, type: string) {
-  return await prisma.list.findFirst({
+  return prisma.list.findFirst({
     where: {
       country: {
         name: {

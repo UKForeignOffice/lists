@@ -33,7 +33,9 @@ export function configureHelmet(server: Express): void {
   });
 
   const generateCspNonce = (_req: IncomingMessage, res: ServerResponse): string => {
-    return `'nonce-${get(res, "locals.cspNonce")}'`;
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    const nonce = get(res, "locals.cspNonce") as string;
+    return `'nonce-${nonce}'`;
   };
 
   server.use(helmet.frameguard({ action: "deny" }));

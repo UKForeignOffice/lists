@@ -143,7 +143,7 @@ export function createListSearchBaseLink(serviceType: string): string {
   return `${protocol}://${SERVICE_DOMAIN}${listsRoutes.finder}?serviceType=${serviceType}`;
 }
 
-export function createFormRunnerReturningUserLink(serviceType: string, isAnnualReview: boolean): string {
+export function createFormRunnerReturningUserLink(serviceType: string, _isAnnualReview: boolean): string {
   if (serviceType === undefined) {
     throw new Error("createFormRunnerReturningUserLink serviceType is undefined");
   }

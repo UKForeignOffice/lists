@@ -3,7 +3,7 @@ import { prisma } from "scheduler/prismaClient";
 
 export async function findListsInAnnualReview() {
   const today = startOfToday().toISOString();
-  return await prisma.list.findMany({
+  return prisma.list.findMany({
     where: {
       nextAnnualReviewStartDate: {
         lte: today,

@@ -201,7 +201,7 @@ export function getLanguagesRows(languagesProvided: string[]): LanguageRows {
   }
 
   const rows: LanguageRow[] = languagesProvided.map((language: string) => {
-    // @ts-ignore
+    // @ts-expect-error
     const languageName: string = languages[language];
 
     const languageRow: LanguageRow = {

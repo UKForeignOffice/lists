@@ -15,7 +15,7 @@ export async function get(req: Request, res: ListIndexRes) {
   }
 
   if (req.query.del) {
-    // @ts-ignore
+    // @ts-expect-error
     const toDelete = req.query.del.split(",").map(Number);
     await deleteEvents(toDelete);
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
@@ -109,7 +109,7 @@ export async function post(req: Request, res: ListIndexRes) {
 
   if (isAnnualReview) {
     try {
-      // @ts-ignore
+      // @ts-expect-error
       await setUpdatedCurrentAnnualReview(list, req.body);
       req.flash("successBannerMessage", "Key dates update was successful");
       req.flash("successBannerHeading", "Key dates update");
@@ -135,7 +135,7 @@ export async function post(req: Request, res: ListIndexRes) {
   }
 }
 
-// @ts-ignore
+// @ts-expect-error
 async function setUpdatedCurrentAnnualReview(list: List, body) {
   const jsonData = list.jsonData;
   const { currentAnnualReview } = jsonData;
@@ -150,7 +150,7 @@ async function setUpdatedCurrentAnnualReview(list: List, body) {
     },
   };
 
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id: list.id,
     },
@@ -164,7 +164,7 @@ async function setUpdatedCurrentAnnualReview(list: List, body) {
 }
 
 async function setNextOrLastDates(id: number, nextAnnualReviewStartDate: string, lastAnnualReviewStartDate: string) {
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id,
     },
@@ -202,7 +202,7 @@ async function findReminders(listId: number) {
         end,
       },
       {
-        // @ts-ignore
+        // @ts-expect-error
         weekStartsOn,
       }
     );
@@ -265,7 +265,7 @@ async function findReminders(listId: number) {
 }
 
 async function deleteEvents(ids: number[]) {
-  return await prisma.event.deleteMany({
+  return prisma.event.deleteMany({
     where: {
       id: {
         in: ids,

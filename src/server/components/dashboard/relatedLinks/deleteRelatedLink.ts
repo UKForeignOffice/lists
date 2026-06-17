@@ -21,11 +21,11 @@ export async function deleteRelatedLink(listId: List["id"], index: number) {
   const { relatedLinks = [] } = jsonData;
 
   if (!Number.isNaN(index)) {
-    // @ts-ignore
+    // @ts-expect-error
     relatedLinks.splice(index, 1);
   }
 
-  return await prisma.list.update({
+  return prisma.list.update({
     where: {
       id: listId,
     },

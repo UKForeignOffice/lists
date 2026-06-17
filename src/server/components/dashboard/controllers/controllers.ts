@@ -200,7 +200,7 @@ export async function listDeleteController(req: Request, res: Response) {
   });
 }
 
-export async function listDeletePostController(req: Request, res: Response, next: NextFunction) {
+export async function listDeletePostController(req: Request, res: Response, _next: NextFunction) {
   const { listId } = req.params;
   const list = await findListById(listId);
 

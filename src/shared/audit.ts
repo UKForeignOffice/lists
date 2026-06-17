@@ -7,7 +7,7 @@ import { prisma as schedulerPrisma } from "scheduler/prismaClient";
  * @deprecated
  * TODO: deprecate, this is handled by the history field
  */
-export function recordListItemEvent(
+export async function recordListItemEvent(
   eventData: ListItemEventJsonData | ListEventJsonData,
   auditEvent: AuditEvent,
   type?: "user" | "list" | "listItem",

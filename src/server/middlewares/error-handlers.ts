@@ -39,7 +39,7 @@ export const configureErrorHandlers = (server: Express): void => {
     }
   });
 
-  server.use(function (err: HttpException, req: Request, res: Response, next: NextFunction) {
+  server.use(function (err: HttpException, req: Request, res: Response, _next: NextFunction) {
     logger.error(`${err.status} Error`, err);
     res.status("status" in err ? err.status : 500);
 

@@ -289,7 +289,7 @@ export async function processAnnualReview(): Promise<void> {
   }
   const { result: listItems } = listItemsResult;
   for (const list of listsWithCurrentAnnualReview) {
-    // @ts-ignore
+    // @ts-expect-error
     const listItemsForList = listItems.filter((listItem) => listItem.listId === list.id);
     await processList(list, listItemsForList);
   }

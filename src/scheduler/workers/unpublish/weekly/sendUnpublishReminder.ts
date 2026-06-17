@@ -33,7 +33,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     const event = await addReminderEvent(
       listItem.id,
-      // @ts-ignore - error responses are thrown, so ts-ignoring ErrorResponse warning
+      // @ts-expect-error - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,
       [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
       meta.reference

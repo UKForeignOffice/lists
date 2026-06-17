@@ -10,7 +10,7 @@ relatedLinksRouter.use("*", (req, res, next) => {
   next();
 });
 
-relatedLinksRouter.get("/", (req, res, next) => {
+relatedLinksRouter.get("/", (req, res, _next) => {
   res.redirect(res.locals.listsEditUrl);
 });
 

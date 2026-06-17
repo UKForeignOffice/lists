@@ -47,7 +47,7 @@ export async function createUser(data: Partial<User>): Promise<User | undefined>
 
   try {
     return (await prisma.user.create({
-      // @ts-ignore
+      // @ts-expect-error
       data: {
         ...data,
         email: data.email!.toLowerCase(),
@@ -128,7 +128,7 @@ export async function deleteUserByEmail(email: string, adminEmail: string): Prom
 }
 
 export async function createUserFromEmail(email: string) {
-  return await prisma.user.create({
+  return prisma.user.create({
     data: {
       email,
       jsonData: {

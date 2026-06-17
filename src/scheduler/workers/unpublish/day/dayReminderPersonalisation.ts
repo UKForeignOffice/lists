@@ -3,6 +3,12 @@ import type { Meta } from "./types";
 import type { List, ListItem } from "@prisma/client";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 
+const serviceDisplayString: Record<ServiceType, string> = {
+  funeralDirectors: "Funeral directors",
+  lawyers: "Lawyers",
+  translatorsInterpreters: "Translator or interpreters",
+};
+
 export function providerReminderPersonalisation(listItem: ListItem, meta: Meta) {
   const jsonData = listItem.jsonData as ListItemJsonData;
   const listItemType = listItem.type as ServiceType;
@@ -24,9 +30,3 @@ export function postReminderPersonalisation(list: List, numberNotResponded: numb
     numberNotResponded,
   };
 }
-
-const serviceDisplayString: Record<ServiceType, string> = {
-  funeralDirectors: "Funeral directors",
-  lawyers: "Lawyers",
-  translatorsInterpreters: "Translator or interpreters",
-};

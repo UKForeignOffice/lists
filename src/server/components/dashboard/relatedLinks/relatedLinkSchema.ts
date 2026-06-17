@@ -1,4 +1,5 @@
-import Joi, { type CustomHelpers } from "joi";
+import Joi from "joi";
+import type { CustomHelpers } from "joi";
 
 const ERROR_MESSAGES = {
   "string.url.govuk": "You can only link to GOV.UK",
@@ -20,7 +21,7 @@ function govukUrlValidation<V extends string>(value: V, helper: CustomHelpers) {
   let url;
   try {
     url = new URL(stringToValidate);
-  } catch (e) {
+  } catch (_e) {
     return helper.error("string.url.govuk");
   }
 
