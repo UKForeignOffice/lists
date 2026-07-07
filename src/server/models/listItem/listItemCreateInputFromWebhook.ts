@@ -27,7 +27,11 @@ export async function listItemCreateInputFromWebhook(
 
   const exists = await checkListItemExists({
     organisationName: deserialised.organisationName,
-    countryName: deserialised.addressCountry!,
+    firstLine: deserialised["address.firstLine"],
+    secondLine: deserialised["address.secondLine"],
+    city: deserialised.city,
+    postCode: deserialised.postCode,
+    countryName: country,
   });
 
   if (exists) {

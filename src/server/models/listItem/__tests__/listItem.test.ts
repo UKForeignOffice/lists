@@ -57,6 +57,36 @@ const lawyerWebhookData = {
           type: "text",
           answer: "Cartesian Systems",
         },
+        {
+          key: "address.firstLine",
+          title: "Address line 1",
+          type: "text",
+          answer: "70 King Charles Street",
+        },
+        {
+          key: "address.secondLine",
+          title: "Address line 2",
+          type: "text",
+          answer: null,
+        },
+        {
+          key: "city",
+          title: "Town or city",
+          type: "text",
+          answer: "London",
+        },
+        {
+          key: "postCode",
+          title: "Post code / area code",
+          type: "text",
+          answer: "SW1A 2AH",
+        },
+        {
+          key: "addressCountry",
+          title: "Country",
+          type: "list",
+          answer: "United Kingdom",
+        },
       ],
       index: 0,
     },
@@ -422,24 +452,46 @@ describe("ListItem Model:", () => {
     describe("checkListItemExists", () => {
       const countryName = "France";
       const organisationName = "XYZ Corp";
-      const locationName = "Location Name";
+      const firstLine = "10 Rue de Example";
+      const secondLine = "Suite 2";
+      const city = "Paris";
+      const postCode = "75001";
 
-      test("listItem.count call is correct without organisationName", async () => {
+      test("listItem.count call is correct with organisation name and full address", async () => {
         const spy = spyListItemCount(0);
 
-        await checkListItemExists({ countryName, organisationName });
+        await checkListItemExists({
+          organisationName,
+          countryName,
+          firstLine,
+          secondLine,
+          city,
+          postCode,
+        });
 
         expect(spy).toHaveBeenCalledWith({
           where: {
-            AND: [
-              {
-                jsonData: {
-                  path: ["organisationName"],
-                  equals: organisationName.toLowerCase(),
-                },
-              },
-            ],
+            jsonData: {
+              path: ["organisationName"],
+              equals: organisationName.toLowerCase(),
+            },
             address: {
+              firstLine: {
+                equals: firstLine,
+                mode: "insensitive",
+              },
+              secondLine: {
+                equals: secondLine,
+                mode: "insensitive",
+              },
+              city: {
+                equals: city,
+                mode: "insensitive",
+              },
+              postCode: {
+                equals: postCode,
+                mode: "insensitive",
+              },
               country: {
                 name: countryName,
               },
@@ -448,32 +500,35 @@ describe("ListItem Model:", () => {
         });
       });
 
-      test("listItem.count call is correct with organisationName", async () => {
+      test("listItem.count call is correct when optional address fields are missing", async () => {
         const spy = spyListItemCount(0);
 
         await checkListItemExists({
-          countryName,
           organisationName,
-          locationName,
+          countryName,
+          firstLine,
         });
 
         expect(spy).toHaveBeenCalledWith({
           where: {
-            AND: [
-              {
-                jsonData: {
-                  path: ["organisationName"],
-                  equals: organisationName.toLowerCase(),
-                },
-              },
-              {
-                jsonData: {
-                  path: ["locationName"],
-                  equals: locationName.toLowerCase(),
-                },
-              },
-            ],
+            jsonData: {
+              path: ["organisationName"],
+              equals: organisationName.toLowerCase(),
+            },
             address: {
+              firstLine: {
+                equals: firstLine,
+                mode: "insensitive",
+              },
+              secondLine: {
+                equals: null,
+              },
+              city: {
+                equals: null,
+              },
+              postCode: {
+                equals: null,
+              },
               country: {
                 name: countryName,
               },
@@ -485,8 +540,9 @@ describe("ListItem Model:", () => {
       test("it returns false when list item doesn't exist", async () => {
         spyListItemCount(0);
         const result = await checkListItemExists({
-          countryName,
           organisationName,
+          countryName,
+          firstLine,
         });
         expect(result).toBe(false);
       });
@@ -494,8 +550,9 @@ describe("ListItem Model:", () => {
       test("it returns true when list item exists", async () => {
         spyListItemCount(1);
         const result = await checkListItemExists({
-          countryName,
           organisationName,
+          countryName,
+          firstLine,
         });
         expect(result).toBe(true);
       });

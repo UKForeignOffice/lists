@@ -4,6 +4,7 @@ import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
+import type { Prisma } from "@prisma/client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
@@ -92,39 +93,57 @@ export function fetchPublishedListItemQuery(props: {
 
 export async function checkListItemExists({
   organisationName,
-  locationName,
+  firstLine,
+  secondLine,
+  city,
+  postCode,
   countryName,
 }: {
   organisationName: string;
-  locationName?: string;
+  firstLine: string;
+  secondLine?: string | null;
+  city?: string | null;
+  postCode?: string | null;
   countryName: string;
 }): Promise<boolean> {
-  const jsonDataQuery = [
-    {
+  const addressWhere: Prisma.AddressWhereInput = {
+    firstLine: {
+      equals: firstLine,
+      mode: "insensitive",
+    },
+    secondLine:
+      secondLine === null || secondLine === undefined
+        ? { equals: null }
+        : {
+            equals: secondLine,
+            mode: "insensitive",
+          },
+    city:
+      city === null || city === undefined
+        ? { equals: null }
+        : {
+            equals: city,
+            mode: "insensitive",
+          },
+    postCode:
+      postCode === null || postCode === undefined
+        ? { equals: null }
+        : {
+            equals: postCode,
+            mode: "insensitive",
+          },
+    country: {
+      name: startCase(countryName),
+    },
+  };
+
+  const total = await prisma.listItem.count({
+    where: {
       jsonData: {
         path: ["organisationName"],
         equals: organisationName.toLocaleLowerCase(),
       },
-    },
-  ];
-
-  if (locationName !== undefined && locationName !== null) {
-    jsonDataQuery.push({
-      jsonData: {
-        path: ["locationName"],
-        equals: locationName.toLocaleLowerCase(),
-      },
-    });
-  }
-
-  const total = await prisma.listItem.count({
-    where: {
-      AND: jsonDataQuery,
-      address: {
-        country: {
-          name: startCase(countryName),
-        },
-      },
+      address: addressWhere,
     },
   });
 
