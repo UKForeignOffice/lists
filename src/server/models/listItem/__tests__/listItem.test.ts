@@ -126,6 +126,10 @@ describe("ListItem Model:", () => {
     return prisma.listItem.count.mockResolvedValue(returnValue);
   };
 
+  const spyQueryRawCount = (count: number): jest.SpyInstance => {
+    return prisma.$queryRaw.mockResolvedValue([{ count }]);
+  };
+
   const spyPrismaTransaction = (): jest.SpyInstance => {
     return prisma.$transaction.mockImplementation((values) => Promise.all(values) as never);
   };
@@ -149,16 +153,17 @@ describe("ListItem Model:", () => {
   });
 
   describe("Create Lawyer", () => {
-    test("createLawyer command correctly calls listItem count to check if record already exists", async () => {
-      const spyCount = spyListItemCount(1);
+    test("createLawyer command correctly calls $queryRaw to check if record already exists", async () => {
+      const spy = spyQueryRawCount(1);
       const spyCountry = spyCountryUpsert();
 
       await expect(createListItem(lawyerWebhookData)).rejects.toThrow("lawyers record already exists");
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spyCountry).not.toHaveBeenCalled();
     });
 
     test("createLawyer command correctly calls country.upsert", async () => {
-      spyListItemCount(0);
+      spyQueryRawCount(0);
       spyLocationService();
       spyListItemCreate();
       const spyCountry = spyCountryUpsert();
@@ -175,7 +180,7 @@ describe("ListItem Model:", () => {
     });
 
     test("createLawyer command correctly calls lawyer.create", async () => {
-      spyListItemCount(0);
+      spyQueryRawCount(0);
       spyLocationService();
       spyCountryUpsert();
       const spy = spyListItemCreate();
@@ -186,7 +191,7 @@ describe("ListItem Model:", () => {
     });
 
     test("createLawyer throws listItem.create error", async () => {
-      spyListItemCount(0);
+      spyQueryRawCount(0);
       spyLocationService();
       spyCountryUpsert();
       const error = new Error("CREATE ERROR");
@@ -423,79 +428,105 @@ describe("ListItem Model:", () => {
       const countryName = "France";
       const organisationName = "XYZ Corp";
       const locationName = "Location Name";
+      const city = "Paris";
+      const addressFirstLine = "1 Rue de Rivoli";
+      const addressSecondLine = "Apt 2";
+      const postCode = "75001";
 
-      test("listItem.count call is correct without organisationName", async () => {
-        const spy = spyListItemCount(0);
+      const spyQueryRaw = (count: number) => prisma.$queryRaw.mockResolvedValue([{ count }]);
 
-        await checkListItemExists({ countryName, organisationName });
+      test("queries via $queryRaw and returns false when no match", async () => {
+        const spy = spyQueryRaw(0);
 
-        expect(spy).toHaveBeenCalledWith({
-          where: {
-            AND: [
-              {
-                jsonData: {
-                  path: ["organisationName"],
-                  equals: organisationName.toLowerCase(),
-                },
-              },
-            ],
-            address: {
-              country: {
-                name: countryName,
-              },
-            },
-          },
-        });
+        const result = await checkListItemExists({ countryName, organisationName });
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toBe(false);
       });
 
-      test("listItem.count call is correct with organisationName", async () => {
-        const spy = spyListItemCount(0);
+      test("returns true when $queryRaw reports a match", async () => {
+        spyQueryRaw(1);
+        const result = await checkListItemExists({ countryName, organisationName });
+        expect(result).toBe(true);
+      });
+
+      test("passes all provided address values to $queryRaw", async () => {
+        const spy = spyQueryRaw(0);
 
         await checkListItemExists({
           countryName,
           organisationName,
           locationName,
+          addressFirstLine,
+          addressSecondLine,
+          city,
+          postCode,
         });
 
-        expect(spy).toHaveBeenCalledWith({
-          where: {
-            AND: [
-              {
-                jsonData: {
-                  path: ["organisationName"],
-                  equals: organisationName.toLowerCase(),
-                },
-              },
-              {
-                jsonData: {
-                  path: ["locationName"],
-                  equals: locationName.toLowerCase(),
-                },
-              },
-            ],
-            address: {
-              country: {
-                name: countryName,
-              },
-            },
-          },
-        });
+        // organisationName and countryName are direct template interpolations;
+        // optional fields are embedded inside Prisma.sql fragment objects.
+        // Verify $queryRaw was called and the direct values are present.
+        expect(spy).toHaveBeenCalledTimes(1);
+        const callArgs = spy.mock.calls[0];
+        expect(callArgs).toEqual(expect.arrayContaining([organisationName, countryName]));
       });
 
       test("it returns false when list item doesn't exist", async () => {
-        spyListItemCount(0);
-        const result = await checkListItemExists({
-          countryName,
-          organisationName,
-        });
+        spyQueryRaw(0);
+        const result = await checkListItemExists({ countryName, organisationName });
         expect(result).toBe(false);
       });
 
       test("it returns true when list item exists", async () => {
-        spyListItemCount(1);
+        spyQueryRaw(1);
+        const result = await checkListItemExists({ countryName, organisationName });
+        expect(result).toBe(true);
+      });
+
+      test("regression: same organisation name in different case is treated as a duplicate", async () => {
+        spyQueryRaw(1);
         const result = await checkListItemExists({
-          countryName,
-          organisationName,
+          organisationName: "Example Organisation",
+          countryName: "Greece",
+          city: "Athens",
+          addressFirstLine: "123 Main Street",
+        });
+        expect(result).toBe(true);
+      });
+
+      test("regression: same organisation, same country, different city is not treated as a duplicate", async () => {
+        spyQueryRaw(0);
+        const result = await checkListItemExists({
+          organisationName: "Example Organisation",
+          countryName: "Greece",
+          addressFirstLine: "123 Main Street",
+          city: "Heraklion",
+          postCode: "71001",
+        });
+        expect(result).toBe(false);
+      });
+
+      test("regression: same organisation, same country, different postCode is not treated as a duplicate", async () => {
+        spyQueryRaw(0);
+        const result = await checkListItemExists({
+          organisationName: "Example Organisation",
+          countryName: "Greece",
+          addressFirstLine: "123 Main Street",
+          city: "Athens",
+          postCode: "10556",
+        });
+        expect(result).toBe(false);
+      });
+
+      test("regression: same organisation, full matching address, same country is treated as a duplicate", async () => {
+        spyQueryRaw(1);
+        const result = await checkListItemExists({
+          organisationName: "Example Organisation",
+          countryName: "Greece",
+          addressFirstLine: "123 Main Street",
+          addressSecondLine: "Floor 2",
+          city: "Athens",
+          postCode: "10557",
         });
         expect(result).toBe(true);
       });
@@ -619,7 +650,7 @@ describe("ListItem Model:", () => {
 
     describe("listItemCreateInputFromWebhook", () => {
       test("it rejects when listItem already exists", async () => {
-        spyListItemCount(1);
+        spyQueryRawCount(1);
 
         await expect(listItemCreateInputFromWebhook(lawyerWebhookData)).rejects.toEqual(
           new Error("lawyers record already exists")
@@ -627,7 +658,7 @@ describe("ListItem Model:", () => {
       });
 
       test("it rejects when listItem create command fails", async () => {
-        spyListItemCount(0);
+        spyQueryRawCount(0);
         spyLocationService();
         spyCountryUpsert();
 

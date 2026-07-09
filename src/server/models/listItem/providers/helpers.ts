@@ -4,6 +4,7 @@ import pgescape from "pg-escape";
 import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
+import { Prisma } from "@prisma/client";
 import { get, startCase } from "lodash";
 import { logger } from "server/services/logger";
 import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
@@ -94,41 +95,51 @@ export async function checkListItemExists({
   organisationName,
   locationName,
   countryName,
+  city,
+  addressFirstLine,
+  addressSecondLine,
+  postCode,
 }: {
   organisationName: string;
   locationName?: string;
   countryName: string;
+  city?: string;
+  addressFirstLine?: string;
+  addressSecondLine?: string;
+  postCode?: string;
 }): Promise<boolean> {
-  const jsonDataQuery = [
-    {
-      jsonData: {
-        path: ["organisationName"],
-        equals: organisationName.toLocaleLowerCase(),
-      },
-    },
-  ];
+  const locationFilter =
+    locationName != null
+      ? Prisma.sql`AND lower("ListItem"."jsonData"->>'locationName') = lower(${locationName})`
+      : Prisma.empty;
+  const firstLineFilter =
+    addressFirstLine != null
+      ? Prisma.sql`AND lower("Address"."firstLine") = lower(${addressFirstLine})`
+      : Prisma.empty;
+  const secondLineFilter =
+    addressSecondLine != null
+      ? Prisma.sql`AND lower("Address"."secondLine") = lower(${addressSecondLine})`
+      : Prisma.empty;
+  const cityFilter =
+    city != null ? Prisma.sql`AND lower("Address"."city") = lower(${city})` : Prisma.empty;
+  const postCodeFilter =
+    postCode != null ? Prisma.sql`AND lower("Address"."postCode") = lower(${postCode})` : Prisma.empty;
 
-  if (locationName !== undefined && locationName !== null) {
-    jsonDataQuery.push({
-      jsonData: {
-        path: ["locationName"],
-        equals: locationName.toLocaleLowerCase(),
-      },
-    });
-  }
+  const result = await prisma.$queryRaw<[{ count: bigint }]>`
+    SELECT COUNT(*)::int AS count
+    FROM "ListItem"
+    INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
+    INNER JOIN "Country" ON "Address"."countryId" = "Country".id
+    WHERE lower("ListItem"."jsonData"->>'organisationName') = lower(${organisationName})
+    AND lower("Country"."name") = lower(${countryName})
+    ${locationFilter}
+    ${firstLineFilter}
+    ${secondLineFilter}
+    ${cityFilter}
+    ${postCodeFilter}
+  `;
 
-  const total = await prisma.listItem.count({
-    where: {
-      AND: jsonDataQuery,
-      address: {
-        country: {
-          name: startCase(countryName),
-        },
-      },
-    },
-  });
-
-  return total > 0;
+  return Number(result[0].count) > 0;
 }
 
 export async function some(countryName: CountryName, serviceType: ServiceType): Promise<boolean> {
