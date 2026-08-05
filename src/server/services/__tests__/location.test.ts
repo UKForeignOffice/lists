@@ -137,6 +137,22 @@ describe("Location service:", () => {
 
       expect(result).toEqual([0.0, 0.0]);
     });
+
+    test("maps NRO to NRU for AWS filter countries", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [],
+      });
+
+      await geoLocatePlaceByText("Yaren", "Naoero");
+
+      expect(mockLocationClient.searchPlaceIndexForText).toHaveBeenCalledWith({
+        MaxResults: 1,
+        Text: "Yaren",
+        IndexName: LOCATION_SERVICE_INDEX_NAME,
+        FilterCountries: ["NRU"],
+      });
+    });
   });
 
 });
