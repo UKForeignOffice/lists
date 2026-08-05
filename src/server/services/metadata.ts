@@ -185,7 +185,7 @@ export const countriesList = [
   { text: "Morocco", value: "Morocco", code: "MAR" },
   { text: "Mozambique", value: "Mozambique", code: "MOZ" },
   { text: "Namibia", value: "Namibia", code: "NAM" },
-  { text: "Naoero", value: "Naoero", code: "NRU" },
+  { text: "Naoero", value: "Naoero", code: "NRO" },
   { text: "Nepal", value: "Nepal", code: "NPL" },
   { text: "Netherlands", value: "Netherlands", code: "NLD" },
   { text: "New Caledonia", value: "New Caledonia", code: "NCL" },
