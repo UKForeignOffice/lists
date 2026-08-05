@@ -3,6 +3,10 @@ import { AWS_REGION, LOCATION_SERVICE_INDEX_NAME } from "server/config";
 import { logger } from "./logger";
 import getCountryCodeFromCountryName from "./country-codes";
 
+const AWS_FILTER_COUNTRY_CODE_OVERRIDES: Record<string, string> = {
+  NRO: "NRU",
+};
+
 const INDEX_PARAMS = {
   DataSource: "Esri",
   IndexName: `${LOCATION_SERVICE_INDEX_NAME}`,
@@ -65,12 +69,13 @@ export async function geoLocatePlaceByText(region: string, country: string): Pro
   const countryCode = region?.toLowerCase?.().includes("vatican") ? "VAT" : getCountryCodeFromCountryName(country);
 
   if (!countryCode) throw new Error(`A country code for ${country} could not be found.`);
+  const awsCountryCode = AWS_FILTER_COUNTRY_CODE_OVERRIDES[countryCode] ?? countryCode;
 
   const { Results } = await location.searchPlaceIndexForText({
     MaxResults: 1,
     Text: `${region}`,
     IndexName: INDEX_PARAMS.IndexName,
-    FilterCountries: [countryCode],
+    FilterCountries: [awsCountryCode],
   });
 
   if (Results && Results.length > 0) {
