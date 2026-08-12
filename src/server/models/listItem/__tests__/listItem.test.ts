@@ -463,12 +463,28 @@ describe("ListItem Model:", () => {
           postCode,
         });
 
-        // organisationName and countryName are direct template interpolations;
-        // optional fields are embedded inside Prisma.sql fragment objects.
-        // Verify $queryRaw was called and the direct values are present.
+        // Query params are normalised (case-insensitive, trimmed, collapsed whitespace).
         expect(spy).toHaveBeenCalledTimes(1);
         const callArgs = spy.mock.calls[0];
-        expect(callArgs).toEqual(expect.arrayContaining([organisationName, countryName]));
+        expect(callArgs).toEqual(expect.arrayContaining(["xyz corp", "france", "1 rue de rivoli", "apt 2", "paris", "75001"]));
+      });
+
+      test("normalises case, whitespace and nullish optional address values before querying", async () => {
+        const spy = spyQueryRaw(1);
+
+        await checkListItemExists({
+          organisationName: "  Example   Organisation  ",
+          countryName: "  Greece  ",
+          addressFirstLine: "  123   Main Street ",
+          addressSecondLine: "",
+          city: "  Athens ",
+          postCode: undefined,
+        });
+
+        const callArgs = spy.mock.calls[0];
+        expect(callArgs).toEqual(
+          expect.arrayContaining(["example organisation", "greece", "123 main street", "", "athens", ""])
+        );
       });
 
       test("it returns false when list item doesn't exist", async () => {

@@ -43,6 +43,11 @@ applyRouter.get("/application/session/*", (req: Request, _res: Response, next: N
   next();
 });
 
+// Redirect proxied form-runner sitemap links back to the real sitemap route
+applyRouter.get("/application/sitemap", (_req: Request, res: Response) => {
+  res.redirect("/sitemap");
+});
+
 /**
  * checkCountryQuestionAnswer must come last to prevent circular redirect
  */

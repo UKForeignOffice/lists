@@ -188,6 +188,19 @@ describe("Lists Controllers", () => {
         error: "Unable to process form",
       });
     });
+
+    test("it responds with 422 when createListItem rejects a duplicate application", async () => {
+      req.params.serviceType = "lawyers";
+      req.body.questions = webhookPayload.questions;
+      jest.spyOn(listItem, "createListItem").mockRejectedValue(new Error("lawyers record already exists"));
+
+      await ingestPostController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(422);
+      expect(res.send).toHaveBeenCalledWith({
+        error: "Unable to process form",
+      });
+    });
   });
 
   describe("listsConfirmApplicationController", () => {
