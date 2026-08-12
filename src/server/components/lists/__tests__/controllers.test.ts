@@ -192,6 +192,7 @@ describe("Lists Controllers", () => {
     test("it responds with 422 when createListItem rejects a duplicate application", async () => {
       req.params.serviceType = "lawyers";
       req.body.questions = webhookPayload.questions;
+      const spySendApplicationConfirmationEmail = jest.spyOn(notify, "sendApplicationConfirmationEmail");
       jest.spyOn(listItem, "createListItem").mockRejectedValue(new Error("lawyers record already exists"));
 
       await ingestPostController(req, res);
@@ -200,6 +201,7 @@ describe("Lists Controllers", () => {
       expect(res.send).toHaveBeenCalledWith({
         error: "Unable to process form",
       });
+      expect(spySendApplicationConfirmationEmail).not.toHaveBeenCalled();
     });
   });
 

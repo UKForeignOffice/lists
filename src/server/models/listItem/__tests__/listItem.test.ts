@@ -6,6 +6,7 @@ import { ServiceType } from "../../../../shared/types";
 import * as helpers from "./../../helpers";
 import { logger } from "../../../../server/services/logger";
 import { findPublishedLawyersPerCountry } from "../providers/Lawyers";
+import * as providerHelpers from "../providers/helpers";
 import {
   checkListItemExists,
   getListItemContactInformation,
@@ -87,6 +88,28 @@ const lawyerWebhookData = {
   ],
   metadata: {
     type: "lawyers",
+  },
+} as WebhookData;
+
+const translatorWebhookData = {
+  questions: [
+    {
+      question: "Country list",
+      fields: [{ key: "country", answer: "Spain" }],
+    },
+    {
+      question: "Company name and address",
+      fields: [
+        { key: "organisationName", answer: "Casa Lingua" },
+        { key: "address.firstLine", answer: "1 Calle Mayor" },
+        { key: "address.secondLine", answer: "" },
+        { key: "city", answer: "Madrid" },
+        { key: "postCode", answer: "28001" },
+      ],
+    },
+  ],
+  metadata: {
+    type: "translators-interpreters",
   },
 } as WebhookData;
 
@@ -671,6 +694,22 @@ describe("ListItem Model:", () => {
         await expect(listItemCreateInputFromWebhook(lawyerWebhookData)).rejects.toEqual(
           new Error("lawyers record already exists")
         );
+      });
+
+      test("it checks duplicates using country when addressCountry is not provided", async () => {
+        const spyCheckListItemExists = jest.spyOn(providerHelpers, "checkListItemExists").mockResolvedValue(false);
+        jest.spyOn(helpers, "getListIdForCountryAndType").mockResolvedValue(123);
+
+        await listItemCreateInputFromWebhook(translatorWebhookData, true);
+
+        expect(spyCheckListItemExists).toHaveBeenCalledWith({
+          organisationName: "Casa Lingua",
+          countryName: "Spain",
+          addressFirstLine: "1 Calle Mayor",
+          addressSecondLine: "",
+          city: "Madrid",
+          postCode: "28001",
+        });
       });
 
       test("it rejects when listItem create command fails", async () => {
