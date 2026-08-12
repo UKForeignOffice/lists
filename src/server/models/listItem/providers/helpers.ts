@@ -5,7 +5,7 @@ import { geoPointIsValid } from "server/models/helpers";
 import { ROWS_PER_PAGE } from "server/models/listItem/pagination";
 import { prisma } from "server/models/db/prisma-client";
 import { Prisma } from "@prisma/client";
-import { get, startCase } from "lodash";
+import { get } from "lodash";
 import { logger } from "server/services/logger";
 import type { LanguageRow, LanguageRows, UpdatableAddressFields } from "server/models/listItem/providers/types";
 import type { DeserialisedWebhookData, ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
@@ -108,35 +108,37 @@ export async function checkListItemExists({
   addressSecondLine?: string;
   postCode?: string;
 }): Promise<boolean> {
+  const normalizeDuplicateValue = (value?: string | null): string => {
+    return (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  };
+
+  const normalisedOrganisationName = normalizeDuplicateValue(organisationName);
+  const normalisedCountryName = normalizeDuplicateValue(countryName);
+  const normalisedFirstLine = normalizeDuplicateValue(addressFirstLine);
+  const normalisedSecondLine = normalizeDuplicateValue(addressSecondLine);
+  const normalisedCity = normalizeDuplicateValue(city);
+  const normalisedPostCode = normalizeDuplicateValue(postCode);
+  const normalisedLocationName = normalizeDuplicateValue(locationName);
+
   const locationFilter =
     locationName != null
-      ? Prisma.sql`AND lower("ListItem"."jsonData"->>'locationName') = lower(${locationName})`
+      ? Prisma.sql`
+        AND regexp_replace(lower(trim(COALESCE("ListItem"."jsonData"->>'locationName', ''))), '\\s+', ' ', 'g') = ${normalisedLocationName}
+      `
       : Prisma.empty;
-  const firstLineFilter =
-    addressFirstLine != null
-      ? Prisma.sql`AND lower("Address"."firstLine") = lower(${addressFirstLine})`
-      : Prisma.empty;
-  const secondLineFilter =
-    addressSecondLine != null
-      ? Prisma.sql`AND lower("Address"."secondLine") = lower(${addressSecondLine})`
-      : Prisma.empty;
-  const cityFilter =
-    city != null ? Prisma.sql`AND lower("Address"."city") = lower(${city})` : Prisma.empty;
-  const postCodeFilter =
-    postCode != null ? Prisma.sql`AND lower("Address"."postCode") = lower(${postCode})` : Prisma.empty;
 
   const result = await prisma.$queryRaw<[{ count: bigint }]>`
     SELECT COUNT(*)::int AS count
     FROM "ListItem"
     INNER JOIN "Address" ON "ListItem"."addressId" = "Address".id
     INNER JOIN "Country" ON "Address"."countryId" = "Country".id
-    WHERE lower("ListItem"."jsonData"->>'organisationName') = lower(${organisationName})
-    AND lower("Country"."name") = lower(${countryName})
+    WHERE regexp_replace(lower(trim(COALESCE("ListItem"."jsonData"->>'organisationName', ''))), '\\s+', ' ', 'g') = ${normalisedOrganisationName}
+    AND regexp_replace(lower(trim(COALESCE("Country"."name", ''))), '\\s+', ' ', 'g') = ${normalisedCountryName}
+    AND regexp_replace(lower(trim(COALESCE("Address"."firstLine", ''))), '\\s+', ' ', 'g') = ${normalisedFirstLine}
+    AND regexp_replace(lower(trim(COALESCE("Address"."secondLine", ''))), '\\s+', ' ', 'g') = ${normalisedSecondLine}
+    AND regexp_replace(lower(trim(COALESCE("Address"."city", ''))), '\\s+', ' ', 'g') = ${normalisedCity}
+    AND regexp_replace(lower(trim(COALESCE("Address"."postCode", ''))), '\\s+', ' ', 'g') = ${normalisedPostCode}
     ${locationFilter}
-    ${firstLineFilter}
-    ${secondLineFilter}
-    ${cityFilter}
-    ${postCodeFilter}
   `;
 
   return Number(result[0].count) > 0;

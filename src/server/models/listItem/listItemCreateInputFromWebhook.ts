@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { getListIdForCountryAndType } from "server/models/helpers";
 import type { CountryName } from "server/models/types";
 import { logger } from "server/services/logger";
-import { createAddressObject } from "./geoHelpers";
+import { createAddressObject, getCountryFromData } from "./geoHelpers";
 import { baseDeserialiser, DESERIALISER } from "server/models/listItem/providers/deserialisers";
 import type { WebhookData } from "server/components/formRunner";
 import { checkListItemExists } from "server/models/listItem/providers/helpers";
@@ -23,11 +23,12 @@ export async function listItemCreateInputFromWebhook(
   skipAddressCreation: boolean = false
 ): Promise<Prisma.ListItemCreateInput> {
   const deserialised = deserialise(webhook);
-  const { type, country } = deserialised;
+  const { type } = deserialised;
+  const countryName = getCountryFromData(deserialised);
 
   const exists = await checkListItemExists({
     organisationName: deserialised.organisationName,
-    countryName: deserialised.addressCountry!,
+    countryName,
     addressFirstLine: deserialised["address.firstLine"],
     addressSecondLine: deserialised["address.secondLine"],
     city: deserialised.city,
@@ -35,13 +36,19 @@ export async function listItemCreateInputFromWebhook(
   });
 
   if (exists) {
+    logger.warn(
+      `listItemCreateInputFromWebhook: prevented duplicate ${type} application for "${deserialised.organisationName}" in ${countryName}`
+    );
     throw new Error(`${type} record already exists`);
   }
 
-  const listId = await getListIdForCountryAndType(country as CountryName, type);
+  const listId = await getListIdForCountryAndType(countryName as CountryName, type);
 
   if (!listId) {
-    logger.error(`listItemCreateInputFromWebhook: ${type}  list for ${country} could not be found`, "createListItem");
+    logger.error(
+      `listItemCreateInputFromWebhook: ${type}  list for ${countryName} could not be found`,
+      "createListItem"
+    );
   }
 
   let address = {};
