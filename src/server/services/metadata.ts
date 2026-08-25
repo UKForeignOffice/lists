@@ -258,7 +258,7 @@ export const countriesList = [
   { text: "South Sudan", value: "South Sudan", code: "SSD" },
   { text: "Spain", value: "Spain", code: "ESP" },
   { text: "Sri Lanka", value: "Sri Lanka", code: "LKA" },
-  { text: "St Maarten", value: "St Maarten", code: "SXM" },
+  { text: "Sint Maarten", value: "Sint Maarten", code: "SXM" },
   { text: "St Martin", value: "St Martin", code: "MAF" },
   {
     text: "St Pierre and Miquelon",
