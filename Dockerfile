@@ -39,6 +39,13 @@ COPY --chown=node package.json ./
 COPY --chown=node --from=build /usr/src/app/dist dist
 COPY --chown=node --from=build /usr/src/app/node_modules node_modules
 COPY --chown=node src/server/models/db/ src/server/models/db/
+RUN find /usr/dist/app -type f \( \
+  -name "package-lock.json" -o \
+  -name "Gemfile.lock" -o \
+  -name "npm-shrinkwrap.json" -o \
+  -name "yarn.lock" -o \
+  -name "pnpm-lock.yaml" \
+\) -delete
 
 
 ARG NODE_ENV
@@ -63,3 +70,10 @@ WORKDIR /usr/dist/scheduler
 COPY --chown=node --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
 COPY --chown=node --from=build /usr/src/app/node_modules node_modules
 COPY --chown=node docker/scheduler/package.json ./package.json
+RUN find /usr/dist/scheduler -type f \( \
+  -name "package-lock.json" -o \
+  -name "Gemfile.lock" -o \
+  -name "npm-shrinkwrap.json" -o \
+  -name "yarn.lock" -o \
+  -name "pnpm-lock.yaml" \
+\) -delete
