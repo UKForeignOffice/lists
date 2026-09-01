@@ -22,6 +22,11 @@ COPY ./src ./src/
 ARG BUILD_MODE=${BUILD_MODE}
 RUN npm run build:${BUILD_MODE}
 
+FROM base AS prod-dependencies
+WORKDIR /usr/src/app
+COPY --chown=node package.json package-lock.json ./
+RUN npm ci --omit=dev
+
 FROM base AS prod
 # as root, remove all unnecessary binaries for production
 # use this stage as the "base" for production images
@@ -37,7 +42,8 @@ WORKDIR /usr/dist/app
 # copy neccesary files only
 COPY --chown=node package.json ./
 COPY --chown=node --from=build /usr/src/app/dist dist
-COPY --chown=node --from=build /usr/src/app/node_modules node_modules
+COPY --chown=node --from=prod-dependencies /usr/src/app/node_modules node_modules
+COPY --chown=node --from=build /usr/src/app/node_modules/.prisma node_modules/.prisma
 COPY --chown=node src/server/models/db/ src/server/models/db/
 RUN find /usr/dist/app -type f \( \
   -name "package-lock.json" -o \
@@ -68,7 +74,8 @@ FROM prod AS scheduled
 USER node
 WORKDIR /usr/dist/scheduler
 COPY --chown=node --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
-COPY --chown=node --from=build /usr/src/app/node_modules node_modules
+COPY --chown=node --from=prod-dependencies /usr/src/app/node_modules node_modules
+COPY --chown=node --from=build /usr/src/app/node_modules/.prisma node_modules/.prisma
 COPY --chown=node docker/scheduler/package.json ./package.json
 RUN find /usr/dist/scheduler -type f \( \
   -name "package-lock.json" -o \
