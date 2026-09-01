@@ -84,7 +84,7 @@
     "@babel/register": "^7.28.6",
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",
-    "@ngneat/falso": "^5.0.0",
+    "@ngneat/falso": "^8.0.2",
     "@testing-library/cypress": "^10.1.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/body-parser": "^1.19.6",
