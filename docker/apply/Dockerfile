@@ -8,14 +8,12 @@ COPY --chown=appuser:appuser forms-json runner/dist/server/forms
 COPY --chown=appuser:appuser views/ runner/dist/server/views/
 COPY --chown=appuser:appuser config/ runner/config
 COPY --chown=appuser:appuser docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
-USER root
 RUN find /usr/src/app -type f \( \
   -name "package-lock.json" -o \
   -name "Gemfile.lock" -o \
   -name "npm-shrinkwrap.json" -o \
   -name "pnpm-lock.yaml" \
 \) -delete
-USER appuser
 EXPOSE 3001
 ENV PORT=3001
 ENV SERVICE_URL="apply:${PORT}"
