@@ -9,8 +9,10 @@ describe("getCountryCodeFromCountryName()", () => {
       "CONGO",
       "Congo, Democratic Republic",
       "Brunei",
+      "The Bahamas",
+      "Naoero",
     ];
-    const expectedCountryCodes = ["ITA", "CHN", "COG", "COD", "BRN"];
+    const expectedCountryCodes = ["ITA", "CHN", "COG", "COD", "BRN", "BHS", "NRU"];
 
     // then
     const returnedCountryCodes = testCountryNames.map((country) =>

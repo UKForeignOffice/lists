@@ -138,7 +138,7 @@ describe("Location service:", () => {
       expect(result).toEqual([0.0, 0.0]);
     });
 
-    test("maps NRO to NRU for AWS filter countries", async () => {
+    test("uses the direct NRU code for Naoero", async () => {
       const mockLocationClient = getAWSLocationService();
       (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
         Results: [],

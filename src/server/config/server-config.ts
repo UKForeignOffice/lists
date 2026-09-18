@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 // Server config
 export const PORT = process.env.PORT ?? 3000;
 export const DEBUG = process.env.DEBUG === "true";

@@ -608,8 +608,8 @@
           "value": "Azerbaijan"
         },
         {
-          "text": "Bahamas",
-          "value": "Bahamas"
+          "text": "The Bahamas",
+          "value": "The Bahamas"
         },
         {
           "text": "Bahrain",
@@ -653,7 +653,7 @@
         },
         {
           "text": "Bonaire, Sint Eustatius and Saba",
-          "value": "Bonaire,  Sint Eustatius and Saba"
+          "value": "Bonaire, Sint Eustatius and Saba"
         },
         {
           "text": "Bosnia and Herzegovina",
@@ -1280,6 +1280,10 @@
           "value": "Singapore"
         },
         {
+          "text": "Sint Maarten",
+          "value": "Sint Maarten"
+        },
+        {
           "text": "Slovakia",
           "value": "Slovakia"
         },
@@ -1322,10 +1326,6 @@
         {
           "text": "Sri Lanka",
           "value": "Sri Lanka"
-        },
-        {
-          "text": "Sint Maarten",
-          "value": "Sint Maarten"
         },
         {
           "text": "St Martin",
@@ -1648,7 +1648,7 @@
       "title": "Post to lists",
       "type": "webhook",
       "outputConfiguration": {
-        "url": "http://lists:3000/ingest/funeralDirectors"
+        "url": "http://host.docker.internal:3000/ingest/funeralDirectors"
       }
     }
   ],
