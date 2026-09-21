@@ -153,6 +153,22 @@ describe("Location service:", () => {
         FilterCountries: ["NRU"],
       });
     });
+
+    test("uses the BES code for Bonaire, Sint Eustatius and Saba", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [],
+      });
+
+      await geoLocatePlaceByText("Kralendijk", "Bonaire, Sint Eustatius and Saba");
+
+      expect(mockLocationClient.searchPlaceIndexForText).toHaveBeenCalledWith({
+        MaxResults: 1,
+        Text: "Kralendijk",
+        IndexName: LOCATION_SERVICE_INDEX_NAME,
+        FilterCountries: ["BES"],
+      });
+    });
   });
 
 });
