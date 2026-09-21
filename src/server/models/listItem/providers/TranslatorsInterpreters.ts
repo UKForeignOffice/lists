@@ -1,7 +1,6 @@
 import type { TranslatorInterpreterListItemGetObject } from "server/models/types";
 import { ServiceType } from "shared/types";
 import { getPlaceGeoPoint } from "./../geoHelpers";
-import { startCase, toLower } from "lodash";
 import { logger } from "server/services/logger";
 import { prisma } from "server/models/db/prisma-client";
 import { fetchPublishedListItemQuery } from "server/models/listItem/providers/helpers";
@@ -34,10 +33,7 @@ export async function findPublishedTranslatorsInterpretersPerCountry(
     offset = 0,
   } = props;
 
-  const countryName = props.countryName
-    .split("-") // Split the string by hyphen
-    .map((part) => startCase(toLower(part))) // Apply startCase to each part
-    .join("-"); // Join them back with a hyphen
+  const countryName = props.countryName;
 
   const andWhere: string[] = [];
 
