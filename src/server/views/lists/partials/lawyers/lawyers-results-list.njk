@@ -3,20 +3,14 @@
 
 {% set regionIsSet = answers.region and answers.region !== "Not set" %}
 
+{% include "lists/partials/lawyers/legal-cover-warning.njk" %}
+
 {% if searchResults.length === 0 %}
   <p class="govuk-body">We couldn’t find any results that match your search terms. Try changing these to search again.</p>
 {% else %}
 
   <p class="govuk-body">Where lawyers work within the <a class="govuk-link" href="https://www.gov.uk/legal-aid/legal-problems-abroad" rel="noopener noreferrer" target="_blank">Legal aid</a>
     system or may work 'pro bono' (provide services free of charge depending on circumstances), this has been highlighted.</p>
-
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      You should do your own research before deciding which provider to use.
-    </strong>
-  </div>
 
   <p class="govuk-body noprint">
     Links to lawyer websites will open in a new tab. You can give

@@ -30,14 +30,7 @@
   <p class="govuk-body">
     If you need a notary (a type of lawyer qualified to confirm that legal documents are authentic), you should use <a class="govuk-link" href="https://www.gov.uk/guidance/find-a-notary-abroad" target="_blank">Find a notary abroad</a>.
   </p>
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      You should do your own research before deciding which provider to use. You may also want to check if any insurance
-      policies you have include legal cover before you contact a lawyer independently.
-    </strong>
-  </div>
+  {% include "lists/partials/lawyers/legal-cover-warning.njk" %}
   {% if country %}
     <a href="{{ findServiceType }}/{{ country }}/region" class="govuk-button">Start</a>
   {% else %}
@@ -56,4 +49,3 @@
     You can <a class="govuk-link" href="/application/lawyers">apply to be added to this service</a> if you are based outside the UK, are qualified to practise law and can provide a service to British nationals in English.
   </p>
 {% endblock %}
-
