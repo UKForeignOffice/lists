@@ -251,7 +251,7 @@ describe("Lawyers List:", () => {
       });
     }
 
-    test.each(["Spain", "Italy"])("shows the approved warning before lawyers in %s", async (country) => {
+    test.each(["Spain", "Italy"])("shows the warning between legal aid and feedback text in %s", async (country) => {
       const text = renderResults(country, [
         {
           jsonData: { organisationName: "Example Law Firm", websiteAddress: "https://example.com" },
@@ -262,15 +262,24 @@ describe("Lawyers List:", () => {
       const $html = $.load(text);
       const $main = $html("main .govuk-grid-column-two-thirds");
       const warning = $main.find(".govuk-warning-text");
+      const legalAidText = $main.children("p").filter((_, element) =>
+        $html(element).text().includes("Where lawyers work within the")
+      );
+      const feedbackText = $main.children("p").filter((_, element) =>
+        $html(element).text().includes("Links to lawyer websites will open in a new tab")
+      );
       const firstLawyer = $main.find("ul.govuk-list li h2 a[href='https://example.com']");
+      const elements = $main.children().toArray();
 
       expect(warning).toHaveLength(1);
       expect(warning.find(".govuk-warning-text__text").text().replace(/\s+/g, " ").trim()).toBe(warningText);
       expect(warning.find(".govuk-warning-text__assistive").text()).toBe("Warning");
+      expect(legalAidText).toHaveLength(1);
+      expect(feedbackText).toHaveLength(1);
+      expect(elements.indexOf(warning[0])).toBe(elements.indexOf(legalAidText[0]) + 1);
+      expect(elements.indexOf(feedbackText[0])).toBe(elements.indexOf(warning[0]) + 1);
       expect(firstLawyer).toHaveLength(1);
-      expect($main.children().toArray().indexOf(warning[0])).toBeLessThan(
-        $main.children().toArray().indexOf(firstLawyer.closest("ul")[0])
-      );
+      expect(elements.indexOf(warning[0])).toBeLessThan(elements.indexOf(firstLawyer.closest("ul")[0]));
       expect(await axe(`<main>${warning.toString()}</main>`)).toHaveNoViolations();
     });
 
