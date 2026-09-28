@@ -6,6 +6,7 @@ import * as $ from "cheerio";
 import { Express } from "express";
 import request from "supertest";
 import { axe } from "jest-axe";
+import nunjucks from "nunjucks";
 import { getServer } from "../server";
 import * as helpers from "server/models/listItem/providers/helpers";
 import * as lawyers from "../models/listItem/providers/Lawyers";
@@ -227,6 +228,76 @@ describe("Lawyers List:", () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
       expect(await axe(text)).toHaveNoViolations();
+    });
+  });
+
+  describe("lawyer search results", () => {
+    const warningText =
+      "Warning You should do your own research before deciding which provider to use. You may also want to check if any insurance policies you have include legal cover before you contact a lawyer independently.";
+
+    function renderResults(country: string, searchResults: object[]) {
+      return nunjucks.render("lists/find/lawyers/results.njk", {
+        serviceType: "lawyers",
+        country,
+        answers: {},
+        searchResults,
+        relatedLinks: [],
+        pagination: {
+          results: { count: searchResults.length, from: 1, to: searchResults.length, currentPage: 1 },
+          previous: { href: "" },
+          next: { href: "" },
+          items: [{ text: "1" }],
+        },
+      });
+    }
+
+    test.each(["Spain", "Italy"])("shows the warning between legal aid and feedback text in %s", async (country) => {
+      const text = renderResults(country, [
+        {
+          jsonData: { organisationName: "Example Law Firm", websiteAddress: "https://example.com" },
+          address: { firstLine: "Example Street" },
+        },
+      ]);
+
+      const $html = $.load(text);
+      const $main = $html("main .govuk-grid-column-two-thirds");
+      const warning = $main.find(".govuk-warning-text");
+      const legalAidText = $main.children("p").filter((_, element) =>
+        $html(element).text().includes("Where lawyers work within the")
+      );
+      const feedbackText = $main.children("p").filter((_, element) =>
+        $html(element).text().includes("Links to lawyer websites will open in a new tab")
+      );
+      const firstLawyer = $main.find("ul.govuk-list li h2 a[href='https://example.com']");
+      const elements = $main.children().toArray();
+
+      expect(warning).toHaveLength(1);
+      expect(warning.find(".govuk-warning-text__text").text().replace(/\s+/g, " ").trim()).toBe(warningText);
+      expect(warning.find(".govuk-warning-text__assistive").text()).toBe("Warning");
+      expect(legalAidText).toHaveLength(1);
+      expect(feedbackText).toHaveLength(1);
+      expect(elements.indexOf(warning[0])).toBe(elements.indexOf(legalAidText[0]) + 1);
+      expect(elements.indexOf(feedbackText[0])).toBe(elements.indexOf(warning[0]) + 1);
+      expect(firstLawyer).toHaveLength(1);
+      expect(elements.indexOf(warning[0])).toBeLessThan(elements.indexOf(firstLawyer.closest("ul")[0]));
+      expect(await axe(`<main>${warning.toString()}</main>`)).toHaveNoViolations();
+    });
+
+    test("shows the warning even if no lawyers match", async () => {
+      const text = renderResults("Spain", []);
+      const $html = $.load(text);
+
+      expect($html("main .govuk-warning-text__text").text().replace(/\s+/g, " ").trim()).toBe(warningText);
+      expect($html("main").text()).toContain("We couldn’t find any results");
+    });
+
+    test("uses the same warning on lawyer landing and country pages", async () => {
+      for (const url of ["/find/lawyers", "/find/lawyers?country=Spain"]) {
+        const { text } = await request(server).get(url);
+        const $html = $.load(text);
+
+        expect($html("main .govuk-warning-text__text").text().replace(/\s+/g, " ").trim()).toBe(warningText);
+      }
     });
   });
 });
