@@ -32,10 +32,11 @@ FROM base AS prod
 # use this stage as the "base" for production images
 WORKDIR /usr/bin
 USER root
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 RUN rm vi tee ldd iconv strings traceroute traceroute6 wc wget unzip less scanelf
 
 # docker build --target main -t main --build-arg BUILD_MODE=ci .
-FROM prod as main
+FROM prod AS main
 USER node
 WORKDIR /usr/dist/app
 
@@ -43,8 +44,11 @@ WORKDIR /usr/dist/app
 COPY --chown=node package.json ./
 COPY --chown=node --from=build /usr/src/app/dist dist
 COPY --chown=node --from=prod-dependencies /usr/src/app/node_modules node_modules
+COPY --chown=node --from=build /usr/src/app/node_modules/@prisma node_modules/@prisma
+COPY --chown=node --from=build /usr/src/app/node_modules/prisma node_modules/prisma
 COPY --chown=node --from=build /usr/src/app/node_modules/.prisma node_modules/.prisma
 COPY --chown=node src/server/models/db/ src/server/models/db/
+COPY --chown=node docker/entrypoint.sh ./docker-entrypoint.sh
 RUN find /usr/dist/app -type f \( \
   -name "package-lock.json" -o \
   -name "Gemfile.lock" -o \
@@ -67,7 +71,7 @@ ENV FORM_RUNNER_URL=""
 ENV DEBUG=true
 ENV CI_SMOKE_TEST=true
 
-CMD ["npm", "run", "start:prod"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 # docker build --target scheduled -t scheduled --build-arg BUILD_MODE=ci .
 FROM prod AS scheduled
