@@ -47,7 +47,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.6",
     "csurf": "^1.11.0",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.4.0",
     "dateformat": "^5.0.3",
     "dotenv": "^17.4.2",
     "express": "^4.16.3",
