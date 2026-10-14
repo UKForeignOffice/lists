@@ -272,7 +272,7 @@ test("responds with 422 for schema validation error", async () => {
   // @ts-expect-error
   await ingestPutController(schemaErrorReq, response);
   const schemaError = spiedSend.mock.calls[0][0];
-  expect(spiedStatus).toBeCalledWith(422);
+  expect(spiedStatus).toHaveBeenCalledWith(422);
   expect(schemaError.error).toBe("request could not be processed - post data could not be parsed");
 });
 
@@ -288,7 +288,7 @@ test("responds with 422 for update error", async () => {
   // @ts-expect-error
   await ingestPutController(schemaErrorReq, response);
 
-  expect(spiedStatus).toBeCalledWith(422);
+  expect(spiedStatus).toHaveBeenCalledWith(422);
 });
 
 test("responds with 204 when update is successful", async () => {
@@ -304,7 +304,7 @@ test("responds with 204 when update is successful", async () => {
   const spiedRes = jest.spyOn(response, "status");
   // @ts-expect-error
   await ingestPutController(req, response);
-  expect(spiedRes).toBeCalledWith(204);
+  expect(spiedRes).toHaveBeenCalledWith(204);
 });
 
 test.todo("failed update is inserted into queue");

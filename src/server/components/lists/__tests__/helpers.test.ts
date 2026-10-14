@@ -181,7 +181,7 @@ describe("Lawyers List:", () => {
         type: undefined,
       };
 
-      expect(() => createListSearchBaseLink(listItem.type)).toThrowError(
+      expect(() => createListSearchBaseLink(listItem.type)).toThrow(
         "createListSearchBaseLink serviceType is undefined"
       );
     });

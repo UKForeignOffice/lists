@@ -15,7 +15,7 @@ COPY --chown=node package-lock.json package-lock-cache.json
 
 FROM dependencies AS build
 WORKDIR /usr/src/app
-COPY --chown=node tsconfig.json babel.config.js webpack.config.js .eslintrc.js ./
+COPY --chown=node tsconfig.json babel.config.js webpack.config.js eslint.config.cjs ./
 COPY --chown=node docker/apply/forms-json ./docker/apply/forms-json
 COPY --from=dependencies /usr/src/app/node_modules node_modules
 COPY ./src ./src/

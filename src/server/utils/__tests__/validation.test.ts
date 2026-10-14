@@ -58,10 +58,10 @@ describe("countryNameIsValid", () => {
 
 describe("throwIfConfigVarIsUndefined", () => {
   test("it throws when config variable is undefined", () => {
-    expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrowError("");
+    expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrow("");
   });
 
   test("it does not throw when environment variable is present", () => {
-    expect(() => throwIfConfigVarIsUndefined("DATABASE_URL")).not.toThrowError();
+    expect(() => throwIfConfigVarIsUndefined("DATABASE_URL")).not.toThrow();
   });
 });

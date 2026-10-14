@@ -8,18 +8,12 @@ test("throws when the requested id does not exist", async () => {
   // @ts-expect-error
   prisma.listItem.findFirst.mockRejectedValue(Error("mocked error"));
 
-  await expect(listItem.update(40404, 1, webhookData.lawyer)).rejects.toThrow(
-    "list item 40404 not found"
-  );
-  await expect(
-    listItem.update(40404, 1, webhookData.covidTestProvider)
-  ).rejects.toThrow("list item 40404 not found");
+  await expect(listItem.update(40404, 1, webhookData.lawyer)).rejects.toThrow("list item 40404 not found");
+  await expect(listItem.update(40404, 1, webhookData.covidTestProvider)).rejects.toThrow("list item 40404 not found");
 });
 
 test.skip("update throws when geoLocatePlaceByText fails", async () => {
-  jest
-    .spyOn(location, "geoLocatePlaceByText")
-    .mockRejectedValue(Error("nope!"));
+  jest.spyOn(location, "geoLocatePlaceByText").mockRejectedValue(Error("nope!"));
 
   // @ts-expect-error
   prisma.listItem.findFirst.mockResolvedValue({
@@ -31,9 +25,7 @@ test.skip("update throws when geoLocatePlaceByText fails", async () => {
     },
   });
 
-  await expect(listItem.update(1, 1, webhookData.lawyer)).rejects.toThrowError(
-    "GeoLocation update failed"
-  );
+  await expect(listItem.update(1, 1, webhookData.lawyer)).rejects.toThrow("GeoLocation update failed");
 });
 
 test.skip("address and geolocation tables are not queried when there are no address changes", async () => {
@@ -52,9 +44,9 @@ test.skip("address and geolocation tables are not queried when there are no addr
   jest.spyOn(prisma.listItem, "update").mockResolvedValue({});
 
   await listItem.update(1, 1, webhookData.lawyer);
-  expect(prisma.listItem.update).toBeCalled();
-  expect(prisma.address.update).not.toBeCalled();
-  expect(prisma.$queryRaw).not.toBeCalled();
+  expect(prisma.listItem.update).toHaveBeenCalled();
+  expect(prisma.address.update).not.toHaveBeenCalled();
+  expect(prisma.$queryRaw).not.toHaveBeenCalled();
 });
 
 test.skip("address and geolocation is updated when there are address changes", async () => {
@@ -88,7 +80,7 @@ test.skip("address and geolocation is updated when there are address changes", a
       jsonData: updatedData,
     },
   });
-  expect(prisma.address.update).toBeCalledWith({
+  expect(prisma.address.update).toHaveBeenCalledWith({
     where: {
       id: 101,
     },
@@ -97,7 +89,7 @@ test.skip("address and geolocation is updated when there are address changes", a
       postCode: "SW1A 2AH",
     },
   });
-  expect(prisma.$queryRaw).toBeCalled();
+  expect(prisma.$queryRaw).toHaveBeenCalled();
 });
 
 test.skip("throws when any query in transaction fails", async () => {
