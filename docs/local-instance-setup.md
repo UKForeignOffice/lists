@@ -39,6 +39,8 @@ Use this when you want everything containerised and do not need local hot-reload
 docker compose up --build postgres redis apply lists
 ```
 
+In this mode, `lists` uses the Docker service name `lists` for form-runner callbacks, and the local form runner allows that host. Leave `ENVIRONMENT` unset locally; setting it rewrites form-runner hosts to deployment-only `.internal` addresses.
+
 ## Configure form webhooks for local ingest
 
 When `lists` runs locally (hybrid mode), update the form webhook output URL:
@@ -61,7 +63,7 @@ If you can sign in but cannot access admin-only pages, your user likely does not
 Expected roles JSON:
 
 ```json
-{"roles": ["Administrator"]}
+{ "roles": ["Administrator"] }
 ```
 
 ### Promote a user to Administrator (PostgreSQL)
@@ -87,4 +89,3 @@ where email = 'your@email';
 - If apply submissions do not appear in `lists`, re-check webhook target host.
 - If geolocation calls fail locally, verify AWS auth is active in the terminal running `npm run dev`.
 - If login/session behavior is unexpected, confirm Redis and Postgres are healthy in Docker.
-

@@ -1,4 +1,4 @@
-import { subDays } from "date-fns";
+import { utcDateByDays } from "./utcDateByDays";
 
 Given("the current time is within the {string} key date range", function (keyDate) {
   cy.task("db", {
@@ -32,16 +32,10 @@ Given("the current time is within the {string} key date range", function (keyDat
     };
 
     const now = new Date();
-    currentAnnualReview.keyDates.annualReview[keyDate] = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0
-    ).toISOString();
+    currentAnnualReview.keyDates.annualReview[keyDate] = utcDateByDays(now, 0).toISOString();
     keyDates[keyDate].previousKeyDates.forEach((previousKeyDate) => {
-      const newKeyDate = subDays(new Date(), keyDates[previousKeyDate].daysBeforeAnnualReview).toISOString();
+      const daysBeforeAnnualReview = keyDates[previousKeyDate].daysBeforeAnnualReview;
+      const newKeyDate = utcDateByDays(now, -daysBeforeAnnualReview).toISOString();
       currentAnnualReview.keyDates.annualReview[previousKeyDate] = newKeyDate;
     });
     jsonData.currentAnnualReview = currentAnnualReview;

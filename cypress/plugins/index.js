@@ -13,6 +13,7 @@
 // the project's config changing)
 
 const { PrismaClient } = require("@prisma/client");
+const browserify = require("@cypress/browserify-preprocessor");
 const db = new PrismaClient();
 const cucumber = require("cypress-cucumber-preprocessor").default;
 /**
@@ -21,7 +22,29 @@ const cucumber = require("cypress-cucumber-preprocessor").default;
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  on("file:preprocessor", cucumber());
+  on(
+    "file:preprocessor",
+    cucumber({
+      ...browserify.defaultOptions,
+      browserifyOptions: {
+        ...browserify.defaultOptions.browserifyOptions,
+        transform: [
+          ...browserify.defaultOptions.browserifyOptions.transform,
+          // Browserify's local transform skips modern syntax in these dependencies.
+          [
+            require.resolve("babelify"),
+            {
+              global: true,
+              babelrc: false,
+              configFile: false,
+              presets: [require.resolve("@babel/preset-env")],
+              only: [/node_modules\/(?:@testing-library\/dom|nanoid)\//],
+            },
+          ],
+        ],
+      },
+    })
+  );
 
   /**
    * To aide debugging, you can output the page HTML using the following technique:
@@ -39,6 +62,7 @@ module.exports = (on, config) => {
       return result;
     },
     log: (message) => {
+      // eslint-disable-next-line no-console
       console.log(message);
       return null;
     },
