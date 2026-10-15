@@ -1,4 +1,4 @@
-Feature:
+Feature: Search for lawyers
 
   I want to search for lawyers
 
@@ -14,4 +14,3 @@ Feature:
   Scenario: searching for a country with an empty lawyers list
     Given I am searching for "lawyers" in "Belize" in ""
     Then the country search redirects to "https://www.gov.uk/government/publications/belize-list-of-lawyers"
-

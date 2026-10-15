@@ -15,7 +15,7 @@ Feature: Eligible list items are calculated correctly
   Background:
     Given A "lawyers" list exists for Eurasia
 
-  Scenario:
+  Scenario: Include only eligible providers in annual review
     When eurasia lawyers are due to begin annual review
     And the batch process has run
     Then eligible list items are correct

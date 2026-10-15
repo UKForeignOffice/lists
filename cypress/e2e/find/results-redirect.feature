@@ -1,4 +1,4 @@
-Feature:
+Feature: Redirect legacy results URLs
 
   Redirect from old /results page to /find/{serviceType}/result
 
@@ -42,6 +42,5 @@ Feature:
     And the answer for "Location" is "Not set"
     And the answer for "Repatriation needed" is "Yes"
     And the answer for "Has insurance" is "Yes"
-
 
 

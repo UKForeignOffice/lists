@@ -1,4 +1,4 @@
-Feature:
+Feature: Search for funeral directors
 
   I want to search for funeral directors
 
@@ -18,4 +18,3 @@ Feature:
     And I enter "Lake como" for "Where in Italy do you want to find a funeral director? (Optional)"
     And I continue
     And I have read the disclaimer
-

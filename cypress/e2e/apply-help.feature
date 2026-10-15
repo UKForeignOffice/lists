@@ -1,9 +1,9 @@
-Feature:
+Feature: Application help and policy pages
   I want to see Privacy, Cookie, Accessibility and T&Cs
 
   Background:
 
-  Scenario Outline:
+  Scenario Outline: Open application privacy, cookies, terms and accessibility pages
     Given I am applying
     When I click the link "<link>"
     Then I see "<found>"

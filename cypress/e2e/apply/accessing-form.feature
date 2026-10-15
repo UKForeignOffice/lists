@@ -1,4 +1,4 @@
-Feature:
+Feature: Access application forms from find pages
   As a provider, I want to be able to access the sign up form
 
   Scenario Outline: I can reach the apply form via the find route

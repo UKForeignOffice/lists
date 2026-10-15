@@ -1,4 +1,4 @@
-Feature:
+Feature: Sort list items by last updated date
     Dashboard sorting
 
     Background:

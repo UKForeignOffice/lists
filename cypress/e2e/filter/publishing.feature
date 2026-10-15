@@ -1,4 +1,4 @@
-Feature:
+Feature: Filter list items by publishing status
   Dashboard filtering
 
   Background:

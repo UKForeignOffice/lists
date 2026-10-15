@@ -1,4 +1,4 @@
-Feature:
+Feature: Pin and unpin applications
   Dashboard pinning
 
   Background:

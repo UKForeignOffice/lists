@@ -1,4 +1,4 @@
-Feature:
+Feature: Redirect legacy find URLs to start pages
 
   Redirect from old /find?serviceType={serviceType} to /find/{serviceType}
 
@@ -14,4 +14,3 @@ Feature:
       | translatorsInterpreters | &country=Italy | Find a translator or interpreter in Italy |
       | funeralDirectors        |                | Find a funeral director abroad            |
       | funeralDirectors        | &country=Italy | Find a funeral director in Italy          |
-
