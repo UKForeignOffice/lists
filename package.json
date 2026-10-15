@@ -34,13 +34,13 @@
     "cypress:open": "CI_SMOKE_TEST=true CYPRESS_BASE_URL=http://localhost:3000 npx cypress open"
   },
   "dependencies": {
-    "@aws-sdk/client-location": "^3.1101.0",
-    "@aws-sdk/client-secrets-manager": "^3.1101.0",
+    "@aws-sdk/client-location": "^3.1152.0",
+    "@aws-sdk/client-secrets-manager": "^3.1152.0",
     "@babel/runtime": "^8.0.7",
     "@googleapis/sheets": "^4.0.2",
     "@prisma/client": "^5.22.0",
     "accessible-autocomplete": "^2.0.3",
-    "axios": "1.19.0",
+    "axios": "1.20.0",
     "body-parser": "^1.20.6",
     "compression": "^1.7.4",
     "connect-redis": "^6.0.0",
@@ -60,7 +60,7 @@
     "helmet": "^8.3.0",
     "ioredis": "^4.31.0",
     "joi": "^17.13.3",
-    "json-2-csv": "^5.5.11",
+    "json-2-csv": "^5.6.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.7.0",
     "notifications-node-client": "^7.0.0",
@@ -68,7 +68,7 @@
     "nunjucks-date": "^1.5.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.0",
-    "pg": "^8.22.0",
+    "pg": "^8.23.1",
     "pg-escape": "^0.2.0",
     "pluralize": "^8.0.0",
     "url-parse": "^1.5.10",
@@ -190,7 +190,7 @@
     "tmp": "^0.2.4",
     "lodash": "^4.17.21",
     "npm": "^11.19.1",
-    "axios": "1.19.0",
+    "axios": "1.20.0",
     "googleapis-common": {
       "uuid": "^11.1.1"
     },
