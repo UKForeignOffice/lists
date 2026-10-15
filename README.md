@@ -43,7 +43,7 @@ docker compose up postgres redis apply
 
 1. Download the environment variables from [keybase://team/cautionyourblast.fcdo/config/dev/lists/.env](keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/.env) into the root of this project
 1. If you need to test form submissions locally, you will need to authenticate your shell with AWS
-1. Set your node version to 24
+1. Set your Node version to 24.11 or newer
 1. Install dependencies `npm install`
 1. Run the prisma migrations `npm run prisma:deploy`
 1. Start the application `npm run dev`
