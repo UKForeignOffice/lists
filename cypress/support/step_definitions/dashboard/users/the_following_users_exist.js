@@ -1,5 +1,7 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("the following users exist", (table) => {
+Given("the following users exist", (table) => {
   const rows = table.hashes();
 
   rows.forEach((row) => {

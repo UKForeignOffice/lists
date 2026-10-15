@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("I filter by", (dataTable) => {
   const rows = `${dataTable.raw()}`.split(",");
 

@@ -1,5 +1,11 @@
-Given("a list exists with users", async () => {
-  const emails = [{ email: 'simulate-delivered@notifications.service.gov.uk' }, { email: 'simulate-delivered+1@notifications.service.gov.uk' }, { email: 'simulate-delivered+2@notifications.service.gov.uk' }];
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
+Given("a list exists with users", () => {
+  const emails = [
+    { email: "simulate-delivered@notifications.service.gov.uk" },
+    { email: "simulate-delivered+1@notifications.service.gov.uk" },
+    { email: "simulate-delivered+2@notifications.service.gov.uk" },
+  ];
 
   cy.task("db", {
     operation: "list.findUnique",
@@ -22,8 +28,8 @@ Given("a list exists with users", async () => {
             },
           },
           users: {
-            connect: emails
-          }
+            connect: emails,
+          },
         },
         update: {
           type: "lawyers",
@@ -31,8 +37,8 @@ Given("a list exists with users", async () => {
             deleteMany: {},
           },
           users: {
-            connect: emails
-          }
+            connect: emails,
+          },
         },
         where: {
           reference: "SMOKE",

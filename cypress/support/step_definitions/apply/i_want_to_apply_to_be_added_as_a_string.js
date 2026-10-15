@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 const base = "http://localhost:3001/";
 const urls = {
   lawyers: `${base}lawyers`,

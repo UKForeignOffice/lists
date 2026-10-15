@@ -1,4 +1,6 @@
-Then("an email for the {string} key date is sent to eligible providers", async function () {
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
+Then("an email for the {string} key date is sent to eligible providers", function () {
   let list;
   cy.task("db", {
     operation: "list.findFirst",

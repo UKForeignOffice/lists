@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("I visit the lawyers list for Eurasia", () => {
   cy.task("db", {
     operation: "list.findFirst",

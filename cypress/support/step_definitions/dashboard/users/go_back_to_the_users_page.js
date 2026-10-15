@@ -1,4 +1,6 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("go back to the users page", () => {
+Given("go back to the users page", () => {
   cy.visit("/dashboard/users");
 });

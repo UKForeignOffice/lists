@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 import { utcDateByDays } from "./utcDateByDays";
 
 Given("the current time is within the {string} key date range", function (keyDate) {

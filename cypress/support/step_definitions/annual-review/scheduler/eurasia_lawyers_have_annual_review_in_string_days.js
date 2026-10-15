@@ -1,15 +1,16 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
-When("eurasia lawyers have annual review in {string} days", async (days = "0") => {
+When("eurasia lawyers have annual review in {string} days", (days = "0") => {
   const today = new Date();
-  await updateListForAnnualReview(days, today);
 
-  ["user1", "user2"].forEach(async (reference) => {
-    await createListItem(reference, today);
-  });
+  return updateListForAnnualReview(days, today)
+    .then(() => createListItem("user1", today))
+    .then(() => createListItem("user2", today));
 });
 
-async function updateListForAnnualReview(days, today) {
+function updateListForAnnualReview(days, today) {
   const todayAfternoon = new Date(
     today.getUTCFullYear(),
     today.getUTCMonth(),
@@ -19,7 +20,7 @@ async function updateListForAnnualReview(days, today) {
     0
   );
 
-  await cy.task("db", {
+  return cy.task("db", {
     operation: "list.update",
     variables: {
       where: {
@@ -32,11 +33,11 @@ async function updateListForAnnualReview(days, today) {
   });
 }
 
-async function createListItem(reference, today) {
+function createListItem(reference, today) {
   const monthBeforeToday = today;
   monthBeforeToday.setMonth(today.getMonth() - 1);
 
-  await cy.task("db", {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {

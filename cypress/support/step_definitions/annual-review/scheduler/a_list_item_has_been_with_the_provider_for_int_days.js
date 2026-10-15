@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("a list item has been with the provider for {int} days with the reference {string}", (days, reference) => {
   const publishedDate = new Date();
   publishedDate.setDate(publishedDate.getDate() - days);

@@ -1,3 +1,5 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 Then("the {string} key date email is sent to post", function (keyDate) {
   cy.task("db", {
     operation: "list.findFirst",
@@ -39,7 +41,7 @@ Then("the {string} key date email is sent to post", function (keyDate) {
         },
       },
     }).then((audit) => {
-      cy.expect(audit.id).to.exist;
+      cy.expect(audit.id).to.be.a("number");
     });
   });
 });

@@ -1,3 +1,5 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 Then("the unpublish reminder email is not sent to user with reference {string}", function (reference) {
   cy.task("db", {
     operation: "list.findFirst",

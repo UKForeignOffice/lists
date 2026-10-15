@@ -134,6 +134,14 @@ Compose will start the following:
 
 Note: See `docker-compose.yml` file for respective usernames and passwords.
 
+### Cypress smoke tests
+
+With the Docker services running on port 3000 and the test database seeded, run
+`npm run smoke-tests`. The `.feature` specs in `cypress/e2e` use step definitions
+from `cypress/support/step_definitions`; import `Given`, `When`, or `Then` from
+`@badeball/cypress-cucumber-preprocessor` when adding steps. Scenarios tagged
+`@wip` remain pending by default.
+
 ### Local environment variables
 
 Ideally try ot get a `.env` file from another engineer, otherwise please create the file in the root of the project and configure all the environment variables listed below.

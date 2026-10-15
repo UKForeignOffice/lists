@@ -1,6 +1,6 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("check the {string} checkbox", (checkboxName) => {
-  cy.findByRole("checkbox", { name: checkboxName })
-    .should("not.be.checked")
-    .check();
+Given("check the {string} checkbox", (checkboxName) => {
+  cy.findByRole("checkbox", { name: checkboxName }).should("not.be.checked").check();
 });

@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 const base = "/find?serviceType=";
 const urls = {
   lawyers: `${base}lawyers`,

@@ -1,11 +1,10 @@
-When(
-  "I {string} provide legal services and support to customers in English",
-  (string) => {
-    const canProvide = string === "can";
-    cy.findByLabelText(canProvide ? "Yes" : "No").click();
-    cy.findByRole("button").click();
-  }
-);
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
+When("I {string} provide legal services and support to customers in English", (string) => {
+  const canProvide = string === "can";
+  cy.findByLabelText(canProvide ? "Yes" : "No").click();
+  cy.findByRole("button").click();
+});
 
 When("I {string} provide legal aid", (string) => {
   const canProvide = string === "can";

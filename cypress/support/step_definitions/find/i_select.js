@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When(/I select \[([^]+)]$/, (arrayAsString) => {
   const checkboxes = arrayAsString.split(",");
   checkboxes.forEach((checkbox) => {

@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 const base = "/find/";
 Given("I am searching for {string}", (serviceType) => {
   cy.visit(`${base}${serviceType}`);

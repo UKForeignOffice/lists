@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("there is a list item published {int} days ago", (days) => {
   const publishedDate = new Date();
   publishedDate.setDate(publishedDate.getDate() - days);

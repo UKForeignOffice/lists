@@ -13,36 +13,22 @@
 // the project's config changing)
 
 const { PrismaClient } = require("@prisma/client");
-const browserify = require("@cypress/browserify-preprocessor");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
+const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 const db = new PrismaClient();
-const cucumber = require("cypress-cucumber-preprocessor").default;
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = (on, config) => {
+module.exports = async (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  await addCucumberPreprocessorPlugin(on, config);
+
   on(
     "file:preprocessor",
-    cucumber({
-      ...browserify.defaultOptions,
-      browserifyOptions: {
-        ...browserify.defaultOptions.browserifyOptions,
-        transform: [
-          ...browserify.defaultOptions.browserifyOptions.transform,
-          // Browserify's local transform skips modern syntax in these dependencies.
-          [
-            require.resolve("babelify"),
-            {
-              global: true,
-              babelrc: false,
-              configFile: false,
-              presets: [require.resolve("@babel/preset-env")],
-              only: [/node_modules\/(?:@testing-library\/dom|nanoid)\//],
-            },
-          ],
-        ],
-      },
+    createBundler({
+      plugins: [createEsbuildPlugin(config)],
     })
   );
 

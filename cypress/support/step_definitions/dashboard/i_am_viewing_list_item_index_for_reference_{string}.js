@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("I am viewing list item index for reference:{string}", (reference) => {
   cy.task("db", {
     operation: "list.findUnique",

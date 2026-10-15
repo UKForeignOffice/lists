@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("I enter a valid new annual review date", () => {
   const today = new Date();
   const targetMonth = (today.getMonth() + 3) % 12;

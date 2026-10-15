@@ -1,4 +1,6 @@
-Then("eligible list items are correct", async () => {
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
+Then("eligible list items are correct", () => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {
