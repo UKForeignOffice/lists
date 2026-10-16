@@ -52,7 +52,7 @@
     "dotenv": "^17.4.2",
     "express": "^4.16.3",
     "express-flash": "0.0.2",
-    "express-http-proxy": "^1.6.2",
+    "express-http-proxy": "^2.1.2",
     "express-rate-limit": "^8.7.1",
     "express-session": "^1.19.0",
     "express-winston": "^4.1.0",
