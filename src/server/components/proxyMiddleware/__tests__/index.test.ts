@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import request from "supertest";
+import { configureBodyParser } from "server/middlewares/body-parser";
 
 jest.mock("../router", () => ({
   applyRouter: require("express").Router(),
@@ -76,6 +77,7 @@ describe("form runner proxy middleware", () => {
     const { configureFormRunnerProxyMiddleware } = require("../index") as typeof import("../index");
     app = express();
     configureFormRunnerProxyMiddleware(app);
+    configureBodyParser(app);
   });
 
   afterAll(async () => {
