@@ -28,7 +28,11 @@ export function checkIncompleteState(req: Request, res: Response, next: NextFunc
     return;
   }
 
-  const { error } = schema.validate(answers, DEFAULT_VALIDATION_OPTIONS);
+  const validationOptions =
+    serviceType === "translators-interpreters"
+      ? { ...DEFAULT_VALIDATION_OPTIONS, context: { services: answers.services } }
+      : DEFAULT_VALIDATION_OPTIONS;
+  const { error } = schema.validate(answers, validationOptions);
 
   if (error) {
     res.redirect(`/find/${serviceType}?country=${country}`);

@@ -35,13 +35,13 @@ export const translatorsInterpretersSchema = Joi.object({
   languagesReadable: validReadableLanguages.required(),
   services: validServices.required(),
   interpretationTypes: Joi.when("$services", {
-    is: Joi.array().items("translation").only(),
-    then: validInterpretationTypes.optional(),
-    otherwise: validInterpretationTypes.required(),
+    is: Joi.array().single().has(Joi.valid("interpretation")).required(),
+    then: validInterpretationTypes.min(1).required(),
+    otherwise: validInterpretationTypes.optional(),
   }),
   translationTypes: validTranslationTypes.when("$services", {
-    is: Joi.array().items("interpretation").only(),
-    then: validInterpretationTypes.optional(),
-    otherwise: validInterpretationTypes.required(),
+    is: Joi.array().single().has(Joi.valid("translation")).required(),
+    then: validTranslationTypes.min(1).required(),
+    otherwise: validTranslationTypes.optional(),
   }),
 });
