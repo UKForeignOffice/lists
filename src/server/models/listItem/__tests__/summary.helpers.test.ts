@@ -1,10 +1,12 @@
 import {
+  displayOneMonthAnnualReviewWarning,
   getActivityStatus,
   getPublishingStatus,
   hasBeenPublishedSinceUnpublishing,
   hasBeenUnpublishedSincePublishing,
   wasUnpublishedByUser,
 } from "./../summary.helpers";
+import type { ListWithJsonData } from "server/components/dashboard/helpers";
 
 test("wasUnpublishedByUser returns true if userId is present", () => {
   const noUserHistory = [
@@ -47,6 +49,52 @@ test("wasUnpublishedByUser returns true if userId is present", () => {
     },
   ];
   expect(wasUnpublishedByUser(withTruthyIntUserHistory)).toBe(true);
+});
+
+test("displayOneMonthAnnualReviewWarning rejects a reversed annual review interval", () => {
+  jest.useFakeTimers().setSystemTime(new Date("2024-04-15T00:00:00.000Z"));
+
+  try {
+    expect(() =>
+      displayOneMonthAnnualReviewWarning({
+        jsonData: {
+          currentAnnualReview: {
+            keyDates: {
+              annualReview: {
+                POST_ONE_MONTH: "2024-05-01T00:00:00.000Z",
+                START: "2024-04-01T00:00:00.000Z",
+              },
+            },
+          },
+        },
+      } as ListWithJsonData)
+    ).toThrow(new RangeError("Invalid interval"));
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test("displayOneMonthAnnualReviewWarning shows a warning within a valid annual review interval", () => {
+  jest.useFakeTimers().setSystemTime(new Date("2024-04-15T00:00:00.000Z"));
+
+  try {
+    expect(
+      displayOneMonthAnnualReviewWarning({
+        jsonData: {
+          currentAnnualReview: {
+            keyDates: {
+              annualReview: {
+                POST_ONE_MONTH: "2024-03-20T00:00:00.000Z",
+                START: "2024-04-20T00:00:00.000Z",
+              },
+            },
+          },
+        },
+      } as ListWithJsonData)
+    ).toStrictEqual({ oneMonthWarning: true });
+  } finally {
+    jest.useRealTimers();
+  }
 });
 
 test("getActivityStatus returns the correct status that does not have historical dependencies", () => {

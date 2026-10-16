@@ -1,4 +1,4 @@
-import { endOfDay, isSameDay, isWithinInterval, startOfDay, subDays } from "date-fns";
+import { endOfDay, isSameDay, startOfDay, subDays } from "date-fns";
 import { lowerCase, startCase } from "lodash";
 import { AuditEvent, ListItemEvent } from "@prisma/client";
 
@@ -20,6 +20,7 @@ import {
 } from "scheduler/workers/processListsBeforeAndDuringStart/govukNotify";
 import { findAuditEvents } from "./audit";
 import { recordListItemEvent } from "shared/audit";
+import { isWithinValidDateInterval } from "shared/isWithinValidDateInterval";
 import type { BaseDeserialisedWebhookData } from "shared/deserialiserTypes";
 
 async function processPostEmailsForList(
@@ -166,22 +167,26 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
     } against today date ${today.toISOString()} - ${JSON.stringify(annualReviewKeyDates)}`
   );
 
+  const postOneMonthStart = new Date(annualReviewKeyDates?.POST_ONE_MONTH ?? "");
+  const postOneMonthEnd = subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? "")), 1);
   if (
-    isWithinInterval(today, {
-      start: new Date(annualReviewKeyDates?.POST_ONE_MONTH ?? ""),
-      end: subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? "")), 1),
+    isWithinValidDateInterval(today, {
+      start: postOneMonthStart,
+      end: postOneMonthEnd,
     })
   ) {
-    isEmailSent = isEmailSentBefore(audit as Audit, "sendOneMonthPostEmail");
+    isEmailSent = isEmailSentBefore(audit, "sendOneMonthPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "POST_ONE_MONTH", "sendOneMonthPostEmail");
     }
     return;
   }
+  const postOneWeekStart = new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? "");
+  const postOneWeekEnd = subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_DAY ?? "")), 1);
   if (
-    isWithinInterval(today, {
-      start: new Date(annualReviewKeyDates?.POST_ONE_WEEK ?? ""),
-      end: subDays(endOfDay(new Date(annualReviewKeyDates?.POST_ONE_DAY ?? "")), 1),
+    isWithinValidDateInterval(today, {
+      start: postOneWeekStart,
+      end: postOneWeekEnd,
     })
   ) {
     isEmailSent = isEmailSentBefore(audit, "sendOneWeekPostEmail");
@@ -199,14 +204,14 @@ export async function processList(list: List, listItemsForList: ListItemWithHist
   }
   if (isSameDay(new Date(annualReviewKeyDates?.START ?? ""), today)) {
     // email posts to notify of annual review start
-    isEmailSent = isEmailSentBefore(audit as Audit, "sendStartedPostEmail");
+    isEmailSent = isEmailSentBefore(audit, "sendStartedPostEmail");
     if (!isEmailSent) {
       await processPostEmailsForList(list, "START", "sendStartedPostEmail");
     }
 
     // update ListItem.isAnnualReview if today = the START milestone date
     // email providers to notify of annual review start
-    isEmailSent = isEmailSentBefore(listItemAudit as Audit, "sendStartedProviderEmail");
+    isEmailSent = isEmailSentBefore(listItemAudit, "sendStartedProviderEmail");
     if (isEmailSent) {
       logger.info(`Annual review started email has already been sent to providers for list ${list.id}`);
       return;
