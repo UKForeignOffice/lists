@@ -1,7 +1,7 @@
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import type { RequestError } from "notifications-node-client";
 import { NotifyClient } from "notifications-node-client";
+import type { NotifyRequestError } from "shared/notify-types";
 import { NOTIFY } from "server/config";
 import { weeklyReminderPersonalisation } from "./weeklyReminderPersonalisation";
 import type { ListItem } from "@prisma/client";
@@ -33,7 +33,6 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     const event = await addReminderEvent(
       listItem.id,
-      // @ts-expect-error - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,
       [`sent reminder for week ${meta.weeksSinceStart}. (${meta.weeksUntilUnpublish} until unpublish date)`],
       meta.reference
@@ -54,7 +53,7 @@ export async function sendUnpublishReminder(listItem: ListItem, meta: Meta) {
 
     const isNotifyError = "data" in response && response.data.errors;
     if (isNotifyError) {
-      const errors = response.data.errors as RequestError[];
+      const errors = response.data.errors as NotifyRequestError[];
       // eslint-disable-next-line @typescript-eslint/naming-convention
       errors.forEach(({ error, message }) => {
         logger.error(

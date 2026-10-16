@@ -1,6 +1,6 @@
 import { schedulerLogger } from "scheduler/logger";
-import type { RequestError } from "notifications-node-client";
 import { NotifyClient } from "notifications-node-client";
+import type { NotifyRequestError } from "shared/notify-types";
 import { NOTIFY } from "server/config";
 import type { Meta } from "./types";
 import { postReminderPersonalisation } from "./dayReminderPersonalisation";
@@ -54,7 +54,7 @@ export async function sendUnpublishPostConfirmation(
 
     const isNotifyError = "data" in response && response.data.errors;
     if (isNotifyError) {
-      const errors = response.data.errors as RequestError[];
+      const errors = response.data.errors as NotifyRequestError[];
       // eslint-disable-next-line @typescript-eslint/naming-convention
       errors.forEach(({ error, message }) => {
         logger.error(

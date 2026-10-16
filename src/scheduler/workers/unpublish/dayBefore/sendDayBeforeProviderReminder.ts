@@ -1,6 +1,6 @@
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import type { RequestError, SendEmailResponse } from "notifications-node-client";
+import type { NotifyEmailResponse, NotifyRequestError } from "shared/notify-types";
 import { isSmokeTest, NOTIFY } from "server/config";
 import { getNotifyClient } from "shared/getNotifyClient";
 import { providerReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
@@ -31,14 +31,14 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
       personalisation,
       reference: meta.reference,
     });
-    const responseData =
+    const responseData: NotifyEmailResponse | undefined =
       "data" in response
         ? response.data
         : isSmokeTest
-          ? ({
+          ? {
               id: "smoke-test",
               template: { id: template },
-            } as SendEmailResponse)
+            }
           : undefined;
 
     if (!responseData) {
@@ -48,7 +48,6 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
 
     const event = await addReminderEvent(
       listItem.id,
-      // @ts-expect-error - error responses are thrown, so ts-ignoring ErrorResponse warning
       responseData,
       [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       meta.reference
@@ -70,7 +69,7 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
 
     const isNotifyError = response?.data?.errors;
     if (isNotifyError) {
-      const errors = response.data.errors as RequestError[];
+      const errors = response.data.errors as NotifyRequestError[];
       errors.forEach(({ error, message }) => {
         logger.error(
           `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`

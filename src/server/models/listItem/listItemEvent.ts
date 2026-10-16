@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { ListItemEvent } from "@prisma/client";
-import type { SendEmailResponse } from "notifications-node-client";
+import type { NotifyEmailResponse } from "shared/notify-types";
 
 export type EventCreate<E extends ListItemEvent> = Prisma.EventCreateWithoutListItemInput & { type: E };
 
@@ -147,7 +147,7 @@ export const EVENTS = {
   }),
 
   [ListItemEvent.REMINDER]: (
-    response: SendEmailResponse,
+    response: NotifyEmailResponse,
     notes?: string[],
     reference?: string
   ): EventCreate<"REMINDER"> => {
@@ -158,7 +158,6 @@ export const EVENTS = {
 
     return {
       type: ListItemEvent.REMINDER,
-      // @ts-expect-error -- issue is with response.Template, there is a tsc/prisma incompatibility
       jsonData: {
         eventName: "reminder",
         ...{ notes },
