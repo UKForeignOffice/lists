@@ -51,7 +51,7 @@ describe("GOVUK Notify service:", () => {
     test("it throws when Server config variable NOTIFY.apiKey is missing", () => {
       mockNotify.apiKey = "";
 
-      expect(() => getNotifyClient()).toThrowError("Server config variable NOTIFY.apiKey is missing");
+      expect(() => getNotifyClient()).toThrow("Server config variable NOTIFY.apiKey is missing");
 
       mockNotify.apiKey = mocks.GOVUK_NOTIFY_API_KEY ?? "";
     });
@@ -487,15 +487,14 @@ describe("GOVUK Notify service:", () => {
         country: {
           name: "France",
         },
-        "users":
-          [
-            {
-              "email": "test@fcdo.gov.uk",
-            },
-            {
-              "email": "another@fcdo.gov.uk",
-            }
-          ]
+        users: [
+          {
+            email: "test@fcdo.gov.uk",
+          },
+          {
+            email: "another@fcdo.gov.uk",
+          },
+        ],
       });
     });
 
@@ -541,7 +540,7 @@ describe("sendEmails", () => {
 
     await sendEmails("abc", ["test@fcdo.gov.uk", "test@fcdo.gov.uk"], {});
 
-    expect(spy).toBeCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   test("sendEmails only rejects when all emails fail", async () => {

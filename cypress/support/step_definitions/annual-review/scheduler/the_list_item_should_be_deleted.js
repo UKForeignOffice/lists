@@ -1,24 +1,26 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 Then("the list item should be deleted", () => {
   cy.task("db", {
     operation: "listItem.findFirst",
     variables: {
       where: {
-        reference: "AUTO_DELETE"
+        reference: "AUTO_DELETE",
       },
     },
   }).then((listItem) => {
-    cy.expect(listItem).to.be.null;
+    cy.expect(listItem).to.equal(null);
 
     cy.task("db", {
       operation: "audit.findMany",
       variables: {
         where: {
-          auditEvent: "DELETED"
+          auditEvent: "DELETED",
         },
-        orderBy: { id: 'desc' }
+        orderBy: { id: "desc" },
       },
     }).then((auditEvents) => {
-      cy.log(auditEvents)
+      cy.log(auditEvents);
       const { notes } = auditEvents[0].jsonData;
       const expectedValue = ["automated", "deleted due to non-response to annual review for over a year"];
 

@@ -1,4 +1,4 @@
-Feature:
+Feature: Redirect legacy results URLs
 
   Redirect from old /results page to /find/{serviceType}/result
 
@@ -10,8 +10,12 @@ Feature:
     And the answer for "Country" is "Spain"
     And the answer for "Areas of law" is "Maritime, Real Estate"
 
-  Scenario: Old translators results loads parameters and redirects to new url
+  Scenario: Old translators results with missing translation types redirects to the find journey
     When I navigate to "/results?serviceType=translatorsInterpreters&readNotice=ok&country=Poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&readDisclaimer=ok"
+    Then I should see the heading "Find a translator or interpreter in Poland"
+
+  Scenario: Old translators results with translation types loads parameters and redirects to new url
+    When I navigate to "/results?serviceType=translatorsInterpreters&readNotice=ok&country=Poland&region=Not%20set&servicesProvided=translation&languagesProvided=pl&newLanguage=&languagesPopulated=true&languagesConfirmed=true&translationSpecialties=all&readDisclaimer=ok"
     Then I should see the heading "Translators in Poland"
     And the answer for "Country" is "Poland"
     And the answer for "Location" is "Not set"
@@ -42,6 +46,5 @@ Feature:
     And the answer for "Location" is "Not set"
     And the answer for "Repatriation needed" is "Yes"
     And the answer for "Has insurance" is "Yes"
-
 
 

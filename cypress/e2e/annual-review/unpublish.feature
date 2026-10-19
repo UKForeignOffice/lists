@@ -1,4 +1,4 @@
-Feature:
+Feature: Automatically unpublish and delete overdue providers
 As consular staff,
   I should see that non-respondents to the annual review request are unpublished automatically,
   So that I know citizens will be able to find responsive providers
@@ -7,7 +7,7 @@ As consular staff,
   Background:
     Given A "lawyers" list exists for Eurasia
 
-  Scenario:
+  Scenario: Automatically unpublish providers who do not respond to annual review
     And eurasia lawyers are due to begin annual review
     And a list item has been with the provider for 100 days with the reference "UNPUBLISH_DAY_TEST"
     When 0 days before unpublish

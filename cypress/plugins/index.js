@@ -13,15 +13,24 @@
 // the project's config changing)
 
 const { PrismaClient } = require("@prisma/client");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
+const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 const db = new PrismaClient();
-const cucumber = require("cypress-cucumber-preprocessor").default;
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = (on, config) => {
+module.exports = async (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  on("file:preprocessor", cucumber());
+  await addCucumberPreprocessorPlugin(on, config);
+
+  on(
+    "file:preprocessor",
+    createBundler({
+      plugins: [createEsbuildPlugin(config)],
+    })
+  );
 
   /**
    * To aide debugging, you can output the page HTML using the following technique:
@@ -39,6 +48,7 @@ module.exports = (on, config) => {
       return result;
     },
     log: (message) => {
+      // eslint-disable-next-line no-console
       console.log(message);
       return null;
     },

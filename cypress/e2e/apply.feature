@@ -1,9 +1,9 @@
-Feature:
+Feature: Apply to join the Find a lawyer abroad service
   I want to apply to be added to the ‘Find a lawyer abroad’ service
 
   Background:
   @wip
-  Scenario Outline:
+  Scenario Outline: Apply as a lawyer with different company sizes
     Given I want to apply to be added as a "<profession>"
     When I select the option "<country>"
     And I continue
@@ -31,4 +31,3 @@ Feature:
       | lawyers    | Italy   | small       | can't | can't   | [Bankruptcy,Criminal] | can     | Cody        | https://gov.uk | Lazio                    | have        |       |       |      |          |                   |                  |
       | lawyers    | Italy   | medium      | can   | can     | [Bankruptcy,Criminal] | can     | Carly Bella | https://gov.uk | Lazio                    | have        |       |       |      |          |                   |                  |
       | lawyers    | Italy   | large       | cant  | can't   | [Bankruptcy,Criminal] | can     | Palmerston  | https://gov.uk | Lazio                    | haven't     |       |       |      |          |                   |                  |
-

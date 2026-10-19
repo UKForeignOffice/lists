@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 import { startOfToday, subMonths } from "date-fns";
 
 Given("there is a list item unpublished automatically {string} a year ago", (timePeriod) => {

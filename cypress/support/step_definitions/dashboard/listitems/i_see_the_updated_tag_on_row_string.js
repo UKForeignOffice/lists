@@ -1,3 +1,5 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 Then("I {string} the updated tag on row {string}", (verb, rowTitle) => {
   const termElement = cy.findAllByText(rowTitle);
   if (verb === "see") {

@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("Some fields have been updated for {string}", (contactName) => {
   cy.task("db", {
     operation: "listItem.findFirst",

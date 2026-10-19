@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("there is a list item published over a year ago", () => {
   cy.task("db", {
     operation: "listItem.create",

@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 import { nanoid } from "nanoid";
 
 When("my given names are {string}", (givenNames) => {

@@ -14,6 +14,11 @@ describe("isGovUKEmailAddress", () => {
     expect(isGovUKEmailAddress("person.surname@fcdo.gov.uk")).toBe(true);
   });
 
+  test("email addresses and allowed domains are matched case-insensitively", () => {
+    expect(isGovUKEmailAddress("Person.Surname@FCO.GOV.UK")).toBe(true);
+    expect(isGovUKEmailAddress("Person.Surname@FcDo.Gov.Uk")).toBe(true);
+  });
+
   test("invalid email address", () => {
     expect(isGovUKEmailAddress("person@gmail.com")).toBe(false);
     expect(isGovUKEmailAddress("not-an-email")).toBe(false);
@@ -58,10 +63,10 @@ describe("countryNameIsValid", () => {
 
 describe("throwIfConfigVarIsUndefined", () => {
   test("it throws when config variable is undefined", () => {
-    expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrowError("");
+    expect(() => throwIfConfigVarIsUndefined("SomeVariable")).toThrow("");
   });
 
   test("it does not throw when environment variable is present", () => {
-    expect(() => throwIfConfigVarIsUndefined("DATABASE_URL")).not.toThrowError();
+    expect(() => throwIfConfigVarIsUndefined("DATABASE_URL")).not.toThrow();
   });
 });

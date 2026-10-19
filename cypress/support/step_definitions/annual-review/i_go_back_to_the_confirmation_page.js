@@ -1,5 +1,7 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("I go back to confirmation page", () => {
+Given("I go back to confirmation page", () => {
   cy.go("back");
   cy.go("back");
 });

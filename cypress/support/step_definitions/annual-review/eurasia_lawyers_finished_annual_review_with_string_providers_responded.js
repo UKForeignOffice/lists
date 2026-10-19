@@ -1,26 +1,27 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 import { addYears, startOfToday, subMonths, subWeeks } from "date-fns";
 
 const today = startOfToday();
 const publishedDate = subWeeks(today, 6);
 
-When("eurasia lawyers finished annual review and {string} providers responded", async (respondants) => {
-  await setAnnualReview();
-
-  if (respondants === "all") {
-    await createListPublishedItem();
-  } else if (respondants === "some") {
-    await createListPublishedItem();
-    await createListUnpublishedItem();
-  } else {
-    await createListUnpublishedItem();
-  }
+When("eurasia lawyers finished annual review and {string} providers responded", (respondants) => {
+  return setAnnualReview().then(() => {
+    if (respondants === "all") {
+      return createListPublishedItem();
+    }
+    if (respondants === "some") {
+      return createListPublishedItem().then(() => createListUnpublishedItem());
+    }
+    return createListUnpublishedItem();
+  });
 });
 
-async function setAnnualReview() {
+function setAnnualReview() {
   const startOfAnnualReview = subWeeks(today, 6);
   const yearAfterStartOfAnnualReview = addYears(startOfAnnualReview, 1);
 
-  await cy.task("db", {
+  return cy.task("db", {
     operation: "list.update",
     variables: {
       where: {
@@ -31,8 +32,8 @@ async function setAnnualReview() {
   });
 }
 
-async function createListPublishedItem() {
-  await cy.task("db", {
+function createListPublishedItem() {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
@@ -69,7 +70,7 @@ async function createListPublishedItem() {
               type: "PUBLISHED",
               time: publishedDate,
               jsonData: {},
-            }
+            },
           ],
         },
       },
@@ -77,8 +78,8 @@ async function createListPublishedItem() {
   });
 }
 
-async function createListUnpublishedItem() {
-  await cy.task("db", {
+function createListUnpublishedItem() {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
@@ -125,7 +126,7 @@ async function createListUnpublishedItem() {
               type: "PUBLISHED",
               time: publishedDate,
               jsonData: {},
-            }
+            },
           ],
         },
       },

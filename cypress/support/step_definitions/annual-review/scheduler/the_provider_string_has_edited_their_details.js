@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("the provider with reference {string} has edited their details", function (reference) {
   cy.task("db", {
     operation: "listItem.update",

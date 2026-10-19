@@ -1,6 +1,7 @@
 import type { ListIndexRes } from "server/components/dashboard/listsItems/types";
 import type { List, ListJsonData, ScheduledProcessKeyDates } from "server/models/types";
 import { differenceInWeeks, eachWeekOfInterval, formatISO, parseISO, startOfDay, startOfToday } from "date-fns";
+import { assertValidDateInterval } from "shared/isWithinValidDateInterval";
 
 import { prisma } from "server/models/db/prisma-client";
 import type { Request } from "express";
@@ -196,6 +197,7 @@ async function findReminders(listId: number) {
   const weekStartsOn = start.getDay();
   let weeks: Date[] = [];
   try {
+    assertValidDateInterval({ start, end });
     weeks = eachWeekOfInterval(
       {
         start,

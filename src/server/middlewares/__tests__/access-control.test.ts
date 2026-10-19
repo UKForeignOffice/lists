@@ -1,12 +1,10 @@
 import type { Express, NextFunction, Request, Response } from "express";
 import request from "supertest";
 import type { SuperTest, Test } from "supertest";
-import { getServer } from "../../server";
-import { accessControl } from "../access-control";
 
 let mockIsTest = true;
 
-jest.mock("server/config", () => ({
+jest.doMock("server/config", () => ({
   get isTest() {
     return mockIsTest;
   },
@@ -14,6 +12,9 @@ jest.mock("server/config", () => ({
     return "http://apply:3001";
   },
 }));
+
+const { getServer } = require("../../server") as typeof import("../../server");
+const { accessControl } = require("../access-control") as typeof import("../access-control");
 
 describe("access-control", () => {
   describe("handler", () => {

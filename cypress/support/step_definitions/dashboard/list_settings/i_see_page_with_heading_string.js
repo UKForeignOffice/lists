@@ -1,4 +1,6 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("I see page with heading {string}", (pageHeading) => {
+Given("I see page with heading {string}", (pageHeading) => {
   cy.findByRole("heading", { name: pageHeading });
 });

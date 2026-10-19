@@ -1,5 +1,7 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-Then("the unpublish reminder email for {int} days is sent to eligible providers", async (noOfDays) => {
+Then("the unpublish reminder email for {int} days is sent to eligible providers", (noOfDays) => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {

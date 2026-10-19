@@ -18,7 +18,7 @@ The following `npm` scripts are available for you to use;
 - `prisma:migrate` - Generates new Prisma database migration.
 - `prisma:reset` - Reset database.
 - `prisma:deploy` - Run Prisma migrations.
-- `prepare:husky` - Set up Git hooks.
+- `prepare:husky` - Set up Git hooks with Husky after installing dependencies.
 - `release` - Automatically generate a new release. Should only be used in CI.
 - `form-runner:install` - Install Form Runner in the `lib` directory.
 - `form-runner:start` - Start the Form Runner.

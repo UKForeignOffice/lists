@@ -14,6 +14,9 @@ module.exports = {
   coverageReporters: ["json", "text"],
   // The test environment that will be used for testing
   testEnvironment: "node",
+  testEnvironmentOptions: {
+    customExportConditions: ["node", "node-addons"],
+  },
   // setupFiles
   setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
   setupFilesAfterEnv: ["<rootDir>/.jest/setup.ts", "<rootDir>/.jest/extensions.ts"],

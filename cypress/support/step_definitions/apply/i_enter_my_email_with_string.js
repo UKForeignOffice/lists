@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("I enter my email with {string}", (alternative) => {
   const hasAlternativeEmail = alternative.length > 0;
 

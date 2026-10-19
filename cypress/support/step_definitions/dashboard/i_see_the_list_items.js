@@ -1,3 +1,5 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 Then("I see the list items", (dataTable) => {
   const items = dataTable.raw()[0];
   if (Array.isArray(items)) {

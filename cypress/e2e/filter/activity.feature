@@ -1,4 +1,4 @@
-Feature:
+Feature: Filter list items by activity
   Dashboard filtering
 
   Background:

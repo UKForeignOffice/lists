@@ -1,4 +1,6 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-And("I do not see {string} on the page", (string) => {
-    cy.findByText(string).should("not.exist");
+Given("I do not see {string} on the page", (string) => {
+  cy.findByText(string).should("not.exist");
 });

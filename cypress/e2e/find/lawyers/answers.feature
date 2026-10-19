@@ -1,4 +1,4 @@
-Feature:
+Feature: Change lawyer search answers
 
   I want to change my answers
 
@@ -37,4 +37,3 @@ Feature:
     Then I should see the heading "Find a lawyer abroad"
     When I click the link "Start"
     Then I see "Your answers will appear here"
-

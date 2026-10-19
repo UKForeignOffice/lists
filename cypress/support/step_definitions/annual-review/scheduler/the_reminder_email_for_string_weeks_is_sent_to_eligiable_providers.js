@@ -1,6 +1,8 @@
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
-const TOTAL_NO_UNPUBLISH_WEEKS = 5
-Then("the reminder email for {string} weeks is sent to eligible providers", async (noOfWeeks) => {
+const TOTAL_NO_UNPUBLISH_WEEKS = 5;
+Then("the reminder email for {string} weeks is sent to eligible providers", (noOfWeeks) => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {
@@ -18,7 +20,9 @@ Then("the reminder email for {string} weeks is sent to eligible providers", asyn
             {
               jsonData: {
                 path: ["notes"],
-                equals: [`sent reminder for week ${noOfWeeks}. (${TOTAL_NO_UNPUBLISH_WEEKS - noOfWeeks} until unpublish date)`],
+                equals: [
+                  `sent reminder for week ${noOfWeeks}. (${TOTAL_NO_UNPUBLISH_WEEKS - noOfWeeks} until unpublish date)`,
+                ],
               },
             },
             {
@@ -32,6 +36,6 @@ Then("the reminder email for {string} weeks is sent to eligible providers", asyn
       },
     }).then((result) => {
       cy.expect(result.length).to.be.gt(0);
-    })
-  })
+    });
+  });
 });

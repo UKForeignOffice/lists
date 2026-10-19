@@ -90,7 +90,7 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ country: "northern Cyprus" });
 
       expect(status).toBe(302);
-      expect(helpers.some).toBeCalledWith("northern Cyprus", "lawyers");
+      expect(helpers.some).toHaveBeenCalledWith("northern Cyprus", "lawyers");
       expect(header.location).toBe(`northern%20Cyprus/region`);
     });
 
@@ -98,7 +98,7 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ country: "Côte d'Ivoire" });
 
       expect(status).toBe(302);
-      expect(helpers.some).toBeCalledWith("Côte d'Ivoire", "lawyers");
+      expect(helpers.some).toHaveBeenCalledWith("Côte d'Ivoire", "lawyers");
       expect(header.location).toBe(`C%C3%B4te%20d'Ivoire/region`);
     });
 
@@ -106,7 +106,7 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ country: "Guinea-Bissau" });
 
       expect(status).toBe(302);
-      expect(helpers.some).toBeCalledWith("Guinea-Bissau", "lawyers");
+      expect(helpers.some).toHaveBeenCalledWith("Guinea-Bissau", "lawyers");
       expect(header.location).toBe(`Guinea-Bissau/region`);
     });
 
@@ -114,7 +114,7 @@ describe("Lawyers List:", () => {
       const { status, header } = await request(server).post(pageLink).send({ country: "São Tomé and Príncipe" });
 
       expect(status).toBe(302);
-      expect(helpers.some).toBeCalledWith("São Tomé And Príncipe", "lawyers");
+      expect(helpers.some).toHaveBeenCalledWith("São Tomé And Príncipe", "lawyers");
       expect(header.location).toBe(`S%C3%A3o%20Tom%C3%A9%20and%20Pr%C3%ADncipe/region`);
     });
 
@@ -163,14 +163,12 @@ describe("Lawyers List:", () => {
     test("POST sanitises region and redirects correctly", async () => {
       const maliciousInput = `<script>alert("xss")</script>Madrid`;
       const expectedSanitised = "scriptalertxssscriptMadrid";
-      const { status, header } = await request(server)
-        .post(pageLink)
-        .send({ region: maliciousInput });
+      const { status, header } = await request(server).post(pageLink).send({ region: maliciousInput });
 
       expect(status).toBe(302);
       expect(header.location).toBe(`practice-areas?region=${encodeURIComponent(expectedSanitised)}`);
     });
-    
+
     test("accessibility", async () => {
       const { text } = await request(server).get(pageLink).type("text/html");
 
@@ -262,12 +260,12 @@ describe("Lawyers List:", () => {
       const $html = $.load(text);
       const $main = $html("main .govuk-grid-column-two-thirds");
       const warning = $main.find(".govuk-warning-text");
-      const legalAidText = $main.children("p").filter((_, element) =>
-        $html(element).text().includes("Where lawyers work within the")
-      );
-      const feedbackText = $main.children("p").filter((_, element) =>
-        $html(element).text().includes("Links to lawyer websites will open in a new tab")
-      );
+      const legalAidText = $main
+        .children("p")
+        .filter((_, element) => $html(element).text().includes("Where lawyers work within the"));
+      const feedbackText = $main
+        .children("p")
+        .filter((_, element) => $html(element).text().includes("Links to lawyer websites will open in a new tab"));
       const firstLawyer = $main.find("ul.govuk-list li h2 a[href='https://example.com']");
       const elements = $main.children().toArray();
 

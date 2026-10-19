@@ -15,7 +15,7 @@
 You do not need to do this if you only need to run the find or list-management app. You also do not need to do this if you are running the entire application via docker-compose.
 
 If you are running the form runner via docker, but are running lists locally, then you will need to change the output within [./docker/apply/forms-jsons](./docker/apply/forms-json)
-   to target host.docker.internal:3000, instead of lists:3000.
+to target host.docker.internal:3000, instead of lists:3000.
 
 ```
       "outputConfiguration": {
@@ -27,7 +27,8 @@ If you are running the form runner via docker, but are running lists locally, th
 
 For ARM (e.g. M1, M2) processors you will need to change the Dockerfile in `docker/db` to use the correct PostGIS image.
 
-To use test data, you must have the PGP keys to decrypt the data. 
+To use test data, you must have the PGP keys to decrypt the data.
+
 1. Download keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/.env
 1. Load the env vars from .env into the shell `$ set -o allexport; source .env; set +o allexport;`
 1. Build the container via docker compose `$ docker compose build postgres`
@@ -39,13 +40,13 @@ docker compose up postgres redis apply
 ```
 
 **4. Start the lists app**
+
 1. Download the environment variables from [keybase://team/cautionyourblast.fcdo/config/dev/lists/.env](keybase://team/cautionyourblast.fcdo/config/dev/lists/pgp/.env) into the root of this project
 1. If you need to test form submissions locally, you will need to authenticate your shell with AWS
-1. Set your node version to 22 
+1. Set your Node version to 24.11 or newer
 1. Install dependencies `npm install`
 1. Run the prisma migrations `npm run prisma:deploy`
 1. Start the application `npm run dev`
-
 
 ## Architecture
 
@@ -69,9 +70,10 @@ The lists server depends on [XGovFormBuilder/digital-form-builder](https://githu
 to deploy form journeys for data ingestion. The base docker images for the form runner have already been built.
 
 **To add new forms:**
+
 1. Add or replace a form configuration in `docker/apply/forms-json/`
 2. The form runner will create a new route matching the file name.
-i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
+   i.e. adding `lawyers.json` would make a form available at `lists-apply:3001/lawyers`
 
 If you are running the form runner via docker, but are running lists locally, then you will need to change the outputs within [./docker/apply/forms-jsons](./docker/apply/forms-json)
 to target host.docker.internal:3000, instead of lists:3000.
@@ -83,6 +85,7 @@ to target host.docker.internal:3000, instead of lists:3000.
 ```
 
 To start the form runner
+
 ```sh
 docker compose up apply
 ```
@@ -121,13 +124,23 @@ docker compose up postgres redis
 Compose will start the following:
 
 1. `PostgreSQL`: The PostgreSQL database with PostGIS, accessible on [http://localhost:5432](http://localhost:5432)
-  - If you are using Apple Silicon (M1, M2), change `docker/db/Dockerfile` to use `FROM gangstead/postgis:13-3.1-arm`
-  - If you have access to keybase and the B64 encrypted PGP keys, you may use the test data. See the Dockerfile for more details
+
+- If you are using Apple Silicon (M1, M2), change `docker/db/Dockerfile` to use `FROM gangstead/postgis:13-3.1-arm`
+- If you have access to keybase and the B64 encrypted PGP keys, you may use the test data. See the Dockerfile for more details
+
 1. `Redis`: The Redis database, accessible on [http://localhost:6379](http://localhost:6379)
 1. `Apply`: The form runner, accessible on [http://localhost:3001](http://localhost:3001), or [http://localhost:3000/application](http://localhost:3000/application)
 1. `Lists`: The lists server, accessible on [http://localhost:3000](http://localhost:3000)
 
 Note: See `docker-compose.yml` file for respective usernames and passwords.
+
+### Cypress smoke tests
+
+With the Docker services running on port 3000 and the test database seeded, run
+`npm run smoke-tests`. The `.feature` specs in `cypress/e2e` use step definitions
+from `cypress/support/step_definitions`; import `Given`, `When`, or `Then` from
+`@badeball/cypress-cucumber-preprocessor` when adding steps. Scenarios tagged
+`@wip` remain pending by default.
 
 ### Local environment variables
 
@@ -199,10 +212,16 @@ Webpack will watch `/src` folder and will rebuild when changes occur, then Nodem
 
 ### Code Style and Lint
 
-For code styling and formatting we are using:
+ESLint 10 uses the flat configuration in `eslint.config.cjs`. It retains the
+project's Standard rule semantics, TypeScript-specific checks, and Prettier
+formatting checks. TypeScript files use the root `tsconfig.json` for
+type-aware lint rules. Run the checks with:
 
-- [eslint-config-standard-with-typescript](https://www.npmjs.com/package/eslint-config-standard-with-typescript)
-- [https://prettier.io/](https://prettier.io/)
+```sh
+npm run lint
+```
+
+Prettier is also run on staged files by the pre-commit hook.
 
 ### Pre-Commit and Pre-Push Hooks
 
@@ -238,4 +257,5 @@ You can generate valid commit messages by running `npm run commit` and following
 All commit messages are run through a validator and any invalid commit messages will be rejected.
 
 ## Other guides
-- 
+
+-

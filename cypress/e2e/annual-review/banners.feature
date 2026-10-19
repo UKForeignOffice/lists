@@ -5,12 +5,12 @@ Feature: Annual review banners
     And A "lawyers" list exists for Eurasia
     And eurasia lawyers are due to begin annual review
 
-    Scenario:
+    Scenario: Show the annual review start banner
       When the batch process has run
       And I am viewing list item index for reference:"SMOKE"
       Then I see the start banner
 
-    Scenario:
+    Scenario: Warn when a provider is due to be unpublished
       When a list item has been with the provider for 100 days with the reference "UNPUBLISH_DAY_TEST"
       And 1 days before unpublish
       And the batch process has run

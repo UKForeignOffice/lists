@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 const sizes = {
   independent: "Independent lawyer / sole practitioner",
   small: "Small firm (up to 15 legal professionals)",

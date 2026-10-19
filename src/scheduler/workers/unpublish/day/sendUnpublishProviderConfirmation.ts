@@ -1,7 +1,7 @@
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import type { RequestError } from "notifications-node-client";
 import { NotifyClient } from "notifications-node-client";
+import type { NotifyRequestError } from "shared/notify-types";
 import { NOTIFY } from "server/config";
 import type { Meta } from "./types";
 import { providerReminderPersonalisation } from "./dayReminderPersonalisation";
@@ -33,7 +33,6 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
 
     const event = await addReminderEvent(
       listItem.id,
-      // @ts-expect-error - error responses are thrown, so ts-ignoring ErrorResponse warning
       response.data,
       [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       meta.reference
@@ -51,7 +50,7 @@ export async function sendUnpublishProviderConfirmation(listItem: ListItem, meta
 
     const isNotifyError = "data" in response && response.data.errors;
     if (isNotifyError) {
-      const errors = response.data.errors as RequestError[];
+      const errors = response.data.errors as NotifyRequestError[];
       errors.forEach(({ error, message }) => {
         logger.error(
           `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`

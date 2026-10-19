@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("{string} has {int} pinned", (email, itemId) => {
   cy.task("db", {
     operation: "user.update",

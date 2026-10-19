@@ -1,16 +1,14 @@
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { schedulerLogger } from "scheduler/logger";
-import type { RequestError } from "notifications-node-client";
-import { NotifyClient } from "notifications-node-client";
-import { NOTIFY } from "server/config";
+import type { NotifyEmailResponse, NotifyRequestError } from "shared/notify-types";
+import { isSmokeTest, NOTIFY } from "server/config";
+import { getNotifyClient } from "shared/getNotifyClient";
 import { providerReminderPersonalisation } from "./dayBeforeReminderPersonalisation";
 import type { ListItem } from "@prisma/client";
 import type { Meta } from "./types";
 import { addReminderEvent } from "scheduler/workers/helpers/addReminderEvent";
 
 const template = NOTIFY.templates.unpublishNotice.providerOneDay;
-
-const notifyClient = new NotifyClient(NOTIFY.apiKey);
 
 export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Meta) {
   const logger = schedulerLogger.child({
@@ -26,16 +24,31 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
 
   logger.debug(`${JSON.stringify(personalisation)}, email address ${emailAddress}`);
 
+  const missingResponseDataError = new Error("NotifyClient returned no message data; skipping reminder event creation");
+
   try {
-    const response = await notifyClient.sendEmail(template, emailAddress, {
+    const response = await getNotifyClient().sendEmail(template, emailAddress, {
       personalisation,
       reference: meta.reference,
     });
+    const responseData: NotifyEmailResponse | undefined =
+      "data" in response
+        ? response.data
+        : isSmokeTest
+          ? {
+              id: "smoke-test",
+              template: { id: template },
+            }
+          : undefined;
+
+    if (!responseData) {
+      logger.error(missingResponseDataError.message);
+      throw missingResponseDataError;
+    }
 
     const event = await addReminderEvent(
       listItem.id,
-      // @ts-expect-error - error responses are thrown, so ts-ignoring ErrorResponse warning
-      response.data,
+      responseData,
       [`sent reminder for ${meta.daysUntilUnpublish} days until unpublish`],
       meta.reference
     );
@@ -46,13 +59,17 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
       );
     }
 
-    return response.data;
+    return responseData;
   } catch (e) {
-    const { response } = e;
+    if (e === missingResponseDataError) {
+      throw e;
+    }
 
-    const isNotifyError = "data" in response && response.data.errors;
+    const response = e?.response;
+
+    const isNotifyError = response?.data?.errors;
     if (isNotifyError) {
-      const errors = response.data.errors as RequestError[];
+      const errors = response.data.errors as NotifyRequestError[];
       errors.forEach(({ error, message }) => {
         logger.error(
           `NotifyClient responded with code: ${response.data.status_code}, error: ${error}, message: ${message}`
@@ -66,5 +83,6 @@ export async function sendDayBeforeProviderReminder(listItem: ListItem, meta: Me
         personalisation
       )} for email address ${emailAddress} - ${e}`
     );
+    throw e;
   }
 }

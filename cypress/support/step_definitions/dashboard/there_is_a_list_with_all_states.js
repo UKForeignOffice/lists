@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 import { ListItemEvent } from "@prisma/client";
@@ -7,7 +9,7 @@ Given("A {string} list exists for Eurasia", (providerType) => {
 });
 
 function createListForService(service) {
-  const reference  = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
+  const reference = service === "funeralDirectors" ? "SMOKE-FD" : "SMOKE";
 
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
@@ -45,6 +47,7 @@ function createListForService(service) {
         type: service,
         reference,
         nextAnnualReviewStartDate: null,
+        lastAnnualReviewStartDate: null,
         jsonData,
         country: {
           connect: {
@@ -52,19 +55,20 @@ function createListForService(service) {
           },
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       update: {
         type: service,
         jsonData,
         nextAnnualReviewStartDate: null,
+        lastAnnualReviewStartDate: null,
         items: {
           deleteMany: {},
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com" }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       where: {
         reference,

@@ -53,6 +53,18 @@ test("sanitiseQuery strips unknown keys", () => {
   ).toEqual({});
 });
 
+test("sanitiseQuery strips repeated and non-normalized sort values", () => {
+  const result = sanitiseQuery({
+    admins: ["asc", "desc"],
+    live: "ASC",
+    country: "desc",
+    jsonData: "asc",
+  });
+
+  expect(result.error).toBeUndefined();
+  expect(result.value).toEqual({ country: "desc" });
+});
+
 test("convertObjectToEntry returns SortOrderInput when a date key is passed with nulls treated as the earliest date", () => {
   expect(convertEntryToObject(["lastAnnualReviewStartDate", "asc"])).toEqual({
     lastAnnualReviewStartDate: {

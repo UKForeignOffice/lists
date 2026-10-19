@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("a list item has been edited by the provider {int} days ago", (days) => {
   const publishedDate = new Date();
   publishedDate.setDate(publishedDate.getDate() - days);
@@ -13,7 +15,7 @@ When("a list item has been edited by the provider {int} days ago", (days) => {
         status: "EDITED",
         jsonData: {
           emailAddress: "test@test.com",
-          contactName: "Buster"
+          contactName: "Buster",
         },
         list: {
           connect: {

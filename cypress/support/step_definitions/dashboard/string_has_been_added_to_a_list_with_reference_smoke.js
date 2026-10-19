@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("User {string} has been added to list with reference:SMOKE", (email) => {
   cy.task("db", {
     operation: "user.upsert",
@@ -22,8 +24,8 @@ When("User {string} has been added to list with reference:SMOKE", (email) => {
         },
         data: {
           users: {
-            connect: { email }
-          }
+            connect: { email },
+          },
         },
       },
     });

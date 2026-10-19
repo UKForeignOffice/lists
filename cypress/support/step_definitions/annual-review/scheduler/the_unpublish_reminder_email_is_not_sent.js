@@ -1,4 +1,6 @@
-Then("the unpublish reminder email is not sent", async () => {
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
+Then("the unpublish reminder email is not sent", () => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {

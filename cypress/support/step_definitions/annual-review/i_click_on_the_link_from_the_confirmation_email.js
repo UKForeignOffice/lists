@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 /* eslint-disable */
 Given("I click on the link from the confirmation email", () => {
   cy.task("db", {

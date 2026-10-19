@@ -1,3 +1,5 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 Given("the list is in annual review", () => {
   cy.task("db", {
     operation: "list.findUnique",
@@ -26,7 +28,7 @@ Given("the list is in annual review", () => {
               reference: "ANNUAL_REVIEW_REF",
             },
           },
-          nextAnnualReviewStartDate: new Date()
+          nextAnnualReviewStartDate: new Date(),
         },
       },
     });

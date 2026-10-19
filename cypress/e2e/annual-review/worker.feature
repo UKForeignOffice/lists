@@ -17,22 +17,22 @@ Feature: Emails sent on key dates
     And eurasia lawyers are due to begin annual review
     And the batch process has run
 
-  Scenario:
+  Scenario: Notify post one month before annual review
     Given the current time is within the "POST_ONE_MONTH" key date range
     When the worker process has run
     Then the "POST_ONE_MONTH" key date email is sent to post
 
-  Scenario:
+  Scenario: Notify post one week before annual review
     Given the current time is within the "POST_ONE_WEEK" key date range
     When the worker process has run
     Then the "POST_ONE_WEEK" key date email is sent to post
 
-  Scenario:
+  Scenario: Notify post one day before annual review
     Given the current time is within the "POST_ONE_DAY" key date range
     When the worker process has run
     Then the "POST_ONE_DAY" key date email is sent to post
 
-  Scenario:
+  Scenario: Notify post and eligible providers when annual review starts
     Given the current time is within the "START" key date range
     When the worker process has run
     Then the "START" key date email is sent to post

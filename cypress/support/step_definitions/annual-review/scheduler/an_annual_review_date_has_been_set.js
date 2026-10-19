@@ -1,4 +1,6 @@
-Then("an annual review date has been set", async () => {
+import { Then } from "@badeball/cypress-cucumber-preprocessor";
+
+Then("an annual review date has been set", () => {
   cy.task("db", {
     operation: "list.findFirst",
     variables: {

@@ -1,3 +1,5 @@
+import { When } from "@badeball/cypress-cucumber-preprocessor";
+
 When("a related link exists", () => {
   const jsonData = {
     users: ["smoke@cautionyourblast.com"],
@@ -18,8 +20,8 @@ When("a related link exists", () => {
           },
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com", }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       update: {
         type: "lawyers",
@@ -29,8 +31,8 @@ When("a related link exists", () => {
           deleteMany: {},
         },
         users: {
-          connect: { email: "smoke@cautionyourblast.com", }
-        }
+          connect: { email: "smoke@cautionyourblast.com" },
+        },
       },
       where: {
         reference: "SMOKE",

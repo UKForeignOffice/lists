@@ -1,29 +1,31 @@
+import { Given } from "@badeball/cypress-cucumber-preprocessor";
+
 import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 
-Given("eurasia lawyers are due to begin annual review", async () => {
-  await setAnnualReview();
-  await createEligible();
-  await createIneligible();
+Given("eurasia lawyers are due to begin annual review", () => {
+  return setAnnualReview()
+    .then(() => createEligible())
+    .then(() => createIneligible());
 });
 
-async function createEligible() {
+function createEligible() {
   const eligibleReferences = ["eligible-1", "eligible-2", "eligible-3", "eligible-4", "eligible-5"];
 
-  eligibleReferences.forEach(async (reference) => {
-    await createEligibleListItem(reference);
-  });
+  return eligibleReferences.reduce(
+    (previousTask, reference) => previousTask.then(() => createEligibleListItem(reference)),
+    cy.wrap(null)
+  );
 }
 
-async function createIneligible() {
-  await createNew();
-  await createRepublishedRecently();
+function createIneligible() {
+  return createNew().then(() => createRepublishedRecently());
 }
 
-async function setAnnualReview() {
+function setAnnualReview() {
   const today = new Date();
   const fourWeeksAway = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getDate() + 28);
 
-  await cy.task("db", {
+  return cy.task("db", {
     operation: "list.update",
     variables: {
       where: {
@@ -34,9 +36,9 @@ async function setAnnualReview() {
   });
 }
 
-async function createNew() {
+function createNew() {
   const reference = "ineligible-1";
-  await cy.task("db", {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
@@ -70,12 +72,12 @@ async function createNew() {
   });
 }
 
-async function createRepublishedRecently() {
+function createRepublishedRecently() {
   const reference = "ineligible-2";
   const unpublishDate = new Date();
   unpublishDate.setDate(unpublishDate.getDate() - 15);
 
-  return await cy.task("db", {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {
@@ -102,8 +104,8 @@ async function createRepublishedRecently() {
   });
 }
 
-async function createEligibleListItem(reference) {
-  return await cy.task("db", {
+function createEligibleListItem(reference) {
+  return cy.task("db", {
     operation: "listItem.create",
     variables: {
       data: {

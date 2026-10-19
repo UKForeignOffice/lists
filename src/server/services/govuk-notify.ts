@@ -7,7 +7,7 @@ import { getNotifyClient } from "shared/getNotifyClient";
 import type { NotifyResult } from "shared/types";
 import type { List } from "server/models/types";
 import { prisma } from "server/models/db/prisma-client";
-import type { SendEmailOptions } from "notifications-node-client";
+import type { NotifySendEmailOptions } from "shared/notify-types";
 import { getCommonPersonalisations } from "server/services/govuk-notify.helpers";
 import { lowerCase, startCase } from "lodash";
 
@@ -196,7 +196,7 @@ export async function sendAnnualReviewCompletedEmail(
 export async function sendEmails<Personalisation extends { [key: string]: any }>(
   templateId: string,
   emailAddresses: string[],
-  options: SendEmailOptions<Personalisation>,
+  options: NotifySendEmailOptions<Personalisation>,
   logLabel: string = ""
 ) {
   const notifyClient = getNotifyClient();

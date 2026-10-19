@@ -31,6 +31,40 @@ test.each`
   }
 );
 
+const testInLondonTimeZone = process.env.TZ === "Europe/London" ? test : test.skip;
+
+testInLondonTimeZone("getMetaForList counts full local weeks across the spring DST change", () => {
+  jest.useFakeTimers().setSystemTime(new Date("2024-04-01T12:00:00.000Z"));
+  const dstList = {
+    ...list,
+    jsonData: {
+      currentAnnualReview: {
+        ...list.jsonData.currentAnnualReview,
+        keyDates: {
+          annualReview: {
+            START: "2024-03-25T00:00:00.000Z",
+          },
+          unpublished: {
+            UNPUBLISH: "2024-04-29T00:00:00.000Z",
+          },
+        },
+      },
+    },
+  };
+
+  try {
+    expect(getMetaForList(dstList)).toStrictEqual({
+      reference,
+      weeksUntilUnpublish: 4,
+      weeksSinceStart: 1,
+      parsedUnpublishDate: "29 April 2024",
+      countryName: "United Kingdom",
+    });
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
 const reference = "SCR-4MB-13D";
 const startDate = "2023-02-01T00:00:00.000Z";
 const unpublishDate = "2023-03-15T00:00:00.000Z";
