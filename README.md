@@ -48,6 +48,15 @@ docker compose up postgres redis apply
 1. Run the prisma migrations `npm run prisma:deploy`
 1. Start the application `npm run dev`
 
+Prisma CLI reads `prisma.config.ts` for the schema, migration directory and
+`DATABASE_URL`. Generate the client with `npm run prisma:generate` after changing
+the schema or running `prisma:migrate`; Prisma no longer generates it automatically
+as part of `migrate dev`.
+
+If your network requires a custom CA for Prisma's binary downloads, supply it
+to the Docker build with `--secret id=prisma_ca,src=/path/to/ca.pem`. The CA is
+used during the build without being stored in the image.
+
 ## Architecture
 
 ### Server

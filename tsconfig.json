@@ -24,6 +24,7 @@
   "include": [
     ".jest/*",
     "cypress.config.ts",
+    "prisma.config.ts",
     "docker/apply/forms-json/*",
     "src",
     "src/server/**/*",
