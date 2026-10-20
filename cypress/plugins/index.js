@@ -12,11 +12,13 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+require("dotenv/config");
 const { PrismaClient } = require("@prisma/client");
+const { createPrismaAdapter } = require("../../src/shared/prismaAdapter.ts");
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
 const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
-const db = new PrismaClient();
+const db = new PrismaClient({ adapter: createPrismaAdapter() });
 /**
  * @type {Cypress.PluginConfig}
  */
