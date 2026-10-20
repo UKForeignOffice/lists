@@ -30,6 +30,10 @@
         {{ dashboardMacros.errorBanner(messages.error) }}
       {% endif %}
 
+      {% if error.field %}
+        {{ dashboardMacros.errorBanner(error) }}
+      {% endif %}
+
       <h2 class="govuk-heading-m grey-text">{{list.country.name}}</h2>
       <h1 class="govuk-heading-l">
           Create a new list
@@ -81,11 +85,16 @@
             </label>
           </h3>
           {% if error.field === 'country' %}
-            <span class="govuk-error-message">
+            <span class="govuk-error-message" id="country-error">
               <span class="govuk-visually-hidden">Error:</span> {{ error.text }}
             </span>
           {% endif %}
-          <select id="country-autocomplete" name="country" class="govuk-input--error">
+          <select
+            id="country-autocomplete"
+            name="country"
+            class="{{ "govuk-input--error" if error.field === 'country' }}"
+            {{ "aria-describedby='country-error'" if error.field === 'country' }}
+          >
             <option value=""></option>
             {% for country in countriesList %}
               <option value="{{ country.value }}" {{-" selected='selected'" if list.country.name === country.value}}>{{ country.text }}</option>

@@ -1,12 +1,4 @@
 {
   "printWidth": 120,
-  "trailingComma": "es5",
-  "overrides": [
-    {
-      "files": "*.njk",
-      "options": {
-        "parser": "html"
-      }
-    }
-  ]
+  "trailingComma": "es5"
 }
