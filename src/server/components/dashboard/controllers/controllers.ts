@@ -5,7 +5,7 @@ import { findUserByEmail, deleteUserByEmail, getUsersWithList, isAdministrator, 
 import { createList, findListById, updateList, findListDashboardData, deleteList } from "server/models/list";
 import { findFeedbackByType } from "server/models/feedback";
 
-import { isGovUKEmailAddress } from "server/utils/validation";
+import { isCountryNameValid, isGovUKEmailAddress } from "server/utils/validation";
 import type { QuestionError } from "server/components/lists";
 import { authRoutes } from "server/components/auth";
 import { countriesList } from "server/services/metadata";
@@ -230,6 +230,17 @@ export async function listsEditPostController(req: Request, res: Response, next:
 export async function listEditAddPublisher(req: Request, res: Response, next: NextFunction) {
   const listId = res.locals.list.id;
   let error: Partial<QuestionError> = {};
+
+  if (listId === "new" && (typeof req.body.country !== "string" || !isCountryNameValid(req.body.country))) {
+    error = {
+      field: "country",
+      text: "Select a country or territory",
+      href: "#country-autocomplete",
+    };
+    req.flash("questionError", JSON.stringify(error));
+    res.redirect("new");
+    return;
+  }
 
   const data = {
     country: req.body.country,

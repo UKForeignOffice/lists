@@ -48,6 +48,7 @@ COPY --chown=node --from=build /usr/src/app/node_modules/@prisma node_modules/@p
 COPY --chown=node --from=build /usr/src/app/node_modules/prisma node_modules/prisma
 COPY --chown=node --from=build /usr/src/app/node_modules/.prisma node_modules/.prisma
 COPY --chown=node src/server/models/db/ src/server/models/db/
+COPY --chown=node prisma.config.ts ./
 COPY --chown=node docker/entrypoint.sh ./docker-entrypoint.sh
 RUN find /usr/dist/app -type f \( \
   -name "package-lock.json" -o \
@@ -80,6 +81,10 @@ WORKDIR /usr/dist/scheduler
 COPY --chown=node --from=main /usr/dist/app/dist/scheduler ./dist/scheduler
 COPY --chown=node --from=prod-dependencies /usr/src/app/node_modules node_modules
 COPY --chown=node --from=build /usr/src/app/node_modules/.prisma node_modules/.prisma
+COPY --chown=node --from=build /usr/src/app/node_modules/@prisma node_modules/@prisma
+COPY --chown=node --from=build /usr/src/app/node_modules/prisma node_modules/prisma
+COPY --chown=node src/server/models/db/ src/server/models/db/
+COPY --chown=node prisma.config.ts ./
 COPY --chown=node docker/scheduler/package.json ./package.json
 RUN find /usr/dist/scheduler -type f \( \
   -name "package-lock.json" -o \

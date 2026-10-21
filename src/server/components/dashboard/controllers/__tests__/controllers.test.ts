@@ -6,6 +6,8 @@ import * as listModel from "server/models/list";
 import * as listItemModel from "server/models/listItem/listItem";
 
 import {
+  listEditAddPublisher,
+  listsEditController,
   startRouteController,
   usersEditController,
   usersEditPostController,
@@ -265,6 +267,74 @@ describe("Dashboard Controllers", () => {
       await listsController(mockReq, mockRes, mockNext);
 
       expect(mockRes.render.mock.calls[0][1].isNewUser).toBeTruthy();
+    });
+  });
+
+  describe("new list creation", () => {
+    beforeEach(() => {
+      mockRes.locals.list = { id: "new" };
+      mockReq.body = {
+        country: "France",
+        serviceType: ServiceType.lawyers,
+        publisher: "publisher@fcdo.gov.uk",
+      };
+    });
+
+    test.each([undefined, "", "Not a country", ["France"]])(
+      "rejects a missing or unselected country (%p) without creating a list",
+      async (country) => {
+        mockReq.body.country = country;
+
+        await listEditAddPublisher(mockReq, mockRes, mockNext);
+
+        expect(spyCreateList).not.toHaveBeenCalled();
+        expect(mockReq.flash).toHaveBeenCalledWith(
+          "questionError",
+          JSON.stringify({
+            field: "country",
+            text: "Select a country or territory",
+            href: "#country-autocomplete",
+          })
+        );
+        expect(mockRes.redirect).toHaveBeenCalledWith("new");
+      }
+    );
+
+    test("creates a list when a country is selected", async () => {
+      spyCreateList.mockResolvedValueOnce({ id: 12 });
+
+      await listEditAddPublisher(mockReq, mockRes, mockNext);
+
+      expect(spyCreateList).toHaveBeenCalledWith({
+        country: "France",
+        serviceType: ServiceType.lawyers,
+        user: "publisher@fcdo.gov.uk",
+        createdBy: "authemail@fcdo.gov.uk",
+      });
+      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/lists/12");
+    });
+
+    test("does not require a country when adding an administrator to an existing list", async () => {
+      mockRes.locals.list = { id: 1 };
+      mockRes.locals.listsEditUrl = "/dashboard/lists/1";
+      delete mockReq.body.country;
+      spyFindListById.mockResolvedValueOnce({ users: [] });
+      spyUpdateList.mockResolvedValueOnce(list);
+
+      await listEditAddPublisher(mockReq, mockRes, mockNext);
+
+      expect(spyUpdateList).toHaveBeenCalledWith(1, { user: "publisher@fcdo.gov.uk" });
+      expect(mockRes.redirect).toHaveBeenCalledWith("/dashboard/lists/1");
+    });
+
+    test("passes the country error to the new list form after redirect", async () => {
+      const error = { field: "country", text: "Select a country or territory", href: "#country-autocomplete" };
+      mockReq.params.listId = "new";
+      mockReq.flash.mockReturnValueOnce([JSON.stringify(error)]);
+
+      await listsEditController(mockReq, mockRes, mockNext);
+
+      expect(mockRes.render).toHaveBeenCalledWith("dashboard/lists-new", expect.objectContaining({ error }));
     });
   });
 
