@@ -46,9 +46,10 @@ export async function generateFormRunnerWebhookData(
 ): Promise<Array<Partial<Question>>> {
   const questions = await parseJsonFormData(ServiceType.funeralDirectors);
   questions.forEach((question) => {
+    question.fields = question.fields?.filter((field: Field) => FormRunnerFields[field.key] !== undefined);
     question.fields?.forEach((field: Field) => {
       field.answer = get(listItem, FormRunnerFields[field.key]);
     });
   });
-  return questions;
+  return questions.filter((question) => (question.fields?.length ?? 0) > 0);
 }
