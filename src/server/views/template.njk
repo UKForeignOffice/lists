@@ -4,23 +4,21 @@
 {# specify absolute url for the static assets folder e.g. http://wwww.domain.com/assets #}
 {%- set assetUrl = assetUrl | default(assetPath) -%}
 <!DOCTYPE html>
-<html lang="{{ htmlLang | default('en') }}" class="govuk-template govuk-template--rebranded"">
+<html lang="{{ htmlLang | default('en') }}" class="govuk-template">
   <head>
     <meta charset="utf-8">
     <title{% if pageTitleLang %} lang="{{ pageTitleLang }}"{% endif %}>{% block pageTitle %}GOV.UK - The best place to find government services and information{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="{{ themeColor | default('#0b0c0c') }}"> {# Hardcoded value of $govuk-black #}
+    <meta name="theme-color" content="{{ themeColor | default('#1d70b8') }}"> {# Hardcoded value of $govuk-brand-blue #}
     {# Ensure that older IE versions always render with the correct rendering engine #}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     {% block headIcons %}
-      <link rel="mask-icon" href="{{ assetPath | default('/assets') }}/images/govuk-mask-icon.svg" color="{{ themeColor | default('#0b0c0c') }}"> {# Hardcoded value of $govuk-black #}
-      <link rel="apple-touch-icon" sizes="180x180" href="{{ assetPath | default('/assets') }}/images/govuk-apple-touch-icon-180x180.png">
-      <link rel="apple-touch-icon" sizes="167x167" href="{{ assetPath | default('/assets') }}/images/govuk-apple-touch-icon-167x167.png">
-      <link rel="apple-touch-icon" sizes="152x152" href="{{ assetPath | default('/assets') }}/images/govuk-apple-touch-icon-152x152.png">
-      <link rel="apple-touch-icon" href="{{ assetPath | default('/assets') }}/images/govuk-apple-touch-icon.png">
-      <link rel="icon" sizes="48x48" href="{{ assetPath | default('/assets') }}/rebrand/images/favicon.ico">
-      <link rel="icon" sizes="any" href="{{ assetPath | default('/assets') }}/rebrand/images/favicon.svg" type="image/svg+xml">
+      <link rel="icon" sizes="48x48" href="{{ assetPath | default('/assets') }}/images/favicon.ico">
+      <link rel="icon" sizes="any" href="{{ assetPath | default('/assets') }}/images/favicon.svg" type="image/svg+xml">
+      <link rel="mask-icon" href="{{ assetPath | default('/assets') }}/images/govuk-icon-mask.svg" color="{{ themeColor | default('#1d70b8') }}">
+      <link rel="apple-touch-icon" href="{{ assetPath | default('/assets') }}/images/govuk-icon-180.png">
+      <link rel="manifest" href="{{ assetPath | default('/assets') }}/manifest.json">
     {% endblock %}
 
     {% block head %}{% endblock %}
@@ -40,9 +38,9 @@
     {% endblock %}
 
     {% block header %}
-      {{ govukHeader({
-        useTudorCrown: true,
-        rebrand: true}) }}
+      <header class="govuk-template__header">
+        {{ govukHeader() }}
+      </header>
     {% endblock %}
 
     {% block main %}
@@ -55,8 +53,9 @@
     {% endblock %}
 
     {% block footer %}
-      {{ govukFooter({
-        rebrand: true}) }}
+      <footer class="govuk-template__footer">
+        {{ govukFooter() }}
+      </footer>
     {% endblock %}
 
     {% block bodyEnd %}{% endblock %}

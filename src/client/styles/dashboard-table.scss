@@ -1,3 +1,6 @@
+@use "sass:math";
+@use "govuk-frontend" as *;
+
 $icon-size: 18px;
 $icon-up: "\25b2";
 $icon-down: "\25bc";
@@ -28,10 +31,9 @@ $icon-down: "\25bc";
 
 .dashboard-table {
   &__header-text {
-    margin-right: calc($icon-size + 0.5em)
+    margin-right: calc($icon-size + 0.5em);
   }
 }
-
 
 .dashboard-table {
   /**
@@ -47,21 +49,21 @@ $icon-down: "\25bc";
     &:before,
     &:after {
       font-size: $icon-size;
-      color: $govuk-link-colour;
+      color: govuk-functional-colour("link");
       text-decoration: none;
       position: absolute;
       :focus & {
-        color: $govuk-focus-text-colour;
+        color: govuk-functional-colour("focus-text");
       }
       .dashboard-table__header-link:hover & {
-        color: $govuk-link-hover-colour;
+        color: govuk-functional-colour("link-hover");
       }
     }
 
     &--none {
       &:before,
       &:after {
-        font-size: $icon-size / 2;
+        font-size: math.div($icon-size, 2);
         position: absolute;
       }
       &:before {
@@ -87,4 +89,3 @@ $icon-down: "\25bc";
     }
   }
 }
-

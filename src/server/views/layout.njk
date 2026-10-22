@@ -1,7 +1,6 @@
 {% extends "./template.njk" %}
 
 {% from "back-link/macro.njk" import govukBackLink %}
-{% from "footer/macro.njk" import govukFooter -%}
 {% from "skip-link/macro.njk" import govukSkipLink -%}
 {% from "error-summary/macro.njk" import govukErrorSummary %}
 {% from "service-navigation/macro.njk" import govukServiceNavigation %}
@@ -103,7 +102,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <script type="module" nonce="{{ cspNonce }} src="/assets/govuk-frontend/govuk-frontend.min.js"></script>
   <script type="module" nonce="{{ cspNonce }}">
     import { initAll } from '/assets/govuk-frontend/govuk-frontend.min.js'
     initAll()

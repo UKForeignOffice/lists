@@ -1,0 +1,16 @@
+{% from "service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% set protocol = "http" + ("s" if SERVICE_DOMAIN != "localhost:3000" else "") %}
+{% set serviceUrl = protocol + "://" + SERVICE_DOMAIN + "/dashboard" %}
+{% set navigation = [
+  { text: "Lists", href: "/dashboard/lists" },
+  { text: "Admins", href: "/dashboard/users" } if req.user.isAdministrator else false,
+  { text: "Help", href: "/dashboard/help" },
+  { text: "Sign out", href: "/logout" }
+] %}
+
+{{ govukServiceNavigation({
+  serviceName: "List management",
+  serviceUrl: serviceUrl,
+  navigation: navigation
+}) }}
