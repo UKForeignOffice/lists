@@ -1,15 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { logger } from "server/services/logger";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function handleCountryParam(req: Request, res: Response, next: NextFunction, country: string) {
   const validatedCountry = validateCountryLower(country);
   if (!validatedCountry) {
-    const { serviceType } = req.params;
+    const serviceType = getStringRouteParam(req.params, "serviceType");
 
-    logger.error(
-      `User requested ${req.originalUrl} but ${country} was not recognised. Redirecting to ${req.params.serviceType}`
-    );
+    logger.error(`User requested ${req.originalUrl} but ${country} was not recognised. Redirecting to ${serviceType}`);
     res.redirect(`/find/${serviceType}`);
     return;
   }

@@ -9,14 +9,16 @@ import { startCase } from "lodash";
 import { format } from "date-fns";
 import { logger } from "server/services/logger";
 import { AuditEvent } from "@prisma/client";
+import { getStringRouteParam } from "server/utils/route-params";
 
 type ListItemWithJsonData = ListItem & { jsonData: ListItemJsonData };
 
 export async function listExportController(req: Request, res: Response) {
+  const listId = getStringRouteParam(req.params, "listId");
   try {
     const result = await prisma.list.findUniqueOrThrow({
       where: {
-        id: Number(req.params.listId),
+        id: Number(listId),
       },
       include: {
         items: true,
@@ -61,7 +63,7 @@ export async function listExportController(req: Request, res: Response) {
         type: "list",
         auditEvent: AuditEvent.LIST_EXPORTED,
         jsonData: {
-          listId: Number(req.params.listId),
+          listId: Number(listId),
           userId: req.user?.id,
           userEmail: req.user?.emailAddress,
         },
@@ -70,7 +72,7 @@ export async function listExportController(req: Request, res: Response) {
   } catch (err) {
     logger.error(`listExportController error: Error exporting list ${err}`);
     req.flash("exportError", "Error exporting this list");
-    res.redirect(`/dashboard/lists/${req.params.listId}`);
+    res.redirect(`/dashboard/lists/${listId}`);
   }
 
   function formatForCSV(item: ListItemWithJsonData) {

@@ -1,8 +1,9 @@
 import Joi from "joi";
 import type { Request, Response, NextFunction } from "express";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function handleRelatedLinkIndexParam(req: Request, res: Response, next: NextFunction) {
-  const { relatedLinkIndex } = req.params;
+  const relatedLinkIndex = getStringRouteParam(req.params, "relatedLinkIndex");
 
   const schema = Joi.number().allow("new");
   const { value, error } = schema.validate(relatedLinkIndex);

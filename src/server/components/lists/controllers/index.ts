@@ -4,6 +4,7 @@ import { DEFAULT_VIEW_PROPS } from "./../constants";
 import { ServiceType } from "shared/types";
 import { getServiceTypeName } from "./../helpers";
 import { sendManualActionNotificationToPost } from "server/services/govuk-notify";
+import { getStringRouteParam } from "server/utils/route-params";
 
 /**
  * removing DEFAULT_VIEW_PROPS from this file causes the compiler to crash??
@@ -16,7 +17,7 @@ export async function listsConfirmApplicationController(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { reference } = req.params;
+  const reference = getStringRouteParam(req.params, "reference");
 
   try {
     const { type, listId } = await setEmailIsVerified({

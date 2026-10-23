@@ -5,7 +5,7 @@ import request from "supertest";
 import { configureBodyParser } from "server/middlewares/body-parser";
 
 jest.mock("../router", () => ({
-  applyRouter: require("express").Router(),
+  applyRouter: jest.requireActual("../router").applyRouter,
 }));
 
 describe("form runner proxy middleware", () => {
@@ -104,6 +104,13 @@ describe("form runner proxy middleware", () => {
 
     expect(response.status).toBe(200);
     expect(upstreamRequest?.url).toBe(expectedUpstreamPath);
+  });
+
+  test("forwards application paths for unrecognized service types to the form runner", async () => {
+    const response = await request(app).get("/application/unknown-service/start");
+
+    expect(response.status).toBe(200);
+    expect(upstreamRequest?.url).toBe("/unknown-service/start");
   });
 
   test.each([

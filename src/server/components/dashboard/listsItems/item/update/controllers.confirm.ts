@@ -5,6 +5,7 @@ import { merge } from "lodash";
 import type { ListItemRes } from "../../types";
 import type { Action } from "./types";
 import type { NextFunction, Request, Response } from "express";
+import { getStringRouteParam } from "server/utils/route-params";
 
 const actionToConfirmationView: Record<Action, string> = {
   publish: "publish",
@@ -72,8 +73,9 @@ export function post(req: Request, res: ListItemRes, next: NextFunction) {
 
   if (!action || !actionHandlers[action]) {
     req.flash("errorMsg", "This action is not recognised");
+    const listId = getStringRouteParam(req.params, "listId");
     logger.error(
-      `listItem update: ${req.user!.id} attempted to perform an unrecognised action "${action}" on ${req.params.listId}`
+      `listItem update: ${req.user!.id} attempted to perform an unrecognised action "${action}" on ${listId}`
     );
     res.redirect(res.locals.listItemUrl);
     return;

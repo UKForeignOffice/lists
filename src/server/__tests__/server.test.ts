@@ -67,6 +67,19 @@ describe("Server:", () => {
       expect(spy).toHaveBeenCalledWith(server);
     });
 
+    test("uses the extended query parser for nested and bracket query parameters", async () => {
+      const server = await getServer();
+      const parseQuery = server.get("query parser fn") as (query: string) => Record<string, unknown>;
+
+      expect(server.get("query parser")).toBe("extended");
+      expect(
+        parseQuery("filters[country]=Spain&filters[regions][0]=Andalusia&countries[0]=Spain&countries[1]=Italy")
+      ).toEqual({
+        filters: { country: "Spain", regions: ["Andalusia"] },
+        countries: ["Spain", "Italy"],
+      });
+    });
+
     test("initAuth", async () => {
       const spy = jest.spyOn(auth, "initAuth");
       const server = await getServer();

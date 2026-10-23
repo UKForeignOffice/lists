@@ -14,6 +14,13 @@ describe("Lists routes", () => {
     expect(status).toEqual(200);
   });
 
+  test("find root middleware reads bracket-encoded query arrays", async () => {
+    const { status, headers } = await request(server).get("/find?serviceType=lawyers&country%5B0%5D=Spain");
+
+    expect(status).toEqual(302);
+    expect(headers.location).toBe("find/lawyers?country=Spain");
+  });
+
   test("lists results redirect route is ready", async () => {
     const { status } = await request(server).get(
       "/results?serviceType=lawyers&readNotice=ok&country=Italy&region=Rome&resultsTurnaround=1&readDisclaimer=ok"

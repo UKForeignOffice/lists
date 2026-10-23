@@ -3,9 +3,10 @@ import { validateCountryLower } from "server/models/listItem/providers/helpers";
 import { listExists, serviceTypeSchema } from "server/components/proxyMiddleware/helpers";
 import { countriesList } from "server/services/metadata";
 import { camelCase } from "lodash";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function get(req: Request, res: Response) {
-  const { value: serviceType } = serviceTypeSchema.validate(req.params.serviceType);
+  const { value: serviceType } = serviceTypeSchema.validate(getStringRouteParam(req.params, "serviceType"));
 
   res.render("apply/which-country-list-do-you-want-to-be-added-to", {
     countriesList,
@@ -17,7 +18,7 @@ export function get(req: Request, res: Response) {
 export async function post(req: Request, res: Response) {
   const { country } = req.body;
   const validatedCountry = validateCountryLower(country);
-  const { value: serviceType } = serviceTypeSchema.validate(req.params.serviceType);
+  const { value: serviceType } = serviceTypeSchema.validate(getStringRouteParam(req.params, "serviceType"));
   const camelCaseServiceType = camelCase(serviceType) as "lawyers" | "funeralDirectors";
   const nextPagePath = {
     lawyers: "what-size-is-your-company-or-firm",

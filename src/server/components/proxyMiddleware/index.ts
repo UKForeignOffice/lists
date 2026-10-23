@@ -20,7 +20,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   server.use(applyRouter);
 
   server.use(
-    `/application/*`,
+    "/application{/*path}",
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace("/application", "");
@@ -37,7 +37,9 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
       userResHeaderDecorator(headers, userReq, userRes) {
         const isApplicationRequest = userReq.originalUrl.startsWith("/application");
         if (userRes.statusCode === 302 && isApplicationRequest) {
-          const prefix = headers.location?.startsWith("?view=") ? `/${userReq.params[0]}` : "";
+          const wildcardPath = userReq.params.path;
+          const path = Array.isArray(wildcardPath) ? wildcardPath.join("/") : (wildcardPath ?? "");
+          const prefix = headers.location?.startsWith("?view=") ? `/${path}` : "";
           return {
             ...headers,
             location: headers.location?.startsWith("http")
@@ -52,7 +54,7 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
   );
 
   server.use(
-    `/complain/*`,
+    "/complain{/*path}",
     proxy(FORM_RUNNER_URL, {
       proxyReqPathResolver: function (req) {
         return req.originalUrl.replace("/complain", "");
@@ -79,7 +81,9 @@ export function configureFormRunnerProxyMiddleware(server: Express): void {
         const isComplainRequest = userReq.originalUrl.startsWith("/complain");
 
         if (userRes.statusCode === 302 && isComplainRequest) {
-          const prefix = headers.location?.startsWith("?view=") ? `/${userReq.params[0]}` : "";
+          const wildcardPath = userReq.params.path;
+          const path = Array.isArray(wildcardPath) ? wildcardPath.join("/") : (wildcardPath ?? "");
+          const prefix = headers.location?.startsWith("?view=") ? `/${path}` : "";
           return {
             ...headers,
             location: `/complain${prefix}${headers.location}`,

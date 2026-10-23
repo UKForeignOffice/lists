@@ -14,7 +14,7 @@ import serviceName from "server/utils/service-name";
 import { HttpException } from "server/middlewares/error-handlers";
 export const findRouter = express.Router();
 
-findRouter.all("*", initFindSession);
+findRouter.all("/{*path}", initFindSession);
 
 findRouter.use((req, res, next) => {
   const originalUrl = req.originalUrl;
@@ -37,12 +37,16 @@ findRouter.param("country", handleCountryParam);
 findRouter.param("country", handlers.country.redirectIfEmpty);
 
 findRouter.get("/:serviceType/country", handlers.country.get);
-findRouter.all("/funeral-directors/*", loadAnswersIntoLocals, (_req: Request, res: Response, next: NextFunction) => {
-  res.locals.serviceType = "funeral-directors";
-  res.locals.serviceLabel = getServiceLabel("funeral-directors");
-  res.locals.serviceLabelPlural = serviceName("funeral-directors");
-  next();
-});
+findRouter.all(
+  "/funeral-directors{/*path}",
+  loadAnswersIntoLocals,
+  (_req: Request, res: Response, next: NextFunction) => {
+    res.locals.serviceType = "funeral-directors";
+    res.locals.serviceLabel = getServiceLabel("funeral-directors");
+    res.locals.serviceLabelPlural = serviceName("funeral-directors");
+    next();
+  }
+);
 
 findRouter.get("/funeral-directors/insurance", handlers.funeralDirectors.insurance.get);
 findRouter.post("/funeral-directors/insurance", handlers.funeralDirectors.insurance.post);

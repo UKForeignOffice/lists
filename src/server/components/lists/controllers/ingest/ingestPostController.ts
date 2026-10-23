@@ -8,9 +8,11 @@ import { sendApplicationConfirmationEmail } from "server/services/govuk-notify";
 import { logger } from "server/services/logger";
 import type { ListItemJsonData } from "server/models/listItem/providers/deserialisers/types";
 import { isDevMode, isLocalHost, isSmokeTest } from "server/config";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export async function ingestPostController(req: Request, res: Response): Promise<void> {
-  const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
+  const serviceTypeName = getServiceTypeName(getStringRouteParam(req.params, "serviceType"));
+  const serviceType = Object.values(ServiceType).find((candidate) => candidate === serviceTypeName);
   if (!serviceType) {
     res.status(500).send({
       error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
@@ -18,13 +20,6 @@ export async function ingestPostController(req: Request, res: Response): Promise
     return;
   }
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
-
-  if (!serviceType || !(serviceType in ServiceType)) {
-    res.status(500).send({
-      error: "serviceType is incorrect, please make sure form's webhook output configuration is correct",
-    });
-    return;
-  }
 
   if (error !== undefined) {
     res.status(422).send({ error: error.message });

@@ -3,9 +3,10 @@ import type { Request, Response } from "express";
 import { searchFuneralDirectors } from "server/components/lists/searches/funeral-directors";
 import { HttpException } from "server/middlewares/error-handlers";
 import { searchTranslatorsInterpreters } from "server/components/lists/searches/translators-interpreters";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export async function get(req: Request, res: Response) {
-  const { serviceType } = req.params;
+  const serviceType = getStringRouteParam(req.params, "serviceType");
 
   res.locals.answers = req.session.answers;
   const serviceTypeToSearch: { [key: string]: (req: Request) => any } = {

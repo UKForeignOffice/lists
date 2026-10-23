@@ -19,6 +19,7 @@ import type { RelatedLink } from "shared/types";
 import { ServiceType } from "shared/types";
 import serviceName from "server/utils/service-name";
 import { getLinksOfRelatedLists } from "server/components/lists/helpers";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export const DEFAULT_VIEW_PROPS = {
   dashboardRoutes,
@@ -55,14 +56,15 @@ export async function usersListController(req: Request, res: Response, next: Nex
 
 export async function usersEditController(req: Request, res: Response, next: NextFunction) {
   try {
-    const { userEmail } = req.params;
+    const userEmailParam = req.params.userEmail;
     const errorText = req?.flash("errorText");
     const errorTitle = req?.flash("errorTitle");
 
-    if (typeof userEmail !== "string") {
+    if (userEmailParam === undefined) {
       next();
       return;
     }
+    const userEmail = getStringRouteParam(req.params, "userEmail");
 
     let error = {};
     if (errorText?.length || errorTitle?.length) {
@@ -92,7 +94,7 @@ export async function usersEditController(req: Request, res: Response, next: Nex
 export async function usersEditPostController(req: Request, res: Response, next: NextFunction) {
   let roles: UserRoles[];
   const usersRoles: UserRoles | UserRoles[] = req.body.roles;
-  const { userEmail } = req.params;
+  const userEmail = getStringRouteParam(req.params, "userEmail");
   const emailAddress = req?.user?.userData?.email;
   const isAdminUser = await isAdministrator(emailAddress);
   if (!isAdminUser) {
@@ -139,7 +141,7 @@ export async function usersEditPostController(req: Request, res: Response, next:
 
 // TODO: test
 export async function listsEditController(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { listId } = req.params;
+  const listId = getStringRouteParam(req.params, "listId");
 
   try {
     let list: List | undefined;
@@ -190,18 +192,19 @@ export async function listsEditController(req: Request, res: Response, next: Nex
 }
 
 export async function listDeleteController(req: Request, res: Response) {
-  const listData = await findListDashboardData(req.params.listId);
+  const listId = getStringRouteParam(req.params, "listId");
+  const listData = await findListDashboardData(listId);
 
   res.render("dashboard/lists-delete", {
     type: listData?.type,
     country: listData?.country,
     live: listData?.live,
-    listId: req.params.listId,
+    listId,
   });
 }
 
 export async function listDeletePostController(req: Request, res: Response, _next: NextFunction) {
-  const { listId } = req.params;
+  const listId = getStringRouteParam(req.params, "listId");
   const list = await findListById(listId);
 
   await deleteList(list!, req.user!.emailAddress);
@@ -313,7 +316,7 @@ export async function listEditAddPublisher(req: Request, res: Response, next: Ne
 }
 
 export async function listEditRemovePublisher(req: Request, res: Response): Promise<void> {
-  const { listId } = req.params;
+  const listId = getStringRouteParam(req.params, "listId");
   const userEmail = req.body.userEmail;
   const list: List | undefined = await findListById(listId);
 
@@ -348,7 +351,7 @@ export function helpPageController(req: Request, res: Response): void {
 }
 
 export function userDeleteGetController(req: Request, res: Response) {
-  const { userEmail } = req.params;
+  const userEmail = getStringRouteParam(req.params, "userEmail");
   res.render("dashboard/users-delete-confirm", {
     ...DEFAULT_VIEW_PROPS,
     userEmail,
@@ -357,7 +360,7 @@ export function userDeleteGetController(req: Request, res: Response) {
 }
 
 export async function userDeletePostController(req: Request, res: Response) {
-  const { userEmail } = req.params;
+  const userEmail = getStringRouteParam(req.params, "userEmail");
 
   if (req.user?.isAdministrator) {
     await deleteUserByEmail(userEmail, req.user.emailAddress);
