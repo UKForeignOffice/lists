@@ -1,7 +1,6 @@
 import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
 /* eslint-disable */
-import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
 import { ListItemEvent } from "@prisma/client";
 
 Given("A {string} list exists for Eurasia", (providerType) => {
@@ -291,9 +290,9 @@ function createListItem(listItem, listId) {
 //This is just used to generate base json data.
 const baseJsonData = () => ({
   country: "Eurasia",
-  contactName: randFullName(),
-  organisationName: randCompanyName(),
-  emailAddress: randEmail(),
+  contactName: Cypress._.uniqueId("Smoke Contact "),
+  organisationName: Cypress._.uniqueId("Smoke Organisation "),
+  emailAddress: `${Cypress._.uniqueId("smoke-")}@example.com`,
   speakEnglish: true,
   websiteAddress: null,
   regions: "France and UK",

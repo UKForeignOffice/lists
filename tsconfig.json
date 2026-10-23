@@ -2,22 +2,23 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "strict": true,
-    "baseUrl": "src",
     "module": "commonjs",
+    "moduleResolution": "bundler",
     "target": "es2023",
     "sourceMap": true,
     "outDir": "./dist",
     "lib": ["es2023"],
     "esModuleInterop": true,
     "strictNullChecks": true,
+    "types": ["node", "jest"],
     "resolveJsonModule": true,
     "paths": {
-      "client/*": ["client/*"],
-      "server/*": ["server/*"],
-      "scheduler/*": ["scheduler/*"],
-      "shared/*": ["shared/*"],
-      "@jest/*": ["./../.jest/*"],
-      "@forms/*": ["./../docker/apply/forms-json/*"]
+      "client/*": ["./src/client/*"],
+      "server/*": ["./src/server/*"],
+      "scheduler/*": ["./src/scheduler/*"],
+      "shared/*": ["./src/shared/*"],
+      "@jest/*": ["./.jest/*"],
+      "@forms/*": ["./docker/apply/forms-json/*"]
     },
     "useUnknownInCatchVariables": false
   },

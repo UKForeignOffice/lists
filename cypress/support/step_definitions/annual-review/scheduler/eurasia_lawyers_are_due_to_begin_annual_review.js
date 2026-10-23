@@ -1,7 +1,5 @@
 import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
-import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
-
 Given("eurasia lawyers are due to begin annual review", () => {
   return setAnnualReview()
     .then(() => createEligible())
@@ -172,9 +170,9 @@ const events = {
 async function baseJsonData() {
   return {
     country: "Eurasia",
-    contactName: randFullName(),
-    organisationName: randCompanyName(),
-    emailAddress: randEmail(),
+    contactName: Cypress._.uniqueId("Smoke Contact "),
+    organisationName: Cypress._.uniqueId("Smoke Organisation "),
+    emailAddress: `${Cypress._.uniqueId("smoke-")}@example.com`,
     speakEnglish: true,
     websiteAddress: null,
     regions: "France and UK",

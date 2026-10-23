@@ -3,6 +3,8 @@ declare module "axios/dist/node/axios.cjs" {
   export default axios;
 }
 
+declare module "*.scss";
+
 interface Result<Success, ErrorType extends Error = Error> {
   result?: Success;
   error?: ErrorType;
