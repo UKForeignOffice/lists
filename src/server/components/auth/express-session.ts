@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import session from "express-session";
-import connectRedis from "connect-redis";
+import { RedisStore } from "connect-redis";
 import { getSecretValue } from "server/services/secrets-manager";
 import { isLocalHost, ENVIRONMENT } from "server/config";
 import { logger } from "server/services/logger";
@@ -86,7 +86,6 @@ export async function configureExpressSession(server: Express): Promise<void> {
 
   if (isRedisAvailable()) {
     const redisClient = getRedisClient();
-    const RedisStore = connectRedis(session);
 
     options.store = new RedisStore({
       client: redisClient,

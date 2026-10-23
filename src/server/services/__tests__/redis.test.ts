@@ -1,4 +1,4 @@
-import IORedis from "ioredis";
+import Redis, { Cluster } from "ioredis";
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from "server/config";
 import { isRedisAvailable, GetRedisClient, RedisClient } from "../redis";
 
@@ -7,7 +7,19 @@ let mockIsClusterMode: boolean = true;
 
 jest.unmock("server/services/redis");
 
-jest.mock("ioredis");
+jest.mock("ioredis", () => {
+  const Redis = jest.fn();
+  Redis.prototype.on = jest.fn();
+  const Cluster = jest.fn();
+  Cluster.prototype.on = jest.fn();
+
+  return {
+    __esModule: true,
+    default: Redis,
+    Redis,
+    Cluster,
+  };
+});
 
 jest.mock("server/config", () => ({
   get REDIS_CLUSTER_MODE() {
@@ -37,7 +49,7 @@ describe("Redis Service:", () => {
       });
 
       test("should initiate Redis in cluster mode", () => {
-        expect(IORedis.Cluster).toHaveBeenCalledWith(
+        expect(Cluster).toHaveBeenCalledWith(
           [
             {
               host: REDIS_HOST,
@@ -54,7 +66,7 @@ describe("Redis Service:", () => {
       });
 
       test("should return the correct client type", () => {
-        expect(client).toBeInstanceOf(IORedis.Cluster);
+        expect(client).toBeInstanceOf(Cluster);
       });
     });
 
@@ -66,7 +78,7 @@ describe("Redis Service:", () => {
       });
 
       test("should initiate Redis in normal mode", () => {
-        expect(IORedis).toHaveBeenCalledWith({
+        expect(Redis).toHaveBeenCalledWith({
           host: REDIS_HOST,
           password: REDIS_PASSWORD,
           port: REDIS_PORT,
@@ -74,7 +86,7 @@ describe("Redis Service:", () => {
       });
 
       test("should return the correct client type", () => {
-        expect(client).toBeInstanceOf(IORedis);
+        expect(client).toBeInstanceOf(Redis);
       });
     });
   });
