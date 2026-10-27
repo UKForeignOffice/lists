@@ -1,3 +1,5 @@
+{% from "footer/macro.njk" import govukFooter %}
+
 {% set contactUsURL %}
     {% if currentLocation %}
         {{ "/complain/provider-complaint/form" if 'find' in currentLocation else "/application/provider-contact" }}
@@ -6,34 +8,35 @@
     {% endif %}
 {% endset %}
 
-{{ govukFooter({
-    rebrand: true,
-    meta: {
-        items: [
-            {
-                href: 'https://www.gov.uk/government/publications/fcdo-privacy-notice-consular-services-in-the-uk-and-at-british-embassies-high-commissions-and-consulates-overseas/foreign-commonwealth-development-office-privacy-notice-consular-services-in-the-uk-and-missions-overseas',
-                text: 'Privacy'
-            },
-            {
-                href: '/help/cookies',
-                text: 'Cookies'
-            },
-            {
-                href: '/help/accessibility-statement',
-                text: 'Accessibility Statement'
-            },
-            {
-                href: '/help/terms-and-conditions',
-                text: 'Terms and Conditions'
-            },
-            {
-                href: '/sitemap',
-                text: 'Sitemap'
-            },
-            {
-                href: contactUsURL,
-                text: 'Contact Us'
-            }
-        ]
-    }
-}) }}
+<footer class="govuk-template__footer">
+  {{ govukFooter({
+      meta: {
+          items: [
+              {
+                  href: 'https://www.gov.uk/government/publications/fcdo-privacy-notice-consular-services-in-the-uk-and-at-british-embassies-high-commissions-and-consulates-overseas/foreign-commonwealth-development-office-privacy-notice-consular-services-in-the-uk-and-missions-overseas',
+                  text: 'Privacy'
+              },
+              {
+                  href: '/help/cookies',
+                  text: 'Cookies'
+              },
+              {
+                  href: '/help/accessibility-statement',
+                  text: 'Accessibility Statement'
+              },
+              {
+                  href: '/help/terms-and-conditions',
+                  text: 'Terms and Conditions'
+              },
+              {
+                  href: '/sitemap',
+                  text: 'Sitemap'
+              },
+              {
+                  href: contactUsURL,
+                  text: 'Contact Us'
+              }
+          ]
+      }
+  }) }}
+</footer>

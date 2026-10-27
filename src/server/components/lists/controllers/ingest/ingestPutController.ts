@@ -14,10 +14,12 @@ import type { ListJsonData } from "server/models/types";
 import type { EventCreate } from "server/models/listItem/listItemEvent";
 import type { DeserialisedWebhookData } from "server/models/listItem/providers/deserialisers/types";
 import type { Prisma } from "@prisma/client";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export async function ingestPutController(req: Request, res: Response) {
-  const id = req.params.id;
-  const serviceType = getServiceTypeName(req.params.serviceType) as ServiceType;
+  const id = getStringRouteParam(req.params, "id");
+  const serviceTypeName = getServiceTypeName(getStringRouteParam(req.params, "serviceType"));
+  const serviceType = Object.values(ServiceType).find((candidate) => candidate === serviceTypeName);
   const { value, error } = formRunnerPostRequestSchema.validate(req.body);
 
   if (!serviceType || !(serviceType in ServiceType)) {

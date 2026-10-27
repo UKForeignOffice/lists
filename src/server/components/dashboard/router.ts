@@ -17,14 +17,14 @@ import { listRouter } from "./listRouter";
 
 export const dashboardRouter = express.Router();
 
-dashboardRouter.get(`${dashboardRoutes.start}*`, ensureAuthenticated);
+dashboardRouter.get(`${dashboardRoutes.start}{/*path}`, ensureAuthenticated);
 dashboardRouter.get(dashboardRoutes.start, startRouteController);
 
 // help
 dashboardRouter.get(dashboardRoutes.listsHelp, helpPageController);
 
 // Users
-dashboardRouter.all(`${dashboardRoutes.usersList}*`, ensureUserIsAdministrator, addUrlToSession);
+dashboardRouter.all(`${dashboardRoutes.usersList}{/*path}`, ensureUserIsAdministrator, addUrlToSession);
 dashboardRouter.get(dashboardRoutes.usersList, usersListController);
 dashboardRouter.post(dashboardRoutes.usersEdit, usersEditPostController);
 dashboardRouter.get(dashboardRoutes.usersEdit, usersEditController);

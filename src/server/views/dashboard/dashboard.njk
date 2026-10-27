@@ -1,17 +1,8 @@
 {% extends "layout.njk" %}
-{% from "service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% block header %}
-  {% include "includes/header-list-mgmt.njk" %}
-
-  {% set protocol = "http" + ("s" if SERVICE_DOMAIN != "localhost:3000" else "") %}
-  {% set serviceUrl = protocol + "://" + SERVICE_DOMAIN + "/dashboard" %}
-
-  {{ govukServiceNavigation({
-    serviceName: "List management",
-    serviceUrl: serviceUrl
-  }) }}
-
+  {% include "includes/header.njk" %}
+  {% include "includes/dashboard-service-navigation.njk" %}
 {% endblock %}
 
 {% block pageTitle %}

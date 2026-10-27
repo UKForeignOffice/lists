@@ -2,14 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import { logger } from "server/services/logger";
 import { listExists } from "server/components/proxyMiddleware/helpers";
 import { camelCase } from "lodash";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function checkCountryQuestionAnswered(req: Request, res: Response, next: NextFunction) {
-  const serviceType = req.params.serviceType;
-
-  if (!serviceType) {
-    next();
-    return;
-  }
+  const serviceType = getStringRouteParam(req.params, "serviceType");
 
   const session = req.session.application ?? {};
 
@@ -34,7 +30,7 @@ export function checkCountryQuestionAnswered(req: Request, res: Response, next: 
 }
 
 export async function checkIsExistingList(req: Request, res: Response, next: NextFunction) {
-  const { serviceType } = req.params;
+  const serviceType = getStringRouteParam(req.params, "serviceType");
   const session = req.session.application ?? {};
 
   if (session.isInitialisedSession === true) {

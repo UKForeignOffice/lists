@@ -7,7 +7,7 @@ import { isLocalHost } from "server/config";
 
 export const developmentRouter = express.Router();
 
-developmentRouter.get(`/development*`, ensureAuthenticated);
+developmentRouter.get("/development{/*path}", ensureAuthenticated);
 
 // deploy db to apply future database migration changes
 developmentRouter.get(developmentRoutes.deployDb, deployDb);

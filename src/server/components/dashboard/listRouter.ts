@@ -22,7 +22,7 @@ import { validateActionPermission } from "./helpers";
 
 export const listRouter = express.Router();
 
-listRouter.all(`*`, ensureAuthenticated);
+listRouter.all("/{*path}", ensureAuthenticated);
 listRouter.get("/", listsController);
 
 listRouter.param("listId", async (req, res, next, listId) => {
@@ -59,7 +59,7 @@ listRouter.param("listId", async (req, res, next, listId) => {
 listRouter.get("/:listId/development", developmentControllers.get);
 listRouter.post("/:listId/development", developmentControllers.post);
 
-listRouter.all("/:listId*", validateAccessToList);
+listRouter.all("/:listId{/*path}", validateAccessToList);
 
 listRouter.get("/:listId/annual-review-date", annualReview.editDateGetController);
 listRouter.post("/:listId/annual-review-date", annualReview.editDatePostController);
@@ -75,6 +75,6 @@ listRouter.get("/:listId/csv", validateActionPermission, listExportController);
 
 listRouter.use("/:listId/related-links", relatedLinksRouter);
 
-listRouter.all("/:listId/*", validateAccessToList);
+listRouter.all("/:listId/*path", validateAccessToList);
 
 listRouter.use(listItemsRouter);

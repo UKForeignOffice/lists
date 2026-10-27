@@ -4,9 +4,10 @@ import type { NextFunction, Request, Response } from "express";
 import { getDbServiceTypeFromParameter } from "server/components/lists/searches/helpers/getDbServiceTypeFromParameter";
 import { getRedirectIfListIsEmpty } from "server/components/lists/find/helpers/getRedirectIfListIsEmpty";
 import { logger } from "server/services/logger";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export async function redirectIfEmpty(req: Request, res: Response, next: NextFunction, country: string) {
-  const serviceType = req.session.answers?.serviceType ?? req.params.serviceType;
+  const serviceType = req.session.answers?.serviceType ?? getStringRouteParam(req.params, "serviceType");
   const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
 
   if (redirect) {
@@ -34,7 +35,8 @@ export async function post(req: Request, res: Response) {
     res.redirect("country");
     return;
   }
-  const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(req.params.serviceType));
+  const serviceType = getStringRouteParam(req.params, "serviceType");
+  const redirect = await getRedirectIfListIsEmpty(country, getDbServiceTypeFromParameter(serviceType));
 
   if (redirect) {
     res.redirect(redirect);

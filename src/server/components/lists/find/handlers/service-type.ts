@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
 import { validateCountryLower } from "server/models/listItem/providers/helpers";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function get(req: Request, res: Response) {
   const country = req.query.country;
-  const { serviceType } = req.params;
+  const serviceType = getStringRouteParam(req.params, "serviceType");
   const validatedCountry = validateCountryLower(country as string | string[]);
   const userRequestedInvalidCountry = country && !validatedCountry;
 
@@ -21,7 +22,7 @@ export function get(req: Request, res: Response) {
 
   if (req.query.restart === "yes") {
     req.session.answers = {};
-    res.redirect(`${req.params.serviceType}`);
+    res.redirect(serviceType);
     return;
   }
 

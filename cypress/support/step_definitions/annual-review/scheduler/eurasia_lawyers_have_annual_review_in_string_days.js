@@ -1,7 +1,5 @@
 import { When } from "@badeball/cypress-cucumber-preprocessor";
 
-import { randCompanyName, randEmail, randFullName } from "@ngneat/falso";
-
 When("eurasia lawyers have annual review in {string} days", (days = "0") => {
   const today = new Date();
 
@@ -100,8 +98,8 @@ function createListItemBaseObject(reference) {
 function createLawyersJsonData() {
   return {
     country: "Eurasia",
-    contactName: randFullName(),
-    organisationName: randCompanyName(),
+    contactName: Cypress._.uniqueId("Smoke Contact "),
+    organisationName: Cypress._.uniqueId("Smoke Organisation "),
     emailAddress: "bcf745d8.kainos.com@emea.teams.ms",
     speakEnglish: true,
     websiteAddress: null,

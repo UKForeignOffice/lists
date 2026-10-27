@@ -4,6 +4,7 @@ import { translatorsInterpretersSchema } from "server/components/lists/find/help
 import { lawyersSchema } from "server/components/lists/find/helpers/lawyersSchema";
 import { funeralDirectorsSchema } from "server/components/lists/find/helpers/funeralDirectorsSchema";
 import type Joi from "joi";
+import { getStringRouteParam } from "server/utils/route-params";
 
 const DEFAULT_VALIDATION_OPTIONS: ValidationOptions = {
   stripUnknown: { arrays: true },
@@ -12,7 +13,8 @@ const DEFAULT_VALIDATION_OPTIONS: ValidationOptions = {
 };
 
 export function checkIncompleteState(req: Request, res: Response, next: NextFunction) {
-  const { serviceType, country } = req.params;
+  const serviceType = getStringRouteParam(req.params, "serviceType");
+  const country = getStringRouteParam(req.params, "country");
   const { answers = {} } = req.session;
 
   const serviceTypeParamToSchema: { [key: string]: Joi.ObjectSchema } = {

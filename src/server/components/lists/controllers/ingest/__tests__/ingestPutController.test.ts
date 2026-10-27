@@ -266,7 +266,7 @@ test("responds with 422 for schema validation error", async () => {
   jest.spyOn(listItem, "update").mockResolvedValue();
 
   const schemaErrorReq = {
-    params: { id: 1, serviceType: "lawyers" },
+    params: { id: "1", serviceType: "lawyers" },
     body: {},
   };
   // @ts-expect-error
@@ -282,7 +282,7 @@ test("responds with 422 for update error", async () => {
   jest.spyOn(listItem, "update").mockRejectedValue("boo");
 
   const schemaErrorReq = {
-    params: { id: 1, serviceType: "lawyers" },
+    params: { id: "1", serviceType: "lawyers" },
     body: { questions: [] },
   };
   // @ts-expect-error
@@ -294,7 +294,7 @@ test("responds with 422 for update error", async () => {
 test("responds with 204 when update is successful", async () => {
   const req = {
     params: {
-      id: 1,
+      id: "1",
       serviceType: "lawyers",
     },
     body: successJson,

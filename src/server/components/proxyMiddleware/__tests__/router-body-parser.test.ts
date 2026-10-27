@@ -25,6 +25,7 @@ describe("form runner route body parsing", () => {
   beforeEach(() => {
     app = express();
     app.use(applyRouter);
+    app.use((req, res) => res.status(204).send(req.originalUrl));
   });
 
   const countrySelectPath = "/application/lawyers/which-country-list-do-you-want-to-be-added-to";
@@ -66,5 +67,12 @@ describe("form runner route body parsing", () => {
     const response = await request(app).post(countrySelectPath).type("application/json").send('{"country":');
 
     expect(response.status).toBe(400);
+  });
+
+  test("lets unsupported application service paths fall through to the outer proxy", async () => {
+    const response = await request(app).get("/application/unknown-service/start");
+
+    expect(response.status).toBe(204);
+    expect(response.text).toBe("");
   });
 });

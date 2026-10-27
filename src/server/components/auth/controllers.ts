@@ -7,6 +7,7 @@ import passport from "./passport";
 import { isDevMode, isLocalHost, isSmokeTest, SERVICE_DOMAIN } from "server/config";
 import { logger } from "server/services/logger";
 import crypto from "crypto";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export const authController = passport.authenticate("jwt", {
   successReturnToOrRedirect: "/dashboard/lists",
@@ -25,7 +26,7 @@ function isTokenValid(providedToken: string, expectedToken: string): boolean {
 }
 
 export function getLoginController(req: Request, res: Response, next: NextFunction): void {
-  const { token } = req.params;
+  const token = req.params.token === undefined ? undefined : getStringRouteParam(req.params, "token");
   const { invalidToken, token: tokenParam } = req.query;
 
   if (token !== undefined) {

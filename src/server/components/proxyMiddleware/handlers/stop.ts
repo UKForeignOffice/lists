@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
 import { serviceTypeSchema } from "server/components/proxyMiddleware/helpers";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export function get(req: Request, res: Response) {
-  const { value: serviceType } = serviceTypeSchema.validate(req.params.serviceType);
+  const { value: serviceType } = serviceTypeSchema.validate(getStringRouteParam(req.params, "serviceType"));
   const serviceTitles = {
     lawyers: "lawyers",
     "funeral-directors": "funeral directors",

@@ -30,6 +30,8 @@ import { configureExpressSession } from "server/components/auth/express-session"
 const server = express();
 
 export async function getServer(): Promise<Express> {
+  server.set("query parser", "extended");
+
   /**
    * Application level middleware
    */

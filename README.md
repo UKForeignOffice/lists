@@ -230,6 +230,11 @@ type-aware lint rules. Run the checks with:
 npm run lint
 ```
 
+The project uses TypeScript 6 because the current ESLint and Webpack type-checker
+tooling is not compatible with TypeScript 7. Module aliases are defined with
+project-relative paths in `tsconfig.json` and are also used by the Webpack
+resolver.
+
 Prettier is also run on staged files by the pre-commit hook.
 
 ### Pre-Commit and Pre-Push Hooks

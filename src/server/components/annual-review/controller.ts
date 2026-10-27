@@ -15,10 +15,11 @@ import { EVENTS } from "server/models/listItem/listItemEvent";
 import { initialiseFormRunnerSession } from "server/components/formRunner/helpers";
 import { sendAnnualReviewCompletedEmailForList } from "server/components/annual-review/helpers";
 import type { ListWithJsonData } from "server/components/dashboard/helpers";
+import { getStringRouteParam } from "server/utils/route-params";
 
 export async function confirmGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { listItemRef } = req.params;
+    const listItemRef = getStringRouteParam(req.params, "listItemRef");
     const listItem = await findListItemByReference(listItemRef);
 
     if (!listItem) {
@@ -137,7 +138,8 @@ export async function confirmPostController(req: Request, res: Response, next: N
 }
 
 async function redirectToFormRunner(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { listItemRef, underTest } = req.params;
+  const listItemRef = getStringRouteParam(req.params, "listItemRef");
+  const underTest = req.params.underTest === undefined ? undefined : getStringRouteParam(req.params, "underTest");
   const result = await findListItemByReference(listItemRef);
 
   if (!result) {
@@ -162,7 +164,7 @@ async function redirectToFormRunner(req: Request, res: Response, next: NextFunct
 }
 
 export async function declarationGetController(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { listItemRef } = req.params;
+  const listItemRef = getStringRouteParam(req.params, "listItemRef");
   const errorMsg = req.flash("declarationError")[0];
 
   if (!listItemRef) {
@@ -197,7 +199,7 @@ export async function declarationGetController(req: Request, res: Response, next
 export async function declarationPostController(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { confirmation } = req.body;
-    const { listItemRef } = req.params;
+    const listItemRef = getStringRouteParam(req.params, "listItemRef");
     const { updatesRequired } = req.session;
 
     if (!confirmation) {
