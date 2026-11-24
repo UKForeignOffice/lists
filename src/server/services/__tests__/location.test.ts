@@ -138,7 +138,7 @@ describe("Location service:", () => {
       expect(result).toEqual([0.0, 0.0]);
     });
 
-    test("maps NRO to NRU for AWS filter countries", async () => {
+    test("uses the direct NRU code for Naoero", async () => {
       const mockLocationClient = getAWSLocationService();
       (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
         Results: [],
@@ -151,6 +151,22 @@ describe("Location service:", () => {
         Text: "Yaren",
         IndexName: LOCATION_SERVICE_INDEX_NAME,
         FilterCountries: ["NRU"],
+      });
+    });
+
+    test("uses the BES code for Bonaire, Sint Eustatius and Saba", async () => {
+      const mockLocationClient = getAWSLocationService();
+      (mockLocationClient.searchPlaceIndexForText as jest.Mock).mockResolvedValue({
+        Results: [],
+      });
+
+      await geoLocatePlaceByText("Kralendijk", "Bonaire, Sint Eustatius and Saba");
+
+      expect(mockLocationClient.searchPlaceIndexForText).toHaveBeenCalledWith({
+        MaxResults: 1,
+        Text: "Kralendijk",
+        IndexName: LOCATION_SERVICE_INDEX_NAME,
+        FilterCountries: ["BES"],
       });
     });
   });
